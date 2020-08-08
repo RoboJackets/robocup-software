@@ -1,9 +1,6 @@
 #include "MainWindow.hpp"
 
-#include <google/protobuf/descriptor.h>
-#include <rj_protos/grSim_Packet.pb.h>
-#include <rj_protos/grSim_Replacement.pb.h>
-#include <ui_MainWindow.h>
+#include <ctime>
 
 #include <QActionGroup>
 #include <QDateTime>
@@ -13,16 +10,21 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QString>
-#include <ctime>
+#include <google/protobuf/descriptor.h>
+
 #include <gameplay/GameplayModule.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_protos/grSim_Packet.pb.h>
+#include <rj_protos/grSim_Replacement.pb.h>
 #include <ui/StyleSheetManager.hpp>
+#include <ui_MainWindow.h>
 
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
 #include "RobotStatusWidget.hpp"
 #include "radio/Radio.hpp"
+
 #include "rc-fshare/git_version.hpp"
 
 using namespace std;
@@ -35,17 +37,15 @@ constexpr int kHistorySize = 60 * 2;
 constexpr int kLongHistorySize = 60 * 60 * 30;
 
 static const std::vector<QString> defaultHiddenLayers{
-    "MotionControl", "Global Obstacles", "Local Obstacles",
-    "Planning0",     "Planning1",        "Planning2",
-    "Planning3",     "Planning4",        "Planning5"};
+    "MotionControl", "Global Obstacles", "Local Obstacles", "Planning0", "Planning1",
+    "Planning2",     "Planning3",        "Planning4",       "Planning5"};
 
 void calcMinimumWidth(QWidget* widget, const QString& text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor, bool has_external_ref,
-                       QWidget* parent)
+MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _doubleFrameNumber(-1),
@@ -156,13 +156,11 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref,
 
     // Get the item model from the goalieID boxes so we can disable them
     // properly
-    goalieModel =
-        qobject_cast<const QStandardItemModel*>(_ui.goalieID->model());
+    goalieModel = qobject_cast<const QStandardItemModel*>(_ui.goalieID->model());
 
     // Append short Git hash to the main window title with an asterisk if the
     // current Git index is dirty
-    setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
-                   (git_version_dirty ? "*" : ""));
+    setWindowTitle(windowTitle() + " @ " + git_version_short_hash + (git_version_dirty ? "*" : ""));
 
     // Pass context into fieldview
     // (apparently simfieldview is used even outside of simulation)
@@ -185,10 +183,10 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref,
     _ui.actionStopRobots->setEnabled(false);
 
     _node = std::make_shared<rclcpp::Node>("main_window");
-    _quick_commands_srv = _node->create_client<rj_msgs::srv::QuickCommands>(
-        referee::topics::kQuickCommandsSrv);
-    _quick_restart_srv = _node->create_client<rj_msgs::srv::QuickRestart>(
-        referee::topics::kQuickRestartSrv);
+    _quick_commands_srv =
+        _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
+    _quick_restart_srv =
+        _node->create_client<rj_msgs::srv::QuickRestart>(referee::topics::kQuickRestartSrv);
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
     _executor.add_node(_node);
@@ -247,11 +245,9 @@ void MainWindow::initialize() {
 
 void MainWindow::logFileChanged() {
     if (_context->logs.state == Logs::State::kWriting) {
-        QString filename_q =
-            QString::fromStdString(_context->logs.filename.value());
+        QString filename_q = QString::fromStdString(_context->logs.filename.value());
         _logFile->setText(filename_q);
-        _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
-                                         filename_q);
+        _ui.actionStart_Logging->setText(QString("Already Logging to: ") + filename_q);
         _ui.actionStart_Logging->setEnabled(false);
     } else {
         _logFile->setText("Not Recording");
@@ -275,8 +271,8 @@ string MainWindow::formatLabelBold(Side side, const string& label) {
     } else if (side == Side::Blue) {
         color = "#000064";
     }
-    return "<html><head/><body><p><span style=\"color:" + color +
-           "; font-weight: bold;\">" + label + "</span></p></body></html>";
+    return "<html><head/><body><p><span style=\"color:" + color + "; font-weight: bold;\">" +
+           label + "</span></p></body></html>";
 }
 
 void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
@@ -290,15 +286,13 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         qActionGroups["teamGroup"]->setEnabled(false);
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
-        if (_ui.goalieID->currentIndex() !=
-            _game_settings.request_goalie_id + 1) {
+        if (_ui.goalieID->currentIndex() != _game_settings.request_goalie_id + 1) {
             _ui.goalieID->setCurrentIndex(_game_settings.request_goalie_id + 1);
         }
 
         bool blueTeam = _context->blue_team;
         if (_game_settings.request_blue_team != blueTeam) {
-            blueTeam ? _ui.actionTeamBlue->trigger()
-                     : _ui.actionTeamYellow->trigger();
+            blueTeam ? _ui.actionTeamBlue->trigger() : _ui.actionTeamYellow->trigger();
         }
     } else {
         _ui.goalieID->setEnabled(true);
@@ -310,20 +304,17 @@ void MainWindow::updateViews() {
     // TODO(Kyle): Re-enable manual control
 #if MANUAL
     int manual = _context->game_settings.joystick_config.manualID;
-    if ((manual >= 0 || _ui.manualID->isEnabled()) &&
-        !_context->joystick_valid) {
+    if ((manual >= 0 || _ui.manualID->isEnabled()) && !_context->joystick_valid) {
         // Joystick is gone - turn off manual control
         _ui.manualID->setCurrentIndex(0);
         _context->game_settings.joystick_config.manualID = -1;
         _ui.manualID->setEnabled(false);
-        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
-                                     false);
+        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab), false);
     } else if (!_ui.manualID->isEnabled() && _context->joystick_valid) {
         // Joystick reconnected
         _ui.manualID->setEnabled(true);
         _ui.joystickTab->setVisible(true);
-        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
-                                     true);
+        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab), true);
     }
 #endif
 
@@ -385,12 +376,10 @@ void MainWindow::updateViews() {
         _updateCount = 0;
 
         _viewFPS->setText(QString("View: %1 fps").arg(framerate, 0, 'f', 1));
-        _procFPS->setText(
-            QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
+        _procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 
-        _logMemory->setText(QString("Log: %1 kiB")
-                                .arg(QString::number(
-                                    (_context->logs.size_bytes + 512) / 1024)));
+        _logMemory->setText(
+            QString("Log: %1 kiB").arg(QString::number((_context->logs.size_bytes + 512) / 1024)));
     }
 
     auto value = _ui.logHistoryLocation->value();
@@ -413,15 +402,13 @@ void MainWindow::updateViews() {
         size_t num_dropped = _context->logs.dropped_frames;
 
         if (live()) {
-            _doubleFrameNumber =
-                static_cast<double>(_context->logs.frames.size() + num_dropped);
+            _doubleFrameNumber = static_cast<double>(_context->logs.frames.size() + num_dropped);
         } else {
             _doubleFrameNumber += *_playbackRate;
         }
 
         minFrame = num_dropped;
-        maxFrame =
-            static_cast<int>(num_dropped + _context->logs.frames.size()) - 1;
+        maxFrame = static_cast<int>(num_dropped + _context->logs.frames.size()) - 1;
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
@@ -439,16 +426,14 @@ void MainWindow::updateViews() {
         int start = std::max(frameNumber() - kLongHistorySize, minFrame);
 
         // Read the latest frames
-        _longHistory.assign(
-            _context->logs.frames.begin() + start - num_dropped,
-            _context->logs.frames.begin() + frameNumber() - num_dropped + 1);
+        _longHistory.assign(_context->logs.frames.begin() + start - num_dropped,
+                            _context->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
     // Set the history vector by taking the last kHistorySize elements of the
     // "long" history, or fewer if _longHistory is shorter.
     _history.assign(
-        _longHistory.end() -
-            std::min(kHistorySize, static_cast<int>(_longHistory.size())),
+        _longHistory.end() - std::min(kHistorySize, static_cast<int>(_longHistory.size())),
         _longHistory.end());
 
     // Update field view
@@ -492,24 +477,19 @@ void MainWindow::updateViews() {
 
     // Update the playback labels
     if (currentFrame) {
-        auto gametime =
-            RJ::Time(chrono::microseconds(currentFrame->timestamp())) -
-            start_time;
+        auto gametime = RJ::Time(chrono::microseconds(currentFrame->timestamp())) - start_time;
         auto minutes = chrono::duration_cast<chrono::minutes>(gametime);
         gametime -= minutes;
         auto seconds = chrono::duration_cast<chrono::seconds>(gametime);
         gametime -= seconds;
-        auto deciseconds =
-            chrono::duration_cast<chrono::duration<long, ratio<1, 100>>>(
-                gametime);
+        auto deciseconds = chrono::duration_cast<chrono::duration<long, ratio<1, 100>>>(gametime);
 
-        _ui.logTime->setText(QString::fromStdString(
-            to_string(minutes.count()) + ":" + to_string(seconds.count()) +
-            "." + to_string(deciseconds.count())));
+        _ui.logTime->setText(QString::fromStdString(to_string(minutes.count()) + ":" +
+                                                    to_string(seconds.count()) + "." +
+                                                    to_string(deciseconds.count())));
 
-        _ui.frameNumLabel->setText(QString("%1/%2")
-                                       .arg(QString::number(frameNumber()))
-                                       .arg(QString::number(maxFrame)));
+        _ui.frameNumLabel->setText(
+            QString("%1/%2").arg(QString::number(frameNumber())).arg(QString::number(maxFrame)));
     }
 
     /**************************************************************************/
@@ -519,8 +499,7 @@ void MainWindow::updateViews() {
         _ui.logTree->message(*currentFrame);
 
         // update the behavior tree view
-        QString behaviorStr =
-            QString::fromStdString(currentFrame->behavior_tree());
+        QString behaviorStr = QString::fromStdString(currentFrame->behavior_tree());
         if (_ui.behaviorTree->toPlainText() != behaviorStr) {
             _ui.behaviorTree->setPlainText(behaviorStr);
         }
@@ -541,8 +520,8 @@ void MainWindow::updateViews() {
     int timeSeconds = static_cast<int>(game_state.stage_time_left.count());
     int timeMinutes = timeSeconds / 60;
     timeSeconds = timeSeconds % 60;
-    _ui.refTimeLeft->setText(tr("%1:%2").arg(
-        QString::number(timeMinutes), QString::number(std::abs(timeSeconds))));
+    _ui.refTimeLeft->setText(
+        tr("%1:%2").arg(QString::number(timeMinutes), QString::number(std::abs(timeSeconds))));
 
     // Get team information for the yellow and blue teams, and display it.
     TeamInfo blue_info = blue_team ? our_info : their_info;
@@ -560,8 +539,7 @@ void MainWindow::updateViews() {
     TeamInfo yellow_info = !blue_team ? our_info : their_info;
 
     const char* yellowName = yellow_info.name.c_str();
-    string yellowFormatted =
-        strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
+    string yellowFormatted = strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
     yellowFormatted = formatLabelBold(Side::Yellow, yellowFormatted);
     _ui.refYellowName->setText(QString::fromStdString(yellowFormatted));
     _ui.refYellowScore->setText(tr("%1").arg(yellow_info.score));
@@ -577,9 +555,7 @@ void MainWindow::updateViews() {
         // update robot status list
         for (int shell = 0; shell < Num_Shells; shell++) {
             // Search for the corresponding references.
-            auto maybe_rx =
-                [&]() -> std::optional<
-                          std::reference_wrapper<const Packet::RadioRx>> {
+            auto maybe_rx = [&]() -> std::optional<std::reference_wrapper<const Packet::RadioRx>> {
                 for (int i = 0; i < currentFrame->radio_rx_size(); i++) {
                     if (currentFrame->radio_rx(i).robot_id() == shell) {
                         return currentFrame->radio_rx(i);
@@ -587,9 +563,8 @@ void MainWindow::updateViews() {
                 }
                 return std::nullopt;
             }();
-            auto maybe_robot = [&]()
-                -> std::optional<
-                    std::reference_wrapper<const Packet::LogFrame_Robot>> {
+            auto maybe_robot =
+                [&]() -> std::optional<std::reference_wrapper<const Packet::LogFrame_Robot>> {
                 for (int i = 0; i < currentFrame->self_size(); i++) {
                     if (currentFrame->self(i).shell() == shell) {
                         return currentFrame->self(i);
@@ -610,8 +585,7 @@ void MainWindow::updateViews() {
                     QListWidgetItem* item = statusItemIt->second.get();
 
                     // Delete widget from list
-                    for (int row = 0; row < _ui.robotStatusList->count();
-                         row++) {
+                    for (int row = 0; row < _ui.robotStatusList->count(); row++) {
                         if (_ui.robotStatusList->item(row) == item) {
                             _ui.robotStatusList->takeItem(row);
                             break;
@@ -643,20 +617,17 @@ void MainWindow::updateViews() {
                 _ui.robotStatusList->setItemWidget(item, statusWidget);
             } else {
                 statusWidget = dynamic_cast<RobotStatusWidget*>(
-                    _ui.robotStatusList->itemWidget(
-                        statusItemIt->second.get()));
+                    _ui.robotStatusList->itemWidget(statusItemIt->second.get()));
             }
 
             if (statusWidget != nullptr) {
-                statusWidget->loadFromLogFrame(rx, maybe_robot,
-                                               currentFrame->blue_team());
+                statusWidget->loadFromLogFrame(rx, maybe_robot, currentFrame->blue_team());
             }
         }
     }
 
     if (!_game_settings_valid) {
-        auto game_settings_request =
-            std::make_shared<rj_msgs::srv::SetGameSettings::Request>();
+        auto game_settings_request = std::make_shared<rj_msgs::srv::SetGameSettings::Request>();
         game_settings_request->game_settings = _game_settings;
         _set_game_settings->async_send_request(game_settings_request);
         _game_settings_valid = true;
@@ -708,14 +679,11 @@ void MainWindow::updateStatus() {
 
     for (int i = 1; i <= Num_Shells; i++) {
         QStandardItem* item = goalieModel->item(i);
-        if (std::find(validIds.begin(), validIds.end(), i - 1) !=
-            validIds.end()) {
+        if (std::find(validIds.begin(), validIds.end(), i - 1) != validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
-            item->setFlags(item->flags() |
-                           (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            item->setFlags(item->flags() | (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
         } else {
-            item->setFlags(item->flags() &
-                           ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
         }
     }
 
@@ -827,13 +795,11 @@ void MainWindow::playIndicatorStatus(bool color) {
 }
 
 void MainWindow::updateRadioBaseStatus(bool usbRadio) {
-    QString label =
-        QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
+    QString label = QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
     if (_ui.radioBaseStatus->text() != label) {
         _ui.radioBaseStatus->setText(label);
-        _ui.radioBaseStatus->setStyleSheet(
-            usbRadio ? QString("background-color: #00ff00")
-                     : QString("background-color: #ff4040"));
+        _ui.radioBaseStatus->setStyleSheet(usbRadio ? QString("background-color: #00ff00")
+                                                    : QString("background-color: #ff4040"));
     }
 }
 
@@ -899,8 +865,7 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
 
 void MainWindow::on_actionCenterBall_triggered() {
     grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace =
-        simPacket.mutable_replacement()->mutable_ball();
+    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
 
     ball_replace->set_x(0);
     ball_replace->set_y(0);
@@ -913,11 +878,9 @@ void MainWindow::on_actionCenterBall_triggered() {
 
 void MainWindow::on_actionStopBall_triggered() {
     grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace =
-        simPacket.mutable_replacement()->mutable_ball();
+    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
 
-    Geometry2d::Point ballPos =
-        _ui.fieldView->getTeamToWorld() * state()->ball->position;
+    Geometry2d::Point ballPos = _ui.fieldView->getTeamToWorld() * state()->ball->position;
     ball_replace->set_x(ballPos.x());
     ball_replace->set_y(ballPos.y());
     ball_replace->set_vx(0);
@@ -1029,8 +992,7 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
 
 void MainWindow::on_actionRestartUpdateTimer_triggered() {
     printf("Update timer: active %d, singleShot %d, interval %d\n",
-           static_cast<int>(updateTimer.isActive()),
-           static_cast<int>(updateTimer.isSingleShot()),
+           static_cast<int>(updateTimer.isActive()), static_cast<int>(updateTimer.isSingleShot()),
            updateTimer.interval());
     updateTimer.stop();
     updateTimer.start(30);
@@ -1043,14 +1005,12 @@ void MainWindow::on_actionStart_Logging_triggered() {
         }
 
         QString logFile =
-            QString("logs/") +
-            QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
+            QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
 
         if (!_processor->openLog(logFile)) {
             printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
         } else {
-            _ui.actionStart_Logging->setText(QString("Now Logging to:") +
-                                             logFile);
+            _ui.actionStart_Logging->setText(QString("Now Logging to:") + logFile);
             _ui.actionStart_Logging->setEnabled(false);
         }
     }
@@ -1059,8 +1019,7 @@ void MainWindow::on_actionStart_Logging_triggered() {
 // Gameplay commands
 
 void MainWindow::on_actionSeed_triggered() {
-    QString text =
-        QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
+    QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
     if (!text.isNull()) {
         long seed = strtol(text.toLatin1(), nullptr, 16);
         printf("seed %016lx\n", seed);
@@ -1092,9 +1051,7 @@ void MainWindow::on_logHistoryLocation_sliderPressed() {
     on_logHistoryLocation_sliderMoved(_ui.logHistoryLocation->value());
 }
 
-void MainWindow::on_logHistoryLocation_sliderReleased() {
-    on_logHistoryLocation_sliderPressed();
-}
+void MainWindow::on_logHistoryLocation_sliderReleased() { on_logHistoryLocation_sliderPressed(); }
 
 void MainWindow::on_logPlaybackRewind_clicked() {
     if (live()) {
@@ -1141,8 +1098,7 @@ void MainWindow::on_actionTeamYellow_triggered() {
     _ui.team->setText("YELLOW");
     _ui.team->setStyleSheet("background-color: #ffff00");
 
-    update_cache(_game_settings.request_blue_team, false,
-                 &_game_settings_valid);
+    update_cache(_game_settings.request_blue_team, false, &_game_settings_valid);
 }
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
@@ -1162,8 +1118,7 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 }
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
-    update_cache(_game_settings.request_goalie_id, value - 1,
-                 &_game_settings_valid);
+    update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
 }
 
 ////////////////
@@ -1243,12 +1198,10 @@ void MainWindow::on_saveConfig_clicked() {
 
 void MainWindow::on_loadPlaybook_clicked() {
     QString filename = QFileDialog::getOpenFileName(
-        this, "Load Playbook",
-        ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
+        this, "Load Playbook", ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
-            _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
-                                                       true);
+            _processor->gameplayModule()->loadPlaybook(filename.toStdString(), true);
             playIndicatorStatus(true);
         } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
@@ -1259,12 +1212,10 @@ void MainWindow::on_loadPlaybook_clicked() {
 
 void MainWindow::on_savePlaybook_clicked() {
     QString filename = QFileDialog::getSaveFileName(
-        this, "Save Playbook",
-        ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
+        this, "Save Playbook", ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
-            _processor->gameplayModule()->savePlaybook(filename.toStdString(),
-                                                       true);
+            _processor->gameplayModule()->savePlaybook(filename.toStdString(), true);
             playIndicatorStatus(true);
         } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
@@ -1281,21 +1232,13 @@ void MainWindow::on_clearPlays_clicked() {
 ////////
 // Testing Tab
 
-void MainWindow::on_testRun_clicked() {
-    _processor->gameplayModule()->loadTest();
-}
+void MainWindow::on_testRun_clicked() { _processor->gameplayModule()->loadTest(); }
 
-void MainWindow::on_addToTable_clicked() {
-    _processor->gameplayModule()->addTests();
-}
+void MainWindow::on_addToTable_clicked() { _processor->gameplayModule()->addTests(); }
 
-void MainWindow::on_removeFromTable_clicked() {
-    _processor->gameplayModule()->removeTest();
-}
+void MainWindow::on_removeFromTable_clicked() { _processor->gameplayModule()->removeTest(); }
 
-void MainWindow::on_testNext_clicked() {
-    _processor->gameplayModule()->nextTest();
-}
+void MainWindow::on_testNext_clicked() { _processor->gameplayModule()->nextTest(); }
 
 // NOLINTNEXTLINE(readability-make-member-function-const): this modifies state
 void MainWindow::setUseRefChecked(bool /* use_ref */) {
@@ -1332,33 +1275,27 @@ void MainWindow::on_fastForceStart_clicked() {
 }
 
 void MainWindow::on_fastKickoffBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF,
-                       true);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF, true);
 }
 
 void MainWindow::on_fastKickoffYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF,
-                       false);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF, false);
 }
 
 void MainWindow::on_fastDirectBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT,
-                       true);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT, true);
 }
 
 void MainWindow::on_fastDirectYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT,
-                       false);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT, false);
 }
 
 void MainWindow::on_fastIndirectBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT,
-                       true);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT, true);
 }
 
 void MainWindow::on_fastIndirectYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT,
-                       false);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT, false);
 }
 
 bool MainWindow::live() { return !_playbackRate; }
@@ -1367,12 +1304,10 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
     // (layers should never be removed)
     if (frame.debug_layers_size() > _ui.debugLayers->count()) {
         // Add the missing layers and turn them on
-        for (int i = _ui.debugLayers->count(); i < frame.debug_layers_size();
-             ++i) {
+        for (int i = _ui.debugLayers->count(); i < frame.debug_layers_size(); ++i) {
             const QString name = QString::fromStdString(frame.debug_layers(i));
-            bool enabled = !std::any_of(
-                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
-                [&](const QString& string) { return string == name; });
+            bool enabled = !std::any_of(defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                                        [&](const QString& string) { return string == name; });
             addLayer(i, name, enabled);
         }
 

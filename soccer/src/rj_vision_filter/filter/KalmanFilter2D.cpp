@@ -1,4 +1,5 @@
 #include <cmath>
+
 #include <rj_vision_filter/filter/KalmanFilter2D.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -7,16 +8,14 @@ namespace vision_filter {
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, init_covariance, 100.0,
                   "Initial covariance of the filter. Controls how fast it gets "
                   "to the target.")
-DEFINE_NS_FLOAT64(
-    kVisionFilterParamModule, ball, process_noise, 0.1,
-    "Controls how quickly it reacts to changes in ball accelerations.")
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, process_noise, 0.1,
+                  "Controls how quickly it reacts to changes in ball accelerations.")
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, observation_noise, 2.0,
                   "Controls how much it trusts measurements from the camera.")
 
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1, 1) {}
 
-KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos,
-                               Geometry2d::Point initVel)
+KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point initVel)
     : KalmanFilter(4, 2) {
     // clang-format off
     // States are X pos, X vel, Y pos, Y vel
@@ -100,13 +99,9 @@ void KalmanFilter2D::predictWithUpdate(Geometry2d::Point observation) {
     KalmanFilter::predictWithUpdate();
 }
 
-Geometry2d::Point KalmanFilter2D::getPos() const {
-    return Geometry2d::Point(x_k_k(0), x_k_k(2));
-}
+Geometry2d::Point KalmanFilter2D::getPos() const { return Geometry2d::Point(x_k_k(0), x_k_k(2)); }
 
-Geometry2d::Point KalmanFilter2D::getVel() const {
-    return Geometry2d::Point(x_k_k(1), x_k_k(3));
-}
+Geometry2d::Point KalmanFilter2D::getVel() const { return Geometry2d::Point(x_k_k(1), x_k_k(3)); }
 
 Geometry2d::Point KalmanFilter2D::getPosCov() const {
     return Geometry2d::Point(P_k_k(0, 0), P_k_k(2, 2));

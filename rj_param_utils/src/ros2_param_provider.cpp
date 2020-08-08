@@ -2,15 +2,13 @@
 
 namespace params {
 
-ROS2ParamProvider::ROS2ParamProvider(rclcpp::Node* node,
-                                     const std::string& module)
+ROS2ParamProvider::ROS2ParamProvider(rclcpp::Node* node, const std::string& module)
     : ParamProvider{module} {
     DeclareParameters(node);
     InitUpdateParamCallbacks(node);
 }
 
-std::string ROS2ParamProvider::ConvertFullNameToROS2(
-    const std::string& full_name) {
+std::string ROS2ParamProvider::ConvertFullNameToROS2(const std::string& full_name) {
     std::string ros2_name;
 
     ros2_name.reserve(full_name.size());
@@ -27,15 +25,14 @@ std::string ROS2ParamProvider::ConvertFullNameToROS2(
     return ros2_name;
 }
 
-#define DECLARE_AND_UPDATE_PARAMS(type)                           \
-    for (const auto& [param_name, param] : GetParamMap<type>()) { \
-        rcl_interfaces::msg::ParameterDescriptor descriptor;      \
-        descriptor.description = param->help();                   \
-        const std::string& ros2_param_name =                      \
-            ConvertFullNameToROS2(param_name);                    \
-        const type& val = node->declare_parameter(                \
-            ros2_param_name, param->default_value(), descriptor); \
-        Update(param_name, val);                                  \
+#define DECLARE_AND_UPDATE_PARAMS(type)                                                   \
+    for (const auto& [param_name, param] : GetParamMap<type>()) {                         \
+        rcl_interfaces::msg::ParameterDescriptor descriptor;                              \
+        descriptor.description = param->help();                                           \
+        const std::string& ros2_param_name = ConvertFullNameToROS2(param_name);           \
+        const type& val =                                                                 \
+            node->declare_parameter(ros2_param_name, param->default_value(), descriptor); \
+        Update(param_name, val);                                                          \
     }
 
 void ROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {
@@ -54,8 +51,8 @@ void ROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {
 
 void ROS2ParamProvider::InitUpdateParamCallbacks(rclcpp::Node* node) {
     using rcl_interfaces::msg::SetParametersResult;
-    const auto on_update = [this](const std::vector<rclcpp::Parameter>& params)
-        -> SetParametersResult {
+    const auto on_update =
+        [this](const std::vector<rclcpp::Parameter>& params) -> SetParametersResult {
         for (const rclcpp::Parameter& param : params) {
             switch (param.get_type()) {
                 case rclcpp::PARAMETER_BOOL:

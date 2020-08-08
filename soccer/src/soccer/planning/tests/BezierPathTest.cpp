@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <fstream>
+
+#include <gtest/gtest.h>
 
 #include "planning/primitives/PathSmoothing.hpp"
 
@@ -38,13 +38,11 @@ static void check_bezier_smooth(const Planning::BezierPath& path) {
         double curvature = 0;
         path.Evaluate(s, &position, &tangent, &curvature);
 
-        EXPECT_LE((0.5 * (previous_velocity + tangent) * ds)
-                      .distTo(position - previous_position),
+        EXPECT_LE((0.5 * (previous_velocity + tangent) * ds).distTo(position - previous_position),
                   epsilon);
 
         double curvature_expected =
-            (tangent.normalized() - previous_velocity.normalized()).mag() / ds /
-            tangent.mag();
+            (tangent.normalized() - previous_velocity.normalized()).mag() / ds / tangent.mag();
 
         // Make sure that the approximate curvature is consistent with the
         // calculated exact value.
@@ -58,16 +56,14 @@ static void check_bezier_smooth(const Planning::BezierPath& path) {
 TEST(BezierPath, two_points_path_smooth_and_consistent) {
     MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{1, 1}};
-    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0),
-                              constraints);
+    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0), constraints);
     check_bezier_smooth(path);
 }
 
 TEST(BezierPath, multiple_points_path_smooth_and_consistent) {
     MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{1, 1}, Point{2, 0}};
-    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0),
-                              constraints);
+    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0), constraints);
     check_bezier_smooth(path);
 }
 
@@ -83,20 +79,17 @@ TEST(BezierPath, multiple_points_path_smooth_and_consistent) {
 //  the endpoints' positions and velocities (so sub of squared acceleration
 //  is a quadratic in the velocities (decision variables))
 
-TEST(BezierPath,
-     DISABLED_zero_velocity_endpoints_straight_smooth_and_consistent) {
+TEST(BezierPath, DISABLED_zero_velocity_endpoints_straight_smooth_and_consistent) {
     MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{2, 0}};
-    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0),
-                              constraints);
+    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
     check_bezier_smooth(path);
 }
 
 TEST(BezierPath, DISABLED_zero_endpoints_curved_smooth_and_consistent) {
     MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{1, 1}, Point{2, 0}};
-    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0),
-                              constraints);
+    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
     check_bezier_smooth(path);
     check_bezier_low_curvature(path);
 }
@@ -104,8 +97,7 @@ TEST(BezierPath, DISABLED_zero_endpoints_curved_smooth_and_consistent) {
 TEST(BezierPath, DISABLED_nonzero_start_zero_end_curved_smooth_and_consistent) {
     MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{2, 2}};
-    Planning::BezierPath path(std::move(points), Point(1, 0), Point(0, 0),
-                              constraints);
+    Planning::BezierPath path(std::move(points), Point(1, 0), Point(0, 0), constraints);
     check_bezier_smooth(path);
     check_bezier_low_curvature(path);
 }

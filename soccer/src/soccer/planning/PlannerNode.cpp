@@ -27,8 +27,7 @@ void PlannerNode::run() {
         return;
     }
 
-    const WorldState world_state =
-        rj_convert::convert_from_ros(*world_state_msg);
+    const WorldState world_state = rj_convert::convert_from_ros(*world_state_msg);
     const ShapeSet& global_obstacles = context_->globalObstacles;
     const ShapeSet& goal_zones = context_->goalZoneObstacles;
     const auto& robot_intents = context_->robot_intents;
@@ -89,8 +88,7 @@ void PlannerNode::run() {
                             intent.priority,
                             debug_drawer};
 
-        Trajectory trajectory =
-            robots_planners_.at(shell).PlanForRobot(request);
+        Trajectory trajectory = robots_planners_.at(shell).PlanForRobot(request);
         trajectory.draw(&context_->debug_drawer);
         trajectories->at(shell) = std::move(trajectory);
 
@@ -117,8 +115,7 @@ Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
     for (auto& planner : planners_) {
         // If this planner could possibly plan for this command, try to make
         // a plan.
-        if (trajectory.empty() &&
-            planner->isApplicable(request.motionCommand)) {
+        if (trajectory.empty() && planner->isApplicable(request.motionCommand)) {
             RobotInstant startInstant = request.start;
             trajectory = planner->plan(request);
         }
@@ -129,23 +126,19 @@ Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
             planner->reset();
         } else {
             if (!trajectory.angles_valid()) {
-                throw std::runtime_error("Trajectory returned from " +
-                                         planner->name() +
+                throw std::runtime_error("Trajectory returned from " + planner->name() +
                                          " has no angle profile!");
             }
 
             if (!trajectory.timeCreated().has_value()) {
-                throw std::runtime_error("Trajectory returned from " +
-                                         planner->name() +
+                throw std::runtime_error("Trajectory returned from " + planner->name() +
                                          " has no timestamp!");
             }
         }
     }
 
     if (trajectory.empty()) {
-        std::cerr
-            << "No valid planner! Did you forget to specify a default planner?"
-            << std::endl;
+        std::cerr << "No valid planner! Did you forget to specify a default planner?" << std::endl;
         trajectory = Trajectory{{request.start}};
         trajectory.setDebugText("Error: No Valid Planners");
     }

@@ -15,8 +15,7 @@ using Geometry2d::Point;
 using Geometry2d::Pose;
 using Geometry2d::Twist;
 
-bool checkTrajectoryContinuous(const Trajectory& trajectory,
-                               const RobotConstraints& constraints) {
+bool checkTrajectoryContinuous(const Trajectory& trajectory, const RobotConstraints& constraints) {
     if (trajectory.empty()) {
         return false;
     }
@@ -39,18 +38,16 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
 
         // Check for continuous position
         double dist = current.position().distTo(previous.position());
-        double delta_angle =
-            std::abs(fixAngleRadians(current.heading() - previous.heading()));
-        double tangential_acceleration = (current.linear_velocity().mag() -
-                                          previous.linear_velocity().mag()) /
-                                         dt;
+        double delta_angle = std::abs(fixAngleRadians(current.heading() - previous.heading()));
+        double tangential_acceleration =
+            (current.linear_velocity().mag() - previous.linear_velocity().mag()) / dt;
 
         // Include a 1.5x buffer on speeds, because our constraint logic isn't
         // perfect and this is just the average speed over the interval.
         // TODO(#1506): Check angle planning too.
         if (dist / dt > 1.5 * constraints.mot.maxSpeed) {
-            std::cout << "Failure because of position deltas " << dist / dt
-                      << ", " << delta_angle / dt << std::endl;
+            std::cout << "Failure because of position deltas " << dist / dt << ", "
+                      << delta_angle / dt << std::endl;
             return false;
         }
 
@@ -58,11 +55,9 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
         // For now, don't enforce the acceleration limit.
         if (current.linear_velocity().mag() > constraints.mot.maxSpeed * 1.5
             /* || tangential_acceleration > constraints.mot.maxAcceleration * 1.5 */) {
-            std::cout << "Failure because of velocity "
-                      << current.linear_velocity().mag() << ", acceleration "
-                      << tangential_acceleration << " (max "
-                      << constraints.mot.maxSpeed << ", "
-                      << constraints.mot.maxAcceleration << ")"
+            std::cout << "Failure because of velocity " << current.linear_velocity().mag()
+                      << ", acceleration " << tangential_acceleration << " (max "
+                      << constraints.mot.maxSpeed << ", " << constraints.mot.maxAcceleration << ")"
                       << " dt = " << dt << " delta pos = " << dist << std::endl;
             return false;
         }

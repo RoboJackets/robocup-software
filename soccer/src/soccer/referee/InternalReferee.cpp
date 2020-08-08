@@ -59,8 +59,7 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
         });
 
     _game_settings_sub = create_subscription<rj_msgs::msg::GameSettings>(
-        config_server::topics::kGameSettingsPub,
-        rclcpp::QoS(1).transient_local(),
+        config_server::topics::kGameSettingsPub, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::GameSettings::SharedPtr
                    msg) {  // NOLINT(performance-unnecessary-value-param)
             set_team_color(msg->request_blue_team);

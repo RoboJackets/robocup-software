@@ -45,9 +45,7 @@ Rect Polygon::bbox() const {
     return rect;
 }
 
-bool Polygon::intersects(const Rect& rect) const {
-    return intersects(Polygon(rect));
-}
+bool Polygon::intersects(const Rect& rect) const { return intersects(Polygon(rect)); }
 
 bool Polygon::intersects(const Polygon& other) const {
     return containsVertex(other) || other.containsVertex(*this);
@@ -157,8 +155,6 @@ bool Polygon::containsPoint(Point pt) const {
 
 bool Polygon::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
 
-bool Polygon::hit(const Segment& seg) const {
-    return nearSegment(seg, Robot_Radius);
-}
+bool Polygon::hit(const Segment& seg) const { return nearSegment(seg, Robot_Radius); }
 
 }  // namespace Geometry2d

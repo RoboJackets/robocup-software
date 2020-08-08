@@ -93,10 +93,8 @@ TEST(CameraRobot, combine_two) {
 
     CameraRobot r = CameraRobot::CombineRobots(robots);
 
-    EXPECT_EQ(r.getPos().x(),
-              (pose1.position().x() + pose2.position().x()) / 2);
-    EXPECT_EQ(r.getPos().y(),
-              (pose1.position().y() + pose2.position().y()) / 2);
+    EXPECT_EQ(r.getPos().x(), (pose1.position().x() + pose2.position().x()) / 2);
+    EXPECT_EQ(r.getPos().y(), (pose1.position().y() + pose2.position().y()) / 2);
     EXPECT_EQ(r.getTimeCaptured(), t1);
     EXPECT_EQ(r.getTheta(), (pose1.heading() + pose2.heading()) / 2);
     EXPECT_EQ(r.getRobotID(), id);

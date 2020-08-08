@@ -38,9 +38,11 @@ CheckOptions:
   - { key: readability-identifier-naming.VariableCase,            value: lower_case }
   - { key: readability-identifier-naming.ParameterCase,           value: lower_case }
   - { key: readability-identifier-naming.PublicMemberCase,        value: lower_case }
-  # Private members are lower_case_
+  # Protected / Private members are lower_case_
   - { key: readability-identifier-naming.PrivateMemberCase,       value: lower_case }
   - { key: readability-identifier-naming.PrivateMemberSuffix,     value: "_" }
+  - { key: readability-identifier-naming.ProtectedMemberCase,       value: lower_case }
+  - { key: readability-identifier-naming.ProtectedMemberSuffix,     value: "_" }
   # Constexpr / const things are kCamelCase.
   - { key: readability-identifier-naming.ConstexprVariablePrefix, value: "k" }
   - { key: readability-identifier-naming.ConstexprVariableCase,   value: CamelCase }
@@ -48,8 +50,10 @@ CheckOptions:
   - { key: readability-identifier-naming.ClassConstantCase,       value: CamelCase }
   - { key: readability-identifier-naming.GlobalConstantPrefix,    value: "k" }
   - { key: readability-identifier-naming.GlobalConstantCase,      value: CamelCase }
-  # Functions are CamelCase.
-  - { key: readability-identifier-naming.FunctionCase,            value: CamelCase  }
-  - { key: readability-identifier-naming.PublicMethodCase,        value: CamelCase  }
-  - { key: readability-identifier-naming.PrivateMethodCase,       value: CamelCase  }
+  # Functions are snake_case.
+  - { key: readability-identifier-naming.FunctionCase,            value: lower_case  }
+  - { key: readability-identifier-naming.PublicMethodCase,        value: lower_case  }
+  - { key: readability-identifier-naming.PrivateMethodCase,       value: lower_case  }
+  # Look in base class for dependent member references.
+  - { key: AggressiveDependentMemberLookup,                       value: 1 }
 ...

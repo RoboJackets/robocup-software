@@ -1,8 +1,9 @@
 #include "WindowEvaluator.hpp"
 
-#include <Geometry2d/Util.hpp>
 #include <algorithm>
 #include <array>
+
+#include <Geometry2d/Util.hpp>
 #include <rj_constants/constants.hpp>
 
 #include "DebugDrawer.hpp"
@@ -17,23 +18,19 @@ ConfigDouble* WindowEvaluator::distance_score_coefficient;
 
 Window::Window() : t0(0), t1(0), a0(0), a1(0), shot_success(0) {}
 
-Window::Window(double t0, double t1)
-    : t0(t0), t1(t1), a0(0), a1(0), shot_success(0) {}
+Window::Window(double t0, double t1) : t0(t0), t1(t1), a0(0), a1(0), shot_success(0) {}
 
 void WindowEvaluator::createConfiguration(Configuration* cfg) {
-    angle_score_coefficient =
-        new ConfigDouble(cfg, "WindowEvaluator/angleScoreCoeff", 0.7);
-    distance_score_coefficient =
-        new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
+    angle_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/angleScoreCoeff", 0.7);
+    distance_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
 }
 
 WindowEvaluator::WindowEvaluator(Context* context) : context(context) {}
 
-WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target,
-                                               float targetWidth) {
+WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target, float targetWidth) {
     auto dir_vec = (target - origin).perpCCW().normalized();
-    auto segment = Segment{target + dir_vec * (targetWidth / 2),
-                           target - dir_vec * (targetWidth / 2)};
+    auto segment =
+        Segment{target + dir_vec * (targetWidth / 2), target - dir_vec * (targetWidth / 2)};
 
     return eval_pt_to_seg(origin, segment);
 }
@@ -43,25 +40,22 @@ WindowingResult WindowEvaluator::eval_pt_to_robot(Point origin, Point target) {
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_opp_goal(Point origin) {
-    Segment their_goal{
-        Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-              Field_Dimensions::Current_Dimensions.Length()},
-        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-              Field_Dimensions::Current_Dimensions.Length()}};
+    Segment their_goal{Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
+                             Field_Dimensions::Current_Dimensions.Length()},
+                       Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
+                             Field_Dimensions::Current_Dimensions.Length()}};
 
     return eval_pt_to_seg(origin, their_goal);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_our_goal(Point origin) {
-    Segment our_goal{
-        Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0},
-        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0}};
+    Segment our_goal{Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0},
+                     Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0}};
 
     return eval_pt_to_seg(origin, our_goal);
 }
 
-void WindowEvaluator::obstacle_range(std::vector<Window>& windows, double& t0,
-                                     double& t1) {
+void WindowEvaluator::obstacle_range(std::vector<Window>& windows, double& t0, double& t1) {
     // Ignore degenerate obstacles
     if (t0 == t1) {
         return;
@@ -97,14 +91,13 @@ void WindowEvaluator::obstacle_range(std::vector<Window>& windows, double& t0,
     }
 }
 
-void WindowEvaluator::obstacle_robot(std::vector<Window>& windows, Point origin,
-                                     Segment target, Point bot_pos) {
+void WindowEvaluator::obstacle_robot(std::vector<Window>& windows, Point origin, Segment target,
+                                     Point bot_pos) {
     auto n = (bot_pos - origin).normalized();
     auto t = n.perpCCW();
     auto r = Robot_Radius + Ball_Radius;
 
-    Segment seg{bot_pos - n * Robot_Radius + t * r,
-                bot_pos - n * Robot_Radius - t * r};
+    Segment seg{bot_pos - n * Robot_Radius + t * r, bot_pos - n * Robot_Radius - t * r};
 
     if (debug) {
         context->debug_drawer.drawLine(seg, QColor{"Red"}, "Debug");
@@ -152,38 +145,32 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     // apply the obstacles
 
-    std::vector<Robot*> bots(context->state.self.size() +
-                             context->state.opp.size());
+    std::vector<Robot*> bots(context->state.self.size() + context->state.opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
         return bot != nullptr && bot->visible() &&
-               find(excluded_robots.begin(), excluded_robots.end(), bot) ==
-                   excluded_robots.end();
+               find(excluded_robots.begin(), excluded_robots.end(), bot) == excluded_robots.end();
     };
 
-    auto end_it =
-        copy_if(context->state.self.begin(), context->state.self.end(),
-                bots.begin(), filter_predicate);
+    auto end_it = copy_if(context->state.self.begin(), context->state.self.end(), bots.begin(),
+                          filter_predicate);
 
-    end_it = copy_if(context->state.opp.begin(), context->state.opp.end(),
-                     end_it, filter_predicate);
+    end_it =
+        copy_if(context->state.opp.begin(), context->state.opp.end(), end_it, filter_predicate);
 
     bots.resize(distance(bots.begin(), end_it));
 
     std::vector<Point> bot_locations;
-    for_each(bots.begin(), bots.end(), [&bot_locations](Robot* bot) {
-        bot_locations.push_back(bot->pos());
-    });
+    for_each(bots.begin(), bots.end(),
+             [&bot_locations](Robot* bot) { bot_locations.push_back(bot->pos()); });
 
-    bot_locations.insert(bot_locations.end(),
-                         hypothetical_robot_locations.begin(),
+    bot_locations.insert(bot_locations.end(), hypothetical_robot_locations.begin(),
                          hypothetical_robot_locations.end());
 
     for (auto& pos : bot_locations) {
         auto d = (pos - origin).mag();
         // whether or not we can ship over this bot
-        auto chip_overable = chip_enabled &&
-                             (d < max_chip_range - Robot_Radius) &&
+        auto chip_overable = chip_enabled && (d < max_chip_range - Robot_Radius) &&
                              (d > min_chip_range + Robot_Radius);
         if (!chip_overable) {
             obstacle_robot(windows, origin, target, pos);
@@ -195,33 +182,27 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     for (auto& w : windows) {
         w.segment = Segment{p0 + delta * w.t0, p0 + delta * w.t1};
-        w.a0 = RadiansToDegrees(
-            static_cast<float>((w.segment.pt[0] - origin).angle()));
-        w.a1 = RadiansToDegrees(
-            static_cast<float>((w.segment.pt[1] - origin).angle()));
+        w.a0 = RadiansToDegrees(static_cast<float>((w.segment.pt[0] - origin).angle()));
+        w.a1 = RadiansToDegrees(static_cast<float>((w.segment.pt[1] - origin).angle()));
         fill_shot_success(w, origin);
     }
 
     std::optional<Window> best;
     if (!windows.empty()) {
-        best = *max_element(
-            windows.begin(), windows.end(), [](Window& a, Window& b) -> bool {
-                return a.segment.delta().magsq() < b.segment.delta().magsq();
-            });
+        best = *max_element(windows.begin(), windows.end(), [](Window& a, Window& b) -> bool {
+            return a.segment.delta().magsq() < b.segment.delta().magsq();
+        });
     }
     if (debug) {
         if (best) {
-            context->debug_drawer.drawLine(
-                Segment{origin, best->segment.center()}, QColor{"Green"},
-                "Debug");
+            context->debug_drawer.drawLine(Segment{origin, best->segment.center()}, QColor{"Green"},
+                                           "Debug");
         }
         for (Window& window : windows) {
-            context->debug_drawer.drawLine(window.segment, QColor{"Green"},
+            context->debug_drawer.drawLine(window.segment, QColor{"Green"}, "Debug");
+            context->debug_drawer.drawText(QString::number(window.shot_success),
+                                           window.segment.center() + Point(0, 0.1), QColor{"Green"},
                                            "Debug");
-            context->debug_drawer.drawText(
-                QString::number(window.shot_success),
-                window.segment.center() + Point(0, 0.1), QColor{"Green"},
-                "Debug");
         }
     }
 
@@ -237,8 +218,7 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
 
     // get the angle between the shot vector and the target segment, then
     // normalize and positivize it
-    auto angle_between_shot_and_window =
-        abs(shot_vector.angle() - window.segment.delta().angle());
+    auto angle_between_shot_and_window = abs(shot_vector.angle() - window.segment.delta().angle());
     while (abs(angle_between_shot_and_window) > M_PI) {
         angle_between_shot_and_window -= M_PI;
     }
@@ -246,8 +226,7 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
 
     // we don't care about the segment length, we care about the width of the
     // corresponding segment perpendicular to the shot line
-    auto perp_seg_length =
-        abs(sin(angle_between_shot_and_window)) * window.segment.length();
+    auto perp_seg_length = abs(sin(angle_between_shot_and_window)) * window.segment.length();
 
     // the 'width' of the shot in radians
     auto angle = abs(atan2(perp_seg_length, shot_distance));
@@ -262,11 +241,10 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
         std::sqrt(pow(Field_Dimensions::Current_Dimensions.Length(), 2.0f) +
                   pow(Field_Dimensions::Current_Dimensions.Width(), 2.0f));
     const auto& std = *KickEvaluator::kick_std_dev;
-    auto angle_prob = phi(angle_between_shot_and_window / (std)) -
-                      phi(-angle_between_shot_and_window / (std));
+    auto angle_prob =
+        phi(angle_between_shot_and_window / (std)) - phi(-angle_between_shot_and_window / (std));
 
     auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
 
-    window.shot_success =
-        angle_prob + *distance_score_coefficient * distance_score;
+    window.shot_success = angle_prob + *distance_score_coefficient * distance_score;
 }

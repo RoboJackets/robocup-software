@@ -23,9 +23,7 @@ TEST(BallState, QuerySecondsTo) {
     BallState in_3_seconds = state.predict_in(RJ::Seconds(3));
 
     Geometry2d::Point actual;
-    EXPECT_NEAR(
-        state.query_seconds_near(in_3_seconds.position, &actual).count(), 3,
-        1e-6);
+    EXPECT_NEAR(state.query_seconds_near(in_3_seconds.position, &actual).count(), 3, 1e-6);
     EXPECT_TRUE(actual.nearPoint(in_3_seconds.position, 1e-6));
 }
 

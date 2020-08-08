@@ -1,6 +1,7 @@
+#include <cmath>
+
 #include <gtest/gtest.h>
 
-#include <cmath>
 #include <rj_vision_filter/robot/KalmanRobot.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
@@ -38,11 +39,9 @@ TEST(KalmanRobot, valid_world_robot) {
     int robotID = 1;
 
     CameraRobot b1 = CameraRobot(t, pose, robotID);
-    CameraRobot b2 =
-        CameraRobot(t,
-                    Geometry2d::Pose(pose.position() + pose.position(),
-                                     pose.heading() + pose.heading()),
-                    robotID);
+    CameraRobot b2 = CameraRobot(
+        t, Geometry2d::Pose(pose.position() + pose.position(), pose.heading() + pose.heading()),
+        robotID);
     int cID = 1;
     WorldRobot w;
 
@@ -78,11 +77,9 @@ TEST(KalmanRobot, predict) {
     int robotID = 1;
 
     CameraRobot b1 = CameraRobot(t, pose, robotID);
-    CameraRobot b2 =
-        CameraRobot(t,
-                    Geometry2d::Pose(pose.position() + pose.position(),
-                                     pose.heading() + pose.heading()),
-                    robotID);
+    CameraRobot b2 = CameraRobot(
+        t, Geometry2d::Pose(pose.position() + pose.position(), pose.heading() + pose.heading()),
+        robotID);
     int cID = 1;
     WorldRobot w;
 
@@ -115,11 +112,9 @@ TEST(KalmanRobot, predict_and_update) {
     int robotID = 1;
 
     CameraRobot b1 = CameraRobot(t, pose, robotID);
-    CameraRobot b2 =
-        CameraRobot(t,
-                    Geometry2d::Pose(pose.position() + pose.position(),
-                                     pose.heading() + pose.heading()),
-                    robotID);
+    CameraRobot b2 = CameraRobot(
+        t, Geometry2d::Pose(pose.position() + pose.position(), pose.heading() + pose.heading()),
+        robotID);
     int cID = 1;
     WorldRobot w;
 

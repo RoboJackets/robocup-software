@@ -1,4 +1,5 @@
 #include "RefereeTab.hpp"
+
 #include "RefereeTab.moc"
 
 void command(char ch) {}

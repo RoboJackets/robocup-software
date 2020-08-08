@@ -3,6 +3,7 @@
 #include <QFont>
 #include <QMouseEvent>
 #include <QPainter>
+
 #include <rj_common/Network.hpp>
 #include <rj_constants/constants.hpp>
 
@@ -53,8 +54,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
         _dragMode = DRAG_PLACE;
     } else if (me->button() == Qt::RightButton && frame) {
-        if (frame->has_ball() &&
-            pos.nearPoint(frame->ball().pos(), 10 * Ball_Radius)) {
+        if (frame->has_ball() && pos.nearPoint(frame->ball().pos(), 10 * Ball_Radius)) {
             // Drag to shoot the ball
             _dragMode = DRAG_SHOOT;
             _dragTo = pos;
@@ -110,8 +110,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 void SimFieldView::mouseReleaseEvent(QMouseEvent* /*me*/) {
     if (_dragMode == DRAG_SHOOT) {
         grSim_Packet simPacket;
-        grSim_BallReplacement* ball_replace =
-            simPacket.mutable_replacement()->mutable_ball();
+        grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
 
         ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
         ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
@@ -146,8 +145,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
             QFont font;
             font.setPixelSize(30);
             p.setFont(font);
-            drawText(p, _dragTo.toQPointF(),
-                     QString("%1 m/s").arg(speed, 0, 'f', 1));
+            drawText(p, _dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
         }
     }
 }

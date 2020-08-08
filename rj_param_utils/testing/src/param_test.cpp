@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <rj_param_utils/param.h>
 #include <testing/declare_test.h>
 
@@ -31,8 +32,7 @@ constexpr auto kExampleIntVecDescription = "1234 Test.";
 static const std::vector<double> kExampleDoubleVecValue = {1.0, 2.14, 3.2, 4.1};
 constexpr auto kExampleDoubleVecDescription = "1234 Test.";
 
-static const std::vector<std::string> kExampleStringVecValue = {"123", "456",
-                                                                "789"};
+static const std::vector<std::string> kExampleStringVecValue = {"123", "456", "789"};
 constexpr auto kExampleStringVecDescription = "abcde Test.";
 
 constexpr auto kModule = "test_module";
@@ -41,25 +41,20 @@ constexpr auto kModule2 = "test_module2";
 // Root namespace
 DEFINE_BOOL(kModule, bare_bool, kExampleBoolValue, kExampleBoolDescription)
 DEFINE_INT64(kModule, bare_int64, kExampleIntValue, kExampleIntDescription)
-DEFINE_FLOAT64(kModule, bare_double, kExampleDoubleValue,
-               kExampleDoubleDescription)
+DEFINE_FLOAT64(kModule, bare_double, kExampleDoubleValue, kExampleDoubleDescription)
 
-DEFINE_BYTE_VEC(kModule, bare_byte_vec, kExampleByteVecValue,
-                kExampleByteVecDescription)
-DEFINE_BOOL_VEC(kModule, bare_bool_vec, kExampleBoolVecValue,
-                kExampleBoolVecDescription)
-DEFINE_INT64_VEC(kModule, bare_int64_vec, kExampleIntVecValue,
-                 kExampleIntVecDescription)
-DEFINE_STRING_VEC(kModule, bare_string_vec, kExampleStringVecValue,
-                  kExampleStringVecDescription)
+DEFINE_BYTE_VEC(kModule, bare_byte_vec, kExampleByteVecValue, kExampleByteVecDescription)
+DEFINE_BOOL_VEC(kModule, bare_bool_vec, kExampleBoolVecValue, kExampleBoolVecDescription)
+DEFINE_INT64_VEC(kModule, bare_int64_vec, kExampleIntVecValue, kExampleIntVecDescription)
+DEFINE_STRING_VEC(kModule, bare_string_vec, kExampleStringVecValue, kExampleStringVecDescription)
 
 // Namespaced
 DEFINE_NS_STRING(kModule, test::hello, namespaced_string, kExampleStringValue,
                  kExampleStringDescription)
 DEFINE_NS_STRING(kModule, test::bye, namespaced_string, kExampleStringValue2,
                  kExampleStringDescription2)
-DEFINE_NS_FLOAT64_VEC(kModule, test::byte, namespaced_double_vec,
-                      kExampleDoubleVecValue, kExampleDoubleVecDescription)
+DEFINE_NS_FLOAT64_VEC(kModule, test::byte, namespaced_double_vec, kExampleDoubleVecValue,
+                      kExampleDoubleVecDescription)
 
 // In a different "module", emulating multiple nodes in a single
 // executable.
@@ -103,12 +98,9 @@ TEST(Params, CorrectDefaultBareValue) {
 TEST(Params, CorrectDefaultNamespaceValue) {
     EXPECT_EQ(test::hello::PARAM_namespaced_string, kExampleStringValue);
 
-    ASSERT_EQ(test::byte::PARAM_namespaced_double_vec.size(),
-              kExampleDoubleVecValue.size());
-    for (size_t i = 0; i < test::byte::PARAM_namespaced_double_vec.size();
-         i++) {
-        EXPECT_EQ(test::byte::PARAM_namespaced_double_vec[i],
-                  kExampleDoubleVecValue[i]);
+    ASSERT_EQ(test::byte::PARAM_namespaced_double_vec.size(), kExampleDoubleVecValue.size());
+    for (size_t i = 0; i < test::byte::PARAM_namespaced_double_vec.size(); i++) {
+        EXPECT_EQ(test::byte::PARAM_namespaced_double_vec[i], kExampleDoubleVecValue[i]);
     }
 }
 
@@ -177,8 +169,7 @@ TEST(Params, ParamProviderGet) {
     EXPECT_FALSE(provider.Get("bare_int64_vec", &fake_int_vec));
 
     std::string fake_double_vec{};
-    EXPECT_FALSE(
-        provider.Get("test.byte.namespaced_double_vec", &fake_double_vec));
+    EXPECT_FALSE(provider.Get("test.byte.namespaced_double_vec", &fake_double_vec));
 }
 
 /**
@@ -232,16 +223,12 @@ TEST(Params, ParamProviderUpdateNamespace) {
  */
 TEST(Params, ParamProviderModules) {
     ::params::ParamProvider provider{kModule};
-    ASSERT_TRUE(
-        provider.HasParam<std::string>("test::hello::namespaced_string"));
-    ASSERT_FALSE(
-        provider.HasParam<std::string>("test::hello::different_module"));
+    ASSERT_TRUE(provider.HasParam<std::string>("test::hello::namespaced_string"));
+    ASSERT_FALSE(provider.HasParam<std::string>("test::hello::different_module"));
 
     ::params::ParamProvider provider2{kModule2};
-    ASSERT_FALSE(
-        provider2.HasParam<std::string>("test::hello::namespaced_string"));
-    ASSERT_TRUE(
-        provider2.HasParam<std::string>("test::hello::different_module"));
+    ASSERT_FALSE(provider2.HasParam<std::string>("test::hello::namespaced_string"));
+    ASSERT_TRUE(provider2.HasParam<std::string>("test::hello::different_module"));
 }
 
 /**

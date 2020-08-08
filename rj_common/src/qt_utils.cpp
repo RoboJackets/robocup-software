@@ -1,4 +1,5 @@
 #include <QtCore/QCoreApplication>
+
 #include <rj_common/qt_utils.hpp>
 
 QDir ApplicationRunDirectory() {

@@ -1,14 +1,14 @@
 #include "ProtobufTree.hpp"
 
-#include <google/protobuf/descriptor.h>
+#include <cstdio>
+#include <iostream>
 
 #include <QContextMenuEvent>
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMenu>
 #include <QTimer>
-#include <cstdio>
-#include <iostream>
+#include <google/protobuf/descriptor.h>
 
 #include "StripChart.hpp"
 
@@ -22,11 +22,10 @@ Q_DECLARE_METATYPE(const FieldDescriptor*)
 
 // Roles
 enum {
-    FieldMapRole =
-        Qt::UserRole,  // Column_Tag: Holds a FieldMap for this item's children
-    IsMessageRole,     // Column_Tag: true if this item is a message
-    FieldDescriptorRole  // Column_Tag: FieldDescriptor* for this field, if
-                         // applicable
+    FieldMapRole = Qt::UserRole,  // Column_Tag: Holds a FieldMap for this item's children
+    IsMessageRole,                // Column_Tag: true if this item is a message
+    FieldDescriptorRole           // Column_Tag: FieldDescriptor* for this field, if
+                                  // applicable
 };
 
 ProtobufTree::ProtobufTree(QWidget* parent) : QTreeWidget(parent) {
@@ -54,8 +53,7 @@ bool ProtobufTree::message(const google::protobuf::Message& msg) {
     return ret;
 }
 
-bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
-                               const google::protobuf::Message& msg) {
+bool ProtobufTree::addTreeData(QTreeWidgetItem* parent, const google::protobuf::Message& msg) {
     const Reflection* ref = msg.GetReflection();
 
     // Get fields in the message
@@ -69,8 +67,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
 
     // Clear data for missing fields
     const Descriptor* desc = msg.GetDescriptor();
-    for (FieldMap::const_iterator i = fieldMap.begin(); i != fieldMap.end();
-         ++i) {
+    for (FieldMap::const_iterator i = fieldMap.begin(); i != fieldMap.end(); ++i) {
         const FieldDescriptor* field = desc->FindFieldByNumber(i.key());
         if (field == nullptr) {
             // Field has left the descriptor - should never happen
@@ -113,15 +110,12 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
             fieldMap.insert(field->number(), item);
 
             item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            parent->setData(Column_Tag, FieldMapRole,
-                            QVariant::fromValue<FieldMap>(fieldMap));
+            parent->setData(Column_Tag, FieldMapRole, QVariant::fromValue<FieldMap>(fieldMap));
             item->setData(Column_Tag, Qt::DisplayRole, field->number());
-            item->setData(Column_Tag, FieldDescriptorRole,
-                          QVariant::fromValue(field));
+            item->setData(Column_Tag, FieldDescriptorRole, QVariant::fromValue(field));
             item->setText(Column_Field, QString::fromStdString(field->name()));
 
-            if (field->type() == FieldDescriptor::TYPE_MESSAGE &&
-                !field->is_repeated()) {
+            if (field->type() == FieldDescriptor::TYPE_MESSAGE && !field->is_repeated()) {
                 // Singular messages are expanded by default
                 expandItem(item);
             }
@@ -144,8 +138,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                     auto* child = new QTreeWidgetItem(item);
                     child->setText(Column_Field, QString("[%1]").arg(i));
 
-                    child->setData(Column_Tag, FieldDescriptorRole,
-                                   field != nullptr);
+                    child->setData(Column_Tag, FieldDescriptorRole, field != nullptr);
 
                     // For repeated items, the tag column holds the index in the
                     // field
@@ -186,9 +179,8 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                     case FieldDescriptor::TYPE_SINT64:
                     case FieldDescriptor::TYPE_FIXED64:
                     case FieldDescriptor::TYPE_SFIXED64:
-                        child->setData(
-                            Column_Value, Qt::DisplayRole,
-                            (qlonglong)ref->GetRepeatedInt64(msg, field, i));
+                        child->setData(Column_Value, Qt::DisplayRole,
+                                       (qlonglong)ref->GetRepeatedInt64(msg, field, i));
                         break;
 
                     case FieldDescriptor::TYPE_UINT32:
@@ -197,9 +189,8 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                         break;
 
                     case FieldDescriptor::TYPE_UINT64:
-                        child->setData(
-                            Column_Value, Qt::DisplayRole,
-                            (qulonglong)ref->GetRepeatedUInt64(msg, field, i));
+                        child->setData(Column_Value, Qt::DisplayRole,
+                                       (qulonglong)ref->GetRepeatedUInt64(msg, field, i));
                         break;
 
                     case FieldDescriptor::TYPE_FLOAT:
@@ -213,30 +204,25 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                         break;
 
                     case FieldDescriptor::TYPE_BOOL:
-                        child->setCheckState(Column_Value,
-                                             ref->GetRepeatedBool(msg, field, i)
-                                                 ? Qt::Checked
-                                                 : Qt::Unchecked);
+                        child->setCheckState(Column_Value, ref->GetRepeatedBool(msg, field, i)
+                                                               ? Qt::Checked
+                                                               : Qt::Unchecked);
                         break;
 
                     case FieldDescriptor::TYPE_ENUM: {
-                        const EnumValueDescriptor* ev =
-                            ref->GetRepeatedEnum(msg, field, i);
-                        child->setText(Column_Value,
-                                       QString::fromStdString(ev->name()));
+                        const EnumValueDescriptor* ev = ref->GetRepeatedEnum(msg, field, i);
+                        child->setText(Column_Value, QString::fromStdString(ev->name()));
                         break;
                     }
 
                     case FieldDescriptor::TYPE_STRING:
                         child->setText(Column_Value, QString::fromStdString(
-                                                         ref->GetRepeatedString(
-                                                             msg, field, i)));
+                                                         ref->GetRepeatedString(msg, field, i)));
                         break;
 
                     case FieldDescriptor::TYPE_MESSAGE:
                         child->setData(Column_Tag, IsMessageRole, true);
-                        newFields |= addTreeData(
-                            child, ref->GetRepeatedMessage(msg, field, i));
+                        newFields |= addTreeData(child, ref->GetRepeatedMessage(msg, field, i));
                         break;
 
                     case FieldDescriptor::TYPE_BYTES:
@@ -244,8 +230,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                         break;
 
                     default:
-                        child->setText(Column_Value,
-                                       QString("??? %1").arg(field->type()));
+                        child->setText(Column_Value, QString("??? %1").arg(field->type()));
                         break;
                 }
             }
@@ -255,8 +240,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                 case FieldDescriptor::TYPE_SINT32:
                 case FieldDescriptor::TYPE_FIXED32:
                 case FieldDescriptor::TYPE_SFIXED32:
-                    item->setData(Column_Value, Qt::DisplayRole,
-                                  ref->GetInt32(msg, field));
+                    item->setData(Column_Value, Qt::DisplayRole, ref->GetInt32(msg, field));
                     break;
 
                 case FieldDescriptor::TYPE_INT64:
@@ -268,8 +252,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                     break;
 
                 case FieldDescriptor::TYPE_UINT32:
-                    item->setData(Column_Value, Qt::DisplayRole,
-                                  ref->GetUInt32(msg, field));
+                    item->setData(Column_Value, Qt::DisplayRole, ref->GetUInt32(msg, field));
                     break;
 
                 case FieldDescriptor::TYPE_UINT64:
@@ -278,32 +261,26 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                     break;
 
                 case FieldDescriptor::TYPE_FLOAT:
-                    item->setData(Column_Value, Qt::DisplayRole,
-                                  ref->GetFloat(msg, field));
+                    item->setData(Column_Value, Qt::DisplayRole, ref->GetFloat(msg, field));
                     break;
 
                 case FieldDescriptor::TYPE_DOUBLE:
-                    item->setData(Column_Value, Qt::DisplayRole,
-                                  ref->GetDouble(msg, field));
+                    item->setData(Column_Value, Qt::DisplayRole, ref->GetDouble(msg, field));
                     break;
 
                 case FieldDescriptor::TYPE_BOOL:
-                    item->setCheckState(Column_Value, ref->GetBool(msg, field)
-                                                          ? Qt::Checked
-                                                          : Qt::Unchecked);
+                    item->setCheckState(Column_Value,
+                                        ref->GetBool(msg, field) ? Qt::Checked : Qt::Unchecked);
                     break;
 
                 case FieldDescriptor::TYPE_ENUM: {
                     const EnumValueDescriptor* ev = ref->GetEnum(msg, field);
-                    item->setText(Column_Value,
-                                  QString::fromStdString(ev->name()));
+                    item->setText(Column_Value, QString::fromStdString(ev->name()));
                     break;
                 }
 
                 case FieldDescriptor::TYPE_STRING:
-                    item->setText(
-                        Column_Value,
-                        QString::fromStdString(ref->GetString(msg, field)));
+                    item->setText(Column_Value, QString::fromStdString(ref->GetString(msg, field)));
                     break;
 
                 case FieldDescriptor::TYPE_MESSAGE:
@@ -316,8 +293,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                     break;
 
                 default:
-                    item->setText(Column_Value,
-                                  QString("??? %1").arg(field->type()));
+                    item->setText(Column_Value, QString("??? %1").arg(field->type()));
                     break;
             }
         }
@@ -391,7 +367,7 @@ void ProtobufTree::collapseSubtree(QTreeWidgetItem* item) {
 void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
     QMenu menu;
 
-    QAction* expandItemAction = nullptr, * collapseItemAction = nullptr;
+    QAction *expandItemAction = nullptr, *collapseItemAction = nullptr;
     QTreeWidgetItem* item = itemAt(e->pos());
     if (item != nullptr) {
         expandItemAction = menu.addAction("Expand");
@@ -419,14 +395,11 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
     QList<QDockWidget*> dockWidgets;
     const FieldDescriptor* field = nullptr;
     if ((mainWindow != nullptr) && (item != nullptr)) {
-        field = item->data(Column_Tag, FieldDescriptorRole)
-                    .value<const FieldDescriptor*>();
+        field = item->data(Column_Tag, FieldDescriptorRole).value<const FieldDescriptor*>();
         if (field != nullptr) {
             int t = field->type();
-            if (t == FieldDescriptor::TYPE_FLOAT ||
-                t == FieldDescriptor::TYPE_DOUBLE ||
-                (t == FieldDescriptor::TYPE_MESSAGE &&
-                 field->message_type()->name() == "Point")) {
+            if (t == FieldDescriptor::TYPE_FLOAT || t == FieldDescriptor::TYPE_DOUBLE ||
+                (t == FieldDescriptor::TYPE_MESSAGE && field->message_type()->name() == "Point")) {
                 dockWidgets = mainWindow->findChildren<QDockWidget*>();
                 if (!dockWidgets.isEmpty()) {
                     QMenu* chartMenu = menu.addMenu("Chart");
@@ -435,8 +408,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
                     chartMenu->addSeparator();
                     for (int i = 0; i < dockWidgets.size(); ++i) {
                         chartMenuActions.append(chartMenu->addAction(
-                            QString("Add to '%1'")
-                                .arg(dockWidgets[0]->windowTitle())));
+                            QString("Add to '%1'").arg(dockWidgets[0]->windowTitle())));
                     }
                 } else {
                     chartAction = menu.addAction("New Chart");
@@ -526,8 +498,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
             reverse(path.begin(), path.end());
             reverse(names.begin(), names.end());
 
-            dockWidgets[i]->setWindowTitle(dockWidgets[i]->windowTitle() +
-                                           ", " + names.join("."));
+            dockWidgets[i]->setWindowTitle(dockWidgets[i]->windowTitle() + ", " + names.join("."));
             chart->history(_history);
 
             if (field->type() == FieldDescriptor::TYPE_MESSAGE) {

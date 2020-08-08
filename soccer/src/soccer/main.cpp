@@ -1,5 +1,7 @@
-#include <fcntl.h>
-#include <unistd.h>
+#include <cassert>
+#include <csignal>
+#include <cstdio>
+#include <cstring>
 
 #include <QApplication>
 #include <QDateTime>
@@ -8,13 +10,12 @@
 #include <QMessageBox>
 #include <QString>
 #include <ament_index_cpp/get_package_share_directory.hpp>
-#include <cassert>
-#include <csignal>
-#include <cstdio>
-#include <cstring>
+
+#include <fcntl.h>
 #include <gameplay/GameplayModule.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <ui/StyleSheetManager.hpp>
+#include <unistd.h>
 
 #include "Configuration.hpp"
 #include "ui/MainWindow.hpp"
@@ -37,8 +38,7 @@ void usage(const char* prog) {
     std::cerr << "\t-sim:         use simulator\n";
     std::cerr << "\t-nolog:       don't write log files\n";
     std::cerr << "\t-noref:       don't use external referee commands\n";
-    std::cerr
-        << "\t-defend:      specify half of field to defend (plus or minus)\n";
+    std::cerr << "\t-defend:      specify half of field to defend (plus or minus)\n";
     std::exit(0);
 }
 
@@ -159,15 +159,13 @@ int main(int argc, char* argv[]) {
     // Default config file name
     if (cfgFile.isNull()) {
         const auto* filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
-        const auto share_dir =
-            ament_index_cpp::get_package_share_directory("rj_robocup");
+        const auto share_dir = ament_index_cpp::get_package_share_directory("rj_robocup");
         const std::string config_path = share_dir + "/config/" + filename;
 
         cfgFile = QString::fromStdString(config_path);
     }
 
-    std::shared_ptr<Configuration> config =
-        Configuration::FromRegisteredConfigurables();
+    std::shared_ptr<Configuration> config = Configuration::FromRegisteredConfigurables();
 
     // ROS2 init
     rclcpp::init(argc, argv);
@@ -188,8 +186,7 @@ int main(int argc, char* argv[]) {
     if (!config->load(cfgFile, error)) {
         QMessageBox::critical(
             nullptr, "Soccer",
-            QString("Can't read initial configuration %1:\n%2")
-                .arg(cfgFile, error));
+            QString("Can't read initial configuration %1:\n%2").arg(cfgFile, error));
     }
 
     auto win = std::make_unique<MainWindow>(processor.get(), !noref);
@@ -203,9 +200,8 @@ int main(int argc, char* argv[]) {
     } else if (!log) {
         cerr << "Not writing log file" << endl;
     } else if (readLogFile.empty()) {
-        QString logFile =
-            ApplicationRunDirectory().filePath("./logs/") +
-            QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
+        QString logFile = ApplicationRunDirectory().filePath("./logs/") +
+                          QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
         if (!processor->openLog(logFile)) {
             printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
         }
@@ -215,19 +211,15 @@ int main(int argc, char* argv[]) {
 
     std::thread processor_thread(&Processor::run, processor.get());
 
-    while (
-        !processor
-             ->isInitialized()) {  // Wait until processor finishes initializing
+    while (!processor->isInitialized()) {  // Wait until processor finishes initializing
     }
 
-    if (!playbookFile.empty())
-        processor->gameplayModule()->loadPlaybook(playbookFile);
+    if (!playbookFile.empty()) processor->gameplayModule()->loadPlaybook(playbookFile);
 
     // Sets the initial stylesheet for the application
     // based on the environment variable "SOCCER_THEME"
     if (getenv("SOCCER_THEME") != nullptr) {
-        StyleSheetManager::changeStyleSheet(win.get(),
-                                            QString(getenv("SOCCER_THEME")));
+        StyleSheetManager::changeStyleSheet(win.get(), QString(getenv("SOCCER_THEME")));
     }
 
     win->show();

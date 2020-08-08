@@ -1,8 +1,9 @@
 #include "GradientAscent1D.hpp"
 
 #include <cmath>
-#include <rj_common/Utils.hpp>
 #include <tuple>
+
+#include <rj_common/Utils.hpp>
 
 GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
     currentx = config->startX;
@@ -68,8 +69,7 @@ bool GradientAscent1D::continueExecution() {
 float GradientAscent1D::nextX() {
     float delta_x = currentx - previousx;
     float delta_dx = currentdx - previousdx;
-    float gamma =
-        fabs(temperature * delta_x * delta_dx / (delta_dx * delta_dx));
+    float gamma = fabs(temperature * delta_x * delta_dx / (delta_dx * delta_dx));
 
     float x_offset = gamma * currentdx;
 

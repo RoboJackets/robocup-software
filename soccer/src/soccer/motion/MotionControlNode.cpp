@@ -20,16 +20,15 @@ void MotionControlNode::run() {
         return;
     }
 
-    runMotion(rj_convert::convert_from_ros(*world_state_msg),
-              _context->game_state, _context->trajectories,
-              _context->is_joystick_controlled, &_context->motion_setpoints);
+    runMotion(rj_convert::convert_from_ros(*world_state_msg), _context->game_state,
+              _context->trajectories, _context->is_joystick_controlled,
+              &_context->motion_setpoints);
 }
 
-void MotionControlNode::runMotion(
-    const WorldState& world_state, const GameState& game_state,
-    const std::array<Planning::Trajectory, Num_Shells>& trajectories,
-    const std::array<bool, Num_Shells>& joystick_controlled,
-    std::array<MotionSetpoint, Num_Shells>* setpoints) {
+void MotionControlNode::runMotion(const WorldState& world_state, const GameState& game_state,
+                                  const std::array<Planning::Trajectory, Num_Shells>& trajectories,
+                                  const std::array<bool, Num_Shells>& joystick_controlled,
+                                  std::array<MotionSetpoint, Num_Shells>* setpoints) {
     bool force_stop = game_state.state == GameState::State::Halt;
     for (int i = 0; i < Num_Shells; i++) {
         MotionControl& controller = _controllers[i];
@@ -37,8 +36,8 @@ void MotionControlNode::runMotion(
         if (force_stop) {
             controller.stop(setpoint);
         } else {
-            controller.run(world_state.get_robot(true, i), trajectories[i],
-                           joystick_controlled[i], setpoint);
+            controller.run(world_state.get_robot(true, i), trajectories[i], joystick_controlled[i],
+                           setpoint);
         }
     }
 }

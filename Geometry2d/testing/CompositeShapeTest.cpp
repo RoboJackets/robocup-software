@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <vector>
+
+#include <gtest/gtest.h>
 
 #include "Geometry2d/Arc.hpp"
 #include "Geometry2d/Circle.hpp"

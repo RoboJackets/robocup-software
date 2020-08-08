@@ -1,13 +1,13 @@
 #include "TrapezoidalMotion.hpp"
 
 #include <cmath>
+
 #include <rj_common/Utils.hpp>
 
 using namespace std;
 
-double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
-                            double maxAcc, double startSpeed,
-                            double finalSpeed) {
+double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed, double maxAcc,
+                            double startSpeed, double finalSpeed) {
     startSpeed = fmin(startSpeed, maxSpeed);
     finalSpeed = fmin(finalSpeed, maxSpeed);
     double rampUpTime = (maxSpeed - startSpeed) / maxAcc;
@@ -32,9 +32,8 @@ double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
         // We then solve for maxSpeed:
         // maxSpeed = sqrt(pathLength*maxAcc + startSpeed*startSpeed +
         // finalSpeed*finalSpeed);
-        maxSpeed = sqrt((2 * maxAcc * pathLength + powf(startSpeed, 2) +
-                         powf(finalSpeed, 2)) /
-                        2.0);
+        maxSpeed =
+            sqrt((2 * maxAcc * pathLength + powf(startSpeed, 2) + powf(finalSpeed, 2)) / 2.0);
 
         rampUpTime = (maxSpeed - startSpeed) / maxAcc;
         rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
@@ -72,10 +71,9 @@ double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
         double temp1 = (-b + root) / (2 * a);
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
-            debugThrow(
-                "TrapezoidalMotion failed. Solution is imaginary");  // TODO
-                                                                     // Handle
-                                                                     // this
+            debugThrow("TrapezoidalMotion failed. Solution is imaginary");  // TODO
+                                                                            // Handle
+                                                                            // this
             return rampUpTime;
         }
         if (temp1 > 0 && temp1 < rampUpTime) {
@@ -101,10 +99,9 @@ double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
         double temp1 = (-b + root) / (2 * a);
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
-            debugThrow(
-                "TrapezoidalMotion failed. Solution is imaginary");  // TODO
-                                                                     // Handle
-                                                                     // this
+            debugThrow("TrapezoidalMotion failed. Solution is imaginary");  // TODO
+                                                                            // Handle
+                                                                            // this
             return rampUpTime + plateauTime + rampDownTime;
         }
         if (temp1 > 0 && temp1 < rampDownTime) {
@@ -117,9 +114,8 @@ double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
     }
 }
 
-bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
-                       double timeIntoLap, double startSpeed, double finalSpeed,
-                       double& posOut, double& speedOut) {
+bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc, double timeIntoLap,
+                       double startSpeed, double finalSpeed, double& posOut, double& speedOut) {
     // begin by assuming that there's enough time to get up to full speed
     // we do this by calculating the full ramp-up and ramp-down, then seeing
     // if the distance travelled is too great.  If it's gone too far, this is
@@ -149,9 +145,8 @@ bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
         // We then solve for maxSpeed
         // maxSpeed = sqrt(pathLength*maxAcc + startSpeed*startSpeed +
         // finalSpeed*finalSpeed);
-        maxSpeed = sqrt((2 * maxAcc * pathLength + powf(startSpeed, 2) +
-                         powf(finalSpeed, 2)) /
-                        2.0);
+        maxSpeed =
+            sqrt((2 * maxAcc * pathLength + powf(startSpeed, 2) + powf(finalSpeed, 2)) / 2.0);
 
         rampUpTime = (maxSpeed - startSpeed) / maxAcc;
         rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
@@ -175,8 +170,7 @@ bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
     }
     if (timeIntoLap < rampUpTime) {
         /// on the ramp-up, we're accelerating at @maxAcc
-        posOut =
-            0.5 * maxAcc * timeIntoLap * timeIntoLap + startSpeed * timeIntoLap;
+        posOut = 0.5 * maxAcc * timeIntoLap * timeIntoLap + startSpeed * timeIntoLap;
         speedOut = startSpeed + maxAcc * timeIntoLap;
         return true;
     } else if (timeIntoLap < rampUpTime + plateauTime) {

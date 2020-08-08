@@ -1,15 +1,15 @@
 #include "Processor.hpp"
 
-#include <rj_protos/messages_robocup_ssl_detection.pb.h>
+#include <QMutexLocker>
 
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
-#include <QMutexLocker>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_protos/messages_robocup_ssl_detection.pb.h>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
@@ -42,8 +42,7 @@ void Processor::createConfiguration(Configuration* cfg) {
     robot_config_init = std::make_unique<RobotConfig>(cfg, "Rev2015");
 
     for (size_t s = 0; s < Num_Shells; ++s) {
-        robot_status_init.emplace_back(
-            cfg, QString("Robot Statuses/Robot %1").arg(s));
+        robot_status_init.emplace_back(cfg, QString("Robot Statuses/Robot %1").arg(s));
     }
 }
 
@@ -64,11 +63,9 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _context.field_dimensions = *currentDimensions;
 
-    _ros_executor =
-        std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+    _ros_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-    _referee_sub =
-        std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
+    _referee_sub = std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
@@ -78,15 +75,13 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     // ROS2 temp nodes
     _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
-    _raw_vision_packet_sub =
-        std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
+    _raw_vision_packet_sub = std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
     _world_state_queue = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStatePub);
 
     // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
-    _manual_control_node =
-        std::make_unique<joystick::ManualControlNode>(&_context);
+    _manual_control_node = std::make_unique<joystick::ManualControlNode>(&_context);
 
     if (!readLogFile.empty()) {
         _logger->read(readLogFile);
@@ -138,8 +133,7 @@ void Processor::run() {
         // first cycle (we need to run one because MainWindow waits on a single
         // cycle of processor to initialize).
         while (_initialized && _running &&
-               (_context.game_settings.paused ||
-                _context.logs.state == Logs::State::kReading)) {
+               (_context.game_settings.paused || _context.logs.state == Logs::State::kReading)) {
             std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
         }
 
@@ -157,8 +151,7 @@ void Processor::run() {
         _raw_vision_packet_sub->run();
 
         if (_context.field_dimensions != *currentDimensions) {
-            std::cout << "Updating field geometry based off of vision packet."
-                      << std::endl;
+            std::cout << "Updating field geometry based off of vision packet." << std::endl;
             setFieldDimensions(_context.field_dimensions);
         }
 
@@ -168,11 +161,9 @@ void Processor::run() {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        const WorldStateMsg::SharedPtr world_state_msg =
-            _world_state_queue->Get();
+        const WorldStateMsg::SharedPtr world_state_msg = _world_state_queue->Get();
         if (world_state_msg != nullptr) {
-            _context.world_state =
-                rj_convert::convert_from_ros(*world_state_msg);
+            _context.world_state = rj_convert::convert_from_ros(*world_state_msg);
             curStatus.lastVisionTime =
                 rj_convert::convert_from_ros(world_state_msg->last_update_time);
         }

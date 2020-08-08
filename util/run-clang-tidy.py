@@ -263,18 +263,16 @@ def main():
         print("Unable to run clang-tidy.", file=sys.stderr)
         sys.exit(1)
 
-    # Load the database and extract all files.
-    database = json.load(open(os.path.join(build_path, db_path)))
-
     cwd = Path.cwd()
 
     # Build up a big regexy filter from all command line arguments.
     file_name_re = re.compile('|'.join(args.files))
 
     files = []
-    for entry in database:
-        directory = Path(entry['directory'])
-        file = directory / entry['file']
+    # Get all files via glob.
+    globs = list(cwd.glob("**/*.cpp")) + list(cwd.glob("**/*.hpp")) + list(cwd.glob("**/*.h"))
+
+    for file in globs:
         relative_path = file.relative_to(cwd)
 
         if file_name_re.search(str(relative_path)):

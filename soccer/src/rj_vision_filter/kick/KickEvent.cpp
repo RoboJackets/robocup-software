@@ -13,7 +13,5 @@ RJ::Time KickEvent::getKickTime() const { return kickTime; }
 
 WorldRobot KickEvent::getKickingRobot() const { return kickingRobot; }
 
-const std::deque<VisionState>& KickEvent::getStatesSinceKick() const {
-    return statesSinceKick;
-}
+const std::deque<VisionState>& KickEvent::getStatesSinceKick() const { return statesSinceKick; }
 }  // namespace vision_filter

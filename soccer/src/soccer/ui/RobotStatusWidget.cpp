@@ -1,13 +1,12 @@
 #include "RobotStatusWidget.hpp"
 
-#include <rj_common/status.h>
-
-#include <BatteryProfile.hpp>
 #include <cmath>
 #include <iostream>
 
-RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f)
-    : QWidget(parent, f) {
+#include <BatteryProfile.hpp>
+#include <rj_common/status.h>
+
+RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f) : QWidget(parent, f) {
     _ui.setupUi(this);
 
     setBoardID("RJ");
@@ -50,9 +49,7 @@ void RobotStatusWidget::setShellID(int shellID) {
     }
 }
 
-void RobotStatusWidget::setErrorText(const QString& error) {
-    _ui.errorText->setText(error);
-}
+void RobotStatusWidget::setErrorText(const QString& error) { _ui.errorText->setText(error); }
 
 void RobotStatusWidget::setBlueTeam(bool blueTeam) {
     _ui.robotWidget->setBlueTeam(blueTeam);
@@ -84,9 +81,7 @@ void RobotStatusWidget::setBallSenseFault(bool faulty) {
     _ui.robotWidget->setBallSenseFault(faulty);
 }
 
-void RobotStatusWidget::setHasBall(bool hasBall) {
-    _ui.robotWidget->setHasBall(hasBall);
-}
+void RobotStatusWidget::setHasBall(bool hasBall) { _ui.robotWidget->setHasBall(hasBall); }
 
 bool RobotStatusWidget::hasRadio() const { return _hasRadio; }
 
@@ -94,9 +89,8 @@ void RobotStatusWidget::setHasRadio(bool hasRadio) {
     if (hasRadio != _hasRadio) {
         _hasRadio = hasRadio;
 
-        _ui.radioIndicator->setPixmap(
-            QPixmap(QString(hasRadio ? ":icons/radio-connected.svg"
-                                     : ":icons/radio-disconnected.svg")));
+        _ui.radioIndicator->setPixmap(QPixmap(
+            QString(hasRadio ? ":icons/radio-connected.svg" : ":icons/radio-disconnected.svg")));
     }
 }
 
@@ -106,9 +100,8 @@ void RobotStatusWidget::setHasVision(bool hasVision) {
     if (hasVision != _hasVision) {
         _hasVision = hasVision;
 
-        _ui.visionIndicator->setPixmap(
-            QPixmap(QString(hasVision ? ":icons/vision-available.svg"
-                                      : ":icons/vision-unavailable.svg")));
+        _ui.visionIndicator->setPixmap(QPixmap(
+            QString(hasVision ? ":icons/vision-available.svg" : ":icons/vision-unavailable.svg")));
     }
 }
 
@@ -140,9 +133,9 @@ void RobotStatusWidget::setShowstopper(bool showstopper) {
     }
 }
 
-void RobotStatusWidget::loadFromLogFrame(
-    const Packet::RadioRx& rx,
-    const std::optional<Packet::LogFrame::Robot>& maybe_robot, bool blueTeam) {
+void RobotStatusWidget::loadFromLogFrame(const Packet::RadioRx& rx,
+                                         const std::optional<Packet::LogFrame::Robot>& maybe_robot,
+                                         bool blueTeam) {
     // Set shell ID
     setShellID(rx.robot_id());
 
@@ -186,8 +179,7 @@ void RobotStatusWidget::loadFromLogFrame(
     // as well as being drawn as a red X on the graphic of a robot
     bool hasMotorFault = false;
     if (rx.motor_status().size() == 5) {
-        std::array<const char*, 5> motorNames = {"FL", "BL", "BR", "FR",
-                                                 "Dribbler"};
+        std::array<const char*, 5> motorNames = {"FL", "BL", "BR", "FR", "Dribbler"};
 
         // Examine status of each motor (including the dribbler)
         for (int i = 0; i < 5; ++i) {
@@ -209,8 +201,7 @@ void RobotStatusWidget::loadFromLogFrame(
             hasMotorFault = hasMotorFault || motorFault;
         }
     } else {
-        std::cerr << "Expected 5 motors, but only " << rx.motor_status_size()
-                  << std::endl;
+        std::cerr << "Expected 5 motors, but only " << rx.motor_status_size() << std::endl;
         hasMotorFault = true;
     }
 
@@ -252,22 +243,18 @@ void RobotStatusWidget::loadFromLogFrame(
     setErrorText(errorList.join(", "));
 
     // Show the ball in the robot's mouth if it has one
-    bool hasBall =
-        rx.has_ball_sense_status() && rx.ball_sense_status() == Packet::HasBall;
+    bool hasBall = rx.has_ball_sense_status() && rx.ball_sense_status() == Packet::HasBall;
     setHasBall(hasBall);
 
     // Convert battery voltage to a percentage and show it with the battery
     // indicator
     float batteryLevel = 1;
     if (rx.has_battery()) {
-        if (rx.hardware_version() == Packet::RJ2008 ||
-            rx.hardware_version() == Packet::RJ2011) {
-            batteryLevel = static_cast<float>(
-                RJ2008BatteryProfile.getChargeLevel(rx.battery()));
+        if (rx.hardware_version() == Packet::RJ2008 || rx.hardware_version() == Packet::RJ2011) {
+            batteryLevel = static_cast<float>(RJ2008BatteryProfile.getChargeLevel(rx.battery()));
         } else if (rx.hardware_version() == Packet::RJ2015 ||
                    rx.hardware_version() == Packet::RJ2018) {
-            batteryLevel = static_cast<float>(
-                RJ2015BatteryProfile.getChargeLevel(rx.battery()));
+            batteryLevel = static_cast<float>(RJ2015BatteryProfile.getChargeLevel(rx.battery()));
         } else if (rx.hardware_version() == Packet::Simulation) {
             batteryLevel = 1;
         } else {
@@ -280,7 +267,7 @@ void RobotStatusWidget::loadFromLogFrame(
     // If there is an error bad enough that we should get this robot
     // off the field, alert the user through the UI that there is a
     // "showstopper"
-    bool showstopper = !hasVision || hasMotorFault || kickerFault ||
-                       ballSenseFault || (batteryLevel < 0.25) || !fpgaWorking;
+    bool showstopper = !hasVision || hasMotorFault || kickerFault || ballSenseFault ||
+                       (batteryLevel < 0.25) || !fpgaWorking;
     setShowstopper(showstopper);
 }

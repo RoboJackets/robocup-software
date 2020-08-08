@@ -7,29 +7,29 @@ using namespace std;
 
 namespace Geometry2d {
 
-//constants used for the rect-segment intersection
-const int INSIDE = 0x00; // 0000
-const int LEFT = 0x01;   // 0001
-const int RIGHT = 0x02;  // 0010
-const int BOTTOM = 0x04; // 0100
-const int TOP = 0x08;    // 1000
+// constants used for the rect-segment intersection
+const int INSIDE = 0x00;  // 0000
+const int LEFT = 0x01;    // 0001
+const int RIGHT = 0x02;   // 0010
+const int BOTTOM = 0x04;  // 0100
+const int TOP = 0x08;     // 1000
 
 Shape* Rect::clone() const { return new Rect(*this); }
 
 bool Rect::intersects(const Rect& other) const {
-    return !(other.maxx() < minx() || other.minx() > maxx() ||
-             other.maxy() < miny() || other.miny() > maxy());
+    return !(other.maxx() < minx() || other.minx() > maxx() || other.maxy() < miny() ||
+             other.miny() > maxy());
 }
 
-int Rect::CohenSutherlandOutCode(const Point& other) const{
+int Rect::CohenSutherlandOutCode(const Point& other) const {
     int code;
     double x;
     double y;
     x = other.x();
     y = other.y();
 
-    code = INSIDE;          // initialised as being inside of [[clip window]]
-    if (x < minx()) {       // to the left of clip window
+    code = INSIDE;     // initialised as being inside of [[clip window]]
+    if (x < minx()) {  // to the left of clip window
         code |= LEFT;
     } else if (x > maxx()) {  // to the right of clip window
         code |= RIGHT;
@@ -43,9 +43,9 @@ int Rect::CohenSutherlandOutCode(const Point& other) const{
     return code;
 }
 
-std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) const{
-
-    //Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line Clipping
+std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) const {
+    // Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line
+    // Clipping
     Point p0 = other.pt[0];
     double x0 = p0.x();
     double y0 = p0.y();
@@ -60,13 +60,15 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
     bool accept = false;
     while (true) {
         if ((outcode0 | outcode1) == 0) {
-            // bitwise OR is 0: both points inside window; trivially accept and exit loop
+            // bitwise OR is 0: both points inside window; trivially accept and
+            // exit loop
             accept = true;
             break;
         }
         if ((outcode0 & outcode1) != 0) {
-            // bitwise AND is not 0: both points share an outside zone (LEFT, RIGHT, TOP,
-            // or BOTTOM), so both must be outside window; exit loop (accept is false)
+            // bitwise AND is not 0: both points share an outside zone (LEFT,
+            // RIGHT, TOP, or BOTTOM), so both must be outside window; exit loop
+            // (accept is false)
             break;
         }
         // failed both tests, so calculate the line segment to clip
@@ -88,16 +90,13 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
         if ((outcodeOut & TOP) != 0) {  // point is above the clip window
             x = x0 + (x1 - x0) * (maxy() - y0) / (y1 - y0);
             y = maxy();
-        } else if ((outcodeOut & BOTTOM) !=
-                   0) {  // point is below the clip window
+        } else if ((outcodeOut & BOTTOM) != 0) {  // point is below the clip window
             x = x0 + (x1 - x0) * (miny() - y0) / (y1 - y0);
             y = miny();
-        } else if ((outcodeOut & RIGHT) !=
-                   0) {  // point is to the right of clip window
+        } else if ((outcodeOut & RIGHT) != 0) {  // point is to the right of clip window
             y = y0 + (y1 - y0) * (maxx() - x0) / (x1 - x0);
             x = maxx();
-        } else if ((outcodeOut & LEFT) !=
-                   0) {  // point is to the left of clip window
+        } else if ((outcodeOut & LEFT) != 0) {  // point is to the left of clip window
             y = y0 + (y1 - y0) * (minx() - x0) / (x1 - x0);
             x = minx();
         }
@@ -124,15 +123,15 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
             }
         }
     }
-    return std::tuple<bool, std::vector<Point> >(accept,intersectionPoints);
+    return std::tuple<bool, std::vector<Point> >(accept, intersectionPoints);
 }
 
-std::vector<Point> Rect::corners(){
+std::vector<Point> Rect::corners() {
     std::vector<Point> tmp;
-    tmp.emplace_back(minx(),miny());
-    tmp.emplace_back(minx(),maxy());
-    tmp.emplace_back(maxx(),maxy());
-    tmp.emplace_back(maxx(),miny());
+    tmp.emplace_back(minx(), miny());
+    tmp.emplace_back(minx(), maxy());
+    tmp.emplace_back(maxx(), maxy());
+    tmp.emplace_back(maxx(), miny());
     return tmp;
 }
 
@@ -142,13 +141,10 @@ bool Rect::containsRect(const Rect& other) const {
 }
 
 bool Rect::containsPoint(Point point) const {
-    return point.x() >= minx() && point.x() <= maxx() && point.y() >= miny() &&
-           point.y() <= maxy();
+    return point.x() >= minx() && point.x() <= maxx() && point.y() >= miny() && point.y() <= maxy();
 }
 
-bool Rect::hit(const Segment& seg) const {
-    return nearSegment(seg, Robot_Radius);
-}
+bool Rect::hit(const Segment& seg) const { return nearSegment(seg, Robot_Radius); }
 
 bool Rect::hit(Point point) const { return nearPoint(point, Robot_Radius); }
 
@@ -169,7 +165,7 @@ void Rect::expand(const Rect& rect) {
     expand(rect.pt[1]);
 }
 
-void Rect::pad(float padding){
+void Rect::pad(float padding) {
     float _minx = minx();
     float _miny = miny();
     float _maxx = maxx();
@@ -204,8 +200,8 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
         return true;
     }
 
-    Segment edges[4] = {Segment(pt[0], ur), Segment(ur, pt[1]),
-                        Segment(pt[0], ll), Segment(ll, pt[1])};
+    Segment edges[4] = {Segment(pt[0], ur), Segment(ur, pt[1]), Segment(pt[0], ll),
+                        Segment(ll, pt[1])};
 
     // If either endpoint of the segment is near an edge of the rect, then the
     // segment is near this rect.

@@ -1,11 +1,12 @@
 #include "Configuration.hpp"
 
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
 #include <cassert>
 #include <cstdio>
 #include <iostream>
 #include <utility>
+
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 
 std::list<Configurable*>* Configurable::_configurables;
 
@@ -14,8 +15,7 @@ static const int ConfigItemRole = Qt::UserRole;
 
 Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this NOLINT
 
-ConfigItem::ConfigItem(Configuration* config, const QString& name,
-                       std::string description)
+ConfigItem::ConfigItem(Configuration* config, const QString& name, std::string description)
     : _config{config},
       _treeItem{nullptr},
       _path{name.split('/')},
@@ -89,17 +89,15 @@ void ConfigInt::setValueString(const QString& str) { _value = str.toInt(); }
 
 ////////
 
-ConfigDouble::ConfigDouble(Configuration* config, const QString& name,
-                           double value, const std::string& description)
+ConfigDouble::ConfigDouble(Configuration* config, const QString& name, double value,
+                           const std::string& description)
     : ConfigItem(config, name, description), _value{value} {
     addItem();
 }
 
 QString ConfigDouble::toString() { return QString::number(_value); }
 
-void ConfigDouble::setValueString(const QString& str) {
-    _value = str.toDouble();
-}
+void ConfigDouble::setValueString(const QString& str) { _value = str.toDouble(); }
 
 Configuration::Configuration() {
     _tree = nullptr;
@@ -212,8 +210,7 @@ bool Configuration::load(const QString& filename, QString& error) {
     int errorColumn = 0;
     if (!newDoc.setContent(&file, &domError, &errorLine, &errorColumn)) {
         error = QString("%1:%2: %3")
-                    .arg(QString::number(errorLine),
-                         QString::number(errorColumn), domError);
+                    .arg(QString::number(errorLine), QString::number(errorColumn), domError);
         return false;
     }
 

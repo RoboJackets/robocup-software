@@ -1,8 +1,8 @@
 #include "BatteryWidget.hpp"
+
 #include <cmath>
 
-BatteryWidget::BatteryWidget(QWidget* parent, Qt::WindowFlags f)
-    : QWidget(parent, f) {
+BatteryWidget::BatteryWidget(QWidget* parent, Qt::WindowFlags f) : QWidget(parent, f) {
     _batteryLevel = 0;
     setBatteryLevel(0.5);
 }
@@ -34,8 +34,7 @@ void BatteryWidget::paintEvent(QPaintEvent* /*event*/) {
 
     float minPadding = 2;
     float h2w = 2;
-    float w =
-        std::fmin(width() - minPadding * 2, (height() - minPadding * 2) * h2w);
+    float w = std::fmin(width() - minPadding * 2, (height() - minPadding * 2) * h2w);
     float h = w / h2w;
     QRectF battBounds((width() - w) / 2, (height() - h) / 2, w, h);
 
@@ -45,16 +44,14 @@ void BatteryWidget::paintEvent(QPaintEvent* /*event*/) {
 
     //  draw main part of battery
     painter.setBrush(Qt::NoBrush);
-    QRectF mainBox =
-        battBounds.adjusted(0, 0, -battBounds.width() * nubRatio, 0);
+    QRectF mainBox = battBounds.adjusted(0, 0, -battBounds.width() * nubRatio, 0);
     painter.drawRoundedRect(mainBox, 1, 1);
 
     painter.setBrush(color);
 
     //  nub (positive terminal of battery)
     QRectF nubBox = battBounds.adjusted(battBounds.width() * (1 - nubRatio),
-                                        battBounds.height() / 4, 0,
-                                        -battBounds.height() / 4);
+                                        battBounds.height() / 4, 0, -battBounds.height() / 4);
     painter.drawRoundedRect(nubBox, 0.5, 0.5);
 
     //  12.5%, 37.5%, 62.5%, 87.5% are the midpoints of the 4 bars
@@ -68,8 +65,7 @@ void BatteryWidget::paintEvent(QPaintEvent* /*event*/) {
     float barWidth = (mainBox.width() - pad * 2 - barSpacing * 3) / 4.0;
     painter.setPen(Qt::NoPen);
     for (int i = 0; i < barCount; i++) {
-        painter.drawRect(
-            QRectF(mainBox.left() + pad + (barSpacing + barWidth) * i,
-                   mainBox.top() + pad, barWidth, mainBox.height() - pad * 2));
+        painter.drawRect(QRectF(mainBox.left() + pad + (barSpacing + barWidth) * i,
+                                mainBox.top() + pad, barWidth, mainBox.height() - pad * 2));
     }
 }

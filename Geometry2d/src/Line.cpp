@@ -1,8 +1,9 @@
+#include <cmath>
+
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/Line.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
-#include <cmath>
 
 namespace Geometry2d {
 
@@ -14,8 +15,7 @@ bool Line::intersects(const Line& other, Point* intersection) const {
 }
 
 // Has Simple Test
-bool Line::intersects(const Line& line1, const Line& line2,
-                      Point* intersection) {
+bool Line::intersects(const Line& line1, const Line& line2, Point* intersection) {
     // From Mathworld:
     // http://mathworld.wolfram.com/Line-LineIntersection.html
 

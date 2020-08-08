@@ -1,15 +1,15 @@
 #include "SimRadio.hpp"
 
+#include <cmath>
+#include <stdexcept>
+
+#include <Geometry2d/Util.hpp>
+#include <Robot.hpp>
+#include <rj_common/Network.hpp>
 #include <rj_common/status.h>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
-
-#include <Geometry2d/Util.hpp>
-#include <Robot.hpp>
-#include <cmath>
-#include <rj_common/Network.hpp>
-#include <stdexcept>
 
 #include "PacketConvert.hpp"
 
@@ -21,8 +21,7 @@ SimRadio::SimRadio(Context* context, bool blueTeam)
     : _context(context),
       _blueTeam(blueTeam),
       _socket(_io_service, ip::udp::endpoint(ip::udp::v4(),
-                                             blueTeam ? SimBlueStatusPort
-                                                      : SimYellowStatusPort)) {
+                                             blueTeam ? SimBlueStatusPort : SimYellowStatusPort)) {
     _grsim_endpoint = ip::udp::endpoint(ip::udp::v4(), SimCommandPort);
 
     _buffer.resize(1024);
@@ -61,15 +60,13 @@ void SimRadio::receive() { _io_service.poll(); }
 
 void SimRadio::startReceive() {
     // Set a receive callback
-    _socket.async_receive(
-        boost::asio::buffer(_buffer),
-        [this](const boost::system::error_code& error, std::size_t num_bytes) {
-            receivePacket(error, num_bytes);
-        });
+    _socket.async_receive(boost::asio::buffer(_buffer),
+                          [this](const boost::system::error_code& error, std::size_t num_bytes) {
+                              receivePacket(error, num_bytes);
+                          });
 }
 
-void SimRadio::receivePacket(const boost::system::error_code& error,
-                             std::size_t num_bytes) {
+void SimRadio::receivePacket(const boost::system::error_code& error, std::size_t num_bytes) {
     std::string data(_buffer.begin(), _buffer.end());
     handleReceive(data);
     startReceive();
@@ -113,8 +110,7 @@ void SimRadio::stopRobots() {
 
     std::string out;
     simPacket.SerializeToString(&out);
-    _socket.send_to(boost::asio::buffer(out),
-                    ip::udp::endpoint(ip::udp::v4(), SimCommandPort));
+    _socket.send_to(boost::asio::buffer(out), ip::udp::endpoint(ip::udp::v4(), SimCommandPort));
 }
 
 void SimRadio::switchTeam(bool blueTeam) {

@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <fstream>
+
+#include <gtest/gtest.h>
 
 #include "Geometry2d/Pose.hpp"
 #include "SystemState.hpp"
@@ -36,8 +36,7 @@ TEST(Planning, path_target_random) {
         int numObstacles = TestingUtils::random(&gen, 2, 5);
         for (int j = 0; j < numObstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
-                Point{TestingUtils::random(&gen, -2.0, 2.0),
-                      TestingUtils::random(&gen, .5, 1.5)},
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)},
                 .2));
         }
         auto start = randomInstant(&gen);
@@ -69,13 +68,11 @@ TEST(Planning, path_target_random) {
         if (!checkTrajectoryContinuous(path, RobotConstraints{})) {
             std::cout << "Saving to /tmp/out.csv" << std::endl;
             std::ofstream file("/tmp/out.csv");
-            for (auto cursor = path.cursor_begin(); cursor.has_value();
-                 cursor.advance(0.05s)) {
+            for (auto cursor = path.cursor_begin(); cursor.has_value(); cursor.advance(0.05s)) {
                 auto instant = cursor.value();
-                file << RJ::Seconds(instant.stamp - RJ::now()) << ", "
-                     << instant.position().x() << ", " << instant.position().y()
-                     << ", " << instant.linear_velocity().x() << ", "
-                     << instant.linear_velocity().y() << std::endl;
+                file << RJ::Seconds(instant.stamp - RJ::now()) << ", " << instant.position().x()
+                     << ", " << instant.position().y() << ", " << instant.linear_velocity().x()
+                     << ", " << instant.linear_velocity().y() << std::endl;
             }
             EXPECT_FALSE(true);
         }
@@ -83,8 +80,7 @@ TEST(Planning, path_target_random) {
         // EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
     }
 
-    EXPECT_LT(failure_count, 150)
-        << "Failure rate should be less than 15 percent for path target";
+    EXPECT_LT(failure_count, 150) << "Failure rate should be less than 15 percent for path target";
 }
 
 TEST(Planning, collect_basic) {
@@ -227,18 +223,16 @@ TEST(Planning, collect_random) {
     int failure_count = 0;
 
     for (int i = 0; i < 500; i++) {
-        world_state.ball.position = Point{TestingUtils::random(&gen, -1.5, 1.5),
-                                          TestingUtils::random(&gen, 2.0, 4.0)};
+        world_state.ball.position =
+            Point{TestingUtils::random(&gen, -1.5, 1.5), TestingUtils::random(&gen, 2.0, 4.0)};
         world_state.ball.velocity =
-            Point{TestingUtils::random(&gen, -.3, .3),
-                  TestingUtils::random(&gen, -1.0, 0.1)};
+            Point{TestingUtils::random(&gen, -.3, .3), TestingUtils::random(&gen, -1.0, 0.1)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
         int numObstacles = TestingUtils::random(&gen, 2, 5);
         for (int j = 0; j < numObstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
-                Point{TestingUtils::random(&gen, -2.0, 2.0),
-                      TestingUtils::random(&gen, 0.5, 1.5)},
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 0.5, 1.5)},
                 .2));
         }
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
@@ -262,8 +256,7 @@ TEST(Planning, collect_random) {
         EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
     }
 
-    EXPECT_LT(failure_count, 50)
-        << "Failure rate should be below 10 percent for collect";
+    EXPECT_LT(failure_count, 50) << "Failure rate should be below 10 percent for collect";
 }
 
 TEST(Planning, settle_basic) {
@@ -320,18 +313,16 @@ TEST(Planning, settle_random) {
     int failure_count = 0;
 
     for (int i = 0; i < 500; i++) {
-        world_state.ball.position = Point{TestingUtils::random(&gen, -1.5, 1.5),
-                                          TestingUtils::random(&gen, 3.0, 4.0)};
+        world_state.ball.position =
+            Point{TestingUtils::random(&gen, -1.5, 1.5), TestingUtils::random(&gen, 3.0, 4.0)};
         world_state.ball.velocity =
-            Point{TestingUtils::random(&gen, -.3, .3),
-                  TestingUtils::random(&gen, -2.0, -1.0)};
+            Point{TestingUtils::random(&gen, -.3, .3), TestingUtils::random(&gen, -2.0, -1.0)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
         int numObstacles = TestingUtils::random(&gen, 0, 3);
         for (int j = 0; j < numObstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
-                Point{TestingUtils::random(&gen, -2.0, 2.0),
-                      TestingUtils::random(&gen, .5, 1.5)},
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)},
                 .2));
         }
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
@@ -355,8 +346,7 @@ TEST(Planning, settle_random) {
         EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
     }
 
-    EXPECT_LT(failure_count, 100)
-        << "Failure rate should be <20 percent for settle";
+    EXPECT_LT(failure_count, 100) << "Failure rate should be <20 percent for settle";
 }
 
 // todo: test Intercept, LineKick, WorldVel, EscapeObstacle

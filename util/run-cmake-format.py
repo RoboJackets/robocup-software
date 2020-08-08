@@ -18,15 +18,16 @@ def get_format_invocation(f, cmake_format_binary):
     return start
 
 
-def run_format(args, file_queue, lock):
+def run_format(args, file_queue, lock, return_codes):
     """Takes filenames out of queue and runs clang-format on them."""
     while True:
         name = file_queue.get()
-        invocation = get_format_invocation(name, args.cmake_format_binary)
+        invocation = get_format_invocation(name, args.cmake_format_binary, args.check)
 
         proc = subprocess.Popen(invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = proc.communicate()
         with lock:
+            return_codes.append(proc.returncode)
             sys.stdout.write(' '.join(invocation) + '\n' + output.decode('utf-8'))
             if len(err) > 0:
                 sys.stdout.flush()
@@ -47,6 +48,8 @@ def main():
                         help='files to be processed (regex on path)')
     parser.add_argument('-p', dest='build_path',
                         help='Path used to read a compile command database.')
+    parser.add_argument('--check', action='store_true', help='Exit with status code 0 if formatting would not change '
+                                                             'file contents, or status code 1 if it would')
     args = parser.parse_args()
 
     cwd = Path.cwd()
@@ -66,6 +69,7 @@ def main():
     if max_task == 0:
         max_task = multiprocessing.cpu_count()
 
+    return_codes = []
     try:
         # Spin up a bunch of tidy-launching threads.
         task_queue = queue.Queue(max_task)
@@ -73,7 +77,7 @@ def main():
         lock = threading.Lock()
         for _ in range(max_task):
             t = threading.Thread(target=run_format,
-                                 args=(args, task_queue, lock))
+                                 args=(args, task_queue, lock, return_codes))
             t.daemon = True
             t.start()
 
@@ -89,6 +93,12 @@ def main():
         # bonkers with ctrl-c and we start forking merrily.
         print('\nCtrl-C detected, goodbye.')
         os.kill(0, 9)
+
+    for return_code in return_codes:
+        if return_code != 0:
+            sys.exit(return_code)
+
+    sys.exit(0)
 
 
 if __name__ == '__main__':

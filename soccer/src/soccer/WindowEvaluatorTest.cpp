@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
-#include "WindowEvaluator.hpp"
-#include "SystemState.hpp"
+
 #include "Configuration.hpp"
+#include "SystemState.hpp"
+#include "WindowEvaluator.hpp"
 
 using namespace Geometry2d;
 
@@ -16,13 +17,11 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     obstacleBot->mutable_state().visible = true;
     obstacleBot->mutable_state().pose = Pose(1, 1, 0);
 
-    Segment ourGoalSegment(
-        Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
-        Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
+    Segment ourGoalSegment(Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
+                           Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
 
     WindowEvaluator winEval(&context);
-    WindowingResult result =
-        winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
+    WindowingResult result = winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
 
     auto& windows = result.first;
     auto& best = result.second;

@@ -5,13 +5,11 @@
 namespace Planning {
 
 void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
-                const AngleFunction& angle_function,
-                const RotationConstraints& /* constraints */) {
+                const AngleFunction& angle_function, const RotationConstraints& /* constraints */) {
     const RJ::Time start_time = start_instant.stamp;
 
     if (trajectory->empty()) {
-        throw std::invalid_argument(
-            "Cannot profile angles for empty trajectory.");
+        throw std::invalid_argument("Cannot profile angles for empty trajectory.");
     }
 
     if (!trajectory->CheckTime(start_time)) {
@@ -35,8 +33,8 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
     std::vector<double> target_angles;
     target_angles.resize(trajectory->num_instants());
     Eigen::Vector2d gradient;
-    target_angles.at(0) = angle_function(start_instant.linear_motion(),
-                                         start_instant.heading(), &gradient);
+    target_angles.at(0) =
+        angle_function(start_instant.linear_motion(), start_instant.heading(), &gradient);
 
     std::vector<double> velocity;
     velocity.resize(trajectory->num_instants());
@@ -46,10 +44,9 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
         // Get a temporary copy of the previous state and modify it to have
         // the correct heading (we'll actually edit in-place later).
         LinearMotionInstant instant = trajectory->instant_at(i).linear_motion();
-        target_angles.at(i) =
-            angle_function(instant, target_angles.at(i - 1), &gradient);
-        velocity.at(i) = trajectory->instant_at(i).linear_velocity().dot(
-            Geometry2d::Point(gradient));
+        target_angles.at(i) = angle_function(instant, target_angles.at(i - 1), &gradient);
+        velocity.at(i) =
+            trajectory->instant_at(i).linear_velocity().dot(Geometry2d::Point(gradient));
     }
 
     // TODO(#1506): Re-enable this. Currently the forward-tracking is disabled

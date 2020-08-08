@@ -1,9 +1,9 @@
 /** @file */
-#include <rj_param_utils/param.h>
-
 #include <cstdint>
 #include <memory>
 #include <string>
+
+#include <rj_param_utils/param.h>
 
 namespace params {
 namespace internal {
@@ -89,13 +89,11 @@ public:
     void RegisterParam(typename Param<ParamType>::Ptr param) {
         const std::string param_name = param->full_name();
         const std::string& module = param->module();
-        GetParamMap<ParamType>(module).insert(
-            std::make_pair(param_name, std::move(param)));
+        GetParamMap<ParamType>(module).insert(std::make_pair(param_name, std::move(param)));
     }
 
     template <typename ParamType>
-    [[nodiscard]] bool HasParam(const std::string& module,
-                                const std::string& full_name) {
+    [[nodiscard]] bool HasParam(const std::string& module, const std::string& full_name) {
         if (params_.find(module) == params_.end()) {
             return false;
         }
@@ -106,8 +104,7 @@ public:
     }
 
     template <typename ParamType>
-    [[nodiscard]] bool GetParam(const std::string& module,
-                                const std::string& full_name,
+    [[nodiscard]] bool GetParam(const std::string& module, const std::string& full_name,
                                 ParamType* value) {
         auto& param_map = GetParamMap<ParamType>(module);
         auto it = param_map.find(full_name);
@@ -124,8 +121,7 @@ public:
         auto& param_map = GetParamMap<ParamType>(module);
         auto it = param_map.find(full_name);
         if (it == param_map.end()) {
-            throw std::runtime_error("Couldn't find parameter with name " +
-                                     full_name);
+            throw std::runtime_error("Couldn't find parameter with name " + full_name);
         }
         it->second->Update(new_value);
     }
@@ -147,21 +143,18 @@ private:
 };
 
 template <typename ParamType>
-ParamRegisterer::ParamRegisterer(const char* module, const char* prefix,
-                                 const char* name, const char* help,
-                                 const char* filename,
+ParamRegisterer::ParamRegisterer(const char* module, const char* prefix, const char* name,
+                                 const char* help, const char* filename,
                                  ParamType& current_storage) {
     std::unique_ptr<Param<ParamType>> param =
-        std::make_unique<Param<ParamType>>(module, prefix, name, help, filename,
-                                           current_storage);
-    ParamRegistry::GlobalRegistry().template RegisterParam<ParamType>(
-        std::move(param));
+        std::make_unique<Param<ParamType>>(module, prefix, name, help, filename, current_storage);
+    ParamRegistry::GlobalRegistry().template RegisterParam<ParamType>(std::move(param));
 }
 
-#define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                   \
-    template ParamRegisterer::ParamRegisterer(                    \
-        const char* module, const char* prefix, const char* name, \
-        const char* help, const char* filename, type& current_storage);
+#define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                                       \
+    template ParamRegisterer::ParamRegisterer(const char* module, const char* prefix, \
+                                              const char* name, const char* help,     \
+                                              const char* filename, type& current_storage);
 
 // Do this for all supported flag types. For now these correspond to the ROS2
 // parameter types.
@@ -180,52 +173,40 @@ INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<std::string>)
 
 template <typename ParamType>
 bool ParamProvider::Get(const std::string& full_name, ParamType* value) const {
-    return internal::ParamRegistry::GlobalRegistry().GetParam(module_,
-                                                              full_name, value);
+    return internal::ParamRegistry::GlobalRegistry().GetParam(module_, full_name, value);
 }
 
 template <typename ParamType>
 bool ParamProvider::HasParam(const std::string& full_name) const {
-    return internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(
-        module_, full_name);
+    return internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(module_, full_name);
 }
 
 template <typename ParamType>
-void ParamProvider::Update(const std::string& full_name,
-                           const ParamType& new_value) {
-    internal::ParamRegistry::GlobalRegistry().UpdateParam(module_, full_name,
-                                                          new_value);
+void ParamProvider::Update(const std::string& full_name, const ParamType& new_value) {
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(module_, full_name, new_value);
 }
 
 template <typename ParamType>
-bool ParamProvider::TryUpdate(const std::string& full_name,
-                              const ParamType& new_value) {
-    if (!internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(
-            module_, full_name)) {
+bool ParamProvider::TryUpdate(const std::string& full_name, const ParamType& new_value) {
+    if (!internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(module_, full_name)) {
         return false;
     }
 
-    internal::ParamRegistry::GlobalRegistry().UpdateParam(module_, full_name,
-                                                          new_value);
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(module_, full_name, new_value);
     return true;
 }
 
 template <typename ParamType>
 internal::ParamMap<ParamType>& ParamProvider::GetParamMap() {
-    return internal::ParamRegistry::GlobalRegistry().GetParamMap<ParamType>(
-        module_);
+    return internal::ParamRegistry::GlobalRegistry().GetParamMap<ParamType>(module_);
 }
 
 // Instantiate Update, TryUpdate and GetParamMap for all supported types.
-#define INSTANTIATE_PARAM_PROVIDER_FNS(type)                                  \
-    template bool ParamProvider::Get(const std::string& full_name,            \
-                                     type* value) const;                      \
-    template bool ParamProvider::HasParam<type>(const std::string& full_name) \
-        const;                                                                \
-    template void ParamProvider::Update(const std::string& full_name,         \
-                                        const type& new_value);               \
-    template bool ParamProvider::TryUpdate(const std::string& full_name,      \
-                                           const type& new_value);            \
+#define INSTANTIATE_PARAM_PROVIDER_FNS(type)                                                     \
+    template bool ParamProvider::Get(const std::string& full_name, type* value) const;           \
+    template bool ParamProvider::HasParam<type>(const std::string& full_name) const;             \
+    template void ParamProvider::Update(const std::string& full_name, const type& new_value);    \
+    template bool ParamProvider::TryUpdate(const std::string& full_name, const type& new_value); \
     template internal::ParamMap<type>& ParamProvider::GetParamMap<type>();
 
 INSTANTIATE_PARAM_PROVIDER_FNS(bool)
@@ -241,8 +222,7 @@ INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<std::string>)
 
 template <typename ParamType>
 std::ostream& operator<<(std::ostream& os, const Param<ParamType>& param) {
-    os << "[" << param.filename_ << "] " << param.full_name_ << " - "
-       << param.help_;
+    os << "[" << param.filename_ << "] " << param.full_name_ << " - " << param.help_;
     return os;
 }
 }  // namespace params

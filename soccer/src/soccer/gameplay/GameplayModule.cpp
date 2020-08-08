@@ -1,5 +1,3 @@
-#include <rj_protos/LogFrame.pb.h>
-
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
@@ -9,9 +7,11 @@
 #include <rj_common/Network.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 // for python stuff
 #include "DebugDrawer.hpp"
+
 #include "robocup-py.hpp"
 
 // For getting data
@@ -36,13 +36,11 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
 +     * The value is given in meters. As of April 20, 2016 the inner 300mm
 +     * is free space for the robots.
 +     */
-    _fieldEdgeInset =
-        new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
+    _fieldEdgeInset = new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
 }
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
-    return abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
-           numeric_limits<double>::epsilon();
+    return abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) > numeric_limits<double>::epsilon();
 }
 
 // TODO: Replace this whole file when we move to ROS2
@@ -66,8 +64,7 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
         Py_InitializeEx(0);
         PyEval_InitThreads();
         {
-            object main_module(
-                (handle<>(borrowed(PyImport_AddModule("__main__")))));
+            object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
             _mainPyNamespace = main_module.attr("__dict__");
 
             object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
@@ -77,25 +74,19 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
 
             // Get the location of the share directory (where the python files
             // are installed)
-            const auto share_dir =
-                ament_index_cpp::get_package_share_directory("rj_robocup");
+            const auto share_dir = ament_index_cpp::get_package_share_directory("rj_robocup");
             std::stringstream command;
-            command << "import sys; sys.path.append('" << share_dir
-                    << "/gameplay/')";
-            handle<> ignored2{
-                (PyRun_String(command.str().c_str(), Py_file_input,
-                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr()))};
+            command << "import sys; sys.path.append('" << share_dir << "/gameplay/')";
+            handle<> ignored2{(PyRun_String(command.str().c_str(), Py_file_input,
+                                            _mainPyNamespace.ptr(), _mainPyNamespace.ptr()))};
 
-            _mainPyNamespace["constants"] =
-                handle<>(PyImport_ImportModule("constants"));
+            _mainPyNamespace["constants"] = handle<>(PyImport_ImportModule("constants"));
 
-            _mainPyNamespace["constants"].attr("Field") =
-                &Field_Dimensions::Current_Dimensions;
+            _mainPyNamespace["constants"].attr("Field") = &Field_Dimensions::Current_Dimensions;
 
             // instantiate the root play
-            handle<> ignored3(
-                (PyRun_String("import main; main.init()", Py_file_input,
-                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            handle<> ignored3((PyRun_String("import main; main.init()", Py_file_input,
+                                            _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
         }
         PyEval_SaveThread();
     } catch (const error_already_set&) {
@@ -107,10 +98,9 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
 void Gameplay::GameplayModule::calculateFieldObstacles() {
     auto dimensions = Field_Dimensions::Current_Dimensions;
 
-    _centerMatrix =
-        TransformMatrix::translate(Point(0, dimensions.Length() / 2));
-    _oppMatrix = TransformMatrix::translate(Point(0, dimensions.Length())) *
-                 TransformMatrix::rotate(M_PI);
+    _centerMatrix = TransformMatrix::translate(Point(0, dimensions.Length() / 2));
+    _oppMatrix =
+        TransformMatrix::translate(Point(0, dimensions.Length())) * TransformMatrix::rotate(M_PI);
 
     //// Make an obstacle to cover the opponent's half of the field except for
     /// one robot diameter across the center line.
@@ -130,37 +120,31 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     _nonFloor[1] = make_shared<Rect>(Point(-x, y), Point(x, y + 1000));
 
     y = dimensions.FloorLength();
-    _nonFloor[2] =
-        make_shared<Rect>(Point(-x, -3 * deadspace), Point(-x - 1000, y));
+    _nonFloor[2] = make_shared<Rect>(Point(-x, -3 * deadspace), Point(-x - 1000, y));
 
-    _nonFloor[3] =
-        make_shared<Rect>(Point(x, -3 * deadspace), Point(x + 1000, y));
+    _nonFloor[3] = make_shared<Rect>(Point(x, -3 * deadspace), Point(x + 1000, y));
 
     const float halfFlat = static_cast<float>(dimensions.GoalFlat() / 2.0);
     const float shortDist = dimensions.PenaltyShortDist();
     const float longDist = dimensions.PenaltyLongDist();
 
-    _ourGoalArea = make_shared<Rect>(Point(-longDist / 2, 0),
-                                     Point(longDist / 2, shortDist));
+    _ourGoalArea = make_shared<Rect>(Point(-longDist / 2, 0), Point(longDist / 2, shortDist));
 
-    _theirGoalArea =
-        make_shared<Rect>(Point(-longDist / 2, dimensions.Length()),
-                          Point(longDist / 2, dimensions.Length() - shortDist));
+    _theirGoalArea = make_shared<Rect>(Point(-longDist / 2, dimensions.Length()),
+                                       Point(longDist / 2, dimensions.Length() - shortDist));
 
     _ourHalf = make_shared<Rect>(Point(-x, -dimensions.Border()), Point(x, y1));
 
     _opponentHalf = make_shared<Rect>(Point(-x, y1), Point(x, y2));
 
-    _ourGoal = make_shared<Rect>(
-        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(), 0),
-        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-              -dimensions.GoalDepth() - dimensions.LineWidth()));
+    _ourGoal = make_shared<Rect>(Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(), 0),
+                                 Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
+                                       -dimensions.GoalDepth() - dimensions.LineWidth()));
 
     _theirGoal = make_shared<Rect>(
         Point(-dimensions.GoalWidth() / 2, dimensions.Length()),
         Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-              dimensions.Length() + dimensions.GoalDepth() +
-                  dimensions.LineWidth()));
+              dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
 }
@@ -175,9 +159,8 @@ void Gameplay::GameplayModule::setupUI() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            handle<> ignored3(
-                (PyRun_String("import ui.main; ui.main.setup()", Py_file_input,
-                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            handle<> ignored3((PyRun_String("import ui.main; ui.main.setup()", Py_file_input,
+                                            _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
             throw runtime_error("Error trying to setup python-based UI");
@@ -186,8 +169,7 @@ void Gameplay::GameplayModule::setupUI() {
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile,
-                                            bool isAbsolute) {
+void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile, bool isAbsolute) {
     PyGILState_STATE state = PyGILState_Ensure();
     try {
         getMainModule().attr("load_playbook")(playbookFile, isAbsolute);
@@ -199,8 +181,7 @@ void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile,
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::savePlaybook(const string& playbookFile,
-                                            bool isAbsolute) {
+void Gameplay::GameplayModule::savePlaybook(const string& playbookFile, bool isAbsolute) {
     PyGILState_STATE state = PyGILState_Ensure();
     try {
         getMainModule().attr("save_playbook")(playbookFile, isAbsolute);
@@ -220,8 +201,7 @@ void Gameplay::GameplayModule::clearPlays() {
 
 bool Gameplay::GameplayModule::checkPlaybookStatus() {
     PyGILState_STATE state = PyGILState_Ensure();
-    static int prevStatus =
-        extract<int>(getMainModule().attr("numEnablePlays")());
+    static int prevStatus = extract<int>(getMainModule().attr("numEnablePlays")());
     bool static change = false;
     int status = extract<int>(getMainModule().attr("numEnablePlays")());
     if (status == 0) {
@@ -278,8 +258,7 @@ void Gameplay::GameplayModule::run() {
         cout << "Starting GameplayModule::run()" << endl;
     }
 
-    _ballMatrix = Geometry2d::TransformMatrix::translate(
-        _context->world_state.ball.position);
+    _ballMatrix = Geometry2d::TransformMatrix::translate(_context->world_state.ball.position);
 
     _context->globalObstacles = globalObstacles();
     _context->goalZoneObstacles = goalZoneObstacles();
@@ -329,9 +308,8 @@ void Gameplay::GameplayModule::run() {
             if (runningTests) {
                 // I could add a bool to check if this needs to run or not if
                 // this is too inefficient
-                object rtrn(handle<>(PyRun_String(
-                    "ui.main._tests.getNextCommand()", Py_eval_input,
-                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                object rtrn(handle<>(PyRun_String("ui.main._tests.getNextCommand()", Py_eval_input,
+                                                  _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
 #if 0
                 // TODO(Kyle): Part two of the
@@ -367,14 +345,12 @@ void Gameplay::GameplayModule::run() {
              because if it fails, we don't want to crash the program.
              */
 
-            handle<> ignored3(
-                (PyRun_String("main.run()", Py_file_input,
-                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            handle<> ignored3((PyRun_String("main.run()", Py_file_input, _mainPyNamespace.ptr(),
+                                            _mainPyNamespace.ptr())));
 
             try {
                 // record the state of our behavior tree
-                std::string bhvrTreeDesc =
-                    extract<std::string>(getRootPlay().attr("__str__")());
+                std::string bhvrTreeDesc = extract<std::string>(getRootPlay().attr("__str__")());
                 _context->behavior_tree = bhvrTreeDesc;
             } catch (const error_already_set&) {
                 PyErr_Print();
@@ -387,12 +363,10 @@ void Gameplay::GameplayModule::run() {
     PyGILState_Release(state);
 
     /// visualize
-    if (_context->game_state.stayAwayFromBall() &&
-        _context->world_state.ball.visible) {
-        _context->debug_drawer.drawCircle(
-            _context->world_state.ball.position,
-            Field_Dimensions::Current_Dimensions.CenterRadius(), Qt::black,
-            "Rules");
+    if (_context->game_state.stayAwayFromBall() && _context->world_state.ball.visible) {
+        _context->debug_drawer.drawCircle(_context->world_state.ball.position,
+                                          Field_Dimensions::Current_Dimensions.CenterRadius(),
+                                          Qt::black, "Rules");
     }
 
     if (verbose) {
@@ -413,16 +387,11 @@ boost::python::object Gameplay::GameplayModule::getRootPlay() {
     return getMainModule().attr("root_play")();
 }
 
-boost::python::object Gameplay::GameplayModule::getMainModule() {
-    return _mainPyNamespace["main"];
-}
+boost::python::object Gameplay::GameplayModule::getMainModule() { return _mainPyNamespace["main"]; }
 
 void Gameplay::GameplayModule::updateFieldDimensions() {
     PyGILState_STATE state = PyGILState_Ensure();
-    {
-        _mainPyNamespace["constants"].attr("Field") =
-            &Field_Dimensions::Current_Dimensions;
-    }
+    { _mainPyNamespace["constants"].attr("Field") = &Field_Dimensions::Current_Dimensions; }
     PyGILState_Release(state);
 }
 
@@ -430,9 +399,9 @@ void Gameplay::GameplayModule::addTests() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            handle<> ignored3((PyRun_String(
-                "import ui.main; ui.main._tests.addTests()", Py_file_input,
-                _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            handle<> ignored3(
+                (PyRun_String("import ui.main; ui.main._tests.addTests()", Py_file_input,
+                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
             throw runtime_error("Error trying to add tests");
@@ -449,9 +418,9 @@ void Gameplay::GameplayModule::removeTest() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            handle<> ignored3((PyRun_String(
-                "import ui.main; ui.main._tests.removeTest()", Py_file_input,
-                _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            handle<> ignored3(
+                (PyRun_String("import ui.main; ui.main._tests.removeTest()", Py_file_input,
+                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
             throw runtime_error("Error trying to add tests");
@@ -464,9 +433,8 @@ void Gameplay::GameplayModule::nextTest() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            object rtrn(handle<>(
-                PyRun_String("ui.main._tests.nextTest()", Py_eval_input,
-                             _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            object rtrn(handle<>(PyRun_String("ui.main._tests.nextTest()", Py_eval_input,
+                                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
             runningTests = extract<bool>(rtrn);
         } catch (const error_already_set&) {
@@ -484,9 +452,8 @@ void Gameplay::GameplayModule::loadTest() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            object rtrn(handle<>(
-                PyRun_String("ui.main._tests.loadTest()", Py_eval_input,
-                             _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            object rtrn(handle<>(PyRun_String("ui.main._tests.loadTest()", Py_eval_input,
+                                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
             runningTests = extract<bool>(rtrn);
 

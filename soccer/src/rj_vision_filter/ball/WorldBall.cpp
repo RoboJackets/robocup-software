@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -11,8 +12,7 @@ using world_ball::PARAM_ball_merger_power;
 
 WorldBall::WorldBall() : isValid(false) {}
 
-WorldBall::WorldBall(RJ::Time calcTime,
-                     const std::list<KalmanBall>& kalmanBalls)
+WorldBall::WorldBall(RJ::Time calcTime, const std::list<KalmanBall>& kalmanBalls)
     : isValid(true), time(calcTime) {
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
@@ -22,13 +22,11 @@ WorldBall::WorldBall(RJ::Time calcTime,
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
     if (PARAM_ball_merger_power < 1 || PARAM_ball_merger_power > 2) {
-        std::cout << "WARN: ball_merger_power should be between 1 and 2"
-                  << std::endl;
+        std::cout << "WARN: ball_merger_power should be between 1 and 2" << std::endl;
     }
 
     if (kalmanBalls.empty()) {
-        throw std::runtime_error(
-            "ERROR: Zero balls are given to the WorldBall constructor");
+        throw std::runtime_error("ERROR: Zero balls are given to the WorldBall constructor");
     }
 
     for (const KalmanBall& ball : kalmanBalls) {
@@ -56,11 +54,11 @@ WorldBall::WorldBall(RJ::Time calcTime,
         double velUncertantity = velStdDev.mag();
 
         // Weight better estimates higher
-        double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
-                                          -PARAM_ball_merger_power);
+        double filterPosWeight =
+            std::pow(posUncertantity * filterUncertantity, -PARAM_ball_merger_power);
 
-        double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
-                                          -PARAM_ball_merger_power);
+        double filterVelWeight =
+            std::pow(velUncertantity * filterUncertantity, -PARAM_ball_merger_power);
 
         posAvg += filterPosWeight * ball.getPos();
         velAvg += filterVelWeight * ball.getVel();
@@ -89,9 +87,7 @@ double WorldBall::getPosCov() const { return posCov; }
 
 double WorldBall::getVelCov() const { return velCov; }
 
-const std::list<KalmanBall>& WorldBall::getBallComponents() const {
-    return ballComponents;
-}
+const std::list<KalmanBall>& WorldBall::getBallComponents() const { return ballComponents; }
 
 RJ::Time WorldBall::getTime() const { return time; }
 }  // namespace vision_filter

@@ -1,18 +1,22 @@
 #include "robocup-py.hpp"
 
-#include <boost/python/register_ptr_to_python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <functional>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>
 
+#include <boost/python/register_ptr_to_python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
 #include "WorldState.hpp"
 
 using namespace boost::python;
 
-#include <rj_protos/LogFrame.pb.h>
+#include <exception>
+
+#include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
 
 #include <Configuration.hpp>
 #include <Context.hpp>
@@ -25,12 +29,9 @@ using namespace boost::python;
 #include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <boost/python/exception_translator.hpp>
-#include <boost/version.hpp>
-#include <exception>
 #include <motion/MotionControl.hpp>
-#include <rc-fshare/pid.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
@@ -43,6 +44,8 @@ using namespace boost::python;
 #include "planning/MotionConstraints.hpp"
 #include "referee/ExternalReferee.hpp"
 
+#include <rc-fshare/pid.hpp>
+
 /**
  * These functions make sure errors on the c++
  * side get passed up through python.
@@ -53,11 +56,8 @@ struct NullArgumentException : public std::exception {
     std::string message;
     NullArgumentException() = default;
     NullArgumentException(std::string name)
-        : argument_name{std::move(name)},
-          message{"'" + argument_name + "'' was 'None'."} {}
-    [[nodiscard]] const char* what() const noexcept override {
-        return message.c_str();
-    }
+        : argument_name{std::move(name)}, message{"'" + argument_name + "'' was 'None'."} {}
+    [[nodiscard]] const char* what() const noexcept override { return message.c_str(); }
 };
 
 void translateException(NullArgumentException const& e) {
@@ -105,15 +105,11 @@ void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
 
 // Sets a robot's visibility - this should never be used in gameplay code, but
 // is useful for testing.
-void Robot_set_vis_for_testing(Robot* self, bool vis) {
-    self->mutable_state().visible = vis;
-}
+void Robot_set_vis_for_testing(Robot* self, bool vis) { self->mutable_state().visible = vis; }
 
 // Sets a ball's position - this should never be used in gameplay code, but
 // is useful for testing.
-void Ball_set_pos_for_testing(BallState* self, Geometry2d::Point pos) {
-    self->position = pos;
-}
+void Ball_set_pos_for_testing(BallState* self, Geometry2d::Point pos) { self->position = pos; }
 
 Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
 
@@ -135,9 +131,7 @@ double Ball_estimate_seconds_to(BallState* ball, Geometry2d::Point p) {
     return ball->query_seconds_near(p).count();
 }
 
-double Ball_predict_seconds_to_stop(BallState* ball) {
-    return ball->query_stop_time().count();
-}
+double Ball_predict_seconds_to_stop(BallState* ball) { return ball->query_stop_time().count(); }
 
 double Ball_estimate_seconds_to_dist(BallState* ball, double dist) {
     std::optional<RJ::Seconds> maybe_time = ball->query_seconds_to_dist(dist);
@@ -161,8 +155,7 @@ void OurRobot_move_tuning(OurRobot* self, Geometry2d::Point* to) {
     self->moveTuning(*to);
 }
 
-void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
-                              Geometry2d::Point* vf) {
+void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos, Geometry2d::Point* vf) {
     if (endPos == nullptr || vf == nullptr) {
         throw NullArgumentException();
     }
@@ -193,9 +186,7 @@ void OurRobot_add_local_obstacle(OurRobot* self, Geometry2d::Shape* obs) {
     self->localObstacles(sharedObs);
 }
 
-void OurRobot_set_avoid_ball_radius(OurRobot* self, float radius) {
-    self->avoidBallRadius(radius);
-}
+void OurRobot_set_avoid_ball_radius(OurRobot* self, float radius) { self->avoidBallRadius(radius); }
 
 void OurRobot_set_max_angle_speed(OurRobot* self, float maxAngleSpeed) {
     self->rotationConstraints().maxSpeed = maxAngleSpeed;
@@ -209,21 +200,17 @@ void OurRobot_set_max_accel(OurRobot* self, float maxAccel) {
     self->motionConstraints().maxAcceleration = maxAccel;
 }
 
-void OurRobot_approach_opponent(OurRobot* self, unsigned shell_id,
-                                bool enable_approach) {
+void OurRobot_approach_opponent(OurRobot* self, unsigned shell_id, bool enable_approach) {
     self->approachOpponent(shell_id, enable_approach);
 }
 
-void OurRobot_add_text(OurRobot* self, const std::string& text,
-                       const boost::python::tuple& rgb,
+void OurRobot_add_text(OurRobot* self, const std::string& text, const boost::python::tuple& rgb,
                        const std::string& layerPrefix) {
     self->addText(QString::fromStdString(text), Color_from_tuple(rgb),
                   QString::fromStdString(layerPrefix));
 }
 
-void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
-    self->avoidOpponents(value);
-}
+void OurRobot_set_avoid_opponents(OurRobot* self, bool value) { self->avoidOpponents(value); }
 
 // Tuner code disabled pending refactor since it was removed from
 // the firmware shared repo
@@ -264,20 +251,16 @@ bool Rect_contains_point(Geometry2d::Rect* self, Geometry2d::Point* pt) {
     return self->containsPoint(*pt);
 }
 
-void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin,
-                  float angle) {
+void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin, float angle) {
     if (origin == nullptr) {
         throw NullArgumentException("origin");
     }
     self->rotate(*origin, angle);
 }
 
-void Point_rotate_origin(Geometry2d::Point* self, float angle) {
-    self->rotate(angle);
-}
+void Point_rotate_origin(Geometry2d::Point* self, float angle) { self->rotate(angle); }
 
-void CompositeShape_add_shape(Geometry2d::CompositeShape* self,
-                              Geometry2d::Shape* shape) {
+void CompositeShape_add_shape(Geometry2d::CompositeShape* self, Geometry2d::Shape* shape) {
     if (shape == nullptr) {
         throw NullArgumentException("shape");
     }
@@ -291,17 +274,13 @@ void Polygon_add_vertex(Geometry2d::Polygon* self, Geometry2d::Point* pt) {
     self->addVertex(*pt);
 }
 
-Geometry2d::Point* Line_get_pt(Geometry2d::Line* self, int index) {
-    return &(self->pt[index]);
-}
+Geometry2d::Point* Line_get_pt(Geometry2d::Line* self, int index) { return &(self->pt[index]); }
 
 Geometry2d::Point* Segment_get_pt(Geometry2d::Segment* self, int index) {
     return &(self->pt[index]);
 }
 
-Geometry2d::Point* Rect_get_pt(Geometry2d::Rect* self, int index) {
-    return &(self->pt[index]);
-}
+Geometry2d::Point* Rect_get_pt(Geometry2d::Rect* self, int index) { return &(self->pt[index]); }
 
 boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
                                                    Geometry2d::Segment* other) {
@@ -331,8 +310,7 @@ boost::python::object Rect_segment_intersection(Geometry2d::Rect* self,
         throw NullArgumentException{"segment"};
     }
     boost::python::list lst;
-    std::tuple<bool, std::vector<Geometry2d::Point>> result =
-        self->intersects(*segment);
+    std::tuple<bool, std::vector<Geometry2d::Point>> result = self->intersects(*segment);
     bool doesIntersect = std::get<0>(result);
     if (!doesIntersect) {
         return boost::python::object();
@@ -340,8 +318,7 @@ boost::python::object Rect_segment_intersection(Geometry2d::Rect* self,
 
     std::vector<Geometry2d::Point> intersectionPoints = std::get<1>(result);
     std::vector<Geometry2d::Point>::iterator it;
-    for (it = intersectionPoints.begin(); it != intersectionPoints.end();
-         it++) {
+    for (it = intersectionPoints.begin(); it != intersectionPoints.end(); it++) {
         lst.append(*it);
     }
     return lst;
@@ -357,8 +334,7 @@ boost::python::object Rect_corners(Geometry2d::Rect* self) {
     return lst;
 }
 
-boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
-                                                Geometry2d::Line* line) {
+boost::python::object Segment_line_intersection(Geometry2d::Segment* self, Geometry2d::Line* line) {
     if (line == nullptr) {
         throw NullArgumentException{"line"};
     }
@@ -388,8 +364,7 @@ boost::python::object Segment_nearest_point_to_line(Geometry2d::Segment* self,
 }
 
 // returns None or a Geometry2d::Point
-boost::python::object Line_line_intersection(Geometry2d::Line* self,
-                                             Geometry2d::Line* other) {
+boost::python::object Line_line_intersection(Geometry2d::Line* self, Geometry2d::Line* other) {
     if (other == nullptr) {
         throw NullArgumentException("other");
     }
@@ -418,8 +393,7 @@ boost::python::object Line_segment_intersection(Geometry2d::Line* self,
     }
 };
 
-boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
-                                            Geometry2d::Circle* circle) {
+boost::python::tuple Line_intersects_circle(Geometry2d::Line* self, Geometry2d::Circle* circle) {
     if (circle == nullptr) {
         throw NullArgumentException("circle");
     }
@@ -435,19 +409,16 @@ boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
     return boost::python::tuple(lst);
 }
 
-void DebugDrawer_draw_circle(DebugDrawer* self, const Geometry2d::Point* center,
-                             float radius, const boost::python::tuple& rgb,
-                             const std::string& layer) {
+void DebugDrawer_draw_circle(DebugDrawer* self, const Geometry2d::Point* center, float radius,
+                             const boost::python::tuple& rgb, const std::string& layer) {
     if (center == nullptr) {
         throw NullArgumentException("center");
     }
-    self->drawCircle(*center, radius, Color_from_tuple(rgb),
-                     QString::fromStdString(layer));
+    self->drawCircle(*center, radius, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 void DebugDrawer_draw_arc(DebugDrawer* self, const Geometry2d::Arc* arc,
-                          const boost::python::tuple& rgb,
-                          const std::string& layer) {
+                          const boost::python::tuple& rgb, const std::string& layer) {
     if (arc == nullptr) {
         throw NullArgumentException{"arc"};
     }
@@ -456,8 +427,7 @@ void DebugDrawer_draw_arc(DebugDrawer* self, const Geometry2d::Arc* arc,
 
 // TODO(ashaw596) Fix this lie of a function
 void DebugDrawer_draw_line(DebugDrawer* self, const Geometry2d::Line* line,
-                           const boost::python::tuple& rgb,
-                           const std::string& layer) {
+                           const boost::python::tuple& rgb, const std::string& layer) {
     if (line == nullptr) {
         throw NullArgumentException("line");
     }
@@ -465,19 +435,15 @@ void DebugDrawer_draw_line(DebugDrawer* self, const Geometry2d::Line* line,
                    QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_segment(DebugDrawer* self,
-                              const Geometry2d::Segment* segment,
-                              const boost::python::tuple& rgb,
-                              const std::string& layer) {
+void DebugDrawer_draw_segment(DebugDrawer* self, const Geometry2d::Segment* segment,
+                              const boost::python::tuple& rgb, const std::string& layer) {
     if (segment == nullptr) {
         throw NullArgumentException("segment");
     }
-    self->drawSegment(*segment, Color_from_tuple(rgb),
-                      QString::fromStdString(layer));
+    self->drawSegment(*segment, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_segment_from_points(DebugDrawer* self,
-                                          const Geometry2d::Point* p0,
+void DebugDrawer_draw_segment_from_points(DebugDrawer* self, const Geometry2d::Point* p0,
                                           const Geometry2d::Point* p1,
                                           const boost::python::tuple& rgb,
                                           const std::string& layer) {
@@ -487,14 +453,11 @@ void DebugDrawer_draw_segment_from_points(DebugDrawer* self,
     if (p1 == nullptr) {
         throw NullArgumentException{"p1"};
     }
-    self->drawLine(*p0, *p1, Color_from_tuple(rgb),
-                   QString::fromStdString(layer));
+    self->drawLine(*p0, *p1, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_text(DebugDrawer* self, const std::string& text,
-                           Geometry2d::Point* pos,
-                           const boost::python::tuple& rgb,
-                           const std::string& layer) {
+void DebugDrawer_draw_text(DebugDrawer* self, const std::string& text, Geometry2d::Point* pos,
+                           const boost::python::tuple& rgb, const std::string& layer) {
     if (pos == nullptr) {
         throw NullArgumentException("position");
     }
@@ -502,29 +465,22 @@ void DebugDrawer_draw_text(DebugDrawer* self, const std::string& text,
                    QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_polygon(DebugDrawer* self,
-                              const boost::python::list& points,
-                              const boost::python::tuple& rgb,
-                              const std::string& layer) {
+void DebugDrawer_draw_polygon(DebugDrawer* self, const boost::python::list& points,
+                              const boost::python::tuple& rgb, const std::string& layer) {
     std::vector<Geometry2d::Point> ptVec;
     for (int i = 0; i < len(points); i++) {
         ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
     }
 
-    self->drawPolygon(ptVec, Color_from_tuple(rgb),
-                      QString::fromStdString(layer));
+    self->drawPolygon(ptVec, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_raw_polygon(DebugDrawer* self,
-                                  const Geometry2d::Polygon& points,
-                                  const boost::python::tuple& rgb,
-                                  const std::string& layer) {
-    self->drawPolygon(points, Color_from_tuple(rgb),
-                      QString::fromStdString(layer));
+void DebugDrawer_draw_raw_polygon(DebugDrawer* self, const Geometry2d::Polygon& points,
+                                  const boost::python::tuple& rgb, const std::string& layer) {
+    self->drawPolygon(points, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
-boost::python::list Circle_intersects_line(Geometry2d::Circle* self,
-                                           const Geometry2d::Line* line) {
+boost::python::list Circle_intersects_line(Geometry2d::Circle* self, const Geometry2d::Line* line) {
     if (line == nullptr) {
         throw NullArgumentException("line");
     }
@@ -539,8 +495,7 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle* self,
     return lst;
 }
 
-boost::python::list Arc_intersects_line(Geometry2d::Arc* self,
-                                        const Geometry2d::Line* line) {
+boost::python::list Arc_intersects_line(Geometry2d::Arc* self, const Geometry2d::Line* line) {
     if (line == nullptr) {
         throw NullArgumentException{"line"};
     }
@@ -571,8 +526,7 @@ boost::python::list Arc_intersects_segment(Geometry2d::Arc* self,
     return lst;
 }
 
-boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator* self,
-                                            const Geometry2d::Point* origin,
+boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator* self, const Geometry2d::Point* origin,
                                             const Geometry2d::Segment* target) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
@@ -615,10 +569,8 @@ boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator* self,
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
-                                           const Geometry2d::Point* origin,
-                                           const Geometry2d::Point* target,
-                                           float targetWidth) {
+boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self, const Geometry2d::Point* origin,
+                                           const Geometry2d::Point* target, float targetWidth) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -638,8 +590,8 @@ boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple WinEval_eval_pt_to_opp_goal(
-    WindowEvaluator* self, const Geometry2d::Point* origin) {
+boost::python::tuple WinEval_eval_pt_to_opp_goal(WindowEvaluator* self,
+                                                 const Geometry2d::Point* origin) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -656,8 +608,8 @@ boost::python::tuple WinEval_eval_pt_to_opp_goal(
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple WinEval_eval_pt_to_our_goal(
-    WindowEvaluator* self, const Geometry2d::Point* origin) {
+boost::python::tuple WinEval_eval_pt_to_our_goal(WindowEvaluator* self,
+                                                 const Geometry2d::Point* origin) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -678,9 +630,8 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
-boost::python::tuple KickEval_eval_pt_to_seg(
-    KickEvaluator* self, const Geometry2d::Point* origin,
-    const Geometry2d::Segment* target) {
+boost::python::tuple KickEval_eval_pt_to_seg(KickEvaluator* self, const Geometry2d::Point* origin,
+                                             const Geometry2d::Segment* target) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -697,9 +648,8 @@ boost::python::tuple KickEval_eval_pt_to_seg(
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple KickEval_eval_pt_to_robot(
-    KickEvaluator* self, const Geometry2d::Point* origin,
-    const Geometry2d::Point* target) {
+boost::python::tuple KickEval_eval_pt_to_robot(KickEvaluator* self, const Geometry2d::Point* origin,
+                                               const Geometry2d::Point* target) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -716,10 +666,8 @@ boost::python::tuple KickEval_eval_pt_to_robot(
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
-                                            const Geometry2d::Point* origin,
-                                            const Geometry2d::Point* target,
-                                            float targetWidth) {
+boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self, const Geometry2d::Point* origin,
+                                            const Geometry2d::Point* target, float targetWidth) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -736,8 +684,8 @@ boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple KickEval_eval_pt_to_opp_goal(
-    KickEvaluator* self, const Geometry2d::Point* origin) {
+boost::python::tuple KickEval_eval_pt_to_opp_goal(KickEvaluator* self,
+                                                  const Geometry2d::Point* origin) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -751,8 +699,8 @@ boost::python::tuple KickEval_eval_pt_to_opp_goal(
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple KickEval_eval_pt_to_our_goal(
-    KickEvaluator* self, const Geometry2d::Point* origin) {
+boost::python::tuple KickEval_eval_pt_to_our_goal(KickEvaluator* self,
+                                                  const Geometry2d::Point* origin) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -772,10 +720,8 @@ void KickEval_add_excluded_robot(KickEvaluator* self, Robot* robot) {
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
-boost::shared_ptr<PythonFunctionWrapper> PythonFunctionWrapper_constructor(
-    PyObject* pf) {
-    return boost::shared_ptr<PythonFunctionWrapper>(
-        new PythonFunctionWrapper(pf));
+boost::shared_ptr<PythonFunctionWrapper> PythonFunctionWrapper_constructor(PyObject* pf) {
+    return boost::shared_ptr<PythonFunctionWrapper>(new PythonFunctionWrapper(pf));
 }
 
 float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
@@ -784,21 +730,17 @@ void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
 void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
 
 boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
-    PythonFunctionWrapper* functionWrapper,
-    Geometry2d::Point start = Geometry2d::Point(0, 0),
+    PythonFunctionWrapper* functionWrapper, Geometry2d::Point start = Geometry2d::Point(0, 0),
     Geometry2d::Point step = Geometry2d::Point(1, 1),
-    Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
-    float reflectionCoeff = 1, float expansionCoeff = 2,
-    float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
+    Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001), float reflectionCoeff = 1,
+    float expansionCoeff = 2, float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
     int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
     return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
-        functionWrapper->f, start, step, minDist, reflectionCoeff,
-        expansionCoeff, contractionCoeff, shrinkCoeff, maxIterations, maxValue,
-        maxThresh));
+        functionWrapper->f, start, step, minDist, reflectionCoeff, expansionCoeff, contractionCoeff,
+        shrinkCoeff, maxIterations, maxValue, maxThresh));
 }
 
-boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(
-    NelderMead2DConfig* config) {
+boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(NelderMead2DConfig* config) {
     return boost::shared_ptr<NelderMead2D>(new NelderMead2D(*config));
 }
 
@@ -807,8 +749,7 @@ boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(
  * accessible to python in the 'robocup' module.
  */
 BOOST_PYTHON_MODULE(robocup) {
-    boost::python::register_exception_translator<NullArgumentException>(
-        &translateException);
+    boost::python::register_exception_translator<NullArgumentException>(&translateException);
 
     def("fix_angle_radians", &fixAngleRadians<double>);
     def("get_trapezoidal_time", &Trapezoidal::getTime);
@@ -842,24 +783,22 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<std::vector<Geometry2d::Point>>("vector_Point")
         .def(vector_indexing_suite<std::vector<Geometry2d::Point>>());
 
-    class_<Geometry2d::Line, Geometry2d::Line*>(
-        "Line", init<Geometry2d::Point, Geometry2d::Point>())
+    class_<Geometry2d::Line, Geometry2d::Line*>("Line",
+                                                init<Geometry2d::Point, Geometry2d::Point>())
         .def("delta", &Geometry2d::Line::delta)
         .def("line_intersection", &Line_line_intersection)
         .def("segment_intersection", &Line_segment_intersection)
         .def("dist_to", &Geometry2d::Line::distTo)
         .def("intersects_circle", &Line_intersects_circle)
-        .def("get_pt", &Line_get_pt,
-             return_value_policy<reference_existing_object>())
+        .def("get_pt", &Line_get_pt, return_value_policy<reference_existing_object>())
         .def("nearest_point", &Geometry2d::Line::nearestPoint);
 
-    class_<Geometry2d::Segment, Geometry2d::Segment*>(
-        "Segment", init<Geometry2d::Point, Geometry2d::Point>())
+    class_<Geometry2d::Segment, Geometry2d::Segment*>("Segment",
+                                                      init<Geometry2d::Point, Geometry2d::Point>())
         .def("center", &Geometry2d::Segment::center)
         .def("length", &Geometry2d::Segment::length)
         .def("dist_to", &Geometry2d::Segment::distTo)
-        .def("get_pt", &Segment_get_pt,
-             return_value_policy<reference_existing_object>())
+        .def("get_pt", &Segment_get_pt, return_value_policy<reference_existing_object>())
         .def("nearest_point", &Segment_nearest_point_to_point)
         .def("segment_intersection", &Segment_segment_intersection)
         .def("line_intersection", &Segment_line_intersection)
@@ -869,8 +808,8 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<Geometry2d::Shape, boost::noncopyable>("Shape");
 
-    class_<Geometry2d::Rect, bases<Geometry2d::Shape>>(
-        "Rect", init<Geometry2d::Point, Geometry2d::Point>())
+    class_<Geometry2d::Rect, bases<Geometry2d::Shape>>("Rect",
+                                                       init<Geometry2d::Point, Geometry2d::Point>())
         .def("contains_rect", &Rect_contains_rect)
         .def("min_x", &Geometry2d::Rect::minx)
         .def("min_y", &Geometry2d::Rect::miny)
@@ -882,18 +821,15 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("rect_intersection", &Rect_rect_intersection)
         .def("segment_intersection", &Rect_segment_intersection)
         .def("contains_point", &Geometry2d::Rect::containsPoint)
-        .def("get_pt", &Rect_get_pt,
-             return_value_policy<reference_existing_object>());
+        .def("get_pt", &Rect_get_pt, return_value_policy<reference_existing_object>());
 
-    class_<Geometry2d::Circle, bases<Geometry2d::Shape>>(
-        "Circle", init<Geometry2d::Point, float>())
+    class_<Geometry2d::Circle, bases<Geometry2d::Shape>>("Circle", init<Geometry2d::Point, float>())
         .def("intersects_line", &Circle_intersects_line)
         .def("nearest_point", &Geometry2d::Circle::nearestPoint)
         .def("contains_point", &Geometry2d::Circle::containsPoint)
         .def_readonly("center", &Geometry2d::Circle::center);
 
-    class_<Geometry2d::Arc>("Arc",
-                            init<Geometry2d::Point, float, float, float>())
+    class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
         .def("intersects_line", &Arc_intersects_line)
         .def("intersects_segment", &Arc_intersects_segment)
         .def("center", &Geometry2d::Arc::center)
@@ -901,8 +837,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("start", &Geometry2d::Arc::start)
         .def("end", &Geometry2d::Arc::end);
 
-    class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape>>(
-        "CompositeShape", init<>())
+    class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape>>("CompositeShape", init<>())
         .def("clear", &Geometry2d::CompositeShape::clear)
         .def("is_empty", &Geometry2d::CompositeShape::empty)
         .def("size", &Geometry2d::CompositeShape::size)
@@ -955,22 +890,18 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<Robot>("Robot", init<Context*, int, bool>())
         .def("shell_id", &Robot::shell)
-        .def("is_ours", &Robot::self,
-             "whether or not this robot is on our team")
-        .add_property("pos", &Robot_pos,
-                      "position vector of the robot in meters")
+        .def("is_ours", &Robot::self, "whether or not this robot is on our team")
+        .add_property("pos", &Robot_pos, "position vector of the robot in meters")
         .def("set_pos_for_testing", &Robot_set_pos_for_testing)
         .def("set_vis_for_testing", &Robot_set_vis_for_testing)
         .add_property("vel", &Robot_vel, "velocity vector of the robot in m/s")
         .add_property("angle", &Robot_angle, "angle of the robot in degrees")
-        .add_property("angle_vel", &Robot_angle_vel,
-                      "angular velocity in degrees per second")
+        .add_property("angle_vel", &Robot_angle_vel, "angular velocity in degrees per second")
         .add_property("visible", &Robot::visible)
         .def("__repr__", &Robot_repr)
         .def("__eq__", &Robot::operator==);
 
-    class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
-        "OurRobot", init<Context*, int>())
+    class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>("OurRobot", init<Context*, int>())
         .def("move_to", &OurRobot_move_to)
         .def("move_to_end_vel", &OurRobot_move_to_end_vel)
         .def("move_to_direct", &OurRobot_move_to_direct)
@@ -1002,8 +933,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("kick_level", &OurRobot::kickLevel)
         .def("chip", &OurRobot::chip)
         .def("chip_level", &OurRobot::chipLevel)
-        .def("unkick", &OurRobot::unkick,
-             "clears any prevous kick command sent to the robot")
+        .def("unkick", &OurRobot::unkick, "clears any prevous kick command sent to the robot")
         .def("kick_immediately", &OurRobot::kickImmediately)
         .def("get_cmd_text", &OurRobot::getCmdText,
              "gets the string containing a list of commands sent to the robot, "
@@ -1018,8 +948,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
 
-    class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
-           bases<Robot>>("OpponentRobot", init<Context*, int>());
+    class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>, bases<Robot>>(
+        "OpponentRobot", init<Context*, int>());
 
     class_<BallState, BallState*>("Ball", init<>())
         .def("set_pos_for_testing", &Ball_set_pos_for_testing)
@@ -1068,8 +998,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("game_state", &Context::game_state);
 
     class_<Field_Dimensions>("Field_Dimensions")
-        .def("OurGoalZoneShapePadded",
-             &Field_Dimensions::OurGoalZoneShapePadded)
+        .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)
         .add_property("Length", &Field_Dimensions::Length)
         .add_property("Width", &Field_Dimensions::Width)
         .add_property("Border", &Field_Dimensions::Border)
@@ -1086,20 +1015,16 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("FloorWidth", &Field_Dimensions::FloorWidth)
         .add_property("CenterPoint", &Field_Dimensions::CenterPoint)
         .add_property("OurGoalZoneShape", &Field_Dimensions::OurGoalZoneShape)
-        .add_property("TheirGoalZoneShape",
-                      &Field_Dimensions::TheirGoalZoneShape)
+        .add_property("TheirGoalZoneShape", &Field_Dimensions::TheirGoalZoneShape)
         .add_property("OurGoalSegment", &Field_Dimensions::OurGoalSegment)
         .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
         .add_property("OurHalf", &Field_Dimensions::OurHalf)
         .add_property("TheirHalf", &Field_Dimensions::TheirHalf)
         .add_property("FieldRect", &Field_Dimensions::FieldRect)
         .add_property("FieldBorders", &Field_Dimensions::FieldBorders)
-        .def_readonly("SingleFieldDimensions",
-                      &Field_Dimensions::Single_Field_Dimensions)
-        .def_readonly("DoubleFieldDimensions",
-                      &Field_Dimensions::Double_Field_Dimensions)
-        .def_readonly("CurrentDimensions",
-                      &Field_Dimensions::Current_Dimensions);
+        .def_readonly("SingleFieldDimensions", &Field_Dimensions::Single_Field_Dimensions)
+        .def_readonly("DoubleFieldDimensions", &Field_Dimensions::Double_Field_Dimensions)
+        .def_readonly("CurrentDimensions", &Field_Dimensions::Current_Dimensions);
 
     class_<std::vector<Geometry2d::Line>>("vector_Line")
         .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());
@@ -1112,8 +1037,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readwrite("segment", &Window::segment)
         .def_readwrite("shot_success", &Window::shot_success);
 
-    class_<std::vector<Window>>("vector_Window")
-        .def(vector_indexing_suite<std::vector<Window>>());
+    class_<std::vector<Window>>("vector_Window").def(vector_indexing_suite<std::vector<Window>>());
 
     class_<WindowEvaluator>("WindowEvaluator", init<Context*>())
         .def_readwrite("debug", &WindowEvaluator::debug)
@@ -1132,8 +1056,7 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<KickEvaluator>("KickEvaluator", init<SystemState*>())
         .def_readwrite("excluded_robots", &KickEvaluator::excluded_robots)
-        .def_readwrite("hypothetical_robot_locations",
-                       &KickEvaluator::hypothetical_robot_locations)
+        .def_readwrite("hypothetical_robot_locations", &KickEvaluator::hypothetical_robot_locations)
         .def("add_excluded_robot", &KickEval_add_excluded_robot)
         .def("eval_pt_to_pt", &KickEval_eval_pt_to_pt)
         .def("eval_pt_to_robot", &KickEval_eval_pt_to_robot)
@@ -1145,15 +1068,13 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__init__", make_constructor(&PythonFunctionWrapper_constructor));
 
     class_<NelderMead2DConfig>("NelderMead2DConfig", no_init)
-        .def("__init__", make_constructor(&NelderMead2DConfig_constructor),
-             "function is required")
+        .def("__init__", make_constructor(&NelderMead2DConfig_constructor), "function is required")
         .def_readwrite("start", &NelderMead2DConfig::start)
         .def_readwrite("step", &NelderMead2DConfig::step)
         .def_readwrite("minDist", &NelderMead2DConfig::minDist)
         .def_readwrite("reflectionCoeff", &NelderMead2DConfig::reflectionCoeff)
         .def_readwrite("expansionCoeff", &NelderMead2DConfig::expansionCoeff)
-        .def_readwrite("contractionCoeff",
-                       &NelderMead2DConfig::contractionCoeff)
+        .def_readwrite("contractionCoeff", &NelderMead2DConfig::contractionCoeff)
         .def_readwrite("shrinkCoeff", &NelderMead2DConfig::shrinkCoeff)
         .def_readwrite("maxIterations", &NelderMead2DConfig::maxIterations)
         .def_readwrite("maxValue", &NelderMead2DConfig::maxValue)
@@ -1162,35 +1083,30 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<NelderMead2D>("NelderMead2D", no_init)
         .def("__init__", make_constructor(&NelderMead2D_constructor))
         .def("execute", &NelderMead2D::execute, "returns max value")
-        .def("singleStep", &NelderMead2D::singleStep,
-             "single run of optimization")
+        .def("singleStep", &NelderMead2D::singleStep, "single run of optimization")
         .def("getValue", &NelderMead2D::getValue, "returns max value")
         .def("getPoint", &NelderMead2D::getPoint, "returns max point");
 
     class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
         .def_readonly("name", &ConfigItem::name);
 
-    class_<Configuration, std::shared_ptr<Configuration>, boost::noncopyable>(
-        "Configuration")
-        .def("FromRegisteredConfigurables",
-             &Configuration::FromRegisteredConfigurables)
+    class_<Configuration, std::shared_ptr<Configuration>, boost::noncopyable>("Configuration")
+        .def("FromRegisteredConfigurables", &Configuration::FromRegisteredConfigurables)
         .def("nameLookup", &Configuration::nameLookup,
              return_value_policy<reference_existing_object>())
         .staticmethod("FromRegisteredConfigurables");
 
     // Add wrappers for ConfigItem subclasses
-    class_<ConfigBool, ConfigBool*, boost::noncopyable, bases<ConfigItem>>(
-        "ConfigBool", no_init)
+    class_<ConfigBool, ConfigBool*, boost::noncopyable, bases<ConfigItem>>("ConfigBool", no_init)
         .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
         .def("__str__", &ConfigBool::toString);
 
-    class_<ConfigDouble, ConfigDouble*, boost::noncopyable, bases<ConfigItem>>(
-        "ConfigDouble", no_init)
+    class_<ConfigDouble, ConfigDouble*, boost::noncopyable, bases<ConfigItem>>("ConfigDouble",
+                                                                               no_init)
         .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
         .def("__str__", &ConfigDouble::toString);
 
-    class_<ConfigInt, ConfigInt*, boost::noncopyable, bases<ConfigItem>>(
-        "ConfigInt", no_init)
+    class_<ConfigInt, ConfigInt*, boost::noncopyable, bases<ConfigItem>>("ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
 
@@ -1203,11 +1119,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .value("stop", SSL_Referee_Command_STOP)
         .value("normal_start", SSL_Referee_Command_NORMAL_START)
         .value("force_start", SSL_Referee_Command_FORCE_START)
-        .value("prepare_kickoff_yellow",
-               SSL_Referee_Command_PREPARE_KICKOFF_YELLOW)
+        .value("prepare_kickoff_yellow", SSL_Referee_Command_PREPARE_KICKOFF_YELLOW)
         .value("prepare_kickoff_blue", SSL_Referee_Command_PREPARE_KICKOFF_BLUE)
-        .value("prepare_penalty_yellow",
-               SSL_Referee_Command_PREPARE_PENALTY_YELLOW)
+        .value("prepare_penalty_yellow", SSL_Referee_Command_PREPARE_PENALTY_YELLOW)
         .value("prepare_penalty_blue", SSL_Referee_Command_PREPARE_PENALTY_BLUE)
         .value("direct_free_yellow", SSL_Referee_Command_DIRECT_FREE_YELLOW)
         .value("direct_free_blue", SSL_Referee_Command_DIRECT_FREE_BLUE)
@@ -1217,7 +1131,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .value("timeout_blue", SSL_Referee_Command_TIMEOUT_BLUE)
         .value("goal_yellow", SSL_Referee_Command_GOAL_YELLOW)
         .value("goal_blue", SSL_Referee_Command_GOAL_BLUE)
-        .value("ball_placement_yellow",
-               SSL_Referee_Command_BALL_PLACEMENT_YELLOW)
+        .value("ball_placement_yellow", SSL_Referee_Command_BALL_PLACEMENT_YELLOW)
         .value("ball_placement_blue", SSL_Referee_Command_BALL_PLACEMENT_BLUE);
 }
