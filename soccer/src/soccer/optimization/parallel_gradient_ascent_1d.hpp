@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gradient_ascent1_d.hpp"
-#include "parallel_gradient1_d_config.hpp"
+#include "gradient_ascent_1d.hpp"
+#include "parallel_gradient_1d_config.hpp"
 #include <vector>
 
 /**

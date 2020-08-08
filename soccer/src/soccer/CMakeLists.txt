@@ -23,9 +23,9 @@ set(ROBOCUP_LIB_SRC
     motion/motion_control.cpp
     motion/motion_control_node.cpp
     motion/trapezoidal_motion.cpp
-    optimization/gradient_ascent1_d.cpp
-    optimization/parallel_gradient_ascent1_d.cpp
-    optimization/nelder_mead2_d.cpp
+    optimization/gradient_ascent_1d.cpp
+    optimization/parallel_gradient_ascent_1d.cpp
+    optimization/nelder_mead_2d.cpp
     optimization/python_function_wrapper.cpp
     planning/primitives/angle_planning.cpp
     planning/primitives/create_path.cpp
@@ -81,9 +81,9 @@ set(SOCCER_TEST_SRC
     ball_test.cpp
     kick_evaluator_test.cpp
     motion/trapezoidal_motion_test.cpp
-    optimization/gradient_ascent1_d_test.cpp
-    optimization/parallel_gradient_ascent1_d_test.cpp
-    optimization/nelder_mead2_d_test.cpp
+    optimization/gradient_ascent_1d_test.cpp
+    optimization/parallel_gradient_ascent_1d_test.cpp
+    optimization/nelder_mead_2d_test.cpp
     planning/tests/angle_planning_test.cpp
     planning/tests/bezier_path_test.cpp
     planning/tests/planner_test.cpp

@@ -7,8 +7,8 @@
 
 #include "robot.hpp"
 #include "system_state.hpp"
-#include "optimization/parallel_gradient1_d_config.hpp"
-#include "optimization/parallel_gradient_ascent1_d.hpp"
+#include "optimization/parallel_gradient_1d_config.hpp"
+#include "optimization/parallel_gradient_ascent_1d.hpp"
 
 // < [Point along target segment to aim at], [% Chance of success] >
 using KickResults = std::pair<rj_geometry::Point, float>;

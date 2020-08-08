@@ -9,7 +9,7 @@ set(RJ_VISION_FILTER_SRC
     camera/camera.cpp
     camera/world.cpp
     filter/kalman_filter.cpp
-    filter/kalman_filter2_d.cpp
+    filter/kalman_filter_2d.cpp
     filter/kalman_filter3_d.cpp
     kick/detector/fast_kick_detector.cpp
     kick/detector/slow_kick_detector.cpp

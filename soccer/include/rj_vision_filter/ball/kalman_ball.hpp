@@ -3,7 +3,7 @@
 #include <rj_geometry/point.hpp>
 #include <boost/circular_buffer.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
-#include <rj_vision_filter/filter/kalman_filter2_d.hpp>
+#include <rj_vision_filter/filter/kalman_filter_2d.hpp>
 
 namespace vision_filter {
 class WorldBall;

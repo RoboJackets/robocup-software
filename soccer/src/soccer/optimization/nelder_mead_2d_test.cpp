@@ -4,8 +4,8 @@
 
 #include <rj_geometry/util.hpp>
 
-#include "nelder_mead2_d.hpp"
-#include "nelder_mead2_d_config.hpp"
+#include "nelder_mead_2d.hpp"
+#include "nelder_mead_2d_config.hpp"
 
 static float eval_function1(rj_geometry::Point p) {
     return -1 * sqrt(p.x() * p.x() + p.y() * p.y());

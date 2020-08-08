@@ -1,4 +1,4 @@
-#include "nelder_mead2_d.hpp"
+#include "nelder_mead_2d.hpp"
 
 #include <algorithm>
 #include <cmath>

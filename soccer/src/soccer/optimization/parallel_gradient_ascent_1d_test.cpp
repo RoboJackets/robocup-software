@@ -3,10 +3,10 @@
 
 #include <gtest/gtest.h>
 
-#include "gradient1_d_config.hpp"
-#include "gradient_ascent1_d.hpp"
-#include "parallel_gradient1_d_config.hpp"
-#include "parallel_gradient_ascent1_d.hpp"
+#include "gradient_1d_config.hpp"
+#include "gradient_ascent_1d.hpp"
+#include "parallel_gradient_1d_config.hpp"
+#include "parallel_gradient_ascent_1d.hpp"
 
 using namespace std;
 

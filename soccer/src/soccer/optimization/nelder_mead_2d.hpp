@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nelder_mead2_d_config.hpp"
+#include "nelder_mead_2d_config.hpp"
 #include <rj_geometry/point.hpp>
 #include <vector>
 #include <tuple>

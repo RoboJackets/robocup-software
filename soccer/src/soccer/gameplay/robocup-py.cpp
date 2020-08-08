@@ -38,8 +38,8 @@ using namespace boost::python;
 #include "robot_config.hpp"
 #include "window_evaluator.hpp"
 #include "motion/trapezoidal_motion.hpp"
-#include "optimization/nelder_mead2_d.hpp"
-#include "optimization/nelder_mead2_d_config.hpp"
+#include "optimization/nelder_mead_2d.hpp"
+#include "optimization/nelder_mead_2d_config.hpp"
 #include "optimization/python_function_wrapper.hpp"
 #include "planning/motion_constraints.hpp"
 #include "referee/external_referee.hpp"
@@ -732,7 +732,7 @@ float point_get_y(const rj_geometry::Point* self) { return self->y(); }
 void point_set_x(rj_geometry::Point* self, float x) { self->x() = x; }
 void point_set_y(rj_geometry::Point* self, float y) { self->y() = y; }
 
-boost::shared_ptr<NelderMead2DConfig> nelder_mead2_d_config_constructor(
+boost::shared_ptr<NelderMead2DConfig> nelder_mead_2d_config_constructor(
     PythonFunctionWrapper* function_wrapper, rj_geometry::Point start = rj_geometry::Point(0, 0),
     rj_geometry::Point step = rj_geometry::Point(1, 1),
     rj_geometry::Point min_dist = rj_geometry::Point(0.001, 0.001), float reflection_coeff = 1,
@@ -743,7 +743,7 @@ boost::shared_ptr<NelderMead2DConfig> nelder_mead2_d_config_constructor(
         contraction_coeff, shrink_coeff, max_iterations, max_value, max_thresh));
 }
 
-boost::shared_ptr<NelderMead2D> nelder_mead2_d_constructor(NelderMead2DConfig* config) {
+boost::shared_ptr<NelderMead2D> nelder_mead_2d_constructor(NelderMead2DConfig* config) {
     return boost::shared_ptr<NelderMead2D>(new NelderMead2D(*config));
 }
 
@@ -1071,7 +1071,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__init__", make_constructor(&python_function_wrapper_constructor));
 
     class_<NelderMead2DConfig>("NelderMead2DConfig", no_init)
-        .def("__init__", make_constructor(&nelder_mead2_d_config_constructor),
+        .def("__init__", make_constructor(&nelder_mead_2d_config_constructor),
              "function is required")
         .def_readwrite("start", &NelderMead2DConfig::start)
         .def_readwrite("step", &NelderMead2DConfig::step)
@@ -1085,7 +1085,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readwrite("maxThresh", &NelderMead2DConfig::max_thresh);
 
     class_<NelderMead2D>("NelderMead2D", no_init)
-        .def("__init__", make_constructor(&nelder_mead2_d_constructor))
+        .def("__init__", make_constructor(&nelder_mead_2d_constructor))
         .def("execute", &NelderMead2D::execute, "returns max value")
         .def("singleStep", &NelderMead2D::single_step, "single run of optimization")
         .def("getValue", &NelderMead2D::get_value, "returns max value")

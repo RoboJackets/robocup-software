@@ -1,4 +1,4 @@
-#include "gradient_ascent1_d.hpp"
+#include "gradient_ascent_1d.hpp"
 
 #include <cmath>
 #include <tuple>

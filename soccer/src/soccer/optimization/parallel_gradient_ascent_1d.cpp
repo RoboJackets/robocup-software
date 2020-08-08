@@ -1,4 +1,4 @@
-#include "parallel_gradient_ascent1_d.hpp"
+#include "parallel_gradient_ascent_1d.hpp"
 
 #include <algorithm>
 

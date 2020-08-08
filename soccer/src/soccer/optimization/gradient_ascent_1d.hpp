@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gradient1_d_config.hpp"
+#include "gradient_1d_config.hpp"
 #include <memory>
 
 /**
