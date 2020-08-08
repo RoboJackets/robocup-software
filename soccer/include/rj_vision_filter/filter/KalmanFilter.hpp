@@ -36,28 +36,28 @@ public:
      * Use a child class to setup the specific state matricies
      * Assumes 1 input
      *
-     * @param stateSize The size of the state vector
-     * @param observationSize The size of the observation vector
+     * @param state_size The size of the state vector
+     * @param observation_size The size of the observation vector
      */
-    KalmanFilter(unsigned int stateSize, unsigned int observationSize)
-        : x_k1_k1(stateSize),
-          x_k_k1(stateSize),
-          x_k_k(stateSize),
-          u_k(1),
-          z_k(observationSize),
-          y_k_k1(observationSize),
-          y_k_k(observationSize),
-          P_k1_k1(stateSize, stateSize),
-          P_k_k1(stateSize, stateSize),
-          P_k_k(stateSize, stateSize),
-          S_k(observationSize, observationSize),
-          K_k(stateSize, observationSize),
-          F_k(stateSize, stateSize),
-          B_k(stateSize, 1),
-          H_k(observationSize, stateSize),
-          Q_k(stateSize, stateSize),
-          R_k(observationSize, observationSize),
-          I(Eigen::MatrixXd::Identity(stateSize, stateSize)) {}
+    KalmanFilter(unsigned int state_size, unsigned int observation_size)
+        : x_k1_k1_(state_size),
+          x_k_k1_(state_size),
+          x_k_k_(state_size),
+          u_k_(1),
+          z_k_(observation_size),
+          y_k_k1_(observation_size),
+          y_k_k_(observation_size),
+          P_k1_k1_(state_size, state_size),
+          P_k_k1_(state_size, state_size),
+          P_k_k_(state_size, state_size),
+          S_k_(observation_size, observation_size),
+          K_k_(state_size, observation_size),
+          F_k_(state_size, state_size),
+          B_k_(state_size, 1),
+          H_k_(observation_size, state_size),
+          Q_k_(state_size, state_size),
+          R_k_(observation_size, observation_size),
+          identity_(Eigen::MatrixXd::Identity(state_size, state_size)) {}
 
     /**
      * Predicts without update
@@ -68,33 +68,43 @@ public:
      * Predicts with update
      * z_k must be set with the observation
      */
-    void predictWithUpdate();
+    void predict_with_update();
 
 protected:
-    Eigen::VectorXd x_k1_k1;
-    Eigen::VectorXd x_k_k1;
-    Eigen::VectorXd x_k_k;
+    Eigen::VectorXd x_k1_k1_;
+    Eigen::VectorXd x_k_k1_;
+    Eigen::VectorXd x_k_k_;
 
-    Eigen::VectorXd u_k;
-    Eigen::VectorXd z_k;
+    Eigen::VectorXd u_k_;
+    Eigen::VectorXd z_k_;
 
-    Eigen::VectorXd y_k_k1;
-    Eigen::VectorXd y_k_k;
+    Eigen::VectorXd y_k_k1_;
+    Eigen::VectorXd y_k_k_;
 
-    Eigen::MatrixXd P_k1_k1;
-    Eigen::MatrixXd P_k_k1;
-    Eigen::MatrixXd P_k_k;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd P_k1_k1_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd P_k_k1_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd P_k_k_;
 
-    Eigen::MatrixXd S_k;
-    Eigen::MatrixXd K_k;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd S_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd K_k_;
 
-    Eigen::MatrixXd F_k;
-    Eigen::MatrixXd B_k;
-    Eigen::MatrixXd H_k;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd F_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd B_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd H_k_;
 
-    Eigen::MatrixXd Q_k;
-    Eigen::MatrixXd R_k;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd Q_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd R_k_;
 
-    Eigen::MatrixXd I;
+    Eigen::MatrixXd identity_;
 };
 }  // namespace vision_filter

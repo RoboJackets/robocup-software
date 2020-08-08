@@ -44,7 +44,7 @@ bool Line::intersects(const Line& line1, const Line& line2, Point* intersection)
 }
 
 // Has Simple Test
-float Line::distTo(Point other) const {
+float Line::dist_to(Point other) const {
     Point delta = pt[1] - pt[0];
     const auto top = static_cast<float>(delta.x() * (pt[0].y() - other.y()) -
                                         (pt[0].x() - other.x()) * delta.y());
@@ -53,7 +53,7 @@ float Line::distTo(Point other) const {
 }
 
 // Very Simple Test
-Point Line::nearestPoint(Point p) const {
+Point Line::nearest_point(Point p) const {
     Point v_hat = delta().normalized();
     return pt[0] + v_hat * v_hat.dot(p - pt[0]);
 }
@@ -87,23 +87,23 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
 
     float common = std::sqrt(descr);
 
-    float xPart1 = det * dy;
-    float signDy = dy < 0 ? -1 : 1;
+    float x_part1 = det * dy;
+    float sign_dy = dy < 0 ? -1 : 1;
 
-    float xPart2 = signDy * dx * common;
+    float x_part2 = sign_dy * dx * common;
 
-    float yPart1 = -det * dx;
-    float yPart2 = std::fabs(dy) * common;
+    float y_part1 = -det * dx;
+    float y_part2 = std::fabs(dy) * common;
 
     if (p1 != nullptr) {
-        float x = xPart1 + xPart2;
-        float y = yPart1 + yPart2;
+        float x = x_part1 + x_part2;
+        float y = y_part1 + y_part2;
         *p1 = Point(x / dr2 + circle.center.x(), y / dr2 + circle.center.y());
     }
 
     if (p2 != nullptr) {
-        float x = xPart1 - xPart2;
-        float y = yPart1 - yPart2;
+        float x = x_part1 - x_part2;
+        float y = y_part1 - y_part2;
         *p2 = Point(x / dr2 + circle.center.x(), y / dr2 + circle.center.y());
     }
 

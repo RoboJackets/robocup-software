@@ -62,7 +62,7 @@ public:
      *
      * @param instant The new RobotInstant to add.
      */
-    void AppendInstant(RobotInstant instant);
+    void append_instant(RobotInstant instant);
 
     /**
      * @brief Hold the final position for a set time.
@@ -72,18 +72,18 @@ public:
      *
      * @param seconds the duration after the end of the trajectory to hold pose.
      */
-    void HoldFor(RJ::Seconds duration);
+    void hold_for(RJ::Seconds duration);
 
     /**
      * @brief Check that the given point in time is within bounds.
      */
-    [[nodiscard]] bool CheckTime(RJ::Time time) const;
+    [[nodiscard]] bool check_time(RJ::Time time) const;
 
     /**
      * @brief Check that the given time is within bounds. Operates on a duration
      * (time into the path) rather than a timestamp.
      */
-    [[nodiscard]] bool CheckSeconds(RJ::Seconds seconds) const;
+    [[nodiscard]] bool check_seconds(RJ::Seconds seconds) const;
 
     /**
      * @brief Contract or expand this trajectory by scaling velocities and
@@ -93,12 +93,12 @@ public:
      * @param fixed_point The time point that should remain unchanged. Defaults
      *  to the beginning of the trajectory.
      */
-    void ScaleDuration(RJ::Seconds final_duration, RJ::Time fixed_point);
+    void scale_duration(RJ::Seconds final_duration, RJ::Time fixed_point);
 
     /**
      * @copydoc Trajectory::ScaleDuration(RJ::Seconds, RJ::Time)
      */
-    void ScaleDuration(RJ::Seconds final_duration);
+    void scale_duration(RJ::Seconds final_duration);
 
     /**
      * @return The time point at the beginning of the trajectory.
@@ -159,15 +159,15 @@ public:
      * @brief Returns a trajectory formed using an interval subset of this
      *  trajectory.
      *
-     * @param start_time The time from which the sub-trajectory should start.
-     * @param end_time The time at which the sub-trajectory should end.
+     * @param clip_start_time The time from which the sub-trajectory should start.
+     * @param clip_end_time The time at which the sub-trajectory should end.
      *  If it is after the trajectory's end, the sub-trajectory will be taken
      *  to the end of the trajectory.
      *
      * @return a sub-trajectory of the original trajectory.
      */
-    [[nodiscard]] Trajectory subTrajectory(RJ::Time startTime,
-                                           RJ::Time endTime) const;
+    [[nodiscard]] Trajectory sub_trajectory(RJ::Time clip_start_time,
+                                           RJ::Time clip_end_time) const;
 
     /**
      * @return the instant count. Intended for use when editing a trajectory
@@ -283,12 +283,12 @@ public:
      * @param time time between previous and next
      * @return the interpolated robot instant at the given time
      */
-    static RobotInstant interpolatedInstant(const RobotInstant& prev,
+    static RobotInstant interpolated_instant(const RobotInstant& prev,
                                             const RobotInstant& next,
                                             RJ::Time time);
 
-    void setDebugText(std::string str) { debug_text_ = std::move(str); };
-    [[nodiscard]] std::string getDebugText() const {
+    void set_debug_text(std::string str) { debug_text_ = std::move(str); };
+    [[nodiscard]] std::string get_debug_text() const {
         return debug_text_ ? *debug_text_ : "";
     }
 
@@ -296,7 +296,7 @@ public:
      * @brief Get the time this trajectory was created, or nullopt if it has not
      * yet been stamped.
      */
-    std::optional<RJ::Time> timeCreated() { return creation_stamp_; }
+    std::optional<RJ::Time> time_created() { return creation_stamp_; }
 
     /**
      * @brief Stamp this trajectory for completion at the specified time.
@@ -330,7 +330,7 @@ public:
          *  by this cursor.
          */
         [[nodiscard]] bool has_value() const {
-            return trajectory_.CheckTime(time_);
+            return trajectory_.check_time(time_);
         }
 
         /**

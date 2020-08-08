@@ -20,8 +20,8 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
     RobotInstant b_begin = b.first();
 
     using Geometry2d::Point;
-    if (!a_end.position().nearPoint(b_begin.position(), 1e-6) ||
-        !a_end.linear_velocity().nearPoint(b_begin.linear_velocity(), 1e-6) ||
+    if (!a_end.position().near_point(b_begin.position(), 1e-6) ||
+        !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6) ||
         a_end.stamp != b_begin.stamp) {
         throw std::invalid_argument(
             "Cannot splice trajectories a and b, where a.last() != b.first()");
@@ -35,7 +35,7 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
     creation_stamp_ = std::nullopt;
 }
 
-void Trajectory::AppendInstant(RobotInstant instant) {
+void Trajectory::append_instant(RobotInstant instant) {
     if (!empty() && instant.stamp <= end_time()) {
         throw std::invalid_argument(
             "Cannot append instant at or before the "
@@ -50,22 +50,22 @@ void Trajectory::AppendInstant(RobotInstant instant) {
     creation_stamp_ = std::nullopt;
 }
 
-bool Trajectory::CheckTime(RJ::Time time) const {
+bool Trajectory::check_time(RJ::Time time) const {
     return time >= begin_time() && time <= end_time();
 }
 
-bool Trajectory::CheckSeconds(RJ::Seconds seconds) const {
+bool Trajectory::check_seconds(RJ::Seconds seconds) const {
     return seconds >= 0s && seconds <= duration();
 }
 
-void Trajectory::ScaleDuration(RJ::Seconds final_duration) {
+void Trajectory::scale_duration(RJ::Seconds final_duration) {
     // Note: even though this modifies the trajectory, it does not break
     // angle planning and so we do not need to mark the angle profile as
     // invalid.
-    ScaleDuration(final_duration, begin_time());
+    scale_duration(final_duration, begin_time());
 }
 
-void Trajectory::ScaleDuration(RJ::Seconds final_duration, RJ::Time fixed_point) {
+void Trajectory::scale_duration(RJ::Seconds final_duration, RJ::Time fixed_point) {
     // Note: even though this modifies the trajectory, it does not break
     // angle planning and so we do not need to mark the angle profile as
     // invalid.
@@ -84,7 +84,7 @@ std::optional<RobotInstant> Trajectory::evaluate(RJ::Seconds seconds) const {
 }
 
 std::optional<RobotInstant> Trajectory::evaluate(RJ::Time time) const {
-    if (instants_.empty() || !CheckTime(time)) {
+    if (instants_.empty() || !check_time(time)) {
         return std::nullopt;
     }
 
@@ -93,8 +93,8 @@ std::optional<RobotInstant> Trajectory::evaluate(RJ::Time time) const {
     return cursor.value();
 }
 
-RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
-                                             const RobotInstant& next_entry, RJ::Time time) {
+RobotInstant Trajectory::interpolated_instant(const RobotInstant& prev_entry,
+                                              const RobotInstant& next_entry, RJ::Time time) {
     if (time < prev_entry.stamp || time > next_entry.stamp) {
         throw std::invalid_argument("Interpolant time is not between prev_ and next_ timestamps");
     }
@@ -118,8 +118,8 @@ RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
 
     Pose pose_0 = prev_entry.pose;
     Pose pose_1 = next_entry.pose;
-    Twist tangent_0 = prev_entry.velocity * RJ::numSeconds(dt);
-    Twist tangent_1 = next_entry.velocity * RJ::numSeconds(dt);
+    Twist tangent_0 = prev_entry.velocity * RJ::num_seconds(dt);
+    Twist tangent_1 = next_entry.velocity * RJ::num_seconds(dt);
 
     // Cubic interpolation.
     // We've rescaled the problem to exist in the range [0, 1] instead of
@@ -138,28 +138,28 @@ RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
                                      Eigen::Vector3d(tangent_0) * (3 * s * s - 4 * s + 1) +
                                      Eigen::Vector3d(pose_1) * (-6 * s * s + 6 * s) +
                                      Eigen::Vector3d(tangent_1) * (3 * s * s - 2 * s)) /
-                               RJ::numSeconds(dt);
+                               RJ::num_seconds(dt);
 
     // Create a new RobotInstant with the correct values.
     return RobotInstant{interpolated_pose, interpolated_twist, time};
 }
 
-Trajectory Trajectory::subTrajectory(RJ::Time startTime, RJ::Time endTime) const {
-    if (startTime > endTime) {
+Trajectory Trajectory::sub_trajectory(RJ::Time clip_start_time, RJ::Time clip_end_time) const {
+    if (clip_start_time > clip_end_time) {
         throw std::invalid_argument("End time must not come before start time");
     }
 
-    Cursor cursor(*this, startTime);
+    Cursor cursor(*this, clip_start_time);
 
     if (!cursor.has_value()) {
         throw std::invalid_argument("Sub-trajectory start time is outside of trajectory");
     }
 
-    RJ::Time actual_end = std::min(endTime, end_time());
+    RJ::Time actual_end = std::min(clip_end_time, end_time());
 
     // If the start and end times are identical, we are trying to grab an
     // infinitesimal trajectory. This is weird but technically not wrong.
-    if (startTime == actual_end) {
+    if (clip_start_time == actual_end) {
         return Trajectory({cursor.value()});
     }
 
@@ -172,7 +172,7 @@ Trajectory Trajectory::subTrajectory(RJ::Time startTime, RJ::Time endTime) const
 
     // The above calculation will always miss the last instant.
     result_instants.push_back(
-        Trajectory::interpolatedInstant(result_instants.back(), cursor.value(), actual_end));
+        Trajectory::interpolated_instant(result_instants.back(), cursor.value(), actual_end));
 
     return Trajectory{std::move(result_instants)};
 }
@@ -186,30 +186,30 @@ Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, insta
 void Trajectory::draw(DebugDrawer* drawer,
                       std::optional<Geometry2d::Point> alt_text_position) const {
     if (instants_.size() > 1) {
-        Packet::DebugRobotPath* dbgPath = drawer->addDebugPath();
-        dbgPath->set_layer(drawer->findDebugLayer("Motion"));
+        Packet::DebugRobotPath* dbg_path = drawer->add_debug_path();
+        dbg_path->set_layer(drawer->find_debug_layer("Motion"));
 
         for (const RobotInstant& instant : instants_) {
-            Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbgPath->add_points();
+            Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg_path->add_points();
             *pt->mutable_pos() = instant.pose.position();
             *pt->mutable_vel() = instant.velocity.linear();
         }
     }
 
     if (debug_text_) {
-        Geometry2d::Point textPos;
+        Geometry2d::Point text_pos;
 
         // Only use the backup position if there's no trajectory.
         if (!empty()) {
-            textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
+            text_pos = first().pose.position() + Geometry2d::Point(0.1, 0);
         } else if (alt_text_position.has_value()) {
-            textPos = alt_text_position.value();
+            text_pos = alt_text_position.value();
         } else {
             return;
         }
 
-        drawer->drawText(QString::fromStdString(debug_text_.value()), textPos,
-                         QColor(100, 100, 255, 100), "PlanningDebugText");
+        drawer->draw_text(QString::fromStdString(debug_text_.value()), text_pos,
+                          QColor(100, 100, 255, 100), "PlanningDebugText");
     }
 }
 
@@ -226,17 +226,17 @@ bool Trajectory::nearly_equal(const Trajectory& a, const Trajectory& b, double t
     // Otherwise, they are identical.
     return a_it == a.instants_end() && b_it == b.instants_end();
 }
-void Trajectory::HoldFor(RJ::Seconds duration) {
+void Trajectory::hold_for(RJ::Seconds duration) {
     RobotInstant instant = last();
     if (duration <= RJ::Seconds(0)) {
         throw std::invalid_argument("Hold duration must be positive");
     }
 
-    if (!Twist::nearly_equals(instant.velocity, Twist::Zero())) {
+    if (!Twist::nearly_equals(instant.velocity, Twist::zero())) {
         throw std::runtime_error("Cannot hold nonzero velocity");
     }
 
-    instant.velocity = Twist::Zero();
+    instant.velocity = Twist::zero();
     instant.stamp = instant.stamp + duration;
 
     // Does not invalidate angle planning.
@@ -261,14 +261,14 @@ RobotInstant Trajectory::Cursor::value() const {
     }
     RobotInstant instant_1 = *(iterator_ + 1);
 
-    return Trajectory::interpolatedInstant(instant_0, instant_1, time_);
+    return Trajectory::interpolated_instant(instant_0, instant_1, time_);
 }
 
 void Trajectory::Cursor::seek(RJ::Time time) {
     // If we are seeking past the end (or before the beginning) it's not an
     // error, we just don't have a valid value anymore. We do this to be
     // consistent with the behavior of advance().
-    if (!trajectory_.CheckTime(time)) {
+    if (!trajectory_.check_time(time)) {
         time_ = time;
         iterator_ = trajectory_.instants_end();
         return;
@@ -302,7 +302,7 @@ void Trajectory::Cursor::seek(RJ::Time time) {
 void Trajectory::Cursor::advance(RJ::Seconds seconds) {
     time_ = RJ::Time(time_ + seconds);
 
-    if (!trajectory_.CheckTime(time_)) {
+    if (!trajectory_.check_time(time_)) {
         time_ = RJ::Time::max();
         return;
     }

@@ -16,8 +16,9 @@ void SoccerConfigClient::run() {
         return;
     }
 
-    rj_convert::convert_from_ros(config_client_->gameSettingsThreaded(), &context_->game_settings);
-    rj_convert::convert_from_ros(config_client_->fieldDimensionsThreaded(),
+    rj_convert::convert_from_ros(config_client_->game_settings_threaded(),
+                                 &context_->game_settings);
+    rj_convert::convert_from_ros(config_client_->field_dimensions_threaded(),
                                  &context_->field_dimensions);
 }
 }  // namespace ros2_temp

@@ -13,29 +13,29 @@
 class SimRadio : public Radio {
 public:
     static std::size_t instance_count;
-    SimRadio(Context* context, bool blueTeam = false);
+    SimRadio(Context* context, bool blue_team = false);
 
-    [[nodiscard]] bool isOpen() const override;
-    void send(const std::array<RobotIntent, Num_Shells>& intents,
-              const std::array<MotionSetpoint, Num_Shells>& setpoints) override;
+    [[nodiscard]] bool is_open() const override;
+    void send(const std::array<RobotIntent, kNumShells>& intents,
+              const std::array<MotionSetpoint, kNumShells>& setpoints) override;
     void receive() override;
-    void switchTeam(bool blueTeam) override;
+    void switch_team(bool blue_team) override;
 
-    void stopRobots();
+    void stop_robots();
 
 private:
-    Context* const _context;
+    Context* const context_;
 
-    void handleReceive(const std::string& data);
-    void startReceive();
-    void receivePacket(const boost::system::error_code& error,
+    void handle_receive(const std::string& data);
+    void start_receive();
+    void receive_packet(const boost::system::error_code& error,
                        size_t num_bytes);
 
-    boost::asio::io_service _io_service;
-    boost::asio::ip::udp::socket _socket;
-    boost::asio::ip::udp::endpoint _grsim_endpoint;
+    boost::asio::io_service io_service_;
+    boost::asio::ip::udp::socket socket_;
+    boost::asio::ip::udp::endpoint grsim_endpoint_;
 
-    std::vector<char> _buffer;
+    std::vector<char> buffer_;
 
-    bool _blueTeam;
+    bool blue_team_;
 };

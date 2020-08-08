@@ -15,7 +15,8 @@ using Geometry2d::Point;
 using Geometry2d::Pose;
 using Geometry2d::Twist;
 
-bool checkTrajectoryContinuous(const Trajectory& trajectory, const RobotConstraints& constraints) {
+bool check_trajectory_continuous(const Trajectory& trajectory,
+                                 const RobotConstraints& constraints) {
     if (trajectory.empty()) {
         return false;
     }
@@ -37,15 +38,15 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory, const RobotConstrai
         }
 
         // Check for continuous position
-        double dist = current.position().distTo(previous.position());
-        double delta_angle = std::abs(fixAngleRadians(current.heading() - previous.heading()));
+        double dist = current.position().dist_to(previous.position());
+        double delta_angle = std::abs(fix_angle_radians(current.heading() - previous.heading()));
         double tangential_acceleration =
             (current.linear_velocity().mag() - previous.linear_velocity().mag()) / dt;
 
         // Include a 1.5x buffer on speeds, because our constraint logic isn't
         // perfect and this is just the average speed over the interval.
         // TODO(#1506): Check angle planning too.
-        if (dist / dt > 1.5 * constraints.mot.maxSpeed) {
+        if (dist / dt > 1.5 * constraints.mot.max_speed) {
             std::cout << "Failure because of position deltas " << dist / dt << ", "
                       << delta_angle / dt << std::endl;
             return false;
@@ -53,11 +54,12 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory, const RobotConstrai
 
         // Make sure tangential acceleration and velocity are limited.
         // For now, don't enforce the acceleration limit.
-        if (current.linear_velocity().mag() > constraints.mot.maxSpeed * 1.5
-            /* || tangential_acceleration > constraints.mot.maxAcceleration * 1.5 */) {
+        if (current.linear_velocity().mag() > constraints.mot.max_speed * 1.5
+            /* || tangential_acceleration > constraints.mot.max_acceleration * 1.5 */) {
             std::cout << "Failure because of velocity " << current.linear_velocity().mag()
                       << ", acceleration " << tangential_acceleration << " (max "
-                      << constraints.mot.maxSpeed << ", " << constraints.mot.maxAcceleration << ")"
+                      << constraints.mot.max_speed << ", " << constraints.mot.max_acceleration
+                      << ")"
                       << " dt = " << dt << " delta pos = " << dist << std::endl;
             return false;
         }
@@ -68,12 +70,12 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory, const RobotConstrai
     return true;
 }
 
-RobotInstant randomInstant(std::mt19937* generator) {
-    Point randPoint{random(generator, -3.0, 3.0), random(generator, 0.0, 6.0)};
-    Pose randPose{randPoint, random(generator, 0.0, 2 * M_PI)};
-    Point randVel{random(generator, -0.5, 0.5), random(generator, -0.5, 0.5)};
-    Twist randTwist{randVel, random(generator, -0.2, 0.2)};
-    return RobotInstant{randPose, randTwist, RJ::now()};
+RobotInstant random_instant(std::mt19937* generator) {
+    Point rand_point{random(generator, -3.0, 3.0), random(generator, 0.0, 6.0)};
+    Pose rand_pose{rand_point, random(generator, 0.0, 2 * M_PI)};
+    Point rand_vel{random(generator, -0.5, 0.5), random(generator, -0.5, 0.5)};
+    Twist rand_twist{rand_vel, random(generator, -0.2, 0.2)};
+    return RobotInstant{rand_pose, rand_twist, RJ::now()};
 }
 
 }  // namespace Planning::TestingUtils

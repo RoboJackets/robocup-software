@@ -22,16 +22,16 @@ public:
      * robot and the resulting velocity vector
      *
      * @param ball Kalman ball we are trying to test
-     * @param yellowRobots Best estimation of the yellow robots states
-     * @param blueRobots Best estimation of the yellow robots states
-     * @param outNewVel Output of the resulting velocity vector after bounce
+     * @param yellow_robots Best estimation of the yellow robots states
+     * @param blue_robots Best estimation of the yellow robots states
+     * @param out_new_vel Output of the resulting velocity vector after bounce
      *
      * @return Whether the ball bounces or not
      */
-    static bool CalcBallBounce(const KalmanBall& ball,
-                               const std::vector<WorldRobot>& yellowRobots,
-                               const std::vector<WorldRobot>& blueRobots,
-                               Geometry2d::Point& outNewVel);
+    static bool calc_ball_bounce(const KalmanBall& ball,
+                               const std::vector<WorldRobot>& yellow_robots,
+                               const std::vector<WorldRobot>& blue_robots,
+                               Geometry2d::Point& out_new_vel);
 
 private:
     /**
@@ -42,7 +42,7 @@ private:
      * @param ball The ball we want to check for intersection with
      * @param robot The robot we what to check for intersection with
      */
-    static bool BallInRobot(const KalmanBall& ball, const WorldRobot& robot);
+    static bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot);
 
     /**
      * Finds the 0, 1 or 2 interserct locations on the ball shell
@@ -55,7 +55,7 @@ private:
      * 1 means tangental intersection
      * 2 means chord based intersection
      */
-    static std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
+    static std::vector<Geometry2d::Point> possible_ball_intersection_pts(
         const KalmanBall& ball, const WorldRobot& robot);
 };
 }  // namespace vision_filter

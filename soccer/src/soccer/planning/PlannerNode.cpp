@@ -14,7 +14,7 @@
 namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context) {
-    robots_planners_.resize(Num_Shells);
+    robots_planners_.resize(kNumShells);
 
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "planner_node_game_state_sub", vision_filter::topics::kWorldStatePub);
@@ -22,14 +22,14 @@ PlannerNode::PlannerNode(Context* context) : context_(context) {
 
 using namespace Geometry2d;
 void PlannerNode::run() {
-    const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->Get();
+    const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
     if (world_state_msg == nullptr) {
         return;
     }
 
     const WorldState world_state = rj_convert::convert_from_ros(*world_state_msg);
-    const ShapeSet& global_obstacles = context_->globalObstacles;
-    const ShapeSet& goal_zones = context_->goalZoneObstacles;
+    const ShapeSet& global_obstacles = context_->global_obstacles;
+    const ShapeSet& goal_zones = context_->goal_zone_obstacles;
     const auto& robot_intents = context_->robot_intents;
     DebugDrawer* debug_drawer = &context_->debug_drawer;
     auto* trajectories = &context_->trajectories;
@@ -40,18 +40,18 @@ void PlannerNode::run() {
         return;
     }
 
-    std::array<Trajectory*, Num_Shells> planned{};
+    std::array<Trajectory*, kNumShells> planned{};
 
     // Sort the robots by priority
-    std::array<int, Num_Shells> shells{};
-    for (int i = 0; i < Num_Shells; i++) {
+    std::array<int, kNumShells> shells{};
+    for (int i = 0; i < kNumShells; i++) {
         shells[i] = i;
     }
     std::sort(shells.begin(), shells.end(), [&](int a, int b) {
         return robot_intents.at(a).priority > robot_intents.at(b).priority;
     });
 
-    for (int i = 0; i < Num_Shells; i++) {
+    for (int i = 0; i < kNumShells; i++) {
         unsigned int shell = shells.at(i);
         const auto& robot = world_state.our_robots.at(shell);
         const auto& intent = robot_intents.at(shell);
@@ -72,7 +72,7 @@ void PlannerNode::run() {
 
         if (debug_drawer != nullptr) {
             for (const auto& shape : local_obstacles.shapes()) {
-                debug_drawer->drawShape(shape, QColor(0, 0, 0, 16));
+                debug_drawer->draw_shape(shape, QColor(0, 0, 0, 16));
             }
         }
 
@@ -88,7 +88,7 @@ void PlannerNode::run() {
                             intent.priority,
                             debug_drawer};
 
-        Trajectory trajectory = robots_planners_.at(shell).PlanForRobot(request);
+        Trajectory trajectory = robots_planners_.at(shell).plan_for_robot(request);
         trajectory.draw(&context_->debug_drawer);
         trajectories->at(shell) = std::move(trajectory);
 
@@ -107,7 +107,7 @@ PlannerForRobot::PlannerForRobot() {
     planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
 }
 
-Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
+Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request) {
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
@@ -115,8 +115,8 @@ Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
     for (auto& planner : planners_) {
         // If this planner could possibly plan for this command, try to make
         // a plan.
-        if (trajectory.empty() && planner->isApplicable(request.motionCommand)) {
-            RobotInstant startInstant = request.start;
+        if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
+            RobotInstant start_instant = request.start;
             trajectory = planner->plan(request);
         }
 
@@ -130,7 +130,7 @@ Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
                                          " has no angle profile!");
             }
 
-            if (!trajectory.timeCreated().has_value()) {
+            if (!trajectory.time_created().has_value()) {
                 throw std::runtime_error("Trajectory returned from " + planner->name() +
                                          " has no timestamp!");
             }
@@ -140,7 +140,7 @@ Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
     if (trajectory.empty()) {
         std::cerr << "No valid planner! Did you forget to specify a default planner?" << std::endl;
         trajectory = Trajectory{{request.start}};
-        trajectory.setDebugText("Error: No Valid Planners");
+        trajectory.set_debug_text("Error: No Valid Planners");
     }
 
     return trajectory;

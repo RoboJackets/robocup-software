@@ -3,15 +3,15 @@
 
 REGISTER_CONFIGURABLE(MotionConstraints);
 
-ConfigDouble* MotionConstraints::_max_acceleration;
-ConfigDouble* MotionConstraints::_max_speed;
+ConfigDouble* MotionConstraints::max_acceleration_config;
+ConfigDouble* MotionConstraints::max_speed_config;
 
-void MotionConstraints::createConfiguration(Configuration* cfg) {
-    _max_acceleration = new ConfigDouble(cfg, "MotionConstraints/Max Acceleration", .5);
-    _max_speed = new ConfigDouble(cfg, "MotionConstraints/Max Velocity", 2.0);
+void MotionConstraints::create_configuration(Configuration* cfg) {
+    max_acceleration_config = new ConfigDouble(cfg, "MotionConstraints/Max Acceleration", .5);
+    max_speed_config = new ConfigDouble(cfg, "MotionConstraints/Max Velocity", 2.0);
 }
 
 MotionConstraints::MotionConstraints() {
-    maxSpeed = *_max_speed;
-    maxAcceleration = *_max_acceleration;
+    max_speed = *max_speed_config;
+    max_acceleration = *max_acceleration_config;
 }

@@ -26,11 +26,11 @@ TEST(Logger, SaveContext) {
     // Or their radio packets
     context.robot_status.at(1).kicker = RobotStatus::KickerState::kFailed;
 
-    // We should use blueTeam from GameState, not GameSettings
-    context.game_settings.requestBlueTeam = true;
+    // We should use blue_team from GameState, not GameSettings
+    context.game_settings.request_blue_team = true;
     context.blue_team = false;
 
-    std::shared_ptr<Packet::LogFrame> frame = Logger::createLogFrame(&context);
+    std::shared_ptr<Packet::LogFrame> frame = Logger::create_log_frame(&context);
 
     EXPECT_EQ(frame->self_size(), 1);
     EXPECT_EQ(frame->self(0).shell(), 0);
@@ -53,7 +53,7 @@ TEST(Logger, SerializeDeserialize) {
     context.robot_status.at(0).timestamp = start_time;
     context.robot_status.at(0).kicker = RobotStatus::KickerState::kCharged;
 
-    std::shared_ptr<Packet::LogFrame> frame = Logger::createLogFrame(&context);
+    std::shared_ptr<Packet::LogFrame> frame = Logger::create_log_frame(&context);
 
     // Allocate 1MiB
     std::vector<char> data(1 << 20);
@@ -61,7 +61,7 @@ TEST(Logger, SerializeDeserialize) {
 
     constexpr int kExpected = 3;
     for (int i = 0; i < 3; i++) {
-        EXPECT_TRUE(Logger::writeToFile(frame.get(), &output));
+        EXPECT_TRUE(Logger::write_to_file(frame.get(), &output));
     }
 
     Packet::LogFrame other_frame;
@@ -72,7 +72,7 @@ TEST(Logger, SerializeDeserialize) {
     differencer.ReportDifferencesToString(&diff);
 
     google::protobuf::io::ArrayInputStream input(data.data(), output.ByteCount());
-    while (Logger::readFromFile(&other_frame, &input)) {
+    while (Logger::read_from_file(&other_frame, &input)) {
         count++;
         EXPECT_TRUE(differencer.Compare(*frame, other_frame));
         other_frame.Clear();

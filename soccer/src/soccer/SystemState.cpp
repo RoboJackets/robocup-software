@@ -4,9 +4,9 @@
 SystemState::SystemState(Context* const context) {
     // FIXME - boost::array?
     paused = false;
-    self.resize(Num_Shells);
-    opp.resize(Num_Shells);
-    for (int i = 0; i < Num_Shells; ++i) {
+    self.resize(kNumShells);
+    opp.resize(kNumShells);
+    for (int i = 0; i < kNumShells; ++i) {
         self[i] = new OurRobot(context, i);      // NOLINT
         opp[i] = new OpponentRobot(context, i);  // NOLINT
     }
@@ -15,18 +15,18 @@ SystemState::SystemState(Context* const context) {
 }
 
 SystemState::~SystemState() {
-    for (int i = 0; i < Num_Shells; ++i) {
+    for (int i = 0; i < kNumShells; ++i) {
         delete self[i];  // NOLINT
         delete opp[i];   // NOLINT
     }
 }
 
-std::vector<int> SystemState::ourValidIds() {
-    std::vector<int> validIds;
+std::vector<int> SystemState::our_valid_ids() {
+    std::vector<int> valid_ids;
     for (auto& i : self) {
         if (i->visible()) {
-            validIds.push_back(i->shell());
+            valid_ids.push_back(i->shell());
         }
     }
-    return validIds;
+    return valid_ids;
 }

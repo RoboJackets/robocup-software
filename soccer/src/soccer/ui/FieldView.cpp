@@ -14,7 +14,7 @@
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
 #include <planning/MotionConstraints.hpp>
-#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/FieldDimensions.hpp>
 #include <rj_common/VisionDotPattern.hpp>
 #include <rj_constants/constants.hpp>
 
@@ -113,8 +113,8 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     p.translate(width() / 2.0, height() / 2.0);
     p.scale(width(), -height());
     p.rotate(_rotate * 90);
-    p.scale(1.0 / Field_Dimensions::Current_Dimensions.FloorLength(),
-            1.0 / Field_Dimensions::Current_Dimensions.FloorWidth());
+    p.scale(1.0 / FieldDimensions::current_dimensions.floor_length(),
+            1.0 / FieldDimensions::current_dimensions.floor_width());
 
     // Set text rotation for world space
     _textRotation = -_rotate * 90;
@@ -134,8 +134,8 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     // Make coordinate transformations
     _screenToWorld = Geometry2d::TransformMatrix();
     _screenToWorld *=
-        Geometry2d::TransformMatrix::scale(Field_Dimensions::Current_Dimensions.FloorLength(),
-                                           Field_Dimensions::Current_Dimensions.FloorWidth());
+        Geometry2d::TransformMatrix::scale(FieldDimensions::current_dimensions.floor_length(),
+                                           FieldDimensions::current_dimensions.floor_width());
     _screenToWorld *=
         Geometry2d::TransformMatrix::rotate(-static_cast<float>(_rotate * M_PI / 2.0));
     _screenToWorld *= Geometry2d::TransformMatrix::scale(static_cast<float>(1.0 / width()),
@@ -145,7 +145,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
     _worldToTeam = Geometry2d::TransformMatrix();
     _worldToTeam *= Geometry2d::TransformMatrix::translate(
-        0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+        0, FieldDimensions::current_dimensions.length() / 2.0f);
     if (frame->defend_plus_x()) {
         _worldToTeam *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
     } else {
@@ -159,7 +159,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
         _teamToWorld *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
     }
     _teamToWorld *= Geometry2d::TransformMatrix::translate(
-        0, -Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+        0, -FieldDimensions::current_dimensions.length() / 2.0f);
 
     // Draw world-space graphics
     drawWorldSpace(p);
@@ -171,7 +171,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     } else {
         p.rotate(-90);
     }
-    p.translate(0, -Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+    p.translate(0, -FieldDimensions::current_dimensions.length() / 2.0f);
 
     // Text has to be rotated so it is always upright on screen
     _textRotation = -_rotate * 90 + (frame->defend_plus_x() ? -90 : 90);
@@ -203,20 +203,20 @@ void FieldView::drawWorldSpace(QPainter& p) {
                     QPointF pos(r.x() / 1000, r.y() / 1000);
                     drawRobot(p, true, r.robot_id(), pos, r.orientation());
                     // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // Robot_Radius, Robot_Radius);
+                    // kRobotRadius, kRobotRadius);
                 }
 
                 for (const SSL_DetectionRobot& r : detect.robots_yellow()) {
                     QPointF pos(r.x() / 1000, r.y() / 1000);
                     drawRobot(p, false, r.robot_id(), pos, r.orientation());
                     // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // Robot_Radius, Robot_Radius);
+                    // kRobotRadius, kRobotRadius);
                 }
             }
 
             if (showRawBalls) {
                 for (const SSL_DetectionBall& b : detect.balls()) {
-                    p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), Ball_Radius, Ball_Radius);
+                    p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), kBallRadius, kBallRadius);
                 }
             }
         }
@@ -244,16 +244,16 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Block off half the field
     if (!frame->use_our_half()) {
-        const float FX = Field_Dimensions::Current_Dimensions.FloorWidth() / 2;
-        const float FY1 = -Field_Dimensions::Current_Dimensions.Border();
-        const float FY2 = Field_Dimensions::Current_Dimensions.Length() / 2;
+        const float FX = FieldDimensions::current_dimensions.floor_width() / 2;
+        const float FY1 = -FieldDimensions::current_dimensions.border();
+        const float FY2 = FieldDimensions::current_dimensions.length() / 2;
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
     }
     if (!frame->use_opponent_half()) {
-        const float FX = Field_Dimensions::Current_Dimensions.FloorWidth() / 2;
-        const float FY1 = Field_Dimensions::Current_Dimensions.Length() / 2;
-        const float FY2 = Field_Dimensions::Current_Dimensions.Length() +
-                          Field_Dimensions::Current_Dimensions.Border();
+        const float FX = FieldDimensions::current_dimensions.floor_width() / 2;
+        const float FY1 = FieldDimensions::current_dimensions.length() / 2;
+        const float FY2 = FieldDimensions::current_dimensions.length() +
+                          FieldDimensions::current_dimensions.border();
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
     }
 
@@ -308,7 +308,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                                             Geometry2d::Point(path.points(i + 1).vel())) /
                                            2;
                 auto pcntMaxSpd =
-                    static_cast<float>(avgVel.mag() / MotionConstraints::defaultMaxSpeed());
+                    static_cast<float>(avgVel.mag() / MotionConstraints::default_max_speed());
                 QColor mixedColor(std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
                                   std::max(0, std::min((int)(255 * (1 - pcntMaxSpd)), 255)));
                 QPen pen(mixedColor);
@@ -318,7 +318,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
                 const Geometry2d::Point fromPos = Geometry2d::Point(from.pos());
                 const Geometry2d::Point toPos = Geometry2d::Point(to.pos());
-                p.drawLine(fromPos.toQPointF(), toPos.toQPointF());
+                p.drawLine(fromPos.to_q_point_f(), toPos.to_q_point_f());
             }
         }
     }
@@ -475,12 +475,12 @@ void FieldView::drawTeamSpace(QPainter& p) {
         // Highlight the manually controlled robot
         if (manualID == r.shell()) {
             p.setPen(greenPen);
-            const float r = Robot_Radius + .05;
+            const float r = kRobotRadius + .05;
             p.drawEllipse(center, r, r);
         }
 
         // Robot text
-        QPointF textPos = center - rtX * 0.2 - rtY * (Robot_Radius + 0.1);
+        QPointF textPos = center - rtX * 0.2 - rtY * (kRobotRadius + 0.1);
         for (const DebugText& text : r.text()) {
             if (text.layer() < 0 || layerVisible(text.layer())) {
                 tempPen.setColor(text.color());
@@ -499,7 +499,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
         p.setPen(ballPen);
         p.setBrush(ballColor);
         p.drawEllipse(
-            QRectF(-Ball_Radius + pos.x(), -Ball_Radius + pos.y(), Ball_Diameter, Ball_Diameter));
+            QRectF(-kBallRadius + pos.x(), -kBallRadius + pos.y(), kBallDiameter, kBallDiameter));
 
         if (!vel.isNull()) {
             p.drawLine(pos, QPointF(pos.x() + vel.x(), pos.y() + vel.y()));
@@ -544,84 +544,84 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     p.save();
 
     // reset to center
-    p.translate(-Field_Dimensions::Current_Dimensions.FloorLength() / 2.0,
-                -Field_Dimensions::Current_Dimensions.FloorWidth() / 2.0);
+    p.translate(-FieldDimensions::current_dimensions.floor_length() / 2.0,
+                -FieldDimensions::current_dimensions.floor_width() / 2.0);
 
-    p.translate(Field_Dimensions::Current_Dimensions.Border(),
-                Field_Dimensions::Current_Dimensions.Border());
+    p.translate(FieldDimensions::current_dimensions.border(),
+                FieldDimensions::current_dimensions.border());
 
-    p.setPen(QPen(Qt::white, Field_Dimensions::Current_Dimensions.LineWidth() *
+    p.setPen(QPen(Qt::white, FieldDimensions::current_dimensions.line_width() *
                                  2.0));  // double-width pen for visibility
                                          //(although its less accurate)
     p.setBrush(Qt::NoBrush);
-    p.drawRect(QRectF(0, 0, Field_Dimensions::Current_Dimensions.Length(),
-                      Field_Dimensions::Current_Dimensions.Width()));
+    p.drawRect(QRectF(0, 0, FieldDimensions::current_dimensions.length(),
+                      FieldDimensions::current_dimensions.width()));
 
     // set brush alpha to 0
     p.setBrush(QColor(0, 130, 0, 0));
 
     // reset to center
-    p.translate(Field_Dimensions::Current_Dimensions.Length() / 2.0,
-                Field_Dimensions::Current_Dimensions.Width() / 2.0);
+    p.translate(FieldDimensions::current_dimensions.length() / 2.0,
+                FieldDimensions::current_dimensions.width() / 2.0);
 
     // centerline
-    p.drawLine(QLineF(0, Field_Dimensions::Current_Dimensions.Width() / 2, 0,
-                      -Field_Dimensions::Current_Dimensions.Width() / 2.0));
+    p.drawLine(QLineF(0, FieldDimensions::current_dimensions.width() / 2, 0,
+                      -FieldDimensions::current_dimensions.width() / 2.0));
 
     // center circle
-    p.drawEllipse(QRectF(-Field_Dimensions::Current_Dimensions.CenterRadius(),
-                         -Field_Dimensions::Current_Dimensions.CenterRadius(),
-                         Field_Dimensions::Current_Dimensions.CenterDiameter(),
-                         Field_Dimensions::Current_Dimensions.CenterDiameter()));
+    p.drawEllipse(QRectF(-FieldDimensions::current_dimensions.center_radius(),
+                         -FieldDimensions::current_dimensions.center_radius(),
+                         FieldDimensions::current_dimensions.center_diameter(),
+                         FieldDimensions::current_dimensions.center_diameter()));
 
-    p.translate(-Field_Dimensions::Current_Dimensions.Length() / 2.0, 0);
+    p.translate(-FieldDimensions::current_dimensions.length() / 2.0, 0);
 
     // goal areas
-    p.drawLine(QLineF(0, -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-                      Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
-    p.drawLine(QLineF(Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-                      Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
-    p.drawLine(QLineF(Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
-                      Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+    p.drawLine(QLineF(0, -FieldDimensions::current_dimensions.penalty_long_dist() / 2,
+                      FieldDimensions::current_dimensions.penalty_short_dist(),
+                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
+    p.drawLine(QLineF(FieldDimensions::current_dimensions.penalty_short_dist(),
+                      FieldDimensions::current_dimensions.penalty_long_dist() / 2,
+                      FieldDimensions::current_dimensions.penalty_short_dist(),
+                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
+    p.drawLine(QLineF(FieldDimensions::current_dimensions.penalty_short_dist(),
+                      FieldDimensions::current_dimensions.penalty_long_dist() / 2, 0,
+                      FieldDimensions::current_dimensions.penalty_long_dist() / 2));
 
-    p.translate(Field_Dimensions::Current_Dimensions.Length(), 0);
+    p.translate(FieldDimensions::current_dimensions.length(), 0);
 
-    p.drawLine(QLineF(0, -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-                      -Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
-    p.drawLine(QLineF(-Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-                      -Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
-    p.drawLine(QLineF(-Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-                      Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
-                      Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+    p.drawLine(QLineF(0, -FieldDimensions::current_dimensions.penalty_long_dist() / 2,
+                      -FieldDimensions::current_dimensions.penalty_short_dist(),
+                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
+    p.drawLine(QLineF(-FieldDimensions::current_dimensions.penalty_short_dist(),
+                      FieldDimensions::current_dimensions.penalty_long_dist() / 2,
+                      -FieldDimensions::current_dimensions.penalty_short_dist(),
+                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
+    p.drawLine(QLineF(-FieldDimensions::current_dimensions.penalty_short_dist(),
+                      FieldDimensions::current_dimensions.penalty_long_dist() / 2, 0,
+                      FieldDimensions::current_dimensions.penalty_long_dist() / 2));
 
     // goals
-    float x[2] = {0, Field_Dimensions::Current_Dimensions.GoalDepth()};
-    float y[2] = {Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0f,
-                  -Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0f};
+    float x[2] = {0, FieldDimensions::current_dimensions.goal_depth()};
+    float y[2] = {FieldDimensions::current_dimensions.goal_width() / 2.0f,
+                  -FieldDimensions::current_dimensions.goal_width() / 2.0f};
 
     bool flip = frame->blue_team() ^ frame->defend_plus_x();
 
     QColor goalColor = flip ? Qt::yellow : Qt::blue;
     p.setPen(QPen(goalColor,
-                  Field_Dimensions::Current_Dimensions.LineWidth() *
+                  FieldDimensions::current_dimensions.line_width() *
                       2.0));  // double-width for visibility, not real-life accuracy
     p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
     p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
 
-    x[0] -= Field_Dimensions::Current_Dimensions.Length();
-    x[1] -= Field_Dimensions::Current_Dimensions.Length() +
-            2 * Field_Dimensions::Current_Dimensions.GoalDepth();
+    x[0] -= FieldDimensions::current_dimensions.length();
+    x[1] -= FieldDimensions::current_dimensions.length() +
+            2 * FieldDimensions::current_dimensions.goal_depth();
 
     goalColor = flip ? Qt::blue : Qt::yellow;
-    p.setPen(QPen(goalColor, Field_Dimensions::Current_Dimensions.LineWidth() * 2.0));
+    p.setPen(QPen(goalColor, FieldDimensions::current_dimensions.line_width() * 2.0));
     p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
     p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
@@ -642,7 +642,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
         painter.save();
         painter.setPen(redPen);
         painter.setBrush(QBrush{Qt::red, Qt::SolidPattern});
-        auto r = Robot_Radius + 0.025;
+        auto r = kRobotRadius + 0.025;
         painter.drawEllipse(QPointF(0, 0), r, r);
         painter.restore();
     }
@@ -655,31 +655,31 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
         painter.setBrush(Qt::yellow);
     }
 
-    painter.rotate(RadiansToDegrees(theta) + 90);
+    painter.rotate(radians_to_degrees(theta) + 90);
 
     int span = 40;
 
     int start = span * 16 + 90 * 16;
     int end = 360 * 16 - (span * 2) * 16;
-    const float r = Robot_Radius;
+    const float r = kRobotRadius;
     painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
 
     if (showDotPatterns) {
         painter.setPen(Qt::NoPen);
         for (int i = 0; i < 4; i++) {
-            painter.setBrush(QBrush(Dot_Pattern_Colors[ID][i]));
+            painter.setBrush(QBrush(kDotPatternColors[ID][i]));
             QPointF center;
-            center.setX((i >= 2) ? Dots_Small_Offset : Dots_Large_Offset);
+            center.setX((i >= 2) ? kDotsSmallOffset : kDotsLargeOffset);
             center.setX(center.x() * ((i == 1 || i == 2) ? -1 : 1));
-            center.setY((i <= 1) ? Dots_Small_Offset : Dots_Large_Offset);
+            center.setY((i <= 1) ? kDotsSmallOffset : kDotsLargeOffset);
             center.setY(center.y() * ((i <= 1) ? -1 : 1));
-            painter.drawEllipse(center, Dots_Radius, Dots_Radius);
+            painter.drawEllipse(center, kDotsRadius, kDotsRadius);
         }
     }
 
     if (hasBall) {
         painter.setPen(redPen);
-        const float r = Robot_Radius * 0.75f;
+        const float r = kRobotRadius * 0.75f;
         painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
     }
 
@@ -703,7 +703,7 @@ void FieldView::drawRobotHeading(QPainter* painter, QPointF pos, float theta,
                                  const QColor& heading_color, float heading_line_len) {
     painter->save();
     painter->translate(pos.x(), pos.y());
-    painter->rotate(RadiansToDegrees(theta));
+    painter->rotate(radians_to_degrees(theta));
 
     const QPen heading_pen(heading_color, 0);
     painter->setPen(heading_pen);
@@ -723,18 +723,18 @@ void FieldView::resizeEvent(QResizeEvent* e) {
     int needH;
     if ((_rotate & 1) != 0) {
         needH = static_cast<int>(std::round(static_cast<float>(givenW) *
-                                            Field_Dimensions::Current_Dimensions.FloorLength() /
-                                            Field_Dimensions::Current_Dimensions.FloorWidth()));
+                                            FieldDimensions::current_dimensions.floor_length() /
+                                            FieldDimensions::current_dimensions.floor_width()));
         needW = static_cast<int>(std::round(static_cast<float>(givenH) *
-                                            Field_Dimensions::Current_Dimensions.FloorWidth() /
-                                            Field_Dimensions::Current_Dimensions.FloorLength()));
+                                            FieldDimensions::current_dimensions.floor_width() /
+                                            FieldDimensions::current_dimensions.floor_length()));
     } else {
         needH = static_cast<int>(std::round(static_cast<float>(givenW) *
-                                            Field_Dimensions::Current_Dimensions.FloorWidth() /
-                                            Field_Dimensions::Current_Dimensions.FloorLength()));
+                                            FieldDimensions::current_dimensions.floor_width() /
+                                            FieldDimensions::current_dimensions.floor_length()));
         needW = static_cast<int>(std::round(static_cast<float>(givenH) *
-                                            Field_Dimensions::Current_Dimensions.FloorLength() /
-                                            Field_Dimensions::Current_Dimensions.FloorWidth()));
+                                            FieldDimensions::current_dimensions.floor_length() /
+                                            FieldDimensions::current_dimensions.floor_width()));
     }
 
     QSize size;

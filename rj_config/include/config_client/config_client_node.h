@@ -15,34 +15,34 @@ class ConfigClientNode : public rclcpp::Node {
 public:
     ConfigClientNode(const std::string& name);
 
-    [[nodiscard]] const GameSettingsMsg& gameSettings() const {
-        return config_client_.gameSettings();
+    [[nodiscard]] const GameSettingsMsg& game_settings() const {
+        return config_client_.game_settings();
     }
 
-    [[nodiscard]] const FieldDimensionsMsg& fieldDimensions() const {
-        return config_client_.fieldDimensions();
+    [[nodiscard]] const FieldDimensionsMsg& field_dimensions() const {
+        return config_client_.field_dimensions();
     }
 
-    [[nodiscard]] const GameSettingsMsg& gameSettingsThreaded() const {
-        return config_client_.gameSettingsThreaded();
+    [[nodiscard]] const GameSettingsMsg& game_settings_threaded() const {
+        return config_client_.game_settings_threaded();
     }
 
-    [[nodiscard]] const FieldDimensionsMsg& fieldDimensionsThreaded() const {
-        return config_client_.fieldDimensionsThreaded();
+    [[nodiscard]] const FieldDimensionsMsg& field_dimensions_threaded() const {
+        return config_client_.field_dimensions_threaded();
     }
 
     [[nodiscard]] bool connected() const { return config_client_.connected(); }
 
-    bool waitUntilConnection() const {
-        return config_client_.waitUntilConnected();
+    bool wait_until_connection() const {
+        return config_client_.wait_until_connected();
     }
 
-    void updateGameSettings(const GameSettingsMsg& msg) {
-        return config_client_.updateGameSettings(msg);
+    void update_game_settings(const GameSettingsMsg& msg) {
+        return config_client_.update_game_settings(msg);
     }
 
-    void updateFieldDimensions(const FieldDimensionsMsg& msg) {
-        return config_client_.updateFieldDimensions(msg);
+    void update_field_dimensions(const FieldDimensionsMsg& msg) {
+        return config_client_.update_field_dimensions(msg);
     }
 
 private:

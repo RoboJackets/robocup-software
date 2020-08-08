@@ -33,7 +33,7 @@ public:
      * @return An immutable reference to the robot's state.
      */
     [[nodiscard]] const RobotState& state() const {
-        return _context->world_state.get_robot(self(), shell());
+        return context_->world_state.get_robot(self(), shell());
     }
 
     /**
@@ -42,7 +42,7 @@ public:
      * @return A mutable reference to the robot's state.
      */
     RobotState& mutable_state() {
-        return _context->world_state.get_robot(self(), shell());
+        return context_->world_state.get_robot(self(), shell());
     }
 
     [[nodiscard]] Geometry2d::Pose pose() const { return state().pose; }
@@ -59,7 +59,7 @@ public:
         return state().velocity.linear();
     }
 
-    [[nodiscard]] double angleVel() const { return state().velocity.angular(); }
+    [[nodiscard]] double angle_vel() const { return state().velocity.angular(); }
 
     [[nodiscard]] bool visible() const { return state().visible; }
 
@@ -67,33 +67,33 @@ public:
      * ID number for the robot.  This is the number that the dot pattern on
      * the top of the robot represents
      */
-    [[nodiscard]] int shell() const { return _shell; }
+    [[nodiscard]] int shell() const { return shell_; }
 
     /**
      * Check whether or not this robot is on our team
      */
-    [[nodiscard]] bool self() const { return _self; }
+    [[nodiscard]] bool self() const { return self_; }
 
     bool operator==(const Robot& other) const {
         return shell() == other.shell() && self() == other.self();
     }
 
-    [[nodiscard]] std::string toString() const {
+    [[nodiscard]] std::string to_string() const {
         return std::string("<Robot ") + (self() ? "us[" : "them[") +
-               std::to_string(shell()) + "], pos=" + pos().toString() + ">";
+               std::to_string(shell()) + "], pos=" + pos().to_string() + ">";
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Robot& robot) {
-        stream << robot.toString();
+        stream << robot.to_string();
         return stream;
     }
 
 protected:
-    Context* _context;
+    Context* context_;
 
 private:
-    const int _shell;
-    const bool _self;
+    const int shell_;
+    const bool self_;
 };
 
 /**
@@ -110,7 +110,7 @@ private:
  */
 class OurRobot : public Robot {
 public:
-    using RobotMask = std::array<float, Num_Shells>;
+    using RobotMask = std::array<float, kNumShells>;
 
     /**
      * @brief Construct a new OurRobot
@@ -119,73 +119,73 @@ public:
      */
     OurRobot(Context* context, int shell);
 
-    void addStatusText();
+    void add_status_text();
 
-    void addText(const QString& text, const QColor& qc = Qt::white,
-                 const QString& layerPrefix = "RobotText");
+    void add_text(const QString& text, const QColor& qc = Qt::white,
+                 const QString& layer_prefix = "RobotText");
 
     /// true if the kicker is ready
     bool charged() const;
 
     /// returns the time since the kicker was last charged, 0.0 if ready
-    float kickTimer() const;
+    float kick_timer() const;
 
     /// segment for the location of the kicker
-    Geometry2d::Segment kickerBar() const;
+    Geometry2d::Segment kicker_bar() const;
     /// converts a point to the frame of reference of robot
-    Geometry2d::Point pointInRobotSpace(Geometry2d::Point pt) const;
+    Geometry2d::Point point_in_robot_space(Geometry2d::Point pt) const;
 
     // simple checks to do geometry
     /** returns true if the position specified is behind the robot */
     // FIXME - Function name and comment don't match
-    bool behindBall(Geometry2d::Point ballPos) const;
+    bool behind_ball(Geometry2d::Point ball_pos) const;
 
     // Constraints
-    const RobotConstraints& robotConstraints() const {
-        return _context->robot_constraints[shell()];
+    const RobotConstraints& robot_constraints() const {
+        return context_->robot_constraints[shell()];
     }
 
-    RobotConstraints& robotConstraints() {
-        return _context->robot_constraints[shell()];
+    RobotConstraints& robot_constraints() {
+        return context_->robot_constraints[shell()];
     }
 
-    const MotionConstraints& motionConstraints() const {
-        return robotConstraints().mot;
+    const MotionConstraints& motion_constraints() const {
+        return robot_constraints().mot;
     }
 
-    MotionConstraints& motionConstraints() { return robotConstraints().mot; }
+    MotionConstraints& motion_constraints() { return robot_constraints().mot; }
 
     /**
      * Returns a const reference to the path of the robot.
      */
     const Planning::Trajectory& path() const {
-        return _context->trajectories[shell()];
+        return context_->trajectories[shell()];
     }
 
     /**
      * Returns a movable reference to the path of the robot.
      */
     Planning::Trajectory&& path_movable() {
-        return std::move(_context->trajectories[shell()]);
+        return std::move(context_->trajectories[shell()]);
     }
 
-    /// clears old radioTx stuff, resets robot debug text, and clears local
+    /// clears old radio_tx stuff, resets robot debug text, and clears local
     /// obstacles
-    void resetForNextIteration();
+    void reset_for_next_iteration();
 
     /// clears all fields in the robot's MotionConstraints object, causing the
     /// robot to stop
-    void resetMotionConstraints();
+    void reset_motion_constraints();
 
     /** Stop the robot */
     void stop();
 
     /**
-     * Makes this robot execute a lineKick
+     * Makes this robot execute a line kick
      *
      * @param target - The target to kick towards (aiming point)
      */
-    void lineKick(Geometry2d::Point target);
+    void line_kick(Geometry2d::Point target);
 
     /**
      * Intercept the ball as quickly as possible
@@ -197,27 +197,27 @@ public:
 
     /**
      * @brief Move to a given point using the default RRT planner
-     * @param endSpeed - the speed we should be going when we reach the end of
+     * @param end_speed - the speed we should be going when we reach the end of
      * the path
      */
     void move(Geometry2d::Point goal,
-              Geometry2d::Point endVelocity = Geometry2d::Point());
+              Geometry2d::Point end_velocity = Geometry2d::Point());
 
     /**
      * @brief Move to a given point bypassing the RRT Path planner. This will
      * plan a direct path ignoring all obstacles and the starting velocity
-     * @param endSpeed - the speed we should be going when we reach the end of
+     * @param end_speed - the speed we should be going when we reach the end of
      * the path
      */
-    void moveDirect(Geometry2d::Point goal, float endSpeed = 0);
+    void move_direct(Geometry2d::Point goal, float end_speed = 0);
 
     /**
      * @brief Move to a given point while breaking everything. Tells the robot
      * it is already at the endpoint
-     * @param endSpeed - the speed we should be going when we reach the end of
+     * @param end_speed - the speed we should be going when we reach the end of
      * the path. I'm not even sure if this part makes any sense here.
      */
-    void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
+    void move_tuning(Geometry2d::Point goal, float end_speed = 0);
 
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
@@ -237,14 +237,14 @@ public:
     void face(Geometry2d::Point pt);
 
     /**
-     * Sets the worldVelocity in the robot's MotionConstraints
+     * Sets the world_velocity in the robot's MotionConstraints
      */
-    void worldVelocity(Geometry2d::Point targetWorldVel);
+    void world_velocity(Geometry2d::Point target_world_vel);
 
     /**
      * The robot pivots around it's mouth toward the given target
      */
-    void pivot(Geometry2d::Point pivotTarget);
+    void pivot(Geometry2d::Point pivot_target);
 
     /*
      * Enable dribbler (0 to 127)
@@ -270,7 +270,7 @@ public:
     /**
      * enable kick when ready at a given strength (0-255)
      */
-    void kickLevel(uint8_t strength);
+    void kick_level(uint8_t strength);
 
     /**
      * enable chip when ready at a given percentage of the currently set max
@@ -282,22 +282,22 @@ public:
     /**
      * enable chip when ready at a given strength (0-255)
      */
-    void chipLevel(uint8_t strength);
+    void chip_level(uint8_t strength);
 
     /**
      * @brief Undoes any calls to kick() or chip().
      */
     void unkick();
 
-    RJ::Timestamp lastKickTime() const;
+    RJ::Timestamp last_kick_time() const;
 
-    const RobotStatus& radioStatus() const {
-        return _context->robot_status.at(shell());
+    const RobotStatus& radio_status() const {
+        return context_->robot_status.at(shell());
     }
 
     /// checks if the bot has kicked/chipped very recently.
-    bool justKicked() {
-        return radioStatus().kicker == RobotStatus::KickerState::kCharging;
+    bool just_kicked() {
+        return radio_status().kicker == RobotStatus::KickerState::kCharging;
     }
 
     /**
@@ -305,68 +305,68 @@ public:
      * this iteration. Contains face(), move(), etc - used to display in the
      * BehaviorTree tab in soccer
      */
-    std::string getCmdText() const;
+    std::string get_cmd_text() const;
 
     /**
      * ignore ball sense and kick immediately
      */
-    void kickImmediately();
+    void kick_immediately();
 
     // True if this robot will treat opponents as obstacles
     // Set to false for defenders to avoid being herded
-    bool avoidOpponents() const;
-    void avoidOpponents(bool enable);
+    bool avoid_opponents() const;
+    void avoid_opponents(bool enable);
 
-    void disableAvoidBall();
-    void avoidBallRadius(float radius);
-    float avoidBallRadius() const;
-    void resetAvoidBall();  // sets avoid ball radius to Ball_Avoid_Small
+    void disable_avoid_ball();
+    void avoid_ball_radius(float radius);
+    float avoid_ball_radius() const;
+    void reset_avoid_ball();  // sets avoid ball radius to Ball_Avoid_Small
 
-    void resetAvoidRobotRadii();
+    void reset_avoid_robot_radii();
 
     /**
      * Adds an obstacle to the local set of obstacles for avoidance
      * Cleared after every frame
      */
-    void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
+    void local_obstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
         intent().local_obstacles.add(obs);
     }
-    const Geometry2d::ShapeSet& localObstacles() const {
+    const Geometry2d::ShapeSet& local_obstacles() const {
         return intent().local_obstacles;
     }
-    void clearLocalObstacles() { intent().local_obstacles.clear(); }
+    void clear_local_obstacles() { intent().local_obstacles.clear(); }
 
-    Geometry2d::ShapeSet collectStaticObstacles(
-        const Geometry2d::ShapeSet& globalObstacles,
-        bool localObstacles = true);
+    Geometry2d::ShapeSet collect_static_obstacles(
+        const Geometry2d::ShapeSet& global_obstacles,
+        bool local_obstacles = true);
 
-    void approachAllOpponents(bool enable = true);
-    void avoidAllOpponents(bool enable = true);
+    void approach_all_opponents(bool enable = true);
+    void avoid_all_opponents(bool enable = true);
 
     /** checks if opponents are avoided at all */
-    bool avoidOpponent(unsigned shell_id) const;
+    bool avoid_opponent(unsigned shell_id) const;
 
     /** @return true if we are able to approach the given opponent */
-    bool approachOpponent(unsigned shell_id) const;
+    bool approach_opponent(unsigned shell_id) const;
 
     /** returns the avoidance radius */
-    float avoidOpponentRadius(unsigned shell_id) const;
+    float avoid_opponent_radius(unsigned shell_id) const;
 
     /** returns the avoidance radius */
-    void avoidAllOpponentRadius(float radius);
+    void avoid_all_opponent_radius(float radius);
 
     /** enable/disable for opponent avoidance */
-    void avoidOpponent(unsigned shell_id, bool enable_avoid);
+    void avoid_opponent(unsigned shell_id, bool enable_avoid);
 
     /**
      * enable/disable approach of opponents - diable uses larger avoidance
      * radius
      */
-    void approachOpponent(unsigned shell_id, bool enable_approach);
+    void approach_opponent(unsigned shell_id, bool enable_approach);
 
-    void avoidOpponentRadius(unsigned shell_id, float radius);
+    void avoid_opponent_radius(unsigned shell_id, float radius);
 
-    Geometry2d::Point mouthCenterPos() const;
+    Geometry2d::Point mouth_center_pos() const;
 
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
@@ -380,74 +380,74 @@ public:
     bool driving_available(bool require_all = true) const;
 
     // lower level status checks
-    bool hasBall() const;
-    bool hasBallRaw() const;
-    bool ballSenseWorks() const;
-    bool kickerWorks() const;
-    double kickerVoltage() const;
-    RobotStatus::HardwareVersion hardwareVersion() const;
+    bool has_ball() const;
+    bool has_ball_raw() const;
+    bool ball_sense_works() const;
+    bool kicker_works() const;
+    double kicker_voltage() const;
+    RobotStatus::HardwareVersion hardware_version() const;
 
-    const Planning::MotionCommand& motionCommand() const {
+    const Planning::MotionCommand& motion_command() const {
         return intent().motion_command;
     }
-    void setMotionCommand(const Planning::MotionCommand& newCmd) {
-        if (intent().motion_command.index() != newCmd.index()) {
+    void set_motion_command(const Planning::MotionCommand& new_cmd) {
+        if (intent().motion_command.index() != new_cmd.index()) {
             // clear path when command type changes
-            _context->trajectories[shell()] = Planning::Trajectory{{}};
+            context_->trajectories[shell()] = Planning::Trajectory{{}};
         }
 
-        intent().motion_command = newCmd;
+        intent().motion_command = new_cmd;
     }
 
-    const RotationConstraints& rotationConstraints() const {
-        return robotConstraints().rot;
+    const RotationConstraints& rotation_constraints() const {
+        return robot_constraints().rot;
     }
 
-    RotationConstraints& rotationConstraints() {
-        return robotConstraints().rot;
+    RotationConstraints& rotation_constraints() {
+        return robot_constraints().rot;
     }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
-    bool statusIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
+    bool status_is_fresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
 
     /**
      * @brief start the robot playing a song
      * @param song
      */
     void sing(RobotIntent::Song song = RobotIntent::Song::FIGHT_SONG) {
-        addText("GO TECH!", QColor(255, 0, 255), "Sing");
+        add_text("GO TECH!", QColor(255, 0, 255), "Sing");
         intent().song = song;
     }
 
-    bool isPenaltyKicker = false;
-    bool isBallPlacer = false;
+    bool is_penalty_kicker = false;
+    bool is_ball_placer = false;
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
-    double distanceToChipLanding(int chipPower);
-    uint8_t chipPowerForDistance(double distance);
+    double distance_to_chip_landing(int chip_power);
+    uint8_t chip_power_for_distance(double distance);
 
     /**
      * Sets the priority which paths are planned.
      * Higher priority values are planned first.
      */
-    void setPlanningPriority(int8_t priority) { _planningPriority = priority; }
+    void set_planning_priority(int8_t priority) { planning_priority_ = priority; }
 
     /**
      * Gets the priority which paths are planned.
      * Higher priority values are planned first.
      */
-    int8_t getPlanningPriority() const { return _planningPriority; }
+    int8_t get_planning_priority() const { return planning_priority_; }
 
-    void setPID(double p, double i, double d);
+    void set_pid(double p, double i, double d);
 
-    void setJoystickControlled(bool joystickControlled);
-    bool isJoystickControlled() const;
+    void set_joystick_controlled(bool joystick_controlled);
+    bool is_joystick_controlled() const;
 
 protected:
-    RobotConstraints _robotConstraints;
+    RobotConstraints robot_constraints_;
 
     /**
      * Creates a set of obstacles from a given robot team mask,
@@ -460,7 +460,7 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+    Geometry2d::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask) const {
         Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i) {
@@ -473,7 +473,7 @@ protected:
     }
 
     /**
-     * Only adds obstacles within the checkRadius of the passed in position
+     * Only adds obstacles within the check_radius of the passed in position
      * Creates a set of obstacles from a given robot team mask, where mask
      * values < 0 create no obstacle, and larger values create an obstacle of a
      * given radius
@@ -484,14 +484,14 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+    Geometry2d::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask,
-                                              Geometry2d::Point currentPosition,
-                                              float checkRadius) const {
+                                              Geometry2d::Point current_position,
+                                              float check_radius) const {
         Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i) {
             if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-                if (currentPosition.distTo(robots[i]->pos()) <= checkRadius) {
+                if (current_position.dist_to(robots[i]->pos()) <= check_radius) {
                     result.add(std::make_shared<Geometry2d::Circle>(
                         robots[i]->pos(), mask[i]));
                 }
@@ -503,37 +503,37 @@ protected:
     /**
      * Creates an obstacle for the ball if necessary
      */
-    std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
+    std::shared_ptr<Geometry2d::Circle> create_ball_obstacle() const;
 
     friend class Processor;
     friend class RadioNode;
 
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
-    void radioRxUpdated();
+    void radio_rx_updated();
 
     const RobotLocalConfig* status() const {
-        return &_context->local_configs[shell()];
+        return &context_->local_configs[shell()];
     }
 
-    const RobotConfig* config() const { return _context->robot_config.get(); }
+    const RobotConfig* config() const { return context_->robot_config.get(); }
 
 private:
-    RJ::Time _lastBallSense;
-    const RJ::Seconds _lostBallDuration = RJ::Seconds(0.1);
+    RJ::Time last_ball_sense_;
+    const RJ::Seconds lost_ball_duration_ = RJ::Seconds(0.1);
 
-    void _kick(uint8_t strength);
-    void _chip(uint8_t strength);
-    void _unkick();
+    void do_kick(uint8_t strength);
+    void do_chip(uint8_t strength);
+    void do_unkick();
 
-    RobotStatus::KickerState _lastKickerStatus =
+    RobotStatus::KickerState last_kicker_status_ =
         RobotStatus::KickerState::kCharging;
-    RJ::Time _lastKickTime;
-    RJ::Time _lastChargedTime;
+    RJ::Time last_kick_time_;
+    RJ::Time last_charged_time_;
 
-    RobotIntent& intent() { return _context->robot_intents[shell()]; }
+    RobotIntent& intent() { return context_->robot_intents[shell()]; }
     const RobotIntent& intent() const {
-        return _context->robot_intents[shell()];
+        return context_->robot_intents[shell()];
     }
 
     /**
@@ -543,17 +543,17 @@ private:
      */
     // note: originally this was not a pointer, but I got weird errors about a
     // deleted copy constructor...
-    std::stringstream _cmdText;
+    std::stringstream cmd_text_;
 
-    void _clearCmdText();
+    void clear_cmd_text();
 
     /// default values for avoid radii
-    static ConfigDouble* _selfAvoidRadius;
-    static ConfigDouble* _oppAvoidRadius;
-    static ConfigDouble* _oppGoalieAvoidRadius;
-    static ConfigDouble* _dribbleOutOfBoundsOffset;
+    static ConfigDouble* self_avoid_radius;
+    static ConfigDouble* opp_avoid_radius;
+    static ConfigDouble* opp_goalie_avoid_radius;
+    static ConfigDouble* dribble_out_of_bounds_offset;
 
-    int8_t _planningPriority{};
+    int8_t planning_priority_{};
 };
 
 /**

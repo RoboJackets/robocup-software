@@ -16,7 +16,7 @@
  * Use Example:
  * GradientAscent1D ga(& [Gradient1DConfig]);
  * ga.execute();
- * ga.getValue();
+ * ga.get_value();
  */
 class GradientAscent1D {
 public:
@@ -29,7 +29,7 @@ public:
      *       the max. This is used when executing multiple GradientAscent1D's
      *       in parallel
      */
-    bool singleStep();
+    bool single_step();
 
     /**
      * Executes the full optimization algorithm
@@ -42,33 +42,33 @@ public:
     /**
      * @return the X value of the current guess of the max
      */
-    float getXValue();
+    float get_x_value();
 
     /**
      * @return the current guess of the max value
      */
-    float getValue();
+    float get_value();
 
     /**
      * @return Should continue execution?
      */
-    bool continueExecution();
+    bool continue_execution();
 
 private:
-    Gradient1DConfig* config;
+    Gradient1DConfig* config_;
 
-    float currentVal;
-    float currentx;
-    float currentdx;
-    float previousx;
-    float previousdx;
+    float current_val_;
+    float currentx_;
+    float currentdx_;
+    float previousx_;
+    float previousdx_;
 
-    float temperature;
+    float temperature_;
 
-    int iterationCount;
+    int iteration_count_;
 
     /**
      * @return next x value based on derivative
      */
-    float nextX();
+    float next_x();
 };

@@ -22,7 +22,7 @@ public:
      * pairs.
      * These MUST be sorted in order of increasing voltage.
      */
-    BatteryProfile(std::vector<BatteryProfile::Entry> dataPoints);
+    BatteryProfile(std::vector<BatteryProfile::Entry> data_points);
 
     /**
      * @brief Get the charge level given the voltage
@@ -32,12 +32,12 @@ public:
      * @param voltage The voltage of the battery
      * @return A value between 0 and 1 indicating charge level
      */
-    double getChargeLevel(double voltage) const;
+    double get_charge_level(double voltage) const;
 
 private:
-    std::vector<BatteryProfile::Entry> _dataPoints;
+    std::vector<BatteryProfile::Entry> data_points_;
 };
 
 //  profiles for our batteries.  See BatteryProfile.cpp for more info
-const extern BatteryProfile RJ2008BatteryProfile;
-const extern BatteryProfile RJ2015BatteryProfile;
+const extern BatteryProfile kRJ2008BatteryProfile;
+const extern BatteryProfile kRJ2015BatteryProfile;

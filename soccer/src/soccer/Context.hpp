@@ -32,24 +32,24 @@ struct Context {
     Context& operator=(Context&&) = delete;
 
     // Gameplay -> Planning, Radio
-    std::array<RobotIntent, Num_Shells> robot_intents;
+    std::array<RobotIntent, kNumShells> robot_intents;
     // Motion control -> Radio
-    std::array<MotionSetpoint, Num_Shells> motion_setpoints;
+    std::array<MotionSetpoint, kNumShells> motion_setpoints;
     // Planning -> Motion control
-    std::array<Planning::Trajectory, Num_Shells> trajectories;
+    std::array<Planning::Trajectory, kNumShells> trajectories;
     // Radio -> Gameplay
-    std::array<RobotStatus, Num_Shells> robot_status;
+    std::array<RobotStatus, kNumShells> robot_status;
     // MainWindow -> Manual control
-    std::array<bool, Num_Shells> is_joystick_controlled;
+    std::array<bool, kNumShells> is_joystick_controlled;
     /** \brief Whether at least one joystick is connected */
     bool joystick_valid;
 
-    std::array<RobotLocalConfig, Num_Shells> local_configs;
-    std::array<RobotConstraints, Num_Shells> robot_constraints;
+    std::array<RobotLocalConfig, kNumShells> local_configs;
+    std::array<RobotConstraints, kNumShells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
-    Geometry2d::ShapeSet globalObstacles;
-    Geometry2d::ShapeSet goalZoneObstacles;
+    Geometry2d::ShapeSet global_obstacles;
+    Geometry2d::ShapeSet goal_zone_obstacles;
 
     SystemState state;
     GameState game_state;
@@ -67,7 +67,7 @@ struct Context {
 
     WorldState world_state;
 
-    Field_Dimensions field_dimensions;
+    FieldDimensions field_dimensions;
 
     std::optional<grSim_Packet> grsim_command;
 

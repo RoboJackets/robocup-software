@@ -13,100 +13,100 @@ namespace Geometry2d {
 class TransformMatrix {
 public:
     TransformMatrix() {
-        _m[0] = 1;
-        _m[1] = 0;
-        _m[2] = 0;
-        _m[3] = 0;
-        _m[4] = 1;
-        _m[5] = 0;
+        m_[0] = 1;
+        m_[1] = 0;
+        m_[2] = 0;
+        m_[3] = 0;
+        m_[4] = 1;
+        m_[5] = 0;
     }
 
     TransformMatrix(float a, float b, float c, float d, float e, float f) {
-        _m[0] = a;
-        _m[1] = b;
-        _m[2] = c;
-        _m[3] = d;
-        _m[4] = e;
-        _m[5] = f;
+        m_[0] = a;
+        m_[1] = b;
+        m_[2] = c;
+        m_[3] = d;
+        m_[4] = e;
+        m_[5] = f;
     }
 
     TransformMatrix(Geometry2d::Point origin, float rotation = 0,
                     bool mirror = false, float scale = 1);
 
     TransformMatrix(const Eigen::Matrix<double, 3, 3>& other) {
-        _m[0] = other(0, 0);
-        _m[1] = other(0, 1);
-        _m[2] = other(0, 2);
-        _m[3] = other(1, 0);
-        _m[4] = other(1, 1);
-        _m[5] = other(1, 2);
+        m_[0] = other(0, 0);
+        m_[1] = other(0, 1);
+        m_[2] = other(0, 2);
+        m_[3] = other(1, 0);
+        m_[4] = other(1, 1);
+        m_[5] = other(1, 2);
     }
 
     TransformMatrix operator*(const TransformMatrix& other) const {
-        float a = _m[0] * other._m[0] + _m[1] * other._m[3];
-        float b = _m[0] * other._m[1] + _m[1] * other._m[4];
-        float c = _m[0] * other._m[2] + _m[1] * other._m[5] + _m[2];
-        float d = _m[3] * other._m[0] + _m[4] * other._m[3];
-        float e = _m[3] * other._m[1] + _m[4] * other._m[4];
-        float f = _m[3] * other._m[2] + _m[4] * other._m[5] + _m[5];
+        float a = m_[0] * other.m_[0] + m_[1] * other.m_[3];
+        float b = m_[0] * other.m_[1] + m_[1] * other.m_[4];
+        float c = m_[0] * other.m_[2] + m_[1] * other.m_[5] + m_[2];
+        float d = m_[3] * other.m_[0] + m_[4] * other.m_[3];
+        float e = m_[3] * other.m_[1] + m_[4] * other.m_[4];
+        float f = m_[3] * other.m_[2] + m_[4] * other.m_[5] + m_[5];
 
         return TransformMatrix(a, b, c, d, e, f);
     }
 
     TransformMatrix& operator*=(const TransformMatrix& other) {
-        float a = _m[0] * other._m[0] + _m[1] * other._m[3];
-        float b = _m[0] * other._m[1] + _m[1] * other._m[4];
-        float c = _m[0] * other._m[2] + _m[1] * other._m[5] + _m[2];
-        float d = _m[3] * other._m[0] + _m[4] * other._m[3];
-        float e = _m[3] * other._m[1] + _m[4] * other._m[4];
-        float f = _m[3] * other._m[2] + _m[4] * other._m[5] + _m[5];
+        float a = m_[0] * other.m_[0] + m_[1] * other.m_[3];
+        float b = m_[0] * other.m_[1] + m_[1] * other.m_[4];
+        float c = m_[0] * other.m_[2] + m_[1] * other.m_[5] + m_[2];
+        float d = m_[3] * other.m_[0] + m_[4] * other.m_[3];
+        float e = m_[3] * other.m_[1] + m_[4] * other.m_[4];
+        float f = m_[3] * other.m_[2] + m_[4] * other.m_[5] + m_[5];
 
-        _m[0] = a;
-        _m[1] = b;
-        _m[2] = c;
-        _m[3] = d;
-        _m[4] = e;
-        _m[5] = f;
+        m_[0] = a;
+        m_[1] = b;
+        m_[2] = c;
+        m_[3] = d;
+        m_[4] = e;
+        m_[5] = f;
 
         return *this;
     }
 
     operator Eigen::Matrix<double, 3, 3>() const {
         Eigen::Matrix<double, 3, 3> result;
-        result << _m[0], _m[1], _m[2], _m[3], _m[4], _m[5], 0, 0, 1;
+        result << m_[0], m_[1], m_[2], m_[3], m_[4], m_[5], 0, 0, 1;
         return result;
     }
 
     Point operator*(const Point& pt) const {
-        return Point(pt.x() * _m[0] + pt.y() * _m[1] + _m[2],
-                     pt.x() * _m[3] + pt.y() * _m[4] + _m[5]);
+        return Point(pt.x() * m_[0] + pt.y() * m_[1] + m_[2],
+                     pt.x() * m_[3] + pt.y() * m_[4] + m_[5]);
     }
 
     // Transforms a direction vector (3rd element is zero)
-    Point transformDirection(const Point& dir) const {
-        return Point(dir.x() * _m[0] + dir.y() * _m[1],
-                     dir.x() * _m[3] + dir.y() * _m[4]);
+    Point transform_direction(const Point& dir) const {
+        return Point(dir.x() * m_[0] + dir.y() * m_[1],
+                     dir.x() * m_[3] + dir.y() * m_[4]);
     }
 
     // Transforms the given angle in radians
-    float transformAngle(float angle) const;
+    float transform_angle(float angle) const;
 
     // Returns the vector that represents the direction of the transformed
     // X-axis.
-    Point x() const { return Point(_m[0], _m[3]); }
+    Point x() const { return Point(m_[0], m_[3]); }
 
     // Returns the vector that represents the direction of the transformed
     // Y-axis.
-    Point y() const { return Point(_m[1], _m[4]); }
+    Point y() const { return Point(m_[1], m_[4]); }
 
     // Returns the origin of the transformed coordinate system
-    Point origin() const { return Point(_m[2], _m[5]); }
+    Point origin() const { return Point(m_[2], m_[5]); }
 
     // Returns the scaling along the transformed X-axis.
-    float xScale() const { return x().mag(); }
+    float x_scale() const { return x().mag(); }
 
     // Returns the scaling along the transformed Y-axis.
-    float yScale() const { return y().mag(); }
+    float y_scale() const { return y().mag(); }
 
     // Returns the clockwise angle from the transformed Y axis to the original Y
     // axis. This is not affected by horizontal reflection.
@@ -116,7 +116,7 @@ public:
     // left-handed).
     bool mirrored() const;
 
-    const float* m() const { return _m; }
+    const float* m() const { return m_; }
 
     ////////////////
     // Functions to build common transformations:
@@ -149,14 +149,14 @@ public:
     }
 
     // Returns a matrix to rotate <angle> radians CCW around <center>.
-    static TransformMatrix rotateAroundPoint(const Point& center, float angle);
+    static TransformMatrix rotate_around_point(const Point& center, float angle);
 
     // Returns a matrix to reflect along the line parallel to the Y-axis
     // containing <center>.
-    static TransformMatrix mirrorAroundPoint(const Point& center);
+    static TransformMatrix mirror_around_point(const Point& center);
 
-    static const TransformMatrix identity;
-    static const TransformMatrix mirrorX;
+    static const TransformMatrix kIdentity;
+    static const TransformMatrix kMirrorX;
 
 protected:
     // Matrix values in row-major order.
@@ -164,6 +164,6 @@ protected:
     // Indices:
     //   [0 1 2
     //    3 4 5]
-    float _m[6]{};
+    float m_[6]{};
 };
 }  // namespace Geometry2d

@@ -26,7 +26,7 @@ void Polygon::init(const Segment& seg, float r, float length) {
     }
 
     Point v = dir * r;
-    Point u = v.perpCCW();
+    Point u = v.perp_ccw();
 
     vertices.resize(4);
     vertices[0] = seg.pt[0] - u - v;
@@ -48,12 +48,12 @@ Rect Polygon::bbox() const {
 bool Polygon::intersects(const Rect& rect) const { return intersects(Polygon(rect)); }
 
 bool Polygon::intersects(const Polygon& other) const {
-    return containsVertex(other) || other.containsVertex(*this);
+    return contains_vertex(other) || other.contains_vertex(*this);
 }
 
-bool Polygon::containsVertex(const Polygon& other) const {
+bool Polygon::contains_vertex(const Polygon& other) const {
     for (auto vertice : other.vertices) {
-        if (containsPoint(vertice)) {
+        if (contains_point(vertice)) {
             return true;
         }
     }
@@ -61,15 +61,15 @@ bool Polygon::containsVertex(const Polygon& other) const {
     return false;
 }
 
-bool Polygon::nearPoint(Point pt, float threshold) const {
-    if (containsPoint(pt)) {
+bool Polygon::near_point(Point pt, float threshold) const {
+    if (contains_point(pt)) {
         return true;
     }
 
     unsigned int i = vertices.size() - 1;
     for (unsigned int j = 0; j < vertices.size(); ++j) {
         Segment edge(vertices[i], vertices[j]);
-        if (edge.nearPoint(pt, threshold)) {
+        if (edge.near_point(pt, threshold)) {
             return true;
         }
 
@@ -79,15 +79,15 @@ bool Polygon::nearPoint(Point pt, float threshold) const {
     return false;
 }
 
-bool Polygon::nearSegment(const Segment& seg, float threshold) const {
-    if (containsPoint(seg.pt[0]) || containsPoint(seg.pt[1])) {
+bool Polygon::near_segment(const Segment& seg, float threshold) const {
+    if (contains_point(seg.pt[0]) || contains_point(seg.pt[1])) {
         return true;
     }
 
     unsigned int i = vertices.size() - 1;
     for (unsigned int j = 0; j < vertices.size(); ++j) {
         Segment edge(vertices[i], vertices[j]);
-        if (edge.nearSegment(seg, threshold)) {
+        if (edge.near_segment(seg, threshold)) {
             return true;
         }
 
@@ -97,7 +97,7 @@ bool Polygon::nearSegment(const Segment& seg, float threshold) const {
     return false;
 }
 
-bool Polygon::containsPoint(Point pt) const {
+bool Polygon::contains_point(Point pt) const {
     // FIXME (Ben) - Replace this with the optimized wrap-number test.
 
     // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.h
@@ -136,14 +136,14 @@ bool Polygon::containsPoint(Point pt) const {
         if (p1.y() <= pt.y()) {
             if (p2.y() > pt.y()) {
                 // Edge is going up
-                if (Line(p1, p2).pointSide(pt) > 0) {
+                if (Line(p1, p2).point_side(pt) > 0) {
                     ++count;
                 }
             }
         } else {
             if (p2.y() <= pt.y()) {
                 // Edge is going down
-                if (Line(p1, p2).pointSide(pt) < 0) {
+                if (Line(p1, p2).point_side(pt) < 0) {
                     --count;
                 }
             }
@@ -153,8 +153,8 @@ bool Polygon::containsPoint(Point pt) const {
     return count != 0;
 }
 
-bool Polygon::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
+bool Polygon::hit(Point pt) const { return near_point(pt, kRobotRadius); }
 
-bool Polygon::hit(const Segment& seg) const { return nearSegment(seg, Robot_Radius); }
+bool Polygon::hit(const Segment& seg) const { return near_segment(seg, kRobotRadius); }
 
 }  // namespace Geometry2d

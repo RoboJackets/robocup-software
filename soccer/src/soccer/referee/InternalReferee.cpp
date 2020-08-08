@@ -7,7 +7,7 @@ namespace referee {
 InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
     using rj_msgs::srv::QuickCommands;
     // NOLINTNEXTLINE(performance-unnecessary-value-param)
-    _quick_commands_srv = create_service<QuickCommands>(
+    quick_commands_srv_ = create_service<QuickCommands>(
         referee::topics::kQuickCommandsSrv,
         [this](QuickCommands::Request::SharedPtr
                    request,  // NOLINT(performance-unnecessary-value-param)
@@ -35,7 +35,7 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
 
     using rj_msgs::srv::QuickRestart;
     // NOLINTNEXTLINE(performance-unnecessary-value-param)
-    _quick_restart_srv = create_service<QuickRestart>(
+    quick_restart_srv_ = create_service<QuickRestart>(
         referee::topics::kQuickRestartSrv,
         [this](QuickRestart::Request::SharedPtr
                    request,  // NOLINT(performance-unnecessary-value-param)
@@ -58,7 +58,7 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
             send();
         });
 
-    _game_settings_sub = create_subscription<rj_msgs::msg::GameSettings>(
+    game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(
         config_server::topics::kGameSettingsPub, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::GameSettings::SharedPtr
                    msg) {  // NOLINT(performance-unnecessary-value-param)

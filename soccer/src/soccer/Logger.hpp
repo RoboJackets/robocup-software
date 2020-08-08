@@ -71,7 +71,7 @@ class Context;
  */
 class Logger : public Node {
 public:
-    Logger(Context* context) : _context(context) {}
+    Logger(Context* context) : context_(context) {}
 
     /**
      * \brief Open the given file for reading
@@ -97,19 +97,19 @@ public:
     void stop() override;
 
 private:
-    static std::shared_ptr<Packet::LogFrame> createLogFrame(Context* context);
-    static bool writeToFile(Packet::LogFrame* frame,
+    static std::shared_ptr<Packet::LogFrame> create_log_frame(Context* context);
+    static bool write_to_file(Packet::LogFrame* frame,
                             google::protobuf::io::ZeroCopyOutputStream* out);
-    static bool readFromFile(Packet::LogFrame* frame,
+    static bool read_from_file(Packet::LogFrame* frame,
                              google::protobuf::io::ZeroCopyInputStream* in);
-    static void fillRobot(Packet::LogFrame::Robot* out, int shell_id,
+    static void fill_robot(Packet::LogFrame::Robot* out, int shell_id,
                           RobotState const* state, RobotStatus const* status,
                           MotionSetpoint const* setpoint);
 
     FRIEND_TEST(Logger, SaveContext);
     FRIEND_TEST(Logger, SerializeDeserialize);
 
-    std::optional<std::fstream> _log_file;
+    std::optional<std::fstream> log_file_;
 
-    Context* _context;
+    Context* context_;
 };

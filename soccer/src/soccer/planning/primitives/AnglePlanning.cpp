@@ -4,22 +4,23 @@
 
 namespace Planning {
 
-void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
-                const AngleFunction& angle_function, const RotationConstraints& /* constraints */) {
+void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
+                 const AngleFunction& angle_function,
+                 const RotationConstraints& /* constraints */) {
     const RJ::Time start_time = start_instant.stamp;
 
     if (trajectory->empty()) {
         throw std::invalid_argument("Cannot profile angles for empty trajectory.");
     }
 
-    if (!trajectory->CheckTime(start_time)) {
+    if (!trajectory->check_time(start_time)) {
         throw std::runtime_error("Tried to profile from invalid start time.");
     }
 
     // Clip the front of the trajectory.
     // TODO(#1506): Handle this slightly more gracefully, by only profiling the
     // required portion of the trajectory.
-    *trajectory = trajectory->subTrajectory(start_time, trajectory->end_time());
+    *trajectory = trajectory->sub_trajectory(start_time, trajectory->end_time());
 
     if (trajectory->num_instants() < 2) {
         trajectory->first() = start_instant;
@@ -74,7 +75,7 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
     target_angles.at(i); double next_velocity = velocity.at(i);
 
         double target_heading = target_angles.at(i - 1);
-        double delta = fixAngleRadians(next_heading - target_heading);
+        double delta = fix_angle_radians(next_heading - target_heading);
 
         RJ::Time time_next = trajectory->instant_at(i).stamp;
         RJ::Time time_prev = trajectory->instant_at(i - 1).stamp;
@@ -94,8 +95,8 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
         //  not expected to have rapid discontinuities (possible exception:
         //  face point, when moving near the point).
         acceleration = std::clamp(acceleration,
-                                  -constraints.maxAccel,
-                                  constraints.maxAccel);
+                                  -constraints.max_accel,
+                                  constraints.max_accel);
 
         double prev_velocity = next_velocity - acceleration * dt;
         double prev_heading =
@@ -117,18 +118,18 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
             RJ::Seconds(time - trajectory->begin_time()).count();
 
         Trapezoid::State state{target_angles.at(i), velocity.at(i)};
-        double trapezoid_time = Trapezoid::timeRemaining(initial,
+        double trapezoid_time = Trapezoid::time_remaining(initial,
                                                          state,
-                                                         constraints.maxSpeed,
-                                                         constraints.maxAccel);
+                                                         constraints.max_speed,
+                                                         constraints.max_accel);
         if (time_from_begin >= trapezoid_time) {
             break;
         }
 
-        state = Trapezoid::predictIn(initial,
+        state = Trapezoid::predict_in(initial,
                                      state,
-                                     constraints.maxSpeed,
-                                     constraints.maxAccel,
+                                     constraints.max_speed,
+                                     constraints.max_accel,
                                      time_from_begin);
         target_angles.at(i) = state.position;
         velocity.at(i) = state.velocity;

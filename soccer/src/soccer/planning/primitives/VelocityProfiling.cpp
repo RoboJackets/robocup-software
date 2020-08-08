@@ -18,8 +18,8 @@ double limit_acceleration(double velocity_initial, double velocity_final, double
                       std::sqrt(std::pow(velocity_initial, 2) + offset));
 }
 
-Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double final_speed,
-                           const MotionConstraints& constraints, RJ::Time initial_time) {
+Trajectory profile_velocity(const BezierPath& path, double initial_speed, double final_speed,
+                            const MotionConstraints& constraints, RJ::Time initial_time) {
     if (path.empty()) {
         return Trajectory{{}};
     }
@@ -36,12 +36,12 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
     std::vector<Point> points(num_points);
     std::vector<Point> derivs1(num_points);
     std::vector<double> curvature(num_points);
-    std::vector<double> speed(num_points, constraints.maxSpeed);
+    std::vector<double> speed(num_points, constraints.max_speed);
 
     // Note: these are just suggestions. If they are impossible given
     // MotionConstraints, then we'll limit them.
     speed[0] = initial_speed;
-    speed[num_points - 1] = std::min(constraints.maxSpeed, final_speed);
+    speed[num_points - 1] = std::min(constraints.max_speed, final_speed);
 
     // Disable curvature limiting. Our Bezier implementation has some
     // issues when the initial or final velocity is small: it places
@@ -49,13 +49,13 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
     // curvature near the endpoints.
     // TODO(#1539): Switch to Hermite splines and minimize
     //  sum-squared-acceleration instead of solving for Bezier curves.
-    // double max_centripetal_acceleration = constraints.maxAcceleration;
+    // double max_centripetal_acceleration = constraints.max_acceleration;
 
     // Velocity pass: fill points and calculate maximum velocity given curvature
     // at each point.
     for (int n = 0; n < num_points; n++) {
         double s = n / static_cast<double>(num_segments);
-        path.Evaluate(s, &points[n], &derivs1[n], &curvature[n]);
+        path.evaluate(s, &points[n], &derivs1[n], &curvature[n]);
 
         if (curvature[n] < 0.0 || !std::isfinite(curvature[n])) {
             throw std::runtime_error("Invalid curvature");
@@ -73,14 +73,14 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
     // Acceleration pass: calculate maximum velocity at each point based on
     // acceleration limits forwards in time.
     for (int n = 0; n < num_points - 2; n++) {
-        double max_tangential_acceleration = constraints.maxAcceleration;
+        double max_tangential_acceleration = constraints.max_acceleration;
 
         // TODO(#1539): Re-enable curvature limiting
         // if (limit_curvature) {
         //     double centripetal_acceleartion =
         //         speed[n] * speed[n] * curvature[n];
         //     double squared_max_tangential_acceleration =
-        //         std::pow(constraints.maxAcceleration, 2) -
+        //         std::pow(constraints.max_acceleration, 2) -
         //         std::pow(centripetal_acceleartion, 2);
 
         //     // This can occur when our initial speed is fast enough that we
@@ -105,14 +105,14 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
     // Deceleration pass: calculate maximum velocity at each point based on
     // acceleration limits backwards in time.
     for (int n = num_points - 1; n > 1; n--) {
-        double max_tangential_acceleration = constraints.maxAcceleration;
+        double max_tangential_acceleration = constraints.max_acceleration;
 
         // TODO(#1539): Re-enable curvature limiting
         // if (limit_curvature) {
         //     double centripetal_acceleration =
         //         speed[n] * speed[n] * curvature[n];
         //     double squared_max_tangential_acceleration =
-        //         std::pow(constraints.maxAcceleration, 2) -
+        //         std::pow(constraints.max_acceleration, 2) -
         //         std::pow(centripetal_acceleration, 2);
 
         //     // This can occur when our initial speed is fast enough that we
@@ -138,12 +138,12 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
 
     Pose initial_pose{points[0], 0};
     Twist initial_twist{derivs1[0].normalized(speed[0]), 0};
-    trajectory.AppendInstant(RobotInstant{initial_pose, initial_twist, initial_time});
+    trajectory.append_instant(RobotInstant{initial_pose, initial_twist, initial_time});
 
     for (int n = 1; n < num_points; n++) {
-        Point deltaPos = points[n] - points[n - 1];
+        Point delta_pos = points[n] - points[n - 1];
 
-        double distance = deltaPos.mag();
+        double distance = delta_pos.mag();
 
         // Average speed over the interval. We assume constant acceleration,
         // which is true in the limit of small intervals.
@@ -164,7 +164,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
         Twist twist{derivs1[n].normalized(speed[n]), 0};
 
         // Add point n in
-        trajectory.AppendInstant(RobotInstant{pose, twist, current_time});
+        trajectory.append_instant(RobotInstant{pose, twist, current_time});
     }
     return std::move(trajectory);
 }

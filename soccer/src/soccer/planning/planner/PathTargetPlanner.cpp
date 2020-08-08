@@ -16,7 +16,7 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     Geometry2d::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
-    FillObstacles(request, &static_obstacles, &dynamic_obstacles, true, &ball_trajectory);
+    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, true, &ball_trajectory);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
@@ -26,36 +26,36 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
         return Trajectory();
     }
 
-    auto command = std::get<PathTargetCommand>(request.motionCommand);
-    LinearMotionInstant goalInstant = command.goal;
-    Point goalPoint = goalInstant.position;
+    auto command = std::get<PathTargetCommand>(request.motion_command);
+    LinearMotionInstant goal_instant = command.goal;
+    Point goal_point = goal_instant.position;
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
-        request.debug_drawer->drawCircle(goalPoint, static_cast<float>(drawRadius), drawColor,
-                                         drawLayer);
+        request.debug_drawer->draw_circle(goal_point, static_cast<float>(draw_radius), draw_color,
+                                          draw_layer);
     }
 
-    AngleFunction angle_function = getAngleFunction(request);
+    AngleFunction angle_function = get_angle_function(request);
 
     // Call into the sub-object to actually execute the plan.
-    Trajectory trajectory = Replanner::CreatePlan(
-        Replanner::PlanParams{request.start, goalInstant, static_obstacles, dynamic_obstacles,
+    Trajectory trajectory = Replanner::create_plan(
+        Replanner::PlanParams{request.start, goal_instant, static_obstacles, dynamic_obstacles,
                               request.constraints, angle_function, RJ::Seconds(3.0)},
-        std::move(previous));
+        std::move(previous_));
 
-    previous = trajectory;
+    previous_ = trajectory;
     return trajectory;
 }
 
-AngleFunction PathTargetPlanner::getAngleFunction(const PlanRequest& request) {
-    auto angle_override = std::get<PathTargetCommand>(request.motionCommand).angle_override;
+AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {
+    auto angle_override = std::get<PathTargetCommand>(request.motion_command).angle_override;
     if (std::holds_alternative<TargetFacePoint>(angle_override)) {
-        return AngleFns::facePoint(std::get<TargetFacePoint>(angle_override).face_point);
+        return AngleFns::face_point(std::get<TargetFacePoint>(angle_override).face_point);
     }
 
     if (std::holds_alternative<TargetFaceAngle>(angle_override)) {
-        return AngleFns::faceAngle(std::get<TargetFaceAngle>(angle_override).target);
+        return AngleFns::face_angle(std::get<TargetFaceAngle>(angle_override).target);
     }
 
     return AngleFns::tangent;

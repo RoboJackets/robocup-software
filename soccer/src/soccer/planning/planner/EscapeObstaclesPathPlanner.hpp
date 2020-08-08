@@ -30,35 +30,35 @@ public:
     EscapeObstaclesPathPlanner& operator=(const EscapeObstaclesPathPlanner&) =
         default;
 
-    Trajectory plan(const PlanRequest& planRequest) override;
+    Trajectory plan(const PlanRequest& plan_request) override;
 
-    [[nodiscard]] bool isApplicable(
+    [[nodiscard]] bool is_applicable(
         const MotionCommand& /* command */) const override {
         return true;
     }
 
     /// Uses an RRT to find a point near to @pt that isn't blocked by obstacles.
-    /// If @prevPt is give, only uses a newly-found point if it is closer to @pt
+    /// If @prev_pt is give, only uses a newly-found point if it is closer to @pt
     /// by a configurable threshold.
-    /// @param rrtLogger Optional callback to log the rrt tree after it's built
-    static Geometry2d::Point findNonBlockedGoal(
-        Geometry2d::Point pt, std::optional<Geometry2d::Point> prevPt,
-        const Geometry2d::ShapeSet& obstacles, int maxItr = 300);
+    /// @param rrt_logger Optional callback to log the rrt tree after it's built
+    static Geometry2d::Point find_non_blocked_goal(
+        Geometry2d::Point pt, std::optional<Geometry2d::Point> prev_pt,
+        const Geometry2d::ShapeSet& obstacles, int max_itr = 300);
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
-    static double stepSize() { return *_stepSize; }
+    static double step_size() { return *step_size_config; }
 
 private:
-    PathTargetPlanner _planner;
+    PathTargetPlanner planner_;
 
     /// Step size for the RRT used to find an unblocked point in
-    /// findNonBlockedGoal()
-    static ConfigDouble* _stepSize;
+    /// find_non_blocked_goal()
+    static ConfigDouble* step_size_config;
 
     /// A newly-found unblocked goal must be this much closer to the start
     /// position than the previous point in order to be used.
-    static ConfigDouble* _goalChangeThreshold;
+    static ConfigDouble* goal_change_threshold;
 };
 
 }  // namespace Planning

@@ -18,7 +18,7 @@ namespace Planning {
  * @param hit_time   The time of the collision (output parameter).
  * @return           Whether or not there is a collision.
  */
-bool TrajectoryHitsStatic(const Trajectory& trajectory,
+bool trajectory_hits_static(const Trajectory& trajectory,
                           const Geometry2d::ShapeSet& obstacles,
                           RJ::Time start_time, RJ::Time* hit_time);
 
@@ -33,7 +33,7 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
  * @param out_hit_time     The time of the collision (output parameter).
  * @return                 Whether or not there is a collision.
  */
-bool TrajectoryHitsDynamic(const Trajectory& trajectory,
+bool trajectory_hits_dynamic(const Trajectory& trajectory,
                            const std::vector<DynamicObstacle>& obstacles,
                            RJ::Time start_time,
                            Geometry2d::Circle* out_hit_obstacle,

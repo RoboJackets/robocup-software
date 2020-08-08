@@ -13,226 +13,227 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
-    const float ApproachSpeed = 0.25;
+Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
+    const float approach_speed = 0.25;
 
-    const float ballAvoidDistance = 0.05;
+    const float ball_avoid_distance = 0.05;
 
-    const auto& command = std::get<LineKickCommand>(planRequest.motionCommand);
+    const auto& command = std::get<LineKickCommand>(plan_request.motion_command);
 
-    const RobotInstant& startInstant = planRequest.start;
-    const auto& motionConstraints = planRequest.constraints.mot;
-    const auto& rotationConstraints = planRequest.constraints.rot;
-    const auto& ball = planRequest.world_state->ball;
+    const RobotInstant& start_instant = plan_request.start;
+    const auto& motion_constraints = plan_request.constraints.mot;
+    const auto& rotation_constraints = plan_request.constraints.rot;
+    const auto& ball = plan_request.world_state->ball;
 
-    if (prevPath.empty()) {
-        finalApproach = false;
+    if (prev_path_.empty()) {
+        final_approach_ = false;
     }
 
     ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
-    FillObstacles(planRequest, &static_obstacles, &dynamic_obstacles, false, nullptr);
+    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false, nullptr);
 
     auto obstacles_with_ball = static_obstacles;
-    const RJ::Time curTime = startInstant.stamp;
+    const RJ::Time cur_time = start_instant.stamp;
     obstacles_with_ball.add(
-        make_shared<Circle>(ball.predict_at(curTime).position, ballAvoidDistance));
+        make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
 
-    if (finalApproach && targetKickPos) {
-        RJ::Seconds duration_into_path = curTime - prevPath.begin_time();
+    if (final_approach_ && target_kick_pos_) {
+        RJ::Seconds duration_into_path = cur_time - prev_path_.begin_time();
 
-        RobotInstant target = prevPath.last();
-        RJ::Time time = ball.query_time_near(*targetKickPos);
+        RobotInstant target = prev_path_.last();
+        RJ::Time time = ball.query_time_near(*target_kick_pos_);
 
-        auto timeLeft = prevPath.duration() - duration_into_path;
+        auto time_left = prev_path_.duration() - duration_into_path;
 
-        if (timeLeft < RJ::Seconds(-0.3) || timeLeft > RJ::Seconds(5.0)) {
-            finalApproach = false;
-            prevPath = {};
-        } else if (timeLeft < RJ::Seconds(0)) {
-            prevPath.setDebugText("reuse past done " + std::to_string(timeLeft.count()));
-            return prevPath;
+        if (time_left < RJ::Seconds(-0.3) || time_left > RJ::Seconds(5.0)) {
+            final_approach_ = false;
+            prev_path_ = {};
+        } else if (time_left < RJ::Seconds(0)) {
+            prev_path_.set_debug_text("reuse past done " + std::to_string(time_left.count()));
+            return prev_path_;
         } else {
-            RJ::Seconds timeForBall = time - curTime;
-            prevPath.ScaleDuration(prevPath.duration() * (timeLeft / timeForBall),
-                                   startInstant.stamp);
-            prevPath.setDebugText("reuse final slow " + std::to_string(timeForBall.count()) + " " +
-                                  std::to_string(timeLeft.count()));
-            prevPath.stamp(RJ::now());
-            return prevPath;
+            RJ::Seconds time_for_ball = time - cur_time;
+            prev_path_.scale_duration(prev_path_.duration() * (time_left / time_for_ball),
+                                      start_instant.stamp);
+            prev_path_.set_debug_text("reuse final slow " + std::to_string(time_for_ball.count()) +
+                                      " " + std::to_string(time_left.count()));
+            prev_path_.stamp(RJ::now());
+            return prev_path_;
         }
     }
 
     if (ball.velocity.mag() < 0.2) {
         LinearMotionInstant target{ball.position,
-                                   (command.target - ball.position).normalized(ApproachSpeed)};
+                                   (command.target - ball.position).normalized(approach_speed)};
 
         auto ball_trajectory = ball.make_trajectory();
 
         Trajectory path;
-        if (std::abs(target.velocity.angleBetween((target.position - startInstant.position()))) >
-            DegreesToRadians(10)) {
-            target.position -= target.velocity.normalized(ballAvoidDistance * 2 + Robot_Radius);
-            if (!prevPath.empty() &&
-                target.position.distTo(prevPath.last().position()) <
-                    Replanner::goalPosChangeThreshold() &&
-                reusePathCount < 20) {
-                target.velocity = prevPath.last().linear_velocity();
-                reusePathCount++;
+        if (std::abs(target.velocity.angle_between((target.position - start_instant.position()))) >
+            degrees_to_radians(10)) {
+            target.position -= target.velocity.normalized(ball_avoid_distance * 2 + kRobotRadius);
+            if (!prev_path_.empty() &&
+                target.position.dist_to(prev_path_.last().position()) <
+                    Replanner::goal_pos_change_threshold() &&
+                reuse_path_count_ < 20) {
+                target.velocity = prev_path_.last().linear_velocity();
+                reuse_path_count_++;
             } else {
-                reusePathCount = 0;
+                reuse_path_count_ = 0;
             }
 
-            Replanner::PlanParams params{startInstant,
+            Replanner::PlanParams params{start_instant,
                                          target,
                                          obstacles_with_ball,
                                          dynamic_obstacles,
-                                         planRequest.constraints,
-                                         AngleFns::facePoint(command.target)};
-            path = Replanner::CreatePlan(params, prevPath);
-            path.setDebugText("slow ball 1");
+                                         plan_request.constraints,
+                                         AngleFns::face_point(command.target)};
+            path = Replanner::create_plan(params, prev_path_);
+            path.set_debug_text("slow ball 1");
         } else {
-            if (!prevPath.empty() &&
-                target.position.distTo(prevPath.last().position()) <
-                    Replanner::goalPosChangeThreshold() &&
-                reusePathCount < 20) {
-                target.velocity = prevPath.last().linear_velocity();
-                reusePathCount++;
+            if (!prev_path_.empty() &&
+                target.position.dist_to(prev_path_.last().position()) <
+                    Replanner::goal_pos_change_threshold() &&
+                reuse_path_count_ < 20) {
+                target.velocity = prev_path_.last().linear_velocity();
+                reuse_path_count_++;
             } else {
-                reusePathCount = 0;
+                reuse_path_count_ = 0;
             }
 
-            target.position += target.velocity.normalized(Robot_Radius);
+            target.position += target.velocity.normalized(kRobotRadius);
 
-            Replanner::PlanParams params{startInstant,
+            Replanner::PlanParams params{start_instant,
                                          target,
                                          static_obstacles,
                                          dynamic_obstacles,
-                                         planRequest.constraints,
-                                         AngleFns::facePoint(command.target)};
-            path = Replanner::CreatePlan(params, prevPath);
-            path.setDebugText("slow ball 2");
+                                         plan_request.constraints,
+                                         AngleFns::face_point(command.target)};
+            path = Replanner::create_plan(params, prev_path_);
+            path.set_debug_text("slow ball 2");
         }
-        targetKickPos = std::nullopt;
+        target_kick_pos_ = std::nullopt;
         path.stamp(RJ::now());
-        prevPath = path;
+        prev_path_ = path;
         return path;
     }
 
-    if (!prevPath.empty() && targetKickPos) {
-        auto previous_duration_remaining = prevPath.end_time() - startInstant.stamp;
+    if (!prev_path_.empty() && target_kick_pos_) {
+        auto previous_duration_remaining = prev_path_.end_time() - start_instant.stamp;
 
         LinearMotionInstant target;
-        RJ::Time intercept_time = ball.query_time_near(*targetKickPos, &target.position);
-        RJ::Time end_time_adjusted = prevPath.end_time() - RJ::Seconds(1.0);
+        RJ::Time intercept_time = ball.query_time_near(*target_kick_pos_, &target.position);
+        RJ::Time end_time_adjusted = prev_path_.end_time() - RJ::Seconds(1.0);
         if (previous_duration_remaining < RJ::Seconds(0.0)) {
-            target.velocity = (command.target - target.position).normalized(ApproachSpeed);
-            target.position -= target.velocity.normalized(Robot_Radius + Ball_Radius * 2);
+            target.velocity = (command.target - target.position).normalized(approach_speed);
+            target.position -= target.velocity.normalized(kRobotRadius + kBallRadius * 2);
 
-            Replanner::PlanParams params{startInstant,
+            Replanner::PlanParams params{start_instant,
                                          target,
                                          static_obstacles,
                                          dynamic_obstacles,
-                                         planRequest.constraints,
-                                         AngleFns::facePoint(command.target)};
-            Trajectory path = Replanner::CreatePlan(params, prevPath);
+                                         plan_request.constraints,
+                                         AngleFns::face_point(command.target)};
+            Trajectory path = Replanner::create_plan(params, prev_path_);
 
             if (!path.empty()) {
-                path.setDebugText(
+                path.set_debug_text(
                     "FinalPath" + std::to_string(path.duration().count()) + " " +
-                    std::to_string(RJ::Seconds(intercept_time - startInstant.stamp).count()) + " " +
-                    std::to_string(intercept_time.time_since_epoch().count()));
+                    std::to_string(RJ::Seconds(intercept_time - start_instant.stamp).count()) +
+                    " " + std::to_string(intercept_time.time_since_epoch().count()));
                 path.stamp(RJ::now());
-                prevPath = path;
+                prev_path_ = path;
                 return path;
             }
         }
 
-        if (prevPath.CheckTime(startInstant.stamp) &&
-            !TrajectoryHitsStatic(prevPath, static_obstacles, startInstant.stamp, nullptr) &&
-            end_time_adjusted < intercept_time && reusePathCount < 10) {
-            reusePathCount++;
-            Point nearPoint;
-            prevPath.setDebugText("Reuse prevPath");
-            if (ball.query_time_near(prevPath.last().position(), &nearPoint) >= end_time_adjusted) {
-                return prevPath;
+        if (prev_path_.check_time(start_instant.stamp) &&
+            !trajectory_hits_static(prev_path_, static_obstacles, start_instant.stamp, nullptr) &&
+            end_time_adjusted < intercept_time && reuse_path_count_ < 10) {
+            reuse_path_count_++;
+            Point near_point;
+            prev_path_.set_debug_text("Reuse prev_path");
+            if (ball.query_time_near(prev_path_.last().position(), &near_point) >=
+                end_time_adjusted) {
+                return prev_path_;
             }
         }
     }
 
-    Trajectory partialPath;
-    RJ::Seconds partialPathTime = 0ms;
-    auto tmpStartInstant = startInstant;
-    const auto partialReplanLeadTime = RJ::Seconds(Replanner::partialReplanLeadTime());
+    Trajectory partial_path;
+    RJ::Seconds partial_path_time = 0ms;
+    auto tmp_start_instant = start_instant;
+    const auto partial_replan_lead_time = RJ::Seconds(Replanner::partial_replan_lead_time());
 
-    if (!prevPath.empty() && prevPath.CheckTime(startInstant.stamp)) {
-        if (startInstant.stamp < prevPath.end_time() - partialReplanLeadTime * 2) {
-            partialPath = prevPath.subTrajectory(startInstant.stamp,
-                                                 startInstant.stamp + partialReplanLeadTime);
-            partialPathTime = partialReplanLeadTime;
-            tmpStartInstant = partialPath.last();
+    if (!prev_path_.empty() && prev_path_.check_time(start_instant.stamp)) {
+        if (start_instant.stamp < prev_path_.end_time() - partial_replan_lead_time * 2) {
+            partial_path = prev_path_.sub_trajectory(
+                start_instant.stamp, start_instant.stamp + partial_replan_lead_time);
+            partial_path_time = partial_replan_lead_time;
+            tmp_start_instant = partial_path.last();
         }
     }
 
     for (auto t = RJ::Seconds(0.4); t < RJ::Seconds(6); t += RJ::Seconds(0.2)) {
-        RJ::Time rollout_time = curTime + t;
+        RJ::Time rollout_time = cur_time + t;
 
         auto ball_state_predicted = ball.predict_at(rollout_time);
         LinearMotionInstant target{ball_state_predicted.position};
-        targetKickPos = target.position;
-        target.velocity = (command.target - target.position).normalized(ApproachSpeed);
-        target.position -= target.velocity.normalized(Robot_Radius + Ball_Radius * 2);
+        target_kick_pos_ = target.position;
+        target.velocity = (command.target - target.position).normalized(approach_speed);
+        target.position -= target.velocity.normalized(kRobotRadius + kBallRadius * 2);
 
         vector<Point> intermediate_points;
-        if (std::abs(target.velocity.angleBetween((target.position - tmpStartInstant.position()))) >
-            DegreesToRadians(60)) {
+        if (std::abs(target.velocity.angle_between(
+                (target.position - tmp_start_instant.position()))) > degrees_to_radians(60)) {
             intermediate_points.push_back(
                 target.position -
-                target.velocity.normalized(Robot_Radius * 2.0 + Ball_Radius * 2.0));
+                target.velocity.normalized(kRobotRadius * 2.0 + kBallRadius * 2.0));
         }
 
-        Trajectory path =
-            CreatePath::simple(tmpStartInstant.linear_motion(), target, planRequest.constraints.mot,
-                               tmpStartInstant.stamp, intermediate_points);
+        Trajectory path = CreatePath::simple(tmp_start_instant.linear_motion(), target,
+                                             plan_request.constraints.mot, tmp_start_instant.stamp,
+                                             intermediate_points);
 
         if (!path.empty()) {
-            if (path.duration() + partialPathTime <= t) {
-                if (!partialPath.empty()) {
-                    path = Trajectory(std::move(partialPath), path);
+            if (path.duration() + partial_path_time <= t) {
+                if (!partial_path.empty()) {
+                    path = Trajectory(std::move(partial_path), path);
                 }
-                PlanAngles(&path, tmpStartInstant, AngleFns::facePoint(target.position),
-                           planRequest.constraints.rot);
+                plan_angles(&path, tmp_start_instant, AngleFns::face_point(target.position),
+                            plan_request.constraints.rot);
 
-                path.setDebugText("FoundPath" + std::to_string(path.duration().count()));
-                reusePathCount = 0;
+                path.set_debug_text("FoundPath" + std::to_string(path.duration().count()));
+                reuse_path_count_ = 0;
                 path.stamp(RJ::now());
-                prevPath = path;
+                prev_path_ = path;
                 return path;
             }
         }
     }
 
-    auto ball_predicted = ball.predict_at(curTime);
+    auto ball_predicted = ball.predict_at(cur_time);
     LinearMotionInstant target{ball_predicted.position};
-    target.velocity = (command.target - target.position).normalized(ApproachSpeed);
-    target.position -= target.velocity.normalized(Robot_Radius * 3);
+    target.velocity = (command.target - target.position).normalized(approach_speed);
+    target.position -= target.velocity.normalized(kRobotRadius * 3);
 
-    auto ballPath = ball.make_trajectory();
-    dynamic_obstacles.emplace_back(Ball_Radius, &ballPath);
+    auto ball_path = ball.make_trajectory();
+    dynamic_obstacles.emplace_back(kBallRadius, &ball_path);
 
-    Replanner::PlanParams params{startInstant,
+    Replanner::PlanParams params{start_instant,
                                  target,
                                  static_obstacles,
                                  dynamic_obstacles,
-                                 planRequest.constraints,
-                                 AngleFns::facePoint(command.target)};
-    Trajectory path = Replanner::CreatePlan(params, prevPath);
+                                 plan_request.constraints,
+                                 AngleFns::face_point(command.target)};
+    Trajectory path = Replanner::create_plan(params, prev_path_);
 
-    path.setDebugText("Approaching cautious");
+    path.set_debug_text("Approaching cautious");
 
-    targetKickPos = std::nullopt;
+    target_kick_pos_ = std::nullopt;
     path.stamp(RJ::now());
-    prevPath = path;
+    prev_path_ = path;
     return path;
 }
 

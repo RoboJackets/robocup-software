@@ -18,7 +18,7 @@ public:
      * @brief Blocking get.
      * @return The first item in the queue, blocking until one is available.
      */
-    T Get() {
+    T get() {
         std::unique_lock<std::mutex> lock{mutex_};
         cv_.wait(lock, [this]() { return !queue_.empty(); });
         auto item = std::move(queue_.front());
@@ -33,7 +33,7 @@ public:
      * @param timeout How long to wait for this operation.
      * @return True if an item was obtained, false if it timed out.
      */
-    bool TryGet(T& item, const std::chrono::milliseconds& timeout) {
+    bool try_get(T& item, const std::chrono::milliseconds& timeout) {
         std::unique_lock<std::mutex> lock{mutex_};
         const auto timeout_time = std::chrono::steady_clock::now() + timeout;
         cv_.wait_until(lock, timeout_time,
@@ -53,7 +53,7 @@ public:
      * @brief Returns all of the messages in the queue in a vector.
      * @return A vector containing all the messages in the queue.
      */
-    std::vector<T> GetAll() {
+    std::vector<T> get_all() {
         std::unique_lock<std::mutex> lock{mutex_};
         std::vector<T> vector(std::make_move_iterator(queue_.begin()),
                               std::make_move_iterator(queue_.end()));
@@ -66,7 +66,7 @@ public:
      * @brief Pushes an item onto the queue.
      * @param item The item to be added.
      */
-    void Push(const T& item) {
+    void push(const T& item) {
         {
             std::unique_lock<std::mutex> lock{mutex_};
             queue_.emplace_back(item);
@@ -78,7 +78,7 @@ public:
      * @brief Pushes an item onto the queue.
      * @param item The item to be added.
      */
-    void Push(T&& item) {
+    void push(T&& item) {
         {
             std::unique_lock<std::mutex> lock{mutex_};
             queue_.emplace_back(std::move(item));

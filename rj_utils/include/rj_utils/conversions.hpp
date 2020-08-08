@@ -15,7 +15,7 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
  * @param packet
  * @return
  */
-[[nodiscard]] RawProtobufMsg::UniquePtr ToROSMsg(
+[[nodiscard]] RawProtobufMsg::UniquePtr to_ros_msg(
     const SSL_WrapperPacket& packet);
 
 /**
@@ -23,11 +23,11 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
  * @param ball
  * @return
  */
-[[nodiscard]] DetectionBallMsg ToROSMsg(const SSL_DetectionBall& ball);
+[[nodiscard]] DetectionBallMsg to_ros_msg(const SSL_DetectionBall& ball);
 
 /**
  * @brief Converts from SSL_DetectionRobot to a DetectionRobotMsg.
  * @param robot
  * @return
  */
-[[nodiscard]] DetectionRobotMsg ToROSMsg(const SSL_DetectionRobot& robot);
+[[nodiscard]] DetectionRobotMsg to_ros_msg(const SSL_DetectionRobot& robot);

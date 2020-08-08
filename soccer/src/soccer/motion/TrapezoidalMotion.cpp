@@ -6,189 +6,190 @@
 
 using namespace std;
 
-double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed, double maxAcc,
-                            double startSpeed, double finalSpeed) {
-    startSpeed = fmin(startSpeed, maxSpeed);
-    finalSpeed = fmin(finalSpeed, maxSpeed);
-    double rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-    double plateauTime;
-    double rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+double Trapezoidal::get_time(double distance, double path_length, double max_speed, double max_acc,
+                             double start_speed, double final_speed) {
+    start_speed = fmin(start_speed, max_speed);
+    final_speed = fmin(final_speed, max_speed);
+    double ramp_up_time = (max_speed - start_speed) / max_acc;
+    double plateau_time;
+    double ramp_down_time = (final_speed - max_speed) / -max_acc;
 
-    double rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
-    double plateauDist;
-    double rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
+    double ramp_up_dist = ramp_up_time * (start_speed + max_speed) / 2.0;
+    double plateau_dist;
+    double ramp_down_dist = ramp_down_time * (max_speed + final_speed) / 2.0;
 
-    if (rampUpDist + rampDownDist > pathLength) {
+    if (ramp_up_dist + ramp_down_dist > path_length) {
         // triangle case: we don't ever hit full speed
 
         // Calculate what max speed we actually reach (it's less than the
         // parameter passed in).
-        // We write an equation for pathLength given maxSpeed, then solve for
-        // maxSpeed
-        // 	rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-        // 	rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
-        // 	pathLength = (startSpeed + maxSpeed)/2*rampUpTime
-        // 					+ (maxSpeed + finalSpeed)/2*rampDownTime;
-        // We then solve for maxSpeed:
-        // maxSpeed = sqrt(pathLength*maxAcc + startSpeed*startSpeed +
-        // finalSpeed*finalSpeed);
-        maxSpeed =
-            sqrt((2 * maxAcc * pathLength + powf(startSpeed, 2) + powf(finalSpeed, 2)) / 2.0);
+        // We write an equation for path_length given max_speed, then solve for
+        // max_speed
+        // 	ramp_up_time = (max_speed - start_speed) / max_acc;
+        // 	ramp_down_time = (final_speed - max_speed) / -max_acc;
+        // 	path_length = (start_speed + max_speed)/2*ramp_up_time
+        // 					+ (max_speed + final_speed)/2*ramp_down_time;
+        // We then solve for max_speed:
+        // max_speed = sqrt(path_length*max_acc + start_speed*start_speed +
+        // final_speed*final_speed);
+        max_speed =
+            sqrt((2 * max_acc * path_length + powf(start_speed, 2) + powf(final_speed, 2)) / 2.0);
 
-        rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-        rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
-        rampUpDist = (startSpeed + maxSpeed) / 2.0 * rampUpTime;
-        rampDownDist = (finalSpeed + maxSpeed) / 2.0 * rampDownTime;
+        ramp_up_time = (max_speed - start_speed) / max_acc;
+        ramp_down_time = (final_speed - max_speed) / -max_acc;
+        ramp_up_dist = (start_speed + max_speed) / 2.0 * ramp_up_time;
+        ramp_down_dist = (final_speed + max_speed) / 2.0 * ramp_down_time;
 
         // no plateau
-        plateauTime = 0;
-        plateauDist = 0;
+        plateau_time = 0;
+        plateau_dist = 0;
 
     } else {
-        // trapezoid case: there's a time where we go at maxSpeed for a bit
-        plateauDist = pathLength - (rampUpDist + rampDownDist);
-        plateauTime = plateauDist / maxSpeed;
+        // trapezoid case: there's a time where we go at max_speed for a bit
+        plateau_dist = path_length - (ramp_up_dist + ramp_down_dist);
+        plateau_time = plateau_dist / max_speed;
     }
 
     if (distance <= 0) {
         return 0;
     }
 
-    if (abs(distance - (rampUpDist + plateauDist + rampDownDist)) < 0.00001) {
-        return rampUpTime + plateauTime + rampDownTime;
+    if (abs(distance - (ramp_up_dist + plateau_dist + ramp_down_dist)) < 0.00001) {
+        return ramp_up_time + plateau_time + ramp_down_time;
     }
-    if (distance < rampUpDist) {
+    if (distance < ramp_up_dist) {
         // time calculations
         /*
             1/2*a*t^2 + t*v0 - d = 0
             t = -b +- sqrt(b^2 - 4*a*c)/(2*a)
 
         */
-        double b = startSpeed;
-        double a = maxAcc / 2.0;
+        double b = start_speed;
+        double a = max_acc / 2.0;
         double c = -distance;
         double root = sqrt(b * b - 4 * a * c);
         double temp1 = (-b + root) / (2 * a);
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
-            debugThrow("TrapezoidalMotion failed. Solution is imaginary");  // TODO
-                                                                            // Handle
-                                                                            // this
-            return rampUpTime;
+            debug_throw("TrapezoidalMotion failed. Solution is imaginary");  // TODO
+                                                                             // Handle
+                                                                             // this
+            return ramp_up_time;
         }
-        if (temp1 > 0 && temp1 < rampUpTime) {
+        if (temp1 > 0 && temp1 < ramp_up_time) {
             return temp1;
         }
         return temp2;
 
-    } else if (distance <= rampUpDist + plateauDist) {
-        double position = distance - rampUpDist;
-        return rampUpTime + position / maxSpeed;
-    } else if (distance < rampUpDist + plateauDist + rampDownDist) {
+    } else if (distance <= ramp_up_dist + plateau_dist) {
+        double position = distance - ramp_up_dist;
+        return ramp_up_time + position / max_speed;
+    } else if (distance < ramp_up_dist + plateau_dist + ramp_down_dist) {
         // time calculations
         /*
             1/2*a*t^2 + t*v0 - d = 0
             t = -b +- sqrt(b^2 - 4*a*c)/(2*a)
 
         */
-        double position = distance - rampUpDist - plateauDist;
-        double b = maxSpeed;
-        double a = -maxAcc / 2.0;
+        double position = distance - ramp_up_dist - plateau_dist;
+        double b = max_speed;
+        double a = -max_acc / 2.0;
         double c = -position;
         double root = sqrt(b * b - 4 * a * c);
         double temp1 = (-b + root) / (2 * a);
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
-            debugThrow("TrapezoidalMotion failed. Solution is imaginary");  // TODO
-                                                                            // Handle
-                                                                            // this
-            return rampUpTime + plateauTime + rampDownTime;
+            debug_throw("TrapezoidalMotion failed. Solution is imaginary");  // TODO
+                                                                             // Handle
+                                                                             // this
+            return ramp_up_time + plateau_time + ramp_down_time;
         }
-        if (temp1 > 0 && temp1 < rampDownTime) {
-            return rampUpTime + plateauTime + temp1;
+        if (temp1 > 0 && temp1 < ramp_down_time) {
+            return ramp_up_time + plateau_time + temp1;
         }
-        return rampUpTime + plateauTime + temp2;
+        return ramp_up_time + plateau_time + temp2;
 
     } else {
-        return rampUpTime + plateauTime + rampDownTime;
+        return ramp_up_time + plateau_time + ramp_down_time;
     }
 }
 
-bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc, double timeIntoLap,
-                       double startSpeed, double finalSpeed, double& posOut, double& speedOut) {
+bool trapezoidal_motion(double path_length, double max_speed, double max_acc, double time_into_lap,
+                        double start_speed, double final_speed, double& pos_out,
+                        double& speed_out) {
     // begin by assuming that there's enough time to get up to full speed
     // we do this by calculating the full ramp-up and ramp-down, then seeing
     // if the distance travelled is too great.  If it's gone too far, this is
     // the "triangle case"
 
-    startSpeed = fmin(startSpeed, maxSpeed);
-    finalSpeed = fmin(finalSpeed, maxSpeed);
-    double rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-    double plateauTime;
-    double rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+    start_speed = fmin(start_speed, max_speed);
+    final_speed = fmin(final_speed, max_speed);
+    double ramp_up_time = (max_speed - start_speed) / max_acc;
+    double plateau_time;
+    double ramp_down_time = (final_speed - max_speed) / -max_acc;
 
-    double rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
-    double plateauDist;
-    double rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
+    double ramp_up_dist = ramp_up_time * (start_speed + max_speed) / 2.0;
+    double plateau_dist;
+    double ramp_down_dist = ramp_down_time * (max_speed + final_speed) / 2.0;
 
-    if (rampUpDist + rampDownDist > pathLength) {
+    if (ramp_up_dist + ramp_down_dist > path_length) {
         // triangle case: we don't ever hit full speed
 
         // Calculate what max speed we actually reach (it's less than the
         // parameter passed in).
-        // We write an equation for pathLength given maxSpeed, then solve for
-        // maxSpeed
-        // 	rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-        // 	rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
-        // 	pathLength = (startSpeed + maxSpeed)/2*rampUpTime
-        // 					+ (maxSpeed + finalSpeed)/2*rampDownTime;
-        // We then solve for maxSpeed
-        // maxSpeed = sqrt(pathLength*maxAcc + startSpeed*startSpeed +
-        // finalSpeed*finalSpeed);
-        maxSpeed =
-            sqrt((2 * maxAcc * pathLength + powf(startSpeed, 2) + powf(finalSpeed, 2)) / 2.0);
+        // We write an equation for path_length given max_speed, then solve for
+        // max_speed
+        // 	ramp_up_time = (max_speed - start_speed) / max_acc;
+        // 	ramp_down_time = (final_speed - max_speed) / -max_acc;
+        // 	path_length = (start_speed + max_speed)/2*ramp_up_time
+        // 					+ (max_speed + final_speed)/2*ramp_down_time;
+        // We then solve for max_speed
+        // max_speed = sqrt(path_length*max_acc + start_speed*start_speed +
+        // final_speed*final_speed);
+        max_speed =
+            sqrt((2 * max_acc * path_length + powf(start_speed, 2) + powf(final_speed, 2)) / 2.0);
 
-        rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-        rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
-        rampUpDist = (startSpeed + maxSpeed) / 2.0 * rampUpTime;
-        rampDownDist = (finalSpeed + maxSpeed) / 2.0 * rampDownTime;
+        ramp_up_time = (max_speed - start_speed) / max_acc;
+        ramp_down_time = (final_speed - max_speed) / -max_acc;
+        ramp_up_dist = (start_speed + max_speed) / 2.0 * ramp_up_time;
+        ramp_down_dist = (final_speed + max_speed) / 2.0 * ramp_down_time;
 
         // no plateau
-        plateauTime = 0;
-        plateauDist = 0;
+        plateau_time = 0;
+        plateau_dist = 0;
     } else {
-        // trapezoid case: there's a time where we go at maxSpeed for a bit
-        plateauDist = pathLength - (rampUpDist + rampDownDist);
-        plateauTime = plateauDist / maxSpeed;
+        // trapezoid case: there's a time where we go at max_speed for a bit
+        plateau_dist = path_length - (ramp_up_dist + ramp_down_dist);
+        plateau_time = plateau_dist / max_speed;
     }
 
-    if (timeIntoLap < 0) {
+    if (time_into_lap < 0) {
         /// not even started on the path yet
-        posOut = 0;
-        speedOut = startSpeed;
+        pos_out = 0;
+        speed_out = start_speed;
         return false;
     }
-    if (timeIntoLap < rampUpTime) {
-        /// on the ramp-up, we're accelerating at @maxAcc
-        posOut = 0.5 * maxAcc * timeIntoLap * timeIntoLap + startSpeed * timeIntoLap;
-        speedOut = startSpeed + maxAcc * timeIntoLap;
+    if (time_into_lap < ramp_up_time) {
+        /// on the ramp-up, we're accelerating at @max_acc
+        pos_out = 0.5 * max_acc * time_into_lap * time_into_lap + start_speed * time_into_lap;
+        speed_out = start_speed + max_acc * time_into_lap;
         return true;
-    } else if (timeIntoLap < rampUpTime + plateauTime) {
+    } else if (time_into_lap < ramp_up_time + plateau_time) {
         /// we're on the plateau
-        posOut = rampUpDist + (timeIntoLap - rampUpTime) * maxSpeed;
-        speedOut = maxSpeed;
+        pos_out = ramp_up_dist + (time_into_lap - ramp_up_time) * max_speed;
+        speed_out = max_speed;
         return true;
-    } else if (timeIntoLap < rampUpTime + plateauTime + rampDownTime) {
+    } else if (time_into_lap < ramp_up_time + plateau_time + ramp_down_time) {
         /// we're on the ramp down
-        double timeIntoRampDown = timeIntoLap - (rampUpTime + plateauTime);
-        posOut = 0.5 * (-maxAcc) * timeIntoRampDown * timeIntoRampDown +
-                 maxSpeed * timeIntoRampDown + (rampUpDist + plateauDist);
-        speedOut = maxSpeed - maxAcc * timeIntoRampDown;
+        double time_into_ramp_down = time_into_lap - (ramp_up_time + plateau_time);
+        pos_out = 0.5 * (-max_acc) * time_into_ramp_down * time_into_ramp_down +
+                  max_speed * time_into_ramp_down + (ramp_up_dist + plateau_dist);
+        speed_out = max_speed - max_acc * time_into_ramp_down;
         return true;
     } else {
         /// past the end of the path
-        posOut = pathLength;
-        speedOut = finalSpeed;
+        pos_out = path_length;
+        speed_out = final_speed;
         return false;
     }
 }

@@ -21,7 +21,7 @@ using Seconds = std::chrono::duration<double>;
 /** returns the local system timestamp in microseconds */
 
 template <class Duration>
-constexpr int64_t numMicroseconds(Duration d) {
+constexpr int64_t num_microseconds(Duration d) {
     return std::chrono::duration_cast<std::chrono::microseconds>(d).count();
 }
 
@@ -33,23 +33,23 @@ inline Time now() {
 }
 
 constexpr Timestamp timestamp(Time time) {
-    return numMicroseconds(time.time_since_epoch());
+    return num_microseconds(time.time_since_epoch());
 }
 
 inline Timestamp timestamp() { return timestamp(now()); }
 
 /// Converts a decimal number of seconds to an integer timestamp in microseconds
-constexpr RJ::Timestamp SecsToTimestamp(double secs) {
+constexpr RJ::Timestamp secs_to_timestamp(double secs) {
     return secs * 1000000.0f;
 }
 
 template <class Duration>
-constexpr double numSeconds(Duration d) {
+constexpr double num_seconds(Duration d) {
     return std::chrono::duration<double>(d).count();
 }
 
 /// Converts an integer timestamp in microseconds to a decimal number of seconds
-constexpr float TimestampToSecs(RJ::Timestamp timestamp) {
+constexpr float timestamp_to_secs(RJ::Timestamp timestamp) {
     return (float)(timestamp / 1000000.0f);
 }
 

@@ -16,21 +16,21 @@ public:
     /**
      * Creates a camera frame directly from the protobuf packets
      *
-     * @param tCapture Time the frame was captured
-     * @param cameraID ID of the camera this frame corresponds to
-     * @param cameraBalls Unsorted list of ball detections
-     * @param cameraRobotsYellow Unsorted list of yellow team robot detections
-     * @param cameraRobotsBlue Unsorted list of blue team robot detections
+     * @param t_capture Time the frame was captured
+     * @param camera_id ID of the camera this frame corresponds to
+     * @param camera_balls Unsorted list of ball detections
+     * @param camera_robots_yellow Unsorted list of yellow team robot detections
+     * @param camera_robots_blue Unsorted list of blue team robot detections
      */
-    CameraFrame(RJ::Time tCapture, int cameraID,
-                std::vector<CameraBall> cameraBalls,
-                std::vector<CameraRobot> cameraRobotsYellow,
-                std::vector<CameraRobot> cameraRobotsBlue)
-        : tCapture(tCapture),
-          cameraID(cameraID),
-          cameraBalls(std::move(cameraBalls)),
-          cameraRobotsYellow(std::move(cameraRobotsYellow)),
-          cameraRobotsBlue(std::move(cameraRobotsBlue)) {}
+    CameraFrame(RJ::Time t_capture, int camera_id,
+                std::vector<CameraBall> camera_balls,
+                std::vector<CameraRobot> camera_robots_yellow,
+                std::vector<CameraRobot> camera_robots_blue)
+        : t_capture(t_capture),
+          camera_id(camera_id),
+          camera_balls(std::move(camera_balls)),
+          camera_robots_yellow(std::move(camera_robots_yellow)),
+          camera_robots_blue(std::move(camera_robots_blue)) {}
 
     /**
      * @brief Constructor from DetectionFrameMsg.
@@ -39,29 +39,29 @@ public:
     CameraFrame(const DetectionFrameMsg& msg,
                 const Geometry2d::TransformMatrix& world_to_team,
                 double team_angle)
-        : tCapture{rj_convert::convert_from_ros(msg.t_capture)},
-          cameraID{static_cast<int>(msg.camera_id)},
-          cameraBalls{},
-          cameraRobotsYellow{},
-          cameraRobotsBlue{} {
+        : t_capture{rj_convert::convert_from_ros(msg.t_capture)},
+          camera_id{static_cast<int>(msg.camera_id)},
+          camera_balls{},
+          camera_robots_yellow{},
+          camera_robots_blue{} {
         for (const DetectionBallMsg& ball_msg : msg.balls) {
-            cameraBalls.emplace_back(tCapture, ball_msg, world_to_team);
+            camera_balls.emplace_back(t_capture, ball_msg, world_to_team);
         }
 
         for (const DetectionRobotMsg& robot_msg : msg.robots_blue) {
-            cameraRobotsBlue.emplace_back(tCapture, robot_msg, world_to_team,
+            camera_robots_blue.emplace_back(t_capture, robot_msg, world_to_team,
                                           team_angle);
         }
         for (const DetectionRobotMsg& robot_msg : msg.robots_yellow) {
-            cameraRobotsYellow.emplace_back(tCapture, robot_msg, world_to_team,
+            camera_robots_yellow.emplace_back(t_capture, robot_msg, world_to_team,
                                             team_angle);
         }
     }
 
-    RJ::Time tCapture;
-    int cameraID;
-    std::vector<CameraBall> cameraBalls;
-    std::vector<CameraRobot> cameraRobotsYellow;
-    std::vector<CameraRobot> cameraRobotsBlue;
+    RJ::Time t_capture;
+    int camera_id;
+    std::vector<CameraBall> camera_balls;
+    std::vector<CameraRobot> camera_robots_yellow;
+    std::vector<CameraRobot> camera_robots_blue;
 };
 }  // namespace vision_filter

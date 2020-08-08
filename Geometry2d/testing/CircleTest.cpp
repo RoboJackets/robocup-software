@@ -37,8 +37,8 @@ TEST(Circle, GetterSetter) {
 TEST(Circle, ContainsPt) {
     Circle c({0, 0}, 1);
 
-    EXPECT_TRUE(c.containsPoint({0.4, 0.4}));
-    EXPECT_FALSE(c.containsPoint({1.4, 0}));
+    EXPECT_TRUE(c.contains_point({0.4, 0.4}));
+    EXPECT_FALSE(c.contains_point({1.4, 0}));
 }
 
 TEST(Circle, Hit) {
@@ -54,9 +54,9 @@ TEST(Circle, Hit) {
 TEST(Circle, NearPoint) {
     Circle c({0, 0}, 1);
 
-    EXPECT_TRUE(c.nearPoint({0.5, 0}, 1));
-    EXPECT_TRUE(c.nearPoint({1.5, 0}, 1));
-    EXPECT_FALSE(c.nearPoint({2.5, 0}, 1));
+    EXPECT_TRUE(c.near_point({0.5, 0}, 1));
+    EXPECT_TRUE(c.near_point({1.5, 0}, 1));
+    EXPECT_FALSE(c.near_point({2.5, 0}, 1));
 }
 
 TEST(Circle, Intersects) {
@@ -118,14 +118,14 @@ TEST(Circle, TangentPoints) {
     Point s2(1000000, 0);
 
     // Nullptrs
-    EXPECT_FALSE(c.tangentPoints(s1));
+    EXPECT_FALSE(c.tangent_points(s1));
 
     // Inside circle
-    EXPECT_FALSE(c.tangentPoints(s1, &out1, &out2));
+    EXPECT_FALSE(c.tangent_points(s1, &out1, &out2));
 
     // Outside circle very far away
     // Tangets are basically top and bottom
-    EXPECT_TRUE(c.tangentPoints(s2, &out1, &out2));
+    EXPECT_TRUE(c.tangent_points(s2, &out1, &out2));
     EXPECT_NEAR(out1.x(), 0.01, 0.01);
     EXPECT_NEAR(out1.y(), -0.99, 0.01);
     EXPECT_NEAR(out2.x(), 0.01, 0.01);
@@ -136,22 +136,22 @@ TEST(Circle, NearestPoint) {
     Circle c({0, 0}, 1);
 
     // No solution so it returns center
-    Point out1 = c.nearestPoint({0, 0});
+    Point out1 = c.nearest_point({0, 0});
     EXPECT_NEAR(out1.x(), 0, 0.01);
     EXPECT_NEAR(out1.y(), 0, 0.01);
 
     // Inside circle
-    Point out2 = c.nearestPoint({0.1, 0});
+    Point out2 = c.nearest_point({0.1, 0});
     EXPECT_NEAR(out2.x(), 1, 0.01);
     EXPECT_NEAR(out2.y(), 0, 0.01);
 
     // On circle
-    Point out3 = c.nearestPoint({1, 0});
+    Point out3 = c.nearest_point({1, 0});
     EXPECT_NEAR(out3.x(), 1, 0.01);
     EXPECT_NEAR(out3.y(), 0, 0.01);
 
     // Outside circle
-    Point out4 = c.nearestPoint({2, 0});
+    Point out4 = c.nearest_point({2, 0});
     EXPECT_NEAR(out4.x(), 1, 0.01);
     EXPECT_NEAR(out4.y(), 0, 0.01);
 }

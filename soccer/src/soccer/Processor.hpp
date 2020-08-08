@@ -67,59 +67,59 @@ public:
     struct Status {
         Status() {}
 
-        RJ::Time lastLoopTime;
-        RJ::Time lastVisionTime;
-        RJ::Time lastRefereeTime;
-        RJ::Time lastRadioRxTime;
+        RJ::Time last_loop_time;
+        RJ::Time last_vision_time;
+        RJ::Time last_referee_time;
+        RJ::Time last_radio_rx_time;
     };
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
-    Processor(bool sim, bool blueTeam, const std::string& readLogFile = "");
+    Processor(bool sim, bool blue_team, const std::string& read_log_file = "");
     virtual ~Processor();
 
     void stop();
 
-    std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const {
-        return _gameplayModule;
+    std::shared_ptr<Gameplay::GameplayModule> gameplay_module() const {
+        return gameplay_module_;
     }
 
-    SystemState* state() { return &_context.state; }
+    SystemState* state() { return &context_.state; }
 
     Status status() {
-        std::lock_guard lock(_statusMutex);
-        return _status;
+        std::lock_guard lock(status_mutex_);
+        return status_;
     }
 
-    float framerate() { return _framerate; }
+    float framerate() { return framerate_; }
 
-    bool openLog(const QString& filename) {
-        _logger->write(filename.toStdString());
+    bool open_log(const QString& filename) {
+        logger_->write(filename.toStdString());
         return true;
     }
 
-    void closeLog() { _logger->close(); }
+    void close_log() { logger_->close(); }
 
-    std::lock_guard<std::mutex> lockLoopMutex() {
-        return std::lock_guard(_loopMutex);
+    std::lock_guard<std::mutex> lock_loop_mutex() {
+        return std::lock_guard(loop_mutex_);
     }
 
-    std::mutex* loopMutex() { return &_loopMutex; }
+    std::mutex* loop_mutex() { return &loop_mutex_; }
 
-    Radio* radio() { return _radio->getRadio(); }
+    Radio* radio() { return radio_->get_radio(); }
 
     /**
      * Stops all robots by clearing their intents and setpoints
      */
-    void stopRobots();
+    void stop_robots();
 
-    void setFieldDimensions(const Field_Dimensions& dims);
+    void set_field_dimensions(const FieldDimensions& dims);
 
-    bool isRadioOpen() const;
+    bool is_radio_open() const;
 
-    bool isInitialized() const;
+    bool is_initialized() const;
 
-    Context* context() { return &_context; }
+    Context* context() { return &context_; }
 
     void run();
 
@@ -129,7 +129,7 @@ private:
     static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
-    static std::vector<RobotLocalConfig*> robotStatuses;
+    static std::vector<RobotLocalConfig*> robot_statuses;
 
     /**
      * Updates the intent.active for each robot.
@@ -137,58 +137,58 @@ private:
      * The intent is active if it's being joystick controlled or
      * if it's visible
      */
-    void updateIntentActive();
+    void update_intent_active();
 
     /** Used to start and stop the thread **/
-    volatile bool _running;
+    volatile bool running_;
 
     // A logfile to read from.
     // When empty, don't read logs at all.
-    std::string _readLogFile;
+    std::string read_log_file_;
 
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access
     // SystemState, etc.
-    std::mutex _loopMutex;
+    std::mutex loop_mutex_;
 
     /** global system state */
-    Context _context;
+    Context context_;
 
     // Processing period in microseconds
-    RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
+    RJ::Seconds frame_period_ = RJ::Seconds(1) / 60;
 
     /// Measured framerate
-    float _framerate;
+    float framerate_;
 
     // This is used by the GUI to indicate status of the processing loop and
     // network
-    std::mutex _statusMutex;
-    Status _status;
+    std::mutex status_mutex_;
+    Status status_;
 
     // modules
-    std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-    std::unique_ptr<MotionControlNode> _motionControl;
-    std::unique_ptr<Planning::PlannerNode> _planner_node;
-    std::unique_ptr<RadioNode> _radio;
-    std::unique_ptr<GrSimCommunicator> _grSimCom;
-    std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
-    std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
-    std::unique_ptr<Logger> _logger;
+    std::shared_ptr<Gameplay::GameplayModule> gameplay_module_;
+    std::unique_ptr<MotionControlNode> motion_control_;
+    std::unique_ptr<Planning::PlannerNode> planner_node_;
+    std::unique_ptr<RadioNode> radio_;
+    std::unique_ptr<GrSimCommunicator> gr_sim_com_;
+    std::unique_ptr<joystick::SDLJoystickNode> sdl_joystick_node_;
+    std::unique_ptr<joystick::ManualControlNode> manual_control_node_;
+    std::unique_ptr<Logger> logger_;
 
-    std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> _ros_executor;
+    std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> ros_executor_;
 
     // ROS2 temporary modules
     using WorldStateMsg = rj_msgs::msg::WorldState;
     using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
         WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
 
-    AsyncWorldStateMsgQueue::UniquePtr _world_state_queue;
+    AsyncWorldStateMsgQueue::UniquePtr world_state_queue_;
 
-    std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
-    std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
-    std::unique_ptr<ros2_temp::RefereeSub> _referee_sub;
+    std::unique_ptr<ros2_temp::SoccerConfigClient> config_client_;
+    std::unique_ptr<ros2_temp::RawVisionPacketSub> raw_vision_packet_sub_;
+    std::unique_ptr<ros2_temp::RefereeSub> referee_sub_;
 
-    std::vector<Node*> _nodes;
+    std::vector<Node*> nodes_;
 
-    bool _initialized;
+    bool initialized_;
 };

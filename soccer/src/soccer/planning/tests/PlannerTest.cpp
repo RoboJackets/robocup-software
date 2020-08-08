@@ -33,13 +33,13 @@ TEST(Planning, path_target_random) {
     int failure_count = 0;
     for (int i = 0; i < 1000; i++) {
         ShapeSet obstacles;
-        int numObstacles = TestingUtils::random(&gen, 2, 5);
-        for (int j = 0; j < numObstacles; j++) {
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)},
                 .2));
         }
-        auto start = randomInstant(&gen);
+        auto start = random_instant(&gen);
 
         // If we start in an obstacle planning will trivially fail. We don't
         // care about this case.
@@ -47,7 +47,7 @@ TEST(Planning, path_target_random) {
             continue;
         }
 
-        LinearMotionInstant goal = randomInstant(&gen).linear_motion();
+        LinearMotionInstant goal = random_instant(&gen).linear_motion();
         PlanRequest request{start,
                             PathTargetCommand{goal},
                             RobotConstraints{},
@@ -65,7 +65,7 @@ TEST(Planning, path_target_random) {
             continue;
         }
 
-        if (!checkTrajectoryContinuous(path, RobotConstraints{})) {
+        if (!check_trajectory_continuous(path, RobotConstraints{})) {
             std::cout << "Saving to /tmp/out.csv" << std::endl;
             std::ofstream file("/tmp/out.csv");
             for (auto cursor = path.cursor_begin(); cursor.has_value(); cursor.advance(0.05s)) {
@@ -77,7 +77,7 @@ TEST(Planning, path_target_random) {
             EXPECT_FALSE(true);
         }
 
-        // EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+        // EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
     }
 
     EXPECT_LT(failure_count, 150) << "Failure rate should be less than 15 percent for path target";
@@ -100,7 +100,7 @@ TEST(Planning, collect_basic) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_obstructed) {
@@ -122,7 +122,7 @@ TEST(Planning, collect_obstructed) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_pointless_obs) {
@@ -147,7 +147,7 @@ TEST(Planning, collect_pointless_obs) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_moving_ball_quick) {
@@ -169,7 +169,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_moving_ball_slow) {
@@ -191,7 +191,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_moving_ball_slow_2) {
@@ -213,7 +213,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_random) {
@@ -229,8 +229,8 @@ TEST(Planning, collect_random) {
             Point{TestingUtils::random(&gen, -.3, .3), TestingUtils::random(&gen, -1.0, 0.1)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
-        int numObstacles = TestingUtils::random(&gen, 2, 5);
-        for (int j = 0; j < numObstacles; j++) {
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 0.5, 1.5)},
                 .2));
@@ -253,7 +253,7 @@ TEST(Planning, collect_random) {
             continue;
         }
 
-        EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+        EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
     }
 
     EXPECT_LT(failure_count, 50) << "Failure rate should be below 10 percent for collect";
@@ -278,7 +278,7 @@ TEST(Planning, settle_basic) {
                         nullptr};
     SettlePlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, settle_pointless_obs) {
@@ -303,7 +303,7 @@ TEST(Planning, settle_pointless_obs) {
     SettlePlanner planner;
     Trajectory path = planner.plan(std::move(request));
     ASSERT_TRUE(!path.empty());
-    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, settle_random) {
@@ -319,8 +319,8 @@ TEST(Planning, settle_random) {
             Point{TestingUtils::random(&gen, -.3, .3), TestingUtils::random(&gen, -2.0, -1.0)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
-        int numObstacles = TestingUtils::random(&gen, 0, 3);
-        for (int j = 0; j < numObstacles; j++) {
+        int num_obstacles = TestingUtils::random(&gen, 0, 3);
+        for (int j = 0; j < num_obstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)},
                 .2));
@@ -343,7 +343,7 @@ TEST(Planning, settle_random) {
             continue;
         }
 
-        EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
+        EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
     }
 
     EXPECT_LT(failure_count, 100) << "Failure rate should be <20 percent for settle";

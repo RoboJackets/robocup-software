@@ -14,11 +14,11 @@
 #define M_E 2.718281828459045
 #endif
 
-constexpr float DegreesToRadians(float x) {
+constexpr float degrees_to_radians(float x) {
     return (x) * static_cast<float>(M_PI) / 180.f;
 }
 
-constexpr float RadiansToDegrees(float x) {
+constexpr float radians_to_degrees(float x) {
     return (x)*180.f / static_cast<float>(M_PI);
 }
 
@@ -35,7 +35,7 @@ static inline T sign(T f) {
 
 // TODO(1485): Make this smaller once we figure out why test are failing in O3.
 // static const float FLOAT_EPSILON = 0.00001;
-static const float FLOAT_EPSILON = 1e-4;
-static bool nearlyEqual(float a, float b) {
-    return std::fabs(a - b) < FLOAT_EPSILON;
+static const float kFloatEpsilon = 1e-4;
+static bool nearly_equal(float a, float b) {
+    return std::fabs(a - b) < kFloatEpsilon;
 }

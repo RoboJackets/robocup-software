@@ -26,34 +26,34 @@ SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
 
 SDLJoystickNode::~SDLJoystickNode() { SDL_Quit(); }
 
-void SDLJoystickNode::queryAndUpdateGamepadList() {
+void SDLJoystickNode::query_and_update_gamepad_list() {
     SDL_GameControllerUpdate();
     SDL_Event event;
     while (SDL_PollEvent(&event) == 1) {
         switch (event.type) {
             case SDL_CONTROLLERDEVICEADDED:
-                addJoystick(event.cdevice.which);
+                add_joystick(event.cdevice.which);
                 break;
             case SDL_CONTROLLERDEVICEREMOVED:
-                removeJoystick(event.cdevice.which);
+                remove_joystick(event.cdevice.which);
                 break;
         }
     }
 }
 
-void SDLJoystickNode::addJoystick(int device_index) {
+void SDLJoystickNode::add_joystick(int device_index) {
     auto new_joystick = std::make_unique<SDLGamepad>(device_index);
     context_->gamepads.emplace_back(new_joystick->unique_id);
     gamepads_.emplace_back(std::move(new_joystick));
 }
 
-void SDLJoystickNode::removeJoystick(int instance_id) {
+void SDLJoystickNode::remove_joystick(int instance_id) {
     const auto is_instance = [instance_id](const std::unique_ptr<SDLGamepad>& gamepad) -> bool {
         return gamepad->instance_id == instance_id;
     };
 
     std::optional<std::reference_wrapper<const SDLGamepad>> gamepad;
-    gamepad = getGamepadByInstanceID(instance_id);
+    gamepad = get_gamepad_by_instance_id(instance_id);
     if (gamepad) {
         const int unique_id = gamepad->get().unique_id;
         // Remove gamepad from context gamepads
@@ -67,7 +67,7 @@ void SDLJoystickNode::removeJoystick(int instance_id) {
     }
 }
 
-std::optional<std::reference_wrapper<const SDLGamepad>> SDLJoystickNode::getGamepadByInstanceID(
+std::optional<std::reference_wrapper<const SDLGamepad>> SDLJoystickNode::get_gamepad_by_instance_id(
     int instance_id) const {
     const auto is_instance = [instance_id](const std::unique_ptr<SDLGamepad>& gamepad) -> bool {
         return gamepad->instance_id == instance_id;
@@ -82,7 +82,7 @@ std::optional<std::reference_wrapper<const SDLGamepad>> SDLJoystickNode::getGame
     return std::cref(**it);
 }
 
-void SDLJoystickNode::updateGamepadMessages() {
+void SDLJoystickNode::update_gamepad_messages() {
     context_->gamepad_messages.clear();
     for (auto& gamepad : gamepads_) {
         context_->gamepad_messages.emplace_back(gamepad->update());
@@ -90,7 +90,7 @@ void SDLJoystickNode::updateGamepadMessages() {
 }
 
 void SDLJoystickNode::run() {
-    queryAndUpdateGamepadList();
-    updateGamepadMessages();
+    query_and_update_gamepad_list();
+    update_gamepad_messages();
 }
 }  // namespace joystick

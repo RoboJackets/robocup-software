@@ -46,25 +46,25 @@ private:
 
     static GameState::Period period_from_proto(SSL_Referee::Stage stage);
 
-    rclcpp::Publisher<RawProtobufMsg>::SharedPtr _raw_ref_pub;
-    rclcpp::TimerBase::SharedPtr _network_timer;
+    rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_ref_pub_;
+    rclcpp::TimerBase::SharedPtr network_timer_;
 
     // Process a new referee command
     void handle_command(SSL_Referee::Command command);
     void handle_stage(SSL_Referee::Stage stage);
 
     // Arbitrary receive buffer size
-    static constexpr size_t RecvBufferSize =
+    static constexpr size_t kRecvBufferSize =
         std::numeric_limits<uint16_t>::max() + 1;
-    std::array<char, RecvBufferSize> _recv_buffer{};
+    std::array<char, kRecvBufferSize> recv_buffer_{};
 
-    boost::asio::io_service _io_service;
-    boost::asio::ip::udp::socket _asio_socket;
-    boost::asio::ip::udp::endpoint _sender_endpoint;
+    boost::asio::io_service io_service_;
+    boost::asio::ip::udp::socket asio_socket_;
+    boost::asio::ip::udp::endpoint sender_endpoint_;
 
-    void setupRefereeMulticast();
-    void startReceive();
-    void receivePacket(const boost::system::error_code& error,
+    void setup_referee_multicast();
+    void start_receive();
+    void receive_packet(const boost::system::error_code& error,
                        size_t num_bytes);
 };
 

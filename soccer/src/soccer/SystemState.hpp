@@ -50,7 +50,7 @@ public:
      */
     BallState* ball;
 
-    std::vector<int> ourValidIds();
+    std::vector<int> our_valid_ids();
 
     bool paused;
 };

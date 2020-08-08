@@ -39,19 +39,19 @@ public:
      * @param tangent Output parameter for the tangent vector at s, if non-null.
      * @param curvature Output parameter for the curvature at s, if non-null.
      */
-    void Evaluate(double s, Geometry2d::Point* position = nullptr,
+    void evaluate(double s, Geometry2d::Point* position = nullptr,
                   Geometry2d::Point* tangent = nullptr,
                   double* curvature = nullptr) const;
 
     /**
      * @brief Whether or not this curve is empty.
      */
-    [[nodiscard]] bool empty() const { return control.empty(); }
+    [[nodiscard]] bool empty() const { return control_.empty(); }
 
     /**
      * @brief The number of cubic segments in this Bezier curve.
      */
-    [[nodiscard]] int size() const { return control.size(); }
+    [[nodiscard]] int size() const { return control_.size(); }
 
     /**
      * @brief Control points for a Bezier curve.
@@ -67,7 +67,7 @@ public:
     };
 
 private:
-    std::vector<CubicBezierControlPoints> control;
+    std::vector<CubicBezierControlPoints> control_;
 };
 
 }  // namespace Planning

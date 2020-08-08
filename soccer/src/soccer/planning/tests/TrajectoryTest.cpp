@@ -25,8 +25,8 @@ TEST(Trajectory, Interpolation) {
     RobotInstant end_instant = RobotInstant(Pose(2, 0, 6), Twist(1, 0, 0), start + 1500ms);
 
     Trajectory trajectory;
-    trajectory.AppendInstant(start_instant);
-    trajectory.AppendInstant(mid_instant);
+    trajectory.append_instant(start_instant);
+    trajectory.append_instant(mid_instant);
 
     ASSERT_EQ(*trajectory.evaluate(start), start_instant);
     ASSERT_EQ(*trajectory.evaluate(trajectory.end_time()), mid_instant);
@@ -46,7 +46,7 @@ TEST(Trajectory, Interpolation) {
     }
 
     // Make sure we use the right segment.
-    trajectory.AppendInstant(end_instant);
+    trajectory.append_instant(end_instant);
     {
         RobotInstant instant = *trajectory.evaluate(start + 1250ms);
         EXPECT_NEAR(instant.position().x(), 1.5, 1e-6);
@@ -61,12 +61,12 @@ TEST(Trajectory, Interpolation) {
 
     EXPECT_EQ(*trajectory.evaluate(trajectory.end_time()), end_instant);
 
-    EXPECT_TRUE(trajectory.CheckTime(start + 500ms));
-    EXPECT_FALSE(trajectory.CheckTime(start - 500ms));
-    EXPECT_FALSE(trajectory.CheckTime(start + 2500ms));
-    EXPECT_TRUE(trajectory.CheckSeconds(500ms));
-    EXPECT_FALSE(trajectory.CheckSeconds(-500ms));
-    EXPECT_FALSE(trajectory.CheckSeconds(2500ms));
+    EXPECT_TRUE(trajectory.check_time(start + 500ms));
+    EXPECT_FALSE(trajectory.check_time(start - 500ms));
+    EXPECT_FALSE(trajectory.check_time(start + 2500ms));
+    EXPECT_TRUE(trajectory.check_seconds(500ms));
+    EXPECT_FALSE(trajectory.check_seconds(-500ms));
+    EXPECT_FALSE(trajectory.check_seconds(2500ms));
 
     EXPECT_EQ(trajectory.duration(), RJ::Seconds(end_instant.stamp - start_instant.stamp));
 }
@@ -129,8 +129,8 @@ TEST(Trajectory, BezierPath) {
     Point vf(0, 1);
 
     MotionConstraints constraints;
-    constraints.maxSpeed = 3.0;
-    constraints.maxAcceleration = 3.0;
+    constraints.max_speed = 3.0;
+    constraints.max_acceleration = 3.0;
 
     Planning::BezierPath path(points, vi, vf, constraints);
 
@@ -138,15 +138,15 @@ TEST(Trajectory, BezierPath) {
         Point p;
         Point v;
         double k = 0;
-        path.Evaluate(i / 3.0, &p, &v, &k);
+        path.evaluate(i / 3.0, &p, &v, &k);
 
         std::cout << p << ", " << v << std::endl;
         EXPECT_NEAR((p - points[i]).mag(), 0, 1e-6);
         if (i == 0) {
-            EXPECT_NEAR(v.angleBetween(vi), 0, 1e-3);
+            EXPECT_NEAR(v.angle_between(vi), 0, 1e-3);
         }
         if (i == 3) {
-            EXPECT_NEAR(v.angleBetween(vf), 0, 1e-3);
+            EXPECT_NEAR(v.angle_between(vf), 0, 1e-3);
         }
     }
 }
@@ -167,7 +167,7 @@ TEST(Trajectory, SubTrajectory) {
         RobotInstant ab = traj.evaluate(t0).value();
         RobotInstant bc = traj.evaluate(t1).value();
 
-        Trajectory sub = traj.subTrajectory(t0, t1);
+        Trajectory sub = traj.sub_trajectory(t0, t1);
         EXPECT_TRUE(Trajectory::nearly_equal(sub, Trajectory{{ab, b, bc}}));
     }
 
@@ -176,7 +176,7 @@ TEST(Trajectory, SubTrajectory) {
         RJ::Time t1{6s};
         RobotInstant bc = traj.evaluate(t0).value();
 
-        Trajectory sub = traj.subTrajectory(t0, t1);
+        Trajectory sub = traj.sub_trajectory(t0, t1);
         EXPECT_TRUE(Trajectory::nearly_equal(sub, Trajectory{{bc, c}}));
     }
 
@@ -185,7 +185,7 @@ TEST(Trajectory, SubTrajectory) {
         RJ::Time t1{6s};
         RobotInstant bc = traj.evaluate(t0).value();
 
-        Trajectory sub = traj.subTrajectory(t0, t1);
+        Trajectory sub = traj.sub_trajectory(t0, t1);
         EXPECT_TRUE(Trajectory::nearly_equal(sub, Trajectory{{c}}));
     }
 }
@@ -196,7 +196,7 @@ TEST(Trajectory, SubTrajectoryEndpoints) {
     RobotInstant c{Pose{{2, 0}, 0}, Twist{{1, 0}, 1}, RJ::Time(4s)};
     Trajectory traj{{a, b, c}};
 
-    Trajectory sub = traj.subTrajectory(RJ::Time(0s), RJ::Time(4s));
+    Trajectory sub = traj.sub_trajectory(RJ::Time(0s), RJ::Time(4s));
     EXPECT_TRUE(Trajectory::nearly_equal(sub, Trajectory{{a, b, c}}));
 }
 

@@ -23,14 +23,14 @@ public:
         }
     }
 
-    std::vector<std::shared_ptr<Shape>>& shapes() { return _shapes; }
+    std::vector<std::shared_ptr<Shape>>& shapes() { return shapes_; }
     [[nodiscard]] const std::vector<std::shared_ptr<Shape>>& shapes() const {
-        return _shapes;
+        return shapes_;
     }
 
     void add(std::shared_ptr<Shape> shape) {
         assert(shape != nullptr);
-        _shapes.push_back(shape);
+        shapes_.push_back(shape);
     }
 
     void add(const ShapeSet& other) {
@@ -40,7 +40,7 @@ public:
     }
 
     /// Remove all shapes
-    void clear() { _shapes.clear(); }
+    void clear() { shapes_.clear(); }
 
     /**
      * Get a set of which shapes "hit" the given object.
@@ -49,9 +49,9 @@ public:
      * @return A set of all shapes that collide with the given object
      */
     template <typename T>
-    std::set<std::shared_ptr<Shape>> hitSet(const T& obj) const {
+    std::set<std::shared_ptr<Shape>> hit_set(const T& obj) const {
         std::set<std::shared_ptr<Shape>> hits;
-        for (const auto& shape : _shapes) {
+        for (const auto& shape : shapes_) {
             if (shape->hit(obj)) {
                 hits.insert(shape);
             }
@@ -67,7 +67,7 @@ public:
      */
     template <typename T>
     bool hit(const T& obj) const {
-        for (const auto& shape : _shapes) {
+        for (const auto& shape : shapes_) {
             if (shape->hit(obj)) {
                 return true;
             }
@@ -76,17 +76,17 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& out,
-                                    const ShapeSet& shapeSet) {
+                                    const ShapeSet& shape_set) {
         out << "ShapeSet: {";
-        for (const auto& shape : shapeSet.shapes()) {
-            out << shape->toString() << ", ";
+        for (const auto& shape : shape_set.shapes()) {
+            out << shape->to_string() << ", ";
         }
         out << "}";
         return out;
     }
 
 private:
-    std::vector<std::shared_ptr<Shape>> _shapes;
+    std::vector<std::shared_ptr<Shape>> shapes_;
 };
 
 }  // namespace Geometry2d

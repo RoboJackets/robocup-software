@@ -14,7 +14,7 @@
  * Use Example:
  * NelderMead2D nm(& [NelderMead2DConfig]);
  * nm.execute();
- * nm.getValue();
+ * nm.get_value();
  */
 
 class NelderMead2D {
@@ -29,7 +29,7 @@ public:
      *       the max. This is used when you want to split the optimization
      *       accross multiple time steps
      */
-    bool singleStep();
+    bool single_step();
 
     /**
      * Executes the full optimization algorithm
@@ -39,23 +39,23 @@ public:
     /**
      * @return the XY coordinate of the current guess of the max
      */
-    Geometry2d::Point getPoint();
+    Geometry2d::Point get_point();
 
     /**
      * @return the current guess of the max value
      */
-    float getValue();
+    float get_value();
 
     /**
      * @return Should continue execution?
      */
-    bool continueExecution();
+    bool continue_execution();
 
 private:
-    NelderMead2DConfig& config;
-    int iterationCount;
-    std::vector<std::tuple<float, Geometry2d::Point>> vertices;
+    NelderMead2DConfig& config_;
+    int iteration_count_;
+    std::vector<std::tuple<float, Geometry2d::Point>> vertices_;
 
-    void sortVertices();
-    bool replaceWorst(float newScore, Geometry2d::Point newPoint);
+    void sort_vertices();
+    bool replace_worst(float new_score, Geometry2d::Point new_point);
 };

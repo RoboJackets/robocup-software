@@ -5,32 +5,32 @@
 using namespace std;
 using namespace Geometry2d;
 
-bool pointEqual(Point p1, Point p2) {
-    return nearlyEqual(p1.x(), p2.x()) && nearlyEqual(p1.y(), p2.y());
+bool point_equal(Point p1, Point p2) {
+    return nearly_equal(p1.x(), p2.x()) && nearly_equal(p1.y(), p2.y());
 }
 /*
  * Tests the constructor and basic operators of the Point class
  */
 TEST(Point, constructors) {
     // Test Constructors
-    Point defaultConstructed;
-    EXPECT_FLOAT_EQ(defaultConstructed.x(), 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.y(), 0);
+    Point default_constructed;
+    EXPECT_FLOAT_EQ(default_constructed.x(), 0);
+    EXPECT_FLOAT_EQ(default_constructed.y(), 0);
 
     Point test(0, 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.x(), 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.y(), 0);
+    EXPECT_FLOAT_EQ(default_constructed.x(), 0);
+    EXPECT_FLOAT_EQ(default_constructed.y(), 0);
 
-    EXPECT_EQ(test, defaultConstructed);
+    EXPECT_EQ(test, default_constructed);
 }
 
-TEST(Point, toEigen) {
+TEST(Point, to_eigen) {
     Eigen::Vector2d p = Point(1.0, 2.0);
     ASSERT_EQ(p(0), 1.0);
     ASSERT_EQ(p(1), 2.0);
 }
 
-TEST(Point, fromEigen) {
+TEST(Point, from_eigen) {
     Point p = Eigen::Vector2d(1.0, 2.0);
     ASSERT_EQ(p.x(), 1.0);
     ASSERT_EQ(p.y(), 2.0);
@@ -96,15 +96,15 @@ TEST(Point, operators) {
     // Test operator * Point x float
     temp = Point(1, -5);
     temp *= 3.5;
-    EXPECT_PRED2(pointEqual, temp, Point(1 * 3.5, -5 * 3.5));
-    EXPECT_PRED2(pointEqual, Point(1, -5) * 3.5, Point(1 * 3.5, -5 * 3.5));
-    EXPECT_PRED2(pointEqual, 3.5 * Point(1, -5), Point(1 * 3.5, -5 * 3.5));
+    EXPECT_PRED2(point_equal, temp, Point(1 * 3.5, -5 * 3.5));
+    EXPECT_PRED2(point_equal, Point(1, -5) * 3.5, Point(1 * 3.5, -5 * 3.5));
+    EXPECT_PRED2(point_equal, 3.5 * Point(1, -5), Point(1 * 3.5, -5 * 3.5));
 
     temp = Point(5.6, -3.6);
     std::stringstream out;
     out << temp;
     EXPECT_EQ("Point(5.6, -3.6)", out.str());
-    EXPECT_EQ("Point(5.6, -3.6)", temp.toString());
+    EXPECT_EQ("Point(5.6, -3.6)", temp.to_string());
 }
 
 TEST(Point, mag) {
@@ -124,69 +124,70 @@ TEST(Point, rotation) {
     const Point unit(1, 0);
     Point test = unit;
     Point expected = Point(sqrt(2) / 2, sqrt(2) / 2);
-    EXPECT_PRED2(pointEqual, expected, test.rotate(M_PI / 4));
-    EXPECT_PRED2(pointEqual, expected, unit.rotated(M_PI / 4));
+    EXPECT_PRED2(point_equal, expected, test.rotate(M_PI / 4));
+    EXPECT_PRED2(point_equal, expected, unit.rotated(M_PI / 4));
     test = unit;
-    EXPECT_PRED2(pointEqual, expected, test.rotate(Point(0, 0), M_PI / 4));
-    EXPECT_PRED2(pointEqual, expected, Point::rotated(unit, Point(0, 0), M_PI / 4));
-    EXPECT_PRED2(pointEqual, expected, Point::direction(M_PI / 4));
+    EXPECT_PRED2(point_equal, expected, test.rotate(Point(0, 0), M_PI / 4));
+    EXPECT_PRED2(point_equal, expected, Point::rotated(unit, Point(0, 0), M_PI / 4));
+    EXPECT_PRED2(point_equal, expected, Point::direction(M_PI / 4));
     EXPECT_FLOAT_EQ(M_PI / 4, expected.angle());
 
     test = unit;
-    EXPECT_PRED2(pointEqual, expected, test.rotate(M_PI / 4 - 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected, unit.rotated(M_PI / 4 - 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, test.rotate(M_PI / 4 - 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, unit.rotated(M_PI / 4 - 12 * M_PI));
     test = unit;
-    EXPECT_PRED2(pointEqual, expected, test.rotate(Point(0, 0), M_PI / 4 - 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected, Point::rotated(unit, Point(0, 0), M_PI / 4 - 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected, Point::direction(M_PI / 4 - 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, test.rotate(Point(0, 0), M_PI / 4 - 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, Point::rotated(unit, Point(0, 0), M_PI / 4 - 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, Point::direction(M_PI / 4 - 12 * M_PI));
 
     test = unit;
     expected = Point(3, 2);
-    EXPECT_PRED2(pointEqual, expected, test.rotate(Point(3, 0), -M_PI / 2 + 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected, unit.rotated(Point(3, 0), -M_PI / 2 + 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected, Point::rotated(unit, Point(3, 0), -M_PI / 2 + 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, test.rotate(Point(3, 0), -M_PI / 2 + 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, unit.rotated(Point(3, 0), -M_PI / 2 + 12 * M_PI));
+    EXPECT_PRED2(point_equal, expected, Point::rotated(unit, Point(3, 0), -M_PI / 2 + 12 * M_PI));
 
-    EXPECT_PRED2(pointEqual, expected.rotated(M_PI / 2), expected.perpCCW());
-    EXPECT_PRED2(pointEqual, expected.rotated(-M_PI / 2), expected.perpCW());
+    EXPECT_PRED2(point_equal, expected.rotated(M_PI / 2), expected.perp_ccw());
+    EXPECT_PRED2(point_equal, expected.rotated(-M_PI / 2), expected.perp_cw());
 }
 
-TEST(Point, clampBig) {
+TEST(Point, clamp_big) {
     Point p0(10.0, 10.0);
     p0.clamp(10);
     EXPECT_FLOAT_EQ(10, p0.mag());
-    EXPECT_PRED2(pointEqual, p0, Point(sqrt(50), sqrt(50)));
+    EXPECT_PRED2(point_equal, p0, Point(sqrt(50), sqrt(50)));
 
     p0 = Point(-20.5, 1.5);
     float mag = p0.mag();
     p0.clamp(1);
     EXPECT_FLOAT_EQ(1, p0.mag());
-    EXPECT_PRED2(pointEqual, p0, Point(-20.5 / mag, 1.5 / mag));
+    EXPECT_PRED2(point_equal, p0, Point(-20.5 / mag, 1.5 / mag));
 }
 
 //  if you clamp a vector to a value that's bigger
 //  than it's magnitude, it shouldn't change
-TEST(Point, clampSmall) {
+TEST(Point, clamp_small) {
     Point p0(10, -6);
     p0.clamp(15);
     EXPECT_TRUE(p0 == Point(10, -6));
     p0.clamp(sqrt(10 * 10 + 6 * 6));
-    EXPECT_PRED2(pointEqual, p0, Point(10, -6));
+    EXPECT_PRED2(point_equal, p0, Point(10, -6));
 }
 
-TEST(Point, distTo) {
-    EXPECT_FLOAT_EQ(0, Point(5, 3).distTo(Point(5, 3)));
-    EXPECT_FLOAT_EQ(5, Point(4, 5).distTo(Point(1, 1)));
-    EXPECT_FLOAT_EQ(5, Point(1.5, 1.5).distTo(Point(4.5, 5.5)));
-    EXPECT_FLOAT_EQ((Point(93, 44) - Point(4.5, 5.5)).mag(), Point(93, 44).distTo(Point(4.5, 5.5)));
+TEST(Point, dist_to) {
+    EXPECT_FLOAT_EQ(0, Point(5, 3).dist_to(Point(5, 3)));
+    EXPECT_FLOAT_EQ(5, Point(4, 5).dist_to(Point(1, 1)));
+    EXPECT_FLOAT_EQ(5, Point(1.5, 1.5).dist_to(Point(4.5, 5.5)));
+    EXPECT_FLOAT_EQ((Point(93, 44) - Point(4.5, 5.5)).mag(),
+                    Point(93, 44).dist_to(Point(4.5, 5.5)));
 }
 
-TEST(Point, nearPoint) {
+TEST(Point, near_point) {
     for (float y = -5; y <= 5; y += 0.01) {
         for (float x = -5; x <= 5; x += 0.01) {
             Point point(x, y);
             float close = (pow(x - 1.1, 2) + pow(y - 1.3, 2)) - 2.5 * 2.5;
-            if (!nearlyEqual(close, 0)) {
-                EXPECT_EQ(close <= 0, point.nearPoint(Point(1.1, 1.3), 2.5))
+            if (!nearly_equal(close, 0)) {
+                EXPECT_EQ(close <= 0, point.near_point(Point(1.1, 1.3), 2.5))
                     << "x:" << x << " y:" << y;
             }
         }
@@ -196,18 +197,20 @@ TEST(Point, nearPoint) {
 // TODO(ashaw596) Add tests for the changed normalized
 TEST(Point, normalized) {
     Point expected(5 / sqrt(5 * 5 + 2 * 2), 2 / sqrt(5 * 5 + 2 * 2));
-    EXPECT_PRED2(pointEqual, expected, Point(5 * 1.4, 2 * 1.4).normalized());
-    EXPECT_PRED2(pointEqual, expected, Point(5 / 1.4, 2 / 1.4).normalized());
-    EXPECT_PRED2(pointEqual, Point(0, 0), Point(0, 0).normalized());
+    EXPECT_PRED2(point_equal, expected, Point(5 * 1.4, 2 * 1.4).normalized());
+    EXPECT_PRED2(point_equal, expected, Point(5 / 1.4, 2 / 1.4).normalized());
+    EXPECT_PRED2(point_equal, Point(0, 0), Point(0, 0).normalized());
 }
 
-TEST(Point, nearlyEquals) {
-    EXPECT_TRUE(Point(0, 5).nearlyEquals(Point(0, 5)));
-    EXPECT_TRUE(Point(0, 5).nearlyEquals(Point(0 - FLOAT_EPSILON / 2, 5 + FLOAT_EPSILON / 2)));
-    EXPECT_TRUE(Point(0, 5).nearlyEquals(Point(0 + FLOAT_EPSILON / 2, 5 - FLOAT_EPSILON / 2)));
+TEST(Point, nearly_equals) {
+    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0, 5)));
+    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 - kFloatEpsilon / 2, 5 + kFloatEpsilon / 2)));
+    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 + kFloatEpsilon / 2, 5 - kFloatEpsilon / 2)));
 
-    EXPECT_FALSE(Point(0, 5).nearlyEquals(Point(0 - FLOAT_EPSILON * 1.1, 5 + FLOAT_EPSILON * 1.1)));
-    EXPECT_FALSE(Point(0, 5).nearlyEquals(Point(0 + FLOAT_EPSILON * 1.1, 5 - FLOAT_EPSILON * 1.1)));
+    EXPECT_FALSE(
+        Point(0, 5).nearly_equals(Point(0 - kFloatEpsilon * 1.1, 5 + kFloatEpsilon * 1.1)));
+    EXPECT_FALSE(
+        Point(0, 5).nearly_equals(Point(0 + kFloatEpsilon * 1.1, 5 - kFloatEpsilon * 1.1)));
 }
-// TODO(ashaw596) Add tests for angleTo and angleBetween once those changes are
+// TODO(ashaw596) Add tests for angle_to and angle_between once those changes are
 // merged

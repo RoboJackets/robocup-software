@@ -23,89 +23,89 @@ public:
     /**
      * Creates a valid world robot
      *
-     * @param robotID The ID of the robot
+     * @param robot_id The ID of the robot
      * @param team The team color
-     * @param kalmanRobots List of kalman robots from each of the cameras to
+     * @param kalman_robots List of kalman robots from each of the cameras to
      * merger
      */
-    WorldRobot(RJ::Time calcTime, Team team, int robotID,
-               const std::list<KalmanRobot>& kalmanRobots);
+    WorldRobot(RJ::Time calc_time, Team team, int robot_id,
+               const std::list<KalmanRobot>& kalman_robots);
 
     /**
      * @return If the robot actually represents a real robot
      */
-    bool getIsValid() const;
+    bool get_is_valid() const;
 
     /**
      * @return Enum value representing team color
      */
-    Team getTeamColor() const;
+    Team get_team_color() const;
 
     /**
      * @return The robot id
      */
-    int getRobotID() const;
+    int get_robot_id() const;
 
     /**
      * @return The best estimated position of the robot
      */
-    Geometry2d::Point getPos() const;
+    Geometry2d::Point get_pos() const;
 
     /**
      * @return The best estimated heading of the robot
      */
-    double getTheta() const;
+    double get_theta() const;
 
     /**
      * @return The best estimated pose of the robot
      */
-    Geometry2d::Pose getPose() const;
+    Geometry2d::Pose get_pose() const;
 
     /**
      * @return The best estimated velocity of the robot
      */
-    Geometry2d::Point getVel() const;
+    Geometry2d::Point get_vel() const;
 
     /**
      * @return The best estimated angular velocity of the robot
      */
-    double getOmega() const;
+    double get_omega() const;
 
     /**
      * @return The best estimated twist of the robot
      */
-    Geometry2d::Twist getTwist() const;
+    Geometry2d::Twist get_twist() const;
 
     /**
      * @return The average position covariance of the filter including theta
      */
-    double getPosCov() const;
+    double get_pos_cov() const;
 
     /**
      * @return The average velocity covariance of the filter including omega
      */
-    double getVelCov() const;
+    double get_vel_cov() const;
 
     /**
      * @return List of all the building kalman robots for this world robot
      */
-    const std::list<KalmanRobot>& getRobotComponents() const;
+    const std::list<KalmanRobot>& get_robot_components() const;
 
     /**
      * @return Time of creation for the robot estimate
      */
-    RJ::Time getTime() const;
+    RJ::Time get_time() const;
 
 private:
-    Team team;
-    int robotID{};
-    Geometry2d::Pose pose;
-    Geometry2d::Twist twist;
-    double posCov{};
-    double velCov{};
-    std::list<KalmanRobot> robotComponents;
-    RJ::Time time;
+    Team team_;
+    int robot_id_{};
+    Geometry2d::Pose pose_;
+    Geometry2d::Twist twist_;
+    double pos_cov_{};
+    double vel_cov_{};
+    std::list<KalmanRobot> robot_components_;
+    RJ::Time time_;
 
-    bool isValid;
+    bool is_valid_;
 };
 }  // namespace vision_filter

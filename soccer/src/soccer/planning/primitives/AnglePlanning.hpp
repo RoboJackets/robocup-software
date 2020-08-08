@@ -34,8 +34,8 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
                       Eigen::Vector2d* jacobian) {
     Geometry2d::Point vel = instant.velocity;
 
-    double delta_forward = fixAngleRadians(vel.angle() - previous_angle);
-    double delta_reverse = fixAngleRadians(M_PI + vel.angle() - previous_angle);
+    double delta_forward = fix_angle_radians(vel.angle() - previous_angle);
+    double delta_reverse = fix_angle_radians(M_PI + vel.angle() - previous_angle);
 
     if (jacobian != nullptr) {
         *jacobian = Eigen::Vector2d::Zero();
@@ -56,7 +56,7 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
  * @brief Create an @ref AngleFunction for facing a particular point on the
  * field.
  */
-inline AngleFunction facePoint(const Geometry2d::Point point) {
+inline AngleFunction face_point(const Geometry2d::Point point) {
     return [=](const LinearMotionInstant& instant, double /*previous_angle*/,
                Eigen::Vector2d* jacobian) -> double {
         if (jacobian != nullptr) {
@@ -66,14 +66,14 @@ inline AngleFunction facePoint(const Geometry2d::Point point) {
                 Eigen::Vector2d(displacement.rotate(-M_PI / 2) / distance_sq);
         }
 
-        return instant.position.angleTo(point);
+        return instant.position.angle_to(point);
     };
 }
 
 /**
  * @brief Create an @ref AngleFunction for facing a particular constant angle.
  */
-inline AngleFunction faceAngle(double angle) {
+inline AngleFunction face_angle(double angle) {
     return [=](const LinearMotionInstant& /*instant*/,
                double /*previous_angle*/, Eigen::Vector2d* jacobian) -> double {
         if (jacobian != nullptr) {
@@ -98,7 +98,7 @@ inline AngleFunction faceAngle(double angle) {
  *      a function of the robot's current state.
  * @param constraints Constraints on the robot's rotation.
  */
-void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
+void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 

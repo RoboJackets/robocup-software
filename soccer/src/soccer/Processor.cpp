@@ -22,16 +22,16 @@ using namespace Geometry2d;
 using namespace google::protobuf;
 
 // TODO: Remove this and just use the one in Context.
-Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
+FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
 
 // A temporary place to store RobotLocalConfig/RobotConfig variables as we
-// create them. They are initialized in createConfiguration, before the
+// create them. They are initialized in create_configuration, before the
 // Processor class is initialized, so we need to temporarily store them
 // somewhere.
 std::vector<RobotLocalConfig> robot_status_init;
 std::unique_ptr<RobotConfig> Processor::robot_config_init;
 
-void Processor::createConfiguration(Configuration* cfg) {
+void Processor::create_configuration(Configuration* cfg) {
     // If robot_config_init is not null, then we've already done this.
     // That means we're doing FromRegisteredConfigurables() in python code,
     // and so we shouldn't reinitialize anything.
@@ -41,57 +41,57 @@ void Processor::createConfiguration(Configuration* cfg) {
 
     robot_config_init = std::make_unique<RobotConfig>(cfg, "Rev2015");
 
-    for (size_t s = 0; s < Num_Shells; ++s) {
+    for (size_t s = 0; s < kNumShells; ++s) {
         robot_status_init.emplace_back(cfg, QString("Robot Statuses/Robot %1").arg(s));
     }
 }
 
-Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
-    : _loopMutex(), _readLogFile(readLogFile) {
-    _running = true;
-    _framerate = 0;
-    _initialized = false;
-    _radio = nullptr;
+Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
+    : loop_mutex_(), read_log_file_(read_log_file) {
+    running_ = true;
+    framerate_ = 0;
+    initialized_ = false;
+    radio_ = nullptr;
 
     // Configuration-time variables.
-    _context.robot_config = std::move(robot_config_init);
-    for (int i = Num_Shells - 1; i >= 0; i--) {
+    context_.robot_config = std::move(robot_config_init);
+    for (int i = kNumShells - 1; i >= 0; i--) {
         // Set up fields in Context
-        _context.local_configs[i] = std::move(robot_status_init.back());
+        context_.local_configs[i] = std::move(robot_status_init.back());
         robot_status_init.pop_back();
     }
 
-    _context.field_dimensions = *currentDimensions;
+    context_.field_dimensions = *current_dimensions;
 
-    _ros_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+    ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-    _referee_sub = std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
-    _motionControl = std::make_unique<MotionControlNode>(&_context);
-    _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
-    _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
-    _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
-    _logger = std::make_unique<Logger>(&_context);
+    referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
+    gameplay_module_ = std::make_shared<Gameplay::GameplayModule>(&context_);
+    motion_control_ = std::make_unique<MotionControlNode>(&context_);
+    planner_node_ = std::make_unique<Planning::PlannerNode>(&context_);
+    radio_ = std::make_unique<RadioNode>(&context_, sim, blue_team);
+    gr_sim_com_ = std::make_unique<GrSimCommunicator>(&context_);
+    logger_ = std::make_unique<Logger>(&context_);
 
     // ROS2 temp nodes
-    _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
-    _raw_vision_packet_sub = std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
-    _world_state_queue = std::make_unique<AsyncWorldStateMsgQueue>(
+    config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
+    raw_vision_packet_sub_ = std::make_unique<ros2_temp::RawVisionPacketSub>(&context_);
+    world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStatePub);
 
     // Joystick
-    _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
-    _manual_control_node = std::make_unique<joystick::ManualControlNode>(&_context);
+    sdl_joystick_node_ = std::make_unique<joystick::SDLJoystickNode>(&context_);
+    manual_control_node_ = std::make_unique<joystick::ManualControlNode>(&context_);
 
-    if (!readLogFile.empty()) {
-        _logger->read(readLogFile);
+    if (!read_log_file.empty()) {
+        logger_->read(read_log_file);
     }
 
-    _logger->start();
+    logger_->start();
 
-    _nodes.push_back(_motionControl.get());
-    _nodes.push_back(_grSimCom.get());
-    _nodes.push_back(_logger.get());
+    nodes_.push_back(motion_control_.get());
+    nodes_.push_back(gr_sim_com_.get());
+    nodes_.push_back(logger_.get());
 }
 
 Processor::~Processor() {
@@ -101,16 +101,16 @@ Processor::~Processor() {
     // This is kind of a hack, but if we don't do that they get destructed
     // when Processor dies. That normally isn't a problem, but in unit tests,
     // we create and destroy multiple instances of Processor for each test.
-    robot_config_init = std::move(_context.robot_config);
+    robot_config_init = std::move(context_.robot_config);
 
-    for (size_t i = 0; i < Num_Shells; i++) {
-        robot_status_init.push_back(std::move(_context.local_configs[i]));
+    for (size_t i = 0; i < kNumShells; i++) {
+        robot_status_init.push_back(std::move(context_.local_configs[i]));
     }
 }
 
 void Processor::stop() {
-    if (_running) {
-        _running = false;
+    if (running_) {
+        running_ = false;
     }
 }
 
@@ -118,74 +118,74 @@ void Processor::stop() {
  * program loop
  */
 void Processor::run() {
-    Status curStatus;
+    Status cur_status;
 
     bool first = true;
     // main loop
-    while (_running) {
-        RJ::Time startTime = RJ::now();
-        auto deltaTime = startTime - curStatus.lastLoopTime;
-        _framerate = RJ::Seconds(1) / deltaTime;
-        curStatus.lastLoopTime = startTime;
-        _context.state.time = startTime;
+    while (running_) {
+        RJ::Time start_time = RJ::now();
+        auto delta_time = start_time - cur_status.last_loop_time;
+        framerate_ = RJ::Seconds(1) / delta_time;
+        cur_status.last_loop_time = start_time;
+        context_.state.time = start_time;
 
         // Don't run processor while we're paused or reading logs after the
         // first cycle (we need to run one because MainWindow waits on a single
         // cycle of processor to initialize).
-        while (_initialized && _running &&
-               (_context.game_settings.paused || _context.logs.state == Logs::State::kReading)) {
+        while (initialized_ && running_ &&
+               (context_.game_settings.paused || context_.logs.state == Logs::State::kReading)) {
             std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
         }
 
         ////////////////
         // Inputs
         // TODO(#1558): Backport spin_all and use it for our main executor.
-        _ros_executor->spin_some();
-        _sdl_joystick_node->run();
-        _manual_control_node->run();
+        ros_executor_->spin_some();
+        sdl_joystick_node_->run();
+        manual_control_node_->run();
 
         // Updates context_->field_dimensions
-        _config_client->run();
+        config_client_->run();
 
         // Updates context_->raw_vision_packets
-        _raw_vision_packet_sub->run();
+        raw_vision_packet_sub_->run();
 
-        if (_context.field_dimensions != *currentDimensions) {
+        if (context_.field_dimensions != *current_dimensions) {
             std::cout << "Updating field geometry based off of vision packet." << std::endl;
-            setFieldDimensions(_context.field_dimensions);
+            set_field_dimensions(context_.field_dimensions);
         }
 
-        _radio->run();
+        radio_->run();
 
-        if (_radio) {
-            curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
+        if (radio_) {
+            cur_status.last_radio_rx_time = radio_->get_last_radio_rx_time();
         }
 
-        const WorldStateMsg::SharedPtr world_state_msg = _world_state_queue->Get();
+        const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
         if (world_state_msg != nullptr) {
-            _context.world_state = rj_convert::convert_from_ros(*world_state_msg);
-            curStatus.lastVisionTime =
+            context_.world_state = rj_convert::convert_from_ros(*world_state_msg);
+            cur_status.last_vision_time =
                 rj_convert::convert_from_ros(world_state_msg->last_update_time);
         }
 
         // Run high-level soccer logic
-        _gameplayModule->run();
+        gameplay_module_->run();
 
         // recalculates Field obstacles on every run through to account for
         // changing inset
-        if (_gameplayModule->hasFieldEdgeInsetChanged()) {
-            _gameplayModule->calculateFieldObstacles();
+        if (gameplay_module_->has_field_edge_inset_changed()) {
+            gameplay_module_->calculate_field_obstacles();
         }
 
         // In: Global Obstacles
         // Out: context_->trajectories
-        _planner_node->run();
+        planner_node_->run();
 
         // In: context_->trajectories
         // Out: context_->motion_setpoints
-        _motionControl->run();
+        motion_control_->run();
 
-        _grSimCom->run();
+        gr_sim_com_->run();
 
         // TODO(#1505): Run all modules in sequence using the vector. For now we
         // still have to update things manually.
@@ -193,44 +193,44 @@ void Processor::run() {
         ////////////////
         // Outputs
 
-        if (_context.game_state.halt()) {
-            stopRobots();
+        if (context_.game_state.halt()) {
+            stop_robots();
         }
-        updateIntentActive();
-        _manual_control_node->run();
+        update_intent_active();
+        manual_control_node_->run();
 
         // Store processing loop status
-        _statusMutex.lock();
-        _status = curStatus;
-        _statusMutex.unlock();
+        status_mutex_.lock();
+        status_ = cur_status;
+        status_mutex_.unlock();
 
         // Processor Initialization Completed
-        _initialized = true;
+        initialized_ = true;
 
         {
-            loopMutex()->lock();
+            loop_mutex()->lock();
             // Log this entire frame
-            _logger->run();
-            loopMutex()->unlock();
+            logger_->run();
+            loop_mutex()->unlock();
         }
 
         ////////////////
         // Timing
 
-        auto endTime = RJ::now();
-        auto timeLapse = endTime - startTime;
-        if (timeLapse < _framePeriod) {
-            ::usleep(RJ::numMicroseconds(_framePeriod - timeLapse));
+        auto end_time = RJ::now();
+        auto time_lapse = end_time - start_time;
+        if (time_lapse < frame_period_) {
+            ::usleep(RJ::num_microseconds(frame_period_ - time_lapse));
         } else {
-            //   printf("Processor took too long: %d us\n", lastFrameTime);
+            //   printf("Processor took too long: %d us\n", last_frame_time);
         }
     }
 }
 
-void Processor::stopRobots() {
-    for (OurRobot* r : _context.state.self) {
-        RobotIntent& intent = _context.robot_intents[r->shell()];
-        MotionSetpoint& setpoint = _context.motion_setpoints[r->shell()];
+void Processor::stop_robots() {
+    for (OurRobot* r : context_.state.self) {
+        RobotIntent& intent = context_.robot_intents[r->shell()];
+        MotionSetpoint& setpoint = context_.motion_setpoints[r->shell()];
 
         setpoint.clear();
         intent.dvelocity = 0;
@@ -241,20 +241,20 @@ void Processor::stopRobots() {
     }
 }
 
-void Processor::updateIntentActive() {
+void Processor::update_intent_active() {
     // Intent is active if it's being joystick controlled, or
     // if it's visible.
-    for (OurRobot* r : _context.state.self) {
-        RobotIntent& intent = _context.robot_intents[r->shell()];
-        intent.is_active = r->isJoystickControlled() || r->visible();
+    for (OurRobot* r : context_.state.self) {
+        RobotIntent& intent = context_.robot_intents[r->shell()];
+        intent.is_active = r->is_joystick_controlled() || r->visible();
     }
 }
 
-void Processor::setFieldDimensions(const Field_Dimensions& dims) {
-    *currentDimensions = dims;
-    _gameplayModule->calculateFieldObstacles();
-    _gameplayModule->updateFieldDimensions();
+void Processor::set_field_dimensions(const FieldDimensions& dims) {
+    *current_dimensions = dims;
+    gameplay_module_->calculate_field_obstacles();
+    gameplay_module_->update_field_dimensions();
 }
 
-bool Processor::isRadioOpen() const { return _radio->isOpen(); }
-bool Processor::isInitialized() const { return _initialized; }
+bool Processor::is_radio_open() const { return radio_->is_open(); }
+bool Processor::is_initialized() const { return initialized_; }

@@ -18,57 +18,57 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, orientation_scale, 1.0,
 
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
-KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose, Geometry2d::Twist initTwist)
+KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose init_pose, Geometry2d::Twist init_twist)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
-    x_k1_k1 << initPose.position().x(), initTwist.linear().x(), initPose.position().y(),
-        initTwist.linear().y(), initPose.heading(), initTwist.angular();
-    x_k_k1 = x_k1_k1;
-    x_k_k = x_k1_k1;
+    x_k1_k1_ << init_pose.position().x(), init_twist.linear().x(), init_pose.position().y(),
+        init_twist.linear().y(), init_pose.heading(), init_twist.angular();
+    x_k_k1_ = x_k1_k1_;
+    x_k_k_ = x_k1_k1_;
 
     // Initial covariance is usually extremely high to converge to the true
     // solution
     double p = robot::PARAM_init_covariance;
     double s = robot::PARAM_orientation_scale;
     // clang-format off
-    P_k1_k1 << p,   0,   0,   0,   0,   0,
-               0,   p,   0,   0,   0,   0,
-               0,   0,   p,   0,   0,   0,
-               0,   0,   0,   p,   0,   0,
-               0,   0,   0,   0, s*p,   0,
-               0,   0,   0,   0,   0, s*p;
+    P_k1_k1_ << p,   0,   0,   0,   0,   0,
+                0,   p,   0,   0,   0,   0,
+                0,   0,   p,   0,   0,   0,
+                0,   0,   0,   p,   0,   0,
+                0,   0,   0,   0, s*p,   0,
+                0,   0,   0,   0,   0, s*p;
     // clang-format on
-    P_k_k1 = P_k1_k1;
-    P_k_k = P_k1_k1;
+    P_k_k1_ = P_k1_k1_;
+    P_k_k_ = P_k1_k1_;
 
     // State transition matrix (A)
     // Pos, velocity, theta integrator. Assume constant velocity
     double dt = PARAM_vision_loop_dt;
     // clang-format off
-    F_k << 1, dt,  0,  0,  0,  0,
-           0,  1,  0,  0,  0,  0,
-           0,  0,  1, dt,  0,  0,
-           0,  0,  0,  1,  0,  0,
-           0,  0,  0,  0,  1, dt,
-           0,  0,  0,  0,  0,  1;
+    F_k_ << 1, dt,  0,  0,  0,  0,
+            0,  1,  0,  0,  0,  0,
+            0,  0,  1, dt,  0,  0,
+            0,  0,  0,  1,  0,  0,
+            0,  0,  0,  0,  1, dt,
+            0,  0,  0,  0,  0,  1;
     // clang-format on
 
     // Control transition matrix (B)
     // No inputs. Possible to update for our robots since we know our accel/vel
     // command
     // clang-format off
-    B_k << 0,
-           0,
-           0,
-           0,
-           0,
-           0;
+    B_k_ << 0,
+            0,
+            0,
+            0,
+            0,
+            0;
 
     // Observation Matrix (C)
     // We can get positions
-    H_k << 1, 0, 0, 0, 0, 0,
-           0, 0, 1, 0, 0, 0,
-           0, 0, 0, 0, 1, 0;
+    H_k_ << 1, 0, 0, 0, 0, 0,
+            0, 0, 1, 0, 0, 0,
+            0, 0, 0, 0, 1, 0;
     // clang-format on
 
     // Covariance of process noise (how wrong A is)
@@ -90,46 +90,50 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose, Geometry2d::Twist init
     double dt1 = dt * sigma * sigma;
 
     // clang-format off
-    Q_k << dt3,   dt2,     0,     0,     0,     0,
-           dt2,   dt1,     0,     0,     0,     0,
-             0,     0,   dt3,   dt2,     0,     0,
-             0,     0,   dt2,   dt1,     0,     0,
-             0,     0,     0,     0, s*dt3, s*dt2,
-             0,     0,     0,     0, s*dt2, s*dt1;
+    Q_k_ << dt3,   dt2,     0,     0,     0,     0,
+            dt2,   dt1,     0,     0,     0,     0,
+              0,     0,   dt3,   dt2,     0,     0,
+              0,     0,   dt2,   dt1,     0,     0,
+              0,     0,     0,     0, s*dt3, s*dt2,
+              0,     0,     0,     0, s*dt2, s*dt1;
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)
     double o = robot::PARAM_observation_noise;
     // clang-format off
-    R_k << o,   0,   0,
-           0,   o,   0,
-           0,   0, s*o;
+    R_k_ << o,   0,   0,
+            0,   o,   0,
+            0,   0, s*o;
     // clang-format on
 }
 
-void KalmanFilter3D::predictWithUpdate(Geometry2d::Pose observation) {
-    z_k << observation.position().x(), observation.position().y(), observation.heading();
+void KalmanFilter3D::predict_with_update(Geometry2d::Pose observation) {
+    z_k_ << observation.position().x(), observation.position().y(), observation.heading();
 
-    KalmanFilter::predictWithUpdate();
+    KalmanFilter::predict_with_update();
 }
 
-Geometry2d::Point KalmanFilter3D::getPos() const { return Geometry2d::Point(x_k_k(0), x_k_k(2)); }
-
-double KalmanFilter3D::getTheta() const { return x_k_k(4); }
-
-Geometry2d::Point KalmanFilter3D::getVel() const { return Geometry2d::Point(x_k_k(1), x_k_k(3)); }
-
-double KalmanFilter3D::getOmega() const { return x_k_k(5); }
-
-Geometry2d::Point KalmanFilter3D::getPosCov() const {
-    return Geometry2d::Point(P_k_k(0, 0), P_k_k(2, 2));
+Geometry2d::Point KalmanFilter3D::get_pos() const {
+    return Geometry2d::Point(x_k_k_(0), x_k_k_(2));
 }
 
-double KalmanFilter3D::getThetaCov() const { return P_k_k(4, 4); }
+double KalmanFilter3D::get_theta() const { return x_k_k_(4); }
 
-Geometry2d::Point KalmanFilter3D::getVelCov() const {
-    return Geometry2d::Point(P_k_k(1, 1), P_k_k(3, 3));
+Geometry2d::Point KalmanFilter3D::get_vel() const {
+    return Geometry2d::Point(x_k_k_(1), x_k_k_(3));
 }
 
-double KalmanFilter3D::getOmegaCov() const { return P_k_k(5, 5); }
+double KalmanFilter3D::get_omega() const { return x_k_k_(5); }
+
+Geometry2d::Point KalmanFilter3D::get_pos_cov() const {
+    return Geometry2d::Point(P_k_k_(0, 0), P_k_k_(2, 2));
+}
+
+double KalmanFilter3D::get_theta_cov() const { return P_k_k_(4, 4); }
+
+Geometry2d::Point KalmanFilter3D::get_vel_cov() const {
+    return Geometry2d::Point(P_k_k_(1, 1), P_k_k_(3, 3));
+}
+
+double KalmanFilter3D::get_omega_cov() const { return P_k_k_(5, 5); }
 }  // namespace vision_filter

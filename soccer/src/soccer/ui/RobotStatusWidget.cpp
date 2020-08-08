@@ -251,10 +251,10 @@ void RobotStatusWidget::loadFromLogFrame(const Packet::RadioRx& rx,
     float batteryLevel = 1;
     if (rx.has_battery()) {
         if (rx.hardware_version() == Packet::RJ2008 || rx.hardware_version() == Packet::RJ2011) {
-            batteryLevel = static_cast<float>(RJ2008BatteryProfile.getChargeLevel(rx.battery()));
+            batteryLevel = static_cast<float>(kRJ2008BatteryProfile.get_charge_level(rx.battery()));
         } else if (rx.hardware_version() == Packet::RJ2015 ||
                    rx.hardware_version() == Packet::RJ2018) {
-            batteryLevel = static_cast<float>(RJ2015BatteryProfile.getChargeLevel(rx.battery()));
+            batteryLevel = static_cast<float>(kRJ2015BatteryProfile.get_charge_level(rx.battery()));
         } else if (rx.hardware_version() == Packet::Simulation) {
             batteryLevel = 1;
         } else {

@@ -13,60 +13,64 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-ConfigDouble* Replanner::_goalPosChangeThreshold;
-ConfigDouble* Replanner::_goalVelChangeThreshold;
-ConfigDouble* Replanner::_partialReplanLeadTime;
-ConfigDouble* Replanner::_offPathErrorThreshold;
+ConfigDouble* Replanner::goal_pos_change_threshold_config;
+ConfigDouble* Replanner::goal_vel_change_threshold_config;
+ConfigDouble* Replanner::partial_replan_lead_time_config;
+ConfigDouble* Replanner::off_path_error_threshold_config;
 
 REGISTER_CONFIGURABLE(Replanner);
 
-void applyHold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
+void apply_hold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
     if (hold_time.has_value() && !trajectory->empty() &&
-        Twist::nearly_equals(trajectory->last().velocity, Twist::Zero())) {
-        trajectory->HoldFor(hold_time.value());
+        Twist::nearly_equals(trajectory->last().velocity, Twist::zero())) {
+        trajectory->hold_for(hold_time.value());
     }
 }
 
-void Replanner::createConfiguration(Configuration* cfg) {
+void Replanner::create_configuration(Configuration* cfg) {
     // NOLINTNEXTLINE
-    _goalPosChangeThreshold = new ConfigDouble(cfg, "PathPlanner/Replanner/goalPosChangeThreshold");
+    goal_pos_change_threshold_config =
+        new ConfigDouble(cfg, "PathPlanner/Replanner/goalPosChangeThreshold");
     // NOLINTNEXTLINE
-    _goalVelChangeThreshold = new ConfigDouble(cfg, "PathPlanner/Replanner/goalVelChangeThreshold");
+    goal_vel_change_threshold_config =
+        new ConfigDouble(cfg, "PathPlanner/Replanner/goalVelChangeThreshold");
     // NOLINTNEXTLINE
-    _partialReplanLeadTime = new ConfigDouble(cfg, "PathPlanner/Replanner/partialReplanLeadTime");
+    partial_replan_lead_time_config =
+        new ConfigDouble(cfg, "PathPlanner/Replanner/partialReplanLeadTime");
     // NOLINTNEXTLINE
-    _offPathErrorThreshold =
+    off_path_error_threshold_config =
         new ConfigDouble(cfg, "PathPlanner/Replanner/offPathErrorThreshold", 0.5);
 }
 
-Trajectory Replanner::partialReplan(const PlanParams& params, const Trajectory& previous) {
-    std::vector<Point> biasWaypoints;
+Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory& previous) {
+    std::vector<Point> bias_waypoints;
     for (auto cursor = previous.cursor(params.start.stamp); cursor.has_value();
          cursor.advance(100ms)) {
-        biasWaypoints.push_back(cursor.value().position());
+        bias_waypoints.push_back(cursor.value().position());
     }
 
-    Trajectory preTrajectory = partialPath(previous, params.start.stamp);
-    Trajectory postTrajectory = CreatePath::rrt(
-        preTrajectory.last().linear_motion(), params.goal, params.constraints.mot,
-        preTrajectory.end_time(), params.static_obstacles, params.dynamic_obstacles, biasWaypoints);
+    Trajectory pre_trajectory = partial_path(previous, params.start.stamp);
+    Trajectory post_trajectory =
+        CreatePath::rrt(pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
+                        pre_trajectory.end_time(), params.static_obstacles,
+                        params.dynamic_obstacles, bias_waypoints);
 
-    if (postTrajectory.empty()) {
-        return fullReplan(params);
+    if (post_trajectory.empty()) {
+        return full_replan(params);
     }
 
-    Trajectory combined = Trajectory(std::move(preTrajectory), postTrajectory);
+    Trajectory combined = Trajectory(std::move(pre_trajectory), post_trajectory);
 
-    PlanAngles(&combined, params.start, params.angle_function, params.constraints.rot);
+    plan_angles(&combined, params.start, params.angle_function, params.constraints.rot);
 
     combined.stamp(RJ::now());
 
-    applyHold(&combined, params.hold_time);
+    apply_hold(&combined, params.hold_time);
 
     return combined;
 }
 
-Trajectory Replanner::fullReplan(const Replanner::PlanParams& params) {
+Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
     Trajectory path =
         CreatePath::rrt(params.start.linear_motion(), params.goal, params.constraints.mot,
                         params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
@@ -76,7 +80,7 @@ Trajectory Replanner::fullReplan(const Replanner::PlanParams& params) {
             throw std::runtime_error("Invalid trajectory");
         }
 
-        PlanAngles(&path, params.start, params.angle_function, params.constraints.rot);
+        plan_angles(&path, params.start, params.angle_function, params.constraints.rot);
     }
 
     path.stamp(RJ::now());
@@ -85,25 +89,25 @@ Trajectory Replanner::fullReplan(const Replanner::PlanParams& params) {
         throw std::runtime_error("Path has invalid angles.");
     }
 
-    applyHold(&path, params.hold_time);
+    apply_hold(&path, params.hold_time);
 
     return std::move(path);
 }
 
-Trajectory Replanner::checkBetter(const Replanner::PlanParams& params, Trajectory previous) {
-    Trajectory newTrajectory = partialReplan(params, previous);
-    if (!newTrajectory.empty() && newTrajectory.end_time() < previous.end_time()) {
-        applyHold(&newTrajectory, params.hold_time);
-        return std::move(newTrajectory);
+Trajectory Replanner::check_better(const Replanner::PlanParams& params, Trajectory previous) {
+    Trajectory new_trajectory = partial_replan(params, previous);
+    if (!new_trajectory.empty() && new_trajectory.end_time() < previous.end_time()) {
+        apply_hold(&new_trajectory, params.hold_time);
+        return std::move(new_trajectory);
     }
 
     return std::move(previous);
 }
 
-Trajectory Replanner::CreatePlan(Replanner::PlanParams params, Trajectory previous) {
-    Geometry2d::Point goalPoint = params.goal.position;
+Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous) {
+    Geometry2d::Point goal_point = params.goal.position;
 
-    if (!previous.empty() && !previous.timeCreated().has_value()) {
+    if (!previous.empty() && !previous.time_created().has_value()) {
         throw std::invalid_argument(
             "CreatePlan must be called with a trajectory with a valid creation "
             "time!");
@@ -111,56 +115,57 @@ Trajectory Replanner::CreatePlan(Replanner::PlanParams params, Trajectory previo
 
     RJ::Time now = params.start.stamp;
 
-    if (previous.empty() || veeredOffPath(previous, params.start, now) ||
-        goalChanged(previous.last().linear_motion(), params.goal)) {
-        return fullReplan(params);
+    if (previous.empty() || veered_off_path(previous, params.start, now) ||
+        goal_changed(previous.last().linear_motion(), params.goal)) {
+        return full_replan(params);
     }
 
     // If we get here, we definitely should have a valid previous trajectory
     // and so it should have a valid creation time (or we would have thrown).
-    RJ::Time previous_created_time = previous.timeCreated().value();
+    RJ::Time previous_created_time = previous.time_created().value();
 
     Trajectory previous_trajectory = std::move(previous);
 
     RJ::Time start_time =
         std::clamp(now, previous_trajectory.begin_time(), previous_trajectory.end_time());
-    const RJ::Seconds timeRemaining{previous_trajectory.end_time() - start_time};
+    const RJ::Seconds time_remaining{previous_trajectory.end_time() - start_time};
 
     RJ::Time hit_time = RJ::Time::max();
 
     // Use short-circuiting to only check dynamic trajectories if necessary.
-    bool shouldPartialReplan =
-        TrajectoryHitsStatic(previous_trajectory, params.static_obstacles, start_time, &hit_time) ||
-        TrajectoryHitsDynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
-                              &hit_time);
+    bool should_partial_replan =
+        trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time,
+                               &hit_time) ||
+        trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
+                                &hit_time);
 
-    if (shouldPartialReplan) {
-        if (RJ::Seconds(hit_time - start_time).count() < *_partialReplanLeadTime * 2) {
-            return fullReplan(params);
+    if (should_partial_replan) {
+        if (RJ::Seconds(hit_time - start_time).count() < *partial_replan_lead_time_config * 2) {
+            return full_replan(params);
         }
-        return partialReplan(params, previous_trajectory);
+        return partial_replan(params, previous_trajectory);
     }
 
     // Make fine corrections when we are close to the target
     // because the old target might be a bit off
-    if (params.start.position().distTo(goalPoint) < Robot_Radius) {
-        std::optional<RobotInstant> nowInstant = previous_trajectory.evaluate(now);
-        if (nowInstant) {
-            params.start = *nowInstant;
-            return fullReplan(params);
+    if (params.start.position().dist_to(goal_point) < kRobotRadius) {
+        std::optional<RobotInstant> now_instant = previous_trajectory.evaluate(now);
+        if (now_instant) {
+            params.start = *now_instant;
+            return full_replan(params);
         }
     }
 
-    if (now - previous_created_time > _checkBetterDeltaTime &&
-        timeRemaining > RJ::Seconds{*_partialReplanLeadTime} * 2) {
-        return checkBetter(params, previous_trajectory);
+    if (now - previous_created_time > kCheckBetterDeltaTime &&
+        time_remaining > RJ::Seconds{*partial_replan_lead_time_config} * 2) {
+        return check_better(params, previous_trajectory);
     }
 
     previous_trajectory.stamp(RJ::now());
     return previous_trajectory;
 }
 
-bool Replanner::veeredOffPath(const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
+bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
     std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
 
     // If we don't have an instant, assume we're past the end of the path.
@@ -170,13 +175,15 @@ bool Replanner::veeredOffPath(const Trajectory& trajectory, RobotInstant actual,
     RobotInstant instant = maybe_instant.value();
 
     double path_error = (instant.position() - actual.position()).mag();
-    return path_error > *_offPathErrorThreshold;
+    return path_error > *off_path_error_threshold_config;
 }
 
-bool Replanner::goalChanged(const LinearMotionInstant& prevGoal, const LinearMotionInstant& goal) {
-    double goalPosDiff = (prevGoal.position - goal.position).mag();
-    double goalVelDiff = (prevGoal.velocity - goal.velocity).mag();
-    return goalPosDiff > *_goalPosChangeThreshold || goalVelDiff > *_goalVelChangeThreshold;
+bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,
+                             const LinearMotionInstant& goal) {
+    double goal_pos_diff = (prev_goal.position - goal.position).mag();
+    double goal_vel_diff = (prev_goal.velocity - goal.velocity).mag();
+    return goal_pos_diff > *goal_pos_change_threshold_config ||
+           goal_vel_diff > *goal_vel_change_threshold_config;
 }
 
 }  // namespace Planning

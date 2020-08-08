@@ -46,28 +46,28 @@ public:
     GameplayModule(Context* context);
     virtual ~GameplayModule();
 
-    SystemState* state() const { return &_context->state; }
+    SystemState* state() const { return &context_->state; }
 
     virtual void run();
 
-    void setupUI();
+    void setup_ui();
 
     /**
      * @brief Loads a playbook file to enable specified plays.
-     * If isAbsolute is false, the path is treated as relative to the
+     * If is_absolute is false, the path is treated as relative to the
      * playbooks directory. Otherwise, it is treated as an absolute path.
      */
-    void loadPlaybook(const std::string& playbookFile, bool isAbsolute = false);
+    void load_playbook(const std::string& playbook_file, bool is_absolute = false);
 
     /**
      * @brief Saves the currently enabled plays to a playbook file
-     * If isAbsolute is false, the path is treated as relative to the
+     * If is_absolute is false, the path is treated as relative to the
      * playbooks directory. Otherwise, it is treated as an absolute path.
      */
-    void savePlaybook(const std::string& playbookFile, bool isAbsolute = false);
+    void save_playbook(const std::string& playbook_file, bool is_absolute = false);
 
-    void clearPlays();
-    bool checkPlaybookStatus();
+    void clear_plays();
+    bool check_playbook_status();
 
     /**
      * @defgroup matrices Coordinate Conversion Matrices
@@ -75,102 +75,102 @@ public:
      * to team space.
      *
      * Example:
-     * team = _gameplay->oppMatrix() * Geometry2d::Point(1, 0);
+     * team = gameplay_->opp_matrix() * Geometry2d::Point(1, 0);
      */
 
     /**
      * Centered on the ball
      * @ingroup matrices
      */
-    Geometry2d::TransformMatrix ballMatrix() const { return _ballMatrix; }
+    Geometry2d::TransformMatrix ball_matrix() const { return ball_matrix_; }
 
     /**
      * Center of the field
      * @ingroup matrices
      */
-    Geometry2d::TransformMatrix centerMatrix() const { return _centerMatrix; }
+    Geometry2d::TransformMatrix center_matrix() const { return center_matrix_; }
 
     /**
      * Opponent's coordinates
      * @ingroup matrices
      */
-    Geometry2d::TransformMatrix oppMatrix() const { return _oppMatrix; }
+    Geometry2d::TransformMatrix opp_matrix() const { return opp_matrix_; }
 
     /// All robots on our team that are usable by plays
-    const std::set<OurRobot*>& playRobots() const { return _playRobots; }
+    const std::set<OurRobot*>& play_robots() const { return play_robots_; }
 
-    void sendFieldDimensionsToPython();
+    void send_field_dimensions_to_python();
 
-    void calculateFieldObstacles();
+    void calculate_field_obstacles();
 
-    bool hasFieldEdgeInsetChanged() const;
+    bool has_field_edge_inset_changed() const;
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
     /**
      * Returns the current set of global obstacles, including the field
      */
-    Geometry2d::ShapeSet globalObstacles() const;
+    Geometry2d::ShapeSet global_obstacles() const;
 
     /// Returns a ShapeSet containing both goal zones
-    Geometry2d::ShapeSet goalZoneObstacles() const;
+    Geometry2d::ShapeSet goal_zone_obstacles() const;
 
     /// Resends the current field dimensions to python. This should be called
     /// whenever the current field dimensions change
-    void updateFieldDimensions();
+    void update_field_dimensions();
 
     /// adds tests to the list of tests to run
-    void addTests();
+    void add_tests();
 
     /// remove selected test from the list of tests to run
-    void removeTest();
+    void remove_test();
 
     /// loads a test for the testing tab
-    void loadTest();
+    void load_test();
 
     /// go to the next test for the testing tab
-    void nextTest();
+    void next_test();
 
 protected:
-    boost::python::object getRootPlay();
+    boost::python::object get_root_play();
 
     /// gets the instance of the main.py module that's loaded at GameplayModule
-    boost::python::object getMainModule();
+    boost::python::object get_main_module();
 
 private:
-    static ConfigDouble* _fieldEdgeInset;
-    double _oldFieldEdgeInset;
+    static ConfigDouble* field_edge_inset;
+    double old_field_edge_inset_;
 
-    Context* const _context;
+    Context* const context_;
 
-    std::set<OurRobot*> _playRobots;
+    std::set<OurRobot*> play_robots_;
 
-    Geometry2d::TransformMatrix _ballMatrix;
-    Geometry2d::TransformMatrix _centerMatrix;
-    Geometry2d::TransformMatrix _oppMatrix;
+    Geometry2d::TransformMatrix ball_matrix_;
+    Geometry2d::TransformMatrix center_matrix_;
+    Geometry2d::TransformMatrix opp_matrix_;
 
     /// Obstacles to prevent using half the field
-    std::shared_ptr<Geometry2d::Shape> _ourHalf;
-    std::shared_ptr<Geometry2d::Shape> _opponentHalf;
+    std::shared_ptr<Geometry2d::Shape> our_half_;
+    std::shared_ptr<Geometry2d::Shape> opponent_half_;
 
-    std::shared_ptr<Geometry2d::Shape> _sideObstacle;
+    std::shared_ptr<Geometry2d::Shape> side_obstacle_;
 
     /// outside of the floor boundaries
-    std::shared_ptr<Geometry2d::Shape> _nonFloor[4];
+    std::shared_ptr<Geometry2d::Shape> non_floor_[4];
 
     /// goal areas
-    std::shared_ptr<Geometry2d::Shape> _ourGoalArea;
-    std::shared_ptr<Geometry2d::Shape> _theirGoalArea;
+    std::shared_ptr<Geometry2d::Shape> our_goal_area_;
+    std::shared_ptr<Geometry2d::Shape> their_goal_area_;
 
-    std::shared_ptr<Geometry2d::Shape> _ourGoal;
-    std::shared_ptr<Geometry2d::Shape> _theirGoal;
+    std::shared_ptr<Geometry2d::Shape> our_goal_;
+    std::shared_ptr<Geometry2d::Shape> their_goal_;
 
-    int _our_score_last_frame = 0;
+    int our_score_last_frame_ = 0;
 
     // python
-    boost::python::object _mainPyNamespace;
+    boost::python::object main_py_namespace_;
 
     // Testing
-    bool runningTests = false;
+    bool running_tests_ = false;
 };
 }

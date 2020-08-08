@@ -8,7 +8,7 @@
 namespace Planning {
 class Planner {
 public:
-    explicit Planner(std::string name) : _name(std::move(name)) {}
+    explicit Planner(std::string name) : name_(std::move(name)) {}
     virtual ~Planner() = default;
 
     Planner(Planner&&) noexcept = default;
@@ -24,12 +24,12 @@ public:
      * @param command The command to check.
      * @return Whether or not this planner can plan that type of command.
      */
-    [[nodiscard]] virtual bool isApplicable(
+    [[nodiscard]] virtual bool is_applicable(
         const MotionCommand& command) const = 0;
 
     /**
      * Plan a trajectory for this request. This is guaranteed to be a request
-     * that this planner is able to handle (according to @ref isApplicable)
+     * that this planner is able to handle (according to @ref is_applicable)
      *
      * @param request The request to plan.
      * @return A trajectory for the robot to follow.
@@ -45,10 +45,10 @@ public:
     /**
      * Get a user-readable name for this planner.
      */
-    [[nodiscard]] std::string name() const { return _name; }
+    [[nodiscard]] std::string name() const { return name_; }
 
 private:
-    std::string _name;
+    std::string name_;
 };
 
 template <typename CommandType>
@@ -64,7 +64,7 @@ public:
     PlannerForCommandType& operator=(PlannerForCommandType&& other) noexcept =
         default;
 
-    [[nodiscard]] bool isApplicable(
+    [[nodiscard]] bool is_applicable(
         const MotionCommand& command) const override {
         return std::holds_alternative<CommandType>(command);
     }

@@ -13,7 +13,7 @@ class Segment;
 /// left and lower-right or any other pair of diagonal corners.
 class Rect : public Shape {
 private:
-    int CohenSutherlandOutCode(const Point& other) const;
+    int cohen_sutherland_out_code(const Point& other) const;
 
 public:
     using Msg = rj_geometry_msgs::msg::Rect;
@@ -62,9 +62,9 @@ public:
         return *this;
     }
 
-    bool containsRect(const Rect& other) const;
+    bool contains_rect(const Rect& other) const;
 
-    bool containsPoint(Point point) const override;
+    bool contains_point(Point point) const override;
 
     bool hit(Point point) const override;
 
@@ -110,8 +110,8 @@ public:
      */
     std::vector<Point> corners();
 
-    bool nearPoint(Point other, float threshold) const override;
-    bool nearSegment(const Segment& seg, float threshold) const;
+    bool near_point(Point other, float threshold) const override;
+    bool near_segment(const Segment& seg, float threshold) const;
 
     bool intersects(const Rect& other) const;
 
@@ -124,7 +124,7 @@ public:
 
     std::array<Point, 2> pt;
 
-    std::string toString() override {
+    std::string to_string() override {
         std::stringstream str;
         str << *this;
         return str.str();

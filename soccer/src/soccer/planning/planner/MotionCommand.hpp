@@ -45,17 +45,17 @@ struct PathTargetCommand {
  * Move with a particular velocity.
  */
 struct WorldVelCommand {
-    Geometry2d::Point worldVel;
+    Geometry2d::Point world_vel;
 };
 
 /**
  * Pivot around a given point, with a given target angle.
  *
- * The robot will face the pivotPoint throughout the command.
+ * The robot will face the pivot_point throughout the command.
  */
 struct PivotCommand {
-    Geometry2d::Point pivotPoint;
-    Geometry2d::Point pivotTarget;
+    Geometry2d::Point pivot_point;
+    Geometry2d::Point pivot_target;
 };
 
 /**

@@ -51,10 +51,10 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
       _doubleFrameNumber(-1),
       _lastUpdateTime(RJ::now()),
       _processor(processor),
-      _context(processor->context()),
+      context_(processor->context()),
       _has_external_ref(has_external_ref),
-      _game_settings(rj_convert::convert_to_ros(_context->game_settings)) {
-    _context_mutex = processor->loopMutex();
+      _game_settings(rj_convert::convert_to_ros(context_->game_settings)) {
+    context__mutex = processor->loop_mutex();
 
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
@@ -164,7 +164,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     // Pass context into fieldview
     // (apparently simfieldview is used even outside of simulation)
-    _ui.fieldView->setContext(_context);
+    _ui.fieldView->setContext(context_);
 
     if (!_game_settings.simulation) {
         _ui.menu_Simulator->setEnabled(false);
@@ -234,18 +234,18 @@ void MainWindow::initialize() {
 
     // If we're reading logs, we should already have some data. Update frames
     // for all of it.
-    for (const auto& frame : _context->logs.frames) {
+    for (const auto& frame : context_->logs.frames) {
         updateDebugLayers(*frame);
     }
 
-    if (_context->logs.state == Logs::State::kReading) {
+    if (context_->logs.state == Logs::State::kReading) {
         _playbackRate = 0;
     }
 }
 
 void MainWindow::logFileChanged() {
-    if (_context->logs.state == Logs::State::kWriting) {
-        QString filename_q = QString::fromStdString(_context->logs.filename.value());
+    if (context_->logs.state == Logs::State::kWriting) {
+        QString filename_q = QString::fromStdString(context_->logs.filename.value());
         _logFile->setText(filename_q);
         _ui.actionStart_Logging->setText(QString("Already Logging to: ") + filename_q);
         _ui.actionStart_Logging->setEnabled(false);
@@ -290,7 +290,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
             _ui.goalieID->setCurrentIndex(_game_settings.request_goalie_id + 1);
         }
 
-        bool blueTeam = _context->blue_team;
+        bool blueTeam = context_->blue_team;
         if (_game_settings.request_blue_team != blueTeam) {
             blueTeam ? _ui.actionTeamBlue->trigger() : _ui.actionTeamYellow->trigger();
         }
@@ -303,14 +303,14 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 void MainWindow::updateViews() {
     // TODO(Kyle): Re-enable manual control
 #if MANUAL
-    int manual = _context->game_settings.joystick_config.manualID;
-    if ((manual >= 0 || _ui.manualID->isEnabled()) && !_context->joystick_valid) {
+    int manual = context_->game_settings.joystick_config.manualID;
+    if ((manual >= 0 || _ui.manualID->isEnabled()) && !context_->joystick_valid) {
         // Joystick is gone - turn off manual control
         _ui.manualID->setCurrentIndex(0);
-        _context->game_settings.joystick_config.manualID = -1;
+        context_->game_settings.joystick_config.manualID = -1;
         _ui.manualID->setEnabled(false);
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab), false);
-    } else if (!_ui.manualID->isEnabled() && _context->joystick_valid) {
+    } else if (!_ui.manualID->isEnabled() && context_->joystick_valid) {
         // Joystick reconnected
         _ui.manualID->setEnabled(true);
         _ui.joystickTab->setVisible(true);
@@ -323,11 +323,11 @@ void MainWindow::updateViews() {
     TeamInfo their_info;
     bool blue_team = false;
     {
-        std::lock_guard<std::mutex> lock(*_context_mutex);
-        game_state = _context->game_state;
-        blue_team = _context->blue_team;
-        our_info = _context->our_info;
-        their_info = _context->their_info;
+        std::lock_guard<std::mutex> lock(*context__mutex);
+        game_state = context_->game_state;
+        blue_team = context_->blue_team;
+        our_info = context_->our_info;
+        their_info = context_->their_info;
     }
 
     // TODO(Kyle): Fix multiple manual
@@ -379,7 +379,7 @@ void MainWindow::updateViews() {
         _procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 
         _logMemory->setText(
-            QString("Log: %1 kiB").arg(QString::number((_context->logs.size_bytes + 512) / 1024)));
+            QString("Log: %1 kiB").arg(QString::number((context_->logs.size_bytes + 512) / 1024)));
     }
 
     auto value = _ui.logHistoryLocation->value();
@@ -391,24 +391,24 @@ void MainWindow::updateViews() {
 
     // Grab frames
     {
-        std::lock_guard<std::mutex> lock(*_context_mutex);
-        if (_context->logs.frames.empty()) {
+        std::lock_guard<std::mutex> lock(*context__mutex);
+        if (context_->logs.frames.empty()) {
             // No log frames, nothing else to update.
             return;
         }
 
-        start_time = _context->logs.start_time;
+        start_time = context_->logs.start_time;
 
-        size_t num_dropped = _context->logs.dropped_frames;
+        size_t num_dropped = context_->logs.dropped_frames;
 
         if (live()) {
-            _doubleFrameNumber = static_cast<double>(_context->logs.frames.size() + num_dropped);
+            _doubleFrameNumber = static_cast<double>(context_->logs.frames.size() + num_dropped);
         } else {
             _doubleFrameNumber += *_playbackRate;
         }
 
         minFrame = num_dropped;
-        maxFrame = static_cast<int>(num_dropped + _context->logs.frames.size()) - 1;
+        maxFrame = static_cast<int>(num_dropped + context_->logs.frames.size()) - 1;
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
@@ -420,14 +420,14 @@ void MainWindow::updateViews() {
         _ui.logHistoryLocation->setMinimum(minFrame);
         _ui.logHistoryLocation->setMaximum(maxFrame);
 
-        live_frame = _context->logs.frames.back();
+        live_frame = context_->logs.frames.back();
 
         // Cast to ints so that subtraction doesn't overflow.
         int start = std::max(frameNumber() - kLongHistorySize, minFrame);
 
         // Read the latest frames
-        _longHistory.assign(_context->logs.frames.begin() + start - num_dropped,
-                            _context->logs.frames.begin() + frameNumber() - num_dropped + 1);
+        _longHistory.assign(context_->logs.frames.begin() + start - num_dropped,
+                            context_->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
     // Set the history vector by taking the last kHistorySize elements of the
@@ -553,7 +553,7 @@ void MainWindow::updateViews() {
     /**************************************************************************/
     if (currentFrame != nullptr) {
         // update robot status list
-        for (int shell = 0; shell < Num_Shells; shell++) {
+        for (int shell = 0; shell < kNumShells; shell++) {
             // Search for the corresponding references.
             auto maybe_rx = [&]() -> std::optional<std::reference_wrapper<const Packet::RadioRx>> {
                 for (int i = 0; i < currentFrame->radio_rx_size(); i++) {
@@ -656,7 +656,7 @@ void MainWindow::updateStatus() {
         return;
     }
 
-    if (_processor->gameplayModule()->checkPlaybookStatus()) {
+    if (_processor->gameplay_module()->check_playbook_status()) {
         playIndicatorStatus(false);
     }
 
@@ -664,7 +664,7 @@ void MainWindow::updateStatus() {
     bool sim = _game_settings.simulation;
 
     if (!sim) {
-        updateRadioBaseStatus(_processor->isRadioOpen());
+        updateRadioBaseStatus(_processor->is_radio_open());
     }
 
     // Get processing thread status
@@ -675,9 +675,9 @@ void MainWindow::updateStatus() {
     // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
-    std::vector<int> validIds = _processor->state()->ourValidIds();
+    std::vector<int> validIds = _processor->state()->our_valid_ids();
 
-    for (int i = 1; i <= Num_Shells; i++) {
+    for (int i = 1; i <= kNumShells; i++) {
         QStandardItem* item = goalieModel->item(i);
         if (std::find(validIds.begin(), validIds.end(), i - 1) != validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
@@ -709,7 +709,7 @@ void MainWindow::updateStatus() {
     updateFromRefPacket(_has_external_ref);
 
     // Is the processing thread running?
-    if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {
+    if (curTime - ps.last_loop_time > RJ::Seconds(0.1)) {
         // Processing loop hasn't run recently.
         // Likely causes:
         //    Mutex deadlock (need a recursive mutex?)
@@ -719,14 +719,14 @@ void MainWindow::updateStatus() {
     }
 
     // Check network activity
-    if (curTime - ps.lastVisionTime > RJ::Seconds(0.1)) {
+    if (curTime - ps.last_vision_time > RJ::Seconds(0.1)) {
         // We must always have vision
         status("NO VISION", StatusType::Status_Fail);
         return;
     }
 
 #if MANUAL
-    if (_context->game_settings.joystick_config.manualID >= 0) {
+    if (context_->game_settings.joystick_config.manualID >= 0) {
         // Mixed auto/manual control
         status("MANUAL", StatusType::Status_Warning);
         return;
@@ -735,7 +735,7 @@ void MainWindow::updateStatus() {
 
     // Driving the robots helps isolate radio problems by verifying radio TX,
     // so test this after manual driving.
-    if (curTime - ps.lastRadioRxTime > RJ::Seconds(1)) {
+    if (curTime - ps.last_radio_rx_time > RJ::Seconds(1)) {
         // Allow a long timeout in case of poor radio performance
         status("NO RADIO RX", StatusType::Status_Fail);
         return;
@@ -756,7 +756,7 @@ void MainWindow::updateStatus() {
         return;
     }
 
-    if (!sim && _context->logs.state != Logs::State::kWriting) {
+    if (!sim && context_->logs.state != Logs::State::kWriting) {
         // We should record logs during competition
         status("NOT RECORDING", StatusType::Status_Warning);
         return;
@@ -804,11 +804,11 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
 }
 
 void MainWindow::on_fieldView_robotSelected(int shell) {
-    if (_context->joystick_valid) {
+    if (context_->joystick_valid) {
         _ui.manualID->setCurrentIndex(shell + 1);
 
 #if MANUAL
-        std::lock_guard<std::mutex> lock(*_context_mutex);
+        std::lock_guard<std::mutex> lock(*context__mutex);
         _game_settings.joystick_config.manualID = shell;
 #endif
     }
@@ -872,8 +872,8 @@ void MainWindow::on_actionCenterBall_triggered() {
     ball_replace->set_vx(0);
     ball_replace->set_vy(0);
 
-    std::lock_guard<std::mutex> lock(*_context_mutex);
-    _context->grsim_command = simPacket;
+    std::lock_guard<std::mutex> lock(*context__mutex);
+    context_->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionStopBall_triggered() {
@@ -886,19 +886,19 @@ void MainWindow::on_actionStopBall_triggered() {
     ball_replace->set_vx(0);
     ball_replace->set_vy(0);
 
-    std::lock_guard<std::mutex> lock(*_context_mutex);
-    _context->grsim_command = simPacket;
+    std::lock_guard<std::mutex> lock(*context__mutex);
+    context_->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionResetField_triggered() {
     grSim_Packet simPacket;
 
     grSim_Replacement* replacement = simPacket.mutable_replacement();
-    for (int i = 0; i < Robots_Per_Team; ++i) {
+    for (int i = 0; i < kRobotsPerTeam; ++i) {
         auto* rob = replacement->add_robots();
 
         const int NUM_COLS = 2;
-        const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+        const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
 
         double x_pos = -2.5 + i / ROBOTS_PER_COL;
         double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
@@ -910,11 +910,11 @@ void MainWindow::on_actionResetField_triggered() {
         rob->set_yellowteam(false);
     }
 
-    for (int i = 0; i < Robots_Per_Team; ++i) {
+    for (int i = 0; i < kRobotsPerTeam; ++i) {
         auto rob = replacement->add_robots();
 
         const int NUM_COLS = 2;
-        const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+        const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
 
         double x_pos = +2.5 - i / ROBOTS_PER_COL;
         double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
@@ -932,8 +932,8 @@ void MainWindow::on_actionResetField_triggered() {
     ball_replace->set_vx(0.0);
     ball_replace->set_vy(0.0);
 
-    std::lock_guard<std::mutex> lock(*_context_mutex);
-    _context->grsim_command = simPacket;
+    std::lock_guard<std::mutex> lock(*context__mutex);
+    context_->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionStopRobots_triggered() {}
@@ -972,8 +972,8 @@ void MainWindow::on_actionDampedRotation_toggled(bool value) {
     else
         cout << "Disabled" << endl;
 
-    std::lock_guard<std::mutex> lock(*_context_mutex);
-    _context->game_settings.joystick_config.dampedRotation = value;
+    std::lock_guard<std::mutex> lock(*context__mutex);
+    context_->game_settings.joystick_config.dampedRotation = value;
 #endif
 }
 
@@ -985,8 +985,8 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
     else
         cout << "Disabled" << endl;
 
-    std::lock_guard<std::mutex> lock(*_context_mutex);
-    _context->game_settings.joystick_config.dampedTranslation = value;
+    std::lock_guard<std::mutex> lock(*context__mutex);
+    context_->game_settings.joystick_config.dampedTranslation = value;
 #endif
 }
 
@@ -999,7 +999,7 @@ void MainWindow::on_actionRestartUpdateTimer_triggered() {
 }
 
 void MainWindow::on_actionStart_Logging_triggered() {
-    if (_context->logs.state != Logs::State::kWriting) {
+    if (context_->logs.state != Logs::State::kWriting) {
         if (!QDir("logs").exists()) {
             QDir().mkdir("logs");
         }
@@ -1007,7 +1007,7 @@ void MainWindow::on_actionStart_Logging_triggered() {
         QString logFile =
             QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
 
-        if (!_processor->openLog(logFile)) {
+        if (!_processor->open_log(logFile)) {
             printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
         } else {
             _ui.actionStart_Logging->setText(QString("Now Logging to:") + logFile);
@@ -1030,8 +1030,8 @@ void MainWindow::on_actionSeed_triggered() {
 // Joystick settings
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
 #if MANUAL
-    std::lock_guard<std::mutex> lock(*_context_mutex);
-    _context->game_settings.joystick_config.useKickOnBreakBeam =
+    std::lock_guard<std::mutex> lock(*context__mutex);
+    context_->game_settings.joystick_config.useKickOnBreakBeam =
         _ui.joystickKickOnBreakBeam->checkState() == Qt::CheckState::Checked;
 #endif
 }
@@ -1103,13 +1103,13 @@ void MainWindow::on_actionTeamYellow_triggered() {
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
 #if MANUAL
-    _context->game_settings.joystick_config.manualID = value - 1;
+    context_->game_settings.joystick_config.manualID = value - 1;
 #endif
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
 #if MANUAL
-    _context->game_settings.joystick_config.useFieldOrientedDrive = value;
+    context_->game_settings.joystick_config.useFieldOrientedDrive = value;
 #endif
 }
 
@@ -1198,10 +1198,11 @@ void MainWindow::on_saveConfig_clicked() {
 
 void MainWindow::on_loadPlaybook_clicked() {
     QString filename = QFileDialog::getOpenFileName(
-        this, "Load Playbook", ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
+        this, "Load Playbook",
+        application_run_directory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
-            _processor->gameplayModule()->loadPlaybook(filename.toStdString(), true);
+            _processor->gameplay_module()->load_playbook(filename.toStdString(), true);
             playIndicatorStatus(true);
         } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
@@ -1212,10 +1213,11 @@ void MainWindow::on_loadPlaybook_clicked() {
 
 void MainWindow::on_savePlaybook_clicked() {
     QString filename = QFileDialog::getSaveFileName(
-        this, "Save Playbook", ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
+        this, "Save Playbook",
+        application_run_directory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
-            _processor->gameplayModule()->savePlaybook(filename.toStdString(), true);
+            _processor->gameplay_module()->save_playbook(filename.toStdString(), true);
             playIndicatorStatus(true);
         } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
@@ -1225,20 +1227,20 @@ void MainWindow::on_savePlaybook_clicked() {
 }
 
 void MainWindow::on_clearPlays_clicked() {
-    _processor->gameplayModule()->clearPlays();
+    _processor->gameplay_module()->clear_plays();
     playIndicatorStatus(true);
 }
 
 ////////
 // Testing Tab
 
-void MainWindow::on_testRun_clicked() { _processor->gameplayModule()->loadTest(); }
+void MainWindow::on_testRun_clicked() { _processor->gameplay_module()->load_test(); }
 
-void MainWindow::on_addToTable_clicked() { _processor->gameplayModule()->addTests(); }
+void MainWindow::on_addToTable_clicked() { _processor->gameplay_module()->add_tests(); }
 
-void MainWindow::on_removeFromTable_clicked() { _processor->gameplayModule()->removeTest(); }
+void MainWindow::on_removeFromTable_clicked() { _processor->gameplay_module()->remove_test(); }
 
-void MainWindow::on_testNext_clicked() { _processor->gameplayModule()->nextTest(); }
+void MainWindow::on_testNext_clicked() { _processor->gameplay_module()->next_test(); }
 
 // NOLINTNEXTLINE(readability-make-member-function-const): this modifies state
 void MainWindow::setUseRefChecked(bool /* use_ref */) {

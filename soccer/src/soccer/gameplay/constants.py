@@ -43,5 +43,5 @@ class Ball:
 class Evaluation:
     SlowThreshold = 1
 
-# Set to the global Field_Dimensions object by the GameplayModule
-Field = robocup.Field_Dimensions.CurrentDimensions
+# Set to the global FieldDimensions object by the GameplayModule
+Field = robocup.FieldDimensions.CurrentDimensions

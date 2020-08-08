@@ -9,19 +9,19 @@ namespace Geometry2d {
 class Circle : public Shape {
 public:
     Circle() {
-        _r = -1;
-        _rsq = -1;
+        r_ = -1;
+        rsq_ = -1;
     }
 
     Circle(Point c, float r) {
         center = c;
-        _r = r;
-        _rsq = -1;
+        r_ = r;
+        rsq_ = -1;
     }
 
     Circle(const Circle& other) {
         center = other.center;
-        _r = other.radius();
+        r_ = other.radius();
     }
 
     Shape* clone() const override;
@@ -32,39 +32,39 @@ public:
 
     // Radius squared
     float radius_sq() const {
-        if (_rsq < 0 && _r >= 0) {
-            _rsq = _r * _r;
+        if (rsq_ < 0 && r_ >= 0) {
+            rsq_ = r_ * r_;
         }
 
-        return _rsq;
+        return rsq_;
     }
 
     void radius_sq(float value) {
-        _rsq = value;
-        _r = -1;
+        rsq_ = value;
+        r_ = -1;
     }
 
     // Radius
     float radius() const {
-        if (_r < 0 && _rsq >= 0) {
-            _r = sqrtf(_rsq);
+        if (r_ < 0 && rsq_ >= 0) {
+            r_ = sqrtf(rsq_);
         }
 
-        return _r;
+        return r_;
     }
 
     void radius(float value) {
-        _r = value;
-        _rsq = -1;
+        r_ = value;
+        rsq_ = -1;
     }
 
-    bool containsPoint(Point pt) const override;
+    bool contains_point(Point pt) const override;
 
     bool hit(Point pt) const override;
 
     bool hit(const Segment& seg) const override;
 
-    bool nearPoint(Point pt, float threshold) const override;
+    bool near_point(Point pt, float threshold) const override;
 
     // Returns the number of points at which this circle intersects the given
     // circle.
@@ -77,15 +77,15 @@ public:
     // are modified, where n is the return value.
     int intersects(const Line& line, Point* i = nullptr) const;
 
-    bool tangentPoints(Point src, Point* p1 = nullptr,
+    bool tangent_points(Point src, Point* p1 = nullptr,
                        Point* p2 = nullptr) const;
 
     /// finds the point on the circle closest to @p
-    Point nearestPoint(Point p) const;
+    Point nearest_point(Point p) const;
 
     Point center;
 
-    std::string toString() override {
+    std::string to_string() override {
         std::stringstream str;
         str << "Circle<" << center << ", " << radius() << ">";
         return str.str();
@@ -93,9 +93,9 @@ public:
 
 protected:
     // Radius
-    mutable float _r;
+    mutable float r_;
 
     // Radius squared
-    mutable float _rsq;
+    mutable float rsq_;
 };
 }

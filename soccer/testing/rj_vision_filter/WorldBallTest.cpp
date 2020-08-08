@@ -6,7 +6,7 @@ namespace vision_filter {
 TEST(WorldBall, invalid) {
     WorldBall wb;
 
-    EXPECT_FALSE(wb.getIsValid());
+    EXPECT_FALSE(wb.get_is_valid());
 }
 
 TEST(WorldBall, no_ball) {
@@ -19,24 +19,24 @@ TEST(WorldBall, one_ball) {
     RJ::Time t = RJ::now();
     Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
-    int cID = 1;
+    int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(cID, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
     WorldBall wb = WorldBall(t, kbl);
 
-    Geometry2d::Point rp = wb.getPos();
-    Geometry2d::Point rv = wb.getVel();
-    double rpc = wb.getPosCov();
-    double rvc = wb.getVelCov();
+    Geometry2d::Point rp = wb.get_pos();
+    Geometry2d::Point rv = wb.get_vel();
+    double rpc = wb.get_pos_cov();
+    double rvc = wb.get_vel_cov();
 
-    std::list<KalmanBall> list = wb.getBallComponents();
+    std::list<KalmanBall> list = wb.get_ball_components();
 
-    EXPECT_TRUE(wb.getIsValid());
+    EXPECT_TRUE(wb.get_is_valid());
     EXPECT_EQ(rp.x(), p.x());
     EXPECT_EQ(rp.y(), p.y());
     EXPECT_EQ(rv.x(), 0);
@@ -54,11 +54,11 @@ TEST(WorldBall, two_ball) {
     Geometry2d::Point p2 = Geometry2d::Point(2, 2);
     CameraBall b1 = CameraBall(t, p1);
     CameraBall b2 = CameraBall(t, p2);
-    int cID = 1;
+    int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb1 = KalmanBall(cID, t, b1, w);
-    KalmanBall kb2 = KalmanBall(cID, t, b2, w);
+    KalmanBall kb1 = KalmanBall(c_id, t, b1, w);
+    KalmanBall kb2 = KalmanBall(c_id, t, b2, w);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb1);
@@ -66,14 +66,14 @@ TEST(WorldBall, two_ball) {
 
     WorldBall wb = WorldBall(t, kbl);
 
-    Geometry2d::Point rp = wb.getPos();
-    Geometry2d::Point rv = wb.getVel();
-    double rpc = wb.getPosCov();
-    double rvc = wb.getVelCov();
+    Geometry2d::Point rp = wb.get_pos();
+    Geometry2d::Point rv = wb.get_vel();
+    double rpc = wb.get_pos_cov();
+    double rvc = wb.get_vel_cov();
 
-    std::list<KalmanBall> list = wb.getBallComponents();
+    std::list<KalmanBall> list = wb.get_ball_components();
 
-    EXPECT_TRUE(wb.getIsValid());
+    EXPECT_TRUE(wb.get_is_valid());
     EXPECT_EQ(rp.x(), (p1.x() + p2.x()) / 2);
     EXPECT_EQ(rp.y(), (p1.y() + p2.y()) / 2);
     EXPECT_EQ(rv.x(), 0);

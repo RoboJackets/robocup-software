@@ -3,7 +3,7 @@
 #include <Geometry2d/GeometryConversions.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
-#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/FieldDimensions.hpp>
 #include <rj_common/RefereeEnums.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
@@ -71,17 +71,17 @@ public:
     ////////
     // Rule queries
 
-    [[nodiscard]] bool isFirstHalf() const { return period == FirstHalf; }
+    [[nodiscard]] bool is_first_half() const { return period == FirstHalf; }
 
-    [[nodiscard]] bool isSecondHalf() const { return period == SecondHalf; }
+    [[nodiscard]] bool is_second_half() const { return period == SecondHalf; }
 
-    [[nodiscard]] bool isHalftime() const { return period == Halftime; }
+    [[nodiscard]] bool is_halftime() const { return period == Halftime; }
 
-    [[nodiscard]] bool isOvertime1() const { return period == Overtime1; }
+    [[nodiscard]] bool is_overtime1() const { return period == Overtime1; }
 
-    [[nodiscard]] bool isOvertime2() const { return period == Overtime2; }
+    [[nodiscard]] bool is_overtime2() const { return period == Overtime2; }
 
-    [[nodiscard]] bool isPenaltyShootout() const {
+    [[nodiscard]] bool is_penalty_shootout() const {
         return period == PenaltyShootout;
     }
 
@@ -97,81 +97,81 @@ public:
 
     [[nodiscard]] bool placement() const { return restart == Placement; }
 
-    [[nodiscard]] bool isOurRestart() const { return our_restart; }
+    [[nodiscard]] bool is_our_restart() const { return our_restart; }
 
     [[nodiscard]] bool direct() const { return restart == Direct; }
 
     [[nodiscard]] bool indirect() const { return restart == Indirect; }
 
-    [[nodiscard]] bool ourKickoff() const { return kickoff() && our_restart; }
+    [[nodiscard]] bool our_kickoff() const { return kickoff() && our_restart; }
 
-    [[nodiscard]] bool ourPenalty() const { return penalty() && our_restart; }
+    [[nodiscard]] bool our_penalty() const { return penalty() && our_restart; }
 
-    [[nodiscard]] bool ourDirect() const { return direct() && our_restart; }
+    [[nodiscard]] bool our_direct() const { return direct() && our_restart; }
 
-    [[nodiscard]] bool ourIndirect() const { return indirect() && our_restart; }
+    [[nodiscard]] bool our_indirect() const { return indirect() && our_restart; }
 
-    [[nodiscard]] bool ourFreeKick() const {
-        return ourDirect() || ourIndirect();
+    [[nodiscard]] bool our_free_kick() const {
+        return our_direct() || our_indirect();
     }
 
-    [[nodiscard]] bool ourPlacement() const {
+    [[nodiscard]] bool our_placement() const {
         return placement() && our_restart;
     }
 
-    [[nodiscard]] bool theirKickoff() const {
+    [[nodiscard]] bool their_kickoff() const {
         return kickoff() && !our_restart;
     }
 
-    [[nodiscard]] bool theirPenalty() const {
+    [[nodiscard]] bool their_penalty() const {
         return penalty() && !our_restart;
     }
 
-    [[nodiscard]] bool theirDirect() const { return direct() && !our_restart; }
+    [[nodiscard]] bool their_direct() const { return direct() && !our_restart; }
 
-    [[nodiscard]] bool theirIndirect() const {
+    [[nodiscard]] bool their_indirect() const {
         return indirect() && !our_restart;
     }
 
-    [[nodiscard]] bool theirFreeKick() const {
-        return theirDirect() || theirIndirect();
+    [[nodiscard]] bool their_free_kick() const {
+        return their_direct() || their_indirect();
     }
 
-    [[nodiscard]] bool theirPlacement() const {
+    [[nodiscard]] bool their_placement() const {
         return placement() && !our_restart;
     }
 
     // Robots must be in position for a restart
-    [[nodiscard]] bool setupRestart() const {
+    [[nodiscard]] bool setup_restart() const {
         return state == Setup || state == Ready;
     }
 
-    [[nodiscard]] bool inSetupState() const { return state == Setup; }
+    [[nodiscard]] bool in_setup_state() const { return state == Setup; }
 
-    [[nodiscard]] bool inReadyState() const { return state == Ready; }
+    [[nodiscard]] bool in_ready_state() const { return state == Ready; }
 
     // One of our robots can kick the ball
-    [[nodiscard]] bool canKick() const {
+    [[nodiscard]] bool can_kick() const {
         return state == Playing || (our_restart && state == Playing);
     }
 
     // Our robots must stay 500mm away from the ball
-    [[nodiscard]] bool stayAwayFromBall() const {
+    [[nodiscard]] bool stay_away_from_ball() const {
         return state != Playing && !our_restart;
     }
 
     // Our robots must stay on our half of the field
-    [[nodiscard]] bool stayOnSide() const {
-        return setupRestart() && restart == Kickoff;
+    [[nodiscard]] bool stay_on_side() const {
+        return setup_restart() && restart == Kickoff;
     }
 
     // Our robots (except the penalty kicker) must stay 400mm behind the penalty
     // line
-    [[nodiscard]] bool stayBehindPenaltyLine() const {
+    [[nodiscard]] bool stay_behind_penalty_line() const {
         return restart == Penalty;
     }
 
-    [[nodiscard]] std::optional<Geometry2d::Point> getBallPlacementPoint()
+    [[nodiscard]] std::optional<Geometry2d::Point> get_ball_placement_point()
         const {
         return ball_placement_point;
     }

@@ -29,9 +29,9 @@ TEST(VelocityProfiling, BasicTest) {
 
     RJ::Time start_time{0s};
 
-    Trajectory result = ProfileVelocity(path, 0.5, 0, constraints.mot, start_time);
+    Trajectory result = profile_velocity(path, 0.5, 0, constraints.mot, start_time);
 
-    TestingUtils::checkTrajectoryContinuous(result, constraints);
+    TestingUtils::check_trajectory_continuous(result, constraints);
 }
 
 TEST(VelocityProfiling, ComplexPath) {
@@ -42,9 +42,9 @@ TEST(VelocityProfiling, ComplexPath) {
 
     RJ::Time start_time{0s};
 
-    Trajectory result = ProfileVelocity(path, 0.5, 0, constraints.mot, start_time);
+    Trajectory result = profile_velocity(path, 0.5, 0, constraints.mot, start_time);
 
-    TestingUtils::checkTrajectoryContinuous(result, constraints);
+    TestingUtils::check_trajectory_continuous(result, constraints);
 }
 
 TEST(VelocityProfiling, ClampAccel) {
