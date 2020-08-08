@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include <WorldState.hpp>
+#include <world_state.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 RobotState get_random_robot_state() {

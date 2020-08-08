@@ -8,7 +8,7 @@
 #include <boost/asio.hpp>
 #include <cstdint>
 #include <rclcpp/rclcpp.hpp>
-#include <rj_common/Network.hpp>
+#include <rj_common/network.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_utils/concurrent_queue.hpp>

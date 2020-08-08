@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <GameState.hpp>
+#include <game_state.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 bool operator==(const GameState& a, const GameState& b) {

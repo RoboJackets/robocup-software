@@ -9,7 +9,7 @@
 #include <boost/python/register_ptr_to_python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-#include "WorldState.hpp"
+#include "world_state.hpp"
 
 using namespace boost::python;
 
@@ -18,8 +18,8 @@ using namespace boost::python;
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
 
-#include <Configuration.hpp>
-#include <Context.hpp>
+#include <configuration.hpp>
+#include <context.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
@@ -27,22 +27,22 @@ using namespace boost::python;
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Rect.hpp>
-#include <Robot.hpp>
-#include <SystemState.hpp>
-#include <motion/MotionControl.hpp>
+#include <robot.hpp>
+#include <system_state.hpp>
+#include <motion/motion_control.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
-#include "DebugDrawer.hpp"
-#include "KickEvaluator.hpp"
-#include "RobotConfig.hpp"
-#include "WindowEvaluator.hpp"
-#include "motion/TrapezoidalMotion.hpp"
-#include "optimization/NelderMead2D.hpp"
-#include "optimization/NelderMead2DConfig.hpp"
-#include "optimization/PythonFunctionWrapper.hpp"
-#include "planning/MotionConstraints.hpp"
-#include "referee/ExternalReferee.hpp"
+#include "debug_drawer.hpp"
+#include "kick_evaluator.hpp"
+#include "robot_config.hpp"
+#include "window_evaluator.hpp"
+#include "motion/trapezoidal_motion.hpp"
+#include "optimization/nelder_mead2_d.hpp"
+#include "optimization/nelder_mead2_d_config.hpp"
+#include "optimization/python_function_wrapper.hpp"
+#include "planning/motion_constraints.hpp"
+#include "referee/external_referee.hpp"
 
 #include <rc-fshare/pid.hpp>
 

@@ -8,8 +8,8 @@
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
 
-#include "Context.hpp"
-#include "Node.hpp"
+#include "context.hpp"
+#include "node.hpp"
 
 namespace ros2_temp {
 
