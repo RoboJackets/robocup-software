@@ -1,7 +1,7 @@
 #include "packet_convert.hpp"
 
 #include <Geometry2d/Util.hpp>
-#include <rj_common/status.h>
+#include <rj_common/status.hpp>
 #include <rj_common/time.hpp>
 
 #include "robot_intent.hpp"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_common/status.h>
+#include <rj_common/status.hpp>
 
 #include <QColor>
 #include <algorithm>

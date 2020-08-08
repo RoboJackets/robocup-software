@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_param_utils/ros2_param_provider.h>
+#include <rj_param_utils/ros2_param_provider.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/msg/game_state.hpp>

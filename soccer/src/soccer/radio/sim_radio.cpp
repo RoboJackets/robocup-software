@@ -6,7 +6,7 @@
 #include <Geometry2d/Util.hpp>
 #include <robot.hpp>
 #include <rj_common/network.hpp>
-#include <rj_common/status.h>
+#include <rj_common/status.hpp>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/messages_robocup_ssl_robot_status.pb.h>

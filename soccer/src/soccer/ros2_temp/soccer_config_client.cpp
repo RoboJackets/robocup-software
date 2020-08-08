@@ -1,4 +1,4 @@
-#include <ros2_temp/soccer_config_client.h>
+#include <ros2_temp/soccer_config_client.hpp>
 
 namespace ros2_temp {
 SoccerConfigClient::SoccerConfigClient(Context* context) : context_{context} {

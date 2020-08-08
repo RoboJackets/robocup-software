@@ -10,7 +10,7 @@
 #include <rj_common/multicast.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
-#include <rj_param_utils/param.h>
+#include <rj_param_utils/param.hpp>
 #include <rj_utils/logging.hpp>
 #include <unistd.h>
 

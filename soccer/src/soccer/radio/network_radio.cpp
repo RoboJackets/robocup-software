@@ -1,6 +1,6 @@
 #include "network_radio.hpp"
 
-#include <rj_common/status.h>
+#include <rj_common/status.hpp>
 
 #include "Geometry2d/Util.hpp"
 #include "packet_convert.hpp"

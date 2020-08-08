@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <rj_param_utils/param.h>
-#include <testing/declare_test.h>
+#include <rj_param_utils/param.hpp>
+#include <testing/declare_test.hpp>
 
 namespace params::testing {
 constexpr bool kExampleBoolValue = true;

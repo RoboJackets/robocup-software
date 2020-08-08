@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include <battery_profile.hpp>
-#include <rj_common/status.h>
+#include <rj_common/status.hpp>
 
 RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f) : QWidget(parent, f) {
     _ui.setupUi(this);

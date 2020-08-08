@@ -1,4 +1,4 @@
-#include <rj_param_utils/ros2_param_provider.h>
+#include <rj_param_utils/ros2_param_provider.hpp>
 
 namespace params {
 

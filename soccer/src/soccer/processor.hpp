@@ -5,9 +5,9 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
-#include <rj_topic_utils/async_message_queue.h>
-#include <ros2_temp/raw_vision_packet_sub.h>
-#include <ros2_temp/soccer_config_client.h>
+#include <rj_topic_utils/async_message_queue.hpp>
+#include <ros2_temp/raw_vision_packet_sub.hpp>
+#include <ros2_temp/soccer_config_client.hpp>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>

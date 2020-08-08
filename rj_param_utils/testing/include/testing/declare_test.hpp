@@ -1,4 +1,4 @@
-#include <rj_param_utils/param.h>
+#include <rj_param_utils/param.hpp>
 
 namespace params::testing {
 constexpr auto kDeclareTestModule = "declare_test";

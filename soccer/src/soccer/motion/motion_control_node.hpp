@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_topic_utils/async_message_queue.h>
+#include <rj_topic_utils/async_message_queue.hpp>
 
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/world_state.hpp>

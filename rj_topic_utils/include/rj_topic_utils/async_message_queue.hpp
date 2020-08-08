@@ -3,7 +3,7 @@
 #include <thread>
 #include <vector>
 
-#include "message_queue.h"
+#include "message_queue.hpp"
 
 namespace rj_topic_utils {
 

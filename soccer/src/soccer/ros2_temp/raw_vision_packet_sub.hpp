@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_topic_utils/async_message_queue.h>
+#include <rj_topic_utils/async_message_queue.hpp>
 
 #include <context.hpp>
 #include <rclcpp/rclcpp.hpp>
