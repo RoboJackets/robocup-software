@@ -19,7 +19,8 @@ ConfigDouble* EscapeObstaclesPathPlanner::step_size_config;
 ConfigDouble* EscapeObstaclesPathPlanner::goal_change_threshold;
 
 void EscapeObstaclesPathPlanner::create_configuration(Configuration* cfg) {
-    step_size_config = new ConfigDouble(cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
+    step_size_config =
+        new ConfigDouble(cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
     goal_change_threshold = new ConfigDouble(
         cfg, "PathPlanner/EscapeObstaclesPathPlanner/goalChangeThreshold", kRobotRadius);
 }
@@ -42,7 +43,8 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
             {RobotInstant{start_instant.pose, start_instant.velocity * 0.8, start_instant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
-        result.set_debug_text("[ESCAPE " + std::to_string(plan_request.motion_command.index()) + "]");
+        result.set_debug_text("[ESCAPE " + std::to_string(plan_request.motion_command.index()) +
+                              "]");
         return result;
     }
 

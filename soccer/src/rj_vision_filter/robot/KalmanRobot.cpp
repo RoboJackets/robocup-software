@@ -73,8 +73,8 @@ void KalmanRobot::predict_and_update(RJ::Time current_time, CameraRobot update_r
 }
 
 bool KalmanRobot::is_unhealthy() const {
-    bool updated_recently =
-        RJ::Seconds(last_predict_time_ - last_update_time_) < RJ::Seconds(PARAM_max_time_outside_vision);
+    bool updated_recently = RJ::Seconds(last_predict_time_ - last_update_time_) <
+                            RJ::Seconds(PARAM_max_time_outside_vision);
 
     return !updated_recently;
 }

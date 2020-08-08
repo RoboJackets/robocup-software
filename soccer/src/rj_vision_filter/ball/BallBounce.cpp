@@ -56,7 +56,8 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                 continue;
             }
 
-            std::vector<Geometry2d::Point> intersect_pts = possible_ball_intersection_pts(ball, robot);
+            std::vector<Geometry2d::Point> intersect_pts =
+                possible_ball_intersection_pts(ball, robot);
 
             // Doesn't intersect
             if (intersect_pts.empty()) {

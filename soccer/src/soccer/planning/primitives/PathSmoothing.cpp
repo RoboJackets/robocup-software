@@ -151,13 +151,13 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
 
     double path_length_so_far = 0.0;
     for (int i = 0; i < num_curves; i++) {
-        double time_before =
-            Trapezoidal::get_time(path_length_so_far, total_path_length, motion_constraints.max_speed,
-                                 motion_constraints.max_acceleration, start_speed, end_speed);
+        double time_before = Trapezoidal::get_time(
+            path_length_so_far, total_path_length, motion_constraints.max_speed,
+            motion_constraints.max_acceleration, start_speed, end_speed);
         path_length_so_far += (points[i + 1] - points[i]).mag();
-        double time_after =
-            Trapezoidal::get_time(path_length_so_far, total_path_length, motion_constraints.max_speed,
-                                 motion_constraints.max_acceleration, start_speed, end_speed);
+        double time_after = Trapezoidal::get_time(
+            path_length_so_far, total_path_length, motion_constraints.max_speed,
+            motion_constraints.max_acceleration, start_speed, end_speed);
 
         ks[i] = 1.0 / (time_after - time_before);
 

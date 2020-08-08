@@ -58,7 +58,8 @@ bool check_trajectory_continuous(const Trajectory& trajectory,
             /* || tangential_acceleration > constraints.mot.max_acceleration * 1.5 */) {
             std::cout << "Failure because of velocity " << current.linear_velocity().mag()
                       << ", acceleration " << tangential_acceleration << " (max "
-                      << constraints.mot.max_speed << ", " << constraints.mot.max_acceleration << ")"
+                      << constraints.mot.max_speed << ", " << constraints.mot.max_acceleration
+                      << ")"
                       << " dt = " << dt << " delta pos = " << dist << std::endl;
             return false;
         }

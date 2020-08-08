@@ -195,14 +195,14 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     }
     if (debug) {
         if (best) {
-            context_->debug_drawer.draw_line(Segment{origin, best->segment.center()}, QColor{"Green"},
-                                           "Debug");
+            context_->debug_drawer.draw_line(Segment{origin, best->segment.center()},
+                                             QColor{"Green"}, "Debug");
         }
         for (Window& window : windows) {
             context_->debug_drawer.draw_line(window.segment, QColor{"Green"}, "Debug");
             context_->debug_drawer.draw_text(QString::number(window.shot_success),
-                                           window.segment.center() + Point(0, 0.1), QColor{"Green"},
-                                           "Debug");
+                                             window.segment.center() + Point(0, 0.1),
+                                             QColor{"Green"}, "Debug");
         }
     }
 

@@ -48,7 +48,7 @@ void Camera::update_with_frame(RJ::Time calc_time, const std::vector<CameraBall>
 
     update_balls(calc_time, ball_list, previous_world_ball);
     update_robots(calc_time, yellow_robot_list, blue_robot_list, previous_yellow_world_robots,
-                 previous_blue_world_robots);
+                  previous_blue_world_robots);
 }
 
 void Camera::update_without_frame(RJ::Time calc_time) {
@@ -205,10 +205,12 @@ void Camera::update_robots(RJ::Time calc_time,
         } else {
             if (PARAM_use_mhkf) {
                 update_robots_mhkf(calc_time, single_yellow_robot_list,
-                                 previous_yellow_world_robots.at(i), kalman_robot_yellow_list_.at(i));
+                                   previous_yellow_world_robots.at(i),
+                                   kalman_robot_yellow_list_.at(i));
             } else {
                 update_robots_akf(calc_time, single_yellow_robot_list,
-                                previous_yellow_world_robots.at(i), kalman_robot_yellow_list_.at(i));
+                                  previous_yellow_world_robots.at(i),
+                                  kalman_robot_yellow_list_.at(i));
             }
         }
 
@@ -222,10 +224,10 @@ void Camera::update_robots(RJ::Time calc_time,
         } else {
             if (PARAM_use_mhkf) {
                 update_robots_mhkf(calc_time, single_blue_robot_list,
-                                 previous_blue_world_robots.at(i), kalman_robot_blue_list_.at(i));
+                                   previous_blue_world_robots.at(i), kalman_robot_blue_list_.at(i));
             } else {
-                update_robots_akf(calc_time, single_blue_robot_list, previous_blue_world_robots.at(i),
-                                kalman_robot_blue_list_.at(i));
+                update_robots_akf(calc_time, single_blue_robot_list,
+                                  previous_blue_world_robots.at(i), kalman_robot_blue_list_.at(i));
             }
         }
     }
@@ -240,7 +242,8 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     // frame or two
     if (single_kalman_robot_list.empty()) {
         CameraRobot avg_robot = CameraRobot::combine_robots(single_robot_list);
-        single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot, previous_world_robot);
+        single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot,
+                                              previous_world_robot);
 
         return;
     }
@@ -317,7 +320,8 @@ void Camera::update_robots_akf(RJ::Time calc_time, const std::list<CameraRobot>&
     // If we have no existing filters, create a new one from average of
     // everything
     if (single_kalman_robot_list.empty()) {
-        single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot, previous_world_robot);
+        single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot,
+                                              previous_world_robot);
 
         return;
     }

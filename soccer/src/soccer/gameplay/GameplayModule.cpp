@@ -40,7 +40,8 @@ void GameplayModule::create_configuration(Configuration* cfg) {
 }
 
 bool GameplayModule::has_field_edge_inset_changed() const {
-    return abs(field_edge_inset->value() - old_field_edge_inset_) > numeric_limits<double>::epsilon();
+    return abs(field_edge_inset->value() - old_field_edge_inset_) >
+           numeric_limits<double>::epsilon();
 }
 
 // TODO: Replace this whole file when we move to ROS2
@@ -131,15 +132,15 @@ void Gameplay::GameplayModule::calculate_field_obstacles() {
     our_goal_area_ = make_shared<Rect>(Point(-long_dist / 2, 0), Point(long_dist / 2, short_dist));
 
     their_goal_area_ = make_shared<Rect>(Point(-long_dist / 2, dimensions.length()),
-                                       Point(long_dist / 2, dimensions.length() - short_dist));
+                                         Point(long_dist / 2, dimensions.length() - short_dist));
 
     our_half_ = make_shared<Rect>(Point(-x, -dimensions.border()), Point(x, y1));
 
     opponent_half_ = make_shared<Rect>(Point(-x, y1), Point(x, y2));
 
     our_goal_ = make_shared<Rect>(Point(-dimensions.goal_width() / 2 - dimensions.line_width(), 0),
-                                 Point(dimensions.goal_width() / 2 + dimensions.line_width(),
-                                       -dimensions.goal_depth() - dimensions.line_width()));
+                                  Point(dimensions.goal_width() / 2 + dimensions.line_width(),
+                                        -dimensions.goal_depth() - dimensions.line_width()));
 
     their_goal_ = make_shared<Rect>(
         Point(-dimensions.goal_width() / 2, dimensions.length()),
@@ -308,8 +309,9 @@ void Gameplay::GameplayModule::run() {
             if (running_tests_) {
                 // I could add a bool to check if this needs to run or not if
                 // this is too inefficient
-                object rtrn(handle<>(PyRun_String("ui.main._tests.getNextCommand()", Py_eval_input,
-                                                  main_py_namespace_.ptr(), main_py_namespace_.ptr())));
+                object rtrn(
+                    handle<>(PyRun_String("ui.main._tests.getNextCommand()", Py_eval_input,
+                                          main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
 #if 0
                 // TODO(Kyle): Part two of the
@@ -350,7 +352,8 @@ void Gameplay::GameplayModule::run() {
 
             try {
                 // record the state of our behavior tree
-                std::string bhvr_tree_desc = extract<std::string>(get_root_play().attr("__str__")());
+                std::string bhvr_tree_desc =
+                    extract<std::string>(get_root_play().attr("__str__")());
                 context_->behavior_tree = bhvr_tree_desc;
             } catch (const error_already_set&) {
                 PyErr_Print();
@@ -365,8 +368,8 @@ void Gameplay::GameplayModule::run() {
     /// visualize
     if (context_->game_state.stay_away_from_ball() && context_->world_state.ball.visible) {
         context_->debug_drawer.draw_circle(context_->world_state.ball.position,
-                                          Field_Dimensions::current_dimensions.center_radius(),
-                                          Qt::black, "Rules");
+                                           Field_Dimensions::current_dimensions.center_radius(),
+                                           Qt::black, "Rules");
     }
 
     if (verbose) {

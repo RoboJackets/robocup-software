@@ -58,9 +58,9 @@ bool SlowKickDetector::detect_kick(KickEvent* kick_event) {
 
     // Check all robots if they have enough measurements
     for (int i = 0; i < state_history_.at(0).yellow_robots.size(); i++) {
-        bool all_valid = std::all_of(state_history_.begin(), state_history_.end(), [i](VisionState& v) {
-            return v.yellow_robots.at(i).get_is_valid();
-        });
+        bool all_valid =
+            std::all_of(state_history_.begin(), state_history_.end(),
+                        [i](VisionState& v) { return v.yellow_robots.at(i).get_is_valid(); });
 
         // If not all the robots of this specific id are valid
         // check the next one
@@ -86,9 +86,9 @@ bool SlowKickDetector::detect_kick(KickEvent* kick_event) {
     // Check all robots if they have enough measurements
     // Same as above, need a better way to do this
     for (int i = 0; i < state_history_.at(0).blue_robots.size(); i++) {
-        bool all_valid = std::all_of(state_history_.begin(), state_history_.end(), [i](VisionState& v) {
-            return v.blue_robots.at(i).get_is_valid();
-        });
+        bool all_valid =
+            std::all_of(state_history_.begin(), state_history_.end(),
+                        [i](VisionState& v) { return v.blue_robots.at(i).get_is_valid(); });
 
         // If not all the robots of this specific id are valid
         // check the next one

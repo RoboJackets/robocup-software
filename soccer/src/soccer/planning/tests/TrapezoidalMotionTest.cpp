@@ -44,7 +44,8 @@ protected:
 TEST_F(TrapezoidalMotionTest, Time) {
     initial_ = Trapezoid::State{0, 0};
     goal_ = Trapezoid::State{1, 0};
-    double total_time = Trapezoid::time_remaining(initial_, goal_, max_velocity_, max_acceleration_);
+    double total_time =
+        Trapezoid::time_remaining(initial_, goal_, max_velocity_, max_acceleration_);
     EXPECT_NEAR(total_time, 2, 1e-6);
 }
 

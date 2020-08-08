@@ -101,6 +101,7 @@ TEST(AnglePlanning, DISABLED_start_from_incorrect_angle) {
 
     // Check that by the latter half of the trajectory, we are close to correct
     check_angle_planning_near_exact(
-        trajectory.sub_trajectory(trajectory.begin_time() + RJ::Seconds(2.0), trajectory.end_time()),
+        trajectory.sub_trajectory(trajectory.begin_time() + RJ::Seconds(2.0),
+                                  trajectory.end_time()),
         angle_fn, 5e-2);
 }

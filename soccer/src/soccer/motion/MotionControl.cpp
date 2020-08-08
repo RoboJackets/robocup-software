@@ -120,8 +120,8 @@ void MotionControl::run(const RobotState& state, const Planning::Trajectory& tra
         if (maybe_pose_target) {
             Pose pose_target = maybe_pose_target.value();
             drawer_->draw_line(pose_target.position(),
-                              pose_target.position() + result_world.linear(), Qt::blue,
-                              "MotionControl");
+                               pose_target.position() + result_world.linear(), Qt::blue,
+                               "MotionControl");
         }
     }
 }

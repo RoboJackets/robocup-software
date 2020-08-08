@@ -35,7 +35,8 @@ void Replanner::create_configuration(Configuration* cfg) {
     goal_vel_change_threshold_config =
         new ConfigDouble(cfg, "PathPlanner/Replanner/goalVelChangeThreshold");
     // NOLINTNEXTLINE
-    partial_replan_lead_time_config = new ConfigDouble(cfg, "PathPlanner/Replanner/partialReplanLeadTime");
+    partial_replan_lead_time_config =
+        new ConfigDouble(cfg, "PathPlanner/Replanner/partialReplanLeadTime");
     // NOLINTNEXTLINE
     off_path_error_threshold_config =
         new ConfigDouble(cfg, "PathPlanner/Replanner/offPathErrorThreshold", 0.5);
@@ -133,9 +134,10 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     // Use short-circuiting to only check dynamic trajectories if necessary.
     bool should_partial_replan =
-        trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time, &hit_time) ||
+        trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time,
+                               &hit_time) ||
         trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
-                              &hit_time);
+                                &hit_time);
 
     if (should_partial_replan) {
         if (RJ::Seconds(hit_time - start_time).count() < *partial_replan_lead_time_config * 2) {
@@ -180,7 +182,8 @@ bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,
                              const LinearMotionInstant& goal) {
     double goal_pos_diff = (prev_goal.position - goal.position).mag();
     double goal_vel_diff = (prev_goal.velocity - goal.velocity).mag();
-    return goal_pos_diff > *goal_pos_change_threshold_config || goal_vel_diff > *goal_vel_change_threshold_config;
+    return goal_pos_diff > *goal_pos_change_threshold_config ||
+           goal_vel_diff > *goal_vel_change_threshold_config;
 }
 
 }  // namespace Planning

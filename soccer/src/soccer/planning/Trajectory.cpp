@@ -209,7 +209,7 @@ void Trajectory::draw(DebugDrawer* drawer,
         }
 
         drawer->draw_text(QString::fromStdString(debug_text_.value()), text_pos,
-                         QColor(100, 100, 255, 100), "PlanningDebugText");
+                          QColor(100, 100, 255, 100), "PlanningDebugText");
     }
 }
 

@@ -83,12 +83,13 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, avoid_ball,
-                  &ball_trajectory);
+                   &ball_trajectory);
 
     // Smooth out the ball velocity a little bit so we can get a better estimate
     // of intersect points
     if (first_ball_vel_found_) {
-        average_ball_vel_ = apply_low_pass_filter<Point>(average_ball_vel_, ball.velocity, *ball_vel_gain);
+        average_ball_vel_ =
+            apply_low_pass_filter<Point>(average_ball_vel_, ball.velocity, *ball_vel_gain);
     } else {
         average_ball_vel_ = ball.velocity;
         first_ball_vel_found_ = true;
@@ -155,7 +156,8 @@ void SettlePlanner::check_solution_validity(BallState ball, RobotInstant start_i
     Point relative_robot_pos = start_instant.position() - delta_pos;
 
     bool robot_far = (ball.position - relative_robot_pos).mag() > 2 * kRobotRadius + kBallRadius;
-    bool robot_on_ball_line = ball_movement_line.dist_to(relative_robot_pos) < kRobotMouthRadius / 2;
+    bool robot_on_ball_line =
+        ball_movement_line.dist_to(relative_robot_pos) < kRobotMouthRadius / 2;
     bool ball_moving = average_ball_vel_.mag() > 0.2;
     bool ball_moving_to_us = (ball.position - relative_robot_pos).mag() >
                              (ball.position + 0.01 * average_ball_vel_ - relative_robot_pos).mag();
@@ -236,7 +238,8 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
 
         // Account for the target point causing a slight offset in robot
         // position since we want the ball to still hit the mouth
-        Point ball_vel_intercept = ball.position + average_ball_vel_.normalized() * dist + delta_pos;
+        Point ball_vel_intercept =
+            ball.position + average_ball_vel_.normalized() * dist + delta_pos;
 
         if (!field_rect.contains_point(ball_vel_intercept)) {
             break;
@@ -366,7 +369,7 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
 
         if (!shortcut.empty()) {
             plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),
-                       plan_request.constraints.rot);
+                        plan_request.constraints.rot);
             shortcut.stamp(RJ::now());
             return shortcut;
         }
@@ -386,8 +389,8 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     // Build a new path with the target
     // Since the replanner exists, we don't have to deal with partial paths,
     // just use the interface
-    LinearMotionInstant target_robot_intersection{path_intercept_target_,
-                                                  *ball_speed_percent_for_dampen * average_ball_vel_};
+    LinearMotionInstant target_robot_intersection{
+        path_intercept_target_, *ball_speed_percent_for_dampen * average_ball_vel_};
 
     Replanner::PlanParams params{
         start_instant,     target_robot_intersection, static_obstacles,
@@ -402,7 +405,7 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     }
 
     plan_angles(&new_target_path, start_instant, AngleFns::face_point(face_pos),
-               plan_request.constraints.rot);
+                plan_request.constraints.rot);
     new_target_path.stamp(RJ::now());
     return new_target_path;
 }
@@ -428,7 +431,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant s
 
     if (plan_request.debug_drawer != nullptr) {
         plan_request.debug_drawer->draw_text("Damping", ball.position + Point(.1, .1),
-                                            QColor(255, 255, 255), "DampState");
+                                             QColor(255, 255, 255), "DampState");
     }
 
     if (path_created_for_dampen_ && !previous_.empty()) {
@@ -498,7 +501,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant s
     }
 
     plan_angles(&dampen_end, start_instant, AngleFns::face_point(face_pos),
-               plan_request.constraints.rot);
+                plan_request.constraints.rot);
     dampen_end.stamp(RJ::now());
     return dampen_end;
 }

@@ -19,7 +19,7 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
     points.push_back(goal.position);
     BezierPath bezier(points, start.velocity, goal.velocity, motion_constraints);
     Trajectory path = profile_velocity(bezier, start.velocity.mag(), goal.velocity.mag(),
-                                      motion_constraints, start_time);
+                                       motion_constraints, start_time);
     return std::move(path);
 }
 
@@ -40,7 +40,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     if (start.position.dist_to(goal.position) < kRobotRadius ||
         !trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr) &&
             !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
-                                   nullptr)) {
+                                     nullptr)) {
         return std::move(straight_trajectory);
     }
 
@@ -54,11 +54,11 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
 
         path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
-                               motion_constraints, start_time);
+                                motion_constraints, start_time);
 
         Circle hit_circle;
         if (!trajectory_hits_dynamic(path, dynamic_obstacles, path.begin_time(), &hit_circle,
-                                   nullptr)) {
+                                     nullptr)) {
             break;
         }
 

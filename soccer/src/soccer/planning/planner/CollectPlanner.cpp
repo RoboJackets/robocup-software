@@ -124,7 +124,7 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
         average_ball_vel_initialized_ = true;
     } else {
         average_ball_vel_ = *target_point_averaging_gain * average_ball_vel_ +
-                         (1 - *target_point_averaging_gain) * ball.velocity;
+                            (1 - *target_point_averaging_gain) * ball.velocity;
     }
 
     // Approach direction is the direction we move towards the ball and through
@@ -152,7 +152,7 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
         // Move through the ball and stop
         case Control:
             previous_ = control(plan_request, partial_start_instant, partial_path, obstacles,
-                               dynamic_obstacles);
+                                dynamic_obstacles);
             break;
         default:
             previous_ = invalid(plan_request, obstacles, dynamic_obstacles);
@@ -222,8 +222,9 @@ Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, Robo
     Point target_slow_vel = average_ball_vel_ + approach_direction_ * *touch_delta_speed;
 
     // Force the path to use the same target if it doesn't move too much
-    if (!path_coarse_target_initialized_ || (path_coarse_target_ - target_slow_pos).mag() >
-                                            (*approach_dist_target - *dist_cutoff_to_control) / 2) {
+    if (!path_coarse_target_initialized_ ||
+        (path_coarse_target_ - target_slow_pos).mag() >
+            (*approach_dist_target - *dist_cutoff_to_control) / 2) {
         path_coarse_target_ = target_slow_pos;
     }
 
@@ -291,7 +292,7 @@ Trajectory CollectPlanner::fine_approach(
 
     path_hit.set_debug_text("fine");
     plan_angles(&path_hit, start_instant, AngleFns::face_point(ball.position),
-               plan_request.constraints.rot);
+                plan_request.constraints.rot);
     path_hit.stamp(RJ::now());
 
     if (plan_request.debug_drawer != nullptr) {
@@ -359,10 +360,10 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
     // 0 m/s
     double dist_from_ball = *stop_dist_scale * stopping_dist;
 
-    Point target_pos = start.position() +
-                       dist_from_ball * (ball.position - start.position() +
-                                         velocity_scale * average_ball_vel_ * non_zero_vel_time_delta)
-                                            .norm();
+    Point target_pos = start.position() + dist_from_ball * (ball.position - start.position() +
+                                                            velocity_scale * average_ball_vel_ *
+                                                                non_zero_vel_time_delta)
+                                                               .norm();
     LinearMotionInstant target{target_pos};
 
     // Try to use the RRTPlanner to generate the path first

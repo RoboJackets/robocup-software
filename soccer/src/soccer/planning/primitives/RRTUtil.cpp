@@ -64,7 +64,7 @@ void draw_rrt(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer, unsigned s
     for (const auto& node : rrt.allNodes()) {
         if (node.parent() != nullptr) {
             debug_drawer->draw_line(Segment(node.state(), node.parent()->state()), color,
-                                   QString("RobotRRT%1").arg(shell_id));
+                                    QString("RobotRRT%1").arg(shell_id));
         }
     }
 }

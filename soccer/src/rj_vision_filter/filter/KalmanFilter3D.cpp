@@ -22,7 +22,7 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose init_pose, Geometry2d::Twist ini
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
     x_k1_k1_ << init_pose.position().x(), init_twist.linear().x(), init_pose.position().y(),
-         init_twist.linear().y(), init_pose.heading(), init_twist.angular();
+        init_twist.linear().y(), init_pose.heading(), init_twist.angular();
     x_k_k1_ = x_k1_k1_;
     x_k_k_ = x_k1_k1_;
 
@@ -113,11 +113,15 @@ void KalmanFilter3D::predict_with_update(Geometry2d::Pose observation) {
     KalmanFilter::predict_with_update();
 }
 
-Geometry2d::Point KalmanFilter3D::get_pos() const { return Geometry2d::Point(x_k_k_(0), x_k_k_(2)); }
+Geometry2d::Point KalmanFilter3D::get_pos() const {
+    return Geometry2d::Point(x_k_k_(0), x_k_k_(2));
+}
 
 double KalmanFilter3D::get_theta() const { return x_k_k_(4); }
 
-Geometry2d::Point KalmanFilter3D::get_vel() const { return Geometry2d::Point(x_k_k_(1), x_k_k_(3)); }
+Geometry2d::Point KalmanFilter3D::get_vel() const {
+    return Geometry2d::Point(x_k_k_(1), x_k_k_(3));
+}
 
 double KalmanFilter3D::get_omega() const { return x_k_k_(5); }
 

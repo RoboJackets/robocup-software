@@ -49,7 +49,7 @@ void World::update_with_camera_frame(RJ::Time calc_time,
 
         cameras_.at(frame.camera_id)
             .update_with_frame(calc_time, frame.camera_balls, yellow_team, blue_team, ball_,
-                             robots_yellow_, robots_blue_);
+                               robots_yellow_, robots_blue_);
 
         camera_updated.at(frame.camera_id) = true;
 
@@ -105,7 +105,8 @@ void World::update_world_objects(RJ::Time calc_time) {
             std::list<KalmanBall> camera_balls = camera.get_kalman_balls();
             std::vector<std::list<KalmanRobot>> camera_robots_yellow =
                 camera.get_kalman_robots_yellow();
-            std::vector<std::list<KalmanRobot>> camera_robots_blue = camera.get_kalman_robots_blue();
+            std::vector<std::list<KalmanRobot>> camera_robots_blue =
+                camera.get_kalman_robots_blue();
 
             if (!camera_balls.empty()) {
                 // Sort by health of the kalman filter
@@ -164,8 +165,10 @@ void World::detect_kicks(RJ::Time calc_time) {
     KickEvent fast_event;
     KickEvent slow_event;
 
-    bool is_fast_kick = fast_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, fast_event);
-    bool is_slow_kick = slow_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, &slow_event);
+    bool is_fast_kick =
+        fast_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, fast_event);
+    bool is_slow_kick =
+        slow_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, &slow_event);
 
     // If there isn't a kick recorded already
     if (!best_kick_estimate_.get_is_valid()) {

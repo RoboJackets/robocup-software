@@ -209,7 +209,7 @@ void our_robot_approach_opponent(OurRobot* self, unsigned shell_id, bool enable_
 void our_robot_add_text(OurRobot* self, const std::string& text, const boost::python::tuple& rgb,
                         const std::string& layer_prefix) {
     self->add_text(QString::fromStdString(text), color_from_tuple(rgb),
-                  QString::fromStdString(layer_prefix));
+                   QString::fromStdString(layer_prefix));
 }
 
 void our_robot_set_avoid_opponents(OurRobot* self, bool value) { self->avoid_opponents(value); }
@@ -434,7 +434,7 @@ void debug_drawer_draw_line(DebugDrawer* self, const Geometry2d::Line* line,
         throw NullArgumentException("line");
     }
     self->draw_line(Geometry2d::Segment(*line), color_from_tuple(rgb),
-                   QString::fromStdString(layer));
+                    QString::fromStdString(layer));
 }
 
 void debug_drawer_draw_segment(DebugDrawer* self, const Geometry2d::Segment* segment,
@@ -464,7 +464,7 @@ void debug_drawer_draw_text(DebugDrawer* self, const std::string& text, Geometry
         throw NullArgumentException("position");
     }
     self->draw_text(QString::fromStdString(text), *pos, color_from_tuple(rgb),
-                   QString::fromStdString(layer));
+                    QString::fromStdString(layer));
 }
 
 void debug_drawer_draw_polygon(DebugDrawer* self, const boost::python::list& points,

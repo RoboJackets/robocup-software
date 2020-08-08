@@ -20,8 +20,8 @@ using namespace boost::asio;
 SimRadio::SimRadio(Context* context, bool blue_team)
     : context_(context),
       blue_team_(blue_team),
-      socket_(io_service_, ip::udp::endpoint(ip::udp::v4(),
-                                             blue_team ? kSimBlueStatusPort : kSimYellowStatusPort)) {
+      socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
+                                                                      : kSimYellowStatusPort)) {
     grsim_endpoint_ = ip::udp::endpoint(ip::udp::v4(), kSimCommandPort);
 
     buffer_.resize(1024);

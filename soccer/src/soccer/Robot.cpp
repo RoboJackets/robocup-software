@@ -232,7 +232,8 @@ void OurRobot::intercept(Point target) {
 
 void OurRobot::world_velocity(Geometry2d::Point target_world_vel) {
     set_motion_command(Planning::WorldVelCommand{target_world_vel});
-    cmd_text_ << "world_vel(" << target_world_vel.x() << ", " << target_world_vel.y() << ")" << endl;
+    cmd_text_ << "world_vel(" << target_world_vel.x() << ", " << target_world_vel.y() << ")"
+              << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivot_target) {

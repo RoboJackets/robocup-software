@@ -17,11 +17,11 @@ bool trapezoid1(double t, double& pos_out, double& speed_out) {
     double final_speed = 0;
 
     bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
-                                   pos_out, speed_out);
+                                    pos_out, speed_out);
 
     if (valid) {
         auto time = Trapezoidal::get_time(pos_out, path_length, max_speed, max_acc, start_speed,
-                                         final_speed);
+                                          final_speed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -35,11 +35,11 @@ bool trapezoid2(double t, double& pos_out, double& speed_out) {
     double final_speed = 0;
 
     bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
-                                   pos_out, speed_out);
+                                    pos_out, speed_out);
 
     if (valid) {
         double time = Trapezoidal::get_time(pos_out, path_length, max_speed, max_acc, start_speed,
-                                           final_speed);
+                                            final_speed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -56,11 +56,11 @@ bool triangle1(double t, double& pos_out, double& speed_out) {
     double final_speed = 0;
 
     bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
-                                   pos_out, speed_out);
+                                    pos_out, speed_out);
 
     if (valid) {
         double time = Trapezoidal::get_time(pos_out, path_length, max_speed, max_acc, start_speed,
-                                           final_speed);
+                                            final_speed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -77,11 +77,11 @@ bool triangle2(double t, double& pos_out, double& speed_out) {
     double final_speed = 0;
 
     bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
-                                   pos_out, speed_out);
+                                    pos_out, speed_out);
 
     if (valid) {
         double time = Trapezoidal::get_time(pos_out, path_length, max_speed, max_acc, start_speed,
-                                           final_speed);
+                                            final_speed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -98,11 +98,11 @@ bool triangle3(double t, double& pos_out, double& speed_out) {
     double final_speed = 1;
 
     bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
-                                   pos_out, speed_out);
+                                    pos_out, speed_out);
 
     if (valid) {
         double time = Trapezoidal::get_time(pos_out, path_length, max_speed, max_acc, start_speed,
-                                           final_speed);
+                                            final_speed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -119,11 +119,11 @@ bool triangle4(double t, double& pos_out, double& speed_out) {
     double final_speed = 0;
 
     bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
-                                   pos_out, speed_out);
+                                    pos_out, speed_out);
 
     if (valid) {
         double time = Trapezoidal::get_time(pos_out, path_length, max_speed, max_acc, start_speed,
-                                           final_speed);
+                                            final_speed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;

@@ -50,17 +50,17 @@ LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
     ui.splitter->setStretchFactor(0, 98);
     ui.splitter->setStretchFactor(1, 10);
 
-    QActionGroup* rotateGroup = new QActionGroup(this);
-    rotateGroup->addAction(ui.action0);
-    rotateGroup->addAction(ui.action90);
-    rotateGroup->addAction(ui.action180);
-    rotateGroup->addAction(ui.action270);
+    QActionGroup* rotate_group = new QActionGroup(this);
+    rotate_group->addAction(ui.action0);
+    rotate_group->addAction(ui.action90);
+    rotate_group->addAction(ui.action180);
+    rotate_group->addAction(ui.action270);
 
     connect(&_updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     _updateTimer.start(30);
 }
 
-bool LogViewer::readFrames(const char* filename) {
+bool LogViewer::read_frames(const char* filename) {
     frames.clear();
     ui.timeSlider->setMaximum(0);
 
@@ -101,7 +101,7 @@ bool LogViewer::readFrames(const char* filename) {
     return true;
 }
 
-void LogViewer::updateViews() {
+void LogViewer::update_views() {
     // Update current frame number
     QTime time = QTime::currentTime();
     if (!_lastUpdateTime.isNull()) {
@@ -114,7 +114,7 @@ void LogViewer::updateViews() {
     _doubleFrameNumber = min(frames.size() - 1.0, _doubleFrameNumber);
 
     int f = frameNumber();
-    const LogFrame& currentFrame = *frames[f];
+    const LogFrame& current_frame = *frames[f];
 
     ui.timeSlider->setValue(f);
 
@@ -129,12 +129,12 @@ void LogViewer::updateViews() {
 
     // Update non-message tree items
     _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
-    int elapsedMillis = (currentFrame.command_time() - frames[0]->command_time() + 500) / 1000;
-    QTime elapsedTime = QTime::fromMSecsSinceStartOfDay(elapsedMillis);
-    _elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
+    int elapsed_millis = (current_frame.command_time() - frames[0]->command_time() + 500) / 1000;
+    QTime elapsed_time = QTime::fromMSecsSinceStartOfDay(elapsed_millis);
+    _elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsed_time.toString("hh:mm:ss.zzz"));
 
     // Sort the tree by tag if items have been added
-    if (ui.tree->message(currentFrame)) {
+    if (ui.tree->message(current_frame)) {
         // Items have been added, so sort again on tag number
         ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
     }
@@ -150,40 +150,40 @@ void LogViewer::on_action180_triggered() { ui.fieldView->rotate(2); }
 
 void LogViewer::on_action270_triggered() { ui.fieldView->rotate(3); }
 
-void LogViewer::on_actionRawBalls_toggled(bool state) {
+void LogViewer::on_action_raw_balls_toggled(bool state) {
     ui.fieldView->showRawBalls = state;
     ui.fieldView->update();
 }
 
-void LogViewer::on_actionRawRobots_toggled(bool state) {
+void LogViewer::on_action_raw_robots_toggled(bool state) {
     ui.fieldView->showRawRobots = state;
     ui.fieldView->update();
 }
 
-void LogViewer::on_actionCoords_toggled(bool state) {
+void LogViewer::on_action_coords_toggled(bool state) {
     ui.fieldView->showCoords = state;
     ui.fieldView->update();
 }
 
-void LogViewer::on_timeSlider_sliderPressed() { ui.playbackRate->setValue(0); }
+void LogViewer::on_time_slider_slider_pressed() { ui.playbackRate->setValue(0); }
 
-void LogViewer::on_timeSlider_sliderMoved(int value) { frameNumber(value); }
+void LogViewer::on_time_slider_slider_moved(int value) { frameNumber(value); }
 
-void LogViewer::on_playbackRate_sliderReleased() {
+void LogViewer::on_playback_rate_slider_released() {
     // Center the slider and stop playback
     ui.playbackRate->setValue(0);
 }
 
-void LogViewer::on_logNext_clicked() {
+void LogViewer::on_log_next_clicked() {
     ui.playbackRate->setValue(0);
     frameNumber(frameNumber() + 1);
 }
 
-void LogViewer::on_logPrev_clicked() {
+void LogViewer::on_log_prev_clicked() {
     ui.playbackRate->setValue(0);
     frameNumber(frameNumber() - 1);
 }
 
-void LogViewer::on_logBeginning_clicked() { frameNumber(0); }
+void LogViewer::on_log_beginning_clicked() { frameNumber(0); }
 
-void LogViewer::on_logEnd_clicked() { frameNumber(frames.size() - 1); }
+void LogViewer::on_log_end_clicked() { frameNumber(frames.size() - 1); }

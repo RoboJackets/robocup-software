@@ -76,7 +76,7 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     BezierPath path_bezier(points, Point(0, 0), Point(0, 0), linear_constraints);
 
     Trajectory path = profile_velocity(path_bezier, start_instant.linear_velocity().mag(), 0,
-                                      linear_constraints, start_instant.stamp);
+                                       linear_constraints, start_instant.stamp);
     if (Twist::nearly_equals(path.last().velocity, Twist::zero())) {
         path.hold_for(RJ::Seconds(3.0));
     }

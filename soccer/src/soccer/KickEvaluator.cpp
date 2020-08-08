@@ -264,7 +264,8 @@ vector<Robot*> KickEvaluator::get_valid_robots() {
                find(excluded_robots.begin(), excluded_robots.end(), bot) == excluded_robots.end();
     };
 
-    auto end_it = std::copy_if(system_->self.begin(), system_->self.end(), bots.begin(), filter_predicate);
+    auto end_it =
+        std::copy_if(system_->self.begin(), system_->self.end(), bots.begin(), filter_predicate);
 
     end_it = std::copy_if(system_->opp.begin(), system_->opp.end(), end_it, filter_predicate);
 
@@ -277,7 +278,8 @@ tuple<float, float> KickEvaluator::rect_to_polar(Point origin, Point target, Poi
     Point obstacle_dir = obstacle - origin;
     Point target_dir = target - origin;
 
-    return make_tuple(obstacle_dir.mag(), fix_angle_radians(target_dir.angle_between(obstacle_dir)));
+    return make_tuple(obstacle_dir.mag(),
+                      fix_angle_radians(target_dir.angle_between(obstacle_dir)));
 }
 
 vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(Point origin, Point target) {
@@ -344,8 +346,8 @@ void KickEvaluator::init_gradient_configs(ParallelGradient1DConfig& p_config,
     // Create list of configs
     for (tuple<float, float> x_start : x_starts) {
         p_config.ga_config.emplace_back(&func, get<1>(x_start), get<0>(x_start), dx_error,
-                                         max_x_movement, temperature_descent, temperature_min,
-                                         max_iterations, max_value, max_thresh);
+                                        max_x_movement, temperature_descent, temperature_min,
+                                        max_iterations, max_value, max_thresh);
     }
 
     p_config.x_combine_thresh = static_cast<float>(

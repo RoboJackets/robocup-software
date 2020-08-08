@@ -55,9 +55,9 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
         } else {
             RJ::Seconds time_for_ball = time - cur_time;
             prev_path_.scale_duration(prev_path_.duration() * (time_left / time_for_ball),
-                                   start_instant.stamp);
+                                      start_instant.stamp);
             prev_path_.set_debug_text("reuse final slow " + std::to_string(time_for_ball.count()) +
-                                  " " + std::to_string(time_left.count()));
+                                      " " + std::to_string(time_left.count()));
             prev_path_.stamp(RJ::now());
             return prev_path_;
         }
@@ -168,8 +168,8 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
 
     if (!prev_path_.empty() && prev_path_.check_time(start_instant.stamp)) {
         if (start_instant.stamp < prev_path_.end_time() - partial_replan_lead_time * 2) {
-            partial_path = prev_path_.sub_trajectory(start_instant.stamp,
-                                                  start_instant.stamp + partial_replan_lead_time);
+            partial_path = prev_path_.sub_trajectory(
+                start_instant.stamp, start_instant.stamp + partial_replan_lead_time);
             partial_path_time = partial_replan_lead_time;
             tmp_start_instant = partial_path.last();
         }
@@ -202,7 +202,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
                     path = Trajectory(std::move(partial_path), path);
                 }
                 plan_angles(&path, tmp_start_instant, AngleFns::face_point(target.position),
-                           plan_request.constraints.rot);
+                            plan_request.constraints.rot);
 
                 path.set_debug_text("FoundPath" + std::to_string(path.duration().count()));
                 reuse_path_count_ = 0;

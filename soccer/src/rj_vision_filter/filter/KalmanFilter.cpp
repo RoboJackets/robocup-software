@@ -28,7 +28,8 @@ void KalmanFilter::predict_with_update() {
     K_k_ = P_k_k1_ * H_k_.transpose() * S_k_.inverse();
 
     x_k_k_ = x_k_k1_ + K_k_ * y_k_k1_;
-    P_k_k_ = (identity_ - K_k_ * H_k_) * P_k_k1_ * (identity_ - K_k_ * H_k_).transpose() + K_k_ * R_k_ * K_k_.transpose();
+    P_k_k_ = (identity_ - K_k_ * H_k_) * P_k_k1_ * (identity_ - K_k_ * H_k_).transpose() +
+             K_k_ * R_k_ * K_k_.transpose();
 
     y_k_k_ = z_k_ - H_k_ * x_k_k_;
 }

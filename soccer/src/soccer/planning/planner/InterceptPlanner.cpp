@@ -63,7 +63,7 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
             trajectory.set_debug_text(debug_text_out.str());
 
             plan_angles(&trajectory, start_instant, AngleFns::face_point(ball.position),
-                       plan_request.constraints.rot);
+                        plan_request.constraints.rot);
             trajectory.stamp(RJ::now());
             return trajectory;
         }
@@ -75,7 +75,7 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     trajectory.set_debug_text("GivingUp");
 
     plan_angles(&trajectory, start_instant, AngleFns::face_point(ball.position),
-               plan_request.constraints.rot);
+                plan_request.constraints.rot);
     trajectory.stamp(RJ::now());
 
     return trajectory;
