@@ -201,9 +201,9 @@ void Gameplay::GameplayModule::clear_plays() {
 
 bool Gameplay::GameplayModule::check_playbook_status() {
     PyGILState_STATE state = PyGILState_Ensure();
-    static int prev_status = extract<int>(get_main_module().attr("num_enable_plays")());
+    static int prev_status = extract<int>(get_main_module().attr("numEnablePlays")());
     bool static change = false;
-    int status = extract<int>(get_main_module().attr("num_enable_plays")());
+    int status = extract<int>(get_main_module().attr("numEnablePlays")());
     if (status == 0) {
         change = false;
     } else if (status != prev_status) {
@@ -308,7 +308,7 @@ void Gameplay::GameplayModule::run() {
             if (running_tests_) {
                 // I could add a bool to check if this needs to run or not if
                 // this is too inefficient
-                object rtrn(handle<>(PyRun_String("ui.main._tests.get_next_command()", Py_eval_input,
+                object rtrn(handle<>(PyRun_String("ui.main._tests.getNextCommand()", Py_eval_input,
                                                   main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
 #if 0
@@ -402,7 +402,7 @@ void Gameplay::GameplayModule::add_tests() {
     {
         try {
             handle<> ignored3(
-                (PyRun_String("import ui.main; ui.main._tests.add_tests()", Py_file_input,
+                (PyRun_String("import ui.main; ui.main._tests.addTests()", Py_file_input,
                               main_py_namespace_.ptr(), main_py_namespace_.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
@@ -421,7 +421,7 @@ void Gameplay::GameplayModule::remove_test() {
     {
         try {
             handle<> ignored3(
-                (PyRun_String("import ui.main; ui.main._tests.remove_test()", Py_file_input,
+                (PyRun_String("import ui.main; ui.main._tests.removeTest()", Py_file_input,
                               main_py_namespace_.ptr(), main_py_namespace_.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
@@ -435,7 +435,7 @@ void Gameplay::GameplayModule::next_test() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            object rtrn(handle<>(PyRun_String("ui.main._tests.next_test()", Py_eval_input,
+            object rtrn(handle<>(PyRun_String("ui.main._tests.nextTest()", Py_eval_input,
                                               main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
             running_tests_ = extract<bool>(rtrn);
@@ -559,7 +559,7 @@ void Gameplay::GameplayModule::load_test() {
 
                 // Get ball Information
                 object ball_rtrn(handle<>(PyRun_String(
-                    "ui.main._tests.get_test_ball()", Py_eval_input,
+                    "ui.main._tests.getTestBall()", Py_eval_input,
                     main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
                 boost::python::list ball =

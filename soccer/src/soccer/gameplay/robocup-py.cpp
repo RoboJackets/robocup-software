@@ -1115,8 +1115,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__str__", &ConfigInt::to_string);
 
     class_<MotionConstraints>("MotionConstraints")
-        .def_readonly("MaxRobotSpeed", &MotionConstraints::max_speed)
-        .def_readonly("MaxRobotAccel", &MotionConstraints::max_acceleration);
+        .def_readonly("MaxRobotSpeed", &MotionConstraints::max_speed_config)
+        .def_readonly("MaxRobotAccel", &MotionConstraints::max_acceleration_config);
 
     enum_<RefereeModuleEnums::Command>("Command")
         .value("halt", SSL_Referee_Command_HALT)

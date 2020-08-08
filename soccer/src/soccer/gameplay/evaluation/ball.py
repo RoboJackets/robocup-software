@@ -144,6 +144,7 @@ def robot_has_ball(robot: robocup.Robot) -> bool:
 
 
 def time_to_ball(robot: robocup.Robot) -> float:
+    x = robocup.MotionConstraints.MaxRobotSpeed
     max_vel = robocup.MotionConstraints.MaxRobotSpeed.value
     max_accel = robocup.MotionConstraints.MaxRobotAccel.value
     delay = .1  # TODO: tune this better

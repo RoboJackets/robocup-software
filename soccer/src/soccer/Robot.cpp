@@ -305,12 +305,12 @@ void OurRobot::kick_level(uint8_t strength) {
 
 void OurRobot::chip(float strength) {
     double max_chip = *config()->kicker.max_chip;
-    chip(roundf(strength * ((float)max_chip)));
+    do_chip(roundf(strength * ((float)max_chip)));
     cmd_text_ << "chip(" << strength * 100 << "%)" << endl;
 }
 
 void OurRobot::chip_level(uint8_t strength) {
-    chip(strength);
+    do_chip(strength);
 
     cmd_text_ << "chip(" << (float)strength << ")" << endl;
 }
