@@ -1,6 +1,8 @@
 #pragma once
 
+#include <rj_common/Field_Dimensions.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <rrt/2dplane/PlaneStateSpace.hpp>
 
 namespace Planning {
@@ -14,7 +16,7 @@ public:
                       const Geometry2d::ShapeSet& obstacles)
         : field_dimensions_(dims), obstacles_(obstacles) {}
 
-    Geometry2d::Point randomState() const {
+    Geometry2d::Point randomState() const override {
         double x = field_dimensions_.floor_width() * (drand48() - 0.5f);
         double y = field_dimensions_.floor_length() * drand48() -
                    field_dimensions_.border();
@@ -22,11 +24,11 @@ public:
     }
 
     double distance(const Geometry2d::Point& from,
-                    const Geometry2d::Point& to) const {
+                    const Geometry2d::Point& to) const override {
         return from.dist_to(to);
     }
 
-    bool stateValid(const Geometry2d::Point& state) const {
+    bool stateValid(const Geometry2d::Point& state) const override {
         // note: obstacles_ contains obstacles that define the limits of the
         // field, so we shouldn't have to check separately that the point is
         // within the field boundaries.
@@ -36,7 +38,7 @@ public:
 
     Geometry2d::Point intermediateState(const Geometry2d::Point& source,
                                         const Geometry2d::Point& target,
-                                        double step_size) const {
+                                        double step_size) const override {
         auto dir = (target - source).norm();
         return source + dir * step_size;
     }
@@ -44,12 +46,12 @@ public:
     Geometry2d::Point intermediateState(const Geometry2d::Point& source,
                                         const Geometry2d::Point& target,
                                         double min_step_size,
-                                        double max_step_size) const {
+                                        double max_step_size) const override {
         throw std::runtime_error("Adaptive stepsize control not implemented");
     }
 
     bool transitionValid(const Geometry2d::Point& from,
-                         const Geometry2d::Point& to) const {
+                         const Geometry2d::Point& to) const override {
         // Ensure that @to doesn't hit any obstacles that @from doesn't. This
         // allows the RRT to start inside an obstacle, but prevents it from
         // entering a new obstacle.

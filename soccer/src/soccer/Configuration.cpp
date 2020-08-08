@@ -178,6 +178,7 @@ ConfigItem* Configuration::config_item(QTreeWidgetItem* ti) {
     return ti->data(0, kConfigItemRole).value<ConfigItem*>();
 }
 
+// NOLINTNEXTLINE(readability-identifier-naming)
 void Configuration::itemChanged(QTreeWidgetItem* item, int column) {
     if (column == 1) {
         ConfigItem* ci = config_item(item);

@@ -34,6 +34,7 @@ public:
     bool save(const QString& filename, QString& error);
 
 protected Q_SLOTS:
+    // NOLINTNEXTLINE(readability-identifier-naming)
     void itemChanged(QTreeWidgetItem* item, int column);
 
 protected:
