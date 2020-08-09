@@ -3,13 +3,13 @@
 
 #include <boost/exception/diagnostic_information.hpp>
 
-#include <rj_common/FieldDimensions.hpp>
+#include <rj_common/field_dimensions.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_utils/conversions.hpp>
 #include <rj_utils/logging.hpp>
-#include <rj_vision_receiver/vision_receiver.h>
+#include <rj_vision_receiver/vision_receiver.hpp>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 

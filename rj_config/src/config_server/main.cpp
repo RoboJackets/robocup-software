@@ -1,6 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <config_server/config_server.h>
+#include <config_server/config_server.hpp>
 
 using config_server::ConfigServer;
 

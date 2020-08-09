@@ -100,7 +100,7 @@ add_subdirectory(external)
 add_subdirectory(rj_protos)
 add_subdirectory(rj_constants)
 add_subdirectory(rj_utils)
-add_subdirectory(Geometry2d) # TODO(1516)
+add_subdirectory(rj_geometry)
 add_subdirectory(rj_config)
 add_subdirectory(rj_common)
 

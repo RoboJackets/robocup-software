@@ -1,5 +1,5 @@
 #include <rj_constants/topic_names.hpp>
-#include <ros2_temp/raw_vision_packet_sub.h>
+#include <ros2_temp/raw_vision_packet_sub.hpp>
 
 namespace ros2_temp {
 RawVisionPacketSub::RawVisionPacketSub(Context* context) : context_{context} {

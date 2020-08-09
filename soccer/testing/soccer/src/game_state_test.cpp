@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <GameState.hpp>
+#include <game_state.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 bool operator==(const GameState& a, const GameState& b) {
@@ -25,6 +25,6 @@ TEST(ROSConvertGameState, game_state_lossless_convert_with_placement) {
                          GameState::Restart::Placement,
                          true,
                          RJ::Seconds(1.0),
-                         Geometry2d::Point(1.0, 2.0)};
+                         rj_geometry::Point(1.0, 2.0)};
     test_lossless_convert_cpp_value<GameState>(mock_state);
 }

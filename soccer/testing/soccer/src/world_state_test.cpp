@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include <WorldState.hpp>
+#include <world_state.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 RobotState get_random_robot_state() {
@@ -11,15 +11,15 @@ RobotState get_random_robot_state() {
     std::uniform_real_distribution<double> uniform(0.0, 1.0);
     auto rand = [&]() -> double { return uniform(e1); };
 
-    const Geometry2d::Point position{rand(), rand()};
+    const rj_geometry::Point position{rand(), rand()};
     const double heading = rand();
-    const Geometry2d::Point linear{rand(), rand()};
+    const rj_geometry::Point linear{rand(), rand()};
     const double angular = rand();
     const RJ::Time timestamp = RJ::now();
     const bool visible = true;
 
-    const Geometry2d::Pose pose{position, heading};
-    const Geometry2d::Twist twist{linear, angular};
+    const rj_geometry::Pose pose{position, heading};
+    const rj_geometry::Twist twist{linear, angular};
     return RobotState{pose, twist, timestamp, visible};
 }
 
@@ -29,8 +29,8 @@ BallState get_random_ball_state() {
     std::uniform_real_distribution<double> uniform(0.0, 1.0);
     auto rand = [&]() -> double { return uniform(e1); };
 
-    const Geometry2d::Point position{rand(), rand()};
-    const Geometry2d::Point velocity{rand(), rand()};
+    const rj_geometry::Point position{rand(), rand()};
+    const rj_geometry::Point velocity{rand(), rand()};
     const RJ::Time timestamp = RJ::now();
 
     return BallState{position, velocity, timestamp};
