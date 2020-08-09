@@ -1,6 +1,6 @@
 #pragma once
 
-#include <config_client/config_client.h>
+#include <config_client/config_client.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 

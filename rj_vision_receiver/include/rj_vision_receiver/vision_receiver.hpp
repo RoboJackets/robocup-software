@@ -1,6 +1,6 @@
 #pragma once
 
-#include <config_client/config_client.h>
+#include <config_client/config_client.hpp>
 #include <rj_param_utils/ros2_param_provider.hpp>
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <rj_vision_receiver/stamped_wrapper_packet.hpp>

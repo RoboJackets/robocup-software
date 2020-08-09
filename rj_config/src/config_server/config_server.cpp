@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <config_server/config_server.h>
-#include <rj_common/FieldDimensions.hpp>
+#include <config_server/config_server.hpp>
+#include <rj_common/field_dimensions.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging.hpp>
 

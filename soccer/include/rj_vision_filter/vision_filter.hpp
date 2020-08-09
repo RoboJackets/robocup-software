@@ -1,6 +1,6 @@
 #pragma once
 
-#include <config_client/config_client.h>
+#include <config_client/config_client.hpp>
 #include <rj_param_utils/ros2_param_provider.hpp>
 #include <rj_topic_utils/message_queue.hpp>
 

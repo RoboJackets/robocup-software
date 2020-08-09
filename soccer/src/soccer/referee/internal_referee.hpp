@@ -5,7 +5,7 @@
 #include <rj_msgs/srv/quick_restart.hpp>
 
 #include "referee_base.hpp"
-#include "config_client/config_client.h"
+#include "config_client/config_client.hpp"
 
 namespace referee {
 
