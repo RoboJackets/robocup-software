@@ -1,5 +1,6 @@
 
 #include <spdlog/spdlog.h>
+
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
 

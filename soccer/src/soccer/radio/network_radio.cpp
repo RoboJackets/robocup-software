@@ -1,8 +1,8 @@
 #include "network_radio.hpp"
 
+#include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
 
-#include <fmt/ostream.h>
 #include <rj_common/status.hpp>
 
 #include "packet_convert.hpp"
@@ -69,7 +69,8 @@ void NetworkRadio::send(const std::array<RobotIntent, kNumShells>& intents,
                     [](const boost::system::error_code& error, std::size_t num_bytes) {
                         // Handle errors.
                         if (static_cast<bool>(error)) {
-                            SPDLOG_ERROR("Error sending: {}.", error);
+                            SPDLOG_ERROR("Error sending: {}.",
+                                         error);  // NOLINT(bugprone-lambda-function-name)
                         }
                     });
             }

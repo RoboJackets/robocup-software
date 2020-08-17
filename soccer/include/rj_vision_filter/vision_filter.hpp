@@ -1,20 +1,22 @@
 #pragma once
 
-#include <config_client/config_client.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
-#include <rj_topic_utils/message_queue.hpp>
-
 #include <atomic>
 #include <mutex>
+#include <thread>
+#include <vector>
+
 #include <rclcpp/rclcpp.hpp>
+
+#include <config_client/config_client.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
-#include <rj_vision_filter/camera/camera_frame.hpp>
-#include <rj_vision_filter/camera/world.hpp>
-#include <thread>
-#include <vector>
+
+#include "rj_vision_filter/camera/camera_frame.hpp"
+#include "rj_vision_filter/camera/world.hpp"
 
 namespace vision_filter {
 using TeamColorMsg = rj_msgs::msg::TeamColor;
@@ -106,11 +108,9 @@ private:
      * @return The transform from the world to the team frame.
      */
     [[nodiscard]] rj_geometry::TransformMatrix world_to_team() const {
-        rj_geometry::TransformMatrix world_to_team =
-            rj_geometry::TransformMatrix::translate(
-                0, config_client_.field_dimensions().length / 2.0f);
-        world_to_team *= rj_geometry::TransformMatrix::rotate(
-            static_cast<float>(team_angle()));
+        rj_geometry::TransformMatrix world_to_team = rj_geometry::TransformMatrix::translate(
+            0, config_client_.field_dimensions().length / 2.0f);
+        world_to_team *= rj_geometry::TransformMatrix::rotate(static_cast<float>(team_angle()));
         return world_to_team;
     }
 
@@ -122,8 +122,7 @@ private:
     std::vector<CameraFrame> frame_buffer_{};
 
     using TeamColorMsgQueue =
-        rj_topic_utils::MessageQueue<TeamColorMsg,
-                                     rj_topic_utils::MessagePolicy::kLatest>;
+        rj_topic_utils::MessageQueue<TeamColorMsg, rj_topic_utils::MessagePolicy::kLatest>;
     using TimeMsg = builtin_interfaces::msg::Time;
 
     config_client::ConfigClient config_client_;
@@ -139,14 +138,13 @@ private:
     rclcpp::TimerBase::SharedPtr predict_timer_;
 
     rclcpp::Subscription<DetectionFrameMsg>::SharedPtr detection_frame_sub_;
-    rj_utils::ConcurrentQueue<DetectionFrameMsg::UniquePtr>
-        detection_frame_queue_;
+    rj_utils::ConcurrentQueue<DetectionFrameMsg::UniquePtr> detection_frame_queue_;
 
     /**
      * @brief Publisher for WorldStateMsg.
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
 
-    params::ROS2ParamProvider param_provider_;
+    ::params::ROS2ParamProvider param_provider_;
 };
 }  // namespace vision_filter

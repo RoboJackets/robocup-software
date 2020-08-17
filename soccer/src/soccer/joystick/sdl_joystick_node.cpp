@@ -8,7 +8,7 @@ SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
         SPDLOG_ERROR("SDL could not initialize game controller system! SDL Error: {}",
-                      SDL_GetError());
+                     SDL_GetError());
         throw std::runtime_error("");
     }
 

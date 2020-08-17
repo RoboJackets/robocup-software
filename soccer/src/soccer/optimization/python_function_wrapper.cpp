@@ -1,7 +1,7 @@
 #include "python_function_wrapper.hpp"
 
-#include <spdlog/spdlog.h>
 #include <fmt/ostream.h>
+#include <spdlog/spdlog.h>
 
 float cpp_function_cb(rj_geometry::Point p, PyObject* pyfunc) {
     if (pyfunc == nullptr) {
