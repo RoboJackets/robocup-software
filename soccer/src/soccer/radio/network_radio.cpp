@@ -69,8 +69,8 @@ void NetworkRadio::send(const std::array<RobotIntent, kNumShells>& intents,
                     [](const boost::system::error_code& error, std::size_t num_bytes) {
                         // Handle errors.
                         if (static_cast<bool>(error)) {
-                            SPDLOG_ERROR("Error sending: {}.",
-                                         error);  // NOLINT(bugprone-lambda-function-name)
+                            SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)
+                                "Error sending: {}.", error);
                         }
                     });
             }

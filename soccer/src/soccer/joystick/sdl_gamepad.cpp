@@ -11,6 +11,7 @@ SDLGamepad::SDLGamepad(int device_index) {
 
     if (controller_ == nullptr) {
         spdlog::critical("ERROR: Could not open controller! SDL Error: {}", SDL_GetError());
+        throw std::runtime_error("Failed to open controller!");
     }
 
     auto* joystick = SDL_GameControllerGetJoystick(controller_);

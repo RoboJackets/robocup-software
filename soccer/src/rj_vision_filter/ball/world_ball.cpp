@@ -28,6 +28,7 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
 
     if (kalman_balls.empty()) {
         spdlog::critical("Zero balls are given to the WorldBall constructor");
+        throw std::runtime_error("Zero balls are given to the WorldBall constructor");
     }
 
     for (const KalmanBall& ball : kalman_balls) {
