@@ -6,6 +6,7 @@ Welcome to the RoboJackets RoboCup SSL documentation!
     :maxdepth: 2
     :caption: Contents:
 
+    installation/index
     getting_started/index
 
 

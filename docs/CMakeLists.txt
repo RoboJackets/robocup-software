@@ -65,6 +65,7 @@ set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/docs_build/sphinx_docs)
 set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
 
 file(GLOB_RECURSE SPHINX_SOURCE_FILES ${SPHINX_SOURCE}/*)
+message(STATUS "SPHINX_SOURCE_FILES: ${SPHINX_SOURCE_FILES}")
 
 # Only regenerate Sphinx when: - Doxygen has rerun - Our doc files have been updated - The Sphinx
 # config has been updated
