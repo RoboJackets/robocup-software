@@ -1,4 +1,3 @@
-#include <iostream>
 
 #include <robot.hpp>
 #include <rj_common/time.hpp>

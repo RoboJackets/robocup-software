@@ -54,7 +54,7 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : context_(context) {
     // setup python interpreter
     //
     try {
-        spdlog::info("Initializing embedded python interpreter...");
+        SPDLOG_INFO("Initializing embedded python interpreter...");
 
         //  this tells python how to load the robocup module
         //  it has to be done before Py_Initialize()

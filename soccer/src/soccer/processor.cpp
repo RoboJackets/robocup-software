@@ -154,7 +154,7 @@ void Processor::run() {
         raw_vision_packet_sub_->run();
 
         if (context_.field_dimensions != *current_dimensions) {
-            spdlog::info("Updating field geometry based off of vision packet.");
+            SPDLOG_INFO("Updating field geometry based off of vision packet.");
             set_field_dimensions(context_.field_dimensions);
         }
 

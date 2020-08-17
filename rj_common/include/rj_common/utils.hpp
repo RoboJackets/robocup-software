@@ -1,8 +1,9 @@
 #pragma once
 
 #include <cmath>
-#include <iostream>
 #include <stdexcept>
+
+#include <spdlog/spdlog.h>
 
 const static bool kThrowDebugExceptions = true;
 
@@ -11,11 +12,9 @@ inline int signum(T val) {
     return (0 < val) - (val <= 0);
 }
 
-inline void debug_log(const std::string& e) { std::cerr << e << std::endl; }
+inline void debug_log(const std::string& e) { spdlog::debug(e); }
 
-inline void debug_log(const std::exception& e) {
-    std::cerr << e.what() << std::endl;
-}
+inline void debug_log(const std::exception& e) { spdlog::debug(e.what()); }
 
 inline void debug_log_if(const std::string& e, bool condition) {
     if (condition) {
@@ -24,8 +23,7 @@ inline void debug_log_if(const std::string& e, bool condition) {
 }
 
 template <class T,
-          typename std::enable_if<std::is_base_of<std::exception, T>::value,
-                                  int>::type = 0>
+          typename std::enable_if<std::is_base_of<std::exception, T>::value, int>::type = 0>
 inline void debug_throw(const T& e) {
     debug_log(e);
     if (kThrowDebugExceptions) {
@@ -33,9 +31,7 @@ inline void debug_throw(const T& e) {
     }
 }
 
-inline void debug_throw(const std::string& string) {
-    debug_throw(std::runtime_error(string));
-}
+inline void debug_throw(const std::string& string) { debug_throw(std::runtime_error(string)); }
 
 inline void debug_throw_if(const std::string& string, bool condition) {
     if (condition) {

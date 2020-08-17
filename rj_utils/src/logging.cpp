@@ -52,7 +52,10 @@ void Ros2Sink<Mutex>::sink_it_(const spdlog::details::log_msg& msg) {
 void set_spdlog_default_ros2(const std::string& logger_name) {
     auto ros2_sink = std::make_shared<Ros2Sink<spdlog::details::null_mutex>>();
     auto ros2_logger = std::make_shared<spdlog::logger>(logger_name, std::move(ros2_sink));
-    ros2_logger->set_pattern("%v");
+
+    // Also include the source filename and line number, but remove all the other level / timestamp
+    // information as that is provided by ros2.
+    ros2_logger->set_pattern("[%s:%#] %v");
     spdlog::set_default_logger(std::move(ros2_logger));
 }
 }  // namespace rj_utils

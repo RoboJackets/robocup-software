@@ -1,5 +1,6 @@
 #include <cmath>
-#include <iostream>
+
+#include <spdlog/spdlog.h>
 
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/params.hpp>
@@ -22,11 +23,11 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
     if (PARAM_ball_merger_power < 1 || PARAM_ball_merger_power > 2) {
-        std::cout << "WARN: ball_merger_power should be between 1 and 2" << std::endl;
+        SPDLOG_WARN("ball_merger_power should be between 1 and 2");
     }
 
     if (kalman_balls.empty()) {
-        throw std::runtime_error("ERROR: Zero balls are given to the WorldBall constructor");
+        spdlog::critical("Zero balls are given to the WorldBall constructor");
     }
 
     for (const KalmanBall& ball : kalman_balls) {
