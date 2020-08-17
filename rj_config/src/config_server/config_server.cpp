@@ -3,7 +3,7 @@
 #include <config_server/config_server.hpp>
 #include <rj_common/field_dimensions.hpp>
 #include <rj_constants/topic_names.hpp>
-#include <rj_utils/logging.hpp>
+#include <rj_utils/logging_macros.hpp>
 
 namespace config_server {
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)

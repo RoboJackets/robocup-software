@@ -11,7 +11,7 @@
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_param_utils/param.hpp>
-#include <rj_utils/logging.hpp>
+#include <rj_utils/logging_macros.hpp>
 #include <unistd.h>
 
 #include "world_state.hpp"

@@ -158,6 +158,7 @@ set(ROBOCUP_DEPS_LIBRARIES
     rc-fshare
     rj_param_utils
     rj_topic_utils
+    rj_utils
     config_client)
 
 # ---- vision_filter ----
