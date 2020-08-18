@@ -39,7 +39,7 @@ namespace Gameplay {
  * iteration of the main run loop, the GameplayModule
  * calls into python, which does all of the high-level planning, resulting in
  * updated motion targets, etc for the robots.  The
- * GameplayModule then executes path planning for each ::OurRobot.
+ * GameplayModule then executes path planning for each OurRobot.
  */
 class GameplayModule {
 public:
