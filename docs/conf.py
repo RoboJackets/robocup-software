@@ -30,7 +30,7 @@ release = ''
 
 # -- Read The Docs Configuration ---------------------------------------------------
 def configureDoxyfile(input_dir, output_dir):
-    with open('../Doxyfile.in', 'r') as file :
+    with open('Doxyfile.in', 'r') as file :
         filedata = file.read()
 
     filedata = filedata.replace('@DOXYGEN_INPUT_DIR@', input_dir)
