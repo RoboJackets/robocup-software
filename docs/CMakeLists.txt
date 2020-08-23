@@ -15,6 +15,11 @@ if(NOT (${Doxygen_FOUND} AND ${Sphinx_FOUND}))
   return()
 endif()
 
+if (NOT BUILD_DOCUMENTATION)
+    message(STATUS "BUILD_DOCUMENTATION option is not enabled. Not creating documentation targets.")
+    return()
+endif()
+
 message(STATUS "Found Doxygen and Sphinx. Creating documentation targets.")
 # ======================================================================
 # Get all files to document.

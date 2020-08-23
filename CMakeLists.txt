@@ -16,6 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # CMake Options.
 # ======================================================================
 option(NO_WALL "Disables -Wall for CI so it doesn't print as much." OFF)
+option(BUILD_DOCUMENTATION "Build documentation if doxygen and sphinx are found." OFF)
 
 if(NOT NO_WALL
    AND CMAKE_COMPILER_IS_GNUCXX
