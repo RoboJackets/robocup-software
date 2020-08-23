@@ -1,21 +1,8 @@
 # -*- coding: utf-8 -*-
-#
-# Configuration file for the Sphinx documentation builder.
-#
-# This file does only contain a selection of the most common options. For a
-# full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
-
-# -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
+import subprocess
+import sys
+import sphinx.application
+import pathlib
 
 # -- Project information -----------------------------------------------------
 
@@ -40,6 +27,7 @@ release = ''
 extensions = ["breathe"]
 
 # -- Breathe Configuration ---------------------------------------------------
+breathe_projects = {}
 breathe_default_project = "rj_robocup"
 breathe_default_members = ('members', 'protected-members', 'private-members', 'undoc-members')
 
@@ -81,7 +69,9 @@ html_theme = 'sphinx_rtd_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    "collapse_navigation": False
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -174,3 +164,65 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
+
+
+# -- Configuring standalone build ---------------------------------------------
+def configure_doxyfile(input_dir: pathlib.Path, output_dir: pathlib.Path, doxyfile_dir: pathlib.Path) -> None:
+    """ Mimics the configure_file functionality in cmake.
+    :param input_dir: Input directory for Doxygen.
+    :param output_dir: Output directory for Doxygen.
+    :param doxyfile_dir: The directory of the Doxyfile.
+    """
+    print("doxyfile_dir: {}".format(doxyfile_dir))
+    try:
+        with open(doxyfile_dir / "Doxyfile.in", "r") as file:
+            filedata: str = file.read()
+    except Exception as e:
+        print(e)
+        raise e
+
+    print(1)
+    filedata = filedata.replace("@DOXYGEN_INPUT_DIR@", str(input_dir))
+    print(1)
+    filedata = filedata.replace("@DOXYGEN_OUTPUT_DIR@", str(output_dir))
+
+    print(3)
+    with open(doxyfile_dir / "Doxyfile", "w") as file:
+        file.write(filedata)
+
+
+def run_doxygen(doxyfile_dir: pathlib.Path) -> None:
+    """ Runs the doxygen command in the passed in directory.
+    :param doxyfile_dir: Path to the directory containing the Doxyfile.
+    """
+    subprocess.call("doxygen", shell=True, cwd=doxyfile_dir)
+
+
+def generate_doxygen_xml(app: sphinx.application.Sphinx) -> None:
+    """ Generates the doxygen XML for breathe.
+    :param app: Application object representing the Sphinx process
+    """
+    # Define all the paths.
+    cwd = pathlib.Path().resolve()
+    project_dir = cwd.parent.parent
+
+    input_dir = (project_dir / "soccer").resolve()
+    output_dir = (cwd / "build").resolve()
+    doxyfile_dir = (project_dir / "docs").resolve()
+
+    # Configure the Doxyfile.
+    configure_doxyfile(input_dir, output_dir, doxyfile_dir)
+
+    # Run the doxygen command to generate the XML.
+    run_doxygen(doxyfile_dir)
+
+    # Update the "breathe_projects" variable so that the rj_robocup project points to the
+    # correct directory.
+    breathe_projects["rj_robocup"] = str((output_dir / "xml").resolve())
+
+
+def setup(app: sphinx.application.Sphinx) -> None:
+    """ Adds generate_doxygen_xml hook to generate the doxygen XML for breathe.
+    :param app: Application object representing the Sphinx process
+    """
+    app.connect("builder-inited", generate_doxygen_xml)
