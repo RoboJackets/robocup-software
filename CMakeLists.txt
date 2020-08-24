@@ -12,7 +12,11 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# ======================================================================
+# CMake Options.
+# ======================================================================
 option(NO_WALL "Disables -Wall for CI so it doesn't print as much." OFF)
+option(BUILD_DOCUMENTATION "Build documentation if doxygen and sphinx are found." OFF)
 
 if(NOT NO_WALL
    AND CMAKE_COMPILER_IS_GNUCXX
@@ -106,6 +110,8 @@ add_subdirectory(rj_common)
 
 add_subdirectory(rj_vision_receiver)
 add_subdirectory(soccer)
+
+add_subdirectory(docs)
 
 # ======================================================================
 # Packaging
