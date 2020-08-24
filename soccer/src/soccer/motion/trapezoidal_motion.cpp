@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include <rj_common/utils.hpp>
+#include <rj_utils/logging.hpp>
 
 using namespace std;
 
@@ -71,9 +71,9 @@ double Trapezoidal::get_time(double distance, double path_length, double max_spe
         double temp1 = (-b + root) / (2 * a);
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
-            debug_throw("TrapezoidalMotion failed. Solution is imaginary");  // TODO
-                                                                             // Handle
-                                                                             // this
+            rj_utils::debug_throw("TrapezoidalMotion failed. Solution is imaginary");  // TODO
+                                                                                       // Handle
+                                                                                       // this
             return ramp_up_time;
         }
         if (temp1 > 0 && temp1 < ramp_up_time) {
@@ -99,9 +99,9 @@ double Trapezoidal::get_time(double distance, double path_length, double max_spe
         double temp1 = (-b + root) / (2 * a);
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
-            debug_throw("TrapezoidalMotion failed. Solution is imaginary");  // TODO
-                                                                             // Handle
-                                                                             // this
+            rj_utils::debug_throw("TrapezoidalMotion failed. Solution is imaginary");  // TODO
+                                                                                       // Handle
+                                                                                       // this
             return ramp_up_time + plateau_time + ramp_down_time;
         }
         if (temp1 > 0 && temp1 < ramp_down_time) {
