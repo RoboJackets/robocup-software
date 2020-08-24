@@ -2,14 +2,14 @@
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <spdlog/spdlog.h>
+#include <rj_utils/logging.hpp>
 
 namespace joystick {
 SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
-        SPDLOG_ERROR("SDL could not initialize game controller system! SDL Error: {}",
+        FATAL_THROW("SDL could not initialize game controller system! SDL Error: {}",
                      SDL_GetError());
-        throw std::runtime_error("");
     }
 
     // Attempt to add additional mappings (relative to run)
