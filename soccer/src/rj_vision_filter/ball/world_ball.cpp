@@ -1,8 +1,8 @@
 #include <cmath>
 
+#include <rj_utils/logging.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/params.hpp>
-#include <rj_utils/logging.hpp>
 
 namespace vision_filter {
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_ball, ball_merger_power, 1.5,
@@ -26,7 +26,7 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
     }
 
     if (kalman_balls.empty()) {
-       FATAL_THROW("Zero balls are given to the WorldBall constructor");
+        FATAL_THROW("Zero balls are given to the WorldBall constructor");
     }
 
     for (const KalmanBall& ball : kalman_balls) {
