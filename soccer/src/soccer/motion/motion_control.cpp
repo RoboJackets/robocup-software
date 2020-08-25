@@ -3,9 +3,10 @@
 #include <optional>
 
 #include <context.hpp>
-#include <rj_geometry/util.hpp>
-#include <robot_config.hpp>
 #include <rj_common/utils.hpp>
+#include <rj_geometry/util.hpp>
+#include <rj_utils/logging.hpp>
+#include <robot_config.hpp>
 
 #include "planning/instant.hpp"
 
@@ -139,7 +140,7 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
         target_vel = Twist::zero();
-        debug_throw("A bad value was calculated.");
+        rj_utils::debug_throw("A bad value was calculated.");
     }
 
     // Note: we used to set minimum effective speeds here. However, that should

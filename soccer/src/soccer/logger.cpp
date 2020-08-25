@@ -3,9 +3,11 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <spdlog/spdlog.h>
 
-#include "context.hpp"
-#include "radio/packet_convert.hpp"
+#include <context.hpp>
+#include <radio/packet_convert.hpp>
+#include <rj_utils/logging.hpp>
 
 #include <rc-fshare/git_version.hpp>
 
@@ -122,8 +124,7 @@ void Logger::read(const std::string& filename) {
     context_->logs.frames.clear();
 
     if (!log_file_->good()) {
-        std::cerr << "Log file " << filename << " does not exist." << std::endl;
-        std::exit(-1);
+        FATAL_THROW("Log file {} does not exist.", filename);
     }
 
     // Populate the entire logs struct.

@@ -1,3 +1,5 @@
+#include <spdlog/spdlog.h>
+
 #include <rj_vision_filter/ball/camera_ball.hpp>
 
 namespace vision_filter {
@@ -13,7 +15,7 @@ rj_geometry::Point CameraBall::get_pos() const { return pos_; }
 CameraBall CameraBall::combine_balls(const std::vector<CameraBall>& balls) {
     // Make sure we don't divide by zero due to some weird error
     if (balls.empty()) {
-        std::cout << "ERROR: Number of balls to combine is zero" << std::endl;
+        SPDLOG_ERROR("Number of balls to combine is zero");
 
         return CameraBall(RJ::now(), rj_geometry::Point(0, 0));
     }

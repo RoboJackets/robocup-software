@@ -24,7 +24,8 @@ Checks:          '-*,
                   -misc-non-private-member-variables-in-classes,
                   -cppcoreguidelines-non-private-member-variables-in-classes,
                   -clang-analyzer-cplusplus.Move,
-                  -bugprone-infinite-loop
+                  -bugprone-infinite-loop,
+                  -cppcoreguidelines-macro-usage
                   '
 #WarningsAsErrors: '*'
 AnalyzeTemporaryDtors: false
