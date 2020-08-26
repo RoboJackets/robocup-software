@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>

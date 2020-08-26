@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 NelderMead2D::NelderMead2D(NelderMead2DConfig& config) : config_(config), iteration_count_(0) {
     // Creates starting points at [start], [start] + [-x, y], [start] + [x, y]

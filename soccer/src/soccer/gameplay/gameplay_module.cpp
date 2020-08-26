@@ -1,21 +1,21 @@
-#include "gameplay/gameplay_module.hpp"
-
-#include <ament_index_cpp/get_package_share_directory.hpp>
-#include <spdlog/spdlog.h>
-
+#include <robot.hpp>
+#include <system_state.hpp>
+#include <gameplay/gameplay_module.hpp>
+#include <planning/instant.hpp>
+#include <referee/external_referee.hpp>
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
+// for python stuff
 #include "debug_drawer.hpp"
-#include "planning/instant.hpp"
-#include "referee/external_referee.hpp"
-#include "robot.hpp"
-#include "system_state.hpp"
 
 #include "robocup-py.hpp"
+
+// For getting data
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 using namespace Gameplay;
 
@@ -54,7 +54,7 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : context_(context) {
     // setup python interpreter
     //
     try {
-        SPDLOG_INFO("Initializing embedded python interpreter...");
+        cout << "Initializing embedded python interpreter..." << endl;
 
         //  this tells python how to load the robocup module
         //  it has to be done before Py_Initialize()

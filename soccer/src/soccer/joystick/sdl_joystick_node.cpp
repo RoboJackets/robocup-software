@@ -1,16 +1,17 @@
 #include "sdl_joystick_node.hpp"
 
-#include <ament_index_cpp/get_package_share_directory.hpp>
-#include <spdlog/spdlog.h>
+#include <iostream>
 
-#include <rj_utils/logging.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 namespace joystick {
 SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
-        FATAL_THROW("SDL could not initialize game controller system! SDL Error: {}",
-                    SDL_GetError());
+        std::cerr << "ERROR: SDL could not initialize game controller system! SDL "
+                     "Error: "
+                  << SDL_GetError() << std::endl;
+        throw std::runtime_error("");
     }
 
     // Attempt to add additional mappings (relative to run)
@@ -18,7 +19,8 @@ SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     std::stringstream sdl_path;
     sdl_path << share_dir << "/gamecontrollerdb.txt";
     if (SDL_GameControllerAddMappingsFromFile(sdl_path.str().c_str()) == -1) {
-        SPDLOG_ERROR("Failed adding additional SDL Gamecontroller Mappings: {}", SDL_GetError());
+        std::cout << "Failed adding additional SDL Gamecontroller Mappings: " << SDL_GetError()
+                  << std::endl;
     }
 }
 

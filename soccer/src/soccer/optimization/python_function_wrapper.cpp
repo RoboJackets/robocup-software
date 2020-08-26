@@ -1,13 +1,11 @@
 #include "python_function_wrapper.hpp"
 
-#include <fmt/ostream.h>
-#include <spdlog/spdlog.h>
+#include <iostream>
 
 float cpp_function_cb(rj_geometry::Point p, PyObject* pyfunc) {
     if (pyfunc == nullptr) {
-        SPDLOG_ERROR(
-            "Pyfunction is null. Does the PythonFunctionWrapper have the same lifetime as the "
-            "NelderMead object?");
+        std::cerr << "Pyfunction is null. Does the PythonFunctionWrapper "
+                  << "have the same lifetime as the NelderMead object?" << std::endl;
 
         return -1;
     }
@@ -15,7 +13,8 @@ float cpp_function_cb(rj_geometry::Point p, PyObject* pyfunc) {
     PyObject* pyresult = PyObject_CallObject(pyfunc, Py_BuildValue("ff", p.x(), p.y()));
 
     if (pyresult == NULL) {
-        SPDLOG_ERROR("Python callback function returned a bad value with args {}.", p);
+        std::cerr << "Python callback function returned a bad value with args ";
+        std::cerr << p << std::endl;
 
         return -1;
     }

@@ -1,7 +1,5 @@
 #include "gr_sim_communicator.hpp"
 
-#include <spdlog/spdlog.h>
-
 #include <rj_common/network.hpp>
 #include <rj_constants/constants.hpp>
 
@@ -44,6 +42,6 @@ void GrSimCommunicator::send_sim_command(const grSim_Packet& cmd) {
     cmd.SerializeToString(&out);
     size_t bytes = asio_socket_.send_to(boost::asio::buffer(out), grsim_endpoint_);
     if (bytes == 0) {
-        SPDLOG_ERROR("Sent 0 bytes.");
+        std::cerr << "Sent 0 bytes in " __FILE__ << std::endl;
     }
 }

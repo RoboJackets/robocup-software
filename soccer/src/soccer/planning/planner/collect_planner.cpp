@@ -1,7 +1,5 @@
 #include "collect_planner.hpp"
 
-#include <spdlog/spdlog.h>
-
 #include <rj_constants/constants.hpp>
 
 #include "configuration.hpp"
@@ -406,7 +404,7 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
 Trajectory CollectPlanner::invalid(const PlanRequest& plan_request,
                                    const rj_geometry::ShapeSet& static_obstacles,
                                    const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    SPDLOG_WARN("Invalid state in collect planner. Restarting");
+    std::cout << "WARNING: Invalid state in collect planner. Restarting" << std::endl;
     current_state_ = CourseApproach;
 
     // Stop movement until next frame since it's the safest option

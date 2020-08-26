@@ -1,6 +1,5 @@
 #include <cmath>
-
-#include <spdlog/spdlog.h>
+#include <iostream>
 
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
@@ -28,7 +27,7 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
     if (PARAM_robot_merger_power < 1 || PARAM_robot_merger_power > 2) {
-        SPDLOG_WARN("robot_merger_power must be between 1 and 2");
+        std::cout << "WARN: robot_merger_power must be between 1 and 2" << std::endl;
     }
 
     if (kalman_robots.empty()) {
@@ -71,7 +70,7 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
 
         pos_cartesian_avg += filter_pos_weight * robot.get_pos();
         theta_cartesian_avg += rj_geometry::Point(filter_pos_weight * cos(robot.get_theta()),
-                                                  filter_pos_weight * sin(robot.get_theta()));
+                                                 filter_pos_weight * sin(robot.get_theta()));
         twist_avg.linear() += filter_vel_weight * robot.get_vel();
         twist_avg.angular() += filter_vel_weight * robot.get_omega();
 

@@ -12,13 +12,13 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <fcntl.h>
+#include <gameplay/gameplay_module.hpp>
 #include <rj_common/qt_utils.hpp>
+#include <ui/style_sheet_manager.hpp>
 #include <unistd.h>
 
 #include "configuration.hpp"
-#include "gameplay/gameplay_module.hpp"
 #include "ui/main_window.hpp"
-#include "ui/style_sheet_manager.hpp"
 
 using namespace std;
 

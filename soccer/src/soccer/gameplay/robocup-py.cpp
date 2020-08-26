@@ -1,6 +1,7 @@
 #include "robocup-py.hpp"
 
 #include <functional>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>
