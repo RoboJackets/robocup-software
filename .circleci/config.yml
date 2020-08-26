@@ -81,7 +81,7 @@ jobs:
       - run: |
           PR_NUM=$(echo $CIRCLE_PULL_REQUEST | grep -o "[0-9]*")
           if [ -z "$PR_NUM" ]; then
-            DIFFBRANCH="ros2"
+            DIFFBRANCH="origin/staging"
           else
             PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
             DIFFBRANCH=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
@@ -102,7 +102,7 @@ jobs:
       - run: |
           PR_NUM=$(echo "$CIRCLE_PULL_REQUEST" | grep -o "[0-9]*")
           if [ -z "$PR_NUM" ]; then
-            DIFFBRANCH="ros2"
+            DIFFBRANCH="origin/staging"
           else
             PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
             DIFFBRANCH=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")

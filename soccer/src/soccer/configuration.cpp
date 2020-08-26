@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <iostream>
 #include <utility>
 
 #include <QTreeWidget>

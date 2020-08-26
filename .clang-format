@@ -12,7 +12,7 @@ SortIncludes: true
 IncludeBlocks: Regroup
 IncludeCategories:
   # External Libraries
-  - Regex:           '^<(Eigen|fmt|rclcpp|ament_index_cpp|builtin_interfaces|boost|gtest|Q(.*)|google|gtest|SDL|spdlog)(\/)?([A-Za-z0-9.\/-_])+>'
+  - Regex:           '^<(Eigen|rclcpp|ament_index_cpp|builtin_interfaces|boost|gtest|Q(.*)|google|gtest|SDL)(\/)?([A-Za-z0-9.\/-_])+>'
     Priority:        2
   # stdlib. These includes are all lowercase
   - Regex:           '^<([a-z0-9\/-_])+>'

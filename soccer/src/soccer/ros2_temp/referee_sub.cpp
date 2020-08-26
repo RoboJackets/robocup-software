@@ -1,7 +1,7 @@
 #include "referee_sub.hpp"
 
 #include <rj_constants/topic_names.hpp>
-#include <rj_utils/logging_macros.hpp>
+#include <rj_utils/logging.hpp>
 
 namespace ros2_temp {
 

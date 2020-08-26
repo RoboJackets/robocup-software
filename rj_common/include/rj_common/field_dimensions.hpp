@@ -9,6 +9,7 @@
 #include <rj_geometry/rect.hpp>
 #include <cfloat>
 #include <cmath>
+#include <iostream>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 

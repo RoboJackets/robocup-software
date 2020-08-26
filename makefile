@@ -160,7 +160,7 @@ apidocs:
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
 # Find the most recent common ancestor. This prevents new commits on staging from registering as diffs.
-DIFFBRANCH ?= ros2
+DIFFBRANCH ?= staging
 DIFFBASE ?= $(shell git merge-base $(DIFFBRANCH) HEAD)
 
 # check if everything in our codebase is in accordance with the style config defined in .clang-format

@@ -1,12 +1,9 @@
 #include "network_radio.hpp"
 
-#include <fmt/ostream.h>
-#include <spdlog/spdlog.h>
-
 #include <rj_common/status.hpp>
 
-#include "packet_convert.hpp"
 #include "rj_geometry/util.hpp"
+#include "packet_convert.hpp"
 
 using namespace boost::asio;
 using ip::udp;
@@ -69,8 +66,7 @@ void NetworkRadio::send(const std::array<RobotIntent, kNumShells>& intents,
                     [](const boost::system::error_code& error, std::size_t num_bytes) {
                         // Handle errors.
                         if (static_cast<bool>(error)) {
-                            SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)
-                                "Error sending: {}.", error);
+                            std::cerr << "Error sending: " << error << " in " __FILE__ << std::endl;
                         }
                     });
             }
@@ -85,11 +81,12 @@ void NetworkRadio::receive() {
 
 void NetworkRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
     if (static_cast<bool>(error)) {
-        SPDLOG_ERROR("Error sending: {}.", error);
+        std::cerr << "Error receiving: " << error << " in " __FILE__ << std::endl;
         return;
     }
     if (num_bytes != rtp::ReverseSize) {
-        SPDLOG_ERROR("Invalid packet length: expected {}, got {}", rtp::ReverseSize, num_bytes);
+        std::cerr << "Invalid packet length: expected " << rtp::ReverseSize << ", got " << num_bytes
+                  << std::endl;
         return;
     }
 

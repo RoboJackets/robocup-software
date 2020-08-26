@@ -1,8 +1,7 @@
 #include "robot_status_widget.hpp"
 
 #include <cmath>
-
-#include <spdlog/spdlog.h>
+#include <iostream>
 
 #include <battery_profile.hpp>
 #include <rj_common/status.hpp>
@@ -202,7 +201,7 @@ void RobotStatusWidget::loadFromLogFrame(const Packet::RadioRx& rx,
             hasMotorFault = hasMotorFault || motorFault;
         }
     } else {
-        SPDLOG_ERROR("Expected 5 motors, but only {}.", rx.motor_status_size());
+        std::cerr << "Expected 5 motors, but only " << rx.motor_status_size() << std::endl;
         hasMotorFault = true;
     }
 
@@ -259,8 +258,8 @@ void RobotStatusWidget::loadFromLogFrame(const Packet::RadioRx& rx,
         } else if (rx.hardware_version() == Packet::Simulation) {
             batteryLevel = 1;
         } else {
-            SPDLOG_ERROR("Unknown hardware revision {}, unable to calculate battery %.",
-                         rx.hardware_version());
+            std::cerr << "Unknown hardware revision " << rx.hardware_version()
+                      << ", unable to calculate battery %" << std::endl;
         }
     }
     setBatteryLevel(batteryLevel);

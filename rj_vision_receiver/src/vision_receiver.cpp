@@ -8,7 +8,7 @@
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_utils/conversions.hpp>
-#include <rj_utils/logging_macros.hpp>
+#include <rj_utils/logging.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
@@ -234,8 +234,8 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
     }
 
     const SSL_FieldCicularArc* center = nullptr;
-    float penalty_short_dist = 0;                                          // default value
-    float penalty_long_dist = 0;                                           // default value
+    float penalty_short_dist = 0;                                           // default value
+    float penalty_long_dist = 0;                                            // default value
     float displacement = FieldDimensions::kDefaultDimensions.goal_flat();  // default displacment
 
     // Loop through field arcs looking for needed fields
@@ -280,7 +280,8 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             displacement / 1000.0f,
             (field_size.field_length() / 1000.0f + (field_border)*2),
             (field_size.field_width() / 1000.0f + (field_border)*2)};
-        config_.update_field_dimensions(rj_convert::convert_to_ros<FieldDimensions>(new_field_dim));
+        config_.update_field_dimensions(
+            rj_convert::convert_to_ros<FieldDimensions>(new_field_dim));
     } else if (center != nullptr && thickness != 0) {
         const FieldDimensions default_dim = FieldDimensions::kDefaultDimensions;
 

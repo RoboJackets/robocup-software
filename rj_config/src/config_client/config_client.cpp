@@ -1,6 +1,6 @@
 #include <config_client/config_client.hpp>
 #include <rj_constants/topic_names.hpp>
-#include <rj_utils/logging_macros.hpp>
+#include <rj_utils/logging.hpp>
 
 namespace config_client {
 ConfigClient::ConfigClient(rclcpp::Node* node)
