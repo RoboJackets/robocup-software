@@ -1,19 +1,19 @@
 #include "processor.hpp"
 
 #include <QMutexLocker>
+#include <spdlog/spdlog.h>
 
-#include <rj_geometry/util.hpp>
-#include <log_utils.hpp>
-#include <robot.hpp>
-#include <robot_config.hpp>
-#include <gameplay/gameplay_module.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
-#include <rj_protos/messages_robocup_ssl_detection.pb.h>
+#include <rj_geometry/util.hpp>
+#include <rj_utils/logging.hpp>
 
 #include "debug_drawer.hpp"
+#include "gameplay/gameplay_module.hpp"
 #include "radio/packet_convert.hpp"
 #include "radio/radio_node.hpp"
+#include "robot.hpp"
+#include "robot_config.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -48,6 +48,9 @@ void Processor::create_configuration(Configuration* cfg) {
 
 Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     : loop_mutex_(), read_log_file_(read_log_file) {
+    // Set the logger to ros2.
+    rj_utils::set_spdlog_default_ros2("processor");
+
     running_ = true;
     framerate_ = 0;
     initialized_ = false;
@@ -151,7 +154,7 @@ void Processor::run() {
         raw_vision_packet_sub_->run();
 
         if (context_.field_dimensions != *current_dimensions) {
-            std::cout << "Updating field geometry based off of vision packet." << std::endl;
+            SPDLOG_INFO("Updating field geometry based off of vision packet.");
             set_field_dimensions(context_.field_dimensions);
         }
 

@@ -2,7 +2,6 @@
 
 #include <rj_protos/referee.pb.h>
 
-#include <iostream>
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/team_info.hpp>
 #include <string>
