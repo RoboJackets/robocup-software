@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-import sheen.skill as skill
+import stp.skill as skill
 
 
 class ICapture(skill.ISkill, ABC):

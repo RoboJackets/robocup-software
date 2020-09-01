@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Type, TypeVar, Optional, List, Iterator
 
-import sheen.role.assignment as assignment
-import sheen.tactic as tactic
-import sheen.utils.edict as edict
-from sheen.role import RoleRequest
-from sheen.tactic import SkillEntry, ITactic
+import stp.role.assignment as assignment
+import stp.tactic as tactic
+import stp.utils.edict as edict
+from stp.role import RoleRequest
+from stp.tactic import SkillEntry, ITactic
 
 
 class IPlay(ABC):

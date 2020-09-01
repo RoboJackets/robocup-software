@@ -2,7 +2,7 @@ from typing import Type
 
 import pytest
 
-from sheen.utils.edict import EKey, EDict, ValueConcreteT
+from stp.utils.edict import EKey, EDict, ValueConcreteT
 
 
 class Interface:

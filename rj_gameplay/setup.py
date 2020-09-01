@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-PACKAGE_NAME = 'sheen'
+PACKAGE_NAME = 'stp'
 
 setup(
     name=PACKAGE_NAME,

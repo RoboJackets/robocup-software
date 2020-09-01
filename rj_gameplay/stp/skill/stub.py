@@ -1,5 +1,5 @@
-import sheen.skill as skill
-from sheen import role as role
+import stp.skill as skill
+from stp import role as role
 
 
 class Stub(skill.ISkill):

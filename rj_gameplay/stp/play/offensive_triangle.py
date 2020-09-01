@@ -1,9 +1,9 @@
-import sheen.tactic as tactic
-import sheen.tactic.pass_or_shoot as pass_or_shoot
-import sheen.tactic.def_support as def_support
+import stp.tactic as tactic
+import stp.tactic.pass_or_shoot as pass_or_shoot
+import stp.tactic.def_support as def_support
 
-import sheen.play as play
-import sheen.play.pure_play as pure_play
+import stp.play as play
+import stp.play.pure_play as pure_play
 
 
 class Tactics(play.TacticsEnum):

@@ -1,5 +1,5 @@
-import sheen.tactic as tactic
-import sheen.skill.stub as stub
+import stp.tactic as tactic
+import stp.skill.stub as stub
 
 
 class Skills(tactic.SkillsEnum):

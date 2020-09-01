@@ -1,9 +1,9 @@
 from abc import abstractmethod, ABC
 from typing import Dict, Tuple, Type
 
-import sheen.tactic as tactic
-import sheen.role as role
-import sheen.game_state
+import stp.tactic as tactic
+import stp.role as role
+import stp.game_state
 
 RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry]
 
@@ -17,7 +17,7 @@ class IRoleAssignment(ABC):
         self,
         requests: FlatRoleRequests,
         prev_results: FlatRoleResults,
-        game_state: sheen.game_state.GameState,
+        game_state: stp.game_state.GameState,
     ) -> FlatRoleResults:
         """ Assigns roles.
         :param requests: The role requests.

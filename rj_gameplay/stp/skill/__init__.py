@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Type, TypeVar, MutableMapping, Dict
 
-import sheen.role as role
+import stp.role as role
 
 
 class ISkill(ABC):

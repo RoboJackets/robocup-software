@@ -1,9 +1,9 @@
 from typing import Optional
 
-import sheen.tactic as tactic
-import sheen.skill.ball_carrier as ball_carrier
-import sheen.skill.seeker as seeker
-import sheen.skill.capture as capture
+import stp.tactic as tactic
+import stp.skill.ball_carrier as ball_carrier
+import stp.skill.seeker as seeker
+import stp.skill.capture as capture
 
 
 class Skills(tactic.SkillsEnum):

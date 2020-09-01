@@ -1,6 +1,6 @@
-import sheen.tactic as tactic
-import sheen.skill as skill
-from sheen import role as role
+import stp.tactic as tactic
+import stp.skill as skill
+from stp import role as role
 
 
 class BaseSkill(skill.ISkill):

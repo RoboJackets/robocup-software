@@ -5,9 +5,9 @@ from typing import Tuple, List
 import scipy.optimize
 import numpy as np
 
-import sheen.role as role
-import sheen.role.assignment as assignment
-import sheen.game_state
+import stp.role as role
+import stp.role.assignment as assignment
+import stp.game_state
 
 SortedRequests = List[assignment.FlatRoleRequests]
 
@@ -35,7 +35,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     def compute_costs_matrix(
         free_robots: np.ndarray,
         flat_requests: assignment.FlatRoleRequests,
-        game_state: sheen.game_state.GameState,
+        game_state: stp.game_state.GameState,
         prev_results: assignment.FlatRoleResults,
     ) -> np.ndarray:
         """Computes the m x n cost matrix corresponding to the passed in free robots and
@@ -71,7 +71,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     @staticmethod
     def assign_prioritized_roles(
         flat_requests: assignment.FlatRoleRequests,
-        game_state: sheen.game_state.GameState,
+        game_state: stp.game_state.GameState,
         free_robots: np.ndarray,
         prev_results: assignment.FlatRoleResults,
     ) -> Tuple[assignment.FlatRoleResults, np.ndarray]:
@@ -79,7 +79,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         :param flat_requests: The role requests.
         :param game_state: The current state of the game.
         :param free_robots: The array of free robots that haven't been assigned yet. This
-        list will be mutated. Array of sheen.game_state.Robot.
+        list will be mutated. Array of stp.game_state.Robot.
         :param prev_results: The previous results.
         :return: The results of the role assignment and the new free_robots after
         assignment.
@@ -110,7 +110,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             robot_idx: int = robot_ind[assignment_idx]
             cost: float = robot_costs[robot_idx, request_idx]
 
-            robot: sheen.game_state.Robot = free_robots[robot_idx]
+            robot: stp.game_state.Robot = free_robots[robot_idx]
             role_id = keys_list[request_idx]
 
             flat_results[role_id].assign(robot, cost)
@@ -123,7 +123,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     @staticmethod
     def assign_roles(
         flat_requests: assignment.FlatRoleRequests,
-        game_state: sheen.game_state.GameState,
+        game_state: stp.game_state.GameState,
         prev_results: assignment.FlatRoleResults,
     ) -> assignment.FlatRoleResults:
         """Assigns roles.

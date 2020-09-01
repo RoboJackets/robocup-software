@@ -3,8 +3,8 @@ from typing import Optional, Type
 
 import numpy as np
 
-import sheen.skill as skill
-from sheen import role as role
+import stp.skill as skill
+from stp import role as role
 
 
 class Pass:

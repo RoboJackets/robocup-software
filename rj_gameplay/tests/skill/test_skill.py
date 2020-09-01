@@ -1,7 +1,7 @@
 import pytest
 
-import sheen.skill as skill
-import sheen.role as role
+import stp.skill as skill
+import stp.role as role
 
 
 class ITestSkill1(skill.ISkill):

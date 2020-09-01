@@ -2,8 +2,8 @@ from typing import Optional
 
 import numpy as np
 
-import sheen.role as role
-import sheen.game_state as game_state
+import stp.role as role
+import stp.game_state as game_state
 
 
 def flat_switch_cost(

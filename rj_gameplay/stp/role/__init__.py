@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import Callable, Optional
 
-import sheen.game_state as game_state
+import stp.game_state as game_state
 
 
 class Role:

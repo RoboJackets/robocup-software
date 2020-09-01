@@ -2,16 +2,16 @@ from typing import List
 
 import numpy as np
 
-import sheen.role.cost as cost
-import sheen.role as role
-import sheen.skill as skill
-import sheen.tactic as tactic
-import sheen.play as play
+import stp.role.cost as cost
+import stp.role as role
+import stp.skill as skill
+import stp.tactic as tactic
+import stp.play as play
 
-from sheen.role import Priority
-from sheen.game_state import Ball, Robot, GameState
-from sheen.role.assignment import RoleId, FlatRoleRequests
-from sheen.role.assignment.naive import SortedRequests, NaiveRoleAssignment
+from stp.role import Priority
+from stp.game_state import Ball, Robot, GameState
+from stp.role.assignment import RoleId, FlatRoleRequests
+from stp.role.assignment.naive import SortedRequests, NaiveRoleAssignment
 
 
 class SkillBase(skill.ISkill):

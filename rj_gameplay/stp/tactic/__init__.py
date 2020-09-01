@@ -1,9 +1,9 @@
 from typing import Type, TypeVar, List, Optional, Dict, MutableMapping
 from abc import ABC, abstractmethod
 
-import sheen.skill as skill
-import sheen.utils.edict as edict
-import sheen.role as role
+import stp.skill as skill
+import stp.utils.edict as edict
+import stp.role as role
 
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
 

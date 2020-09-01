@@ -1,1 +1,1 @@
-import sheen.play as play
+import stp.play as play

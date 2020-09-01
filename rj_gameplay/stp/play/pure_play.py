@@ -1,9 +1,9 @@
 from typing import List, Dict
 
-import sheen.play as play
-import sheen.tactic as tactic
-import sheen.skill as skill
-import sheen.role.assignment as assignment
+import stp.play as play
+import stp.tactic as tactic
+import stp.skill as skill
+import stp.role.assignment as assignment
 
 
 class PurePlay(play.IPlay):
