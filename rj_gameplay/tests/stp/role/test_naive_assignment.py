@@ -9,7 +9,7 @@ import stp.tactic as tactic
 import stp.play as play
 
 from stp.role import Priority
-from stp.game_state import Ball, Robot, GameState
+from stp.rc import Ball, Robot, WorldState
 from stp.role.assignment import RoleId, FlatRoleRequests
 from stp.role.assignment.naive import SortedRequests, NaiveRoleAssignment
 
@@ -241,7 +241,7 @@ def test_compute_costs_matrix() -> None:
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    game_state: GameState = GameState(out_robots, their_robots, ball)
+    game_state: WorldState = WorldState(out_robots, their_robots, ball)
     prev_results = {}
 
     # Compute the cost matrix.
@@ -300,7 +300,7 @@ def test_assign_prioritized_roles() -> None:
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    game_state: GameState = GameState(out_robots, their_robots, ball)
+    game_state: WorldState = WorldState(out_robots, their_robots, ball)
 
     # Assign the roles.
     results, new_free_robots = NaiveRoleAssignment.assign_prioritized_roles(
@@ -366,7 +366,7 @@ def test_assign_roles() -> None:
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    game_state: GameState = GameState(out_robots, their_robots, ball)
+    game_state: WorldState = WorldState(out_robots, their_robots, ball)
 
     # Assign the roles.
     results = NaiveRoleAssignment.assign_roles(requests, game_state, {})

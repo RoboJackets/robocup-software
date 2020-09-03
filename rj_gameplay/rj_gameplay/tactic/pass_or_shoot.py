@@ -1,9 +1,9 @@
 from typing import Optional
 
 import stp.tactic as tactic
-import stp.skill.ball_carrier as ball_carrier
-import stp.skill.seeker as seeker
-import stp.skill.capture as capture
+import rj_gameplay.skill.ball_carrier as ball_carrier
+import rj_gameplay.skill.seeker as seeker
+import rj_gameplay.skill.capture as capture
 
 
 class Skills(tactic.SkillsEnum):
@@ -13,8 +13,7 @@ class Skills(tactic.SkillsEnum):
 
 
 class PassOrShoot(tactic.ITactic):
-    """ Tactic that controls one ball carrier and multiple seekers.
-    """
+    """Tactic that controls one ball carrier and multiple seekers."""
 
     __slots__ = ["skills", "BALL_CARRIER", "RECEIVER", "SEEKERS"]
 
@@ -39,7 +38,7 @@ class PassOrShoot(tactic.ITactic):
 
     @staticmethod
     def get_pass(prev_skills: tactic.SkillsDict) -> Optional[ball_carrier.Pass]:
-        """ Returns the pass from IBallCarrier if it is in prev_skills, otherwise None.
+        """Returns the pass from IBallCarrier if it is in prev_skills, otherwise None.
         :param prev_skills: Skills that were run in the previous tick.
         :return: The pass from IBallCarrier if it is in prev_skills, otherwise None.
         """

@@ -3,8 +3,7 @@ from stp import role as role
 
 
 class Stub(skill.ISkill):
-    """ Stub skill that does nothing.
-    """
+    """Stub skill that does nothing."""
 
     def define(self):
         pass

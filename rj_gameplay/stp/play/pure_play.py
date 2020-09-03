@@ -7,8 +7,7 @@ import stp.role.assignment as assignment
 
 
 class PurePlay(play.IPlay):
-    """ A stateless play that uses the same tactics for the entire lifetime.
-    """
+    """A stateless play that uses the same tactics for the entire lifetime."""
 
     __slots__ = ["tactics"]
 
@@ -21,7 +20,7 @@ class PurePlay(play.IPlay):
         return []
 
     def collect_role_requests(self) -> play.RoleRequests:
-        """ Collects the role requests from each tactic.
+        """Collects the role requests from each tactic.
         :return: The collected play.RoleRequests.
         """
         prev_skills: tactic.SkillsDict = tactic.SkillsDict()

@@ -7,8 +7,7 @@ class Skills(tactic.SkillsEnum):
 
 
 class DefSupport(tactic.ITactic):
-    """ Tactic that supports the ball carrier defensively.
-    """
+    """Tactic that supports the ball carrier defensively."""
 
     __slots__ = ["skills", "STUB"]
 

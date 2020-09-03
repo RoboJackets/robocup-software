@@ -3,21 +3,19 @@ from abc import ABC, abstractmethod
 
 import stp.skill as skill
 import stp.utils.edict as edict
+import stp.utils.enum as enum
 import stp.role as role
 
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
 
 
 class SkillEntry(edict.EKey[SkillT]):
-    """ An entry in the SkillsEnum for a tactic.
-    """
-
-    INVALID_IDX = -1
+    """An entry in the SkillsEnum for a tactic."""
 
     __slots__ = ["skill", "_idx", "_owner"]
 
     skill: Optional[SkillT]
-    _idx: int
+    _idx: Optional[int]
 
     def __init__(self, entry_skill: Type[SkillT]):
         """
@@ -26,7 +24,7 @@ class SkillEntry(edict.EKey[SkillT]):
         super().__init__(entry_skill)
 
         self.skill = None
-        self._idx = SkillEntry.INVALID_IDX
+        self._idx = None
 
     def set_idx(self, num: int) -> None:
         self._idx = num
@@ -52,22 +50,7 @@ class SkillEntry(edict.EKey[SkillT]):
         return self.__str__()
 
 
-class SkillsEnumMeta(type):
-    def __new__(mcs, cls, bases, class_dict):
-        object_attrs = set(dir(type(cls, (object,), {})))
-        enum_cls: type = super().__new__(mcs, cls, bases, class_dict)
-
-        enum_cls.enum_names = [
-            key
-            for key in class_dict.keys()
-            if key not in object_attrs
-            and not (key.startswith("_") and key.endswith("_"))
-        ]
-
-        return enum_cls
-
-
-class SkillsEnum(metaclass=SkillsEnumMeta):
+class SkillsEnum(metaclass=enum.SimpleEnumMeta):
     def __init__(self, skill_factory: skill.Factory):
         """
         :param skill_factory: Skill Factory used to initialize the skill instances in
@@ -108,8 +91,7 @@ class ITactic(ABC):
 
 
 class Ctx:
-    """ Context for tactics.
-    """
+    """Context for tactics."""
 
     __slots__ = ["skill_factory"]
 
@@ -123,8 +105,7 @@ TacticT = TypeVar("TacticT", bound=ITactic)
 
 
 class Registry(MutableMapping):
-    """ Registry that holds instances of tactics indexed by the type.
-    """
+    """Registry that holds instances of tactics indexed by the type."""
 
     __slots__ = ["_dict"]
 
@@ -162,8 +143,7 @@ class Registry(MutableMapping):
 
 
 class Factory:
-    """ Factory that creates tactics according to the TacticRegistry passed in.
-    """
+    """Factory that creates tactics according to the TacticRegistry passed in."""
 
     __slots__ = ["_registry"]
 

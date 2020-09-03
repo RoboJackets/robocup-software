@@ -1,4 +1,3 @@
-from collections import defaultdict
 from math import isfinite
 from typing import Tuple, List
 
@@ -7,7 +6,7 @@ import numpy as np
 
 import stp.role as role
 import stp.role.assignment as assignment
-import stp.game_state
+import stp.rc
 
 SortedRequests = List[assignment.FlatRoleRequests]
 
@@ -16,8 +15,9 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     @staticmethod
     def get_sorted_requests(requests: assignment.FlatRoleRequests) -> SortedRequests:
         """Returns a list of FlatRoleRequests sorted in ascending priority order.
-        :param requests:
-        :return:
+        :param requests: Flat list of requests.
+        :return: List of FlatRoleRequests in sorted ascending priority order, ie.
+        [LOW, MEDIUM, HIGH].
         """
         role_id: assignment.RoleId
         request: role.RoleRequest
@@ -35,14 +35,14 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     def compute_costs_matrix(
         free_robots: np.ndarray,
         flat_requests: assignment.FlatRoleRequests,
-        game_state: stp.game_state.GameState,
+        world_state: stp.rc.WorldState,
         prev_results: assignment.FlatRoleResults,
     ) -> np.ndarray:
         """Computes the m x n cost matrix corresponding to the passed in free robots and
         role requests.
         :param flat_requests: Role requests to compute cost matrix for.
         :param free_robots: Free robots to compute cost matrix for.
-        :param game_state: Current game state.
+        :param world_state: Current world state.
         :param prev_results: The previous results.
         :return: The m x n cost matrix corresponding to the passed in free robots and
         role requests.
@@ -59,7 +59,9 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             # For each role request, iterate over robots.
             for robot_idx, robot in enumerate(free_robots):
                 # Otherwise, record the cost.
-                cost: float = request.cost_fn(robot, prev_results.get(role_id, None))
+                cost: float = request.cost_fn(
+                    robot, prev_results.get(role_id, None), world_state
+                )
                 if not isfinite(cost):
                     continue
 
@@ -71,15 +73,15 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     @staticmethod
     def assign_prioritized_roles(
         flat_requests: assignment.FlatRoleRequests,
-        game_state: stp.game_state.GameState,
+        world_state: stp.rc.WorldState,
         free_robots: np.ndarray,
         prev_results: assignment.FlatRoleResults,
     ) -> Tuple[assignment.FlatRoleResults, np.ndarray]:
         """Assigns roles using the Hungarian algorithm.
         :param flat_requests: The role requests.
-        :param game_state: The current state of the game.
-        :param free_robots: The array of free robots that haven't been assigned yet. This
-        list will be mutated. Array of stp.game_state.Robot.
+        :param world_state: The current state of the game.
+        :param free_robots: The array of free robots that haven't been assigned yet.
+        This list will be mutated. Array of stp.rc.Robot.
         :param prev_results: The previous results.
         :return: The results of the role assignment and the new free_robots after
         assignment.
@@ -96,7 +98,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
         # Compute the n x m cost matrix.
         robot_costs: np.ndarray = NaiveRoleAssignment.compute_costs_matrix(
-            free_robots, flat_requests, game_state, prev_results
+            free_robots, flat_requests, world_state, prev_results
         )
 
         # Get the optimal assignment using the Hungarian algorithm.
@@ -110,7 +112,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             robot_idx: int = robot_ind[assignment_idx]
             cost: float = robot_costs[robot_idx, request_idx]
 
-            robot: stp.game_state.Robot = free_robots[robot_idx]
+            robot: stp.rc.Robot = free_robots[robot_idx]
             role_id = keys_list[request_idx]
 
             flat_results[role_id].assign(robot, cost)
@@ -123,12 +125,12 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     @staticmethod
     def assign_roles(
         flat_requests: assignment.FlatRoleRequests,
-        game_state: stp.game_state.GameState,
+        world_state: stp.rc.WorldState,
         prev_results: assignment.FlatRoleResults,
     ) -> assignment.FlatRoleResults:
         """Assigns roles.
         :param flat_requests: The role requests.
-        :param game_state: The current state of the game.
+        :param world_state: The current state of the game.
         :param prev_results: The previous results.
         :return: The results of the role assignment.
         """
@@ -142,9 +144,9 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         requests_dict: assignment.FlatRoleRequests
         request: role.RoleRequest
 
-        # Make a copy of game_state.our_robots so that we can mutate it without mutating
-        # game_state.our_robots.
-        free_robots = np.array(game_state.our_robots)
+        # Make a copy of rc.our_robots so that we can mutate it without mutating
+        # rc.our_robots.
+        free_robots = np.array(world_state.our_robots)
 
         flat_results: assignment.FlatRoleResults = {}
 
@@ -155,7 +157,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                 prioritized_results,
                 free_robots,
             ) = NaiveRoleAssignment.assign_prioritized_roles(
-                requests_dict, game_state, free_robots, prev_results
+                requests_dict, world_state, free_robots, prev_results
             )
 
             # Add the prioritized_results to flat_results.

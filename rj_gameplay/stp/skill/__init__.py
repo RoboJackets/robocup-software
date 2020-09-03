@@ -18,8 +18,7 @@ SkillT = TypeVar("SkillT", bound=ISkill)
 
 
 class Registry(MutableMapping):
-    """ Registry that holds instances of skills indexed by the type.
-    """
+    """Registry that holds instances of skills indexed by the type."""
 
     __slots__ = ["_dict"]
 
@@ -57,8 +56,7 @@ class Registry(MutableMapping):
 
 
 class Factory:
-    """ Factory that creates skills according to the SkillRegistry passed in.
-    """
+    """Factory that creates skills according to the SkillRegistry passed in."""
 
     __slots__ = ["_registry"]
 

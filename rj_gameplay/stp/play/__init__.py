@@ -4,13 +4,13 @@ from typing import Dict, Type, TypeVar, Optional, List, Iterator
 import stp.role.assignment as assignment
 import stp.tactic as tactic
 import stp.utils.edict as edict
+import stp.utils.enum as enum
 from stp.role import RoleRequest
 from stp.tactic import SkillEntry, ITactic
 
 
 class IPlay(ABC):
-    """ Interface for a play, the highest level of abstraction from the STP hierarchy.
-    """
+    """Interface for a play, the highest level of abstraction from the STP hierarchy."""
 
     ...
 
@@ -19,21 +19,18 @@ TacticT = TypeVar("TacticT", bound=tactic.ITactic)
 
 
 class TacticEntry(edict.EKey[TacticT]):
-    """ An entry in the TacticEnum for a play.
-    """
-
-    INVALID_IDX = -1
+    """An entry in the TacticEnum for a play."""
 
     __slots__ = ["_idx", "skill"]
 
     tactic: Optional[TacticT]
-    _idx: int
+    _idx: Optional[int]
 
     def __init__(self, entry_skill: Type[TacticT]):
         super().__init__(entry_skill)
 
         self.tactic = None
-        self._idx = TacticEntry.INVALID_IDX
+        self._idx = None
 
     def set_idx(self, num: int) -> None:
         self._idx = num
@@ -57,25 +54,7 @@ class TacticEntry(edict.EKey[TacticT]):
         return self.__str__()
 
 
-class TacticsEnumMeta(type):
-    """ Metaclass for
-    """
-
-    def __new__(mcs, cls, bases, class_dict):
-        object_attrs = set(dir(type(cls, (object,), {})))
-        enum_cls: type = super().__new__(mcs, cls, bases, class_dict)
-
-        enum_cls.enum_names = [
-            key
-            for key in class_dict.keys()
-            if key not in object_attrs
-            and not (key.startswith("_") and key.endswith("_"))
-        ]
-
-        return enum_cls
-
-
-class TacticsEnum(metaclass=TacticsEnumMeta):
+class TacticsEnum(metaclass=enum.SimpleEnumMeta):
     def __init__(self, tactic_factory: tactic.Factory):
         """
         :param tactic_factory: Tactic Factory used to initialize the tactic instances in
@@ -106,8 +85,7 @@ class TacticsEnum(metaclass=TacticsEnumMeta):
 
 
 class Ctx:
-    """ Context for plays.
-    """
+    """Context for plays."""
 
     __slots__ = ["tactic_factory"]
 
@@ -121,7 +99,8 @@ RoleRequests = Dict[Type[tactic.ITactic], tactic.RoleRequests]
 
 
 def flatten_requests(role_requests: RoleRequests) -> assignment.FlatRoleRequests:
-    """ Flattens play.RoleRequests into assignment.FlatRoleRequests, ie. a nested dict into just a flat dict.
+    """Flattens play.RoleRequests into assignment.FlatRoleRequests, ie. a nested
+    dict into just a flat dict.
     :param role_requests: The nested play.RoleRequests dicts.
     :return: The flattened assignment.FlatRoleRequests dict.
     """

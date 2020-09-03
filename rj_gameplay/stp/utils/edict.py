@@ -17,7 +17,7 @@ class EKey(Generic[ValueConcreteT]):
 
 
 class EDict(Generic[ValueInterfaceT], MutableMapping):
-    """ A dictionary with type information where the key encodes information about the
+    """A dictionary with type information where the key encodes information about the
     subclass so that the correct subclass can be retrieved without an additional
     instanceof check.
     """

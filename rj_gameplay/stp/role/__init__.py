@@ -1,14 +1,14 @@
 from enum import IntEnum
 from typing import Callable, Optional
 
-import stp.game_state as game_state
+import stp.rc as rc
 
 
 class Role:
     __slots__ = ["robot"]
-    robot: Optional[game_state.Robot]
+    robot: Optional[rc.Robot]
 
-    def __init__(self, robot: Optional[game_state.Robot]):
+    def __init__(self, robot: Optional[rc.Robot]):
         self.robot = robot
 
     def is_filled(self) -> bool:
@@ -31,8 +31,8 @@ class Priority(IntEnum):
     NUM_PRIORITIES = 3
 
 
-# (robot: Robot, prev_robot: Robot) -> cost.
-CostFn = Callable[[game_state.Robot, Optional[game_state.Robot]], float]
+# (robot: Robot, prev_robot: Robot, world_state: WorldState) -> cost.
+CostFn = Callable[[rc.Robot, Optional[rc.Robot], rc.WorldState], float]
 
 
 class RoleRequest:
@@ -101,7 +101,7 @@ class RoleResult:
         """
         return self.role.is_filled()
 
-    def assign(self, robot: game_state.Robot, cost: float) -> None:
+    def assign(self, robot: rc.Robot, cost: float) -> None:
         """Assigns self.role to the passed in robot, updating self.cost to the
         assignment cost.
         :param robot: Robot to use for the role.

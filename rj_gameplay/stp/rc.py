@@ -3,8 +3,7 @@ import numpy as np
 
 
 class Robot:
-    """ Robot. Pose: [x, y, theta]. Twist: [dx, dy, dtheta].
-    """
+    """Robot. Pose: [x, y, theta]. Twist: [dx, dy, dtheta]."""
 
     __slots__ = ["id", "pose", "twist", "has_ball"]
     id: int
@@ -33,8 +32,7 @@ class Robot:
 
 
 class Ball:
-    """ Ball.
-    """
+    """Ball."""
 
     __slots__ = ["pos", "vel"]
 
@@ -49,9 +47,8 @@ class Ball:
         return "Ball(pos:{}, vel:{})".format(self.pos, self.vel)
 
 
-class GameState:
-    """ Current state of the game.
-    """
+class WorldState:
+    """Current state of the game."""
 
     __slots__ = ["our_robots", "their_robots", "ball"]
 

@@ -3,7 +3,7 @@ from typing import Dict, Tuple, Type
 
 import stp.tactic as tactic
 import stp.role as role
-import stp.game_state
+import stp.rc
 
 RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry]
 
@@ -12,17 +12,17 @@ FlatRoleResults = Dict[RoleId, role.RoleResult]
 
 
 class IRoleAssignment(ABC):
+    @staticmethod
     @abstractmethod
     def assign_roles(
-        self,
-        requests: FlatRoleRequests,
+        flat_requests: FlatRoleRequests,
+        game_state: stp.rc.WorldState,
         prev_results: FlatRoleResults,
-        game_state: stp.game_state.GameState,
     ) -> FlatRoleResults:
-        """ Assigns roles.
-        :param requests: The role requests.
-        :param prev_results: The previous results.
+        """Assigns roles.
+        :param flat_requests: The role requests.
         :param game_state: The current state of the game.
+        :param prev_results: The previous results.
         :return: The results of the role assignment.
         """
         ...
