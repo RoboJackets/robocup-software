@@ -7,11 +7,13 @@ import stp.role as role
 import stp.skill as skill
 import stp.tactic as tactic
 import stp.play as play
+from stp import action as action
 
 from stp.role import Priority
 from stp.rc import Ball, Robot, WorldState
 from stp.role.assignment import RoleId, FlatRoleRequests
 from stp.role.assignment.naive import SortedRequests, NaiveRoleAssignment
+from stp.tactic import RoleResults
 
 
 class SkillBase(skill.ISkill):
@@ -60,6 +62,10 @@ class TacticBase(tactic.ITactic):
         self.C1 = self.skills.C1
         self.C2 = self.skills.C2
 
+    def tick(self, role_results: RoleResults) -> List[action.IAction]:
+        # Dummy tick function doesn't return any actions.
+        return []
+
     def get_requests(self, prev_skills: tactic.SkillsDict) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
             self.A1: self.A1.skill.create_request().with_priority(Priority.LOW),
@@ -96,8 +102,8 @@ def get_simple_role_ids() -> List[RoleId]:
 
 
 def test_get_sorted_requests_simple():
-    """Manually create a Requests and check that get_sorted_requests returns a list of three dictionaries, one for each
-    priority level.
+    """Manually create a Requests and check that get_sorted_requests returns a list of
+    three dictionaries, one for each priority level.
     """
     role_id_a, role_id_b, role_id_c = get_simple_role_ids()
 
@@ -123,7 +129,7 @@ def test_get_sorted_requests_simple():
     assert len(sorted_requests[1]) == 1
     assert len(sorted_requests[2]) == 1
 
-    # Check that A is in high priority, B is in low priority and C is in medium priority.
+    # Check that A is in high priority, B is in low priority, C is in medium priority.
     assert role_id_a in sorted_requests[Priority.HIGH]
     assert role_id_b in sorted_requests[Priority.LOW]
     assert role_id_c in sorted_requests[Priority.MEDIUM]

@@ -63,7 +63,11 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                     robot, prev_results.get(role_id, None), world_state
                 )
                 if not isfinite(cost):
-                    continue
+                    raise ValueError(
+                        "Got a non-finite cost ({}) for request {} and robot {}".format(
+                            cost, request, robot
+                        )
+                    )
 
                 # Add to robot_costs.
                 robot_costs[robot_idx, request_idx] = cost

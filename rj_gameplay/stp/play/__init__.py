@@ -1,18 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Type, TypeVar, Optional, List, Iterator
+from collections import defaultdict
+from typing import Dict, Type, TypeVar, Optional, List, Iterator, Tuple
 
+import stp.role as role
 import stp.role.assignment as assignment
+import stp.action as action
 import stp.tactic as tactic
 import stp.utils.typed_key_dict as tkdict
 import stp.utils.enum as enum
-from stp.role import RoleRequest
-from stp.tactic import SkillEntry, ITactic
-
-
-class IPlay(ABC):
-    """Interface for a play, the highest level of abstraction from the STP hierarchy."""
-
-    ...
+import stp.rc as rc
 
 
 TacticT = TypeVar("TacticT", bound=tactic.ITactic)
@@ -87,15 +83,39 @@ class TacticsEnum(metaclass=enum.SimpleEnumMeta):
 class Ctx:
     """Context for plays."""
 
-    __slots__ = ["tactic_factory"]
+    __slots__ = ["tactic_factory", "role_assignment"]
 
     tactic_factory: tactic.Factory
+    role_assignment: assignment.IRoleAssignment
 
-    def __init__(self, tactic_factory: tactic.Factory):
+    def __init__(self, tactic_factory: tactic.Factory, role_assignment):
         self.tactic_factory = tactic_factory
+        self.role_assignment = role_assignment
+
+
+class IPlay(ABC):
+    """Interface for a play, the highest level of abstraction from the STP hierarchy."""
+
+    __slots__ = []
+
+    @abstractmethod
+    def tick(
+        self, world_state: rc.WorldState, prev_results: assignment.FlatRoleResults
+    ) -> Tuple[assignment.FlatRoleResults, List[action.IAction]]:
+        """Performs one "tick" of the specified play.
+
+        This should:
+            1. Collect all the role requests from the tactics
+            2. Perform role assignment
+            3. Gives each tactic its assigned roles and getting a list of skills.
+            4. Return the list of skills obtained.
+        :return: The list of skill to run.
+        """
+        ...
 
 
 RoleRequests = Dict[Type[tactic.ITactic], tactic.RoleRequests]
+RoleResults = Dict[Type[tactic.ITactic], tactic.RoleResults]
 
 
 def flatten_requests(role_requests: RoleRequests) -> assignment.FlatRoleRequests:
@@ -106,14 +126,30 @@ def flatten_requests(role_requests: RoleRequests) -> assignment.FlatRoleRequests
     """
     flat_role_requests: assignment.FlatRoleRequests = {}
 
-    tactic_t: Type[ITactic]
-    tactic_requests: Dict[SkillEntry, RoleRequest]
+    tactic_t: Type[tactic.ITactic]
+    tactic_requests: Dict[tactic.SkillEntry, role.RoleRequest]
 
     for tactic_t, tactic_requests in role_requests.items():
-        skill_entry: SkillEntry
-        request: RoleRequest
+        skill_entry: tactic.SkillEntry
+        request: role.RoleRequest
 
         for skill_entry, request in tactic_requests.items():
             flat_role_requests[(tactic_t, skill_entry)] = request
 
     return flat_role_requests
+
+
+def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
+    """Unflattens assignment.FlatRoleResults into play.RoleResults, ie. a flat dict
+    into a nested dict.
+    :param results: The flat assignments.FlatRoleResults dict.
+    :return: The nested play.RoleRequests dicts
+    """
+    nested_results: RoleResults = defaultdict(dict)
+
+    tactic_t: Type[tactic.ITactic]
+    skill_entry: tactic.SkillEntry
+    for (tactic_t, skill_entry), result in results.items():
+        nested_results[tactic_t][skill_entry] = result
+
+    return nested_results

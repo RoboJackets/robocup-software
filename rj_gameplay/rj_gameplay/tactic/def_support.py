@@ -16,7 +16,7 @@ class DefSupport(tactic.ITactic):
 
         self.STUB = self.skills.STUB
 
-    def define(self, prev_skills: tactic.SkillsDict) -> tactic.RoleRequests:
+    def get_requests(self, prev_skills: tactic.SkillsDict) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = tactic.RoleRequests()
 
         role_requests[self.STUB] = self.STUB.skill.create_request()

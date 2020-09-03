@@ -1,6 +1,7 @@
 from typing import Type, TypeVar, List, Optional, Dict, MutableMapping
 from abc import ABC, abstractmethod
 
+import stp.action as action
 import stp.skill as skill
 import stp.utils.typed_key_dict as tkdict
 import stp.utils.enum as enum
@@ -78,6 +79,7 @@ class SkillsEnum(metaclass=enum.SimpleEnumMeta):
 
 
 RoleRequests = Dict[SkillEntry, role.RoleRequest]
+RoleResults = Dict[SkillEntry, role.RoleResult]
 
 
 class SkillsDict(tkdict.TypedKeyDict[List[skill.ISkill]]):
@@ -87,6 +89,18 @@ class SkillsDict(tkdict.TypedKeyDict[List[skill.ISkill]]):
 class ITactic(ABC):
     @abstractmethod
     def get_requests(self, prev_skills: SkillsDict) -> RoleRequests:
+        """
+        :param prev_skills:
+        :return:
+        """
+        ...
+
+    @abstractmethod
+    def tick(self, role_results: RoleResults) -> List[action.IAction]:
+        """Ticks the tactic, returning the list of actions for each robot.
+        :param role_results:
+        :return:
+        """
         ...
 
 

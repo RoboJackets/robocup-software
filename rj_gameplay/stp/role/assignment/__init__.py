@@ -16,12 +16,12 @@ class IRoleAssignment(ABC):
     @abstractmethod
     def assign_roles(
         flat_requests: FlatRoleRequests,
-        game_state: stp.rc.WorldState,
+        world_state: stp.rc.WorldState,
         prev_results: FlatRoleResults,
     ) -> FlatRoleResults:
         """Assigns roles.
         :param flat_requests: The role requests.
-        :param game_state: The current state of the game.
+        :param world_state: The current state of the world.
         :param prev_results: The previous results.
         :return: The results of the role assignment.
         """
