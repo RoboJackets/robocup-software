@@ -1,1 +1,1 @@
-import stp.utils.edict
+import stp.utils.typed_key_dict

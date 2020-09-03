@@ -6,7 +6,7 @@ ValueInterfaceT = TypeVar("ValueInterfaceT")
 ValueConcreteT = TypeVar("ValueConcreteT")
 
 
-class EKey(Generic[ValueConcreteT]):
+class TypedKey(Generic[ValueConcreteT]):
     __slots__ = ["concrete_cls"]
 
     def __init__(self, cls: Type[ValueConcreteT]):
@@ -16,7 +16,7 @@ class EKey(Generic[ValueConcreteT]):
         return self.concrete_cls
 
 
-class EDict(Generic[ValueInterfaceT], MutableMapping):
+class TypedKeyDict(Generic[ValueInterfaceT], MutableMapping):
     """A dictionary with type information where the key encodes information about the
     subclass so that the correct subclass can be retrieved without an additional
     instanceof check.
@@ -25,9 +25,9 @@ class EDict(Generic[ValueInterfaceT], MutableMapping):
     __slots__ = ["_dict"]
 
     def __init__(self):
-        self._dict: Dict[EKey, ValueInterfaceT] = {}
+        self._dict: Dict[TypedKey, ValueInterfaceT] = {}
 
-    def __getitem__(self, k: EKey[ValueConcreteT]) -> ValueConcreteT:
+    def __getitem__(self, k: TypedKey[ValueConcreteT]) -> ValueConcreteT:
         # The below can throw a KeyError.
         item: ValueInterfaceT = self._dict[k]
 
@@ -41,7 +41,7 @@ class EDict(Generic[ValueInterfaceT], MutableMapping):
 
         return item
 
-    def __setitem__(self, k: EKey[ValueConcreteT], v: ValueConcreteT) -> None:
+    def __setitem__(self, k: TypedKey[ValueConcreteT], v: ValueConcreteT) -> None:
         # Check that the item we're setting is an instance of the expected type.
         if not isinstance(v, k.concrete_cls):
             raise KeyError(
@@ -52,7 +52,7 @@ class EDict(Generic[ValueInterfaceT], MutableMapping):
 
         self._dict.__setitem__(k, v)
 
-    def __delitem__(self, k: EKey[ValueConcreteT]) -> None:
+    def __delitem__(self, k: TypedKey[ValueConcreteT]) -> None:
         self._dict.__delitem__(k)
 
     def __len__(self) -> int:

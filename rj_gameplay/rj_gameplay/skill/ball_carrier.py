@@ -1,20 +1,28 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Type
+from typing import Optional
 
 import numpy as np
 
 import stp.skill as skill
-from stp import role as role
+import stp.rc as rc
 
 
+# TODO: Add time information.
 class Pass:
+    """A representation of a pass."""
+
     __slots__ = ["passer", "receiver", "pt"]
 
-    passer: int
-    receiver: int
+    passer: rc.RobotId
+    receiver: rc.RobotId
     pt: np.ndarray
 
-    def __init__(self, passer: int, receiver: int, pt: np.ndarray):
+    def __init__(self, passer: rc.RobotId, receiver: rc.RobotId, pt: np.ndarray):
+        """Creates a Pass.
+        :param passer: The RobotId of the passing robot.
+        :param receiver: The RobotId of the receiving robot.
+        :param pt: The point at which the pass will be made to.
+        """
         self.passer = passer
         self.receiver = receiver
         self.pt = pt
@@ -33,5 +41,5 @@ class BallCarrier(IBallCarrier):
     def get_pass(self) -> Optional[Pass]:
         ...
 
-    def create_request(self) -> role.RoleRequest:
+    def create_request(self) -> skill.role.RoleRequest:
         pass

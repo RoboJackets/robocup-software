@@ -2,14 +2,14 @@ from typing import Type, TypeVar, List, Optional, Dict, MutableMapping
 from abc import ABC, abstractmethod
 
 import stp.skill as skill
-import stp.utils.edict as edict
+import stp.utils.typed_key_dict as tkdict
 import stp.utils.enum as enum
 import stp.role as role
 
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
 
 
-class SkillEntry(edict.EKey[SkillT]):
+class SkillEntry(tkdict.TypedKey[SkillT]):
     """An entry in the SkillsEnum for a tactic."""
 
     __slots__ = ["skill", "_idx", "_owner"]
@@ -80,7 +80,7 @@ class SkillsEnum(metaclass=enum.SimpleEnumMeta):
 RoleRequests = Dict[SkillEntry, role.RoleRequest]
 
 
-class SkillsDict(edict.EDict[List[skill.ISkill]]):
+class SkillsDict(tkdict.TypedKeyDict[List[skill.ISkill]]):
     ...
 
 

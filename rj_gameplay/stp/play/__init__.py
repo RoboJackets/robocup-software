@@ -3,7 +3,7 @@ from typing import Dict, Type, TypeVar, Optional, List, Iterator
 
 import stp.role.assignment as assignment
 import stp.tactic as tactic
-import stp.utils.edict as edict
+import stp.utils.typed_key_dict as tkdict
 import stp.utils.enum as enum
 from stp.role import RoleRequest
 from stp.tactic import SkillEntry, ITactic
@@ -18,7 +18,7 @@ class IPlay(ABC):
 TacticT = TypeVar("TacticT", bound=tactic.ITactic)
 
 
-class TacticEntry(edict.EKey[TacticT]):
+class TacticEntry(tkdict.TypedKey[TacticT]):
     """An entry in the TacticEnum for a play."""
 
     __slots__ = ["_idx", "skill"]
