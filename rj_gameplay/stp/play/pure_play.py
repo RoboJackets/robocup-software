@@ -64,12 +64,11 @@ class PurePlay(play.IPlay):
         :param world_state: The current WorldState.
         :return: The collected play.RoleRequests.
         """
-        prev_skills: tactic.SkillsDict = tactic.SkillsDict()
         role_requests: play.RoleRequests = play.RoleRequests()
 
         tactic_entry: play.TacticEntry
         for tactic_entry in self.tactics:
-            tactic_requests = tactic_entry.tactic.get_requests(prev_skills, world_state)
+            tactic_requests = tactic_entry.tactic.get_requests(world_state, None)
             role_requests[type(tactic_entry.tactic)] = tactic_requests
 
         return role_requests

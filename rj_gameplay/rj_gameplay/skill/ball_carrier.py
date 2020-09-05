@@ -7,41 +7,31 @@ from typing import Optional
 import numpy as np
 import stp.rc as rc
 import stp.skill as skill
+import stp.action as action
 
-
-# TODO: Add time information.
-class Pass:
-    """A representation of a pass."""
-
-    __slots__ = ["passer", "receiver", "pt"]
-
-    passer: rc.RobotId
-    receiver: rc.RobotId
-    pt: np.ndarray
-
-    def __init__(self, passer: rc.RobotId, receiver: rc.RobotId, pt: np.ndarray):
-        """Creates a Pass.
-        :param passer: The RobotId of the passing robot.
-        :param receiver: The RobotId of the receiving robot.
-        :param pt: The point at which the pass will be made to.
-        """
-        self.passer = passer
-        self.receiver = receiver
-        self.pt = pt
+import rj_gameplay.eval as eval
 
 
 class IBallCarrier(skill.ISkill, ABC):
-    @abstractmethod
-    def get_pass(self) -> Optional[Pass]:
+    def do_pass(self, pas: eval.Pass, robot: rc.Robot) -> action.IAction:
+        """Returns the action corresponding to
+        :param pas: The pass to perform.
+        :param robot: The robot to perform the pass.
+        :return:
+        """
+        ...
+
+    def do_shoot(self, shot: eval.Shot, robot: rc.Robot) -> action.IAction:
+        """Returns the action for shooting.
+        :type shot: The shot to perform.
+        :return:
+        """
         ...
 
 
 class BallCarrier(IBallCarrier):
     def define(self):
         pass
-
-    def get_pass(self) -> Optional[Pass]:
-        ...
 
     def create_request(self) -> skill.role.RoleRequest:
         pass

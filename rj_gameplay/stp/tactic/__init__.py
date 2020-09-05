@@ -2,7 +2,7 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
 import stp.action as action
 import stp.rc as rc
@@ -17,9 +17,9 @@ SkillT = TypeVar("SkillT", bound=skill.ISkill)
 class SkillEntry(tkdict.TypedKey[SkillT]):
     """An entry in the SkillsEnum for a tactic."""
 
-    __slots__ = ["skill", "_idx", "_owner"]
+    __slots__ = ["_skill", "_idx", "_owner"]
 
-    skill: Optional[SkillT]
+    _skill: Optional[SkillT]
     _idx: Optional[int]
 
     def __init__(self, entry_skill: Type[SkillT]):
@@ -28,16 +28,23 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
         """
         super().__init__(entry_skill)
 
-        self.skill = None
+        self._skill = None
         self._idx = None
 
     def set_idx(self, num: int) -> None:
         """Sets the index of the current skill, used for equality checks & hashing."""
         self._idx = num
 
-    def set_skill(self, skill_instance: SkillT) -> None:
-        """Sets the instance of the skill."""
-        self.skill = skill_instance
+    @property
+    def skill(self) -> SkillT:
+        """Getter for skill that asserts that _skill is not None."""
+        assert self._skill is not None
+        return self._skill
+
+    @skill.setter
+    def skill(self, skill_instance: SkillT) -> None:
+        """Setter for skill."""
+        self._skill = skill_instance
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, SkillEntry):
@@ -71,7 +78,7 @@ class SkillsEnum(metaclass=enum.SimpleEnumMeta):
             # Assign the correct indices to each skill.SkillEntry.
             entry.set_idx(idx)
             # Instantiate the skills using skill_factory.
-            entry.set_skill(skill_factory.create(entry.concrete_cls))
+            entry.skill = skill_factory.create(entry.concrete_cls)
 
     @classmethod
     def entries(cls) -> List[SkillEntry]:
@@ -102,27 +109,35 @@ class SkillsDict(tkdict.TypedKeyDict[List[skill.ISkill]]):
     ...
 
 
-class ITactic(ABC):
+PropT = TypeVar("PropT")
+
+
+class ITactic(Generic[PropT], ABC):
     """The interface class for all tactics."""
 
     @abstractmethod
-    def get_requests(
-        self, prev_skills: SkillsDict, world_state: rc.WorldState
-    ) -> RoleRequests:
+    def compute_props(self, prev_props: Optional[PropT]) -> PropT:
+        """Computes the props(state) required for the current tick.
+        :param prev_props: The props from the previous tick, if available.
+        :return: The props for the current tick.
+        """
+        ...
+
+    @abstractmethod
+    def get_requests(self, world_state: rc.WorldState, props: PropT) -> RoleRequests:
         """Returns the RoleRequests for this tactic.
-        :param prev_skills: A dictionary of skills from the previous iteration.
         :param world_state: Current world state.
+        :param props: The state of the current tactic.
         :return: RoleRequests for the tactic.
         """
         ...
 
     @abstractmethod
-    def tick(
-        self, role_results: RoleResults
-    ) -> Tuple[List[action.IAction], SkillsDict]:
+    def tick(self, role_results: RoleResults, props: PropT) -> List[action.IAction]:
         """Ticks the tactic, returning a tuple of the actions and the skills executed.
         :param role_results: The results of role assignment.
-        :return:
+        :param props: The state of the current tactic.
+        :return: A list of actions to be executed.
         """
         ...
 

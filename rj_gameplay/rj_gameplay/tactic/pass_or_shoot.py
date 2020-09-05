@@ -1,5 +1,6 @@
 """Contains the PassOrShoot tactic. """
 
+from dataclasses import dataclass
 from typing import List, Optional
 
 import stp.action as action
@@ -9,17 +10,27 @@ import stp.tactic as tactic
 import rj_gameplay.skill.ball_carrier as ball_carrier
 import rj_gameplay.skill.capture as capture
 import rj_gameplay.skill.seeker as seeker
+import rj_gameplay.eval as eval
+from rj_gameplay.skill.ball_carrier import IBallCarrier
+from stp.role import RoleResult
 
 
 class Skills(tactic.SkillsEnum):
-    """SKills for PassOrShoot."""
+    """Skills for PassOrShoot."""
 
     BALL_CARRIER = tactic.SkillEntry(ball_carrier.IBallCarrier)
     SEEKERS = tactic.SkillEntry(seeker.ISeeker)
     RECEIVER = tactic.SkillEntry(capture.ICapture)
 
 
-class PassOrShoot(tactic.ITactic):
+@dataclass
+class Props:
+    """Props (state) for PassOrShoot."""
+
+    maybe_pass: Optional[eval.Pass] = None
+
+
+class PassOrShoot(tactic.ITactic[Props]):
     """Tactic that controls one ball carrier and multiple seekers."""
 
     __slots__ = ["skills", "BALL_CARRIER", "RECEIVER", "SEEKERS"]
@@ -31,13 +42,15 @@ class PassOrShoot(tactic.ITactic):
         self.RECEIVER = self.skills.RECEIVER
         self.SEEKERS = self.skills.SEEKERS
 
+    def compute_props(self, prev_props: Optional[Props]) -> Props:
+        return Props()
+
     def get_requests(
-        self, prev_skills: tactic.SkillsDict, world_state: rc.WorldState
+        self, world_state: rc.WorldState, props: Props
     ) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = tactic.RoleRequests()
 
-        maybe_pass = self.get_pass(prev_skills)
-        if maybe_pass:
+        if props.maybe_pass:
             role_requests[self.RECEIVER] = [self.RECEIVER.skill.create_request()]
 
         role_requests[self.BALL_CARRIER] = [self.BALL_CARRIER.skill.create_request()]
@@ -47,15 +60,19 @@ class PassOrShoot(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[action.IAction]:
-        return []
+    def tick(
+        self, role_results: tactic.RoleResults, props: Props
+    ) -> List[action.IAction]:
 
-    @staticmethod
-    def get_pass(prev_skills: tactic.SkillsDict) -> Optional[ball_carrier.Pass]:
-        """Returns the pass from IBallCarrier if it is in prev_skills, otherwise None.
-        :param prev_skills: Skills that were run in the previous tick.
-        :return: The pass from IBallCarrier if it is in prev_skills, otherwise None.
-        """
-        if Skills.BALL_CARRIER not in prev_skills:
-            return None
-        return prev_skills[Skills.BALL_CARRIER].get_pass()
+        receiver_role: RoleResult = role_results[self.RECEIVER][0]
+        ball_carrier_role: RoleResult = role_results[self.BALL_CARRIER][0]
+        seeker_roles: List[RoleResult] = role_results[self.SEEKERS]
+
+        actions: List[action.IAction] = []
+
+        assert ball_carrier_role.role.is_filled()
+        ball_carrier_skill: IBallCarrier = self.BALL_CARRIER.skill
+
+        for seeker_role in seeker_roles:
+            if seeker_role.is_filled():
+                ...

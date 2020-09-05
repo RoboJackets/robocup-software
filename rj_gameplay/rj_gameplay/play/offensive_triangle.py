@@ -17,4 +17,4 @@ class OffensiveTriangle(pure_play.PurePlay):
     """
 
     def __init__(self, tactics_factory: tactic.Factory):
-        super().__init__(Tactics(tactics_factory))
+        super().__init__(Tactics(tactics_factory), ctx)

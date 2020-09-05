@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 
@@ -13,7 +13,7 @@ from stp.role import Priority
 from stp.rc import Ball, Robot, WorldState
 from stp.role.assignment import RoleId, FlatRoleRequests
 from stp.role.assignment.naive import SortedRequests, NaiveRoleAssignment
-from stp.tactic import RoleResults
+from stp.tactic import RoleResults, PropT
 
 
 class SkillBase(skill.ISkill):
@@ -51,7 +51,7 @@ class Skills(tactic.SkillsEnum):
     C2 = tactic.SkillEntry(SkillC)
 
 
-class TacticBase(tactic.ITactic):
+class TacticBase(tactic.ITactic[None]):
     def __init__(self, ctx: tactic.Ctx):
         self.skills = Skills(ctx.skill_factory)
 
@@ -62,13 +62,14 @@ class TacticBase(tactic.ITactic):
         self.C1 = self.skills.C1
         self.C2 = self.skills.C2
 
-    def tick(self, role_results: RoleResults) -> List[action.IAction]:
+    def compute_props(self, prev_props: None) -> None:
+        return None
+
+    def tick(self, role_results: RoleResults, props: None) -> List[action.IAction]:
         # Dummy tick function doesn't return any actions.
         return []
 
-    def get_requests(
-        self, prev_skills: tactic.SkillsDict, world_state: WorldState
-    ) -> tactic.RoleRequests:
+    def get_requests(self, world_state: WorldState, props: None) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
             self.A1: [self.A1.skill.create_request().with_priority(Priority.LOW)],
             self.A2: [self.A2.skill.create_request().with_priority(Priority.MEDIUM)],
@@ -98,7 +99,7 @@ def get_simple_role_ids() -> List[RoleId]:
         zip(skill_entries, skill_instances)
     ):
         skill_entry.set_idx(idx)
-        skill_entry.set_skill(skill_instance)
+        skill_entry.skill = skill_instance
 
     return [(TacticBase, skill_entry, 0) for skill_entry in skill_entries]
 
@@ -161,8 +162,7 @@ def test_get_sorted_requests_multiple() -> None:
     tactic_ctx = get_tactic_ctx()
     tactic_instance = TacticBase(tactic_ctx)
 
-    # Create dummy prev_skills and world_state.
-    prev_skills: tactic.SkillsDict = tactic.SkillsDict()
+    # Create dummy world_state.
     out_robots: List[Robot] = []
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
@@ -170,7 +170,7 @@ def test_get_sorted_requests_multiple() -> None:
     world_state: WorldState = WorldState(out_robots, their_robots, ball)
 
     requests: play.RoleRequests = {
-        TacticBase: tactic_instance.get_requests(prev_skills, world_state)
+        TacticBase: tactic_instance.get_requests(world_state, None)
     }
 
     flat_requests: FlatRoleRequests = play.flatten_requests(requests)

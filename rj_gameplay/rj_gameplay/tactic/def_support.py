@@ -1,18 +1,24 @@
 """Contains the DefSupport tactic.
 """
 
-from typing import List
+from typing import List, Optional
 
 import stp.action as action
 import stp.skill.stub as stub
 import stp.tactic as tactic
+import stp.rc as rc
+from stp.tactic import PropT
 
 
 class Skills(tactic.SkillsEnum):
     STUB = tactic.SkillEntry(stub.Stub)
 
 
-class DefSupport(tactic.ITactic):
+class Props:
+    ...
+
+
+class DefSupport(tactic.ITactic[Props]):
     """Tactic that supports the ball carrier defensively."""
 
     __slots__ = ["skills", "STUB"]
@@ -22,12 +28,19 @@ class DefSupport(tactic.ITactic):
 
         self.STUB = self.skills.STUB
 
-    def get_requests(self, prev_skills: tactic.SkillsDict) -> tactic.RoleRequests:
+    def compute_props(self, prev_props: Optional[Props]) -> Props:
+        pass
+
+    def get_requests(
+        self, world_state: rc.WorldState, props: Props
+    ) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = tactic.RoleRequests()
 
         role_requests[self.STUB] = self.STUB.skill.create_request()
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[action.IAction]:
+    def tick(
+        self, role_results: tactic.RoleResults, props: Props
+    ) -> List[action.IAction]:
         return []
