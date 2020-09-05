@@ -49,7 +49,7 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
         return hash((self.concrete_cls, self._idx))
 
     def __str__(self) -> str:
-        idx_string: str = "{:2}".format(self._idx) if self._idx else "??"
+        idx_string: str = "{:2}".format(self._idx) if self._idx is not None else "??"
         return "SkillEntry({}: {} - {})".format(
             idx_string, self.concrete_cls.__name__, self.skill
         )
