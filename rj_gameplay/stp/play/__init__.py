@@ -23,22 +23,30 @@ class TacticEntry(tkdict.TypedKey[TacticT]):
 
     __slots__ = ["_idx", "skill"]
 
-    tactic: Optional[TacticT]
+    _tactic: Optional[TacticT]
     _idx: Optional[int]
 
     def __init__(self, entry_skill: Type[TacticT]):
         super().__init__(entry_skill)
 
-        self.tactic = None
+        self._tactic = None
         self._idx = None
+
+    @property
+    def tactic(self) -> TacticT:
+        """Getter for _tactic that checks that it's not None."""
+        assert self._tactic is not None
+        return self._tactic
+
+    @tactic.setter
+    def tactic(self, tactic_instance: TacticT) -> None:
+        """Sets the actual instance of the tactic."""
+        assert tactic_instance is not None
+        self._tactic = tactic_instance
 
     def set_idx(self, num: int) -> None:
         """Sets the index of the entry."""
         self._idx = num
-
-    def set_tactic(self, tactic_instance: TacticT) -> None:
-        """Sets the actual instance of the tactic."""
-        self.tactic = tactic_instance
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, TacticEntry):
@@ -51,7 +59,7 @@ class TacticEntry(tkdict.TypedKey[TacticT]):
 
     def __str__(self) -> str:
         return "{:3}: {} - {}".format(
-            self._idx, self.concrete_cls.__name__, self.tactic
+            self._idx, self.concrete_cls.__name__, self._tactic
         )
 
     def __repr__(self) -> str:
@@ -70,7 +78,7 @@ class TacticsEnum(metaclass=enum.SimpleEnumMeta):
         # skills using skill_factory.
         for idx, entry in enumerate(self.entries()):
             entry.set_idx(idx)
-            entry.set_tactic(tactic_factory.create(entry.concrete_cls))
+            entry.tactic = tactic_factory.create(entry.concrete_cls)
 
     @classmethod
     def entries(cls) -> List[TacticEntry]:
@@ -109,7 +117,7 @@ class Ctx:
 class IPlay(ABC):
     """Interface for a play, the highest level of abstraction from the STP hierarchy."""
 
-    __slots__ = []
+    __slots__ = ()
 
     @abstractmethod
     def tick(
@@ -189,4 +197,5 @@ def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
                     "we dropped an index somewhere..."
                 )
 
-    return nested_results
+    # mypy fails to infer that there won't be any Nones in the list.
+    return nested_results  # type: ignore

@@ -37,13 +37,16 @@ def distance_to_pt(
     """
 
     def cost_fn(
-        robot: rc.Robot, prev_robot: Optional[rc.Robot], world_state: rc.WorldState
+        robot: rc.Robot,
+        prev_result: Optional[role.RoleResult],
+        world_state: rc.WorldState,
     ):
         dist: float = np.linalg.norm(robot.pose[:2] - eval_pt)
         cost: float = dist / saturate_dist
 
         # Add the cost for switching robots.
-        cost += flat_switch_cost(robot, prev_robot, switch_cost)
+        if prev_result and prev_result.role.is_filled():
+            cost += flat_switch_cost(robot, prev_result.role.robot, switch_cost)
 
         return max(min(cost, 1.0), 0.0)
 
@@ -59,12 +62,15 @@ def constant(value: float, switch_cost: float) -> role.CostFn:
     assert 0.0 <= value <= 1.0
 
     def cost_fn(
-        robot: rc.Robot, prev_robot: Optional[rc.Robot], world_state: rc.WorldState
+        robot: rc.Robot,
+        prev_result: Optional[role.RoleResult],
+        world_state: rc.WorldState,
     ):
         cost = value
 
         # Add the cost for switching robots.
-        cost += flat_switch_cost(robot, prev_robot, switch_cost)
+        if prev_result and prev_result.role.is_filled():
+            cost += flat_switch_cost(robot, prev_result.role.robot, switch_cost)
 
         return max(min(cost, 1.0), 0.0)
 

@@ -1,7 +1,7 @@
 """This module contains data structures for role assignment."""
 
 from enum import IntEnum
-from typing import Callable, Optional
+from typing import Optional, Protocol
 
 import stp.rc as rc
 
@@ -40,8 +40,16 @@ class Priority(IntEnum):
     NUM_PRIORITIES = 3
 
 
-# (robot: Robot, prev_robot: Robot, world_state: WorldState) -> cost.
-CostFn = Callable[[rc.Robot, Optional[rc.Robot], rc.WorldState], float]
+class CostFn(Protocol):
+    """Protocol for CostFn."""
+
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+        ...
 
 
 class RoleRequest:
@@ -98,25 +106,19 @@ class RoleRequest:
 class RoleResult:
     """The result of role assignment."""
 
-    __slots__ = ["priority", "required", "cost_fn", "cost", "role"]
+    __slots__ = ["request", "cost", "role"]
 
-    priority: Priority
-    required: bool
-    cost_fn: CostFn
+    request: RoleRequest
     cost: float
     role: Role
 
     def __init__(
         self,
-        priority: Priority,
-        required: bool,
-        cost_fn: CostFn,
+        request: RoleRequest,
         cost: float,
         role: Role,
     ):
-        self.priority = priority
-        self.required = required
-        self.cost_fn = cost_fn
+        self.request = request
         self.cost = cost
         self.role = role
 
@@ -137,13 +139,12 @@ class RoleResult:
 
     @classmethod
     def from_request(cls, request: RoleRequest) -> "RoleResult":
-        return RoleResult(
-            request.priority, request.required, request.cost_fn, 0.0, Role(None)
-        )
+        """Creates an unfilled RoleResult from a RoleRequest."""
+        return RoleResult(request, 0.0, Role(None))
 
     def __str__(self) -> str:
         return "RoleResult(priority={:>6}, role={})".format(
-            self.priority.name, self.role
+            self.request.priority.name, self.role
         )
 
     def __repr__(self) -> str:

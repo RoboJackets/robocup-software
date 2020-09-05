@@ -5,6 +5,8 @@ from collections.abc import MutableMapping
 
 ValueInterfaceT = TypeVar("ValueInterfaceT")
 
+# There's no way to specify that ValueConcreteT is bounded by ValueInterfaceT, so these
+# two types are separate, and we need to force mypy to accept this.
 ValueConcreteT = TypeVar("ValueConcreteT")
 
 
@@ -57,7 +59,9 @@ class TypedKeyDict(Generic[ValueInterfaceT], MutableMapping):
                 )
             )
 
-        self._dict.__setitem__(key, value)
+        # We need to force mypy to accept that ValueConcreteT is a subclass of
+        # ValueInterfaceT, even though there's no actual checks that this is true.
+        self._dict.__setitem__(key, value)  # type: ignore
 
     def __delitem__(self, key: TypedKey[ValueConcreteT]) -> None:
         self._dict.__delitem__(key)

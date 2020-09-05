@@ -1,7 +1,7 @@
 """Module that contains NaiveRoleAssignment. """
 
 from math import isfinite
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 import scipy.optimize
 import numpy as np
@@ -9,6 +9,7 @@ import numpy as np
 import stp.role as role
 import stp.role.assignment as assignment
 import stp.rc
+from stp.role import RoleResult
 
 SortedRequests = List[assignment.FlatRoleRequests]
 
@@ -59,15 +60,11 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
         # Iterate over each role request.
         for request_idx, (role_id, request) in enumerate(flat_requests.items()):
-            role_id: assignment.RoleId
-            request: role.RoleRequest
-
             # For each role request, iterate over robots.
             for robot_idx, robot in enumerate(free_robots):
                 # Otherwise, record the cost.
-                cost: float = request.cost_fn(
-                    robot, prev_results.get(role_id, None), world_state
-                )
+                prev_result: Optional[RoleResult] = prev_results.get(role_id, None)
+                cost: float = request.cost_fn(robot, prev_result, world_state)
                 if not isfinite(cost):
                     raise ValueError(
                         "Got a non-finite cost ({}) for request {} and robot {}".format(
