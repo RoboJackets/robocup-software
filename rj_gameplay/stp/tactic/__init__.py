@@ -8,6 +8,7 @@ import stp.action as action
 import stp.skill as skill
 import stp.utils.typed_key_dict as tkdict
 import stp.utils.enum as enum
+import stp.rc as rc
 import stp.role as role
 
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
@@ -91,8 +92,8 @@ class SkillsEnum(metaclass=enum.SimpleEnumMeta):
         return "\n".join(strs)
 
 
-RoleRequests = Dict[SkillEntry, role.RoleRequest]
-RoleResults = Dict[SkillEntry, role.RoleResult]
+RoleRequests = Dict[SkillEntry, List[role.RoleRequest]]
+RoleResults = Dict[SkillEntry, List[role.RoleResult]]
 
 
 class SkillsDict(tkdict.TypedKeyDict[List[skill.ISkill]]):
@@ -105,10 +106,13 @@ class ITactic(ABC):
     """The interface class for all tactics."""
 
     @abstractmethod
-    def get_requests(self, prev_skills: SkillsDict) -> RoleRequests:
+    def get_requests(
+        self, prev_skills: SkillsDict, world_state: rc.WorldState
+    ) -> RoleRequests:
         """Returns the RoleRequests for this tactic.
         :param prev_skills: A dictionary of skills from the previous iteration.
-        :return:
+        :param world_state: Current world state.
+        :return: RoleRequests for the tactic.
         """
         ...
 

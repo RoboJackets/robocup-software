@@ -1,13 +1,13 @@
 """This module contains the interface for role assignment."""
 
 from abc import abstractmethod, ABC
-from typing import Dict, Tuple, Type
+from typing import Dict, List, Tuple, Type
 
 import stp.tactic as tactic
 import stp.role as role
 import stp.rc
 
-RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry]
+RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry, int]
 
 FlatRoleRequests = Dict[RoleId, role.RoleRequest]
 FlatRoleResults = Dict[RoleId, role.RoleResult]

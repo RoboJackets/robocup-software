@@ -12,7 +12,8 @@ import stp.tactic as tactic
 import stp.utils.typed_key_dict as tkdict
 import stp.utils.enum as enum
 import stp.rc as rc
-
+from stp.role import RoleResult
+from stp.tactic import SkillEntry
 
 TacticT = TypeVar("TacticT", bound=tactic.ITactic)
 
@@ -139,16 +140,24 @@ def flatten_requests(role_requests: RoleRequests) -> assignment.FlatRoleRequests
     flat_role_requests: assignment.FlatRoleRequests = {}
 
     tactic_t: Type[tactic.ITactic]
-    tactic_requests: Dict[tactic.SkillEntry, role.RoleRequest]
+    tactic_requests: tactic.RoleRequests
 
     for tactic_t, tactic_requests in role_requests.items():
         skill_entry: tactic.SkillEntry
-        request: role.RoleRequest
+        requests: List[role.RoleRequest]
 
-        for skill_entry, request in tactic_requests.items():
-            flat_role_requests[(tactic_t, skill_entry)] = request
+        for skill_entry, requests in tactic_requests.items():
+            request: role.RoleRequest
+
+            for request_idx, request in enumerate(requests):
+                flat_role_requests[(tactic_t, skill_entry, request_idx)] = request
 
     return flat_role_requests
+
+
+MaybeRoleResults = Dict[
+    Type[tactic.ITactic], Dict[SkillEntry, List[Optional[role.RoleResult]]]
+]
 
 
 def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
@@ -157,11 +166,27 @@ def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
     :param results: The flat assignments.FlatRoleResults dict.
     :return: The nested play.RoleRequests dicts
     """
-    nested_results: RoleResults = defaultdict(dict)
+    nested_results: MaybeRoleResults = defaultdict(lambda: defaultdict(list))
 
     tactic_t: Type[tactic.ITactic]
     skill_entry: tactic.SkillEntry
-    for (tactic_t, skill_entry), result in results.items():
-        nested_results[tactic_t][skill_entry] = result
+    for (tactic_t, skill_entry, request_idx), result in results.items():
+        results_list: List[Optional[RoleResult]] = nested_results[tactic_t][skill_entry]
+
+        # Extend the list so that it's long enough to put in result at request_idx.
+        if len(results_list) <= request_idx:
+            num_to_extend = request_idx - len(results_list) + 1
+            results_list.extend([None for _ in range(num_to_extend)])
+        results_list[request_idx] = result
+
+    # Check that there aren't any Nones in the nested dict.
+    tactic_results: Dict[SkillEntry, List[Optional[RoleResult]]]
+    for tactic_t, tactic_results in nested_results.items():
+        for skill_entry, skill_results in tactic_results.items():
+            if None in skill_results:
+                raise RuntimeError(
+                    "Somehow there's a None in the list of RoleResults, meaning that "
+                    "we dropped an index somewhere..."
+                )
 
     return nested_results

@@ -4,6 +4,7 @@ from typing import Optional, List
 
 import stp.action as action
 import stp.tactic as tactic
+import stp.rc as rc
 
 import rj_gameplay.skill.ball_carrier as ball_carrier
 import rj_gameplay.skill.seeker as seeker
@@ -30,15 +31,19 @@ class PassOrShoot(tactic.ITactic):
         self.RECEIVER = self.skills.RECEIVER
         self.SEEKERS = self.skills.SEEKERS
 
-    def get_requests(self, prev_skills: tactic.SkillsDict) -> tactic.RoleRequests:
+    def get_requests(
+        self, prev_skills: tactic.SkillsDict, world_state: rc.WorldState
+    ) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = tactic.RoleRequests()
 
         maybe_pass = self.get_pass(prev_skills)
         if maybe_pass:
-            role_requests[self.RECEIVER] = self.RECEIVER.skill.create_request()
+            role_requests[self.RECEIVER] = [self.RECEIVER.skill.create_request()]
 
-        role_requests[self.BALL_CARRIER] = self.BALL_CARRIER.skill.create_request()
-        role_requests[self.SEEKERS] = self.SEEKERS.skill.create_request()
+        role_requests[self.BALL_CARRIER] = [self.BALL_CARRIER.skill.create_request()]
+        role_requests[self.SEEKERS] = self.SEEKERS.skill.create_requests(
+            len(world_state.our_robots)
+        )
 
         return role_requests
 

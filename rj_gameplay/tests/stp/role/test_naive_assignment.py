@@ -66,14 +66,16 @@ class TacticBase(tactic.ITactic):
         # Dummy tick function doesn't return any actions.
         return []
 
-    def get_requests(self, prev_skills: tactic.SkillsDict) -> tactic.RoleRequests:
+    def get_requests(
+        self, prev_skills: tactic.SkillsDict, world_state: WorldState
+    ) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
-            self.A1: self.A1.skill.create_request().with_priority(Priority.LOW),
-            self.A2: self.A2.skill.create_request().with_priority(Priority.MEDIUM),
-            self.B1: self.B1.skill.create_request().with_priority(Priority.MEDIUM),
-            self.B2: self.B2.skill.create_request().with_priority(Priority.HIGH),
-            self.C1: self.C1.skill.create_request().with_priority(Priority.LOW),
-            self.C2: self.C2.skill.create_request().with_priority(Priority.MEDIUM),
+            self.A1: [self.A1.skill.create_request().with_priority(Priority.LOW)],
+            self.A2: [self.A2.skill.create_request().with_priority(Priority.MEDIUM)],
+            self.B1: [self.B1.skill.create_request().with_priority(Priority.MEDIUM)],
+            self.B2: [self.B2.skill.create_request().with_priority(Priority.HIGH)],
+            self.C1: [self.C1.skill.create_request().with_priority(Priority.LOW)],
+            self.C2: [self.C2.skill.create_request().with_priority(Priority.MEDIUM)],
         }
 
         return role_requests
@@ -98,7 +100,7 @@ def get_simple_role_ids() -> List[RoleId]:
         skill_entry.set_idx(idx)
         skill_entry.set_skill(skill_instance)
 
-    return [(TacticBase, skill_entry) for skill_entry in skill_entries]
+    return [(TacticBase, skill_entry, 0) for skill_entry in skill_entries]
 
 
 def test_get_sorted_requests_simple():
@@ -159,9 +161,16 @@ def test_get_sorted_requests_multiple() -> None:
     tactic_ctx = get_tactic_ctx()
     tactic_instance = TacticBase(tactic_ctx)
 
+    # Create dummy prev_skills and world_state.
     prev_skills: tactic.SkillsDict = tactic.SkillsDict()
+    out_robots: List[Robot] = []
+    their_robots: List[Robot] = []
+    ball: Ball = Ball(np.zeros(2), np.zeros(2))
+
+    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+
     requests: play.RoleRequests = {
-        TacticBase: tactic_instance.get_requests(prev_skills)
+        TacticBase: tactic_instance.get_requests(prev_skills, world_state)
     }
 
     flat_requests: FlatRoleRequests = play.flatten_requests(requests)
@@ -186,24 +195,24 @@ def test_get_sorted_requests_multiple() -> None:
     assert len(sorted_requests[Priority.HIGH]) == len(hi_tactics)
 
     for low_tactic in low_tactics:
-        assert (TacticBase, low_tactic) in sorted_requests[Priority.LOW]
+        assert (TacticBase, low_tactic, 0) in sorted_requests[Priority.LOW]
         assert (
-            sorted_requests[Priority.LOW][TacticBase, low_tactic]
-            == requests[TacticBase][low_tactic]
+            sorted_requests[Priority.LOW][TacticBase, low_tactic, 0]
+            == requests[TacticBase][low_tactic][0]
         )
 
     for med_tactic in med_tactics:
-        assert (TacticBase, med_tactic) in sorted_requests[Priority.MEDIUM]
+        assert (TacticBase, med_tactic, 0) in sorted_requests[Priority.MEDIUM]
         assert (
-            sorted_requests[Priority.MEDIUM][TacticBase, med_tactic]
-            == requests[TacticBase][med_tactic]
+            sorted_requests[Priority.MEDIUM][TacticBase, med_tactic, 0]
+            == requests[TacticBase][med_tactic][0]
         )
 
     for hi_tactic in hi_tactics:
-        assert (TacticBase, hi_tactic) in sorted_requests[Priority.HIGH]
+        assert (TacticBase, hi_tactic, 0) in sorted_requests[Priority.HIGH]
         assert (
-            sorted_requests[Priority.HIGH][TacticBase, hi_tactic]
-            == requests[TacticBase][hi_tactic]
+            sorted_requests[Priority.HIGH][TacticBase, hi_tactic, 0]
+            == requests[TacticBase][hi_tactic][0]
         )
 
 
@@ -242,17 +251,17 @@ def test_compute_costs_matrix() -> None:
         ]
     )
 
-    # Construct the game state.
+    # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    game_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState(out_robots, their_robots, ball)
     prev_results = {}
 
     # Compute the cost matrix.
     costs_matrix: np.ndarray = NaiveRoleAssignment.compute_costs_matrix(
-        free_robots, requests, game_state, prev_results
+        free_robots, requests, world_state, prev_results
     )
 
     # Check that the cost matrix is of the right size, ie. (num_robots, num_requests).
@@ -301,16 +310,16 @@ def test_assign_prioritized_roles() -> None:
         ]
     )
 
-    # Construct the game state.
+    # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    game_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState(out_robots, their_robots, ball)
 
     # Assign the roles.
     results, new_free_robots = NaiveRoleAssignment.assign_prioritized_roles(
-        requests, game_state, free_robots, {}
+        requests, world_state, free_robots, {}
     )
 
     # Check that the the three role ids are assigned.
@@ -367,15 +376,15 @@ def test_assign_roles() -> None:
         ]
     )
 
-    # Construct the game state.
+    # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    game_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState(out_robots, their_robots, ball)
 
     # Assign the roles.
-    results = NaiveRoleAssignment.assign_roles(requests, game_state, {})
+    results = NaiveRoleAssignment.assign_roles(requests, world_state, {})
 
     # Check that the the three role ids are assigned.
     assert len(results) == 3
