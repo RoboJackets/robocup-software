@@ -58,6 +58,11 @@ jobs:
           source /opt/ros/foxy/setup.sh && source install/setup.bash && ./install/lib/rj_robocup/test-soccer --gtest_filter="*"
       - run: |
           source /opt/ros/foxy/setup.sh && source install/setup.bash && cd soccer/src/soccer/gameplay && ./run_tests.sh
+      # Run tests for rj_gameplay
+      - run: pip3 install -r rj_gameplay/requirements.txt
+      - run: PYTHONPATH="$(readlink -f rj_gameplay):$PYTHONPATH" python -m pytest --cov rj_gameplay --cov stp rj_gameplay
+      - run: bash <(curl -s https://codecov.io/bash)
+
   python-static:
     <<: *dir
     <<: *image
@@ -67,9 +72,6 @@ jobs:
       - run: make pylint
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
-      - run: pip3 install -r rj_gameplay/requirements.txt
-      - run: python3 -m pylint -j8 --reports=n rj_gameplay --cov=./
-      - run: bash <(curl -s https://codecov.io/bash)
 
   style:
     <<: *dir

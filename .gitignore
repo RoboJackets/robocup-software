@@ -37,3 +37,8 @@ run/*.nib
 clean.patch
 perf.data*
 .gdb_history
+
+# Python Coverage
+.coverage
+.coverage.*
+coverage.xml
