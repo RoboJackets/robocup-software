@@ -3,9 +3,9 @@
 
 from typing import List
 
-import stp.tactic as tactic
-import stp.skill.stub as stub
 import stp.action as action
+import stp.skill.stub as stub
+import stp.tactic as tactic
 
 
 class Skills(tactic.SkillsEnum):

@@ -5,9 +5,8 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 import numpy as np
-
-import stp.skill as skill
 import stp.rc as rc
+import stp.skill as skill
 
 
 # TODO: Add time information.

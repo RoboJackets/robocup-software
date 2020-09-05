@@ -1,7 +1,7 @@
 """This module contains the Stub skill for ISkill."""
 
-import stp.skill as skill
 import stp.role as role
+import stp.skill as skill
 
 
 class Stub(skill.ISkill):

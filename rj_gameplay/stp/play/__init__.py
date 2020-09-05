@@ -3,15 +3,15 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict, Type, TypeVar, Optional, List, Iterator, Tuple
+from typing import Dict, Iterator, List, Optional, Tuple, Type, TypeVar
 
+import stp.action as action
+import stp.rc as rc
 import stp.role as role
 import stp.role.assignment as assignment
-import stp.action as action
 import stp.tactic as tactic
-import stp.utils.typed_key_dict as tkdict
 import stp.utils.enum as enum
-import stp.rc as rc
+import stp.utils.typed_key_dict as tkdict
 from stp.role import RoleResult
 from stp.tactic import SkillEntry
 

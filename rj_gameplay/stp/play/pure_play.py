@@ -4,9 +4,9 @@ from typing import List, Tuple
 
 import stp.action as action
 import stp.play as play
-import stp.tactic as tactic
-import stp.role.assignment as assignment
 import stp.rc as rc
+import stp.role.assignment as assignment
+import stp.tactic as tactic
 
 
 class PurePlay(play.IPlay):

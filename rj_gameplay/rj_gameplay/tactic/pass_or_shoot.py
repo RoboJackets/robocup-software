@@ -1,14 +1,14 @@
 """Contains the PassOrShoot tactic. """
 
-from typing import Optional, List
+from typing import List, Optional
 
 import stp.action as action
-import stp.tactic as tactic
 import stp.rc as rc
+import stp.tactic as tactic
 
 import rj_gameplay.skill.ball_carrier as ball_carrier
-import rj_gameplay.skill.seeker as seeker
 import rj_gameplay.skill.capture as capture
+import rj_gameplay.skill.seeker as seeker
 
 
 class Skills(tactic.SkillsEnum):

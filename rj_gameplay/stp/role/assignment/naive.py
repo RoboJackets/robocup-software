@@ -1,14 +1,14 @@
 """Module that contains NaiveRoleAssignment. """
 
 from math import isfinite
-from typing import Tuple, List, Optional
+from typing import List, Optional, Tuple
 
-import scipy.optimize
 import numpy as np
+import scipy.optimize
 
+import stp.rc
 import stp.role as role
 import stp.role.assignment as assignment
-import stp.rc
 from stp.role import RoleResult
 
 SortedRequests = List[assignment.FlatRoleRequests]

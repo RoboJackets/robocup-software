@@ -2,14 +2,14 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Type, TypeVar, List, Optional, Dict, MutableMapping, Tuple
+from typing import Dict, List, Optional, Tuple, Type, TypeVar
 
 import stp.action as action
-import stp.skill as skill
-import stp.utils.typed_key_dict as tkdict
-import stp.utils.enum as enum
 import stp.rc as rc
 import stp.role as role
+import stp.skill as skill
+import stp.utils.enum as enum
+import stp.utils.typed_key_dict as tkdict
 
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
 

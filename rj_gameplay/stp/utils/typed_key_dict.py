@@ -1,7 +1,7 @@
 """This module contains data structures to define TypedKeyDict."""
 
-from typing import TypeVar, Generic, Dict, Type
 from collections.abc import MutableMapping
+from typing import Dict, Generic, Type, TypeVar
 
 ValueInterfaceT = TypeVar("ValueInterfaceT")
 

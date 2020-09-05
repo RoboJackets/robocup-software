@@ -1,9 +1,9 @@
-import stp.tactic as tactic
-import rj_gameplay.tactic.pass_or_shoot as pass_or_shoot
-import rj_gameplay.tactic.def_support as def_support
-
 import stp.play as play
 import stp.play.pure_play as pure_play
+import stp.tactic as tactic
+
+import rj_gameplay.tactic.def_support as def_support
+import rj_gameplay.tactic.pass_or_shoot as pass_or_shoot
 
 
 class Tactics(play.TacticsEnum):

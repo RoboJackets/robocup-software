@@ -5,8 +5,8 @@ from typing import Optional
 
 import numpy as np
 
-import stp.role as role
 import stp.rc as rc
+import stp.role as role
 
 
 def flat_switch_cost(

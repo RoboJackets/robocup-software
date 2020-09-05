@@ -4,7 +4,6 @@ from typing import List
 
 import astroid.node_classes
 import astroid.nodes
-
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 from pylint.lint.pylinter import PyLinter

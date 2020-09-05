@@ -2,7 +2,7 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Type, TypeVar, List, Dict
+from typing import Dict, List, Type, TypeVar
 
 import stp.role as role
 
