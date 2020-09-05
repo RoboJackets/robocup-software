@@ -1,3 +1,6 @@
+"""This module contains data structures that are robocup specific, ie. Robot, Ball,
+WorldState"""
+
 from typing import List
 import numpy as np
 

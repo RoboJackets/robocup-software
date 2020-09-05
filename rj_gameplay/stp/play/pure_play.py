@@ -1,3 +1,5 @@
+"""This module contains PurePlay."""
+
 from typing import List, Tuple
 
 import stp.action as action

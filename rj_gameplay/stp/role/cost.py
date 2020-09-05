@@ -1,3 +1,6 @@
+"""This module contains a variety of functions that return cost functions for
+convenience."""
+
 from typing import Optional
 
 import numpy as np
@@ -9,18 +12,25 @@ import stp.rc as rc
 def flat_switch_cost(
     robot: rc.Robot, prev_robot: Optional[rc.Robot], switch_cost: float
 ) -> float:
+    """Returns the cost of switching from prev_robot to robot, ie. switch_cost if
+    robot.id != prev_robot.id, otherwise 0.
+    :param robot: The currently selected robot.
+    :param prev_robot: The previously selected robot.
+    :param switch_cost: The cost of switching to a different robot.
+    :return: switch_cost if robot.id != prev_robot.id, otherwise returns 0.
+    """
     if prev_robot:
         return switch_cost * (robot.id != prev_robot.id)
-    else:
-        return 0
+
+    return 0
 
 
 def distance_to_pt(
-    pt: np.ndarray, saturate_dist: float, switch_cost: float
+    eval_pt: np.ndarray, saturate_dist: float, switch_cost: float
 ) -> role.CostFn:
     """Creates a cost function that returns the distance from the robot's position to a
     point, saturating at the passed in distance.
-    :param pt: Point to evaluate robot's position to.
+    :param eval_pt: Point to evaluate robot's position to.
     :param saturate_dist: Distance at which the cost function saturates.
     :param switch_cost: Flat cost added for switching to a different robot.
     :return: Cost function
@@ -29,7 +39,7 @@ def distance_to_pt(
     def cost_fn(
         robot: rc.Robot, prev_robot: Optional[rc.Robot], world_state: rc.WorldState
     ):
-        dist: float = np.linalg.norm(robot.pose[:2] - pt)
+        dist: float = np.linalg.norm(robot.pose[:2] - eval_pt)
         cost: float = dist / saturate_dist
 
         # Add the cost for switching robots.

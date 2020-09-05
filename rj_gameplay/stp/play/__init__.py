@@ -1,3 +1,6 @@
+""" This module contains data structures for the Plays level of STP.
+"""
+
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Dict, Type, TypeVar, Optional, List, Iterator, Tuple
@@ -29,9 +32,11 @@ class TacticEntry(tkdict.TypedKey[TacticT]):
         self._idx = None
 
     def set_idx(self, num: int) -> None:
+        """Sets the index of the entry."""
         self._idx = num
 
     def set_tactic(self, tactic_instance: TacticT) -> None:
+        """Sets the actual instance of the tactic."""
         self.tactic = tactic_instance
 
     def __eq__(self, other) -> bool:
@@ -44,13 +49,17 @@ class TacticEntry(tkdict.TypedKey[TacticT]):
         return hash((self.concrete_cls, self._idx))
 
     def __str__(self) -> str:
-        return "{:3}: {} - {}".format(self._idx, self.concrete_cls.__name__, self.skill)
+        return "{:3}: {} - {}".format(
+            self._idx, self.concrete_cls.__name__, self.tactic
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
 
 
 class TacticsEnum(metaclass=enum.SimpleEnumMeta):
+    """Enum holding all the tactics that a given play will use."""
+
     def __init__(self, tactic_factory: tactic.Factory):
         """
         :param tactic_factory: Tactic Factory used to initialize the tactic instances in
@@ -64,6 +73,9 @@ class TacticsEnum(metaclass=enum.SimpleEnumMeta):
 
     @classmethod
     def entries(cls) -> List[TacticEntry]:
+        """Returns all the entries of the given tactic"""
+
+        # pylint: disable=no-member
         entries = [getattr(cls, enum_name) for enum_name in cls.enum_names]
 
         for entry in entries:

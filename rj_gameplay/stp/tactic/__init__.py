@@ -1,5 +1,8 @@
-from typing import Type, TypeVar, List, Optional, Dict, MutableMapping
+""" This module contains data structures for the Tactics level of STP.
+"""
+
 from abc import ABC, abstractmethod
+from typing import Type, TypeVar, List, Optional, Dict, MutableMapping, Tuple
 
 import stp.action as action
 import stp.skill as skill
@@ -28,9 +31,11 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
         self._idx = None
 
     def set_idx(self, num: int) -> None:
+        """Sets the index of the current skill, used for equality checks & hashing."""
         self._idx = num
 
     def set_skill(self, skill_instance: SkillT) -> None:
+        """Sets the instance of the skill."""
         self.skill = skill_instance
 
     def __eq__(self, other) -> bool:
@@ -43,8 +48,9 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
         return hash((self.concrete_cls, self._idx))
 
     def __str__(self) -> str:
-        return "SkillEntry({:2}: {} - {})".format(
-            self._idx, self.concrete_cls.__name__, self.skill
+        idx_string: str = "{:2}".format(self._idx) if self._idx else "??"
+        return "SkillEntry({}: {} - {})".format(
+            idx_string, self.concrete_cls.__name__, self.skill
         )
 
     def __repr__(self) -> str:
@@ -52,19 +58,26 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
 
 
 class SkillsEnum(metaclass=enum.SimpleEnumMeta):
+    """Enum that holds skills."""
+
     def __init__(self, skill_factory: skill.Factory):
-        """
+        """Instantiates the SkillsEnum by instantiating it with concrete skills via the
+        skill.Factory passed in.
         :param skill_factory: Skill Factory used to initialize the skill instances in
         each SkillEntry.
         """
-        # Assign the correct indices to each skill.SkillEntry. Also instantiate the
-        # skills using skill_factory.
         for idx, entry in enumerate(self.entries()):
+            # Assign the correct indices to each skill.SkillEntry.
             entry.set_idx(idx)
+            # Instantiate the skills using skill_factory.
             entry.set_skill(skill_factory.create(entry.concrete_cls))
 
     @classmethod
     def entries(cls) -> List[SkillEntry]:
+        """Returns a list of the SkillEntry for this SkillsEnum.
+        :return: List of the SkillEntry for this SkillsEnum.
+        """
+        # pylint: disable=no-member
         entries = [getattr(cls, enum_name) for enum_name in cls.enum_names]
 
         for entry in entries:
@@ -83,22 +96,28 @@ RoleResults = Dict[SkillEntry, role.RoleResult]
 
 
 class SkillsDict(tkdict.TypedKeyDict[List[skill.ISkill]]):
+    """A dictionary mapping typed keys to a list of skill.ISkill."""
+
     ...
 
 
 class ITactic(ABC):
+    """The interface class for all tactics."""
+
     @abstractmethod
     def get_requests(self, prev_skills: SkillsDict) -> RoleRequests:
-        """
-        :param prev_skills:
+        """Returns the RoleRequests for this tactic.
+        :param prev_skills: A dictionary of skills from the previous iteration.
         :return:
         """
         ...
 
     @abstractmethod
-    def tick(self, role_results: RoleResults) -> List[action.IAction]:
-        """Ticks the tactic, returning the list of actions for each robot.
-        :param role_results:
+    def tick(
+        self, role_results: RoleResults
+    ) -> Tuple[List[action.IAction], SkillsDict]:
+        """Ticks the tactic, returning a tuple of the actions and the skills executed.
+        :param role_results: The results of role assignment.
         :return:
         """
         ...
@@ -118,7 +137,7 @@ class Ctx:
 TacticT = TypeVar("TacticT", bound=ITactic)
 
 
-class Registry(MutableMapping):
+class Registry:
     """Registry that holds instances of tactics indexed by the type."""
 
     __slots__ = ["_dict"]
@@ -126,25 +145,25 @@ class Registry(MutableMapping):
     def __init__(self):
         self._dict: Dict[Type[ITactic], ITactic] = {}
 
-    def __getitem__(self, k: Type[TacticT]) -> TacticT:
+    def __getitem__(self, key: Type[TacticT]) -> TacticT:
         # The below can throw a KeyError.
-        tactic: ITactic = self._dict[k]
+        tactic: ITactic = self._dict[key]
 
         # Check that the item we got was an instance of the expected type.
-        if not isinstance(skill, k):
-            raise KeyError("Tactic {} is not an instance of key {}".format(skill, k))
+        if not isinstance(skill, key):
+            raise KeyError("Tactic {} is not an instance of key {}".format(skill, key))
 
         return tactic
 
-    def __setitem__(self, k: Type[TacticT], v: TacticT) -> None:
+    def __setitem__(self, key: Type[TacticT], value: TacticT) -> None:
         # Check that the item we're setting is an instance of the expected type.
-        if not isinstance(v, k):
-            raise KeyError("Tactic {} is not an instance of {}".format(v, k))
+        if not isinstance(value, key):
+            raise KeyError("Tactic {} is not an instance of {}".format(value, key))
 
-        self._dict.__setitem__(k, v)
+        self._dict.__setitem__(key, value)
 
-    def __delitem__(self, k: Type[TacticT]) -> None:
-        self._dict.__delitem__(k)
+    def __delitem__(self, key: Type[TacticT]) -> None:
+        self._dict.__delitem__(key)
 
     def __len__(self) -> int:
         return self._dict.__len__()
@@ -167,6 +186,8 @@ class Factory:
         self._registry = registry
 
     def create(self, tactic: Type[TacticT]) -> TacticT:
+        """Creates an instance of the tactic given the type of the interface of the
+        tactic."""
         if tactic not in self._registry:
             # TODO: Create new class for this error category.
             raise ValueError(

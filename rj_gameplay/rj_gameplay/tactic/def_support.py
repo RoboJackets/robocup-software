@@ -1,5 +1,11 @@
+"""Contains the DefSupport tactic.
+"""
+
+from typing import List
+
 import stp.tactic as tactic
 import stp.skill.stub as stub
+import stp.action as action
 
 
 class Skills(tactic.SkillsEnum):
@@ -22,3 +28,6 @@ class DefSupport(tactic.ITactic):
         role_requests[self.STUB] = self.STUB.skill.create_request()
 
         return role_requests
+
+    def tick(self, role_results: tactic.RoleResults) -> List[action.IAction]:
+        return []

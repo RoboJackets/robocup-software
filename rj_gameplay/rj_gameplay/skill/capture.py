@@ -1,3 +1,5 @@
+"""Contains the ICapture interface."""
+
 from abc import ABC, abstractmethod
 
 import stp.skill as skill

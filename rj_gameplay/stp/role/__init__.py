@@ -1,3 +1,5 @@
+"""This module contains data structures for role assignment."""
+
 from enum import IntEnum
 from typing import Callable, Optional
 
@@ -5,6 +7,8 @@ import stp.rc as rc
 
 
 class Role:
+    """This represents a role, ie. an Optional[rc.Robot]."""
+
     __slots__ = ["robot"]
     robot: Optional[rc.Robot]
 
@@ -12,6 +16,9 @@ class Role:
         self.robot = robot
 
     def is_filled(self) -> bool:
+        """Returns true if the role is filled.
+        :return: True if the role is filled.
+        """
         return self.robot is not None
 
     def __str__(self) -> str:
@@ -25,6 +32,8 @@ class Role:
 
 
 class Priority(IntEnum):
+    """An enum to represent priority of the role assignment."""
+
     LOW = 0
     MEDIUM = 1
     HIGH = 2
@@ -50,14 +59,30 @@ class RoleRequest:
         self.cost_fn = cost_fn
 
     def with_priority(self, priority: Priority) -> "RoleRequest":
+        """Builder style method that modifies the priority and returns the current
+        instance.
+        :param priority: The priority to set the RoleRequest to.
+        :return: self.
+        """
         self.priority = priority
         return self
 
     def with_required(self, required: bool) -> "RoleRequest":
+        """Builder style method that modifies required and returns the current
+        instance.
+        :param required: Whether the tactic will fail if this RoleRequest is not
+        fulfilled.
+        :return: self.
+        """
         self.required = required
         return self
 
     def with_cost_fn(self, cost_fn: CostFn) -> "RoleRequest":
+        """Builder style method that modifies the cost function and returns the current
+        instance.
+        :param cost_fn: The new cost function to use.
+        :return: self.
+        """
         self.cost_fn = cost_fn
         return self
 

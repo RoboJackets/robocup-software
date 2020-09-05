@@ -1,3 +1,5 @@
+"""This module contains the interface for role assignment."""
+
 from abc import abstractmethod, ABC
 from typing import Dict, Tuple, Type
 
@@ -12,6 +14,8 @@ FlatRoleResults = Dict[RoleId, role.RoleResult]
 
 
 class IRoleAssignment(ABC):
+    """Interface for role assignment implementations."""
+
     @staticmethod
     @abstractmethod
     def assign_roles(

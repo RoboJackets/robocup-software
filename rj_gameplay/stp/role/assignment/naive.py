@@ -1,3 +1,5 @@
+"""Module that contains NaiveRoleAssignment. """
+
 from math import isfinite
 from typing import Tuple, List
 
@@ -12,6 +14,10 @@ SortedRequests = List[assignment.FlatRoleRequests]
 
 
 class NaiveRoleAssignment(assignment.IRoleAssignment):
+    """Naive implementation of role assignment that simply performs the Hungarian
+    Algorithm (from scipy.optimize) on HIGH, then MEDIUM, then LOW priority in that
+    order."""
+
     @staticmethod
     def get_sorted_requests(requests: assignment.FlatRoleRequests) -> SortedRequests:
         """Returns a list of FlatRoleRequests sorted in ascending priority order.
@@ -38,8 +44,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         world_state: stp.rc.WorldState,
         prev_results: assignment.FlatRoleResults,
     ) -> np.ndarray:
-        """Computes the m x n cost matrix corresponding to the passed in free robots and
-        role requests.
+        """Computes the n_free_robots x n_requests cost matrix corresponding to the
+        passed in free robots and role requests.
         :param flat_requests: Role requests to compute cost matrix for.
         :param free_robots: Free robots to compute cost matrix for.
         :param world_state: Current world state.
@@ -48,7 +54,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         role requests.
         """
 
-        # Cost matrix size (n_robots, n_requests)
+        # Cost matrix size (n_free_robots, n_requests)
         robot_costs: np.ndarray = np.zeros((len(free_robots), len(flat_requests)))
 
         # Iterate over each role request.
@@ -146,7 +152,6 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
         # Assign roles for each priority from HIGH to LOW.
         requests_dict: assignment.FlatRoleRequests
-        request: role.RoleRequest
 
         # Make a copy of rc.our_robots so that we can mutate it without mutating
         # rc.our_robots.

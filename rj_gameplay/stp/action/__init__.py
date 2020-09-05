@@ -1,3 +1,5 @@
+"""This module contains Actions of the STP(A) hierarchy."""
+
 from abc import ABC, abstractmethod
 from typing import Type, TypeVar, MutableMapping, Dict
 
@@ -14,7 +16,7 @@ class IAction(ABC):
 ActionT = TypeVar("ActionT", bound=IAction)
 
 
-class Registry(MutableMapping):
+class Registry:
     """Registry that holds instances of actions indexed by the type."""
 
     __slots__ = ["_dict"]
@@ -22,25 +24,25 @@ class Registry(MutableMapping):
     def __init__(self):
         self._dict: Dict[Type[IAction], IAction] = {}
 
-    def __getitem__(self, k: Type[ActionT]) -> ActionT:
+    def __getitem__(self, key: Type[ActionT]) -> ActionT:
         # The below can throw a KeyError.
-        action: IAction = self._dict[k]
+        action: IAction = self._dict[key]
 
         # Check that the item we got was an instance of the expected type.
-        if not isinstance(action, k):
-            raise KeyError("Action {} is not an instance of key {}".format(action, k))
+        if not isinstance(action, key):
+            raise KeyError("Action {} is not an instance of key {}".format(action, key))
 
         return action
 
-    def __setitem__(self, k: Type[ActionT], v: ActionT) -> None:
+    def __setitem__(self, key: Type[ActionT], value: ActionT) -> None:
         # Check that the item we're setting is an instance of the expected type.
-        if not isinstance(v, k):
-            raise KeyError("Action {} is not an instance of {}".format(v, k))
+        if not isinstance(value, key):
+            raise KeyError("Action {} is not an instance of {}".format(value, key))
 
-        self._dict.__setitem__(k, v)
+        self._dict.__setitem__(key, value)
 
-    def __delitem__(self, k: Type[ActionT]) -> None:
-        self._dict.__delitem__(k)
+    def __delitem__(self, key: Type[ActionT]) -> None:
+        self._dict.__delitem__(key)
 
     def __len__(self) -> int:
         return self._dict.__len__()
@@ -63,6 +65,8 @@ class Factory:
         self._registry = registry
 
     def create(self, action: Type[ActionT]) -> ActionT:
+        """Creates an instance of the action given the type of the interface of the
+        action."""
         if action not in self._registry:
             # TODO: Create new class for this error category.
             raise ValueError(

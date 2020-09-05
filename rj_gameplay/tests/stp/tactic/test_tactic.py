@@ -62,4 +62,4 @@ def test_skills_enum():
     # Instantiate the skills enum with the skill factory.
     skills = Skills(skill_factory)
 
-    print("\nskills: ", skills)
+    print("\nskills: \n", skills)

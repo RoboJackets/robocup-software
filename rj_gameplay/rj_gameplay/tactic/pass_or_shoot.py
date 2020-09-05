@@ -1,12 +1,18 @@
-from typing import Optional
+"""Contains the PassOrShoot tactic. """
 
+from typing import Optional, List
+
+import stp.action as action
 import stp.tactic as tactic
+
 import rj_gameplay.skill.ball_carrier as ball_carrier
 import rj_gameplay.skill.seeker as seeker
 import rj_gameplay.skill.capture as capture
 
 
 class Skills(tactic.SkillsEnum):
+    """SKills for PassOrShoot."""
+
     BALL_CARRIER = tactic.SkillEntry(ball_carrier.IBallCarrier)
     SEEKERS = tactic.SkillEntry(seeker.ISeeker)
     RECEIVER = tactic.SkillEntry(capture.ICapture)
@@ -35,6 +41,9 @@ class PassOrShoot(tactic.ITactic):
         role_requests[self.SEEKERS] = self.SEEKERS.skill.create_request()
 
         return role_requests
+
+    def tick(self, role_results: tactic.RoleResults) -> List[action.IAction]:
+        return []
 
     @staticmethod
     def get_pass(prev_skills: tactic.SkillsDict) -> Optional[ball_carrier.Pass]:

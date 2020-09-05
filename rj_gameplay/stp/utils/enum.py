@@ -1,10 +1,15 @@
+"""This module contains the implementation of a metaclass for defining Enums."""
+
+from typing import Any, Dict, Tuple
+
+
 class SimpleEnumMeta(type):
     """Metaclass for TacticsEnum. Collects all the class attributes and puts it
     in enum_names"""
 
-    def __new__(mcs, cls, bases, class_dict):
-        object_attrs = set(dir(type(cls, (object,), {})))
-        enum_cls: type = super().__new__(mcs, cls, bases, class_dict)
+    def __new__(cls: type, name: str, bases: Tuple[Any], class_dict: Dict[str, Any]):
+        object_attrs = set(dir(type(name, (object,), {})))
+        enum_cls: type = super().__new__(cls, name, bases, class_dict)
 
         enum_cls.enum_names = [
             key
