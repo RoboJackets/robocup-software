@@ -68,7 +68,7 @@ jobs:
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
       - run: pip3 install -r rj_gameplay/requirements.txt
-      - run: python -m pylint -j8 --reports=n rj_gameplay --cov=./
+      - run: python3 -m pylint -j8 --reports=n rj_gameplay --cov=./
       - run: bash <(curl -s https://codecov.io/bash)
 
   style:
