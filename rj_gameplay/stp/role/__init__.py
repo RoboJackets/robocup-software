@@ -49,22 +49,68 @@ class CostFn(Protocol):
         prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
+        """Given a robot, the previous role assignment result, and the current world
+        state, returns the cost of the assignment.
+        :param robot: The current robot to check costs for.
+        :param prev_result: The previous role assignment result.
+        :param world_state: The current world state.
+        :return:
+        """
         ...
+
+
+class ConstraintFn(Protocol):
+    """Protocol for ConstraintFn."""
+
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> bool:
+        """Given a robot, the previous role assignment result, and the current world
+        state, returns true if the assignment is valid.
+        :param robot: The current robot to check costs for.
+        :param prev_result: The previous role assignment result.
+        :param world_state: The current world state.
+        :return: True if the assignment is valid, false otherwise.
+        """
+        ...
+
+
+def unconstrained_constraint_fn(
+    robot: rc.Robot, prev_result: Optional["RoleResult"], world_state: rc.WorldState
+) -> bool:
+    """An unconstrained constraint fn, ie it always returns True.
+    :param robot: The current robot to check costs for.
+    :param prev_result: The previous role assignment result.
+    :param world_state: The current world state.
+    :return: True.
+    """
+    return True
 
 
 class RoleRequest:
     """Role Request."""
 
-    __slots__ = ["priority", "required", "cost_fn"]
+    __slots__ = ["priority", "required", "cost_fn", "constraint_fn"]
 
     priority: Priority
     required: bool
     cost_fn: CostFn
+    constraint_fn: ConstraintFn
 
-    def __init__(self, priority: Priority, required: bool, cost_fn: CostFn):
+    def __init__(
+        self,
+        priority: Priority,
+        required: bool,
+        cost_fn: CostFn,
+        constraint_fn: ConstraintFn = unconstrained_constraint_fn,
+    ):
         self.priority = priority
         self.required = required
         self.cost_fn = cost_fn
+        self.constraint_fn = constraint_fn
 
     def with_priority(self, priority: Priority) -> "RoleRequest":
         """Builder style method that modifies the priority and returns the current
@@ -92,6 +138,15 @@ class RoleRequest:
         :return: self.
         """
         self.cost_fn = cost_fn
+        return self
+
+    def with_constraint_fn(self, constraint_fn: ConstraintFn) -> "RoleRequest":
+        """Builder style method that modifies the cost function and returns the current
+        instance.
+        :param constraint_fn: The new constraint function to use.
+        :return: self.
+        """
+        self.constraint_fn = constraint_fn
         return self
 
     def __str__(self) -> str:

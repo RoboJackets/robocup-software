@@ -12,6 +12,9 @@ from stp.role import RoleResult
 
 SortedRequests = List[assignment.FlatRoleRequests]
 
+# Define some big constant for "hard constraints".
+INVALID_COST = 1000
+
 
 class NaiveRoleAssignment(assignment.IRoleAssignment):
     """Naive implementation of role assignment that simply performs the Hungarian
@@ -58,12 +61,23 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         robot_costs: np.ndarray = np.zeros((len(free_robots), len(flat_requests)))
 
         # Iterate over each role request.
+        request: role.RoleRequest
         for request_idx, (role_id, request) in enumerate(flat_requests.items()):
             # For each role request, iterate over robots.
             for robot_idx, robot in enumerate(free_robots):
-                # Otherwise, record the cost.
+                # Get the previous result for this role_id, if available.
                 prev_result: Optional[RoleResult] = prev_results.get(role_id, None)
+
+                # If the constraints are not satisfied, set the cost to INVALID_COST
+                # and continue.
+                if not request.constraint_fn(robot, prev_result, world_state):
+                    robot_costs[robot_idx, request_idx] = INVALID_COST
+                    continue
+
+                # Otherwise, record the cost.
                 cost: float = request.cost_fn(robot, prev_result, world_state)
+
+                # Throw an exception if the returned cost is not finite.
                 if not isfinite(cost):
                     raise ValueError(
                         "Got a non-finite cost ({}) for request {} and robot {}".format(
@@ -117,6 +131,11 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             request_idx: int = request_ind[assignment_idx]
             robot_idx: int = robot_ind[assignment_idx]
             cost: float = robot_costs[robot_idx, request_idx]
+
+            # If cost is equal to INVALID_COST, then it means that role assignment
+            # failed. Throw an exception.
+            if cost == INVALID_COST:
+                raise RuntimeError("Hard constraints not satisfied!")
 
             robot: stp.rc.Robot = free_robots[robot_idx]
             role_id = keys_list[request_idx]

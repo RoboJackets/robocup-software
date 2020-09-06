@@ -11,11 +11,6 @@ class ISkill(ABC):
     """ Interface for Skills. """
 
     @abstractmethod
-    def define(self):
-        """Defines the skill. TODO: Flesh this out."""
-        ...
-
-    @abstractmethod
     def create_request(self, **kwargs) -> role.RoleRequest:
         """Creates a sane default RoleRequest.
         :return: A list of size 1 of a sane default RoleRequest.

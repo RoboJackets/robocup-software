@@ -1,9 +1,11 @@
-from typing import List, Optional
+from typing import List
+import math
 
 import numpy as np
 import stp.play as play
 import stp.role as role
 import stp.role.cost as cost
+import stp.role.constraint as constraint
 import stp.skill as skill
 import stp.tactic as tactic
 from stp import action as action
@@ -11,7 +13,6 @@ from stp.rc import Ball, Robot, WorldState
 from stp.role import Priority
 from stp.role.assignment import FlatRoleRequests, RoleId
 from stp.role.assignment.naive import NaiveRoleAssignment, SortedRequests
-from stp.tactic import PropT, RoleResults
 
 
 class SkillBase(skill.ISkill):
@@ -40,6 +41,10 @@ class SkillC(SkillBase):
     ...
 
 
+class BallSkill(SkillBase):
+    ...
+
+
 class Skills(tactic.SkillsEnum):
     A1 = tactic.SkillEntry(SkillA)
     A2 = tactic.SkillEntry(SkillA)
@@ -47,6 +52,7 @@ class Skills(tactic.SkillsEnum):
     B2 = tactic.SkillEntry(SkillB)
     C1 = tactic.SkillEntry(SkillC)
     C2 = tactic.SkillEntry(SkillC)
+    BALL_SKILL = tactic.SkillEntry(BallSkill)
 
 
 class TacticBase(tactic.ITactic[None]):
@@ -59,11 +65,14 @@ class TacticBase(tactic.ITactic[None]):
         self.B2 = self.skills.B2
         self.C1 = self.skills.C1
         self.C2 = self.skills.C2
+        self.BALL_SKILL = self.skills.BALL_SKILL
 
     def compute_props(self, prev_props: None) -> None:
         return None
 
-    def tick(self, role_results: RoleResults, props: None) -> List[action.IAction]:
+    def tick(
+        self, role_results: tactic.RoleResults, props: None
+    ) -> List[action.IAction]:
         # Dummy tick function doesn't return any actions.
         return []
 
@@ -75,6 +84,11 @@ class TacticBase(tactic.ITactic[None]):
             self.B2: [self.B2.skill.create_request().with_priority(Priority.HIGH)],
             self.C1: [self.C1.skill.create_request().with_priority(Priority.LOW)],
             self.C2: [self.C2.skill.create_request().with_priority(Priority.MEDIUM)],
+            self.BALL_SKILL: [
+                self.BALL_SKILL.skill.create_request()
+                .with_priority(Priority.HIGH)
+                .with_constraint_fn(constraint.has_ball())
+            ],
         }
 
         return role_requests
@@ -90,8 +104,9 @@ def get_simple_role_ids() -> List[RoleId]:
         tactic.SkillEntry(SkillA),
         tactic.SkillEntry(SkillB),
         tactic.SkillEntry(SkillC),
+        tactic.SkillEntry(BallSkill),
     ]
-    skill_instances = [SkillA(), SkillB(), SkillC()]
+    skill_instances = [SkillA(), SkillB(), SkillC(), BallSkill()]
 
     for idx, (skill_entry, skill_instance) in enumerate(
         zip(skill_entries, skill_instances)
@@ -106,7 +121,7 @@ def test_get_sorted_requests_simple():
     """Manually create a Requests and check that get_sorted_requests returns a list of
     three dictionaries, one for each priority level.
     """
-    role_id_a, role_id_b, role_id_c = get_simple_role_ids()
+    role_id_a, role_id_b, role_id_c, role_id_ball = get_simple_role_ids()
 
     switch_cost = 0.0
     constant_cost = cost.constant(0.5, switch_cost)
@@ -150,6 +165,7 @@ def get_tactic_ctx() -> tactic.Ctx:
     skill_registry[SkillA] = SkillA()
     skill_registry[SkillB] = SkillB()
     skill_registry[SkillC] = SkillC()
+    skill_registry[BallSkill] = BallSkill()
 
     skill_factory = skill.Factory(skill_registry)
     return tactic.Ctx(skill_factory)
@@ -185,7 +201,7 @@ def test_get_sorted_requests_multiple() -> None:
     # Check the lengths of each dictionary.
     low_tactics = [tactic_instance.A1, tactic_instance.C1]
     med_tactics = [tactic_instance.A2, tactic_instance.B1, tactic_instance.C2]
-    hi_tactics = [tactic_instance.B2]
+    hi_tactics = [tactic_instance.B2, tactic_instance.BALL_SKILL]
 
     assert len(sorted_requests) == 3
     assert len(sorted_requests[Priority.LOW]) == len(low_tactics)
@@ -224,7 +240,7 @@ def test_compute_costs_matrix() -> None:
     """
 
     # Get the three roles.
-    role_id_a, role_id_b, role_id_c = get_simple_role_ids()
+    role_id_a, role_id_b, role_id_c, role_id_ball = get_simple_role_ids()
 
     # Create the cost functions.
     switch_cost = 0.0
@@ -283,7 +299,7 @@ def test_assign_prioritized_roles() -> None:
     returns the expected result.
     """
     # Get the three roles.
-    role_id_a, role_id_b, role_id_c = get_simple_role_ids()
+    role_id_a, role_id_b, role_id_c, role_id_ball = get_simple_role_ids()
 
     # Create the cost functions.
     switch_cost = 0.0
@@ -342,20 +358,20 @@ def test_assign_prioritized_roles() -> None:
 
 
 def test_assign_roles() -> None:
-    """Tests that NaiveRoleAssignment.assign_roles assigns HIGH, then MEDIUM , then LOW
+    """Tests that NaiveRoleAssignment.assign_roles assigns HIGH, then MEDIUM, then LOW
     priority. This is tested by having a MEDIUM priority role request that has a lower
     cost than a HIGH priority role request, and expecting that the HIGH role request is
     fulfilled first.
     """
 
     # Get the three roles.
-    role_id_a, role_id_b, role_id_c = get_simple_role_ids()
+    role_id_a, role_id_b, role_id_c, role_id_ball = get_simple_role_ids()
 
     # Create the cost functions.
     switch_cost = 0.0
-    cost_a = cost.distance_to_pt(np.array([0, 0]), np.sqrt(8), switch_cost)
-    cost_b = cost.distance_to_pt(np.array([1, 1]), np.sqrt(8), switch_cost)
-    cost_c = cost.distance_to_pt(np.array([2, 2]), np.sqrt(8), switch_cost)
+    cost_a = cost.distance_to_pt(np.array([0, 0]), math.sqrt(8), switch_cost)
+    cost_b = cost.distance_to_pt(np.array([1, 1]), math.sqrt(8), switch_cost)
+    cost_c = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
 
     # Create the requests in descending priority.
     requests: FlatRoleRequests = {
@@ -399,3 +415,67 @@ def test_assign_roles() -> None:
     assert results[role_id_a].cost == 0.5
     assert results[role_id_b].cost == 0.5
     assert results[role_id_c].cost == 0.5
+
+
+def test_assign_roles_constrained() -> None:
+    """Tests that NaiveRoleAssignment.assign_roles respects constraints, ie. even though
+    role_id_a and role_id_ball both are HIGH priority, the robot at (0, 0) has the ball
+    and thus is assigned BALL_SKILL.
+    """
+
+    # Get the three roles.
+    role_id_a, role_id_b, role_id_c, role_id_ball = get_simple_role_ids()
+
+    # Create the cost functions.
+    switch_cost = 0.0
+    cost_a = cost.distance_to_pt(np.array([0, 0]), math.sqrt(8), switch_cost)
+    cost_b = cost.distance_to_pt(np.array([1, 1]), math.sqrt(8), switch_cost)
+    cost_c = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
+    cost_ball = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
+
+    # Create the requests in descending priority.
+    requests: FlatRoleRequests = {
+        role_id_a: role.RoleRequest(Priority.HIGH, required=False, cost_fn=cost_a),
+        role_id_ball: role.RoleRequest(
+            Priority.HIGH,
+            required=False,
+            cost_fn=cost_ball,
+            constraint_fn=constraint.has_ball(),
+        ),
+        role_id_b: role.RoleRequest(Priority.MEDIUM, required=False, cost_fn=cost_b),
+        role_id_c: role.RoleRequest(Priority.LOW, required=False, cost_fn=cost_c),
+    }
+
+    # Create the robots at (0, 0) (1, 1) and (2, 2)
+    free_robots = np.array(
+        [
+            Robot(0, np.array([0, 0, 0]), np.zeros(2), True),
+            Robot(1, np.array([1, 1, 0]), np.zeros(2), False),
+            Robot(2, np.array([2, 2, 0]), np.zeros(2), False),
+        ]
+    )
+
+    # Construct the world state.
+    out_robots: List[Robot] = list(free_robots)
+    their_robots: List[Robot] = []
+    ball: Ball = Ball(np.zeros(2), np.zeros(2))
+
+    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+
+    # Assign the roles.
+    results = NaiveRoleAssignment.assign_roles(requests, world_state, {})
+
+    # Check that all roles have been assigned.
+    assert len(results) == 4
+    assert role_id_a in results
+    assert role_id_ball in results
+    assert role_id_b in results
+    assert role_id_c in results
+
+    # Check that A->1, BALL->0, B->2 even though A has a lower cost than BALL for 0.
+    assert results[role_id_a].role.robot == free_robots[1]
+    assert results[role_id_ball].role.robot == free_robots[0]
+    assert results[role_id_b].role.robot == free_robots[2]
+
+    # Check that C's role request is unfilled due to being low priority.
+    assert not results[role_id_c].is_filled()
