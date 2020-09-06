@@ -36,6 +36,13 @@ class Coordinator:
         self._prev_role_results = {}
 
     def tick(self, world_state: rc.WorldState) -> None:
+        """Performs 1 ticks of the STP system:
+            1. Selects the best play to run given the passed in world state.
+            2. Ticks the best play, collecting the list of actions to run.
+            3. Ticks the list of actions.
+        :param world_state: The current state of the world.
+        """
+
         # Call situational analysis to see which play should be running.
         cur_situation, cur_play = self._analyzer.select(world_state)
 

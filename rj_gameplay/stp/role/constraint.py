@@ -3,7 +3,6 @@ convenience."""
 
 from typing import Optional
 
-import numpy as np
 import stp.rc as rc
 import stp.role as role
 

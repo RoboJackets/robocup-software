@@ -1,3 +1,5 @@
+"""This module contains the implementation of SituationAnalyzer."""
+
 from typing import List, Tuple
 
 import stp.play as play

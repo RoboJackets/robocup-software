@@ -1,3 +1,5 @@
+"""This module contains ISituation, the interface for situations."""
+
 from abc import ABC, abstractmethod
 from typing import Dict, Type
 
