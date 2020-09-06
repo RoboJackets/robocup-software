@@ -2,8 +2,8 @@
 
 from abc import ABC, abstractmethod
 
-import stp.skill as skill
 import stp.role as role
+import stp.skill as skill
 
 import rj_gameplay.eval as eval
 

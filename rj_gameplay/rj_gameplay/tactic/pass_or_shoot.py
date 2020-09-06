@@ -6,13 +6,13 @@ from typing import List, Optional
 import stp.action as action
 import stp.rc as rc
 import stp.tactic as tactic
+from stp.role import RoleResult
 
+import rj_gameplay.eval as eval
 import rj_gameplay.skill.ball_carrier as ball_carrier
 import rj_gameplay.skill.capture as capture
 import rj_gameplay.skill.seeker as seeker
-import rj_gameplay.eval as eval
 from rj_gameplay.skill.ball_carrier import IBallCarrier
-from stp.role import RoleResult
 
 
 class Skills(tactic.SkillsEnum):

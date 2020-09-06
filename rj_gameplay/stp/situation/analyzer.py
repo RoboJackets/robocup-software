@@ -1,8 +1,8 @@
 from typing import List, Tuple
 
 import stp.play as play
-import stp.situation
 import stp.rc as rc
+import stp.situation
 
 
 class SituationAnalyzer:

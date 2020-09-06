@@ -1,11 +1,10 @@
-from typing import Tuple, List
+from typing import List, Tuple
 
 import numpy as np
-
-import stp.situation
-import stp.situation.analyzer as analyzer
 import stp.play
 import stp.rc as rc
+import stp.situation
+import stp.situation.analyzer as analyzer
 from stp import action as action
 from stp.role import assignment as assignment
 

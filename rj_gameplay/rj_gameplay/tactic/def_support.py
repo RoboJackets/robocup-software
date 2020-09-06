@@ -4,9 +4,9 @@
 from typing import List, Optional
 
 import stp.action as action
+import stp.rc as rc
 import stp.skill.stub as stub
 import stp.tactic as tactic
-import stp.rc as rc
 from stp.tactic import PropT
 
 

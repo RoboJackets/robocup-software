@@ -1,8 +1,7 @@
 import numpy as np
-
-import stp.role.cost as cost
 import stp.rc as rc
 import stp.role as role
+import stp.role.cost as cost
 
 
 def create_ball() -> rc.Ball:

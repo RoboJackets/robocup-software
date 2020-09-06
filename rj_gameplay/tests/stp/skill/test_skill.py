@@ -1,7 +1,6 @@
 import pytest
-
-import stp.skill as skill
 import stp.role as role
+import stp.skill as skill
 
 
 class ITestSkill1(skill.ISkill):
@@ -43,8 +42,7 @@ class Skill2B(ITestSkill2):
 
 
 def test_skill_registry() -> None:
-    """ Tests basic functionality of skill.Registry.
-    """
+    """Tests basic functionality of skill.Registry."""
     registry = skill.Registry()
 
     skill_a1 = Skill1A("test_skill_a1")
@@ -89,8 +87,7 @@ def test_skill_registry() -> None:
 
 
 def test_skill_factory() -> None:
-    """ Tests basic functionality of skill.Factory.
-    """
+    """Tests basic functionality of skill.Factory."""
     # Create the registry.
     registry = skill.Registry()
 

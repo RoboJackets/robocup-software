@@ -1,7 +1,6 @@
 from typing import Type
 
 import pytest
-
 from stp.utils.typed_key_dict import TypedKey, TypedKeyDict, ValueConcreteT
 
 

@@ -1,8 +1,8 @@
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from typing import Dict, Type
 
-import stp.rc as rc
 import stp.play
+import stp.rc as rc
 
 
 class ISituation(ABC):

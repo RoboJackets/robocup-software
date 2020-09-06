@@ -1,18 +1,16 @@
 from typing import List, Optional
 
 import numpy as np
-
-import stp.role.cost as cost
+import stp.play as play
 import stp.role as role
+import stp.role.cost as cost
 import stp.skill as skill
 import stp.tactic as tactic
-import stp.play as play
 from stp import action as action
-
-from stp.role import Priority
 from stp.rc import Ball, Robot, WorldState
-from stp.role.assignment import RoleId, FlatRoleRequests
-from stp.tactic import RoleResults, PropT
+from stp.role import Priority
+from stp.role.assignment import FlatRoleRequests, RoleId
+from stp.tactic import PropT, RoleResults
 
 
 class SkillBase(skill.ISkill):

@@ -1,6 +1,6 @@
-import stp.tactic as tactic
+import stp.role as role
 import stp.skill as skill
-from stp import role as role
+import stp.tactic as tactic
 
 
 class BaseSkill(skill.ISkill):
@@ -62,4 +62,7 @@ def test_skills_enum():
     # Instantiate the skills enum with the skill factory.
     skills = Skills(skill_factory)
 
-    print("\nskills: \n", skills)
+    # Check that the skills for each enum have been instantiated correctly.
+    assert skills.SKILL_A.skill == skill_a
+    assert skills.SKILL_B.skill == skill_b
+    assert skills.SKILL_C.skill == skill_c

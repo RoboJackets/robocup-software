@@ -5,7 +5,6 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 import scipy.optimize
-
 import stp.rc
 import stp.role as role
 import stp.role.assignment as assignment

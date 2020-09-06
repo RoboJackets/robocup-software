@@ -5,9 +5,9 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 import numpy as np
+import stp.action as action
 import stp.rc as rc
 import stp.skill as skill
-import stp.action as action
 
 import rj_gameplay.eval as eval
 
