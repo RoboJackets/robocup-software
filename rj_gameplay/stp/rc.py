@@ -10,13 +10,14 @@ RobotId = int
 
 
 class Robot:
-    """Robot. Pose: [x, y, theta]. Twist: [dx, dy, dtheta]."""
+    """State of the robot. Pose: [x, y, theta]. Twist: [dx, dy, dtheta]. Properties are
+    to enforce that instances of this class should not be mutated."""
 
-    __slots__ = ["id", "pose", "twist", "has_ball"]
-    id: RobotId
-    pose: np.ndarray
-    twist: np.ndarray
-    has_ball: bool
+    __slots__ = ["__id", "__pose", "__twist", "__has_ball"]
+    __id: RobotId
+    __pose: np.ndarray
+    __twist: np.ndarray
+    __has_ball: bool
 
     def __init__(
         self, robot_id: RobotId, pose: np.ndarray, twist: np.ndarray, has_ball: bool
@@ -27,31 +28,71 @@ class Robot:
         :param twist: Twist of the robot. [dx, dy, dtheta].
         :param has_ball: Whether the robot has the ball or not.
         """
-        self.id = robot_id
-        self.pose = pose
-        self.twist = twist
-        self.has_ball = has_ball
+        self.__id = robot_id
+        self.__pose = pose
+        self.__twist = twist
+        self.__has_ball = has_ball
 
     def __repr__(self) -> str:
         return "Robot(id:{}, pose:{}, twist:{}, has_ball:{})".format(
-            self.id, self.pose, self.twist, self.has_ball
+            self.__id, self.__pose, self.__twist, self.__has_ball
         )
+
+    @property
+    def id(self) -> RobotId:
+        """
+        :return: Id of the robot.
+        """
+        return self.__id
+
+    @property
+    def pose(self) -> np.ndarray:
+        """
+        :return: Pose of the robot. [x, y, theta].
+        """
+        return self.__pose
+
+    @property
+    def twist(self) -> np.ndarray:
+        """
+        :return: Twist of the robot. [dx, dy, dtheta].
+        """
+        return self.__twist
+
+    @property
+    def has_ball(self) -> bool:
+        return self.__has_ball
 
 
 class Ball:
-    """Ball."""
+    """State of the ball. Properties are used to enforce that instances of this class
+    should not be mutated."""
 
-    __slots__ = ["pos", "vel"]
+    __slots__ = ["__pos", "__vel"]
 
-    pos: np.ndarray
-    vel: np.ndarray
+    __pos: np.ndarray
+    __vel: np.ndarray
 
     def __init__(self, pos: np.ndarray, vel: np.ndarray):
-        self.pos = pos
-        self.vel = vel
+        self.__pos = pos
+        self.__vel = vel
 
     def __repr__(self) -> str:
-        return "Ball(pos:{}, vel:{})".format(self.pos, self.vel)
+        return "Ball(pos:{}, vel:{})".format(self.__pos, self.__vel)
+
+    @property
+    def pos(self) -> np.ndarray:
+        """
+        :return: Position of the ball. [x, y].
+        """
+        return self.__pos
+
+    @property
+    def vel(self) -> np.ndarray:
+        """
+        :return: Velocity of the ball. [dx, dy].
+        """
+        return self.__vel
 
 
 class GamePeriod(Enum):
