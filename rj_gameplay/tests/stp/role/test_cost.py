@@ -53,4 +53,4 @@ def test_distance_to_pt() -> None:
     assert cost_robot2 == 1.0
 
     cost_robot2_switch: float = cost_fn(robot2, robot1_role_result, world_state)
-    assert cost_robot2_switch == 1.0
+    assert cost_robot2_switch == 1.5

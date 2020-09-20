@@ -244,9 +244,9 @@ def test_compute_costs_matrix() -> None:
 
     # Create the cost functions.
     switch_cost = 0.0
-    cost_a = cost.distance_to_pt(np.array([0, 0]), np.sqrt(8), switch_cost)
-    cost_b = cost.distance_to_pt(np.array([1, 1]), np.sqrt(8), switch_cost)
-    cost_c = cost.distance_to_pt(np.array([2, 2]), np.sqrt(8), switch_cost)
+    cost_a = cost.distance_to_pt(np.array([0, 0]), math.sqrt(8), switch_cost)
+    cost_b = cost.distance_to_pt(np.array([1, 1]), math.sqrt(8), switch_cost)
+    cost_c = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
 
     # Create the requests of same priority.
     requests: FlatRoleRequests = {
@@ -283,10 +283,10 @@ def test_compute_costs_matrix() -> None:
 
     # fmt: off
     expected_costs_matrix = np.array(
-        [[0.0, 0.5, 1.0],
-         [0.5, 0.0, 0.5],
-         [1.0, 0.5, 0.0],
-         [1.0, 1.0, 0.5]],
+        [[0.0,              math.sqrt(2),       math.sqrt(8)],
+         [math.sqrt(2),              0.0,       math.sqrt(2)],
+         [math.sqrt(8),     math.sqrt(2),                0.0],
+         [math.sqrt(8),     math.sqrt(8),       math.sqrt(2)]]
     )
     # fmt: on
 
@@ -303,9 +303,9 @@ def test_assign_prioritized_roles() -> None:
 
     # Create the cost functions.
     switch_cost = 0.0
-    cost_a = cost.distance_to_pt(np.array([0, 0]), np.sqrt(8), switch_cost)
-    cost_b = cost.distance_to_pt(np.array([1, 1]), np.sqrt(8), switch_cost)
-    cost_c = cost.distance_to_pt(np.array([2, 2]), np.sqrt(8), switch_cost)
+    cost_a = cost.distance_to_pt(np.array([0, 0]), math.sqrt(8), switch_cost)
+    cost_b = cost.distance_to_pt(np.array([1, 1]), math.sqrt(8), switch_cost)
+    cost_c = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
 
     # Create the requests of same priority.
     requests: FlatRoleRequests = {
@@ -411,10 +411,10 @@ def test_assign_roles() -> None:
     assert results[role_id_b].role.robot == free_robots[1]
     assert results[role_id_c].role.robot == free_robots[2]
 
-    # Check that the costs for each role result are 0.5.
-    assert results[role_id_a].cost == 0.5
-    assert results[role_id_b].cost == 0.5
-    assert results[role_id_c].cost == 0.5
+    # Check that the costs for each role result are sqrt(2).
+    assert results[role_id_a].cost == math.sqrt(2)
+    assert results[role_id_b].cost == math.sqrt(2)
+    assert results[role_id_c].cost == math.sqrt(2)
 
 
 def test_assign_roles_constrained() -> None:
