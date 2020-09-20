@@ -5,7 +5,6 @@ import stp.play
 import stp.rc as rc
 import stp.role.assignment as assignment
 import stp.situation
-import stp.situation.analyzer as analyzer
 
 
 class Coordinator:
@@ -15,21 +14,19 @@ class Coordinator:
 
     __slots__ = [
         "_play_registry",
-        "_analyzer",
+        "_play_selector",
         "_prev_situation",
         "_prev_play",
         "_prev_role_results",
     ]
 
-    _play_registry: stp.situation.PlayRegistry
-    _analyzer: analyzer.SituationAnalyzer
+    _play_selector: stp.situation.IPlaySelector
     _prev_situation: Optional[stp.situation.ISituation]
     _prev_play: Optional[stp.play.IPlay]
     _prev_role_results: assignment.FlatRoleResults
 
-    def __init__(self, play_registry: stp.situation.PlayRegistry):
-        self._play_registry = play_registry
-        self._analyzer = analyzer.SituationAnalyzer(self._play_registry)
+    def __init__(self, play_selector: stp.situation.IPlaySelector):
+        self._play_selector = play_selector
 
         self._prev_situation = None
         self._prev_play = None
@@ -44,7 +41,7 @@ class Coordinator:
         """
 
         # Call situational analysis to see which play should be running.
-        cur_situation, cur_play = self._analyzer.select(world_state)
+        cur_situation, cur_play = self._play_selector.select(world_state)
 
         # Collect the list of actions from the play.
         new_role_results, actions = cur_play.tick(world_state, self._prev_role_results)

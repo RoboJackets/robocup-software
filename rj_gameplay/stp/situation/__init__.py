@@ -1,7 +1,7 @@
-"""This module contains ISituation, the interface for situations."""
+"""This module contains the interfaces ISituation, IAnalyzer and IPlaySelector."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, Type
+from typing import Dict, Tuple
 
 import stp.play
 import stp.rc as rc
@@ -10,17 +10,27 @@ import stp.rc as rc
 class ISituation(ABC):
     """Interface for a situation."""
 
-    @abstractmethod
-    def is_applicable(self, world_state: rc.WorldState) -> bool:
-        """Returns true if the current situation is applicable given the current world
-        state."""
-        ...
+    ...
+
+
+class IAnalyzer(ABC):
+    """Interface for situation analyzer."""
 
     @abstractmethod
-    def score(self, world_state: rc.WorldState) -> float:
-        """Returns the "goodness" of this situation given the current world state.
-        [0-1]"""
+    def analyze_situation(
+        self, world_state: rc.WorldState, game_info: rc.GameInfo
+    ) -> ISituation:
+        """Returns the best situation for the current world state.
+        :param world_state: The current state of the world.
+        :param game_info: The information about the state of the game.
+        :return: The best situation for the current world state.
+        """
         ...
 
 
-PlayRegistry = Dict[ISituation, stp.play.IPlay]
+class IPlaySelector(ABC):
+    """Interface for play selector."""
+
+    @abstractmethod
+    def select(self, world_state: rc.WorldState) -> Tuple[ISituation, stp.play.IPlay]:
+        ...

@@ -1,6 +1,7 @@
 """This module contains data structures that are robocup specific, ie. Robot, Ball,
 WorldState"""
 
+from enum import Enum
 from typing import List
 
 import numpy as np
@@ -51,6 +52,73 @@ class Ball:
 
     def __repr__(self) -> str:
         return "Ball(pos:{}, vel:{})".format(self.pos, self.vel)
+
+
+class GamePeriod(Enum):
+    FIRST_HALF = 0
+    HALF_TIME = 1
+    SECOND_HALF = 2
+    OVERTIME1 = 3
+    OVERTIME2 = 4
+    PENALTY_SHOOTOUT = 5
+
+
+class GameState(Enum):
+    HALT = 0  # Robots must not move.
+    STOP = 1  # Robots must stay 500mm away from the ball.
+    SETUP = 2  # Robots not on starting team msut stay 500mm away from ball.
+    READY = 3  # A robot on the starting team may kick the ball.
+    PLAYING = 4  # Normal play.
+
+
+class GameRestart(Enum):
+    NONE = 0
+    KICKOFF = 1
+    DIRECT = 2
+    INDIRECT = 3
+    PENALTY = 4
+    PLACEMENT = 5
+
+
+class Field:
+    """Information about the field."""
+
+    __slots__ = ["length_m"]
+
+    length_m: float
+
+    def __init__(self, length_m: float):
+        self.length_m = length_m
+
+
+class GameInfo:
+    """Game state."""
+
+    __slots__ = ["period", "state", "restart", "our_restart", "field"]
+
+    period: GamePeriod
+    state: GameState
+    restart: GameRestart
+    our_restart: bool
+    field: Field
+
+    def is_restart(self) -> bool:
+        return self.restart != GameRestart.NONE
+
+    def is_kickoff(self) -> bool:
+        return self.restart == GameRestart.KICKOFF
+
+    def is_penalty(self) -> bool:
+        return self.restart == GameRestart.PENALTY
+
+    def is_direct(self) -> bool:
+        return self.restart == GameRestart.DIRECT
+
+    def is_indirect(self) -> bool:
+        return self.restart == GameRestart.INDIRECT
+
+    def is_free_placement(self) -> bool:
+        return self.restart == GameRestart.PLACEMENT
 
 
 class WorldState:
