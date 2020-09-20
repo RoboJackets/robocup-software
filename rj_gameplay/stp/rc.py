@@ -61,6 +61,9 @@ class Robot:
 
     @property
     def has_ball(self) -> bool:
+        """
+        :return: True if the robot currently has the ball.
+        """
         return self.__has_ball
 
 
@@ -96,6 +99,8 @@ class Ball:
 
 
 class GamePeriod(Enum):
+    """Game period."""
+
     FIRST_HALF = 0
     HALF_TIME = 1
     SECOND_HALF = 2
@@ -105,6 +110,8 @@ class GamePeriod(Enum):
 
 
 class GameState(Enum):
+    """State of the game."""
+
     HALT = 0  # Robots must not move.
     STOP = 1  # Robots must stay 500mm away from the ball.
     SETUP = 2  # Robots not on starting team msut stay 500mm away from ball.
@@ -113,6 +120,8 @@ class GameState(Enum):
 
 
 class GameRestart(Enum):
+    """What kind of restart."""
+
     NONE = 0
     KICKOFF = 1
     DIRECT = 2
@@ -144,21 +153,39 @@ class GameInfo:
     field: Field
 
     def is_restart(self) -> bool:
+        """
+        :return: True if there is a restart.
+        """
         return self.restart != GameRestart.NONE
 
     def is_kickoff(self) -> bool:
+        """
+        :return: True if the restart is a kickoff.
+        """
         return self.restart == GameRestart.KICKOFF
 
     def is_penalty(self) -> bool:
+        """
+        :return: True if the restart is a penalty.
+        """
         return self.restart == GameRestart.PENALTY
 
     def is_direct(self) -> bool:
+        """
+        :return: True if the restart is a direct kick.
+        """
         return self.restart == GameRestart.DIRECT
 
     def is_indirect(self) -> bool:
+        """
+        :return: True if the restart is an indirect kick.
+        """
         return self.restart == GameRestart.INDIRECT
 
     def is_free_placement(self) -> bool:
+        """
+        :return: True if the restart is free placement.
+        """
         return self.restart == GameRestart.PLACEMENT
 
 

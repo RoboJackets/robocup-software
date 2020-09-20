@@ -33,4 +33,8 @@ class IPlaySelector(ABC):
 
     @abstractmethod
     def select(self, world_state: rc.WorldState) -> Tuple[ISituation, stp.play.IPlay]:
+        """Selects the best situation and play given given the current world state.
+        :param world_state: The current state of the world.
+        :return: A tuple of the best situation and best play.
+        """
         ...
