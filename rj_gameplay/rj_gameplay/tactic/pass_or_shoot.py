@@ -8,7 +8,7 @@ import stp.rc as rc
 import stp.tactic as tactic
 from stp.role import RoleResult
 
-import rj_gameplay.eval as eval
+import rj_gameplay.eval
 import rj_gameplay.skill.ball_carrier as ball_carrier
 import rj_gameplay.skill.capture as capture
 import rj_gameplay.skill.seeker as seeker
@@ -23,15 +23,14 @@ class Skills(tactic.SkillsEnum):
     RECEIVER = tactic.SkillEntry(capture.ICapture)
 
 
-@dataclass
-class Props:
-    """Props (state) for PassOrShoot."""
-
-    maybe_pass: Optional[eval.Pass] = None
-
-
-class PassOrShoot(tactic.ITactic[Props]):
+class PassOrShoot(tactic.ITactic["PassOrShoot.Props"]):
     """Tactic that controls one ball carrier and multiple seekers."""
+
+    @dataclass
+    class Props:
+        """Props (state) for PassOrShoot."""
+
+        maybe_pass: Optional[rj_gameplay.eval.Pass] = None
 
     __slots__ = ["skills", "BALL_CARRIER", "RECEIVER", "SEEKERS"]
 
@@ -43,7 +42,7 @@ class PassOrShoot(tactic.ITactic[Props]):
         self.SEEKERS = self.skills.SEEKERS
 
     def compute_props(self, prev_props: Optional[Props]) -> Props:
-        return Props()
+        return PassOrShoot.Props()
 
     def get_requests(
         self, world_state: rc.WorldState, props: Props
