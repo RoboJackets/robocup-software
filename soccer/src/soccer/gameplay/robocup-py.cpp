@@ -27,24 +27,24 @@ using namespace boost::python;
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/polygon.hpp>
 #include <rj_geometry/rect.hpp>
-#include <robot.hpp>
-#include <system_state.hpp>
-#include <motion/motion_control.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
+#include <rc-fshare/pid.hpp>
+
+#include "robot.hpp"
+#include "system_state.hpp"
+#include "control/motion_control.hpp"
 #include "debug_drawer.hpp"
 #include "kick_evaluator.hpp"
 #include "robot_config.hpp"
 #include "window_evaluator.hpp"
-#include "motion/trapezoidal_motion.hpp"
+#include "control/trapezoidal_motion.hpp"
 #include "optimization/nelder_mead_2d.hpp"
 #include "optimization/nelder_mead_2d_config.hpp"
 #include "optimization/python_function_wrapper.hpp"
 #include "planning/motion_constraints.hpp"
 #include "referee/external_referee.hpp"
-
-#include <rc-fshare/pid.hpp>
 
 /**
  * These functions make sure errors on the c++
@@ -186,9 +186,16 @@ void our_robot_add_local_obstacle(OurRobot* self, rj_geometry::Shape* obs) {
     self->local_obstacles(shared_obs);
 }
 
-void our_robot_set_avoid_ball_radius(OurRobot* self, float radius) {
-    self->avoid_ball_radius(radius);
+void our_robot_set_avoid_ball_radius([[maybe_unused]] OurRobot* self, float radius) {
+    // TODO(Kyle): Use SPDLog here
+    std::cout << "Configurable avoidance not implemented" << std::endl;
 }
+
+void our_robot_disable_avoid_ball([[maybe_unused]] OurRobot* self) {
+    // TODO(Kyle): Use SPDLog here
+    std::cout << "Configurable avoidance not implemented" << std::endl;
+}
+
 
 void our_robot_set_max_angle_speed(OurRobot* self, float max_angle_speed) {
     self->rotation_constraints().max_speed = max_angle_speed;
@@ -202,8 +209,9 @@ void our_robot_set_max_accel(OurRobot* self, float max_accel) {
     self->motion_constraints().max_acceleration = max_accel;
 }
 
-void our_robot_approach_opponent(OurRobot* self, unsigned shell_id, bool enable_approach) {
-    self->approach_opponent(shell_id, enable_approach);
+void our_robot_approach_opponent([[maybe_unused]] OurRobot* self, [[maybe_unused]] unsigned shell_id, [[maybe_unused]] bool enable_approach) {
+    // TODO(Kyle): Use SPDLog
+    std::cout << "Configurable avoidance not implemented" << std::endl;
 }
 
 void our_robot_add_text(OurRobot* self, const std::string& text, const boost::python::tuple& rgb,
@@ -212,7 +220,10 @@ void our_robot_add_text(OurRobot* self, const std::string& text, const boost::py
                    QString::fromStdString(layer_prefix));
 }
 
-void our_robot_set_avoid_opponents(OurRobot* self, bool value) { self->avoid_opponents(value); }
+void our_robot_set_avoid_opponents([[maybe_unused]] OurRobot* self, [[maybe_unused]] bool value) {
+    // TODO(Kyle): Use SPDLog
+    std::cout << "Configurable avoidance not implemented" << std::endl;
+}
 
 // Tuner code disabled pending refactor since it was removed from
 // the firmware shared repo
@@ -922,7 +933,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("set_max_speed", our_robot_set_max_speed)
         .def("set_max_accel", our_robot_set_max_accel)
         .def("set_avoid_ball_radius", &our_robot_set_avoid_ball_radius)
-        .def("disable_avoid_ball", &OurRobot::disable_avoid_ball)
+        .def("disable_avoid_ball", &our_robot_disable_avoid_ball)
         .def("add_text", &our_robot_add_text)
         .def("approach_opponent", &our_robot_approach_opponent)
         .def("set_avoid_opponents", &our_robot_set_avoid_opponents)

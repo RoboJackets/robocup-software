@@ -15,13 +15,14 @@ using namespace rj_geometry;
 using Planning::LinearMotionInstant;
 using Planning::MotionCommand;
 
-/** thresholds for avoidance of opponents - either a normal (large) or an
- * approach (small)*/
-constexpr float kOppAvoidSmallThresh = 0.03;
-constexpr float kOppAvoidSmall = kRobotRadius - kOppAvoidSmallThresh;
-/** threshold for avoiding the ball*/
-constexpr float kBallAvoidSmallMult = 2.0;
-constexpr float kBallAvoidSmall = kBallAvoidSmallMult * kBallRadius;
+// TODO(Kyle): Make these ROS parameters and move them to a central location
+constexpr double kMaxKickSpeed = 7.0;
+constexpr double kMinKickSpeed = 2.1;
+
+static double kicker_strength_to_speed(uint8_t kick_strength) {
+    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) * (kMaxKickSpeed - kMinKickSpeed) + kMinKickSpeed;
+}
+
 /**
  * When verbose is true, a lot of extra debug info is printed
  * to the console about path planning, etc
@@ -35,23 +36,14 @@ Robot::Robot(Context* context, int shell, bool self)
 
 REGISTER_CONFIGURABLE(OurRobot)
 
-ConfigDouble* OurRobot::self_avoid_radius;
-ConfigDouble* OurRobot::opp_avoid_radius;
-ConfigDouble* OurRobot::opp_goalie_avoid_radius;
 ConfigDouble* OurRobot::dribble_out_of_bounds_offset;
 
 void OurRobot::create_configuration(Configuration* cfg) {
-    self_avoid_radius = new ConfigDouble(cfg, "PathPlanner/selfAvoidRadius", kRobotRadius);
-    opp_avoid_radius = new ConfigDouble(cfg, "PathPlanner/oppAvoidRadius", kRobotRadius - 0.01);
-    opp_goalie_avoid_radius =
-        new ConfigDouble(cfg, "PathPlanner/oppGoalieAvoidRadius", kRobotRadius + 0.05);
     dribble_out_of_bounds_offset =  // NOLINT
         new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
 OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
-    reset_avoid_robot_radii();
-
     clear_cmd_text();
 }
 
@@ -68,27 +60,6 @@ void OurRobot::add_text(const QString& text, const QColor& qc, const QString& la
     context_->debug_drawer.draw_text(text, pos(), qc, layer);
 }
 
-bool OurRobot::avoid_opponents() const {
-    // checks for avoiding all opponents
-    for (size_t i = 0; i < kNumShells; ++i) {
-        if ((context_->state.opp[i] != nullptr) && context_->state.opp[i]->visible() &&
-            intent().opp_avoid_mask[i] < 0.1) {
-            return false;
-        }
-    }
-    return true;
-}
-
-void OurRobot::avoid_opponents(bool enable) {
-    for (float& a : intent().opp_avoid_mask) {
-        if (enable) {
-            a = kRobotRadius - 0.03;
-        } else {
-            a = -1.0;
-        }
-    }
-}
-
 std::string OurRobot::get_cmd_text() const { return cmd_text_.str(); }
 
 void OurRobot::clear_cmd_text() {
@@ -103,8 +74,8 @@ void OurRobot::reset_for_next_iteration() {
 
     clear_cmd_text();
 
-    intent().clear();
-    context_->motion_setpoints[shell()].clear();
+    intent() = {};
+    context_->motion_setpoints[shell()] = {};
 
     if (charged()) {
         last_charged_time_ = RJ::now();
@@ -114,7 +85,6 @@ void OurRobot::reset_for_next_iteration() {
 
     reset_motion_constraints();
     do_unkick();
-    intent().song = RobotIntent::Song::STOP;
 
     is_penalty_kicker = false;
     is_ball_placer = false;
@@ -218,7 +188,6 @@ void OurRobot::line_kick(Point target) {
         return;
     }
 
-    disable_avoid_ball();
     set_motion_command(Planning::LineKickCommand{target});
 }
 
@@ -226,7 +195,7 @@ void OurRobot::intercept(Point target) {
     if (!visible()) {
         return;
     }
-    disable_avoid_ball();
+
     set_motion_command(Planning::InterceptCommand{target});
 }
 
@@ -283,11 +252,11 @@ void OurRobot::dribble(uint8_t speed) {
     if (modified_field.contains_point(pos())) {
         uint8_t scaled =
             std::min(*config()->dribbler.multiplier * speed, static_cast<double>(kMaxDribble));
-        intent().dvelocity = scaled;
+        intent().dribbler_speed = scaled;
 
         cmd_text_ << "dribble(" << (float)speed << ")" << endl;
     } else {
-        intent().dvelocity = 0;
+        intent().dribbler_speed = 0;
     }
 }
 
@@ -318,20 +287,22 @@ void OurRobot::chip_level(uint8_t strength) {
 
 void OurRobot::do_kick(uint8_t strength) {
     uint8_t max = *config()->kicker.max_kick;
-    intent().kcstrength = (strength > max ? max : strength);
+    strength = (strength > max ? max : strength);
+    intent().kick_speed = kicker_strength_to_speed(strength);
     intent().shoot_mode = RobotIntent::ShootMode::KICK;
     intent().trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 }
 
 void OurRobot::do_chip(uint8_t strength) {
     uint8_t max = *config()->kicker.max_chip;
-    intent().kcstrength = (strength > max ? max : strength);
+    strength = (strength > max ? max : strength);
+    intent().kick_speed = kicker_strength_to_speed(strength);
     intent().shoot_mode = RobotIntent::ShootMode::CHIP;
     intent().trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 }
 
 void OurRobot::do_unkick() {
-    intent().kcstrength = 0;
+    intent().kick_speed = 0;
     intent().shoot_mode = RobotIntent::ShootMode::KICK;
     intent().trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
 }
@@ -353,94 +324,6 @@ void OurRobot::face(rj_geometry::Point pt) {
 
     auto& command = std::get<Planning::PathTargetCommand>(intent().motion_command);
     command.angle_override = Planning::TargetFacePoint{pt};
-}
-#pragma mark Robot Avoidance
-
-void OurRobot::reset_avoid_robot_radii() {
-    for (size_t i = 0; i < kNumShells; ++i) {
-        intent().opp_avoid_mask[i] =
-            (i == context_->their_info.goalie) ? *opp_goalie_avoid_radius : *opp_avoid_radius;
-    }
-}
-
-void OurRobot::approach_all_opponents(bool enable) {
-    for (float& ar : intent().opp_avoid_mask) {
-        ar = (enable) ? kOppAvoidSmall : static_cast<float>(*opp_avoid_radius);
-    }
-}
-void OurRobot::avoid_all_opponents(bool enable) {
-    for (float& ar : intent().opp_avoid_mask) {
-        ar = (enable) ? -1.0f : static_cast<float>(*opp_avoid_radius);
-    }
-}
-
-bool OurRobot::avoid_opponent(unsigned shell_id) const {
-    return intent().opp_avoid_mask[shell_id] > 0.0;
-}
-
-bool OurRobot::approach_opponent(unsigned shell_id) const {
-    return avoid_opponent(shell_id) && intent().opp_avoid_mask[shell_id] < kRobotRadius - 0.01;
-}
-
-float OurRobot::avoid_opponent_radius(unsigned shell_id) const {
-    return intent().opp_avoid_mask[shell_id];
-}
-
-void OurRobot::avoid_opponent(unsigned shell_id, bool enable_avoid) {
-    if (enable_avoid) {
-        intent().opp_avoid_mask[shell_id] = *opp_avoid_radius;
-    } else {
-        intent().opp_avoid_mask[shell_id] = -1.0;
-    }
-}
-
-void OurRobot::approach_opponent(unsigned shell_id, bool enable_approach) {
-    if (enable_approach) {
-        intent().opp_avoid_mask[shell_id] = kOppAvoidSmall;
-    } else {
-        intent().opp_avoid_mask[shell_id] = *opp_avoid_radius;
-    }
-}
-
-void OurRobot::avoid_opponent_radius(unsigned shell_id, float radius) {
-    intent().opp_avoid_mask[shell_id] = radius;
-}
-
-void OurRobot::avoid_all_opponent_radius(float radius) {
-    for (float& ar : intent().opp_avoid_mask) {
-        ar = radius;
-    }
-}
-
-#pragma mark Ball Avoidance
-
-void OurRobot::disable_avoid_ball() { avoid_ball_radius(-1); }
-
-void OurRobot::avoid_ball_radius(float radius) {
-    intent().avoid_ball_radius = radius;
-
-    cmd_text_ << "avoid_ball(" << radius << ")" << endl;
-}
-
-float OurRobot::avoid_ball_radius() const { return intent().avoid_ball_radius; }
-
-void OurRobot::reset_avoid_ball() { avoid_ball_radius(kBallAvoidSmall); }
-
-std::shared_ptr<rj_geometry::Circle> OurRobot::create_ball_obstacle() const {
-    // if game is stopped, large obstacle regardless of flags
-    if (context_->game_state.state != GameState::Playing &&
-        !(context_->game_state.our_restart || context_->game_state.their_penalty())) {
-        return std::make_shared<rj_geometry::Circle>(
-            context_->world_state.ball.position,
-            FieldDimensions::current_dimensions.center_radius());
-    }
-
-    // create an obstacle if necessary
-    if (intent().avoid_ball_radius > 0.0) {
-        return std::make_shared<rj_geometry::Circle>(context_->world_state.ball.position,
-                                                    intent().avoid_ball_radius);
-    }
-    return nullptr;
 }
 
 #pragma mark Motion
