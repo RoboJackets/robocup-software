@@ -30,10 +30,28 @@ rosidl_generate_interfaces(
   msg/GameSettings.msg
   msg/GameState.msg
   msg/Goalie.msg
+  msg/ManipulatorSetpoint.msg
+  msg/MotionSetpoint.msg
+
+  msg/LinearMotionInstant.msg
+  msg/EmptyMotionCommand.msg
+  msg/PathTargetMotionCommand.msg
+  msg/WorldVelMotionCommand.msg
+  msg/PivotMotionCommand.msg
+  msg/SettleMotionCommand.msg
+  msg/CollectMotionCommand.msg
+  msg/LineKickMotionCommand.msg
+  msg/InterceptMotionCommand.msg
+  msg/MotionCommand.msg
+
   msg/RawProtobuf.msg
+  msg/RobotIntent.msg
+  msg/RobotInstant.msg
   msg/RobotState.msg
+  msg/RobotStatus.msg
   msg/TeamColor.msg
   msg/TeamInfo.msg
+  msg/Trajectory.msg
   msg/WorldState.msg
   # Services
   srv/QuickCommands.srv

@@ -2,6 +2,7 @@
 
 #include <rj_geometry/pose.hpp>
 #include <rj_common/time.hpp>
+#include <rj_msgs/msg/trajectory.hpp>
 
 #include "debug_drawer.hpp"
 #include "instant.hpp"
@@ -30,6 +31,8 @@ using RobotInstantSequence = std::vector<RobotInstant>;
  */
 class Trajectory {
 public:
+    using Msg = rj_msgs::msg::Trajectory;
+
     Trajectory() = default;
     ~Trajectory() = default;
 
@@ -296,7 +299,7 @@ public:
      * @brief Get the time this trajectory was created, or nullopt if it has not
      * yet been stamped.
      */
-    std::optional<RJ::Time> time_created() { return creation_stamp_; }
+    std::optional<RJ::Time> time_created() const { return creation_stamp_; }
 
     /**
      * @brief Stamp this trajectory for completion at the specified time.
@@ -414,6 +417,11 @@ public:
      */
     [[nodiscard]] bool angles_valid() const { return has_angle_profile_; }
 
+    /**
+     * @return The robot instants forming the keypoints of this trajectory, sequenced by time.
+     */
+    [[nodiscard]] const RobotInstantSequence& instants() const { return instants_; }
+
 private:
     // A sorted array of RobotInstants (by timestamp)
     RobotInstantSequence instants_;
@@ -429,3 +437,25 @@ private:
 };
 
 }  // namespace Planning
+
+namespace rj_convert {
+
+template <>
+struct RosConverter<Planning::Trajectory, rj_msgs::msg::Trajectory> {
+    static rj_msgs::msg::Trajectory to_ros(const Planning::Trajectory& from) {
+        return rj_msgs::build<rj_msgs::msg::Trajectory>()
+            .stamp(convert_to_ros(from.time_created().value()))
+            .instants(convert_to_ros(from.instants()));
+    }
+
+    static Planning::Trajectory from_ros(const rj_msgs::msg::Trajectory& from) {
+        auto trajectory = Planning::Trajectory{convert_from_ros(from.instants)};
+        trajectory.stamp(convert_from_ros(from.stamp));
+        trajectory.mark_angles_valid();
+        return trajectory;
+    }
+};
+
+ASSOCIATE_CPP_ROS(Planning::Trajectory, Planning::Trajectory::Msg);
+
+} // namespace rj_convert
