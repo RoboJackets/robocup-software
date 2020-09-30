@@ -74,7 +74,7 @@ class HeuristicInformation:
         :return: The current BallPos.
         """
 
-        # TODO: Re-implement all the logic here.
+        # TODO(1578): Re-implement all the logic here.
 
         return BallPos.FREE_BALL
 
@@ -88,7 +88,7 @@ class HeuristicInformation:
         :return: The current BallPos.
         """
 
-        # TODO: Re-implement all the logic here.
+        # TODO(1578): Re-implement all the logic here.
 
         return False
 
