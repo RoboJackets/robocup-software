@@ -1,23 +1,22 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
-#include <rj_geometry/pose.hpp>
-#include <world_state.hpp>
-#include <rj_convert/ros_convert.hpp>
-
 #include <variant>
 #include <vector>
 
-#include <rj_msgs/msg/linear_motion_instant.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
-#include <rj_msgs/msg/path_target_motion_command.hpp>
-#include <rj_msgs/msg/line_kick_motion_command.hpp>
-#include <rj_msgs/msg/pivot_motion_command.hpp>
-#include <rj_msgs/msg/intercept_motion_command.hpp>
+#include <rj_convert/ros_convert.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/collect_motion_command.hpp>
+#include <rj_msgs/msg/empty_motion_command.hpp>
+#include <rj_msgs/msg/intercept_motion_command.hpp>
+#include <rj_msgs/msg/line_kick_motion_command.hpp>
+#include <rj_msgs/msg/linear_motion_instant.hpp>
+#include <rj_msgs/msg/motion_command.hpp>
+#include <rj_msgs/msg/path_target_motion_command.hpp>
+#include <rj_msgs/msg/pivot_motion_command.hpp>
 #include <rj_msgs/msg/settle_motion_command.hpp>
 #include <rj_msgs/msg/world_vel_motion_command.hpp>
-#include <rj_msgs/msg/motion_command.hpp>
+#include <world_state.hpp>
 
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
@@ -92,11 +91,13 @@ namespace rj_convert {
 
 template <>
 struct RosConverter<Planning::EmptyCommand, rj_msgs::msg::EmptyMotionCommand> {
-    static rj_msgs::msg::EmptyMotionCommand to_ros([[maybe_unused]] const Planning::EmptyCommand& from) {
+    static rj_msgs::msg::EmptyMotionCommand to_ros([
+        [maybe_unused]] const Planning::EmptyCommand& from) {
         return rj_msgs::msg::EmptyMotionCommand{};
     }
 
-    static Planning::EmptyCommand from_ros([[maybe_unused]] const rj_msgs::msg::EmptyMotionCommand& from) {
+    static Planning::EmptyCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::EmptyMotionCommand& from) {
         return Planning::EmptyCommand{};
     }
 };
@@ -105,11 +106,14 @@ ASSOCIATE_CPP_ROS(Planning::EmptyCommand, rj_msgs::msg::EmptyMotionCommand);
 
 template <>
 struct RosConverter<Planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionCommand> {
-    static rj_msgs::msg::PathTargetMotionCommand to_ros([[maybe_unused]] const Planning::PathTargetCommand& from) {
-        return rj_msgs::build<rj_msgs::msg::PathTargetMotionCommand>().target(convert_to_ros(from.goal));
+    static rj_msgs::msg::PathTargetMotionCommand to_ros([
+        [maybe_unused]] const Planning::PathTargetCommand& from) {
+        return rj_msgs::build<rj_msgs::msg::PathTargetMotionCommand>().target(
+            convert_to_ros(from.goal));
     }
 
-    static Planning::PathTargetCommand from_ros([[maybe_unused]] const rj_msgs::msg::PathTargetMotionCommand& from) {
+    static Planning::PathTargetCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::PathTargetMotionCommand& from) {
         return Planning::PathTargetCommand{convert_from_ros(from.target)};
     }
 };
@@ -118,11 +122,14 @@ ASSOCIATE_CPP_ROS(Planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionCom
 
 template <>
 struct RosConverter<Planning::WorldVelCommand, rj_msgs::msg::WorldVelMotionCommand> {
-    static rj_msgs::msg::WorldVelMotionCommand to_ros([[maybe_unused]] const Planning::WorldVelCommand& from) {
-        return rj_msgs::build<rj_msgs::msg::WorldVelMotionCommand>().world_vel(convert_to_ros(from.world_vel));
+    static rj_msgs::msg::WorldVelMotionCommand to_ros([
+        [maybe_unused]] const Planning::WorldVelCommand& from) {
+        return rj_msgs::build<rj_msgs::msg::WorldVelMotionCommand>().world_vel(
+            convert_to_ros(from.world_vel));
     }
 
-    static Planning::WorldVelCommand from_ros([[maybe_unused]] const rj_msgs::msg::WorldVelMotionCommand& from) {
+    static Planning::WorldVelCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::WorldVelMotionCommand& from) {
         return Planning::WorldVelCommand{convert_from_ros(from.world_vel)};
     }
 };
@@ -131,12 +138,17 @@ ASSOCIATE_CPP_ROS(Planning::WorldVelCommand, rj_msgs::msg::WorldVelMotionCommand
 
 template <>
 struct RosConverter<Planning::PivotCommand, rj_msgs::msg::PivotMotionCommand> {
-    static rj_msgs::msg::PivotMotionCommand to_ros([[maybe_unused]] const Planning::PivotCommand& from) {
-        return rj_msgs::build<rj_msgs::msg::PivotMotionCommand>().pivot_point(convert_to_ros(from.pivot_point)).pivot_target(convert_to_ros(from.pivot_target));
+    static rj_msgs::msg::PivotMotionCommand to_ros([
+        [maybe_unused]] const Planning::PivotCommand& from) {
+        return rj_msgs::build<rj_msgs::msg::PivotMotionCommand>()
+            .pivot_point(convert_to_ros(from.pivot_point))
+            .pivot_target(convert_to_ros(from.pivot_target));
     }
 
-    static Planning::PivotCommand from_ros([[maybe_unused]] const rj_msgs::msg::PivotMotionCommand& from) {
-        return Planning::PivotCommand{convert_from_ros(from.pivot_point), convert_from_ros(from.pivot_target)};
+    static Planning::PivotCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::PivotMotionCommand& from) {
+        return Planning::PivotCommand{convert_from_ros(from.pivot_point),
+                                      convert_from_ros(from.pivot_target)};
     }
 };
 
@@ -144,7 +156,8 @@ ASSOCIATE_CPP_ROS(Planning::PivotCommand, rj_msgs::msg::PivotMotionCommand);
 
 template <>
 struct RosConverter<Planning::SettleCommand, rj_msgs::msg::SettleMotionCommand> {
-    static rj_msgs::msg::SettleMotionCommand to_ros([[maybe_unused]] const Planning::SettleCommand& from) {
+    static rj_msgs::msg::SettleMotionCommand to_ros([
+        [maybe_unused]] const Planning::SettleCommand& from) {
         rj_msgs::msg::SettleMotionCommand result;
         if (from.target.has_value()) {
             result.maybe_target.push_back(convert_to_ros(from.target.value()));
@@ -152,7 +165,8 @@ struct RosConverter<Planning::SettleCommand, rj_msgs::msg::SettleMotionCommand> 
         return result;
     }
 
-    static Planning::SettleCommand from_ros([[maybe_unused]] const rj_msgs::msg::SettleMotionCommand& from) {
+    static Planning::SettleCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::SettleMotionCommand& from) {
         Planning::SettleCommand result;
         if (!from.maybe_target.empty()) {
             result.target = convert_from_ros(from.maybe_target.front());
@@ -165,11 +179,13 @@ ASSOCIATE_CPP_ROS(Planning::SettleCommand, rj_msgs::msg::SettleMotionCommand);
 
 template <>
 struct RosConverter<Planning::CollectCommand, rj_msgs::msg::CollectMotionCommand> {
-    static rj_msgs::msg::CollectMotionCommand to_ros([[maybe_unused]] const Planning::CollectCommand& from) {
+    static rj_msgs::msg::CollectMotionCommand to_ros([
+        [maybe_unused]] const Planning::CollectCommand& from) {
         return rj_msgs::build<rj_msgs::msg::CollectMotionCommand>();
     }
 
-    static Planning::CollectCommand from_ros([[maybe_unused]] const rj_msgs::msg::CollectMotionCommand& from) {
+    static Planning::CollectCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::CollectMotionCommand& from) {
         return Planning::CollectCommand{};
     }
 };
@@ -178,11 +194,14 @@ ASSOCIATE_CPP_ROS(Planning::CollectCommand, rj_msgs::msg::CollectMotionCommand);
 
 template <>
 struct RosConverter<Planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand> {
-    static rj_msgs::msg::LineKickMotionCommand to_ros([[maybe_unused]] const Planning::LineKickCommand& from) {
-        return rj_msgs::build<rj_msgs::msg::LineKickMotionCommand>().target(convert_to_ros(from.target));
+    static rj_msgs::msg::LineKickMotionCommand to_ros([
+        [maybe_unused]] const Planning::LineKickCommand& from) {
+        return rj_msgs::build<rj_msgs::msg::LineKickMotionCommand>().target(
+            convert_to_ros(from.target));
     }
 
-    static Planning::LineKickCommand from_ros([[maybe_unused]] const rj_msgs::msg::LineKickMotionCommand& from) {
+    static Planning::LineKickCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::LineKickMotionCommand& from) {
         return Planning::LineKickCommand{convert_from_ros(from.target)};
     }
 };
@@ -191,11 +210,14 @@ ASSOCIATE_CPP_ROS(Planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand
 
 template <>
 struct RosConverter<Planning::InterceptCommand, rj_msgs::msg::InterceptMotionCommand> {
-    static rj_msgs::msg::InterceptMotionCommand to_ros([[maybe_unused]] const Planning::InterceptCommand& from) {
-        return rj_msgs::build<rj_msgs::msg::InterceptMotionCommand>().target(convert_to_ros(from.target));
+    static rj_msgs::msg::InterceptMotionCommand to_ros([
+        [maybe_unused]] const Planning::InterceptCommand& from) {
+        return rj_msgs::build<rj_msgs::msg::InterceptMotionCommand>().target(
+            convert_to_ros(from.target));
     }
 
-    static Planning::InterceptCommand from_ros([[maybe_unused]] const rj_msgs::msg::InterceptMotionCommand& from) {
+    static Planning::InterceptCommand from_ros([
+        [maybe_unused]] const rj_msgs::msg::InterceptMotionCommand& from) {
         return Planning::InterceptCommand{convert_from_ros(from.target)};
     }
 };
@@ -255,4 +277,4 @@ struct RosConverter<Planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
 ASSOCIATE_CPP_ROS(Planning::MotionCommand, rj_msgs::msg::MotionCommand);
 
-} // namespace rj_convert
+}  // namespace rj_convert

@@ -19,7 +19,9 @@ constexpr double kMaxKickSpeed = 7.0;
 constexpr double kMinKickSpeed = 2.1;
 
 static double kicker_strength_to_speed(uint8_t kick_strength) {
-    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) * (kMaxKickSpeed - kMinKickSpeed) + kMinKickSpeed;
+    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) *
+               (kMaxKickSpeed - kMinKickSpeed) +
+           kMinKickSpeed;
 }
 
 /**

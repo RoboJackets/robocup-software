@@ -5,15 +5,15 @@
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/line.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_geometry/pose.hpp>
 #include <rj_geometry/polygon.hpp>
+#include <rj_geometry/pose.hpp>
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/segment.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_geometry_msgs/msg/line.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
-#include <rj_geometry_msgs/msg/pose.hpp>
 #include <rj_geometry_msgs/msg/polygon.hpp>
+#include <rj_geometry_msgs/msg/pose.hpp>
 #include <rj_geometry_msgs/msg/rect.hpp>
 #include <rj_geometry_msgs/msg/segment.hpp>
 #include <rj_geometry_msgs/msg/shape_set.hpp>
@@ -136,7 +136,9 @@ ASSOCIATE_CPP_ROS(rj_geometry::Rect, rj_geometry::Rect::Msg);
 template <>
 struct RosConverter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle> {
     static rj_geometry_msgs::msg::Circle to_ros(const rj_geometry::Circle& from) {
-        return rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>().center(convert_to_ros(from.center)).radius(convert_to_ros(from.radius()));
+        return rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>()
+            .center(convert_to_ros(from.center))
+            .radius(convert_to_ros(from.radius()));
     }
 
     static rj_geometry::Circle from_ros(const rj_geometry_msgs::msg::Circle& from) {
@@ -149,7 +151,8 @@ ASSOCIATE_CPP_ROS(rj_geometry::Circle, rj_geometry::Circle::Msg);
 template <>
 struct RosConverter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon> {
     static rj_geometry_msgs::msg::Polygon to_ros(const rj_geometry::Polygon& from) {
-        return rj_geometry_msgs::build<rj_geometry_msgs::msg::Polygon>().points(convert_to_ros(from.vertices));
+        return rj_geometry_msgs::build<rj_geometry_msgs::msg::Polygon>().points(
+            convert_to_ros(from.vertices));
     }
 
     static rj_geometry::Polygon from_ros(const rj_geometry_msgs::msg::Polygon& from) {
@@ -172,7 +175,8 @@ struct RosConverter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet> {
             } else if (const auto* as_polygon = dynamic_cast<rj_geometry::Polygon*>(shape.get())) {
                 result.polygons.emplace_back(convert_to_ros(*as_polygon));
             } else {
-                throw std::invalid_argument("Object in ShapeSet has invalid type in conversion to ROS type");
+                throw std::invalid_argument(
+                    "Object in ShapeSet has invalid type in conversion to ROS type");
             }
         }
         return result;
@@ -180,18 +184,18 @@ struct RosConverter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet> {
 
     static rj_geometry::ShapeSet from_ros(const rj_geometry_msgs::msg::ShapeSet& from) {
         rj_geometry::ShapeSet result;
-        std::transform(from.rectangles.begin(),
-                       from.rectangles.end(),
-                       std::back_inserter(result.shapes()),
-                       [] (const auto &rect) { return std::make_shared<rj_geometry::Rect>(convert_from_ros(rect)); });
-        std::transform(from.circles.begin(),
-                       from.circles.end(),
-                       std::back_inserter(result.shapes()),
-                       [] (const auto &rect) { return std::make_shared<rj_geometry::Circle>(convert_from_ros(rect)); });
-        std::transform(from.polygons.begin(),
-                       from.polygons.end(),
-                       std::back_inserter(result.shapes()),
-                       [] (const auto &rect) { return std::make_shared<rj_geometry::Polygon>(convert_from_ros(rect)); });
+        std::transform(from.rectangles.begin(), from.rectangles.end(),
+                       std::back_inserter(result.shapes()), [](const auto& rect) {
+                           return std::make_shared<rj_geometry::Rect>(convert_from_ros(rect));
+                       });
+        std::transform(from.circles.begin(), from.circles.end(),
+                       std::back_inserter(result.shapes()), [](const auto& rect) {
+                           return std::make_shared<rj_geometry::Circle>(convert_from_ros(rect));
+                       });
+        std::transform(from.polygons.begin(), from.polygons.end(),
+                       std::back_inserter(result.shapes()), [](const auto& rect) {
+                           return std::make_shared<rj_geometry::Polygon>(convert_from_ros(rect));
+                       });
         return result;
     }
 };
