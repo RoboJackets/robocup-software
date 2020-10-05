@@ -4,34 +4,36 @@
 
 #pragma once
 
-#include <rj_protos/LogFrame.pb.h>
-#include <rj_topic_utils/async_message_queue.hpp>
-#include <ros2_temp/raw_vision_packet_sub.hpp>
-#include <ros2_temp/soccer_config_client.hpp>
+#include <mutex>
+#include <optional>
+#include <vector>
 
+#include <rclcpp/executors/single_threaded_executor.hpp>
+
+#include <logger.hpp>
+#include <referee/external_referee.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/transform_matrix.hpp>
-#include <logger.hpp>
-#include <system_state.hpp>
-#include <mutex>
-#include <optional>
-#include <rclcpp/executors/single_threaded_executor.hpp>
-#include <referee/external_referee.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <ros2_temp/referee_sub.hpp>
+#include <rj_protos/LogFrame.pb.h>
+#include <rj_topic_utils/async_message_queue.hpp>
 #include <ros2_temp/debug_draw_interface.hpp>
-#include <vector>
+#include <ros2_temp/raw_vision_packet_sub.hpp>
+#include <ros2_temp/referee_sub.hpp>
+#include <ros2_temp/soccer_config_client.hpp>
+#include <system_state.hpp>
 
 #include "context.hpp"
 #include "gr_sim_communicator.hpp"
-#include "node.hpp"
 #include "joystick/manual_control_node.hpp"
 #include "joystick/sdl_joystick_node.hpp"
 #include "motion/motion_control_node.hpp"
+#include "node.hpp"
 #include "planning/planner_node.hpp"
 #include "radio/radio.hpp"
 #include "radio/radio_node.hpp"
+
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;

@@ -29,10 +29,10 @@ using namespace boost::python;
 #include <rj_geometry/rect.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
-#include "motion/trapezoidal_motion.hpp"
 #include "debug_drawer.hpp"
 #include "kick_evaluator.hpp"
 #include "motion/motion_control.hpp"
+#include "motion/trapezoidal_motion.hpp"
 #include "optimization/nelder_mead_2d.hpp"
 #include "optimization/nelder_mead_2d_config.hpp"
 #include "optimization/python_function_wrapper.hpp"

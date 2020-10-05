@@ -79,7 +79,8 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
     raw_vision_packet_sub_ = std::make_unique<ros2_temp::RawVisionPacketSub>(&context_);
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
-    debug_draw_sub_ = std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());
+    debug_draw_sub_ =
+        std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStatePub);
 

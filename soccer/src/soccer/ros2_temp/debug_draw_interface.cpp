@@ -21,7 +21,7 @@ DebugDrawInterface::DebugDrawInterface(Context* context, rclcpp::Executor* execu
 
 void DebugDrawInterface::run() {
     const auto& color_to_qt = [](const rj_drawing_msgs::msg::DrawColor& color) {
-      return QColor::fromRgb(color.r, color.g, color.b);
+        return QColor::fromRgb(color.r, color.g, color.b);
     };
 
     for (const auto& [layer, debug_draw] : latest_) {
@@ -50,10 +50,9 @@ void DebugDrawInterface::run() {
             }
         }
         for (const auto& text : debug_draw->debug_text) {
-            context_->debug_drawer.draw_text(QString::fromStdString(text.text),
-                                             rj_convert::convert_from_ros(text.position),
-                                             color_to_qt(text.color),
-                                             QString::fromStdString(layer));
+            context_->debug_drawer.draw_text(
+                QString::fromStdString(text.text), rj_convert::convert_from_ros(text.position),
+                color_to_qt(text.color), QString::fromStdString(layer));
         }
     }
 }
