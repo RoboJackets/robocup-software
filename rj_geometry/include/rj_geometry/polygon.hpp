@@ -4,9 +4,9 @@
 
 #include <rj_geometry_msgs/msg/polygon.hpp>
 
-#include "shape.hpp"
 #include "rect.hpp"
 #include "segment.hpp"
+#include "shape.hpp"
 
 namespace rj_geometry {
 
