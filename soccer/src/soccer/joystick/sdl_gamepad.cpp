@@ -1,16 +1,17 @@
 #include <algorithm>
-#include <iostream>
 #include <vector>
 
+#include <spdlog/spdlog.h>
+
 #include <joystick/sdl_gamepad.hpp>
+#include <rj_utils/logging.hpp>
 
 namespace joystick {
 SDLGamepad::SDLGamepad(int device_index) {
     controller_ = SDL_GameControllerOpen(device_index);
 
     if (controller_ == nullptr) {
-        std::cerr << "ERROR: Could not open controller! SDL Error: " << SDL_GetError() << std::endl;
-        throw std::runtime_error("Failed to open controller!");
+        FATAL_THROW("ERROR: Could not open controller! SDL Error: {}", SDL_GetError());
     }
 
     auto* joystick = SDL_GameControllerGetJoystick(controller_);

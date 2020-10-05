@@ -21,7 +21,7 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
     if (static_obstacles.hit(request.start.position())) {
-        std::cout << "Hit static obstacle" << std::endl;
+        SPDLOG_INFO("Hit static obstacle");
         reset();
         return Trajectory();
     }

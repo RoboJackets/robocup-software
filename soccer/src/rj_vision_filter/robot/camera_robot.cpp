@@ -1,4 +1,5 @@
-#include <iostream>
+
+#include <spdlog/spdlog.h>
 
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
@@ -24,7 +25,7 @@ rj_geometry::Pose CameraRobot::get_pose() const { return pose_; }
 CameraRobot CameraRobot::combine_robots(const std::list<CameraRobot>& robots) {
     // Make sure we don't divide by zero due to some weird error
     if (robots.empty()) {
-        std::cout << "ERROR: Number of robots to combine is zero" << std::endl;
+        SPDLOG_ERROR("Number of robots to combine is zero");
 
         return CameraRobot(RJ::now(), rj_geometry::Pose(), -1);
     }

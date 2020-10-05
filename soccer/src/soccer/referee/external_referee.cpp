@@ -3,15 +3,17 @@
 #include <stdexcept>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <fmt/ostream.h>
+#include <spdlog/spdlog.h>
 
+#include <rj_common/multicast.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/utils.hpp>
-#include <rj_common/multicast.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_param_utils/param.hpp>
-#include <rj_utils/logging.hpp>
+#include <rj_utils/logging_macros.hpp>
 #include <unistd.h>
 
 #include "world_state.hpp"
@@ -62,15 +64,14 @@ void ExternalReferee::start_receive() {
 
 void ExternalReferee::receive_packet(const boost::system::error_code& error, size_t num_bytes) {
     if (error != boost::system::errc::success) {
-        std::cerr << "Error receiving: " << error << " in " __FILE__ << std::endl;
+        SPDLOG_ERROR("Error receiving: ", error);
         return;
     }
 
     SSL_Referee ref_packet;
     if (!ref_packet.ParseFromArray(recv_buffer_.data(), num_bytes)) {
-        std::cerr << "NewRefereeModule: got bad packet of " << num_bytes << " bytes from "
-                  << sender_endpoint_ << std::endl;
-        std::cerr << "Address: " << &kRefereeAddress << std::endl;
+        SPDLOG_ERROR("Got bad packet of {} bytes from {}", num_bytes, sender_endpoint_);
+        SPDLOG_ERROR("Address: {}", fmt::ptr(&kRefereeAddress));
         return;
     }
 

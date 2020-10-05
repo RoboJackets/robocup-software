@@ -86,6 +86,9 @@ if(NOT FOUND_A_BOOST_PYTHON)
   message(FATAL_ERROR "Unable to find a suitable version of boost python")
 endif()
 
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+
 # ======================================================================
 # QT build tool things
 # ======================================================================
@@ -131,6 +134,7 @@ set(ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS
 set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     ${Boost_LIBRARIES}
     ${Boost_SYSTEM_LIBRARY}
+    fmt
     GL
     GLU
     glut
@@ -142,6 +146,7 @@ set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     Qt5::OpenGL
     Qt5::Network
     Qt5::Svg
+    spdlog
     Threads::Threads
     RRT
     spnav
@@ -158,9 +163,12 @@ set(ROBOCUP_DEPS_LIBRARIES
     rc-fshare
     rj_param_utils
     rj_topic_utils
+    rj_utils
     config_client)
 
 # ---- vision_filter ----
+set(RJ_VISION_FILTER_DEPS_SYSTEM_LIBRARIES spdlog)
+
 set(RJ_VISION_FILTER_DEPS_LIBRARIES rj_param_utils robocup)
 
 # ---- soccer ----
@@ -201,8 +209,8 @@ target_link_libraries(robocup PUBLIC ${ROBOCUP_DEPS_SYSTEM_LIBRARIES} ${ROBOCUP_
 
 ament_target_dependencies(robocup PUBLIC ament_index_cpp)
 
-# ---- Robocup ----
-target_link_libraries(rj_vision_filter PRIVATE robocup)
+# ---- rj_vision_filter ----
+target_link_libraries(rj_vision_filter PRIVATE robocup ${RJ_VISION_FILTER_DEPS_LIBRARIES} ${RJ_VISION_FILTER_DEPS_SYSTEM_LIBRARIES})
 ament_target_dependencies(rj_vision_filter PUBLIC ament_index_cpp)
 
 # ---- Soccer ----
