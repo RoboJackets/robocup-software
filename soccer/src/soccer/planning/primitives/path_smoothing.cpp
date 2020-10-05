@@ -1,6 +1,6 @@
 #include "path_smoothing.hpp"
 
-#include <motion/trapezoidal_motion.hpp>
+#include <control/trapezoidal_motion.hpp>
 
 namespace Planning {
 

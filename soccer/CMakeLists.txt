@@ -15,14 +15,14 @@ find_package(rj_geometry_msgs REQUIRED)
 
 # Qt5
 find_package(
-  Qt5
-  COMPONENTS Widgets
-             Xml
-             Core
-             OpenGL
-             Network
-             Svg
-  REQUIRED)
+        Qt5
+        COMPONENTS Widgets
+        Xml
+        Core
+        OpenGL
+        Network
+        Svg
+        REQUIRED)
 message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
 add_definitions(-DQT_NO_KEYWORDS) # Remove QT slots/signals/emit keywords
 
@@ -52,9 +52,9 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(
-  Boost
-  COMPONENTS system
-  REQUIRED)
+        Boost
+        COMPONENTS system
+        REQUIRED)
 
 # find boost python This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and
 # 'python' on OS X
@@ -63,23 +63,23 @@ set(FOUND_A_BOOST_PYTHON FALSE)
 set(version ${PYTHONLIBS_VERSION_STRING})
 
 string(
-  REGEX
-  REPLACE "[^0-9]"
-          ""
-          boost_py_version
-          "${version}")
+        REGEX
+        REPLACE "[^0-9]"
+        ""
+        boost_py_version
+        "${version}")
 # Get first two numbers of python string
 string(
-  REGEX MATCH
+        REGEX MATCH
         "^[0-9][0-9]"
         boost_py_version
         "${boost_py_version}")
 
 foreach(possible_name python3 python-py${boost_py_version} python)
   find_package(
-    Boost
-    COMPONENTS ${possible_name}
-    QUIET)
+          Boost
+          COMPONENTS ${possible_name}
+          QUIET)
   if(Boost_FOUND)
     set(FOUND_A_BOOST_PYTHON TRUE)
     break()
@@ -115,6 +115,10 @@ add_executable(soccer)
 add_executable(log_viewer)
 add_executable(internal_referee_node)
 add_executable(external_referee_node)
+add_executable(planner_node)
+add_executable(control_node)
+add_executable(sim_radio_node)
+add_executable(network_radio_node)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -128,11 +132,11 @@ add_subdirectory(src)
 
 # ---- robocup ----
 set(ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS
-    ${EIGEN_INCLUDE_DIRS}
-    ${LIBUSB_1_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_DIRS}
-    ${RRT_INCLUDE_DIR}
-    ${SDL2_INCLUDE_DIRS})
+        ${EIGEN_INCLUDE_DIRS}
+        ${LIBUSB_1_INCLUDE_DIRS}
+        ${PYTHON_INCLUDE_DIRS}
+        ${RRT_INCLUDE_DIR}
+        ${SDL2_INCLUDE_DIRS})
 
 set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     ${Boost_LIBRARIES}
@@ -156,8 +160,8 @@ set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     ${SDL2_LIBRARIES})
 
 set(ROBOCUP_DEPS_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/soccer ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/soccer ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include)
 
 set(ROBOCUP_DEPS_LIBRARIES
     rj_common
@@ -176,28 +180,36 @@ set(RJ_VISION_FILTER_DEPS_LIBRARIES rj_param_utils robocup)
 
 # ---- soccer ----
 set(SOCCER_DEPS_SYSTEM_LIBRARIES
-    Qt5::Widgets
-    Qt5::Xml
-    Qt5::Core
-    Qt5::OpenGL
-    Qt5::Network
-    Qt5::Svg)
+        Qt5::Widgets
+        Qt5::Xml
+        Qt5::Core
+        Qt5::OpenGL
+        Qt5::Network
+        Qt5::Svg)
 
 set(SOCCER_DEPS_LIBRARIES robocup)
 
 # ---- log_viewer ----
 set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::OpenGL
-    Qt5::Xml
-    Qt5::Svg)
+        Qt5::Core
+        Qt5::Widgets
+        Qt5::OpenGL
+        Qt5::Xml
+        Qt5::Svg)
 
 set(LOG_VIEWER_DEPS_LIBRARIES robocup)
 
 set(REFEREE_NODE_DEPS_SYSTEM_LIBRARIES)
-
 set(REFEREE_NODE_DEPS_LIBRARIES robocup)
+
+set(RADIO_NODE_DEPS_SYSTEM_LIBRARIES)
+set(RADIO_NODE_DEPS_LIBRARIES robocup)
+
+set(CONTROL_NODE_DEPS_SYSTEM_LIBRARIES)
+set(CONTROL_NODE_DEPS_LIBRARIES robocup)
+
+set(PLANNER_NODE_DEPS_SYSTEM_LIBRARIES)
+set(PLANNER_NODE_DEPS_LIBRARIES robocup)
 
 # ======================================================================
 # Include and Linking
@@ -223,15 +235,32 @@ target_link_libraries(soccer PUBLIC ${SOCCER_DEPS_SYSTEM_LIBRARIES} ${SOCCER_DEP
 
 # ---- log_viewer ----
 target_link_libraries(log_viewer PRIVATE ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
-                                         ${LOG_VIEWER_DEPS_LIBRARIES})
+        ${LOG_VIEWER_DEPS_LIBRARIES})
 
 # -- external_referee_node --
 target_link_libraries(external_referee_node PRIVATE ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
-                                                    ${REFEREE_NODE_DEPS_LIBRARIES})
+        ${REFEREE_NODE_DEPS_LIBRARIES})
 
 # -- internal_referee_node --
 target_link_libraries(internal_referee_node PRIVATE ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
-                                                    ${REFEREE_NODE_DEPS_LIBRARIES})
+        ${REFEREE_NODE_DEPS_LIBRARIES})
+
+# -- sim_radio_node --
+target_link_libraries(sim_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${RADIO_NODE_DEPS_LIBRARIES})
+
+# -- network_radio_node --
+target_link_libraries(network_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${RADIO_NODE_DEPS_LIBRARIES})
+
+# -- control_node --
+target_link_libraries(control_node PRIVATE ${CONTROL_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${CONTROL_NODE_DEPS_LIBRARIES})
+
+# -- planner_node --
+target_link_libraries(planner_node PRIVATE ${PLANNER_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${PLANNER_NODE_DEPS_LIBRARIES})
+
 
 # ======================================================================
 # Testing
@@ -247,9 +276,9 @@ if(BUILD_TESTING)
   set(test_libs geometry2d_testing rj_param_utils_testing)
   foreach(test_lib ${test_libs})
     target_link_libraries(
-      test-soccer
-      PRIVATE
-        "-Wl,--whole-archive -L$<TARGET_FILE_DIR:${test_lib}> -l${test_lib} -Wl,--no-whole-archive")
+            test-soccer
+            PRIVATE
+            "-Wl,--whole-archive -L$<TARGET_FILE_DIR:${test_lib}> -l${test_lib} -Wl,--no-whole-archive")
     target_link_libraries(test-soccer PRIVATE ${test_lib})
   endforeach()
 
@@ -261,37 +290,38 @@ endif()
 # Packaging
 # ======================================================================
 install(
-  TARGETS robocup
-          log_viewer
-          internal_referee_node
-          external_referee_node
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+        TARGETS robocup
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
 
 install(
-  TARGETS soccer
-          internal_referee_node
-          external_referee_node
-          rj_vision_filter
-  DESTINATION lib/${CMAKE_PROJECT_NAME})
+        TARGETS soccer
+        internal_referee_node
+        external_referee_node
+        rj_vision_filter
+        planner_node
+        control_node
+        sim_radio_node
+        network_radio_node
+        DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(
-  DIRECTORY src/soccer/gameplay
-  DESTINATION share/${CMAKE_PROJECT_NAME}
-  FILES_MATCHING
-  PATTERN "*.py"
-  PATTERN "*.pbk")
+        DIRECTORY src/soccer/gameplay
+        DESTINATION share/${CMAKE_PROJECT_NAME}
+        FILES_MATCHING
+        PATTERN "*.py"
+        PATTERN "*.pbk")
 
 install(
-  FILES config/realShopField.xml
-  DESTINATION share/${CMAKE_PROJECT_NAME}/config
-  RENAME soccer-real.cfg)
+        FILES config/realShopField.xml
+        DESTINATION share/${CMAKE_PROJECT_NAME}/config
+        RENAME soccer-real.cfg)
 
 install(
-  FILES config/sim.xml
-  DESTINATION share/${CMAKE_PROJECT_NAME}/config
-  RENAME soccer-sim.cfg)
+        FILES config/sim.xml
+        DESTINATION share/${CMAKE_PROJECT_NAME}/config
+        RENAME soccer-sim.cfg)
 
 if(BUILD_TESTING)
   install(TARGETS test-soccer DESTINATION lib/${CMAKE_PROJECT_NAME})

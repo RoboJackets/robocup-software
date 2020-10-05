@@ -7,29 +7,29 @@
 
 #include "radio.hpp"
 
+namespace radio {
+
 /**
  * @brief Radio IO with robots in the simulator
  */
 class SimRadio : public Radio {
 public:
     static std::size_t instance_count;
-    SimRadio(Context* context, bool blue_team = false);
+    SimRadio(bool blue_team = false);
 
-    [[nodiscard]] bool is_open() const override;
-    void send(const std::array<RobotIntent, kNumShells>& intents,
-              const std::array<MotionSetpoint, kNumShells>& setpoints) override;
+protected:
+    void send(int robot_id,
+              const rj_msgs::msg::MotionSetpoint& motion,
+              const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
     void receive() override;
-    void switch_team(bool blue_team) override;
-
-    void stop_robots();
+    void switch_team(bool blue) override;
 
 private:
-    Context* const context_;
+    void stop_robots();
 
     void handle_receive(const std::string& data);
     void start_receive();
-    void receive_packet(const boost::system::error_code& error,
-                       size_t num_bytes);
+    void receive_packet(const boost::system::error_code& error, size_t num_bytes);
 
     boost::asio::io_service io_service_;
     boost::asio::ip::udp::socket socket_;
@@ -39,3 +39,5 @@ private:
 
     bool blue_team_;
 };
+
+} // namespace radio

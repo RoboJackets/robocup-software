@@ -26,7 +26,7 @@ struct PlanRequest {
                 RobotConstraints constraints,
                 rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles,
-                std::array<Trajectory*, kNumShells> planned_trajectories,
+                std::array<const Trajectory*, kNumShells> planned_trajectories,
                 unsigned shell_id, const WorldState* world_state,
                 int8_t priority = 0, DebugDrawer* debug_drawer = nullptr)
         : start(start),
@@ -70,7 +70,7 @@ struct PlanRequest {
      * Trajectories for each of the robots that has already been planned.
      * nullptr for unplanned robots.
      */
-    std::array<Trajectory*, kNumShells> planned_trajectories;
+    std::array<const Trajectory*, kNumShells> planned_trajectories;
 
     /**
      * The robot's shell ID. Used for debug drawing.
@@ -114,7 +114,7 @@ struct PlanRequest {
  *  nullptr.
  */
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                   std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
-                   Trajectory* out_ball_trajectory = nullptr);
+                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
+                    Trajectory* out_ball_trajectory = nullptr);
 
 }  // namespace Planning

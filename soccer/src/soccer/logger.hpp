@@ -4,7 +4,7 @@
 
 #include <deque>
 #include <fstream>
-#include <motion/motion_setpoint.hpp>
+#include <control/motion_setpoint.hpp>
 #include <optional>
 #include <radio/robot_status.hpp>
 #include <rj_common/time.hpp>

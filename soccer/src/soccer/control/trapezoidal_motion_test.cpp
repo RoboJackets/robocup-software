@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <rj_geometry/point.hpp>
-#include <motion/trapezoidal_motion.hpp>
+#include <control/trapezoidal_motion.hpp>
 
 #include "gtest/gtest.h"
 

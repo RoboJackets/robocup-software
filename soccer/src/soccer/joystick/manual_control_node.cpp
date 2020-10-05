@@ -65,7 +65,7 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
         // If robot isn't visible, then stop
         if (!robot->visible()) {
             intent = {};
-            setpoint.clear();
+            setpoint = {};
             return;
         }
 
@@ -87,8 +87,8 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
     // kick/chip
     bool kick = controls_.kick || controls_.chip;
     intent.trigger_mode = kick ? (context_->game_settings.joystick_config.use_kick_on_break_beam
-                                      ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                                      : RobotIntent::TriggerMode::IMMEDIATE)
+                                  ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                  : RobotIntent::TriggerMode::IMMEDIATE)
                                : RobotIntent::TriggerMode::STAND_DOWN;
 
     // TODO(Kyle): The controller should directly work in the (0, max_kick_speed] range

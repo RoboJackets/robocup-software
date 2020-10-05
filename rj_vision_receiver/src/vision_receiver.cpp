@@ -10,10 +10,11 @@
 #include <rj_utils/conversions.hpp>
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
+#include <spdlog/spdlog.h>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, kSharedVisionPortSinglePrimary,
+DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
              "The port used for the vision receiver.")
 
 namespace vision_receiver {
@@ -67,6 +68,8 @@ void VisionReceiver::set_port(int port) {
     if (socket_.is_open()) {
         socket_.close();
     }
+
+    port_ = port;
 
     // Open the socket and allow address reuse. We need this to allow
     // multiple instances of soccer to listen on the same multicast port.

@@ -6,10 +6,30 @@
 
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
-#include "motion/motion_setpoint.hpp"
+#include "control/motion_setpoint.hpp"
 
-// TODO(Kyle): Make this a real ROS parameter
-constexpr float kMaxKickSpeed = 7.0;
+// TODO(Kyle): Make these ROS parameters and move them to a central location
+constexpr double kMaxKickSpeed = 7.0;
+constexpr double kMinKickSpeed = 2.1;
+constexpr double kMaxChipSpeed = 3.0;
+constexpr double kMinChipSpeed = 0.5;
+
+static uint8_t kicker_speed_to_strength(double kick_speed) {
+    return static_cast<uint8_t>(std::min(1.0, (kick_speed - kMinKickSpeed) / (kMaxKickSpeed - kMinKickSpeed)) * kMaxKick);
+}
+
+static double kicker_strength_to_speed(uint8_t kick_strength) {
+    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) * (kMaxKickSpeed - kMinKickSpeed) + kMinKickSpeed;
+}
+
+static uint8_t chipper_speed_to_strength(double kick_speed) {
+    return static_cast<uint8_t>(std::min(1.0, (kick_speed - kMinChipSpeed) / (kMaxChipSpeed - kMinChipSpeed)) * kMaxKick);
+}
+
+static double chipper_strength_to_speed(uint8_t kick_strength) {
+    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) * (kMaxChipSpeed - kMinChipSpeed) + kMinChipSpeed;
+}
+
 
 namespace ConvertRx {
 
@@ -29,9 +49,9 @@ void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* stat
     status->kicker_voltage = 0;
     status->has_ball = rtp_message.ballSenseStatus;
     status->kicker = rtp_message.kickHealthy
-                         ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
-                                                   : RobotStatus::KickerState::kCharging)
-                         : RobotStatus::KickerState::kFailed;
+                     ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
+                                               : RobotStatus::KickerState::kCharging)
+                     : RobotStatus::KickerState::kFailed;
     for (int i = 0; i < 5; i++) {
         status->motors_healthy[i] = (rtp_message.motorErrors & (1u << i)) == 0;
     }
@@ -110,6 +130,18 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
             break;
     }
 }
+void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
+    msg->robot_id = status.shell_id;
+    msg->battery_voltage = status.battery_voltage;
+    msg->motor_errors = status.motors_healthy;
+    std::copy(status.motors_healthy.end(), status.motors_healthy.end(), msg->motor_errors.begin());
+    msg->has_ball_sense = status.has_ball;
+    msg->kicker_charged = status.kicker == RobotStatus::KickerState::kCharged;
+    msg->kicker_healthy = status.kicker != RobotStatus::KickerState::kFailed;
+    msg->fpga_error = !status.fpga_healthy;
+
+    // TODO(Kyle): Handle encoders.
+}
 
 }  // namespace ConvertRx
 
@@ -127,12 +159,15 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     control_message.bodyW =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.dribbler =
-        std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed) * kMaxDribble, 0, 255);
+    control_message.dribbler = std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed) * kMaxDribble, 0, 255);
 
-    control_message.shootMode = intent.shoot_mode == RobotIntent::ShootMode::CHIP;
-    control_message.kickStrength =
-        std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, 255);
+    if (intent.shoot_mode == RobotIntent::ShootMode::CHIP) {
+        control_message.shootMode = 1;
+        control_message.kickStrength = chipper_speed_to_strength(intent.kick_speed);
+    } else {
+        control_message.shootMode = 0;
+        control_message.kickStrength = kicker_speed_to_strength(intent.kick_speed);
+    }
 
     switch (intent.trigger_mode) {
         case RobotIntent::TriggerMode::STAND_DOWN:
@@ -166,8 +201,7 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     control->set_yvelocity(static_cast<float>(setpoint.yvelocity));
     control->set_avelocity(static_cast<float>(setpoint.avelocity));
     control->set_dvelocity(intent.dribbler_speed);
-    control->set_kcstrength(
-        std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, kMaxKick));
+    control->set_kcstrength(kicker_speed_to_strength(intent.kick_speed));
 
     switch (intent.shoot_mode) {
         case RobotIntent::ShootMode::KICK:
@@ -205,13 +239,13 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     } else {
         if (intent.shoot_mode == RobotIntent::ShootMode::KICK) {
             // Flat kick
-            grsim->set_kickspeedx(intent.kick_speed);
+            double speed = intent.kick_speed;
+            grsim->set_kickspeedx(static_cast<float>(speed));
             grsim->set_kickspeedz(0);
         } else {
             // Chip kick
-            constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
-
             double speed = intent.kick_speed;
+            constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
             grsim->set_kickspeedx(static_cast<float>(std::cos(kChipAngle) * speed));
             grsim->set_kickspeedz(static_cast<float>(std::sin(kChipAngle) * speed));
         }
@@ -222,6 +256,56 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     grsim->set_velangular(static_cast<float>(setpoint.avelocity));
 
     grsim->set_spinner(intent.dribbler_speed > 0);
+    grsim->set_wheelsspeed(false);
+}
+void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp) {
+    rtp->uid = shell;
+    rtp->messageType = rtp::RobotTxMessage::ControlMessageType;
+
+    auto& control_message = rtp->message.controlMessage; // NOLINT
+    control_message.bodyX = static_cast<int16_t>(motion.velocity_x_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    control_message.bodyY = static_cast<int16_t>(motion.velocity_y_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    control_message.bodyW = static_cast<int16_t>(motion.velocity_z_radps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    control_message.dribbler = manipulator.dribbler_speed;
+    control_message.kickStrength = manipulator.kick_strength;
+    control_message.shootMode = manipulator.shoot_mode;
+    control_message.triggerMode = manipulator.trigger_mode;
+    control_message.song = 0;
+}
+
+void ros_to_grsim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
+                  grSim_Robot_Command* grsim) {
+    if (grsim == nullptr) {
+        return;
+    }
+
+    grsim->set_id(shell);
+
+    if (manipulator.trigger_mode == static_cast<uint8_t>(RobotIntent::TriggerMode::STAND_DOWN)) {
+        grsim->set_kickspeedx(0);
+        grsim->set_kickspeedz(0);
+    } else {
+        if (manipulator.shoot_mode == static_cast<uint8_t>(RobotIntent::ShootMode::KICK)) {
+            // Flat kick
+            double speed = kicker_strength_to_speed(manipulator.kick_strength);
+            grsim->set_kickspeedx(static_cast<float>(speed));
+            grsim->set_kickspeedz(0);
+        } else {
+            // Chip kick
+            double speed = chipper_strength_to_speed(manipulator.kick_strength);
+            constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
+            grsim->set_kickspeedx(static_cast<float>(std::cos(kChipAngle) * speed));
+            grsim->set_kickspeedz(static_cast<float>(std::sin(kChipAngle) * speed));
+        }
+    }
+
+    grsim->set_veltangent(static_cast<float>(motion.velocity_y_mps));
+    grsim->set_velnormal(-static_cast<float>(motion.velocity_x_mps));
+    grsim->set_velangular(static_cast<float>(motion.velocity_z_radps));
+
+    grsim->set_spinner(manipulator.dribbler_speed > 0);
     grsim->set_wheelsspeed(false);
 }
 

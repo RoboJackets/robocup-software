@@ -16,7 +16,7 @@
 #include "team_info.hpp"
 #include "world_state.hpp"
 #include "joystick/gamepad_message.hpp"
-#include "motion/motion_setpoint.hpp"
+#include "control/motion_setpoint.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 #include "radio/robot_status.hpp"

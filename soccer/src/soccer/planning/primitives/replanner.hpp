@@ -5,6 +5,7 @@
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/primitives/angle_planning.hpp"
+#include "configuration.hpp"
 
 namespace Planning {
 

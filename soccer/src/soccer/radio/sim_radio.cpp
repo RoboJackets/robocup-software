@@ -3,10 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include <rj_geometry/util.hpp>
-#include <robot.hpp>
 #include <rj_common/network.hpp>
-#include <rj_common/status.hpp>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
@@ -17,8 +14,10 @@ using namespace std;
 using namespace Packet;
 using namespace boost::asio;
 
-SimRadio::SimRadio(Context* context, bool blue_team)
-    : context_(context),
+namespace radio {
+
+SimRadio::SimRadio(bool blue_team)
+    : Radio(),
       blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
@@ -28,24 +27,17 @@ SimRadio::SimRadio(Context* context, bool blue_team)
     start_receive();
 }
 
-bool SimRadio::is_open() const { return socket_.is_open(); }
-
-void SimRadio::send(const std::array<RobotIntent, kNumShells>& intents,
-                    const std::array<MotionSetpoint, kNumShells>& setpoints) {
+void SimRadio::send(int robot_id,
+                    const rj_msgs::msg::MotionSetpoint& motion,
+                    const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
     grSim_Packet sim_packet;
     grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
 
-    for (int i = 0; i < kNumShells; i++) {
-        const auto& intent = intents[i];
-        if (!intent.is_active) {
-            continue;
-        }
-
-        const auto& setpoint = setpoints[i];
-
-        grSim_Robot_Command* sim_robot = sim_robot_commands->add_robot_commands();
-        ConvertTx::to_grsim(intent, setpoint, i, sim_robot);
-    }
+    // Send a grSim packet with a single robot. grSim can handle many robots, but our commands may
+    // come in at different times and it should be fine to just recalculate like this.
+    // TODO(Kyle): Verify that this is okay.
+    grSim_Robot_Command* sim_robot = sim_robot_commands->add_robot_commands();
+    ConvertTx::ros_to_grsim(manipulator, motion, robot_id, sim_robot);
 
     sim_robot_commands->set_isteamyellow(!blue_team_);
     sim_robot_commands->set_timestamp(RJ::timestamp());
@@ -62,7 +54,7 @@ void SimRadio::start_receive() {
     // Set a receive callback
     socket_.async_receive(boost::asio::buffer(buffer_),
                           [this](const boost::system::error_code& error, std::size_t num_bytes) {
-                              receive_packet(error, num_bytes);
+                            receive_packet(error, num_bytes);
                           });
 }
 
@@ -78,12 +70,13 @@ void SimRadio::handle_receive(const std::string& data) {
     packet.ParseFromString(data);
 
     for (size_t pkt_idx = 0; pkt_idx < packet.robots_status_size(); pkt_idx++) {
+        rj_msgs::msg::RobotStatus status_ros;
         RobotStatus status;
         const Robot_Status& grsim_status = packet.robots_status(pkt_idx);
         ConvertRx::grsim_to_status(grsim_status, &status);
+        ConvertRx::status_to_ros(status, &status_ros);
 
-        std::lock_guard<std::mutex> lock(reverse_packets_mutex_);
-        reverse_packets_.push_back(status);
+        publish(status_ros.robot_id, status_ros);
     }
 }
 
@@ -91,9 +84,9 @@ void SimRadio::stop_robots() {
     grSim_Packet sim_packet;
     grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
 
-    for (auto* const our_robot : context_->state.self) {
+    for (int shell = 0; shell < kNumShells; shell++) {
         grSim_Robot_Command* sim_robot = sim_robot_commands->add_robot_commands();
-        sim_robot->set_id(our_robot->shell());
+        sim_robot->set_id(shell);
         sim_robot->set_veltangent(0);
         sim_robot->set_velnormal(0);
         sim_robot->set_velangular(0);
@@ -128,3 +121,5 @@ void SimRadio::switch_team(bool blue_team) {
     // Let them throw exceptions
     socket_.bind(ip::udp::endpoint(ip::udp::v4(), status_port));
 }
+
+} // namespace radio

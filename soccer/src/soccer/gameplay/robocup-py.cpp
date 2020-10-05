@@ -31,8 +31,8 @@ using namespace boost::python;
 
 #include "debug_drawer.hpp"
 #include "kick_evaluator.hpp"
-#include "motion/motion_control.hpp"
-#include "motion/trapezoidal_motion.hpp"
+#include "control/motion_control.hpp"
+#include "control/trapezoidal_motion.hpp"
 #include "optimization/nelder_mead_2d.hpp"
 #include "optimization/nelder_mead_2d_config.hpp"
 #include "optimization/python_function_wrapper.hpp"
@@ -1127,8 +1127,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__str__", &ConfigInt::to_string);
 
     class_<MotionConstraints>("MotionConstraints")
-        .def_readonly("MaxRobotSpeed", &MotionConstraints::max_speed_config)
-        .def_readonly("MaxRobotAccel", &MotionConstraints::max_acceleration_config);
+        .add_property("MaxRobotSpeed", &MotionConstraints::max_speed)
+        .add_property("MaxRobotAccel", &MotionConstraints::max_acceleration);
 
     enum_<RefereeModuleEnums::Command>("Command")
         .value("halt", SSL_Referee_Command_HALT)
