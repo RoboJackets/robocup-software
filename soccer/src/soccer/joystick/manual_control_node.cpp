@@ -64,7 +64,7 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
     if (context_->game_settings.joystick_config.use_field_oriented_drive) {
         // If robot isn't visible, then stop
         if (!robot->visible()) {
-            intent.clear();
+            intent = {};
             setpoint.clear();
             return;
         }
@@ -90,12 +90,15 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
                                       ? RobotIntent::TriggerMode::ON_BREAK_BEAM
                                       : RobotIntent::TriggerMode::IMMEDIATE)
                                : RobotIntent::TriggerMode::STAND_DOWN;
-    intent.kcstrength = controls_.kick_power;
+
+    // TODO(Kyle): The controller should directly work in the (0, max_kick_speed] range
+    constexpr float kMaxKickSpeed = 7.0;
+    intent.kick_speed = static_cast<float>(controls_.kick_power) / kMaxKick * kMaxKickSpeed;
     intent.shoot_mode =
         controls_.kick ? RobotIntent::ShootMode::KICK : RobotIntent::ShootMode::CHIP;
 
     // dribbler
-    intent.dvelocity = controls_.dribble ? controls_.dribbler_power : 0;
+    intent.dribbler_speed = controls_.dribble ? controls_.dribbler_power : 0;
 }
 
 void ManualControlNode::update_gamepad_list() {

@@ -33,7 +33,7 @@ using namespace boost::python;
 
 #include "robot.hpp"
 #include "system_state.hpp"
-#include "control/motion_control.hpp"
+#include "motion/motion_control.hpp"
 #include "debug_drawer.hpp"
 #include "kick_evaluator.hpp"
 #include "robot_config.hpp"

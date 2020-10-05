@@ -236,11 +236,7 @@ void Processor::stop_robots() {
         MotionSetpoint& setpoint = context_.motion_setpoints[r->shell()];
 
         setpoint.clear();
-        intent.dvelocity = 0;
-        intent.kcstrength = 0;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        intent.trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
-        intent.song = RobotIntent::Song::STOP;
+        intent = {};
     }
 }
 
