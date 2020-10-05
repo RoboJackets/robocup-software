@@ -1,46 +1,13 @@
 #pragma once
 
 #include <cmath>
-#include <iostream>
 #include <stdexcept>
 
-const static bool kThrowDebugExceptions = true;
+#include <spdlog/spdlog.h>
 
 template <typename T>
 inline int signum(T val) {
     return (0 < val) - (val <= 0);
-}
-
-inline void debug_log(const std::string& e) { std::cerr << e << std::endl; }
-
-inline void debug_log(const std::exception& e) {
-    std::cerr << e.what() << std::endl;
-}
-
-inline void debug_log_if(const std::string& e, bool condition) {
-    if (condition) {
-        debug_log(e);
-    }
-}
-
-template <class T,
-          typename std::enable_if<std::is_base_of<std::exception, T>::value,
-                                  int>::type = 0>
-inline void debug_throw(const T& e) {
-    debug_log(e);
-    if (kThrowDebugExceptions) {
-        throw e;
-    }
-}
-
-inline void debug_throw(const std::string& string) {
-    debug_throw(std::runtime_error(string));
-}
-
-inline void debug_throw_if(const std::string& string, bool condition) {
-    if (condition) {
-        debug_throw(std::runtime_error(string));
-    }
 }
 
 /**

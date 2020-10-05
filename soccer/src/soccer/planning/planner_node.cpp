@@ -138,7 +138,7 @@ Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request)
     }
 
     if (trajectory.empty()) {
-        std::cerr << "No valid planner! Did you forget to specify a default planner?" << std::endl;
+        SPDLOG_ERROR("No valid planner! Did you forget to specify a default planner?");
         trajectory = Trajectory{{request.start}};
         trajectory.set_debug_text("Error: No Valid Planners");
     }

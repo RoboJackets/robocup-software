@@ -4,16 +4,17 @@
 #include <cmath>
 #include <cstdio>
 #include <fstream>
-#include <iostream>
 
 #include <QDateTime>
 #include <QFileDialog>
 #include <QPainter>
+#include <fmt/ostream.h>
 #include <google/protobuf/descriptor.h>
+#include <spdlog/spdlog.h>
 
-#include <rj_geometry/point.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
 using namespace std;
@@ -192,15 +193,14 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame, float* v) const
         int tag = path[i];
         const FieldDescriptor* fd = desc->FindFieldByNumber(tag);
         if (fd->type() != FieldDescriptor::TYPE_MESSAGE) {
-            std::cerr << "PointMagnitude: expected a message field\n";
+            SPDLOG_ERROR("Expected a message field.");
             return false;
         }
 
         if (fd->is_repeated()) {
             ++i;
             if (i >= path.size()) {
-                std::cerr << "PointMagnitude: ends after tag for repeated "
-                             "field without giving index\n";
+                SPDLOG_ERROR("Ends after tag for repeated field without giving index");
                 return false;
             }
             int j = path[i];
@@ -219,7 +219,7 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame, float* v) const
     }
 
     if (msg->GetDescriptor()->name() != "Point") {
-        std::cerr << "PointMagnitude: path ended in a message other than Point\n";
+        SPDLOG_ERROR("PointMagnitude: path ended in a message other than Point");
         return false;
     }
 
@@ -242,8 +242,9 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float* v) const {
                 if (fd->is_repeated()) {
                     ++i;
                     if (i >= path.size()) {
-                        std::cerr << "NumericField: ends after tag for "
-                                     "repeated field without giving index\n";
+                        SPDLOG_ERROR(
+                            "NumericField: ends after tag for "
+                            "repeated field without giving index");
                         return false;
                     }
                     int j = path[i];
@@ -262,9 +263,10 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float* v) const {
                             break;
 
                         default:
-                            std::cerr << "NumericField: unsupported repeated "
-                                         "field type "
-                                      << fd->type() << "\n";
+                            SPDLOG_ERROR(
+                                "NumericField: unsupported repeated "
+                                "field type {}.",
+                                fd->type());
                             return false;
                     }
                 } else {
@@ -278,23 +280,23 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float* v) const {
                             break;
 
                         default:
-                            std::cerr << "NumericField: unsupported field type " << fd->type()
-                                      << "\n";
+                            SPDLOG_ERROR("NumericField: unsupported field type {}", fd->type());
                             return false;
                     }
                 }
                 return true;
             }
             // Non-message field in the middle of a path
-            std::cerr << "NumericField: expected a message field\n";
+            SPDLOG_ERROR("NumericField: expected a message field");
             return false;
         }
 
         if (fd->is_repeated()) {
             ++i;
             if (i >= path.size()) {
-                std::cerr << "NumericField: ends after tag for repeated field "
-                             "without giving index\n";
+                SPDLOG_ERROR(
+                    "NumericField: ends after tag for repeated field "
+                    "without giving index");
                 return false;
             }
             int j = path[i];

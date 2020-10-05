@@ -3,15 +3,17 @@
 #include <algorithm>
 #include <cmath>
 
+#include <spdlog/spdlog.h>
+
 #include <rj_common/utils.hpp>
 #include <rj_constants/constants.hpp>
 
 #include "configuration.hpp"
 #include "planning/instant.hpp"
-#include "planning/trajectory_utils.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
 #include "planning/primitives/rrt_util.hpp"
+#include "planning/trajectory_utils.hpp"
 
 using namespace rj_geometry;
 
@@ -509,7 +511,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant s
 Trajectory SettlePlanner::invalid(const PlanRequest& plan_request,
                                   const rj_geometry::ShapeSet& static_obstacles,
                                   const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    std::cout << "WARNING: Invalid state in settle planner. Restarting" << std::endl;
+    SPDLOG_WARN("Invalid state in settle planner. Restarting");
     current_state_ = SettlePlannerStates::Intercept;
 
     // Stop movement until next frame since it's the safest option
