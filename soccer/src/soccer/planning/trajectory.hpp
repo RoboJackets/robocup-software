@@ -1,7 +1,7 @@
 #pragma once
 
-#include <rj_geometry/pose.hpp>
 #include <rj_common/time.hpp>
+#include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/trajectory.hpp>
 
 #include "debug_drawer.hpp"
@@ -458,4 +458,4 @@ struct RosConverter<Planning::Trajectory, rj_msgs::msg::Trajectory> {
 
 ASSOCIATE_CPP_ROS(Planning::Trajectory, Planning::Trajectory::Msg);
 
-} // namespace rj_convert
+}  // namespace rj_convert

@@ -1,12 +1,13 @@
 #pragma once
 
+#include <optional>
+
+#include <rj_common/time.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
-#include <optional>
-#include <rj_common/time.hpp>
 #include <rj_msgs/msg/linear_motion_instant.hpp>
 #include <rj_msgs/msg/robot_instant.hpp>
-#include <rj_geometry/geometry_conversions.hpp>
 
 #include "debug_drawer.hpp"
 #include "planning/dynamic_obstacle.hpp"
@@ -109,7 +110,8 @@ struct RosConverter<Planning::LinearMotionInstant, rj_msgs::msg::LinearMotionIns
     }
 
     static Planning::LinearMotionInstant from_ros(const rj_msgs::msg::LinearMotionInstant& from) {
-        return Planning::LinearMotionInstant{convert_from_ros(from.position), convert_from_ros(from.velocity)};
+        return Planning::LinearMotionInstant{convert_from_ros(from.position),
+                                             convert_from_ros(from.velocity)};
     }
 };
 
@@ -125,11 +127,11 @@ struct RosConverter<Planning::RobotInstant, rj_msgs::msg::RobotInstant> {
     }
 
     static Planning::RobotInstant from_ros(const rj_msgs::msg::RobotInstant& from) {
-        return Planning::RobotInstant{convert_from_ros(from.pose), convert_from_ros(from.velocity), convert_from_ros(from.stamp)};
+        return Planning::RobotInstant{convert_from_ros(from.pose), convert_from_ros(from.velocity),
+                                      convert_from_ros(from.stamp)};
     }
 };
 
 ASSOCIATE_CPP_ROS(Planning::RobotInstant, Planning::RobotInstant::Msg);
 
-
-} // namespace rj_convert
+}  // namespace rj_convert

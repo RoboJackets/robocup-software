@@ -1,13 +1,12 @@
 #pragma once
 
-#include <rj_geometry/shape_set.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_convert/ros_convert.hpp>
-
+#include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/robot_intent.hpp>
 
-#include "planning/rotation_command.hpp"
 #include "planning/planner/motion_command.hpp"
+#include "planning/rotation_command.hpp"
 
 struct RobotIntent {
     using Msg = rj_msgs::msg::RobotIntent;
@@ -61,4 +60,4 @@ struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
 
 ASSOCIATE_CPP_ROS(RobotIntent, rj_msgs::msg::RobotIntent);
 
-} // namespace rj_convert
+}  // namespace rj_convert
