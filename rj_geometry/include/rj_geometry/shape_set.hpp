@@ -1,13 +1,13 @@
 #pragma once
 
-#include "shape.hpp"
-
-#include <rj_geometry_msgs/msg/shape_set.hpp>
-
 #include <memory>
 #include <set>
 #include <sstream>
 #include <vector>
+
+#include <rj_geometry_msgs/msg/shape_set.hpp>
+
+#include "shape.hpp"
 
 namespace rj_geometry {
 
