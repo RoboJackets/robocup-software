@@ -94,6 +94,7 @@ include(AddROSIDLSubdirectory)
 # First call add_idl_subdirectory on all ROSIDL subdirectories. This will build + install them at
 # configure time so that find_package will work on them.
 add_rosidl_subdirectory(rj_geometry_msgs)
+add_rosidl_subdirectory(rj_drawing_msgs)
 add_rosidl_subdirectory(rj_msgs)
 
 # This is manually topologically sorted because we're not using colcon

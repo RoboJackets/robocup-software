@@ -20,6 +20,7 @@
 #include <referee/external_referee.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <ros2_temp/referee_sub.hpp>
+#include <ros2_temp/debug_draw_interface.hpp>
 #include <vector>
 
 #include "context.hpp"
@@ -187,6 +188,7 @@ private:
     std::unique_ptr<ros2_temp::SoccerConfigClient> config_client_;
     std::unique_ptr<ros2_temp::RawVisionPacketSub> raw_vision_packet_sub_;
     std::unique_ptr<ros2_temp::RefereeSub> referee_sub_;
+    std::unique_ptr<ros2_temp::DebugDrawInterface> debug_draw_sub_;
 
     std::vector<Node*> nodes_;
 

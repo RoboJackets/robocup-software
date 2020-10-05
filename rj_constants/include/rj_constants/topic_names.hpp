@@ -12,6 +12,12 @@ constexpr auto kGameSettingsSrv = "config/set_game_settings";
 constexpr auto kFieldDimensionsSrv = "config/set_field_dimensions";
 }  // namespace config_server::topics
 
+namespace viz::topics {
+
+constexpr auto kDebugDrawPub = "viz/debug_draw";
+
+}  // namespace viz::topics
+
 namespace referee::topics {
 constexpr auto kGameStatePub = "referee/game_state";
 constexpr auto kOurInfoPub = "referee/our_info";
