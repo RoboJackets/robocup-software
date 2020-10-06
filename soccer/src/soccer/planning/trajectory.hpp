@@ -299,7 +299,7 @@ public:
      * @brief Get the time this trajectory was created, or nullopt if it has not
      * yet been stamped.
      */
-    std::optional<RJ::Time> time_created() const { return creation_stamp_; }
+    [[nodiscard]] std::optional<RJ::Time> time_created() const { return creation_stamp_; }
 
     /**
      * @brief Stamp this trajectory for completion at the specified time.
