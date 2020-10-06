@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 /**
  * \file This file contains all the topic name strings to avoid typos.
  */

@@ -185,7 +185,8 @@ void our_robot_add_local_obstacle(OurRobot* self, rj_geometry::Shape* obs) {
     self->local_obstacles(shared_obs);
 }
 
-void our_robot_set_avoid_ball_radius([[maybe_unused]] OurRobot* self, float radius) {
+void our_robot_set_avoid_ball_radius([[maybe_unused]] OurRobot* self,
+                                     [[maybe_unused]] float radius) {
     // TODO(Kyle): Use SPDLog here
     std::cout << "Configurable avoidance not implemented" << std::endl;
 }

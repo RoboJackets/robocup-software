@@ -289,7 +289,7 @@ void OurRobot::chip_level(uint8_t strength) {
 void OurRobot::do_kick(uint8_t strength) {
     uint8_t max = *config()->kicker.max_kick;
     strength = (strength > max ? max : strength);
-    intent().kick_speed = kicker_strength_to_speed(strength);
+    intent().kick_speed = static_cast<float>(kicker_strength_to_speed(strength));
     intent().shoot_mode = RobotIntent::ShootMode::KICK;
     intent().trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 }
@@ -297,7 +297,7 @@ void OurRobot::do_kick(uint8_t strength) {
 void OurRobot::do_chip(uint8_t strength) {
     uint8_t max = *config()->kicker.max_chip;
     strength = (strength > max ? max : strength);
-    intent().kick_speed = kicker_strength_to_speed(strength);
+    intent().kick_speed = static_cast<float>(kicker_strength_to_speed(strength));
     intent().shoot_mode = RobotIntent::ShootMode::CHIP;
     intent().trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 }
