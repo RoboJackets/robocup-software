@@ -10,6 +10,7 @@ project(soccer LANGUAGES CXX)
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rj_msgs REQUIRED)
+find_package(rj_drawing_msgs REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
 
 # Qt5
@@ -210,6 +211,7 @@ target_include_directories(robocup PUBLIC ${ROBOCUP_DEPS_INCLUDE_DIRS})
 target_link_libraries(robocup PUBLIC ${ROBOCUP_DEPS_SYSTEM_LIBRARIES} ${ROBOCUP_DEPS_LIBRARIES})
 
 ament_target_dependencies(robocup PUBLIC rj_geometry_msgs)
+ament_target_dependencies(robocup PUBLIC rj_drawing_msgs)
 ament_target_dependencies(robocup PUBLIC rj_msgs)
 
 # ---- rj_vision_filter ----
