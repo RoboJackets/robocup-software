@@ -29,7 +29,7 @@ using namespace boost::python;
 #include <rj_geometry/rect.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
-#include "control/trapezoidal_motion.hpp"
+#include "motion/trapezoidal_motion.hpp"
 #include "debug_drawer.hpp"
 #include "kick_evaluator.hpp"
 #include "motion/motion_control.hpp"
