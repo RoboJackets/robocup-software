@@ -37,7 +37,7 @@ void DebugDrawInterface::run() {
                                                 QString::fromStdString(layer));
         }
         for (const auto& pose : debug_draw->poses) {
-            // TODO: Handle poses
+            // TODO(#1584): Handle poses
         }
         for (const auto& path : debug_draw->paths) {
             auto* debug_path = context_->debug_drawer.add_debug_path();
