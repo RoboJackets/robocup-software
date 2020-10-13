@@ -16,5 +16,5 @@ class OffensiveTriangle(pure_play.PurePlay):
     the other two robots support the ball carrier.
     """
 
-    def __init__(self, tactics_factory: tactic.Factory):
+    def __init__(self, tactics_factory: tactic.Factory, ctx: play.Ctx):
         super().__init__(Tactics(tactics_factory), ctx)

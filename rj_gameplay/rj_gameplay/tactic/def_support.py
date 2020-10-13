@@ -1,25 +1,25 @@
 """Contains the DefSupport tactic.
 """
 
+from dataclasses import dataclass
 from typing import List, Optional
 
 import stp.action as action
 import stp.rc as rc
 import stp.skill.stub as stub
 import stp.tactic as tactic
-from stp.tactic import PropT
 
 
 class Skills(tactic.SkillsEnum):
     STUB = tactic.SkillEntry(stub.Stub)
 
 
-class Props:
-    ...
-
-
-class DefSupport(tactic.ITactic[Props]):
+class DefSupport(tactic.ITactic["Props"]):
     """Tactic that supports the ball carrier defensively."""
+
+    @dataclass
+    class Props:
+        ...
 
     __slots__ = ["skills", "STUB"]
 

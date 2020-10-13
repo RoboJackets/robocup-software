@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 
 import stp.action as action
 import stp.rc as rc
@@ -114,14 +114,28 @@ class Ctx:
         self.role_assignment = role_assignment
 
 
-class IPlay(ABC):
+PropT = TypeVar("PropT")
+
+
+class IPlay(Generic[PropT], ABC):
     """Interface for a play, the highest level of abstraction from the STP hierarchy."""
 
     __slots__ = ()
 
     @abstractmethod
+    def compute_props(self, prev_props: Optional[PropT]) -> PropT:
+        """Computes the props(state) required for the current tick.
+        :param prev_props: The props from the previous tick, if available.
+        :return: The props for the current tick.
+        """
+        ...
+
+    @abstractmethod
     def tick(
-        self, world_state: rc.WorldState, prev_results: assignment.FlatRoleResults
+        self,
+        world_state: rc.WorldState,
+        prev_results: assignment.FlatRoleResults,
+        props: PropT,
     ) -> Tuple[assignment.FlatRoleResults, List[action.IAction]]:
         """Performs one "tick" of the specified play.
 
@@ -130,7 +144,10 @@ class IPlay(ABC):
             2. Perform role assignment
             3. Gives each tactic its assigned roles and getting a list of skills.
             4. Return the list of skills obtained.
-        :return: The list of skill to run.
+        :param world_state: Current state of the world.
+        :param prev_results: Previous results of role assignment.
+        :param props: Props from compute_props.
+        :return: Tuple of the role and actions.
         """
         ...
 
