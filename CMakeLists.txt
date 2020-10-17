@@ -108,6 +108,7 @@ add_subdirectory(rj_geometry)
 add_subdirectory(rj_config)
 add_subdirectory(rj_common)
 
+add_subdirectory(rj_gameplay)
 add_subdirectory(rj_vision_receiver)
 add_subdirectory(soccer)
 
