@@ -1,18 +1,22 @@
 #pragma once
 
-#include "shape.hpp"
-
 #include <memory>
 #include <set>
 #include <sstream>
 #include <vector>
+
+#include <rj_geometry_msgs/msg/shape_set.hpp>
+
+#include "shape.hpp"
 
 namespace rj_geometry {
 
 /// This class maintains a collection of Shape objects.
 class ShapeSet {
 public:
-    ShapeSet() {}
+    using Msg = rj_geometry_msgs::msg::ShapeSet;
+
+    ShapeSet() = default;
 
     /// Initializes the set by iterating from @first to @last, which are
     /// iterators into a collection of std::shared_ptr<Shape>.
