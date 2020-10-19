@@ -629,8 +629,16 @@ void MainWindow::updateViews() {
     if (!_game_settings_valid) {
         auto game_settings_request = std::make_shared<rj_msgs::srv::SetGameSettings::Request>();
         game_settings_request->game_settings = _game_settings;
-        _set_game_settings->async_send_request(game_settings_request);
         _game_settings_valid = true;
+
+        // If the request fails, we want to resend it, so mark game settings as invalid.
+        _set_game_settings->async_send_request(
+            game_settings_request,
+            [this] (rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedFuture result) {
+                if (!result.get()) {
+                    _game_settings_valid = false;
+                }
+            });
     }
 
     // We restart this timer repeatedly instead of using a single shot timer in

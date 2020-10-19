@@ -6,11 +6,12 @@
 #include <rj_utils/logging_macros.hpp>
 
 namespace config_server {
-ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
+ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
+                           const GameSettingsMsg& game_settings)
     : Node{"config_server", node_options},
+      game_settings_{game_settings},
       field_dimensions_{rj_convert::convert_to_ros(FieldDimensions::kDefaultDimensions)} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
-
     // Game Settings
     game_settings_publisher_ =
         create_publisher<GameSettingsMsg>(topics::kGameSettingsPub, latching_qos);
