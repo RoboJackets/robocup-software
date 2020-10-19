@@ -45,7 +45,7 @@ all-perf:
 perf: all-perf
 
 run: all
-	./run/soccer
+	ros2 launch rj_robocup soccer.launch.py
 run-comp:
 	./runcomp.sh
 r:	run
@@ -57,13 +57,11 @@ run-sim2play: all
 	ros2 launch rj_robocup sim2play.launch.py
 
 run-release: all-release
-	./run/soccer
+	ros2 launch rj_robocup soccer.launch.py
 run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
-view:
-	./run/soccer -vlog $(file)
 
 # backend targets to launch soccer with grSim in headless
 backend-headless-simulator-soccer:

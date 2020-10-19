@@ -60,9 +60,9 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(vision_filter_launch_path))
 
     return LaunchDescription([
-        DeclareLaunchArgument('team_flag'),
-        DeclareLaunchArgument('sim_flag'),
-        DeclareLaunchArgument('ref_flag'),
-        DeclareLaunchArgument('direction_flag'),
+        DeclareLaunchArgument('team_flag', default_value=''),
+        DeclareLaunchArgument('sim_flag', default_value=''),
+        DeclareLaunchArgument('ref_flag', default_value=''),
+        DeclareLaunchArgument('direction_flag', default_value='plus'),
         stdout_linebuf_envvar, config_server, soccer, vision_receiver, vision_filter, ref_receiver
     ])
