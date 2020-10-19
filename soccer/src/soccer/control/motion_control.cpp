@@ -27,21 +27,20 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0, "Ki for t
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.0, "Kd for translation ((m/s)/(m/s))");
 DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0, "Windup limit for translation (unknown units)");
 
-MotionControl::MotionControl(int shell_id, rclcpp::Node::SharedPtr node, DebugDrawer* debug_drawer)
+MotionControl::MotionControl(int shell_id, rclcpp::Node* node, DebugDrawer* debug_drawer)
     : shell_id_(shell_id),
-      node_(std::move(node)),
       angle_controller_(0, 0, 0, 50, 0),
       drawer_(debug_drawer) {
-    motion_setpoint_pub_ = node_->create_publisher<MotionSetpoint::Msg>(topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
+    motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.
-    trajectory_sub_ = node_->create_subscription<Planning::Trajectory::Msg>(
+    trajectory_sub_ = node->create_subscription<Planning::Trajectory::Msg>(
         planning::topics::trajectory_pub(shell_id),
         rclcpp::QoS(1),
         [this] (Planning::Trajectory::Msg::SharedPtr trajectory) {
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
             spdlog::info("Got trajectory");
         });
-    world_state_sub_ = node_->create_subscription<WorldState::Msg>(
+    world_state_sub_ = node->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStatePub,
         rclcpp::QoS(1),
         [this] (WorldState::Msg::SharedPtr world_state_msg) {
@@ -54,7 +53,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node::SharedPtr node, DebugDr
                 motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
             }
         });
-    game_state_sub_ = node_->create_subscription<GameState::Msg>(
+    game_state_sub_ = node->create_subscription<GameState::Msg>(
         referee::topics::kGameStatePub,
         rclcpp::QoS(1),
         [this] (GameState::Msg::SharedPtr game_state_msg) {

@@ -158,10 +158,6 @@ void Processor::run() {
             set_field_dimensions(context_.field_dimensions);
         }
 
-//        if (radio_) {
-//            cur_status.last_radio_rx_time = radio_->get_last_radio_rx_time();
-//        }
-
         const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
         if (world_state_msg != nullptr) {
             context_.world_state = rj_convert::convert_from_ros(*world_state_msg);
@@ -171,6 +167,10 @@ void Processor::run() {
 
         // Run high-level soccer logic
         gameplay_module_->run();
+
+        update_intent_active();
+
+        autonomy_interface_->run();
 
         // recalculates Field obstacles on every run through to account for
         // changing inset
@@ -189,7 +189,6 @@ void Processor::run() {
         if (context_.game_state.halt()) {
             stop_robots();
         }
-        update_intent_active();
         manual_control_node_->run();
 
         // Store processing loop status

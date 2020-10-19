@@ -25,6 +25,16 @@ def generate_launch_description():
                   arguments=['-b', '-sim', '-noref'],
                   on_exit=Shutdown())
 
+    radio = Node(package='rj_robocup',
+                 executable='sim_radio_node',
+                 output='screen',
+                 on_exit=Shutdown())
+
+    control = Node(package='rj_robocup',
+                   executable='control_node',
+                   output='screen',
+                   on_exit=Shutdown())
+
     config_server = Node(package='rj_robocup',
                          executable='config_server',
                          output='screen',
@@ -44,6 +54,13 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(vision_filter_launch_path))
 
     return LaunchDescription([
-        stdout_linebuf_envvar, config_server, soccer, grsim, vision_receiver,
-        vision_filter, ref_receiver
+        stdout_linebuf_envvar,
+        config_server,
+        radio,
+        control,
+        soccer,
+        grsim,
+        vision_receiver,
+        vision_filter,
+        ref_receiver
     ])

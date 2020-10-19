@@ -14,7 +14,8 @@ class MotionControlTest : public ::testing::Test {
 public:
     void SetUp() override {
         rclcpp::init(0, {});
-        control_ = std::make_unique<MotionControl>(0, std::make_shared<rclcpp::Node>("test_motion_control"), nullptr);
+        node_ = std::make_shared<rclcpp::Node>("test_motion_control");
+        control_ = std::make_unique<MotionControl>(0, node_.get(), nullptr);
     }
 
     void TearDown() override {
@@ -22,6 +23,7 @@ public:
     }
 
 protected:
+    rclcpp::Node::SharedPtr node_;
     std::unique_ptr<MotionControl> control_;
 
     void run(RobotState state, const Trajectory& trajectory, GameState::State game_state, bool is_joystick_controlled, MotionSetpoint* setpoint) {
@@ -67,6 +69,30 @@ TEST_F(MotionControlTest, running_nonzero_output) {
     run(state, trajectory, GameState::Playing, false, &setpoint);
 
     EXPECT_GT(Point(setpoint.xvelocity, setpoint.yvelocity).mag(), 0.1);
+}
+
+TEST_F(MotionControlTest, running_after_trajectory) {
+    RobotState state = make_initial_state();
+    Trajectory trajectory = make_trajectory();
+    MotionSetpoint setpoint;
+
+    // Evaluate at 0.5 seconds into the trajectory.
+    state.timestamp = state.timestamp + RJ::Seconds(1.5);
+    run(state, trajectory, GameState::Playing, false, &setpoint);
+
+    EXPECT_GT(Point(setpoint.xvelocity, setpoint.yvelocity).mag(), 0.1);
+}
+
+TEST_F(MotionControlTest, running_empty_trajectory) {
+    RobotState state = make_initial_state();
+    Trajectory trajectory;
+    MotionSetpoint setpoint;
+
+    // Evaluate at 0.5 seconds into the trajectory.
+    state.timestamp = state.timestamp;
+    run(state, trajectory, GameState::Playing, false, &setpoint);
+
+    EXPECT_NEAR(Point(setpoint.xvelocity, setpoint.yvelocity).mag(), 0.0, 1e-6);
 }
 
 // Make sure the coordinate transformations are correct
