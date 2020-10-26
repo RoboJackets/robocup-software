@@ -187,13 +187,11 @@ void our_robot_add_local_obstacle(OurRobot* self, rj_geometry::Shape* obs) {
 
 void our_robot_set_avoid_ball_radius([[maybe_unused]] OurRobot* self,
                                      [[maybe_unused]] float radius) {
-    // TODO(Kyle): Use SPDLog here
-    std::cout << "Configurable avoidance not implemented" << std::endl;
+    spdlog::warn("Configurable avoidance not implemented");
 }
 
 void our_robot_disable_avoid_ball([[maybe_unused]] OurRobot* self) {
-    // TODO(Kyle): Use SPDLog here
-    std::cout << "Configurable avoidance not implemented" << std::endl;
+    spdlog::warn("Configurable avoidance not implemented");
 }
 
 void our_robot_set_max_angle_speed(OurRobot* self, float max_angle_speed) {

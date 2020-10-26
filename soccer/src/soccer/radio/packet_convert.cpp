@@ -8,7 +8,7 @@
 #include "robot_status.hpp"
 #include "motion/motion_setpoint.hpp"
 
-// TODO(Kyle): Make this a real ROS parameter
+// TODO(#1583): Make this a real ROS parameter
 constexpr float kMaxKickSpeed = 7.0;
 
 namespace ConvertRx {

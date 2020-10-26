@@ -91,7 +91,7 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
                                       : RobotIntent::TriggerMode::IMMEDIATE)
                                : RobotIntent::TriggerMode::STAND_DOWN;
 
-    // TODO(Kyle): The controller should directly work in the (0, max_kick_speed] range
+    // TODO(#1583): The controller should directly work in the (0, max_kick_speed] range
     constexpr float kMaxKickSpeed = 7.0;
     intent.kick_speed = static_cast<float>(controls_.kick_power) / kMaxKick * kMaxKickSpeed;
     intent.shoot_mode =
