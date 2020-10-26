@@ -20,7 +20,7 @@ save_workspace: &save_workspace
   persist_to_workspace:
     root: ~/robocup-software
     paths:
-      - build/*
+      - build-debug/*
       - install/*
 
 load_workspace: &load_workspace
@@ -37,14 +37,14 @@ jobs:
       - checkout
       - <<: *install_deps
       - run: |
-          mkdir -p build && cd build
+          mkdir -p build-debug && cd build-debug
           source /opt/ros/foxy/setup.bash
           export CMAKE_PREFIX_PATH=/opt/ros/foxy
           cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=../install --target -DBUILD_TESTS=ON ..
           ninja -j2 install
       - <<: *save_workspace
 
-  # Use the saved build folder for testing
+  # Use the saved build-debug folder for testing
   test-all:
     <<: *dir
     <<: *image
