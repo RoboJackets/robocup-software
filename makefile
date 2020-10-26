@@ -122,8 +122,7 @@ behavior-diagrams: all
 	@echo -e "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
 
 clean:
-	cd build && ninja clean || true
-	rm -rf build
+	cd build-debug && ninja clean || true
 
 static-analysis:
 	mkdir -p build/static-analysis
