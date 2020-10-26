@@ -8,7 +8,7 @@
 #include "robot_status.hpp"
 #include "motion/motion_setpoint.hpp"
 
-// TODO(Kyle): Make this a real ROS parameter
+// TODO(#1583): Make this a real ROS parameter
 constexpr float kMaxKickSpeed = 7.0;
 
 namespace ConvertRx {
@@ -127,11 +127,12 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     control_message.bodyW =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.dribbler = std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed) * kMaxDribble, 0, 255);
+    control_message.dribbler =
+        std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed) * kMaxDribble, 0, 255);
 
     control_message.shootMode = intent.shoot_mode == RobotIntent::ShootMode::CHIP;
-    control_message.kickStrength = std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, 255);
-
+    control_message.kickStrength =
+        std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, 255);
 
     switch (intent.trigger_mode) {
         case RobotIntent::TriggerMode::STAND_DOWN:
@@ -165,7 +166,8 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     control->set_yvelocity(static_cast<float>(setpoint.yvelocity));
     control->set_avelocity(static_cast<float>(setpoint.avelocity));
     control->set_dvelocity(intent.dribbler_speed);
-    control->set_kcstrength(std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, kMaxKick));
+    control->set_kcstrength(
+        std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, kMaxKick));
 
     switch (intent.shoot_mode) {
         case RobotIntent::ShootMode::KICK:

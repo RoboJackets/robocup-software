@@ -29,10 +29,10 @@ using namespace boost::python;
 #include <rj_geometry/rect.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
-#include "motion/trapezoidal_motion.hpp"
 #include "debug_drawer.hpp"
 #include "kick_evaluator.hpp"
 #include "motion/motion_control.hpp"
+#include "motion/trapezoidal_motion.hpp"
 #include "optimization/nelder_mead_2d.hpp"
 #include "optimization/nelder_mead_2d_config.hpp"
 #include "optimization/python_function_wrapper.hpp"
@@ -187,13 +187,11 @@ void our_robot_add_local_obstacle(OurRobot* self, rj_geometry::Shape* obs) {
 
 void our_robot_set_avoid_ball_radius([[maybe_unused]] OurRobot* self,
                                      [[maybe_unused]] float radius) {
-    // TODO(Kyle): Use SPDLog here
-    std::cout << "Configurable avoidance not implemented" << std::endl;
+    spdlog::warn("Configurable avoidance not implemented");
 }
 
 void our_robot_disable_avoid_ball([[maybe_unused]] OurRobot* self) {
-    // TODO(Kyle): Use SPDLog here
-    std::cout << "Configurable avoidance not implemented" << std::endl;
+    spdlog::warn("Configurable avoidance not implemented");
 }
 
 void our_robot_set_max_angle_speed(OurRobot* self, float max_angle_speed) {
