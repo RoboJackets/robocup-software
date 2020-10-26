@@ -1,0 +1,23 @@
+# -*-mode: conf-*-
+
+[MASTER]
+
+[BASIC]
+good-names = id
+min-public-methods = 0
+;# Allow UPPER_CASE as attributes for enums.
+;variable-rgx=((([a-z_][a-z0-9_]{2,})|(_[a-z0-9_]*)|(__[a-z][a-z0-9_]+__))$)|([A-Z_][A-Z0-9_]+$)
+
+[TYPECHECK]
+ignored-modules =
+ignored-classes =
+
+[MESSAGES CONTROL]
+disable =
+    locally-disabled,
+    unused-argument,
+    too-many-ancestors,
+# Disable all formatting - this is handled by black
+    bad-continuation,
+    # Disable warning on all todos
+    fixme,
