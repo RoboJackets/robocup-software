@@ -113,7 +113,7 @@ jobs:
             DIFFBRANCH=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
           fi
           echo "Removing GCC precompiled headers from compile_commands.json so that clang-tidy will work"
-          sed -i 's/-include [^ ]*cmake_pch\.hxx//' build/compile_commands.json
+          sed -i 's/-include [^ ]*cmake_pch\.hxx//' build-debug/compile_commands.json
           echo "Diffing against $DIFFBRANCH for clang-tidy..."
           DIFFBRANCH=$DIFFBRANCH make checktidy-lines
           cat /tmp/checktidy.patch

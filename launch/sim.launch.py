@@ -9,6 +9,7 @@ from launch_ros.actions import Node
 
 from launch.substitutions import LaunchConfiguration
 
+
 def generate_launch_description():
     bringup_dir = Path(get_package_share_directory('rj_robocup'))
     launch_dir = bringup_dir / 'launch'

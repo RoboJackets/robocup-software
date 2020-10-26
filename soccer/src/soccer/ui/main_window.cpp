@@ -634,7 +634,7 @@ void MainWindow::updateViews() {
         // If the request fails, we want to resend it, so mark game settings as invalid.
         _set_game_settings->async_send_request(
             game_settings_request,
-            [this] (rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedFuture result) {
+            [this](rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedFuture result) {  // NOLINT
                 if (!result.get()) {
                     _game_settings_valid = false;
                 }

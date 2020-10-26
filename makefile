@@ -156,7 +156,7 @@ checkstyle:
 
 CLANG_FORMAT_BINARY=clang-format-10
 CLANG_TIDY_BINARY=clang-tidy-10
-COMPILE_COMMANDS_DIR=build
+COMPILE_COMMANDS_DIR=build-debug
 
 # circleci has 2 cores, but advertises 32
 ifeq ($(CIRCLECI), true)
@@ -174,6 +174,8 @@ ifeq ("$(wildcard $(COMPILE_COMMANDS_DIR)/compile_commands.json)","")
 	@printf "$(COMPILE_COMMANDS_DIR)/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
 	exit 1
 endif
+	@echo "Removing GCC precompiled headers from compile_commands.json so that clang-tidy will work"
+	@sed -i 's/-include [^ ]*cmake_pch\.hxx//' $(COMPILE_COMMANDS_DIR)/compile_commands.json
 	@printf "Running clang-tidy-diff...\n"
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*(Test|test).cpp" -quiet
 
@@ -183,4 +185,6 @@ checkstyle-lines:
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 checktidy-lines:
+	@echo "Removing GCC precompiled headers from compile_commands.json so that clang-tidy will work"
+	@sed -i 's/-include [^ ]*cmake_pch\.hxx//' $(COMPILE_COMMANDS_DIR)/compile_commands.json
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*(Test|test).cpp" > /tmp/checktidy.patch -quiet

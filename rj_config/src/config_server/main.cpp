@@ -1,7 +1,7 @@
+#include <fmt/format.h>
 #include <rclcpp/rclcpp.hpp>
 
 #include <config_server/config_server.hpp>
-#include <fmt/format.h>
 
 using config_server::ConfigServer;
 using config_server::GameSettingsMsg;

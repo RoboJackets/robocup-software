@@ -22,29 +22,19 @@ def generate_launch_description():
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
 
-    soccer = Node(package='rj_robocup',
-                  executable='soccer',
-                  output='screen',
-                  arguments=[
-                      team_flag,
-                      sim_flag,
-                      ref_flag,
-                      '-defend',
-                      direction_flag
-                  ],
-                  on_exit=Shutdown())
+    soccer = Node(
+        package='rj_robocup',
+        executable='soccer',
+        output='screen',
+        arguments=[team_flag, sim_flag, ref_flag, '-defend', direction_flag],
+        on_exit=Shutdown())
 
-    config_server = Node(package='rj_robocup',
-                         executable='config_server',
-                         output='screen',
-                         arguments=[
-                             team_flag,
-                             sim_flag,
-                             ref_flag,
-                             '-defend',
-                             direction_flag
-                         ],
-                         on_exit=Shutdown())
+    config_server = Node(
+        package='rj_robocup',
+        executable='config_server',
+        output='screen',
+        arguments=[team_flag, sim_flag, ref_flag, '-defend', direction_flag],
+        on_exit=Shutdown())
 
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
     vision_receiver = IncludeLaunchDescription(
@@ -63,6 +53,7 @@ def generate_launch_description():
         DeclareLaunchArgument('team_flag', default_value=''),
         DeclareLaunchArgument('sim_flag', default_value=''),
         DeclareLaunchArgument('ref_flag', default_value=''),
-        DeclareLaunchArgument('direction_flag', default_value='plus'),
-        stdout_linebuf_envvar, config_server, soccer, vision_receiver, vision_filter, ref_receiver
+        DeclareLaunchArgument('direction_flag',
+                              default_value='plus'), stdout_linebuf_envvar,
+        config_server, soccer, vision_receiver, vision_filter, ref_receiver
     ])

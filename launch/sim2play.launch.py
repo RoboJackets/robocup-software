@@ -9,6 +9,7 @@ from launch_ros.actions import PushRosNamespace, Node
 
 from launch.substitutions import LaunchConfiguration
 
+
 def generate_launch_description():
     bringup_dir = Path(get_package_share_directory('rj_robocup'))
     launch_dir = bringup_dir / 'launch'
@@ -34,10 +35,7 @@ def generate_launch_description():
             'direction_flag': 'plus'
         }.items())
 
-    yellow = GroupAction([
-        PushRosNamespace("yellow"),
-        soccer_yellow
-    ])
+    yellow = GroupAction([PushRosNamespace("yellow"), soccer_yellow])
 
     soccer_blue = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(soccer_launch_path),
@@ -48,11 +46,6 @@ def generate_launch_description():
             'direction_flag': 'minus'
         }.items())
 
-    blue = GroupAction([
-        PushRosNamespace("blue"),
-        soccer_blue
-    ])
+    blue = GroupAction([PushRosNamespace("blue"), soccer_blue])
 
-    return LaunchDescription([
-        stdout_linebuf_envvar, grsim, yellow, blue
-    ])
+    return LaunchDescription([stdout_linebuf_envvar, grsim, yellow, blue])
