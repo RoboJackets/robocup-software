@@ -20,6 +20,7 @@ set(ROBOCUP_LIB_SRC
     joystick/manual_control_node.cpp
     kick_evaluator.cpp
     logger.cpp
+    spin_all_executor.cpp
     motion/motion_control.cpp
     motion/motion_control_node.cpp
     motion/trapezoidal_motion.cpp

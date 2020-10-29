@@ -14,6 +14,7 @@
 #include "radio/radio_node.hpp"
 #include "robot.hpp"
 #include "robot_config.hpp"
+#include "spin_all_executor.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -66,7 +67,7 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     context_.field_dimensions = *current_dimensions;
 
-    ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+    ros_executor_ = std::make_shared<rclcpp::executors::SpinAllExecutor>();
 
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
     gameplay_module_ = std::make_shared<Gameplay::GameplayModule>(&context_);
