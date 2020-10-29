@@ -7,7 +7,7 @@ using config_server::ConfigServer;
 using config_server::GameSettingsMsg;
 
 /**
- * Parse game settings from the arguments. TODO: Unify this with the parsing in main().
+ * Parse game settings from the arguments. TODO(#1592): Unify this with the parsing in main().
  * @param args the arguments, with ROS args removed.
  * @return the game settings struct.
  */
