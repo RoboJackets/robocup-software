@@ -67,7 +67,7 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     context_.field_dimensions = *current_dimensions;
 
-    ros_executor_ = std::make_shared<rclcpp::executors::SpinAllExecutor>();
+    ros_executor_ = std::make_shared<rj::SpinAllExecutor>();
 
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
     gameplay_module_ = std::make_shared<Gameplay::GameplayModule>(&context_);
@@ -143,8 +143,10 @@ void Processor::run() {
 
         ////////////////
         // Inputs
-        // TODO(#1558): Backport spin_all and use it for our main executor.
-        ros_executor_->spin_some();
+
+        // Use spin_all to address _all_ topics
+        // 1 millisecond timeout
+        ros_executor_->spin_all(std::chrono::nanoseconds(1'000'000));
         sdl_joystick_node_->run();
         manual_control_node_->run();
 

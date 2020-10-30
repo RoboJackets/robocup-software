@@ -2,7 +2,7 @@
 
 namespace rj {
 
-void SpinAllExecutor::spin_all() {
+void SpinAllExecutor::spin_all(std::chrono::nanoseconds max_duration) {
     auto start = std::chrono::steady_clock::now();
     auto max_duration_not_elapsed = [max_duration, start]() {
         if (std::chrono::nanoseconds(0) == max_duration) {
@@ -22,7 +22,7 @@ void SpinAllExecutor::spin_all() {
     RCLCPP_SCOPE_EXIT(this->spinning.store(false););
     bool work_available = false;
     while (rclcpp::ok(context_) && spinning.load() && max_duration_not_elapsed()) {
-        AnyExecutable any_exec;
+        rclcpp::AnyExecutable any_exec;
         if (!work_available) {
             wait_for_work(std::chrono::milliseconds::zero());
         }
