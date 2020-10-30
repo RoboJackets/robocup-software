@@ -149,6 +149,13 @@ private:
     bool blue_team_ = false;
     bool blue_team_valid_ = false;
 
+    /**
+     * @brief Whether we at least have an accurate blue_team value.
+     *
+     * @details If we don't we shouldn't send out anything at all.
+     */
+    bool has_any_info_ = false;
+
     rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
     rclcpp::Publisher<GoalieMsg>::SharedPtr goalie_id_pub_;
     rclcpp::Publisher<TeamInfoMsg>::SharedPtr our_team_info_pub_;

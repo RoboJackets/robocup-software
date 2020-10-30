@@ -29,7 +29,7 @@ public:
      * @brief Constructor.
      * @param node_options
      */
-    ConfigServer(const rclcpp::NodeOptions& node_options);
+    ConfigServer(const rclcpp::NodeOptions& node_options, const GameSettingsMsg& game_settings);
 
 private:
     /**
