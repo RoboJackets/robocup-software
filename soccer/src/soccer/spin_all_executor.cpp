@@ -8,10 +8,13 @@ void SpinAllExecutor::spin_all(std::chrono::nanoseconds max_duration) {
         if (std::chrono::nanoseconds(0) == max_duration) {
             // told to spin forever if need be
             return true;
-        } else if (std::chrono::steady_clock::now() - start < max_duration) {
+        }
+
+        if (std::chrono::steady_clock::now() - start < max_duration) {
             // told to spin only for some maximum amount of time
             return true;
         }
+
         // spun too long
         return false;
     };
