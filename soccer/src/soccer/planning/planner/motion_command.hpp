@@ -147,6 +147,7 @@ struct RosConverter<Planning::WorldVelCommand, rj_msgs::msg::WorldVelMotionComma
             convert_to_ros(from.world_vel));
     }
 
+
     static Planning::WorldVelCommand from_ros(const rj_msgs::msg::WorldVelMotionCommand& from) {
         return Planning::WorldVelCommand{convert_from_ros(from.world_vel)};
     }

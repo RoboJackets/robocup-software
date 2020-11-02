@@ -68,7 +68,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-    referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
     gameplay_module_ = std::make_shared<Gameplay::GameplayModule>(&context_);
     motion_control_ = std::make_unique<MotionControlNode>(&context_);
     planner_node_ = std::make_unique<Planning::PlannerNode>(&context_);
@@ -79,6 +78,9 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     // ROS2 temp nodes
     config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
     raw_vision_packet_sub_ = std::make_unique<ros2_temp::RawVisionPacketSub>(&context_);
+    referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
+    debug_draw_sub_ =
+        std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStatePub);
 
@@ -143,7 +145,9 @@ void Processor::run() {
         ////////////////
         // Inputs
         // TODO(#1558): Backport spin_all and use it for our main executor.
-        ros_executor_->spin_some();
+        for (int i = 0; i < 10; i++) {
+            ros_executor_->spin_some();
+        }
         sdl_joystick_node_->run();
         manual_control_node_->run();
 
@@ -209,6 +213,8 @@ void Processor::run() {
 
         // Processor Initialization Completed
         initialized_ = true;
+
+        debug_draw_sub_->run();
 
         {
             loop_mutex()->lock();
