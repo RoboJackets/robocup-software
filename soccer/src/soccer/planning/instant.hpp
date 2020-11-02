@@ -1,9 +1,13 @@
 #pragma once
 
+#include <optional>
+
+#include <rj_common/time.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
-#include <optional>
-#include <rj_common/time.hpp>
+#include <rj_msgs/msg/linear_motion_instant.hpp>
+#include <rj_msgs/msg/robot_instant.hpp>
 
 #include "debug_drawer.hpp"
 #include "planning/dynamic_obstacle.hpp"
@@ -15,6 +19,8 @@ namespace Planning {
  * including position and velocity.
  */
 struct LinearMotionInstant {
+    using Msg = rj_msgs::msg::LinearMotionInstant;
+
     explicit LinearMotionInstant(rj_geometry::Point pos = {0, 0},
                                  rj_geometry::Point vel = {0, 0})
         : position(pos), velocity(vel) {}
@@ -33,6 +39,8 @@ struct LinearMotionInstant {
  * @brief Represents the current state of a robot in a planned trajectory.
  */
 struct RobotInstant {
+    using Msg = rj_msgs::msg::RobotInstant;
+
     RobotInstant(rj_geometry::Pose pose, rj_geometry::Twist velocity,
                  RJ::Time stamp)
         : pose(pose), velocity(velocity), stamp(stamp) {}
@@ -90,3 +98,40 @@ struct RobotInstant {
 };
 
 }  // namespace Planning
+
+namespace rj_convert {
+
+template <>
+struct RosConverter<Planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant> {
+    static rj_msgs::msg::LinearMotionInstant to_ros(const Planning::LinearMotionInstant& from) {
+        return rj_msgs::build<rj_msgs::msg::LinearMotionInstant>()
+            .position(convert_to_ros(from.position))
+            .velocity(convert_to_ros(from.velocity));
+    }
+
+    static Planning::LinearMotionInstant from_ros(const rj_msgs::msg::LinearMotionInstant& from) {
+        return Planning::LinearMotionInstant{convert_from_ros(from.position),
+                                             convert_from_ros(from.velocity)};
+    }
+};
+
+ASSOCIATE_CPP_ROS(Planning::LinearMotionInstant, Planning::LinearMotionInstant::Msg);
+
+template <>
+struct RosConverter<Planning::RobotInstant, rj_msgs::msg::RobotInstant> {
+    static rj_msgs::msg::RobotInstant to_ros(const Planning::RobotInstant& from) {
+        return rj_msgs::build<rj_msgs::msg::RobotInstant>()
+            .stamp(convert_to_ros(from.stamp))
+            .pose(convert_to_ros(from.pose))
+            .velocity(convert_to_ros(from.velocity));
+    }
+
+    static Planning::RobotInstant from_ros(const rj_msgs::msg::RobotInstant& from) {
+        return Planning::RobotInstant{convert_from_ros(from.pose), convert_from_ros(from.velocity),
+                                      convert_from_ros(from.stamp)};
+    }
+};
+
+ASSOCIATE_CPP_ROS(Planning::RobotInstant, Planning::RobotInstant::Msg);
+
+}  // namespace rj_convert
