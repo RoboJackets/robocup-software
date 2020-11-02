@@ -443,6 +443,9 @@ namespace rj_convert {
 template <>
 struct RosConverter<Planning::Trajectory, rj_msgs::msg::Trajectory> {
     static rj_msgs::msg::Trajectory to_ros(const Planning::Trajectory& from) {
+        if (!from.angles_valid()) {
+            throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
+        }
         return rj_msgs::build<rj_msgs::msg::Trajectory>()
             .stamp(convert_to_ros(from.time_created().value()))
             .instants(convert_to_ros(from.instants()));

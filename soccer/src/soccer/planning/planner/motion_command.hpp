@@ -106,15 +106,35 @@ ASSOCIATE_CPP_ROS(Planning::EmptyCommand, rj_msgs::msg::EmptyMotionCommand);
 
 template <>
 struct RosConverter<Planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionCommand> {
-    static rj_msgs::msg::PathTargetMotionCommand to_ros([
-        [maybe_unused]] const Planning::PathTargetCommand& from) {
-        return rj_msgs::build<rj_msgs::msg::PathTargetMotionCommand>().target(
-            convert_to_ros(from.goal));
+    static rj_msgs::msg::PathTargetMotionCommand to_ros(const Planning::PathTargetCommand& from) {
+        rj_msgs::msg::PathTargetMotionCommand result;
+        result.target = convert_to_ros(from.goal);
+
+        const auto* maybe_point = std::get_if<Planning::TargetFacePoint>(&from.angle_override);
+        const auto* maybe_angle = std::get_if<Planning::TargetFaceAngle>(&from.angle_override);
+        if (maybe_point != nullptr) {
+            rj_geometry_msgs::msg::Point face_point = convert_to_ros(maybe_point->face_point);
+            result.override_face_point.push_back(face_point);
+        } else if (maybe_angle != nullptr) {
+            double face_angle = maybe_angle->target;
+            result.override_angle.push_back(face_angle);
+        }
+
+        return result;
     }
 
-    static Planning::PathTargetCommand from_ros([
-        [maybe_unused]] const rj_msgs::msg::PathTargetMotionCommand& from) {
-        return Planning::PathTargetCommand{convert_from_ros(from.target)};
+    static Planning::PathTargetCommand from_ros(const rj_msgs::msg::PathTargetMotionCommand& from) {
+        Planning::PathTargetCommand result;
+        result.goal = convert_from_ros(from.target);
+        if (!from.override_angle.empty()) {
+            result.angle_override = Planning::TargetFaceAngle{from.override_angle.front()};
+        } else if (!from.override_face_point.empty()) {
+            result.angle_override =
+                Planning::TargetFacePoint{convert_from_ros(from.override_face_point.front())};
+        } else {
+            result.angle_override = Planning::TargetFaceTangent{};
+        }
+        return result;
     }
 };
 
@@ -122,14 +142,13 @@ ASSOCIATE_CPP_ROS(Planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionCom
 
 template <>
 struct RosConverter<Planning::WorldVelCommand, rj_msgs::msg::WorldVelMotionCommand> {
-    static rj_msgs::msg::WorldVelMotionCommand to_ros([
-        [maybe_unused]] const Planning::WorldVelCommand& from) {
+    static rj_msgs::msg::WorldVelMotionCommand to_ros(const Planning::WorldVelCommand& from) {
         return rj_msgs::build<rj_msgs::msg::WorldVelMotionCommand>().world_vel(
             convert_to_ros(from.world_vel));
     }
 
-    static Planning::WorldVelCommand from_ros([
-        [maybe_unused]] const rj_msgs::msg::WorldVelMotionCommand& from) {
+
+    static Planning::WorldVelCommand from_ros(const rj_msgs::msg::WorldVelMotionCommand& from) {
         return Planning::WorldVelCommand{convert_from_ros(from.world_vel)};
     }
 };
@@ -138,15 +157,13 @@ ASSOCIATE_CPP_ROS(Planning::WorldVelCommand, rj_msgs::msg::WorldVelMotionCommand
 
 template <>
 struct RosConverter<Planning::PivotCommand, rj_msgs::msg::PivotMotionCommand> {
-    static rj_msgs::msg::PivotMotionCommand to_ros([
-        [maybe_unused]] const Planning::PivotCommand& from) {
+    static rj_msgs::msg::PivotMotionCommand to_ros(const Planning::PivotCommand& from) {
         return rj_msgs::build<rj_msgs::msg::PivotMotionCommand>()
             .pivot_point(convert_to_ros(from.pivot_point))
             .pivot_target(convert_to_ros(from.pivot_target));
     }
 
-    static Planning::PivotCommand from_ros([
-        [maybe_unused]] const rj_msgs::msg::PivotMotionCommand& from) {
+    static Planning::PivotCommand from_ros(const rj_msgs::msg::PivotMotionCommand& from) {
         return Planning::PivotCommand{convert_from_ros(from.pivot_point),
                                       convert_from_ros(from.pivot_target)};
     }
@@ -156,8 +173,7 @@ ASSOCIATE_CPP_ROS(Planning::PivotCommand, rj_msgs::msg::PivotMotionCommand);
 
 template <>
 struct RosConverter<Planning::SettleCommand, rj_msgs::msg::SettleMotionCommand> {
-    static rj_msgs::msg::SettleMotionCommand to_ros([
-        [maybe_unused]] const Planning::SettleCommand& from) {
+    static rj_msgs::msg::SettleMotionCommand to_ros(const Planning::SettleCommand& from) {
         rj_msgs::msg::SettleMotionCommand result;
         if (from.target.has_value()) {
             result.maybe_target.push_back(convert_to_ros(from.target.value()));
@@ -165,8 +181,7 @@ struct RosConverter<Planning::SettleCommand, rj_msgs::msg::SettleMotionCommand> 
         return result;
     }
 
-    static Planning::SettleCommand from_ros([
-        [maybe_unused]] const rj_msgs::msg::SettleMotionCommand& from) {
+    static Planning::SettleCommand from_ros(const rj_msgs::msg::SettleMotionCommand& from) {
         Planning::SettleCommand result;
         if (!from.maybe_target.empty()) {
             result.target = convert_from_ros(from.maybe_target.front());
