@@ -1,18 +1,17 @@
 #include "debug_draw_interface.hpp"
 
-#include <spdlog/spdlog.h>
-
 #include <rj_constants/topic_names.hpp>
 
 namespace ros2_temp {
+
+constexpr size_t kDebugDrawQueueSize = 10;
 
 DebugDrawInterface::DebugDrawInterface(Context* context, rclcpp::Executor* executor)
     : context_(context) {
     node_ = std::make_shared<rclcpp::Node>("_debug_draw_interface");
     debug_draw_sub_ = node_->create_subscription<rj_drawing_msgs::msg::DebugDraw>(
-        viz::topics::kDebugDrawPub, rclcpp::QoS(10),
+        viz::topics::kDebugDrawPub, rclcpp::QoS(kDebugDrawQueueSize),
         [this](rj_drawing_msgs::msg::DebugDraw::SharedPtr debug_draw) {  // NOLINT
-            spdlog::info("Got message");
             latest_[debug_draw->layer] = debug_draw;
         });
 
@@ -21,11 +20,10 @@ DebugDrawInterface::DebugDrawInterface(Context* context, rclcpp::Executor* execu
 
 void DebugDrawInterface::run() {
     const auto& color_to_qt = [](const rj_drawing_msgs::msg::DrawColor& color) {
-        return QColor::fromRgb(color.r, color.g, color.b);
+        return QColor::fromRgb(color.r, color.g, color.b, color.a);
     };
 
     for (const auto& [layer, debug_draw] : latest_) {
-        spdlog::info("Got layer {}", layer);
         for (const auto& shapes : debug_draw->shapes) {
             context_->debug_drawer.draw_shape_set(rj_convert::convert_from_ros(shapes.shapes),
                                                   color_to_qt(shapes.color),
@@ -46,7 +44,7 @@ void DebugDrawInterface::run() {
                 new_point->mutable_pos()->set_x(point.x);
                 new_point->mutable_pos()->set_y(point.y);
 
-                // TODO(Kyle): Use color in trajectory
+                // TODO(#1584): Use color in trajectory
             }
         }
         for (const auto& text : debug_draw->debug_text) {

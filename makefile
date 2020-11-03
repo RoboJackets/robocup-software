@@ -2,6 +2,7 @@ SHELL=/bin/bash -o pipefail
 MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
+export CMAKE_PREFIX_PATH=/opt/ros/foxy
 
 # circleci has 2 cores, but advertises 32, which causes OOMs
 ifeq ($(CIRCLECI), true)
@@ -15,18 +16,18 @@ CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=$(shell pwd)/install"
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
-	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	mkdir -p build-debug
+ 	cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_release
-	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	mkdir -p build-release
+ 	cd build-release && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_perf
-	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	mkdir -p build-release-debug
+ 	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 all:
@@ -44,7 +45,7 @@ all-perf:
 perf: all-perf
 
 run: all
-	./run/soccer
+	ros2 launch rj_robocup soccer.launch.py
 run-comp:
 	./runcomp.sh
 r:	run
@@ -53,37 +54,22 @@ run-sim: all backend-headless-simulator-soccer
 run-headmore: all backend-simulator-soccer
 
 run-sim2play: all
-	-pkill -f './grSim'
-	-(cd run && ./grSim) &
-	@echo '!!![WARNING]!!! Multiple soccer instances will not work unless your grSim is broadcasting over the proper IP.'
-	@echo 'Please set your grSim broadcast IP to "224.5.23.2:10020", or you will experience issues.'
-	./run/soccer -sim -b & sleep 2 && ./run/soccer -sim -y -defend plus
-	-pkill -f './grSim'
+	ros2 launch rj_robocup sim2play.launch.py
 
 run-release: all-release
-	./run/soccer
+	ros2 launch rj_robocup soccer.launch.py
 run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
-view:
-	./run/soccer -vlog $(file)
 
 # backend targets to launch soccer with grSim in headless
 backend-headless-simulator-soccer:
-	-pkill -f './grSim'
-	-(cd run && ./grSim --headless) &
-	./run/soccer -sim -pbk testing.pbk
-# Kill grSim once we unblock
-	-pkill -f './grSim'
+	ros2 launch rj_robocup sim.launch.py headless_flag:=--headless
 
 # backend targets to launch soccer with a grSim window
 backend-simulator-soccer:
-	-pkill -f './grSim'
-	-(cd run && ./grSim) &
-	./run/soccer -sim -pbk testing.pbk
-# Kill grSim once we unblock
-	-pkill -f './grSim'
+	ros2 launch rj_robocup sim.launch.py
 
 
 debug: all
@@ -136,8 +122,7 @@ behavior-diagrams: all
 	@echo -e "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
 
 clean:
-	cd build && ninja clean || true
-	rm -rf build
+	cd build-debug && ninja clean || true
 
 static-analysis:
 	mkdir -p build/static-analysis
@@ -171,7 +156,7 @@ checkstyle:
 
 CLANG_FORMAT_BINARY=clang-format-10
 CLANG_TIDY_BINARY=clang-tidy-10
-COMPILE_COMMANDS_DIR=build
+COMPILE_COMMANDS_DIR=build-debug
 
 # circleci has 2 cores, but advertises 32
 ifeq ($(CIRCLECI), true)
@@ -189,6 +174,8 @@ ifeq ("$(wildcard $(COMPILE_COMMANDS_DIR)/compile_commands.json)","")
 	@printf "$(COMPILE_COMMANDS_DIR)/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
 	exit 1
 endif
+	@echo "Removing GCC precompiled headers from compile_commands.json so that clang-tidy will work"
+	@sed -i 's/-include [^ ]*cmake_pch\.hxx//' $(COMPILE_COMMANDS_DIR)/compile_commands.json
 	@printf "Running clang-tidy-diff...\n"
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*(Test|test).cpp" -quiet
 
@@ -198,4 +185,6 @@ checkstyle-lines:
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 checktidy-lines:
+	@echo "Removing GCC precompiled headers from compile_commands.json so that clang-tidy will work"
+	@sed -i 's/-include [^ ]*cmake_pch\.hxx//' $(COMPILE_COMMANDS_DIR)/compile_commands.json
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*(Test|test).cpp" > /tmp/checktidy.patch -quiet

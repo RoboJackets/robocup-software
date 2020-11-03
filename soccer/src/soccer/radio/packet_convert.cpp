@@ -8,7 +8,7 @@
 #include "robot_status.hpp"
 #include "control/motion_setpoint.hpp"
 
-// TODO(Kyle): Make these ROS parameters and move them to a central location
+// TODO(#1583): Make these ROS parameters and move them to a central location
 constexpr double kMaxKickSpeed = 7.0;
 constexpr double kMinKickSpeed = 2.1;
 constexpr double kMaxChipSpeed = 3.0;
@@ -159,7 +159,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     control_message.bodyW =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.dribbler = std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed) * kMaxDribble, 0, 255);
+    control_message.dribbler = std::clamp<uint16_t>(
+        static_cast<uint16_t>(intent.dribbler_speed * kMaxDribble), 0, 255);
 
     if (intent.shoot_mode == RobotIntent::ShootMode::CHIP) {
         control_message.shootMode = 1;
@@ -239,13 +240,13 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     } else {
         if (intent.shoot_mode == RobotIntent::ShootMode::KICK) {
             // Flat kick
-            double speed = intent.kick_speed;
-            grsim->set_kickspeedx(static_cast<float>(speed));
+            grsim->set_kickspeedx(intent.kick_speed);
             grsim->set_kickspeedz(0);
         } else {
             // Chip kick
-            double speed = intent.kick_speed;
             constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
+
+            double speed = intent.kick_speed;
             grsim->set_kickspeedx(static_cast<float>(std::cos(kChipAngle) * speed));
             grsim->set_kickspeedz(static_cast<float>(std::sin(kChipAngle) * speed));
         }
