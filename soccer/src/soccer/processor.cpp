@@ -76,7 +76,8 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
     debug_draw_sub_ =
         std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());
-    autonomy_interface_ = std::make_unique<ros2_temp::AutonomyInterface>(&context_, ros_executor_.get());
+    autonomy_interface_ =
+        std::make_unique<ros2_temp::AutonomyInterface>(&context_, ros_executor_.get());
 
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStatePub);

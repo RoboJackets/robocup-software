@@ -18,8 +18,7 @@ public:
     SimRadio(bool blue_team = false);
 
 protected:
-    void send(int robot_id,
-              const rj_msgs::msg::MotionSetpoint& motion,
+    void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
               const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
     void receive() override;
     void switch_team(bool blue) override;
@@ -40,4 +39,4 @@ private:
     bool blue_team_;
 };
 
-} // namespace radio
+}  // namespace radio

@@ -40,7 +40,9 @@ DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
-      drawer_(node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10), fmt::format("motion_control/{}", std::to_string(shell_id))) {
+      drawer_(
+          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
+          fmt::format("motion_control/{}", std::to_string(shell_id))) {
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
         topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.

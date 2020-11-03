@@ -2,15 +2,16 @@
 
 #include <configuration.hpp>
 #include <context.hpp>
-#include <rj_geometry/point.hpp>
-#include <rc-fshare/pid.hpp>
 #include <rj_common/time.hpp>
-#include <rj_param_utils/param.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_param_utils/param.hpp>
 
-#include "robot.hpp"
 #include "control/motion_setpoint.hpp"
+#include "robot.hpp"
 #include "ros_debug_drawer.hpp"
+
+#include <rc-fshare/pid.hpp>
 
 namespace control {
 
@@ -29,7 +30,7 @@ namespace testing {
 
 class MotionControlTest;
 
-} // namespace testing
+}  // namespace testing
 
 /**
  * @brief Handles computer-side motion control
@@ -51,14 +52,11 @@ protected:
      * This runs PID control on the position and angle of the robot and
      * sets values in the robot's radio_tx packet.
      */
-    void run(const RobotState& state,
-             const Planning::Trajectory& path,
-             const GameState::State& game_state,
-             bool is_joystick_controlled,
+    void run(const RobotState& state, const Planning::Trajectory& path,
+             const GameState::State& game_state, bool is_joystick_controlled,
              MotionSetpoint* setpoint);
 
 private:
-
     /**
      * Force stop the motion by setting the setpoint to zero.
      * Also resets PID controllers.
@@ -104,4 +102,4 @@ private:
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
 };
 
-} // namespace control
+}  // namespace control

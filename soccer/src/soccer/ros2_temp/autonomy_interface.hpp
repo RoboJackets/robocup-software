@@ -1,9 +1,11 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
+
+#include <rj_msgs/msg/robot_status.hpp>
+
 #include "node.hpp"
 #include "robot_intent.hpp"
-#include <rj_msgs/msg/robot_status.hpp>
 
 namespace ros2_temp {
 
@@ -24,4 +26,4 @@ private:
     std::vector<rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr> status_subs_;
 };
 
-} // namespace ros2_temp
+}  // namespace ros2_temp

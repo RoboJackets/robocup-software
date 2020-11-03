@@ -1,11 +1,11 @@
 #pragma once
 
-#include "velocity_profiling.hpp"
+#include "configuration.hpp"
 #include "planning/instant.hpp"
+#include "planning/primitives/angle_planning.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
-#include "planning/primitives/angle_planning.hpp"
-#include "configuration.hpp"
+#include "velocity_profiling.hpp"
 
 namespace Planning {
 

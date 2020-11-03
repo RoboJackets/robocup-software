@@ -1,6 +1,7 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
+
 #include "context.hpp"
 
 namespace ros2_temp {
@@ -12,7 +13,7 @@ public:
 private:
     DebugDrawer* debug_drawer_;
     rclcpp::Node::SharedPtr node_;
-    rclcpp::Subscription<
+    rclcpp::Subscription <
 };
 
 }  // namespace ros2_temp

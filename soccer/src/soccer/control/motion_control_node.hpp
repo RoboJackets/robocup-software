@@ -1,15 +1,15 @@
 #pragma once
 
-#include <rj_topic_utils/async_message_queue.hpp>
+#include <vector>
 
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/ros2_param_provider.hpp>
-#include <vector>
+#include <rj_topic_utils/async_message_queue.hpp>
 
-#include "motion_setpoint.hpp"
-#include "motion_control.hpp"
 #include "manipulator_control.hpp"
+#include "motion_control.hpp"
+#include "motion_setpoint.hpp"
 #include "node.hpp"
 
 namespace control {
@@ -28,4 +28,4 @@ private:
     std::vector<ManipulatorControl> manipulators_{};
 };
 
-} // namespace control
+}  // namespace control

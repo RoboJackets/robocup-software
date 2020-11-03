@@ -2,8 +2,8 @@
 #include <cmath>
 #include <iostream>
 
-#include <rj_geometry/point.hpp>
 #include <control/trapezoidal_motion.hpp>
+#include <rj_geometry/point.hpp>
 
 #include "gtest/gtest.h"
 

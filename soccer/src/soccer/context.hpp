@@ -1,25 +1,25 @@
 #pragma once
 
+#include <set>
+
+#include <rj_constants/constants.hpp>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/referee.pb.h>
 
-#include <rj_constants/constants.hpp>
-#include <set>
-
+#include "control/motion_setpoint.hpp"
 #include "debug_drawer.hpp"
 #include "game_settings.hpp"
 #include "game_state.hpp"
+#include "joystick/gamepad_message.hpp"
 #include "logger.hpp"
+#include "planning/robot_constraints.hpp"
+#include "planning/trajectory.hpp"
+#include "radio/robot_status.hpp"
 #include "robot_config.hpp"
 #include "robot_intent.hpp"
 #include "system_state.hpp"
 #include "team_info.hpp"
 #include "world_state.hpp"
-#include "joystick/gamepad_message.hpp"
-#include "control/motion_setpoint.hpp"
-#include "planning/robot_constraints.hpp"
-#include "planning/trajectory.hpp"
-#include "radio/robot_status.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}

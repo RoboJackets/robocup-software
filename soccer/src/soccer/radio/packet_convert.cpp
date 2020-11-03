@@ -1,12 +1,12 @@
 #include "packet_convert.hpp"
 
-#include <rj_geometry/util.hpp>
 #include <rj_common/status.hpp>
 #include <rj_common/time.hpp>
+#include <rj_geometry/util.hpp>
 
+#include "control/motion_setpoint.hpp"
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
-#include "control/motion_setpoint.hpp"
 
 // TODO(#1583): Make these ROS parameters and move them to a central location
 constexpr double kMaxKickSpeed = 7.0;
@@ -15,19 +15,25 @@ constexpr double kMaxChipSpeed = 3.0;
 constexpr double kMinChipSpeed = 0.5;
 
 static uint8_t kicker_speed_to_strength(double kick_speed) {
-    return static_cast<uint8_t>(std::min(1.0, (kick_speed - kMinKickSpeed) / (kMaxKickSpeed - kMinKickSpeed)) * kMaxKick);
+    return static_cast<uint8_t>(
+        std::min(1.0, (kick_speed - kMinKickSpeed) / (kMaxKickSpeed - kMinKickSpeed)) * kMaxKick);
 }
 
 static double kicker_strength_to_speed(uint8_t kick_strength) {
-    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) * (kMaxKickSpeed - kMinKickSpeed) + kMinKickSpeed;
+    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) *
+               (kMaxKickSpeed - kMinKickSpeed) +
+           kMinKickSpeed;
 }
 
 static uint8_t chipper_speed_to_strength(double kick_speed) {
-    return static_cast<uint8_t>(std::min(1.0, (kick_speed - kMinChipSpeed) / (kMaxChipSpeed - kMinChipSpeed)) * kMaxKick);
+    return static_cast<uint8_t>(
+        std::min(1.0, (kick_speed - kMinChipSpeed) / (kMaxChipSpeed - kMinChipSpeed)) * kMaxKick);
 }
 
 static double chipper_strength_to_speed(uint8_t kick_strength) {
-    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) * (kMaxChipSpeed - kMinChipSpeed) + kMinChipSpeed;
+    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) *
+               (kMaxChipSpeed - kMinChipSpeed) +
+           kMinChipSpeed;
 }
 
 namespace ConvertRx {
@@ -48,9 +54,9 @@ void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* stat
     status->kicker_voltage = 0;
     status->has_ball = rtp_message.ballSenseStatus;
     status->kicker = rtp_message.kickHealthy
-                     ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
-                                               : RobotStatus::KickerState::kCharging)
-                     : RobotStatus::KickerState::kFailed;
+                         ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
+                                                   : RobotStatus::KickerState::kCharging)
+                         : RobotStatus::KickerState::kFailed;
     for (int i = 0; i < 5; i++) {
         status->motors_healthy[i] = (rtp_message.motorErrors & (1u << i)) == 0;
     }
@@ -176,8 +182,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     control_message.bodyW =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.dribbler = std::clamp<uint16_t>(
-        static_cast<uint16_t>(intent.dribbler_speed * kMaxDribble), 0, 255);
+    control_message.dribbler =
+        std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed * kMaxDribble), 0, 255);
 
     if (intent.shoot_mode == RobotIntent::ShootMode::CHIP) {
         control_message.shootMode = 1;
@@ -281,10 +287,13 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     rtp->uid = shell;
     rtp->messageType = rtp::RobotTxMessage::ControlMessageType;
 
-    auto& control_message = rtp->message.controlMessage; // NOLINT
-    control_message.bodyX = static_cast<int16_t>(motion.velocity_x_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.bodyY = static_cast<int16_t>(motion.velocity_y_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.bodyW = static_cast<int16_t>(motion.velocity_z_radps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    auto& control_message = rtp->message.controlMessage;  // NOLINT
+    control_message.bodyX =
+        static_cast<int16_t>(motion.velocity_x_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    control_message.bodyY =
+        static_cast<int16_t>(motion.velocity_y_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    control_message.bodyW =
+        static_cast<int16_t>(motion.velocity_z_radps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     control_message.dribbler = manipulator.dribbler_speed;
     control_message.kickStrength = manipulator.kick_strength;
     control_message.shootMode = manipulator.shoot_mode;

@@ -27,8 +27,7 @@ SimRadio::SimRadio(bool blue_team)
     start_receive();
 }
 
-void SimRadio::send(int robot_id,
-                    const rj_msgs::msg::MotionSetpoint& motion,
+void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                     const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
     grSim_Packet sim_packet;
     grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
@@ -54,7 +53,7 @@ void SimRadio::start_receive() {
     // Set a receive callback
     socket_.async_receive(boost::asio::buffer(buffer_),
                           [this](const boost::system::error_code& error, std::size_t num_bytes) {
-                            receive_packet(error, num_bytes);
+                              receive_packet(error, num_bytes);
                           });
 }
 
@@ -126,4 +125,4 @@ void SimRadio::switch_team(bool blue_team) {
     socket_.bind(ip::udp::endpoint(ip::udp::v4(), status_port));
 }
 
-} // namespace radio
+}  // namespace radio

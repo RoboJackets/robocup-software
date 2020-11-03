@@ -2,11 +2,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_intent.hpp>
 #include <rj_param_utils/param.hpp>
-
-#include <rj_constants/topic_names.hpp>
 
 namespace control {
 
@@ -28,4 +27,4 @@ private:
     rclcpp::Subscription<rj_msgs::msg::RobotIntent>::SharedPtr intent_sub_;
 };
 
-} // namespace control
+}  // namespace control

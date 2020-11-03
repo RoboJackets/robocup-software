@@ -6,8 +6,8 @@ namespace control::testing {
 
 using Planning::RobotInstant;
 using Planning::Trajectory;
-using rj_geometry::Pose;
 using rj_geometry::Point;
+using rj_geometry::Pose;
 using rj_geometry::Twist;
 
 class MotionControlTest : public ::testing::Test {
@@ -18,15 +18,14 @@ public:
         control_ = std::make_unique<MotionControl>(0, node_.get());
     }
 
-    void TearDown() override {
-        rclcpp::shutdown();
-    }
+    void TearDown() override { rclcpp::shutdown(); }
 
 protected:
     rclcpp::Node::SharedPtr node_;
     std::unique_ptr<MotionControl> control_;
 
-    void run(RobotState state, const Trajectory& trajectory, GameState::State game_state, bool is_joystick_controlled, MotionSetpoint* setpoint) {
+    void run(RobotState state, const Trajectory& trajectory, GameState::State game_state,
+             bool is_joystick_controlled, MotionSetpoint* setpoint) {
         control_->run(state, trajectory, game_state, is_joystick_controlled, setpoint);
     }
 };
@@ -39,7 +38,7 @@ Trajectory make_trajectory() {
     RobotState initial = make_initial_state();
     RobotInstant initial_instant{initial.pose, initial.velocity, initial.timestamp};
     RobotInstant final_instant{initial.pose + Pose(1.0, 0.0, 0.0), Twist::zero(),
-                                         initial.timestamp + RJ::Seconds(1.0)};
+                               initial.timestamp + RJ::Seconds(1.0)};
     return Trajectory({initial_instant, final_instant});
 }
 
@@ -129,6 +128,5 @@ TEST_F(MotionControlTest, coordinate_transform_body_x) {
     EXPECT_NEAR(setpoint.yvelocity, 0.0, 1e-6);
     EXPECT_NEAR(setpoint.avelocity, 0.0, 1e-6);
 }
-
 
 }  // namespace control::testing

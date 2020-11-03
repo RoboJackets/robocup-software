@@ -28,8 +28,7 @@ void NetworkRadio::start_receive() {
                                       std::size_t num_bytes) { receive_packet(error, num_bytes); });
 }
 
-void NetworkRadio::send(int robot_id,
-                        const rj_msgs::msg::MotionSetpoint& motion,
+void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                         const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
     // Build the control packet for this robot.
     std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
@@ -38,8 +37,7 @@ void NetworkRadio::send(int robot_id,
     auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
     fill_header(header);
 
-    auto* body =
-        reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
+    auto* body = reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
 
     ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body);
 
@@ -60,11 +58,11 @@ void NetworkRadio::send(int robot_id,
             socket_.async_send_to(
                 boost::asio::buffer(forward_packet_buffer), robot_endpoint,
                 [](const boost::system::error_code& error, std::size_t num_bytes) {
-                  // Handle errors.
-                  if (static_cast<bool>(error)) {
-                      SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)
-                          "Error sending: {}.", error);
-                  }
+                    // Handle errors.
+                    if (static_cast<bool>(error)) {
+                        SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)
+                            "Error sending: {}.", error);
+                    }
                 });
         }
     }
@@ -124,4 +122,4 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
 
 void NetworkRadio::switch_team(bool /*blue_team*/) {}
 
-} // namespace radio
+}  // namespace radio

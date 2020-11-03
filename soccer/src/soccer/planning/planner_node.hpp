@@ -1,19 +1,19 @@
 #pragma once
 
-#include <rj_constants/topic_names.hpp>
-#include <rj_msgs/msg/goalie.hpp>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 
 #include <context.hpp>
-#include <vector>
+#include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/goalie.hpp>
 
-#include "world_state.hpp"
 #include "node.hpp"
-#include "trajectory.hpp"
 #include "planner/plan_request.hpp"
 #include "planner/planner.hpp"
 #include "robot_intent.hpp"
+#include "trajectory.hpp"
+#include "world_state.hpp"
 
 namespace Planning {
 
@@ -42,7 +42,8 @@ private:
 
 class PlannerForRobot {
 public:
-    PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node, TrajectoryCollection* robot_trajectories);
+    PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
+                    TrajectoryCollection* robot_trajectories);
 
 private:
     PlanRequest make_request(const RobotIntent& intent);

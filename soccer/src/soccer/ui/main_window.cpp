@@ -672,9 +672,9 @@ void MainWindow::updateStatus() {
     bool sim = _game_settings.simulation;
 
     // TODO(Kyle): Figure out later if radio works.
-//    if (!sim) {
-//        updateRadioBaseStatus(_processor->is_radio_open());
-//    }
+    //    if (!sim) {
+    //        updateRadioBaseStatus(_processor->is_radio_open());
+    //    }
 
     // Get processing thread status
     Processor::Status ps = _processor->status();

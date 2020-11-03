@@ -23,12 +23,11 @@ namespace Planning {
  */
 struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
-                RobotConstraints constraints,
-                rj_geometry::ShapeSet field_obstacles,
+                RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles,
-                std::array<const Trajectory*, kNumShells> planned_trajectories,
-                unsigned shell_id, const WorldState* world_state,
-                int8_t priority = 0, DebugDrawer* debug_drawer = nullptr)
+                std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
+                const WorldState* world_state, int8_t priority = 0,
+                DebugDrawer* debug_drawer = nullptr)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),

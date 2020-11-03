@@ -7,8 +7,6 @@
 namespace ros2_temp {
 
 DebugDrawerInterface::DebugDrawerInterface(Context* context, rclcpp::Executor* executor)
-    : context_(context) {
+    : context_(context) {}
 
-}
-
-} // namespace ros2_temp
+}  // namespace ros2_temp
