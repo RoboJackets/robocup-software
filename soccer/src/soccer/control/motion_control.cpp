@@ -12,41 +12,52 @@
 
 namespace control {
 
+using Planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
-using Planning::RobotInstant;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 1.5, "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.0, "Maximum velocity limit (motion control) (m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 4.0, "Kp for rotation ((rad/s)/rad)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0, "Ki for rotation ((rad/s)/(rad*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0, "Kd for rotation ((rad/s)/(rad/s))");
-DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0, "Windup limit for rotation (unknown units)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 2.0, "Kp for translation ((m/s)/m)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0, "Ki for translation ((m/s)/(m*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.0, "Kd for translation ((m/s)/(m/s))");
-DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0, "Windup limit for translation (unknown units)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 1.5,
+               "Maximum acceleration limit (motion control) (m/s^2)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.0,
+               "Maximum velocity limit (motion control) (m/s)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 4.0,
+               "Kp for rotation ((rad/s)/rad)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
+               "Ki for rotation ((rad/s)/(rad*s))");
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0,
+               "Kd for rotation ((rad/s)/(rad/s))");
+DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
+             "Windup limit for rotation (unknown units)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 2.0,
+               "Kp for translation ((m/s)/m)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
+               "Ki for translation ((m/s)/(m*s))");
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.0,
+               "Kd for translation ((m/s)/(m/s))");
+DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
+             "Windup limit for translation (unknown units)");
 
-MotionControl::MotionControl(int shell_id, rclcpp::Node* node, DebugDrawer* debug_drawer)
+MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
-      drawer_(debug_drawer) {
-    motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
+      drawer_(node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10), fmt::format("motion_control/{}", std::to_string(shell_id))) {
+    motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
+        topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<Planning::Trajectory::Msg>(
-        planning::topics::trajectory_pub(shell_id),
-        rclcpp::QoS(1),
-        [this] (Planning::Trajectory::Msg::SharedPtr trajectory) {
+        planning::topics::trajectory_pub(shell_id), rclcpp::QoS(1),
+        [this](Planning::Trajectory::Msg::SharedPtr trajectory) {
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
             spdlog::info("Got trajectory");
         });
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
-        vision_filter::topics::kWorldStatePub,
-        rclcpp::QoS(1),
-        [this] (WorldState::Msg::SharedPtr world_state_msg) {
-            RobotState state = rj_convert::convert_from_ros(world_state_msg->our_robots.at(shell_id_));
+        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
+        [this](WorldState::Msg::SharedPtr world_state_msg) {
+            RobotState state =
+                rj_convert::convert_from_ros(world_state_msg->our_robots.at(shell_id_));
 
-            // TODO(Kyle): Handle the joystick-controlled case here. In the long run we want to convert this to an action. Should we do that now?
+            // TODO(Kyle): Handle the joystick-controlled case here. In the long run we want to
+            // convert this to an action. Should we do that now?
             MotionSetpoint setpoint;
             run(state, trajectory_, game_state_, false, &setpoint);
             if (state.visible) {
@@ -54,17 +65,14 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node, DebugDrawer* debu
             }
         });
     game_state_sub_ = node->create_subscription<GameState::Msg>(
-        referee::topics::kGameStatePub,
-        rclcpp::QoS(1),
-        [this] (GameState::Msg::SharedPtr game_state_msg) {
+        referee::topics::kGameStatePub, rclcpp::QoS(1).transient_local(),
+        [this](GameState::Msg::SharedPtr game_state_msg) {
             game_state_ = rj_convert::convert_from_ros(*game_state_msg).state;
         });
 }
 
-void MotionControl::run(const RobotState& state,
-                        const Planning::Trajectory& trajectory,
-                        const GameState::State& game_state,
-                        bool is_joystick_controlled,
+void MotionControl::run(const RobotState& state, const Planning::Trajectory& trajectory,
+                        const GameState::State& game_state, bool is_joystick_controlled,
                         MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
@@ -137,22 +145,25 @@ void MotionControl::run(const RobotState& state,
 
     set_velocity(setpoint, result_body);
 
-    // Debug drawing
-    if (drawer_ != nullptr)
     {
+        // Debug drawing
+        using rj_geometry::Circle;
+        using rj_geometry::Segment;
         if (at_end) {
-            drawer_->draw_circle(maybe_target->pose.position(), .15, Qt::red, "Planning");
+            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), Qt::red);
         } else if (maybe_target) {
-            drawer_->draw_circle(maybe_target->pose.position(), .15, Qt::green, "Planning");
+            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), Qt::green);
         }
 
         // Line for velocity when we have a target
         if (maybe_pose_target) {
             Pose pose_target = maybe_pose_target.value();
-            drawer_->draw_line(pose_target.position(),
-                               pose_target.position() + result_world.linear(), Qt::blue,
-                               "MotionControl");
+            drawer_.draw_segment(
+                Segment(pose_target.position(), pose_target.position() + result_world.linear()),
+                Qt::blue);
         }
+
+        drawer_.publish();
     }
 }
 
@@ -206,4 +217,4 @@ void MotionControl::stop(MotionSetpoint* setpoint) {
     reset();
 }
 
-} // namespace control
+}  // namespace control

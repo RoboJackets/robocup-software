@@ -30,7 +30,6 @@ static double chipper_strength_to_speed(uint8_t kick_strength) {
     return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) * (kMaxChipSpeed - kMinChipSpeed) + kMinChipSpeed;
 }
 
-
 namespace ConvertRx {
 
 void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* status) {
@@ -131,14 +130,32 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
     }
 }
 void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
+    rj_convert::convert_to_ros(status.timestamp, &(msg->timestamp));
     msg->robot_id = status.shell_id;
     msg->battery_voltage = status.battery_voltage;
     msg->motor_errors = status.motors_healthy;
-    std::copy(status.motors_healthy.end(), status.motors_healthy.end(), msg->motor_errors.begin());
     msg->has_ball_sense = status.has_ball;
     msg->kicker_charged = status.kicker == RobotStatus::KickerState::kCharged;
     msg->kicker_healthy = status.kicker != RobotStatus::KickerState::kFailed;
     msg->fpga_error = !status.fpga_healthy;
+
+    // TODO(Kyle): Handle encoders.
+}
+
+void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status) {
+    rj_convert::convert_from_ros(msg.timestamp, &(status->timestamp));
+    status->shell_id = msg.robot_id;
+    status->battery_voltage = msg.battery_voltage;
+    status->motors_healthy = msg.motor_errors;
+    status->has_ball = msg.has_ball_sense;
+    if (!msg.kicker_healthy) {
+        status->kicker = RobotStatus::KickerState::kFailed;
+    } else if (msg.kicker_charged) {
+        status->kicker = RobotStatus::KickerState::kCharged;
+    } else {
+        status->kicker = RobotStatus::KickerState::kCharging;
+    }
+    status->fpga_healthy = !msg.fpga_error;
 
     // TODO(Kyle): Handle encoders.
 }

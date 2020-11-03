@@ -41,6 +41,8 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto);
 
 void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg);
 
+void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status);
+
 }  // namespace ConvertRx
 
 namespace ConvertTx {

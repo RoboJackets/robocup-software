@@ -5,6 +5,8 @@
 #include <context.hpp>
 #include <rj_constants/topic_names.hpp>
 
+#include "radio/packet_convert.hpp"
+
 namespace ros2_temp {
 
 AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executor)
@@ -13,10 +15,16 @@ AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executo
 
     executor->add_node(node_);
     intent_pubs_.reserve(kNumShells);
+    status_subs_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(node_->create_publisher<RobotIntent::Msg>(
             gameplay::topics::robot_intent_pub(i),
             rclcpp::QoS(1).transient_local()));
+        status_subs_.emplace_back(node_->create_subscription<rj_msgs::msg::RobotStatus>(
+            radio::topics::robot_status_pub(i), rclcpp::QoS(1),
+            [this, i] (rj_msgs::msg::RobotStatus::SharedPtr status) { // NOLINT
+                ConvertRx::ros_to_status(*status, &context_->robot_status.at(i));
+            }));
     }
 }
 

@@ -15,7 +15,7 @@ public:
     void SetUp() override {
         rclcpp::init(0, {});
         node_ = std::make_shared<rclcpp::Node>("test_motion_control");
-        control_ = std::make_unique<MotionControl>(0, node_.get(), nullptr);
+        control_ = std::make_unique<MotionControl>(0, node_.get());
     }
 
     void TearDown() override {

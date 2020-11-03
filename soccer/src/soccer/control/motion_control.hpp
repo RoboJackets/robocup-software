@@ -10,6 +10,7 @@
 
 #include "robot.hpp"
 #include "control/motion_setpoint.hpp"
+#include "ros_debug_drawer.hpp"
 
 namespace control {
 
@@ -41,7 +42,7 @@ class MotionControlTest;
  */
 class MotionControl {
 public:
-    MotionControl(int shell_id, rclcpp::Node* node, DebugDrawer* debug_drawer);
+    MotionControl(int shell_id, rclcpp::Node* node);
 
 protected:
     friend class testing::MotionControlTest;
@@ -90,7 +91,7 @@ private:
     Pid position_y_controller_;
     Pid angle_controller_;
 
-    DebugDrawer* drawer_{};
+    rj_drawing::RosDebugDrawer drawer_;
     RobotConfig* config_{};
 
     GameState::State game_state_ = GameState::State::Halt;
