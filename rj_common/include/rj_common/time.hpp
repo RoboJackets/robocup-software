@@ -11,7 +11,7 @@
 
 using namespace std::chrono_literals;
 
-namespace RJ {
+namespace rj {
 
 /// type for storing time in microseconds
 using Time = std::chrono::system_clock::time_point;
@@ -38,7 +38,7 @@ constexpr Timestamp timestamp(Time time) {
 inline Timestamp timestamp() { return timestamp(now()); }
 
 /// Converts a decimal number of seconds to an integer timestamp in microseconds
-constexpr RJ::Timestamp secs_to_timestamp(double secs) {
+constexpr rj::Timestamp secs_to_timestamp(double secs) {
     return secs * 1000000.0f;
 }
 
@@ -48,25 +48,25 @@ constexpr double num_seconds(Duration d) {
 }
 
 /// Converts an integer timestamp in microseconds to a decimal number of seconds
-constexpr float timestamp_to_secs(RJ::Timestamp timestamp) {
+constexpr float timestamp_to_secs(rj::Timestamp timestamp) {
     return (float)(timestamp / 1000000.0f);
 }
 
 }  // namespace RJ
 
-inline RJ::Time operator+(const RJ::Time& time, const RJ::Seconds& sec) {
-    return time + std::chrono::duration_cast<RJ::Time::duration>(sec);
+inline rj::Time operator+(const rj::Time& time, const rj::Seconds& sec) {
+    return time + std::chrono::duration_cast<RJ::Time::duration>(secr);
 }
 
-inline RJ::Time operator-(const RJ::Time& time, const RJ::Seconds& sec) {
-    return time - std::chrono::duration_cast<RJ::Time::duration>(sec);
+inline rj::Time operator-(const rj::Time& time, const rj::Seconds& sec) {
+    return time - std::chrono::duration_cast<rj::Time::duration>(sec);
 }
 
-inline std::string to_string(RJ::Seconds seconds) {
+inline std::string to_string(rj::Seconds seconds) {
     return std::to_string(seconds.count()) + "(Seconds)";
 }
 
-inline std::ostream& operator<<(std::ostream& os, RJ::Seconds seconds) {
+inline std::ostream& operator<<(std::ostream& os, rj::Seconds seconds) {
     os << to_string(seconds);
     return os;
 }
@@ -74,8 +74,8 @@ inline std::ostream& operator<<(std::ostream& os, RJ::Seconds seconds) {
 namespace rj_convert {
 
 template <>
-struct RosConverter<RJ::Time, rclcpp::Time> {
-    static rclcpp::Time to_ros(const RJ::Time& value) {
+struct RosConverter<rj::Time, rclcpp::Time> {
+    static rclcpp::Time to_ros(const rj::Time& value) {
         const int64_t nanos =
             std::chrono::duration_cast<std::chrono::nanoseconds>(
                 value.time_since_epoch())
@@ -83,47 +83,47 @@ struct RosConverter<RJ::Time, rclcpp::Time> {
 
         return rclcpp::Time{nanos};
     }
-    static RJ::Time from_ros(const rclcpp::Time& value) {
+    static rj::Time from_ros(const rclcpp::Time& value) {
         const std::chrono::nanoseconds dur(value.nanoseconds());
-        return RJ::Time{dur};
+        return rj::Time{dur};
     }
 };
 
 template <>
-struct RosConverter<RJ::Time, builtin_interfaces::msg::Time> {
-    static rclcpp::Time to_ros(const RJ::Time& value) {
-        return RosConverter<RJ::Time, rclcpp::Time>::to_ros(value);
+struct RosConverter<rj::Time, builtin_interfaces::msg::Time> {
+    static rclcpp::Time to_ros(const rj::Time& value) {
+        return RosConverter<rj::Time, rclcpp::Time>::to_ros(value);
     }
-    static RJ::Time from_ros(const rclcpp::Time& value) {
-        return RosConverter<RJ::Time, rclcpp::Time>::from_ros(value);
+    static rj::Time from_ros(const rclcpp::Time& value) {
+        return RosConverter<rj::Time, rclcpp::Time>::from_ros(value);
     }
 };
 
 template <>
-struct RosConverter<RJ::Seconds, rclcpp::Duration> {
-    static rclcpp::Duration to_ros(const RJ::Seconds& value) {
+struct RosConverter<rj::Seconds, rclcpp::Duration> {
+    static rclcpp::Duration to_ros(const rj::Seconds& value) {
         return rclcpp::Duration(
             std::chrono::duration_cast<std::chrono::nanoseconds>(value)
                 .count());
     }
-    static RJ::Seconds from_ros(const rclcpp::Duration& value) {
+    static rj::Seconds from_ros(const rclcpp::Duration& value) {
         const std::chrono::nanoseconds dur(value.nanoseconds());
-        return std::chrono::duration_cast<RJ::Seconds>(dur);
+        return std::chrono::duration_cast<rj::Seconds>(dur);
     }
 };
 
-ASSOCIATE_CPP_ROS(RJ::Time, builtin_interfaces::msg::Time);
+ASSOCIATE_CPP_ROS(rj::Time, builtin_interfaces::msg::Time);
 
 template <>
-struct RosConverter<RJ::Seconds, builtin_interfaces::msg::Duration> {
-    static rclcpp::Duration to_ros(const RJ::Seconds& value) {
-        return RosConverter<RJ::Seconds, rclcpp::Duration>::to_ros(value);
+struct RosConverter<rj::Seconds, builtin_interfaces::msg::Duration> {
+    static rclcpp::Duration to_ros(const rj::Seconds& value) {
+        return RosConverter<rj::Seconds, rclcpp::Duration>::to_ros(value);
     }
-    static RJ::Seconds from_ros(const rclcpp::Duration& value) {
-        return RosConverter<RJ::Seconds, rclcpp::Duration>::from_ros(value);
+    static rj::Seconds from_ros(const rclcpp::Duration& value) {
+        return RosConverter<rj::Seconds, rclcpp::Duration>::from_ros(value);
     }
 };
 
-ASSOCIATE_CPP_ROS(RJ::Seconds, builtin_interfaces::msg::Duration);
+ASSOCIATE_CPP_ROS(rj::Seconds, builtin_interfaces::msg::Duration);
 
 }  // namespace rj_convert
