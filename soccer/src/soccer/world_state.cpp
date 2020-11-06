@@ -22,13 +22,13 @@ BallState BallState::predict_at(RJ::Time time) const {
     double speed = 0.0;
     double distance = 0.0;
 
-    double max_time = s0 / soccer::physics::PARAM_kBallDecayConstant;
+    double max_time = s0 / soccer::physics::PARAM_ball_decay_constant;
     if (dt.count() >= max_time) {
         speed = 0;
-        distance = s0 * max_time - pow(max_time, 2) / 2.0 * soccer::physics::PARAM_kBallDecayConstant;
+        distance = s0 * max_time - pow(max_time, 2) / 2.0 * soccer::physics::PARAM_ball_decay_constant;
     } else {
-        speed = s0 - (dt.count() * soccer::physics::PARAM_kBallDecayConstant);
-        distance = s0 * dt.count() - pow(dt.count(), 2) / 2.0 * soccer::physics::PARAM_kBallDecayConstant;
+        speed = s0 - (dt.count() * soccer::physics::PARAM_ball_decay_constant);
+        distance = s0 * dt.count() - pow(dt.count(), 2) / 2.0 * soccer::physics::PARAM_ball_decay_constant;
     }
 
     return BallState(position + velocity.normalized(distance), velocity.normalized(speed), time);
@@ -78,12 +78,12 @@ RJ::Seconds BallState::query_stop_time(rj_geometry::Point* out) const {
 
     if (out != nullptr) {
         // vf^2 - vi^2 = 2ad => d = -vi^2 / 2a
-        *out = position + velocity.normalized(std::pow(speed, 2) / (2 * soccer::physics::PARAM_kBallDecayConstant));
+        *out = position + velocity.normalized(std::pow(speed, 2) / (2 * soccer::physics::PARAM_ball_decay_constant));
     }
 
     // Use the formula for time until zero velocity:
     // 0 = v = vi + at => t = -vi / a
-    return RJ::Seconds(speed / soccer::physics::PARAM_kBallDecayConstant);
+    return RJ::Seconds(speed / soccer::physics::PARAM_ball_decay_constant);
 }
 
 rj_geometry::Point BallState::query_stop_position() const {
@@ -95,7 +95,7 @@ rj_geometry::Point BallState::query_stop_position() const {
 std::optional<RJ::Seconds> BallState::query_seconds_to_dist(double distance) const {
     // vf^2 - vi^2 = 2ad => vf = sqrt(vi^2 + 2ad)
     double speed = velocity.mag();
-    double vf_sq = std::pow(speed, 2) - 2 * soccer::physics::PARAM_kBallDecayConstant * distance;
+    double vf_sq = std::pow(speed, 2) - 2 * soccer::physics::PARAM_ball_decay_constant * distance;
 
     // If vf^2 is negative, the ball will never travel the desired distance.
     // Return nullopt.
@@ -104,7 +104,7 @@ std::optional<RJ::Seconds> BallState::query_seconds_to_dist(double distance) con
     }
 
     // Otherwise, use t = (vf - vi) / a
-    return RJ::Seconds(speed - std::sqrt(vf_sq)) / soccer::physics::PARAM_kBallDecayConstant;
+    return RJ::Seconds(speed - std::sqrt(vf_sq)) / soccer::physics::PARAM_ball_decay_constant;
 }
 
 Planning::Trajectory BallState::make_trajectory() const {

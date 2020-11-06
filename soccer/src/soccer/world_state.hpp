@@ -8,7 +8,7 @@
 #include <rj_msgs/msg/ball_state.hpp>
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <params.hpp>
+#include <global_params.hpp>
 
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"

@@ -8,12 +8,12 @@ TEST(BallState, Predict) {
 
     BallState in_3_seconds = state.predict_in(RJ::Seconds(3));
 
-    EXPECT_NEAR(in_3_seconds.velocity.x(), 1 - 3 * soccer::physics::PARAM_kBallDecayConstant, 1e-6);
+    EXPECT_NEAR(in_3_seconds.velocity.x(), 1 - 3 * soccer::physics::PARAM_ball_decay_constant, 1e-6);
 
     BallState in_6_seconds = state.predict_in(RJ::Seconds(6));
 
     EXPECT_EQ(in_6_seconds.velocity.x(), 0);
-    EXPECT_EQ(in_6_seconds.position.x(), 1 / (2 * soccer::physics::PARAM_kBallDecayConstant));
+    EXPECT_EQ(in_6_seconds.position.x(), 1 / (2 * soccer::physics::PARAM_ball_decay_constant));
 }
 
 TEST(BallState, QuerySecondsTo) {
