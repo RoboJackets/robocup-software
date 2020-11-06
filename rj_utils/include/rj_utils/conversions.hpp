@@ -1,12 +1,10 @@
 #pragma once
 
 #include <rj_convert/ros_convert.hpp>
-
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
-
 #include <rj_msgs/msg/detection_ball.hpp>
 #include <rj_msgs/msg/detection_robot.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
+#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
 using DetectionBallMsg = rj_msgs::msg::DetectionBall;
@@ -34,7 +32,6 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
  */
 [[nodiscard]] DetectionRobotMsg to_ros_msg(const SSL_DetectionRobot& robot);
 
-
 namespace rj_convert {
 
 template <>
@@ -53,8 +50,7 @@ struct RosConverter<SSL_DetectionBall, DetectionBallMsg> {
         return to;
     }
 
-    static SSL_DetectionBall from_ros(
-        const DetectionBallMsg& from) {
+    static SSL_DetectionBall from_ros(const DetectionBallMsg& from) {
         SSL_DetectionBall to;
 
         to.set_confidence(convert_from_ros(from.confidence));
@@ -71,4 +67,4 @@ struct RosConverter<SSL_DetectionBall, DetectionBallMsg> {
 
 ASSOCIATE_CPP_ROS(SSL_DetectionBall, DetectionBallMsg)
 
-}; //namespace rj_convert
+};  // namespace rj_convert
