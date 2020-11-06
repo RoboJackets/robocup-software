@@ -2,6 +2,6 @@
 
 #include <rj_param_utils/param.hpp>
 
-constexpr auto soccerParamModule = "soccer";
+constexpr auto kSoccerParamModule = "soccer";
 
-DECLARE_NS_FLOAT64(soccerParamModule, soccer::physics, kBallDecayConstant)
+DECLARE_NS_FLOAT64(kSoccerParamModule, soccer::physics, kBallDecayConstant)
