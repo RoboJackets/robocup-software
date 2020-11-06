@@ -1,4 +1,5 @@
 #include "world_state.hpp"
+#include <physics_params.hpp>
 
 BallState BallState::predict_at(RJ::Time time) const {
     // If the estimate isn't valid, just return an invalid ball.
