@@ -12,9 +12,6 @@
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
 
-// TODO(#1498): Make this configurable
-constexpr double kBallDecayConstant = 0.180;
-
 /**
  * @brief Contains robot motion state data
  * @details This class contains data that comes from the vision system
