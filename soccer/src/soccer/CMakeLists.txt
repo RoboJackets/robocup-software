@@ -74,6 +74,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp
     ros2_temp/referee_sub.cpp
+    ros2_temp/debug_draw_interface.cpp
     window_evaluator.cpp)
 
 set(SOCCER_TEST_SRC
@@ -86,6 +87,7 @@ set(SOCCER_TEST_SRC
     optimization/nelder_mead_2d_test.cpp
     planning/tests/angle_planning_test.cpp
     planning/tests/bezier_path_test.cpp
+    planning/tests/conversion_tests.cpp
     planning/tests/planner_test.cpp
     planning/tests/create_path_test.cpp
     planning/tests/testing_utils.cpp

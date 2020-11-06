@@ -104,9 +104,7 @@ private:
  * - specifying target position, velocity, angle, etc
  * - kicking and chipping the ball
  * - keeping track of which hardware revision this bot is
- * - avoidance of the ball and other robots (this info is fed to the path
  * planner)
- * - playing the GT fight song
  */
 class OurRobot : public Robot {
 public:
@@ -296,7 +294,7 @@ public:
     }
 
     /// checks if the bot has kicked/chipped very recently.
-    bool just_kicked() {
+    bool just_kicked() const {
         return radio_status().kicker == RobotStatus::KickerState::kCharging;
     }
 
@@ -312,18 +310,6 @@ public:
      */
     void kick_immediately();
 
-    // True if this robot will treat opponents as obstacles
-    // Set to false for defenders to avoid being herded
-    bool avoid_opponents() const;
-    void avoid_opponents(bool enable);
-
-    void disable_avoid_ball();
-    void avoid_ball_radius(float radius);
-    float avoid_ball_radius() const;
-    void reset_avoid_ball();  // sets avoid ball radius to Ball_Avoid_Small
-
-    void reset_avoid_robot_radii();
-
     /**
      * Adds an obstacle to the local set of obstacles for avoidance
      * Cleared after every frame
@@ -335,36 +321,6 @@ public:
         return intent().local_obstacles;
     }
     void clear_local_obstacles() { intent().local_obstacles.clear(); }
-
-    rj_geometry::ShapeSet collect_static_obstacles(
-        const rj_geometry::ShapeSet& global_obstacles,
-        bool local_obstacles = true);
-
-    void approach_all_opponents(bool enable = true);
-    void avoid_all_opponents(bool enable = true);
-
-    /** checks if opponents are avoided at all */
-    bool avoid_opponent(unsigned shell_id) const;
-
-    /** @return true if we are able to approach the given opponent */
-    bool approach_opponent(unsigned shell_id) const;
-
-    /** returns the avoidance radius */
-    float avoid_opponent_radius(unsigned shell_id) const;
-
-    /** returns the avoidance radius */
-    void avoid_all_opponent_radius(float radius);
-
-    /** enable/disable for opponent avoidance */
-    void avoid_opponent(unsigned shell_id, bool enable_avoid);
-
-    /**
-     * enable/disable approach of opponents - diable uses larger avoidance
-     * radius
-     */
-    void approach_opponent(unsigned shell_id, bool enable_approach);
-
-    void avoid_opponent_radius(unsigned shell_id, float radius);
 
     rj_geometry::Point mouth_center_pos() const;
 
@@ -412,15 +368,6 @@ public:
      */
     bool status_is_fresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
 
-    /**
-     * @brief start the robot playing a song
-     * @param song
-     */
-    void sing(RobotIntent::Song song = RobotIntent::Song::FIGHT_SONG) {
-        add_text("GO TECH!", QColor(255, 0, 255), "Sing");
-        intent().song = song;
-    }
-
     bool is_penalty_kicker = false;
     bool is_ball_placer = false;
 
@@ -448,62 +395,6 @@ public:
 
 protected:
     RobotConstraints robot_constraints_;
-
-    /**
-     * Creates a set of obstacles from a given robot team mask,
-     * where mask values < 0 create no obstacle, and larger values
-     * create an obstacle of a given radius
-     *
-     * NOTE: mask must not be set for this robot
-     *
-     * @param robots is the set of robots to use to create a mask - either self
-     * or opp from _state
-     */
-    template <class ROBOT>
-    rj_geometry::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
-                                              const RobotMask& mask) const {
-        rj_geometry::ShapeSet result;
-        for (size_t i = 0; i < mask.size(); ++i) {
-            if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-                result.add(std::make_shared<rj_geometry::Circle>(
-                    robots[i]->pos(), mask[i]));
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Only adds obstacles within the check_radius of the passed in position
-     * Creates a set of obstacles from a given robot team mask, where mask
-     * values < 0 create no obstacle, and larger values create an obstacle of a
-     * given radius
-     *
-     * NOTE: mask must not be set for this robot
-     *
-     * @param robots is the set of robots to use to create a mask - either self
-     * or opp from _state
-     */
-    template <class ROBOT>
-    rj_geometry::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
-                                              const RobotMask& mask,
-                                              rj_geometry::Point current_position,
-                                              float check_radius) const {
-        rj_geometry::ShapeSet result;
-        for (size_t i = 0; i < mask.size(); ++i) {
-            if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-                if (current_position.dist_to(robots[i]->pos()) <= check_radius) {
-                    result.add(std::make_shared<rj_geometry::Circle>(
-                        robots[i]->pos(), mask[i]));
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Creates an obstacle for the ball if necessary
-     */
-    std::shared_ptr<rj_geometry::Circle> create_ball_obstacle() const;
 
     friend class Processor;
     friend class RadioNode;
@@ -547,10 +438,6 @@ private:
 
     void clear_cmd_text();
 
-    /// default values for avoid radii
-    static ConfigDouble* self_avoid_radius;
-    static ConfigDouble* opp_avoid_radius;
-    static ConfigDouble* opp_goalie_avoid_radius;
     static ConfigDouble* dribble_out_of_bounds_offset;
 
     int8_t planning_priority_{};

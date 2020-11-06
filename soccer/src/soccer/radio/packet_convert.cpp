@@ -8,6 +8,9 @@
 #include "robot_status.hpp"
 #include "motion/motion_setpoint.hpp"
 
+// TODO(#1583): Make this a real ROS parameter
+constexpr float kMaxKickSpeed = 7.0;
+
 namespace ConvertRx {
 
 void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* status) {
@@ -124,10 +127,12 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     control_message.bodyW =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.dribbler = std::clamp(static_cast<uint16_t>(intent.dvelocity) * 2, 0, 255);
+    control_message.dribbler =
+        std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed) * kMaxDribble, 0, 255);
 
     control_message.shootMode = intent.shoot_mode == RobotIntent::ShootMode::CHIP;
-    control_message.kickStrength = intent.kcstrength;
+    control_message.kickStrength =
+        std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, 255);
 
     switch (intent.trigger_mode) {
         case RobotIntent::TriggerMode::STAND_DOWN:
@@ -138,18 +143,6 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
             break;
         case RobotIntent::TriggerMode::ON_BREAK_BEAM:
             control_message.triggerMode = 2;
-            break;
-    }
-
-    switch (intent.song) {
-        case RobotIntent::Song::STOP:
-            control_message.song = 0;
-            break;
-        case RobotIntent::Song::CONTINUE:
-            control_message.song = 1;
-            break;
-        case RobotIntent::Song::FIGHT_SONG:
-            control_message.song = 2;
             break;
     }
 
@@ -172,8 +165,9 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     control->set_xvelocity(static_cast<float>(setpoint.xvelocity));
     control->set_yvelocity(static_cast<float>(setpoint.yvelocity));
     control->set_avelocity(static_cast<float>(setpoint.avelocity));
-    control->set_dvelocity(intent.dvelocity);
-    control->set_kcstrength(intent.kcstrength);
+    control->set_dvelocity(intent.dribbler_speed);
+    control->set_kcstrength(
+        std::clamp<uint16_t>(intent.kick_speed / kMaxKickSpeed * kMaxKick, 0, kMaxKick));
 
     switch (intent.shoot_mode) {
         case RobotIntent::ShootMode::KICK:
@@ -195,18 +189,6 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
             control->set_triggermode(Packet::Control_TriggerMode_ON_BREAK_BEAM);
             break;
     }
-
-    switch (intent.song) {
-        case RobotIntent::Song::STOP:
-            control->set_song(Packet::Control_Song_STOP);
-            break;
-        case RobotIntent::Song::CONTINUE:
-            control->set_song(Packet::Control_Song_CONTINUE);
-            break;
-        case RobotIntent::Song::FIGHT_SONG:
-            control->set_song(Packet::Control_Song_FIGHT_SONG);
-            break;
-    }
 }
 
 void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
@@ -223,20 +205,13 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     } else {
         if (intent.shoot_mode == RobotIntent::ShootMode::KICK) {
             // Flat kick
-            constexpr double kMaxKickSpeed = 7.0;
-            constexpr double kMinKickSpeed = 2.1;
-            constexpr double kStrengthToSpeed = (kMaxKickSpeed - kMinKickSpeed) / 255;
-            double speed = kStrengthToSpeed * intent.kcstrength + kMinKickSpeed;
-            grsim->set_kickspeedx(static_cast<float>(speed));
+            grsim->set_kickspeedx(intent.kick_speed);
             grsim->set_kickspeedz(0);
         } else {
             // Chip kick
-            constexpr double kMaxChipSpeed = 4.0;
-            constexpr double kMinChipSpeed = 1.0;
-            constexpr double kStrengthToSpeed = (kMaxChipSpeed - kMinChipSpeed) / 255;
             constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
 
-            double speed = kStrengthToSpeed * intent.kcstrength + kMinChipSpeed;
+            double speed = intent.kick_speed;
             grsim->set_kickspeedx(static_cast<float>(std::cos(kChipAngle) * speed));
             grsim->set_kickspeedz(static_cast<float>(std::sin(kChipAngle) * speed));
         }
@@ -246,7 +221,7 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     grsim->set_velnormal(-static_cast<float>(setpoint.xvelocity));
     grsim->set_velangular(static_cast<float>(setpoint.avelocity));
 
-    grsim->set_spinner(intent.dvelocity > 0);
+    grsim->set_spinner(intent.dribbler_speed > 0);
     grsim->set_wheelsspeed(false);
 }
 
