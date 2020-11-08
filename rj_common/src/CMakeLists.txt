@@ -2,9 +2,9 @@
 # Set Sources
 # ======================================================================
 set(RJ_COMMON_SRCS
-    Field_Dimensions.cpp
+    field_dimensions.cpp
     multicast.cpp
-    RefereeEnums.cpp
+    referee_enums.cpp
     qt_utils.cpp)
 
 # ======================================================================

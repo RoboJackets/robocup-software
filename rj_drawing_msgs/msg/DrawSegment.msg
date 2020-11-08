@@ -1,0 +1,2 @@
+rj_geometry_msgs/Segment segment
+DrawColor color

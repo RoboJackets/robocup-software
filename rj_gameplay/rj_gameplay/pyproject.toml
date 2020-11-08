@@ -1,0 +1,4 @@
+[tool.isort]
+profile = "black"
+known_first_party = ["rj_gameplay"]
+known_third_party = ["stp"]

@@ -5,4 +5,4 @@
 /**
  * @return Absolute path to the 'run' directory.
  */
-QDir ApplicationRunDirectory();
+QDir application_run_directory();

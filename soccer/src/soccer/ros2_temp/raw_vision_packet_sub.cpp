@@ -1,5 +1,5 @@
 #include <rj_constants/topic_names.hpp>
-#include <ros2_temp/raw_vision_packet_sub.h>
+#include <ros2_temp/raw_vision_packet_sub.hpp>
 
 namespace ros2_temp {
 RawVisionPacketSub::RawVisionPacketSub(Context* context) : context_{context} {
@@ -8,7 +8,7 @@ RawVisionPacketSub::RawVisionPacketSub(Context* context) : context_{context} {
 }
 
 void RawVisionPacketSub::run() {
-    std::vector<RawProtobufMsg::UniquePtr> raw_protobufs = queue_->GetAll();
+    std::vector<RawProtobufMsg::UniquePtr> raw_protobufs = queue_->get_all();
 
     // Convert all RawProtobufMsgs to SSL_WrapperPacket
     for (const RawProtobufMsg::UniquePtr& msg : raw_protobufs) {

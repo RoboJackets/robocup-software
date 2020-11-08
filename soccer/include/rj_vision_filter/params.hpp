@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_param_utils/param.h>
+#include <rj_param_utils/param.hpp>
 
 namespace vision_filter {
 constexpr auto kVisionFilterParamModule = "vision_filter";

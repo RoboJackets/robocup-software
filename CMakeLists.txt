@@ -12,7 +12,11 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# ======================================================================
+# CMake Options.
+# ======================================================================
 option(NO_WALL "Disables -Wall for CI so it doesn't print as much." OFF)
+option(BUILD_DOCUMENTATION "Build documentation if doxygen and sphinx are found." OFF)
 
 if(NOT NO_WALL
    AND CMAKE_COMPILER_IS_GNUCXX
@@ -90,6 +94,7 @@ include(AddROSIDLSubdirectory)
 # First call add_idl_subdirectory on all ROSIDL subdirectories. This will build + install them at
 # configure time so that find_package will work on them.
 add_rosidl_subdirectory(rj_geometry_msgs)
+add_rosidl_subdirectory(rj_drawing_msgs)
 add_rosidl_subdirectory(rj_msgs)
 
 # This is manually topologically sorted because we're not using colcon
@@ -100,12 +105,15 @@ add_subdirectory(external)
 add_subdirectory(rj_protos)
 add_subdirectory(rj_constants)
 add_subdirectory(rj_utils)
-add_subdirectory(Geometry2d) # TODO(1516)
+add_subdirectory(rj_geometry)
 add_subdirectory(rj_config)
 add_subdirectory(rj_common)
 
+add_subdirectory(rj_gameplay)
 add_subdirectory(rj_vision_receiver)
 add_subdirectory(soccer)
+
+add_subdirectory(docs)
 
 # ======================================================================
 # Packaging

@@ -1,4 +1,4 @@
-#include <testing/declare_test.h>
+#include <testing/declare_test.hpp>
 
 namespace params::testing {
 DEFINE_INT64("declare_test", bare_declare_int, kDeclareIntValue, kDeclareIntDescription)

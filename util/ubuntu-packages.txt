@@ -80,3 +80,4 @@ libgtest-dev
 libusb-1.0-0-dev
 liblz4-dev
 freeglut3-dev
+libfmt-dev
