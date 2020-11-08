@@ -2,6 +2,7 @@
 
 #include <rj_geometry_msgs/msg/rect.hpp>
 
+#include <gtest/gtest.h>
 #include "Point.hpp"
 #include "Shape.hpp"
 
