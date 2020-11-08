@@ -49,7 +49,7 @@ TEST(Rect, cohen_codes){
     EXPECT_EQ(intersectExample.CohenSutherlandOutCode(Point(1.5,2.5)), 0x0A);
 }
 
-TEST(Rect, degenerate_cohen_codes){
+TEST(Rect, degenerage_cohen_codes){
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(0,0)), 0x00);
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(1,0)), 0x02);
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(-1,0)), 0x01);

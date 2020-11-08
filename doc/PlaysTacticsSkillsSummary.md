@@ -15,7 +15,7 @@ For higher level plays, only Coordinated Pass and Defense are really used.
 
 | Tactics                | Description | Use When ... |
 | ---------------------- | ----------- | ------------ |
-| Advance Zone Midfielder| Moves one robot to the best position to recieve the ball, and moves another robot to the best position to recieve the ball from that position. | Use it when need to move robots on a downfield attack at goal. |
+| Advance Zone Midfielder| Moves one robot to the best position to receive the ball, and moves another robot to the best position to receive the ball from that position. | Use it when need to move robots on a downfield attack at goal. |
 | Coordinated Pass       | Moves one robot to the ball and the other to the receive point. When they both are ready, they will pass | Use when you want to pass the ball from one robot to another |
 | Defense                | Basic 2 robot defense that stays on the goalie box. Clears the ball when it comes close. | Use in most cases unless you are writing your own defense |
 | Defense Old            | Same as Defense, but significantly harder to read code-wise | Don't use |

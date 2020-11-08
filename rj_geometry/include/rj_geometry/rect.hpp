@@ -15,8 +15,8 @@ class Segment;
 class Rect : public Shape {
 private:
     int cohen_sutherland_out_code(const Point& other) const;
-    FRIEND_TEST(Rect, cohenCodes);
-    FRIEND_TEST(Rect, degenerageCohenCodes);
+    FRIEND_TEST(Rect, cohen_codes);
+    FRIEND_TEST(Rect, degenerage_cohen_codes);
 
 public:
     using Msg = rj_geometry_msgs::msg::Rect;
