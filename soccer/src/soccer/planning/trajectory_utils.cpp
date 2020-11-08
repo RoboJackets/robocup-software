@@ -28,8 +28,8 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
     // something is probably wrong, but we'll still handle it (just scale dt
     // accordingly).
     // TODO(#1525): Make these config variables.
-    constexpr int kMaxIterations = 100;
-    constexpr RJ::Seconds kExpectedDt{0.05};
+    DECLARE_NS_INT64(kMaxIterations, int, 100);
+    DECLARE_NS_INT64(kExpectedDt, RJ::Seconds, 0.05);
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
@@ -81,8 +81,8 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
     // something is probably wrong, but we'll still handle it (just scale dt
     // accordingly).
     // TODO(#1525): Make these config variables.
-    constexpr int kMaxIterations = 100;
-    constexpr RJ::Seconds kExpectedDt{0.05};
+    DECLARE_NS_INT64(kMaxIterations, int, 100);
+    DECLARE_NS_INT64(kExpectedDt, RJ::Seconds, 0.05);
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
