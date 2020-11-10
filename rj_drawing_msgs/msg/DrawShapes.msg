@@ -1,0 +1,2 @@
+rj_geometry_msgs/ShapeSet shapes
+DrawColor color

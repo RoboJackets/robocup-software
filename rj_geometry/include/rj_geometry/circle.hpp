@@ -1,13 +1,17 @@
 #pragma once
 
-#include "shape.hpp"
-#include "point.hpp"
+#include <rj_geometry_msgs/msg/circle.hpp>
+
 #include "line.hpp"
+#include "point.hpp"
+#include "shape.hpp"
 
 namespace rj_geometry {
 
 class Circle : public Shape {
 public:
+    using Msg = rj_geometry_msgs::msg::Circle;
+
     Circle() {
         r_ = -1;
         rsq_ = -1;

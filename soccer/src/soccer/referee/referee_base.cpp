@@ -75,6 +75,8 @@ void RefereeBase::set_team_info(const TeamInfo& blue, const TeamInfo& yellow) {
 }
 
 void RefereeBase::set_team_color(bool is_blue) {
+    has_any_info_ = true;
+
     bool valid = true;
     update_cache(blue_team_, is_blue, &valid);
 
@@ -97,6 +99,10 @@ void RefereeBase::set_goalie(uint8_t goalie_id) {
 }
 
 void RefereeBase::send() {
+    if (!has_any_info_) {
+        return;
+    }
+
     if (!goalie_valid_) {
         GoalieMsg msg;
         msg.goalie_id = blue_team_ ? blue_info_.goalie : yellow_info_.goalie;

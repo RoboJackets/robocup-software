@@ -17,11 +17,14 @@ find_package(std_msgs REQUIRED)
 # This creates the target rj_geometry_msgs__rosidl_typesupport_cpp
 rosidl_generate_interfaces(
   rj_geometry_msgs
+  msg/Circle.msg
   msg/Line.msg
   msg/Point.msg
+  msg/Polygon.msg
   msg/Pose.msg
   msg/Rect.msg
   msg/Segment.msg
+  msg/ShapeSet.msg
   msg/Twist.msg
   DEPENDENCIES
   std_msgs)

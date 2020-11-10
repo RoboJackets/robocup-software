@@ -114,6 +114,10 @@ void SimRadio::stop_robots() {
 }
 
 void SimRadio::switch_team(bool blue_team) {
+    if (blue_team == blue_team_) {
+        return;
+    }
+
     blue_team_ = blue_team;
 
     if (socket_.is_open()) {

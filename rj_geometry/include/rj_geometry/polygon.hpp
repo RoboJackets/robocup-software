@@ -2,14 +2,18 @@
 
 #include <vector>
 
-#include "shape.hpp"
+#include <rj_geometry_msgs/msg/polygon.hpp>
+
 #include "rect.hpp"
 #include "segment.hpp"
+#include "shape.hpp"
 
 namespace rj_geometry {
 
 class Polygon : public Shape {
 public:
+    using Msg = rj_geometry_msgs::msg::Polygon;
+
     Polygon() {}
     Polygon(const Rect& rect);
     Polygon(std::vector<Point> verts);

@@ -267,8 +267,6 @@ void Gameplay::GameplayModule::run() {
     /// prepare each bot for the next iteration by resetting temporary things
     for (OurRobot* robot : context_->state.self) {
         if (robot != nullptr) {
-            robot->reset_avoid_ball();
-            robot->reset_avoid_robot_radii();
             robot->reset_for_next_iteration();
         }
     }
@@ -376,11 +374,6 @@ void Gameplay::GameplayModule::run() {
         cout << "Finishing GameplayModule::run()" << endl;
     }
 
-    if (context_->our_info.score > our_score_last_frame_) {
-        for (OurRobot* r : context_->state.self) {
-            r->sing();
-        }
-    }
     our_score_last_frame_ = context_->our_info.score;
 }
 

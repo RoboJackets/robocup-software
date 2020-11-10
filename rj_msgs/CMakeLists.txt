@@ -12,12 +12,11 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
-find_package(rj_geometry_msgs REQUIRED)
 
 # ======================================================================
 # Define Targets
 # ======================================================================
-# This creates the target rj_geometry_msgs__rosidl_typesupport_cpp
+# This creates the target rj_msgs__rosidl_typesupport_cpp
 rosidl_generate_interfaces(
   rj_msgs
   # Messages
@@ -30,10 +29,28 @@ rosidl_generate_interfaces(
   msg/GameSettings.msg
   msg/GameState.msg
   msg/Goalie.msg
+  msg/ManipulatorSetpoint.msg
+  msg/MotionSetpoint.msg
+
+  msg/LinearMotionInstant.msg
+  msg/EmptyMotionCommand.msg
+  msg/PathTargetMotionCommand.msg
+  msg/WorldVelMotionCommand.msg
+  msg/PivotMotionCommand.msg
+  msg/SettleMotionCommand.msg
+  msg/CollectMotionCommand.msg
+  msg/LineKickMotionCommand.msg
+  msg/InterceptMotionCommand.msg
+  msg/MotionCommand.msg
+
   msg/RawProtobuf.msg
+  msg/RobotIntent.msg
+  msg/RobotInstant.msg
   msg/RobotState.msg
+  msg/RobotStatus.msg
   msg/TeamColor.msg
   msg/TeamInfo.msg
+  msg/Trajectory.msg
   msg/WorldState.msg
   # Services
   srv/QuickCommands.srv

@@ -9,7 +9,7 @@ class TestConfig(unittest.TestCase):
         self.config = robocup.Configuration.FromRegisteredConfigurables()
 
     def test_config(self):
-        name = "PathPlanner/selfAvoidRadius"
+        name = "PathPlanner/RRT/EnableDebugDrawing"
         avoid = self.config.nameLookup(name)
-        self.assertTrue(isinstance(avoid.value, float))
+        self.assertTrue(isinstance(avoid.value, bool))
         self.assertEqual(name, avoid.name)
