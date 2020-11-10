@@ -32,6 +32,9 @@ public:
 
 using WindowingResult = std::pair<std::vector<Window>, std::optional<Window>>;
 
+constexpr auto windowConfigParamModule = "window_config";
+
+
 /**
  * @brief The WindowEvaluator class calculates open shots from a point to a
  * target.
@@ -123,6 +126,11 @@ public:
      */
     std::vector<rj_geometry::Point> hypothetical_robot_locations;
 
+    DECLARE_FLOAT64(windowConfigParamModule, angle_score_coefficient);
+    DECLARE_FLOAT64(windowConfigParamModule, distance_score_coefficient);
+    //static ConfigDouble* angle_score_coefficient;
+    //static ConfigDouble* distance_score_coefficient;
+
 private:
     Context* context_;
 
@@ -133,7 +141,5 @@ private:
 
     void obstacle_robot(std::vector<Window>& windows, rj_geometry::Point origin,
                         rj_geometry::Segment target, rj_geometry::Point bot_pos);
-
-    static ConfigDouble* angle_score_coefficient;
-    static ConfigDouble* distance_score_coefficient;
+    
 };
