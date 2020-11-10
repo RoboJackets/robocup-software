@@ -34,27 +34,27 @@ TEST(Rect, contains_point) {
 }
 
 TEST(Rect, cohen_codes){
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(0,1.2)), 0x00);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-1,1)), 0x00);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-1.5,1.5)), 0x01);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(1.5,1.2)), 0x02);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(1.5,2)), 0x02);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-.5,0)), 0x04);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-1,0)), 0x04);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-1,3)), 0x08);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-.5,3)), 0x08);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-1.1,0)), 0x05);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(1.1,0)), 0x06);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(-1.5,2.5)), 0x09);
-    EXPECT_EQ(intersect_example.CohenSutherlandOutCode(Point(1.5,2.5)), 0x0A);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(0,1.2)), 0x00);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-1,1)), 0x00);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-1.5,1.5)), 0x01);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(1.5,1.2)), 0x02);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(1.5,2)), 0x02);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-.5,0)), 0x04);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-1,0)), 0x04);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-1,3)), 0x08);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-.5,3)), 0x08);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-1.1,0)), 0x05);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(1.1,0)), 0x06);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(-1.5,2.5)), 0x09);
+    EXPECT_EQ(intersect_example.cohen_sutherland_out_code(Point(1.5,2.5)), 0x0A);
 }
 
 TEST(Rect, degenerage_cohen_codes){
-    EXPECT_EQ(null_example.CohenSutherlandOutCode(Point(0,0)), 0x00);
-    EXPECT_EQ(null_example.CohenSutherlandOutCode(Point(1,0)), 0x02);
-    EXPECT_EQ(null_example.CohenSutherlandOutCode(Point(-1,0)), 0x01);
-    EXPECT_EQ(null_example.CohenSutherlandOutCode(Point(0,1)), 0x08);
-    EXPECT_EQ(null_example.CohenSutherlandOutCode(Point(0,-.1)), 0x04);
+    EXPECT_EQ(null_example.cohen_sutherland_out_code(Point(0,0)), 0x00);
+    EXPECT_EQ(null_example.cohen_sutherland_out_code(Point(1,0)), 0x02);
+    EXPECT_EQ(null_example.cohen_sutherland_out_code(Point(-1,0)), 0x01);
+    EXPECT_EQ(null_example.cohen_sutherland_out_code(Point(0,1)), 0x08);
+    EXPECT_EQ(null_example.cohen_sutherland_out_code(Point(0,-.1)), 0x04);
 }
 
 TEST(Rect, degenerage_segment_intersection) {
