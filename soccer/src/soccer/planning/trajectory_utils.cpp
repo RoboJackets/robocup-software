@@ -27,12 +27,9 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
     // we hit a 5 second trajectory. If our trajectory is longer than that,
     // something is probably wrong, but we'll still handle it (just scale dt
     // accordingly).
-    // TODO(#1525): Make these config variables.
-    DECLARE_NS_INT64(kMaxIterations, int, 100);
-    DECLARE_NS_INT64(kExpectedDt, RJ::Seconds, 0.05);
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
-    RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
+    RJ::Seconds dt = std::max(RJ::Seconds::PARAM_expected_dt, time_left / max_iterations);
 
     const auto& start_hits = obstacles.hit_set(cursor.value().position());
     while (cursor.has_value()) {
@@ -80,12 +77,9 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
     // we hit a 5 second trajectory. If our trajectory is longer than that,
     // something is probably wrong, but we'll still handle it (just scale dt
     // accordingly).
-    // TODO(#1525): Make these config variables.
-    DECLARE_NS_INT64(kMaxIterations, int, 100);
-    DECLARE_NS_INT64(kExpectedDt, RJ::Seconds, 0.05);
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
-    RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
+    RJ::Seconds dt = std::max(RJ::Seconds::PARAM_expected_dt, time_left / max_iterations);
 
     // The time of the earliest hit, if there is one. This is needed so that
     // we get the _first_ time we hit an obstacle, not necessarily the time we
