@@ -10,8 +10,8 @@
 
 constexpr auto windowConfigParamModule = "window_config";
 
-    DECLARE_FLOAT64(windowConfigParamModule, angle_score_coefficient)
-    DECLARE_FLOAT64(windowConfigParamModule, distance_score_coefficient)
+    DECLARE_NS_FLOAT64(windowConfigParamModule, soccer::test, angle_score_coefficient)
+    DECLARE_NS_FLOAT64(windowConfigParamModule, soccer::test, distance_score_coefficient)
 
 /**
  * @brief The Window class represents an open shot from a point to a target
@@ -129,11 +129,6 @@ public:
      * @brief Locations to pretend are robot obstacles during evaluation
      */
     std::vector<rj_geometry::Point> hypothetical_robot_locations;
-
-    // DECLARE_FLOAT64(windowConfigParamModule, angle_score_coefficient)
-    // DECLARE_FLOAT64(windowConfigParamModule, distance_score_coefficient)
-    //static ConfigDouble* angle_score_coefficient;
-    //static ConfigDouble* distance_score_coefficient;
 
 private:
     Context* context_;

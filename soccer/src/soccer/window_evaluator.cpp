@@ -13,18 +13,9 @@ REGISTER_CONFIGURABLE(WindowEvaluator)
 
 using namespace rj_geometry;
 
-//ConfigDouble* WindowEvaluator::angle_score_coefficient;
-//ConfigDouble* WindowEvaluator::distance_score_coefficient;
-/*
-DEFINE_FLOAT64(windowConfigParamModule, angle_score_coefficient, 0.7,
+DEFINE_NS_FLOAT64(windowConfigParamModule, soccer::test, angle_score_coefficient, 0.7,
 	"Angle score coefficient.");
-DEFINE_FLOAT64(windowConfigParamModule, distance_score_coefficient, 0.3,
-	"Distance score coefficient.");
-*/
-
-DEFINE_FLOAT64(windowConfigParamModule, angle_score_coefficient, 0.7,
-	"Angle score coefficient.");
-DEFINE_FLOAT64(windowConfigParamModule, distance_score_coefficient, 0.3,
+DEFINE_NS_FLOAT64(windowConfigParamModule, soccer::test, distance_score_coefficient, 0.3,
 	"Distance score coefficient.");
 
 Window::Window() : t0(0), t1(0), a0(0), a1(0), shot_success(0) {}
@@ -32,8 +23,6 @@ Window::Window() : t0(0), t1(0), a0(0), a1(0), shot_success(0) {}
 Window::Window(double t0, double t1) : t0(t0), t1(t1), a0(0), a1(0), shot_success(0) {}
 
 void WindowEvaluator::create_configuration(Configuration* cfg) {
-	
-	
 	
     //angle_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/angleScoreCoeff", 0.7);
     //distance_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
@@ -260,5 +249,5 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
 
     auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
 
-    window.shot_success = angle_prob + PARAM_distance_score_coefficient * distance_score;
+    window.shot_success = angle_prob + soccer::test::PARAM_distance_score_coefficient * distance_score;
 }
