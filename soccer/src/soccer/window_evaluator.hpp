@@ -8,10 +8,10 @@
 #include "robot.hpp"
 #include "system_state.hpp"
 
-constexpr auto windowConfigParamModule = "window_config";
+constexpr auto windowConfigParamModule = "optimization";
 
-    DECLARE_NS_FLOAT64(windowConfigParamModule, soccer::test, angle_score_coefficient)
-    DECLARE_NS_FLOAT64(windowConfigParamModule, soccer::test, distance_score_coefficient)
+    DECLARE_NS_FLOAT64(windowConfigParamModule, optimization, angle_score_coefficient)
+    DECLARE_NS_FLOAT64(windowConfigParamModule, optimization, distance_score_coefficient)
 
 /**
  * @brief The Window class represents an open shot from a point to a target
