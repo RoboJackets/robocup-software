@@ -4,8 +4,14 @@
 
 #include <rj_geometry/segment.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_param_utils/param.hpp>
 #include "robot.hpp"
 #include "system_state.hpp"
+
+constexpr auto windowConfigParamModule = "window_config";
+
+    DECLARE_FLOAT64(windowConfigParamModule, angle_score_coefficient)
+    DECLARE_FLOAT64(windowConfigParamModule, distance_score_coefficient)
 
 /**
  * @brief The Window class represents an open shot from a point to a target
@@ -31,8 +37,6 @@ public:
 };
 
 using WindowingResult = std::pair<std::vector<Window>, std::optional<Window>>;
-
-constexpr auto windowConfigParamModule = "window_config";
 
 
 /**
@@ -126,8 +130,8 @@ public:
      */
     std::vector<rj_geometry::Point> hypothetical_robot_locations;
 
-    DECLARE_FLOAT64(windowConfigParamModule, angle_score_coefficient);
-    DECLARE_FLOAT64(windowConfigParamModule, distance_score_coefficient);
+    // DECLARE_FLOAT64(windowConfigParamModule, angle_score_coefficient)
+    // DECLARE_FLOAT64(windowConfigParamModule, distance_score_coefficient)
     //static ConfigDouble* angle_score_coefficient;
     //static ConfigDouble* distance_score_coefficient;
 
