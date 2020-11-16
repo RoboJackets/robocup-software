@@ -30,9 +30,9 @@ class Robot:
 
     def __init__(
             self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray,
-            visible = True: bool, ball_sense_triggered = False: bool,
-            has_ball_sense = True: bool, kicker_charged = True: bool,
-            kicker_healthy = True: bool, lethal_fault = False: bool):
+            visible: bool = True, ball_sense_triggered: bool = False,
+            has_ball_sense: bool = True, kicker_charged: bool = True,
+            kicker_healthy: bool = True, lethal_fault: bool = False):
         """
         :param robot_id: Shell id of the robot.
         :param is_ours: Whether the robot is one of our robots
