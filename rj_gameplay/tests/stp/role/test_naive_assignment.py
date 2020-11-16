@@ -258,10 +258,10 @@ def test_compute_costs_matrix() -> None:
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
     free_robots = np.array(
         [
-            Robot(0, np.array([0, 0, 0]), np.zeros(2), False),
-            Robot(1, np.array([1, 1, 0]), np.zeros(2), False),
-            Robot(2, np.array([2, 2, 0]), np.zeros(2), False),
-            Robot(3, np.array([3, 3, 0]), np.zeros(2), False),
+            Robot(0, True, np.array([0, 0, 0]), np.zeros(2)),
+            Robot(1, True, np.array([1, 1, 0]), np.zeros(2)),
+            Robot(2, True, np.array([2, 2, 0]), np.zeros(2)),
+            Robot(3, True, np.array([3, 3, 0]), np.zeros(2)),
         ]
     )
 
@@ -317,10 +317,10 @@ def test_assign_prioritized_roles() -> None:
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
     free_robots = np.array(
         [
-            Robot(0, np.array([0, 0, 0]), np.zeros(2), False),
-            Robot(1, np.array([1, 1, 0]), np.zeros(2), False),
-            Robot(2, np.array([2, 2, 0]), np.zeros(2), False),
-            Robot(3, np.array([3, 3, 0]), np.zeros(2), False),
+            Robot(0, True, np.array([0, 0, 0]), np.zeros(2)),
+            Robot(1, True, np.array([1, 1, 0]), np.zeros(2)),
+            Robot(2, True, np.array([2, 2, 0]), np.zeros(2)),
+            Robot(3, True, np.array([3, 3, 0]), np.zeros(2)),
         ]
     )
 
@@ -383,10 +383,10 @@ def test_assign_roles() -> None:
     # Create the robots at (1, 1), (2, 2), (3, 3), (4, 4).
     free_robots = np.array(
         [
-            Robot(0, np.array([1, 1, 0]), np.zeros(2), False),
-            Robot(1, np.array([2, 2, 0]), np.zeros(2), False),
-            Robot(2, np.array([3, 3, 0]), np.zeros(2), False),
-            Robot(3, np.array([4, 4, 0]), np.zeros(2), False),
+            Robot(0, True, np.array([1, 1, 0]), np.zeros(2)),
+            Robot(1, True, np.array([2, 2, 0]), np.zeros(2)),
+            Robot(2, True, np.array([3, 3, 0]), np.zeros(2)),
+            Robot(3, True, np.array([4, 4, 0]), np.zeros(2)),
         ]
     )
 
@@ -421,6 +421,8 @@ def test_assign_roles_constrained() -> None:
     """Tests that NaiveRoleAssignment.assign_roles respects constraints, ie. even though
     role_id_a and role_id_ball both are HIGH priority, the robot at (0, 0) has the ball
     and thus is assigned BALL_SKILL.
+
+    This test will fail as has_ball has been removed from Robot thus breaking the ball constraint
     """
 
     # Get the three roles.
@@ -449,9 +451,9 @@ def test_assign_roles_constrained() -> None:
     # Create the robots at (0, 0) (1, 1) and (2, 2)
     free_robots = np.array(
         [
-            Robot(0, np.array([0, 0, 0]), np.zeros(2), True),
-            Robot(1, np.array([1, 1, 0]), np.zeros(2), False),
-            Robot(2, np.array([2, 2, 0]), np.zeros(2), False),
+            Robot(0, True, np.array([0, 0, 0]), np.zeros(2)),
+            Robot(1, True, np.array([1, 1, 0]), np.zeros(2)),
+            Robot(2, True, np.array([2, 2, 0]), np.zeros(2)),
         ]
     )
 

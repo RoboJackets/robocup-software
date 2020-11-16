@@ -14,7 +14,8 @@ class Robot:
     """State of a robot. Pose: [x, y, theta]. Twist: [dx, dy, dtheta]. Properties are
     to enforce that instances of this class should not be mutated."""
 
-    __slots__ = ["__id", "__is_ours", "__pose", "__twist", "__ball_sense_triggered", "__visible", "__has_ball_sense", "__kicker_charged", "__kicker_healthy", "__lethal_fault"]
+    __slots__ = ["__id", "__is_ours", "__pose", "__twist", "__ball_sense_triggered",
+            "__visible", "__has_ball_sense", "__kicker_charged", "__kicker_healthy", "__lethal_fault"]
     __id: RobotId
     __is_ours: bool
     __pose: np.ndarray
@@ -28,7 +29,10 @@ class Robot:
     
 
     def __init__(
-            self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray, visible: bool, ball_sense_triggered: bool, has_ball_sense: bool, kicker_charged: bool, kicker_healthy: bool, lethal_fault: bool):
+            self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray,
+            visible = True: bool, ball_sense_triggered = False: bool,
+            has_ball_sense = True: bool, kicker_charged = True: bool,
+            kicker_healthy = True: bool, lethal_fault = False: bool):
         """
         :param robot_id: Shell id of the robot.
         :param is_ours: Whether the robot is one of our robots
