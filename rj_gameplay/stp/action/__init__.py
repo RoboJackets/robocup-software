@@ -10,11 +10,11 @@ class IAction(ABC):
 
     @abstractmethod
     def tick(self, ctx: Ctx) -> None:
-        """Ticks the action and returns if it has failed or succeeded."""
+        """Ticks the action"""
         ...
 
     @abstractmethod
-    def done(self) -> bool
+    def done(self) -> bool:
         """Checks to see if the action is done running"""
         ...
 
