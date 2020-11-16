@@ -14,8 +14,8 @@ def test_constant() -> None:
     switch_cost = 0.5
     cost_fn = cost.constant(0.5, switch_cost)
 
-    robot1 = rc.Robot(1, np.array([0, 0, 0]), np.array([0, 0, 0]), False)
-    robot2 = rc.Robot(2, np.array([0, 0, 0]), np.array([0, 0, 0]), False)
+    robot1 = rc.Robot(1, True, np.array([0, 0, 0]), np.array([0, 0, 0]), True, False, True, True, True, False)
+    robot2 = rc.Robot(2, True,  np.array([0, 0, 0]), np.array([0, 0, 0]), True, False, True, True, True, False)
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
     world_state = rc.WorldState([robot1, robot2], [], create_ball())
@@ -37,8 +37,9 @@ def test_distance_to_pt() -> None:
     target_pt = np.array([1.0, 2.0])
     cost_fn = cost.distance_to_pt(target_pt, saturate_dist, switch_cost)
 
-    robot1 = rc.Robot(1, np.array([1.0, 2.0, 0]), np.array([0, 0, 0]), False)
-    robot2 = rc.Robot(2, np.array([2.0, 3.0, 0]), np.array([0, 0, 0]), False)
+    robot1 = rc.Robot(1, True, np.array([1.0, 2.0, 0]), np.array([0, 0, 0]), True, False, True, True, True, False)
+    robot2 = rc.Robot(2, True,  np.array([2.0, 3.0, 0]), np.array([0, 0, 0]), True, False, True, True, True, False)
+
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
     world_state = rc.WorldState([robot1, robot2], [], create_ball())

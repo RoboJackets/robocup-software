@@ -18,6 +18,7 @@ def has_ball() -> role.ConstraintFn:
         prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> bool:
-        return robot.has_ball
+        # TODO: Replace this with an evaluation function that determines possession
+        return False
 
     return constraint_fn
