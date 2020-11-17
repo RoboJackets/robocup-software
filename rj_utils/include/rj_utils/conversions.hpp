@@ -37,7 +37,7 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
 namespace rj_convert {
 
 template<>
-struct RosConverter<SSL_DetectionRobot, RetectionRobotMsg> {
+struct RosConverter<SSL_DetectionRobot, DetectionRobotMsg> {
 	static DetectionRobotMessage to_ros(const SSL_DetectionRobot& from) {
 		DetectionRobotMsg to;
 		
