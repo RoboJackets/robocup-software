@@ -38,6 +38,7 @@ ament_target_dependencies(
   rclcpp
   rj_msgs)
 
+target_dependencies(rj_utils PUBLIC rj_convert)
 # ======================================================================
 # Packaging
 # ======================================================================
