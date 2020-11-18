@@ -166,7 +166,7 @@ class Ball:
     __vel: np.ndarray
     __visible: bool
 
-    def __init__(self, pos: np.ndarray, vel: np.ndarray, visible: bool):
+    def __init__(self, pos: np.ndarray, vel: np.ndarray, visible: bool = True):
         self.__pos = pos
         self.__vel = vel
         self.__visible = visible
