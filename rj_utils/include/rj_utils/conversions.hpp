@@ -38,7 +38,7 @@ namespace rj_convert {
 
 template<>
 struct RosConverter<SSL_DetectionRobot, DetectionRobotMsg> {
-	static DetectionRobotMessage to_ros(const SSL_DetectionRobot& from) {
+	static DetectionRobotMsg to_ros(const SSL_DetectionRobot& from) {
 		DetectionRobotMsg to;
 		
 		convert_to_ros(from.confidence(), &to.confidence);
