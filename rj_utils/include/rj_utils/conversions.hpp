@@ -69,6 +69,6 @@ struct RosConverter<SSL_DetectionRobot, DetectionRobotMsg> {
 	}
 };
 
-ASSOCIATE_CPP_ROSS(SSL_DetectionRobot, DetectionRobotMsg)
+ASSOCIATE_CPP_ROS(SSL_DetectionRobot, DetectionRobotMsg)
 
 }; // namespace rj_convert
