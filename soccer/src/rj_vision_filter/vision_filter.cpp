@@ -116,7 +116,7 @@ void VisionFilter::predict_states() {
         constexpr int kWarningThrottleMS = 1000;
         EZ_WARN_STREAM_THROTTLE(kWarningThrottleMS,
                                 "Predict is not called fast enough. Iteration took "
-                                    << predict_time.count() << " seconds, should be "
+                                    << prediction_time.count() << " seconds, should be "
                                     << PARAM_vision_loop_dt << ".");
     }
 }
