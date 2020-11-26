@@ -13,10 +13,11 @@ REGISTER_CONFIGURABLE(WindowEvaluator)
 
 using namespace rj_geometry;
 
-DEFINE_NS_FLOAT64(windowConfigParamModule, optimization, angle_score_coefficient, 0.7,
-	"Angle score coefficient.");
-DEFINE_NS_FLOAT64(windowConfigParamModule, optimization, distance_score_coefficient, 0.3,
-	"Distance score coefficient.");
+//currently unused variable
+DEFINE_NS_FLOAT64(kWindowConfigParamModule, optimization, angle_score_coefficient, 0.7,
+                  "Angle score coefficient.");
+DEFINE_NS_FLOAT64(kWindowConfigParamModule, optimization, distance_score_coefficient, 0.3,
+                  "Distance score coefficient.");
 
 Window::Window() : t0(0), t1(0), a0(0), a1(0), shot_success(0) {}
 
@@ -247,5 +248,6 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
 
     auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
 
-    window.shot_success = angle_prob + optimization::PARAM_distance_score_coefficient * distance_score;
+    window.shot_success =
+        angle_prob + optimization::PARAM_distance_score_coefficient * distance_score;
 }
