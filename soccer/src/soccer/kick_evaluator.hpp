@@ -108,7 +108,6 @@ public:
      */
     std::vector<rj_geometry::Point> hypothetical_robot_locations;
 
-    // DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_std_dev)
 
 private:
     SystemState* system_;
@@ -149,8 +148,4 @@ private:
         const std::vector<float>& robot_st_devs, float boundary_lower,
         float boundary_upper);
 
-    
- //    DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_mean)
-	// DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, robot_std_dev)
-	// DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, start_x_offset)
 };

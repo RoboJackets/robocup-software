@@ -28,14 +28,7 @@ inline double fast_exp(double x) {
 inline float fast_exp(float x) { return static_cast<float>(fast_exp(static_cast<double>(x))); }
 
 void KickEvaluator::create_configuration(Configuration* cfg) {
-    // kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.04);
-    // kick_mean = new ConfigDouble(cfg, "KickEvaluator/kick_mean", 0);
-    // robot_std_dev = new ConfigDouble(cfg, "KickEvaluator/robot_std_dev", 0.3);
-    // start_x_offset = new ConfigDouble(cfg, "KickEvaluator/start_x_offset", 0.1);
- //    DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_std_dev, 0.04, "kick standard deviation");
-	// DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_mean, 0, "kick mean");
-	// DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, robot_std_dev, 0.3, "robot standard deviation");
-	// DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, start_x_offset, 0.1, "start x offset");
+    
 }
 
 KickEvaluator::KickEvaluator(SystemState* system_state) : system_(system_state) {}
@@ -106,9 +99,17 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     // Create function with only 1 input
     // Rest are bound to constant values
     function<tuple<float, float>(float)> ke_func =
-        bind(&eval_calculation, std::placeholders::_1, kick_evaluator::PARAM_kick_mean,
-             kick_evaluator::PARAM_kick_std_dev, cref(bot_means), cref(bot_st_devs), cref(bot_vert_scales),
-             target_width / -2, target_width / 2);
+        [&](float x){
+            return eval_calculation(x, 
+                kick_evaluator::PARAM_kick_mean,
+                kick_evaluator::PARAM_kick_std_dev,
+                std::cref(bot_means),
+                std::cref(bot_st_devs),
+                std::cref(bot_vert_scales),
+                target_width / -2,
+                target_width / 2);
+        };
+        
 
     // No opponent robots on the field
     if (bot_means.empty()) {
