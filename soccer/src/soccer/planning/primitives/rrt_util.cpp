@@ -27,28 +27,21 @@ using std::vector;
 using namespace rj_geometry;
 
 void RRTConfig::create_configuration(Configuration* cfg) {
+    DEFINE_NS_BOOL(kRRTConfigParamModule, rrt::config, enable_rrt_debug_drawing, false, "Whether or not to enable debug drawing");
     // NOLINTNEXTLINE
-    enable_rrt_debug_drawing = new ConfigBool(cfg, "PathPlanner/RRT/EnableDebugDrawing", false);
+    DEFINE_NS_FLOAT64(kRRTConfigParamModule, rrt::config, step_size, 0.15, "Step size for the path planner"); //step_size = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
     // NOLINTNEXTLINE
-    step_size = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
+    DEFINE_NS_FLOAT64(kRRTConfigParamModule, rrt::config, goal_bias, 0.3, "Value from 0 to 1 that determines what proportion of the time the RRT "
+                         "will grow towards the goal rather than towards a random point")
     // NOLINTNEXTLINE
-    goal_bias =
-        new ConfigDouble(cfg, "PathPlanner/RRT/GoalBias", 0.3,
-                         "Value from 0 to 1 that determines what proportion of the time the RRT "
-                         "will grow towards the goal rather than towards a random point");
-    // NOLINTNEXTLINE
-    waypoint_bias =
-        new ConfigDouble(cfg, "PathPlanner/RRT/WayPointBias", 0.5,
-                         "Value from 0 to 1 that determines the portion of the time that the "
+    DEFINE_NS_FLOAT64(kRRTConfigParamModule, rrt::config, waypoint_bias, 0.5, "Value from 0 to 1 that determines the portion of the time that the "
                          "RRT will"
-                         " grow towards given waypoints rather than towards a random point");
+                         " grow towards given waypoints rather than towards a random point")
     // NOLINTNEXTLINE
-    min_iterations = new ConfigInt(cfg, "PathPlanner/RRT/MinIterations", 100,
-                                   "The minimum number of iterations for running RRT");
+    DEFINE_NS_INT64(kRRTConfigParamModule, rrt::config, min_iterations, 100, "The minimum number of iterations for running RRT");
     // todo(Ethan) can this be increased? RRT fails sometimes. testing needed
     // //NOLINTNEXTLINE
-    max_iterations = new ConfigInt(cfg, "PathPlanner/RRT/MaxIterations", 250,
-                                   "The maximum number of iterations for running RRT");
+    DEFINE_NS_INT64(kRRTConfigParamModule, rrt::config, max_iterations, 250, "The maximum number of iterations for running RRT");
 }
 
 ConfigBool enable_expensive_rrt_debug_drawing();
@@ -95,14 +88,14 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
         bi_rrt.setMinIterations(0);
         bi_rrt.setMaxIterations(5);
     } else {
-        bi_rrt.setStepSize(*RRTConfig::step_size);
-        bi_rrt.setMinIterations(*RRTConfig::min_iterations);
-        bi_rrt.setMaxIterations(*RRTConfig::max_iterations);
-        bi_rrt.setGoalBias(*RRTConfig::goal_bias);
+        bi_rrt.setStepSize(rrt::config::PARAM_step_size);
+        bi_rrt.setMinIterations(rrt::config::PARAM_min_iterations);
+        bi_rrt.setMaxIterations(rrt::config::PARAM_max_iterations);
+        bi_rrt.setGoalBias(rrt::config::PARAM_goal_bias);
 
         if (!waypoints.empty()) {
             bi_rrt.setWaypoints(waypoints);
-            bi_rrt.setWaypointBias(*RRTConfig::waypoint_bias);
+            bi_rrt.setWaypointBias(rrt::config::PARAM_waypoint_bias);
         }
     }
 

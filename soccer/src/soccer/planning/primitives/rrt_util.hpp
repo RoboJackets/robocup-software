@@ -10,6 +10,8 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 
+#include <rj_vision_filter/params.hpp>
+
 namespace Planning {
 class RRTConfig {
 public:
@@ -17,14 +19,16 @@ public:
 
     // if set, enables drawng of rrts to the SystemState so they can be shown in
     // the gui
-    static ConfigBool* enable_rrt_debug_drawing;
+    DEFINE_NSstatic ConfigBool* enable_rrt_debug_drawing;
 
-    static ConfigDouble* step_size;
-    static ConfigDouble* goal_bias;
-    static ConfigDouble* waypoint_bias;
+    constexpr auto kRRTConfigParamModule = "rrt_config";
+    DECLARE_BOOL(kRRTConfigParamModule, enable_rrt_debug_drawing)
+    DECLARE_FLOAT64(kRRTConfigParamModule, step_size)
+    DECLARE_FLOAT64(kRRTConfigParamModule, goal_bias)
+    DECLARE_FLOAT64(kRRTConfigParamModule, waypoint_bias)
 
-    static ConfigInt* min_iterations;
-    static ConfigInt* max_iterations;
+    DECLARE_INT64(kRRTConfigParamModule, min_iterations)
+    DECLARE_INT64(kRRTConfigParamModule, max_iterations)
 };
 
 /// Drawing
