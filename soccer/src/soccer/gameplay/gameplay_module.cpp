@@ -26,7 +26,7 @@ using namespace boost;
 using namespace boost::python;
 
 using namespace rj_geometry;
-using namespace RefereeModuleEnums;
+using namespace referee_module_enums;
 
 ConfigDouble* GameplayModule::field_edge_inset;
 
