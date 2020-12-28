@@ -139,7 +139,7 @@ if req.destination_shape != None:
 -   If you missed last meeting, just do Triangle Pass instead
 
 
-## Recomended Requirements
+## Recommended Requirements
 
 -   Closest robots to center-field
 -   Closest robots to sideline

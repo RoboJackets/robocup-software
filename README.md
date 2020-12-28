@@ -33,7 +33,7 @@ Code that's shared between the software and firmware sections of our codebase is
 
 ### external/
 
-External dependencies that our code relys on, stored as git submodules. To initialize these, please run `git submodule update --init --recursive`.
+External dependencies that our code relies on, stored as git submodules. To initialize these, please run `git submodule update --init --recursive`.
 
 ### run/
 
