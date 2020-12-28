@@ -34,9 +34,11 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
     std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
 
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
     fill_header(header);
 
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     auto* body = reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
 
     ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body);
@@ -50,14 +52,14 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
         // Check if we've timed out.
         if (RJ::now() + kTimeout < connection.last_received) {
             // Remove the endpoint from the IP map and the connection list
-            assert(robot_ip_map_.erase(connection.endpoint) == 1);
+            assert(robot_ip_map_.erase(connection.endpoint) == 1);  // NOLINT
             connections_.at(robot_id) = std::nullopt;
         } else {
             // Send to the given IP address
             const udp::endpoint& robot_endpoint = connection.endpoint;
             socket_.async_send_to(
                 boost::asio::buffer(forward_packet_buffer), robot_endpoint,
-                [](const boost::system::error_code& error, std::size_t num_bytes) {
+                [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
                     // Handle errors.
                     if (static_cast<bool>(error)) {
                         SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)

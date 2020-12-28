@@ -48,13 +48,13 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<Planning::Trajectory::Msg>(
         planning::topics::trajectory_pub(shell_id), rclcpp::QoS(1),
-        [this](Planning::Trajectory::Msg::SharedPtr trajectory) {
+        [this](Planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
             spdlog::info("Got trajectory");
         });
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
-        [this](WorldState::Msg::SharedPtr world_state_msg) {
+        [this](WorldState::Msg::SharedPtr world_state_msg) {  // NOLINT
             RobotState state =
                 rj_convert::convert_from_ros(world_state_msg->our_robots.at(shell_id_));
 
@@ -68,7 +68,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         });
     game_state_sub_ = node->create_subscription<GameState::Msg>(
         referee::topics::kGameStatePub, rclcpp::QoS(1).transient_local(),
-        [this](GameState::Msg::SharedPtr game_state_msg) {
+        [this](GameState::Msg::SharedPtr game_state_msg) {  // NOLINT
             game_state_ = rj_convert::convert_from_ros(*game_state_msg).state;
         });
 }
@@ -114,8 +114,8 @@ void MotionControl::run(const RobotState& state, const Planning::Trajectory& tra
         velocity_target = target.velocity;
     }
 
-    // TODO: Calculate acceleration and use it to improve response.
-    // TODO: Clamp acceleration
+    // TODO(Kyle): Calculate acceleration and use it to improve response.
+    // TODO(Kyle): Clamp acceleration
 
     Twist correction = Twist::zero();
     if (maybe_pose_target) {

@@ -12,6 +12,8 @@ namespace ros2_temp {
 class AutonomyInterface : public Node {
 public:
     AutonomyInterface(Context* context, rclcpp::Executor* executor);
+    ~AutonomyInterface() override = default;
+
     void run() override;
 
     AutonomyInterface(const AutonomyInterface&) = delete;

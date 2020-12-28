@@ -19,18 +19,20 @@ namespace rj_drawing {
 class RosDebugDrawer {
 public:
     RosDebugDrawer(rclcpp::Publisher<rj_drawing_msgs::msg::DebugDraw>::SharedPtr pub,
-                   const std::string& layer)
-        : pub_(std::move(pub)), layer_(layer) {
+                   std::string layer)
+        : pub_(std::move(pub)), layer_(std::move(layer)) {
         frame_.layer = layer_;
     }
 
-    void draw_shapes(const rj_geometry::ShapeSet& shapes, QColor color = QColor::fromRgb(0, 0, 0)) {
+    void draw_shapes(const rj_geometry::ShapeSet& shapes,
+                     const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.shapes.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>()
                                     .shapes(rj_convert::convert_to_ros(shapes))
                                     .color(color_from_qt(color)));
     }
 
-    void draw_circle(const rj_geometry::Circle& circle, QColor color = QColor::fromRgb(0, 0, 0)) {
+    void draw_circle(const rj_geometry::Circle& circle,
+                     const QColor& color = QColor::fromRgb(0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         shapes.circles.push_back(rj_convert::convert_to_ros(circle));
         frame_.shapes.push_back(
@@ -38,7 +40,7 @@ public:
                 color_from_qt(color)));
     }
 
-    void draw_rect(const rj_geometry::Rect& rect, QColor color = QColor::fromRgb(0, 0, 0)) {
+    void draw_rect(const rj_geometry::Rect& rect, const QColor& color = QColor::fromRgb(0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         shapes.rectangles.push_back(rj_convert::convert_to_ros(rect));
         frame_.shapes.push_back(
@@ -47,7 +49,7 @@ public:
     }
 
     void draw_polygon(const rj_geometry::Polygon& polygon,
-                      QColor color = QColor::fromRgb(0, 0, 0)) {
+                      const QColor& color = QColor::fromRgb(0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         shapes.polygons.push_back(rj_convert::convert_to_ros(polygon));
         frame_.shapes.push_back(
@@ -56,20 +58,20 @@ public:
     }
 
     void draw_segment(const rj_geometry::Segment& segment,
-                      QColor color = QColor::fromRgb(0, 0, 0)) {
+                      const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.segments.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawSegment>()
                                       .segment(rj_convert::convert_to_ros(segment))
                                       .color(color_from_qt(color)));
     }
 
-    void draw_pose(const rj_geometry::Pose& pose, QColor color = QColor::fromRgb(0, 0, 0)) {
+    void draw_pose(const rj_geometry::Pose& pose, const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.poses.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawPose>()
                                    .pose(rj_convert::convert_to_ros(pose))
                                    .color(color_from_qt(color)));
     }
 
     void draw_text(const std::string& text, const rj_geometry::Point& position,
-                   QColor color = QColor::fromRgb(0, 0, 0)) {
+                   const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.debug_text.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawText>()
                                         .text(text)
                                         .position(rj_convert::convert_to_ros(position))
@@ -90,7 +92,7 @@ public:
     }
 
 private:
-    static rj_drawing_msgs::msg::DrawColor color_from_qt(QColor color) {
+    static rj_drawing_msgs::msg::DrawColor color_from_qt(const QColor& color) {
         return rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawColor>()
             .r(color.red())
             .g(color.green())

@@ -15,7 +15,7 @@ struct MotionSetpoint {
     double yvelocity = 0.;
     double avelocity = 0.;
 
-    MotionSetpoint() {}
+    MotionSetpoint() = default;
     MotionSetpoint(double x, double y, double a) : xvelocity(x), yvelocity(y), avelocity(a) {}
 
     friend std::ostream& operator<<(std::ostream& stream, const MotionSetpoint& setpoint) {

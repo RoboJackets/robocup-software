@@ -15,6 +15,7 @@ DECLARE_INT64(params::kMotionControlParamModule, min_safe_kick_power);
 class ManipulatorControl {
 public:
     ManipulatorControl(int shell_id, rclcpp::Node* node);
+    ~ManipulatorControl() = default;
 
     ManipulatorControl(ManipulatorControl&& other) = default;
     ManipulatorControl& operator=(ManipulatorControl&& other) = default;

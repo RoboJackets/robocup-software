@@ -52,7 +52,7 @@ protected:
      * This runs PID control on the position and angle of the robot and
      * sets values in the robot's radio_tx packet.
      */
-    void run(const RobotState& state, const Planning::Trajectory& path,
+    void run(const RobotState& state, const Planning::Trajectory& trajectory,
              const GameState::State& game_state, bool is_joystick_controlled,
              MotionSetpoint* setpoint);
 

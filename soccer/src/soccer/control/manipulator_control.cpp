@@ -18,7 +18,7 @@ ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell
     manipulator_pub_ = manipulator_pub;
     intent_sub_ = node->create_subscription<rj_msgs::msg::RobotIntent>(
         gameplay::topics::robot_intent_pub(shell_id), rclcpp::QoS(1),
-        [manipulator_pub](rj_msgs::msg::RobotIntent::SharedPtr intent) {
+        [manipulator_pub](rj_msgs::msg::RobotIntent::SharedPtr intent) {  // NOLINT
             int kick_strength =
                 std::max<int>(PARAM_min_safe_kick_power,
                               std::min<int>(255, intent->kick_speed / PARAM_max_kick_speed));
