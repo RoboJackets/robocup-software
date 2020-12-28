@@ -2,17 +2,18 @@
 
 #include <map>
 #include <memory>
-#include <planning/motion_constraints.hpp>
-#include <planning/trajectory.hpp>
-#include <planning/planner/motion_command.hpp>
 #include <utility>
 
+#include <planning/motion_constraints.hpp>
+#include <planning/planner/motion_command.hpp>
+#include <planning/trajectory.hpp>
+
 #include "context.hpp"
-#include "world_state.hpp"
 #include "planning/dynamic_obstacle.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "ros_debug_drawer.hpp"
+#include "world_state.hpp"
 
 namespace Planning {
 

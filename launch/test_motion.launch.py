@@ -15,9 +15,7 @@ def generate_launch_description():
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
 
-    grsim = Node(package='rj_robocup',
-                 executable='grSim',
-                 arguments=[])
+    grsim = Node(package='rj_robocup', executable='grSim', arguments=[])
 
     radio = Node(package='rj_robocup',
                  executable='sim_radio_node',
@@ -48,11 +46,6 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(vision_filter_launch_path))
 
     return LaunchDescription([
-        grsim,
-        stdout_linebuf_envvar,
-        config_server,
-        radio,
-        control,
-        vision_receiver,
-        vision_filter, ref_receiver
+        grsim, stdout_linebuf_envvar, config_server, radio, control,
+        vision_receiver, vision_filter, ref_receiver
     ])

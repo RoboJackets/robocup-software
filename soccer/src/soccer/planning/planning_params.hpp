@@ -35,7 +35,6 @@ DECLARE_NS_FLOAT64(kPlanningParamModule, collect, vel_cutoff_to_control);
 DECLARE_NS_FLOAT64(kPlanningParamModule, collect, stop_dist_scale);
 DECLARE_NS_FLOAT64(kPlanningParamModule, collect, target_point_lowpass_gain);
 
-
 DECLARE_NS_FLOAT64(kPlanningParamModule, settle, ball_speed_percent_for_dampen);
 DECLARE_NS_FLOAT64(kPlanningParamModule, settle, search_start_dist);
 DECLARE_NS_FLOAT64(kPlanningParamModule, settle, search_start_dist);
@@ -49,4 +48,4 @@ DECLARE_NS_FLOAT64(kPlanningParamModule, settle, max_ball_angle_for_reset);
 DECLARE_NS_FLOAT64(kPlanningParamModule, settle, max_ball_vel_for_path_reset);
 DECLARE_NS_FLOAT64(kPlanningParamModule, settle, max_bounce_angle);
 
-} // namespace Planning
+}  // namespace Planning

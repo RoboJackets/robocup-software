@@ -42,8 +42,7 @@ private:
 
 class PlannerForRobot {
 public:
-    PlannerForRobot(int robot_id, rclcpp::Node* node,
-                    TrajectoryCollection* robot_trajectories);
+    PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;

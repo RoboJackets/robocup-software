@@ -68,7 +68,7 @@ def generate_launch_description():
         DeclareLaunchArgument('team_flag', default_value=''),
         DeclareLaunchArgument('sim_flag', default_value=''),
         DeclareLaunchArgument('ref_flag', default_value=''),
-        DeclareLaunchArgument('direction_flag',
-                              default_value='plus'), stdout_linebuf_envvar,
-        config_server, soccer, radio, control, planner, vision_receiver, vision_filter, ref_receiver
+        DeclareLaunchArgument('direction_flag', default_value='plus'),
+        stdout_linebuf_envvar, config_server, soccer, radio, control, planner,
+        vision_receiver, vision_filter, ref_receiver
     ])

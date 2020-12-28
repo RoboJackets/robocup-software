@@ -3,17 +3,17 @@
 #include <memory>
 #include <vector>
 
+#include <rj_constants/constants.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_constants/constants.hpp>
 
 #include "planning/instant.hpp"
-#include "planning/trajectory.hpp"
+#include "planning/planning_params.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/path_smoothing.hpp"
 #include "planning/primitives/trapezoidal_motion.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
-#include "planning/planning_params.hpp"
+#include "planning/trajectory.hpp"
 
 namespace Planning {
 using namespace rj_geometry;

@@ -5,11 +5,11 @@
 
 #include <configuration.hpp>
 
+#include "planning/planning_params.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
-#include "planning/primitives/rrt_util.hpp"
 #include "planning/primitives/robo_cup_state_space.hpp"
-#include "planning/planning_params.hpp"
+#include "planning/primitives/rrt_util.hpp"
 
 using namespace rj_geometry;
 namespace Planning {

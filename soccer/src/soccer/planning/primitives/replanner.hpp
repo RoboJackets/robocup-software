@@ -3,8 +3,8 @@
 #include <rj_param_utils/param.hpp>
 
 #include "configuration.hpp"
-#include "planning/planning_params.hpp"
 #include "planning/instant.hpp"
+#include "planning/planning_params.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
@@ -61,7 +61,9 @@ public:
      * a partial replan. This will be used if possible, although in some cases a
      * full replan will be required.
      */
-    static RJ::Seconds partial_replan_lead_time() { return RJ::Seconds(replanner::PARAM_partial_replan_lead_time); }
+    static RJ::Seconds partial_replan_lead_time() {
+        return RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+    }
 
 private:
     // Attempt a partial replan, and use it only if it is faster.

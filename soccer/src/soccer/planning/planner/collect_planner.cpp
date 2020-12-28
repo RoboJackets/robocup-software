@@ -138,19 +138,20 @@ void CollectPlanner::check_solution_validity(BallState ball, RobotInstant start)
 void CollectPlanner::process_state_transition(BallState ball, RobotInstant start_instant) {
     // Do the transitions
     double dist = (start_instant.position() - ball.position).mag() - kRobotMouthRadius;
-    double speed_diff =
-        (start_instant.linear_velocity() - average_ball_vel_).mag() - collect::PARAM_touch_delta_speed;
+    double speed_diff = (start_instant.linear_velocity() - average_ball_vel_).mag() -
+                        collect::PARAM_touch_delta_speed;
 
     // If we are in range to the slow dist
-    if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius && current_state_ == CourseApproach) {
+    if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
+        current_state_ == CourseApproach) {
         current_state_ = FineApproach;
     }
 
     // If we are close enough to the target point near the ball
     // and almost the same speed we want, start slowing down
     // TODO(#1518): Check for ball sense?
-    if (dist < collect::PARAM_dist_cutoff_to_control && speed_diff < collect::PARAM_vel_cutoff_to_control &&
-        current_state_ == FineApproach) {
+    if (dist < collect::PARAM_dist_cutoff_to_control &&
+        speed_diff < collect::PARAM_vel_cutoff_to_control && current_state_ == FineApproach) {
         current_state_ = Control;
     }
 }
@@ -177,8 +178,10 @@ Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, Robo
 
     // Setup targets for path planner
     Point target_slow_pos =
-        ball.position - (collect::PARAM_approach_dist_target + kRobotMouthRadius) * approach_direction_;
-    Point target_slow_vel = average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
+        ball.position -
+        (collect::PARAM_approach_dist_target + kRobotMouthRadius) * approach_direction_;
+    Point target_slow_vel =
+        average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
 
     // Force the path to use the same target if it doesn't move too much
     if (!path_coarse_target_initialized_ ||
@@ -235,7 +238,8 @@ Trajectory CollectPlanner::fine_approach(
 
     // Setup targets for path planner
     Point target_hit_pos = ball.position - kRobotMouthRadius * approach_direction_;
-    Point target_hit_vel = average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
+    Point target_hit_vel =
+        average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
 
     LinearMotionInstant target_hit{target_hit_pos, target_hit_vel};
 
@@ -307,12 +311,14 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
     // Calculate stopping distance given the acceleration
     double max_accel = motion_constraints.max_acceleration;
 
-    double non_zero_vel_time_delta = collect::PARAM_approach_dist_target / collect::PARAM_touch_delta_speed;
+    double non_zero_vel_time_delta =
+        collect::PARAM_approach_dist_target / collect::PARAM_touch_delta_speed;
 
     // Assuming const accel going to zero velocity
     // speed / accel gives time to stop
     // speed / 2 is average speed over entire operation
-    double stopping_dist = collect::PARAM_approach_dist_target + current_speed * current_speed / (2 * max_accel);
+    double stopping_dist =
+        collect::PARAM_approach_dist_target + current_speed * current_speed / (2 * max_accel);
 
     // Move through the ball some distance
     // The initial part will be at a constant speed, then it will decelerate to

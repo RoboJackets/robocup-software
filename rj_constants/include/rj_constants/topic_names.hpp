@@ -65,15 +65,15 @@ namespace control {
 namespace topics {
 
 static inline std::string manipulator_setpoint_pub(int robot_id) {
-    return "control/manipulator_setpoint/robot_" + std::to_string(robot_id) ;
+    return "control/manipulator_setpoint/robot_" + std::to_string(robot_id);
 }
 
 static inline std::string motion_setpoint_pub(int robot_id) {
-    return "control/motion_setpoint/robot_" + std::to_string(robot_id) ;
+    return "control/motion_setpoint/robot_" + std::to_string(robot_id);
 }
 
 static inline std::string robot_controlled_pub(int robot_id) {
-    return "control/robot_controlled/robot_" + std::to_string(robot_id) ;
+    return "control/robot_controlled/robot_" + std::to_string(robot_id);
 }
 
 }  // namespace topics
@@ -89,7 +89,7 @@ constexpr auto kMotionControlParamModule = "motion_control";
 namespace radio::topics {
 
 static inline std::string robot_status_pub(int robot_id) {
-    return "radio/robot_status/robot_" + std::to_string(robot_id) ;
+    return "radio/robot_status/robot_" + std::to_string(robot_id);
 }
 
 }  // namespace radio::topics

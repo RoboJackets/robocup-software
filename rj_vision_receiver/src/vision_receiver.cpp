@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <boost/exception/diagnostic_information.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/multicast.hpp>
@@ -10,7 +11,6 @@
 #include <rj_utils/conversions.hpp>
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
-#include <spdlog/spdlog.h>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 

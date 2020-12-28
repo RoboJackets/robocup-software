@@ -24,8 +24,12 @@ PlannerNode::PlannerNode() : rclcpp::Node("planner") {
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                  TrajectoryCollection* robot_trajectories)
-    : node_{node}, robot_id_{robot_id}, robot_trajectories_{robot_trajectories},
-      debug_draw_{node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10), "planning"} {
+    : node_{node},
+      robot_id_{robot_id},
+      robot_trajectories_{robot_trajectories},
+      debug_draw_{
+          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
+          "planning"} {
     SPDLOG_INFO("Constructor...");
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
@@ -140,7 +144,7 @@ Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request)
         std::vector<rj_geometry::Point> path;
         std::transform(trajectory.instants().begin(), trajectory.instants().end(),
                        std::back_inserter(path),
-                       [] (const auto& instant) { return instant.position(); });
+                       [](const auto& instant) { return instant.position(); });
         debug_draw_.draw_path(path);
     }
 

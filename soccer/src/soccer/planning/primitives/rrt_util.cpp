@@ -6,12 +6,12 @@
 
 #include "debug_drawer.hpp"
 #include "path_smoothing.hpp"
-#include "velocity_profiling.hpp"
 #include "planning/instant.hpp"
 #include "planning/motion_constraints.hpp"
+#include "planning/planning_params.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/trajectory_utils.hpp"
-#include "planning/planning_params.hpp"
+#include "velocity_profiling.hpp"
 
 namespace Planning {
 

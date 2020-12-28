@@ -45,8 +45,8 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     // Smooth out the ball velocity a little bit so we can get a better estimate
     // of intersect points
     if (first_ball_vel_found_) {
-        average_ball_vel_ =
-            apply_low_pass_filter<Point>(average_ball_vel_, ball.velocity, settle::PARAM_ball_vel_gain);
+        average_ball_vel_ = apply_low_pass_filter<Point>(average_ball_vel_, ball.velocity,
+                                                         settle::PARAM_ball_vel_gain);
     } else {
         average_ball_vel_ = ball.velocity;
         first_ball_vel_found_ = true;
@@ -67,7 +67,8 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     if (plan_request.debug_drawer != nullptr) {
         plan_request.debug_drawer->draw_segment(
             Segment(ball.position, ball.position + average_ball_vel_ * 10), QColor(255, 255, 255));
-        plan_request.debug_drawer->draw_text("Average Ball Velocity", ball.position + average_ball_vel_ * 5);
+        plan_request.debug_drawer->draw_text("Average Ball Velocity",
+                                             ball.position + average_ball_vel_ * 5);
     }
 
     // Check if we should transition from intercept to dampen
@@ -97,7 +98,8 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
 
 void SettlePlanner::check_solution_validity(BallState ball, RobotInstant start_instant,
                                             rj_geometry::Point delta_pos) {
-    const double max_ball_angle_change_for_path_reset = settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
+    const double max_ball_angle_change_for_path_reset =
+        settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
 
     // If the ball changed directions or magnitude really quickly, do a reset of
     // target
@@ -180,7 +182,9 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);
 
-    int num_iterations = std::ceil((settle::PARAM_search_end_dist - settle::PARAM_search_start_dist) / settle::PARAM_search_inc_dist);
+    int num_iterations =
+        std::ceil((settle::PARAM_search_end_dist - settle::PARAM_search_start_dist) /
+                  settle::PARAM_search_inc_dist);
 
     for (int iteration = 0; iteration < num_iterations; iteration++) {
         double dist = settle::PARAM_search_start_dist + iteration * settle::PARAM_search_inc_dist;
@@ -287,8 +291,9 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
 
         first_intercept_target_found_ = true;
     } else {
-        avg_instantaneous_intercept_target_ = apply_low_pass_filter<Point>(
-            avg_instantaneous_intercept_target_, ball_vel_intercept, settle::PARAM_target_point_gain);
+        avg_instantaneous_intercept_target_ =
+            apply_low_pass_filter<Point>(avg_instantaneous_intercept_target_, ball_vel_intercept,
+                                         settle::PARAM_target_point_gain);
     }
 
     // Shortcuts the crazy path planner to just move into the path of the ball
@@ -302,8 +307,8 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     // If we are within a single radius of the ball path
     // and in front of it
     // just move directly to the path location
-    Segment ball_line =
-        Segment(ball.position, ball.position + average_ball_vel_.norm() * settle::PARAM_search_end_dist);
+    Segment ball_line = Segment(
+        ball.position, ball.position + average_ball_vel_.norm() * settle::PARAM_search_end_dist);
     Point closest_pt = ball_line.nearest_point(start_instant.position()) + delta_pos;
 
     Point ball_to_pt_dir = closest_pt - ball.position;
@@ -313,12 +318,14 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     // we have run the algorithm at least once AND
     // the target point found in the algorithm is further than we are or just
     // about equal
-    if (in_front_of_ball && (closest_pt - start_instant.position()).mag() < settle::PARAM_shortcut_dist &&
+    if (in_front_of_ball &&
+        (closest_pt - start_instant.position()).mag() < settle::PARAM_shortcut_dist &&
         first_intercept_target_found_ &&
         (closest_pt - ball.position).mag() -
                 (avg_instantaneous_intercept_target_ - ball.position).mag() <
             settle::PARAM_shortcut_dist) {
-        LinearMotionInstant target{closest_pt, settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
+        LinearMotionInstant target{closest_pt,
+                                   settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut =
             CreatePath::rrt(start_instant.linear_motion(), target, plan_request.constraints.mot,
