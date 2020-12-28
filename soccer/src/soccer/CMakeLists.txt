@@ -46,6 +46,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner_node.cpp
     planning/trajectory.cpp
     planning/trajectory_utils.cpp
+    planning/planning_params.cpp
     processor.cpp
     radio/network_radio.cpp
     radio/packet_convert.cpp

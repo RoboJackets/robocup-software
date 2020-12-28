@@ -13,33 +13,11 @@ using namespace rj_geometry;
 
 namespace Planning {
 
-ConfigDouble* Replanner::goal_pos_change_threshold_config;
-ConfigDouble* Replanner::goal_vel_change_threshold_config;
-ConfigDouble* Replanner::partial_replan_lead_time_config;
-ConfigDouble* Replanner::off_path_error_threshold_config;
-
-REGISTER_CONFIGURABLE(Replanner);
-
 void apply_hold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
     if (hold_time.has_value() && !trajectory->empty() &&
         Twist::nearly_equals(trajectory->last().velocity, Twist::zero())) {
         trajectory->hold_for(hold_time.value());
     }
-}
-
-void Replanner::create_configuration(Configuration* cfg) {
-    // NOLINTNEXTLINE
-    goal_pos_change_threshold_config =
-        new ConfigDouble(cfg, "PathPlanner/Replanner/goalPosChangeThreshold");
-    // NOLINTNEXTLINE
-    goal_vel_change_threshold_config =
-        new ConfigDouble(cfg, "PathPlanner/Replanner/goalVelChangeThreshold");
-    // NOLINTNEXTLINE
-    partial_replan_lead_time_config =
-        new ConfigDouble(cfg, "PathPlanner/Replanner/partialReplanLeadTime");
-    // NOLINTNEXTLINE
-    off_path_error_threshold_config =
-        new ConfigDouble(cfg, "PathPlanner/Replanner/offPathErrorThreshold", 0.5);
 }
 
 Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory& previous) {
@@ -140,7 +118,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
                                 &hit_time);
 
     if (should_partial_replan) {
-        if (RJ::Seconds(hit_time - start_time).count() < *partial_replan_lead_time_config * 2) {
+        if (hit_time - start_time < partial_replan_lead_time() * 2) {
             return full_replan(params);
         }
         return partial_replan(params, previous_trajectory);
@@ -157,7 +135,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     }
 
     if (now - previous_created_time > kCheckBetterDeltaTime &&
-        time_remaining > RJ::Seconds{*partial_replan_lead_time_config} * 2) {
+        time_remaining > partial_replan_lead_time() * 2) {
         return check_better(params, previous_trajectory);
     }
 
@@ -175,15 +153,15 @@ bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actua
     RobotInstant instant = maybe_instant.value();
 
     double path_error = (instant.position() - actual.position()).mag();
-    return path_error > *off_path_error_threshold_config;
+    return path_error > replanner::PARAM_off_path_threshold;
 }
 
 bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,
                              const LinearMotionInstant& goal) {
     double goal_pos_diff = (prev_goal.position - goal.position).mag();
     double goal_vel_diff = (prev_goal.velocity - goal.velocity).mag();
-    return goal_pos_diff > *goal_pos_change_threshold_config ||
-           goal_vel_diff > *goal_vel_change_threshold_config;
+    return goal_pos_diff > goal_pos_change_threshold() ||
+           goal_vel_diff > goal_vel_change_threshold();
 }
 
 }  // namespace Planning

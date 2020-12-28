@@ -11,47 +11,12 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/trajectory_utils.hpp"
+#include "planning/planning_params.hpp"
 
 namespace Planning {
-REGISTER_CONFIGURABLE(RRTConfig)
-
-ConfigBool* RRTConfig::enable_rrt_debug_drawing;
-ConfigDouble* RRTConfig::step_size;
-ConfigDouble* RRTConfig::goal_bias;
-ConfigDouble* RRTConfig::waypoint_bias;
-
-ConfigInt* RRTConfig::min_iterations;
-ConfigInt* RRTConfig::max_iterations;
 
 using std::vector;
 using namespace rj_geometry;
-
-void RRTConfig::create_configuration(Configuration* cfg) {
-    // NOLINTNEXTLINE
-    enable_rrt_debug_drawing = new ConfigBool(cfg, "PathPlanner/RRT/EnableDebugDrawing", false);
-    // NOLINTNEXTLINE
-    step_size = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
-    // NOLINTNEXTLINE
-    goal_bias =
-        new ConfigDouble(cfg, "PathPlanner/RRT/GoalBias", 0.3,
-                         "Value from 0 to 1 that determines what proportion of the time the RRT "
-                         "will grow towards the goal rather than towards a random point");
-    // NOLINTNEXTLINE
-    waypoint_bias =
-        new ConfigDouble(cfg, "PathPlanner/RRT/WayPointBias", 0.5,
-                         "Value from 0 to 1 that determines the portion of the time that the "
-                         "RRT will"
-                         " grow towards given waypoints rather than towards a random point");
-    // NOLINTNEXTLINE
-    min_iterations = new ConfigInt(cfg, "PathPlanner/RRT/MinIterations", 100,
-                                   "The minimum number of iterations for running RRT");
-    // todo(Ethan) can this be increased? RRT fails sometimes. testing needed
-    // //NOLINTNEXTLINE
-    max_iterations = new ConfigInt(cfg, "PathPlanner/RRT/MaxIterations", 250,
-                                   "The maximum number of iterations for running RRT");
-}
-
-ConfigBool enable_expensive_rrt_debug_drawing();
 
 void draw_rrt(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer, unsigned shell_id) {
     // Draw each robot's rrts in a different color
@@ -95,14 +60,14 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
         bi_rrt.setMinIterations(0);
         bi_rrt.setMaxIterations(5);
     } else {
-        bi_rrt.setStepSize(*RRTConfig::step_size);
-        bi_rrt.setMinIterations(*RRTConfig::min_iterations);
-        bi_rrt.setMaxIterations(*RRTConfig::max_iterations);
-        bi_rrt.setGoalBias(*RRTConfig::goal_bias);
+        bi_rrt.setStepSize(rrt::PARAM_step_size);
+        bi_rrt.setMinIterations(rrt::PARAM_min_iterations);
+        bi_rrt.setMaxIterations(rrt::PARAM_max_iterations);
+        bi_rrt.setGoalBias(rrt::PARAM_goal_bias);
 
         if (!waypoints.empty()) {
             bi_rrt.setWaypoints(waypoints);
-            bi_rrt.setWaypointBias(*RRTConfig::waypoint_bias);
+            bi_rrt.setWaypointBias(rrt::PARAM_waypoint_bias);
         }
     }
 

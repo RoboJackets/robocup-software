@@ -45,20 +45,10 @@ public:
         rj_geometry::Point pt, std::optional<rj_geometry::Point> prev_pt,
         const rj_geometry::ShapeSet& obstacles, int max_itr = 300);
 
-    static void create_configuration(Configuration* cfg);
-
-    static double step_size() { return *step_size_config; }
+    static double step_size() { return escape::PARAM_step_size; }
 
 private:
     PathTargetPlanner planner_;
-
-    /// Step size for the RRT used to find an unblocked point in
-    /// find_non_blocked_goal()
-    static ConfigDouble* step_size_config;
-
-    /// A newly-found unblocked goal must be this much closer to the start
-    /// position than the previous point in order to be used.
-    static ConfigDouble* goal_change_threshold;
 };
 
 }  // namespace Planning

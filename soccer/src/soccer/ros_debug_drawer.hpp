@@ -76,6 +76,13 @@ public:
                                         .color(color_from_qt(color)));
     }
 
+    void draw_path(const std::vector<rj_geometry::Point>& points) {
+        frame_.paths.emplace_back();
+        for (const auto& point : points) {
+            frame_.paths.back().points.push_back(rj_convert::convert_to_ros(point));
+        }
+    }
+
     void publish() {
         pub_->publish(frame_);
         frame_ = rj_drawing_msgs::msg::DebugDraw{};

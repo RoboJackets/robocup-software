@@ -1,6 +1,7 @@
 #include "planner_node.hpp"
 
 #include <rj_constants/topic_names.hpp>
+#include <ros_debug_drawer.hpp>
 
 #include "instant.hpp"
 #include "planning/planner/collect_planner.hpp"
@@ -16,14 +17,16 @@ namespace Planning {
 PlannerNode::PlannerNode() : rclcpp::Node("planner") {
     robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
-        robots_planners_.emplace_back(i, create_sub_node("planner_robot_" + std::to_string(i)),
-                                      &robot_trajectories_);
+        auto planner = std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_);
+        robots_planners_.emplace_back(std::move(planner));
     }
 }
 
-PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
+PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                  TrajectoryCollection* robot_trajectories)
-    : node_{std::move(node)}, robot_id_{robot_id}, robot_trajectories_{robot_trajectories} {
+    : node_{node}, robot_id_{robot_id}, robot_trajectories_{robot_trajectories},
+      debug_draw_{node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10), "planning"} {
+    SPDLOG_INFO("Constructor...");
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
@@ -46,9 +49,10 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
                                      intent->priority);
         });
     world_state_sub_ = node_->create_subscription<WorldState::Msg>(
-        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1).transient_local(),
-        [this](WorldState::Msg::SharedPtr state) {  // NOLINT
-            latest_world_state_ = rj_convert::convert_from_ros(*state);
+        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
+        [this](WorldState::Msg::SharedPtr world_state) {  // NOLINT
+            auto robots = world_state->our_robots;
+            latest_world_state_ = rj_convert::convert_from_ros(*world_state);
         });
     global_obstacles_sub_ = node_->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
         planning::topics::kGlobalObstaclesPub, rclcpp::QoS(1).transient_local(),
@@ -70,6 +74,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto& robot = latest_world_state_.our_robots.at(robot_id_);
     const auto& start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
+    SPDLOG_INFO("Planning for robot {}", robot.timestamp.time_since_epoch().count());
     rj_geometry::ShapeSet obstacles = global_obstacles_;
     if (!is_goalie_) {
         obstacles.add(goal_zone_obstacles_);
@@ -85,9 +90,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         }
     }
 
-    // TODO(Kyle): Implement debug drawing in ROS
-    DebugDrawer* debug_drawer = nullptr;
-
     return PlanRequest{start,
                        intent.motion_command,
                        RobotConstraints(),
@@ -97,7 +99,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        static_cast<unsigned int>(robot_id_),
                        &latest_world_state_,
                        intent.priority,
-                       debug_drawer};
+                       &debug_draw_};
 }
 
 Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request) {
@@ -134,7 +136,15 @@ Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request)
         SPDLOG_ERROR("No valid planner! Did you forget to specify a default planner?");
         trajectory = Trajectory{{request.start}};
         trajectory.set_debug_text("Error: No Valid Planners");
+    } else {
+        std::vector<rj_geometry::Point> path;
+        std::transform(trajectory.instants().begin(), trajectory.instants().end(),
+                       std::back_inserter(path),
+                       [] (const auto& instant) { return instant.position(); });
+        debug_draw_.draw_path(path);
     }
+
+    debug_draw_.publish();
 
     return trajectory;
 }

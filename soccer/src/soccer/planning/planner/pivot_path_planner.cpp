@@ -13,20 +13,10 @@
 #include "planning/primitives/path_smoothing.hpp"
 #include "planning/primitives/trapezoidal_motion.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
+#include "planning/planning_params.hpp"
 
 namespace Planning {
 using namespace rj_geometry;
-
-REGISTER_CONFIGURABLE(PivotPathPlanner);
-
-ConfigDouble* PivotPathPlanner::pivot_radius_multiplier;
-
-void PivotPathPlanner::create_configuration(Configuration* cfg) {
-    // NOLINTNEXTLINE
-    pivot_radius_multiplier = new ConfigDouble(cfg, "PathPlanner/Pivot/radiusMultiplier", 1.0,
-                                               "Multiplier for the pivotRadius. PivotRadius = "
-                                               "RobotRadius * multiplier");
-}
 
 Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     const RobotInstant& start_instant = request.start;
@@ -39,7 +29,7 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     const auto& command = std::get<PivotCommand>(request.motion_command);
 
-    double radius = pivot_radius_multiplier->value() * kRobotRadius;
+    double radius = pivot::PARAM_radius_multiplier * kRobotRadius;
     auto pivot_point = command.pivot_point;
 
     if (cached_pivot_point_.has_value() &&

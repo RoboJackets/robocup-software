@@ -42,14 +42,21 @@ private:
 
 class PlannerForRobot {
 public:
-    PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
+    PlannerForRobot(int robot_id, rclcpp::Node* node,
                     TrajectoryCollection* robot_trajectories);
+
+    PlannerForRobot(PlannerForRobot&&) = delete;
+    const PlannerForRobot& operator=(PlannerForRobot&&) = delete;
+    PlannerForRobot(const PlannerForRobot&) = delete;
+    const PlannerForRobot& operator=(const PlannerForRobot&) = delete;
+
+    ~PlannerForRobot() = default;
 
 private:
     PlanRequest make_request(const RobotIntent& intent);
     Trajectory plan_for_robot(const Planning::PlanRequest& request);
 
-    rclcpp::Node::SharedPtr node_;
+    rclcpp::Node* node_;
     std::vector<std::unique_ptr<Planner>> planners_;
 
     int robot_id_;
@@ -65,6 +72,8 @@ private:
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr goal_zone_obstacles_sub_;
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_pub_;
+
+    rj_drawing::RosDebugDrawer debug_draw_;
 };
 
 class PlannerNode : public rclcpp::Node {
@@ -72,7 +81,7 @@ public:
     PlannerNode();
 
 private:
-    std::vector<PlannerForRobot> robots_planners_;
+    std::vector<std::unique_ptr<PlannerForRobot>> robots_planners_;
     TrajectoryCollection robot_trajectories_;
 };
 

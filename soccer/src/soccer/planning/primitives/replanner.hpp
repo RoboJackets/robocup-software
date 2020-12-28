@@ -1,6 +1,9 @@
 #pragma once
 
+#include <rj_param_utils/param.hpp>
+
 #include "configuration.hpp"
+#include "planning/planning_params.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/robot_constraints.hpp"
@@ -41,20 +44,24 @@ public:
      */
     static Trajectory create_plan(PlanParams params, Trajectory previous);
 
-    static void create_configuration(Configuration* cfg);
-
     /**
      * @brief The threshold by which the goal needs to change before we require
      * a replan.
      */
-    static double goal_pos_change_threshold() { return *goal_pos_change_threshold_config; }
+    static double goal_pos_change_threshold() { return replanner::PARAM_pos_change_threshold; }
+
+    /**
+     * @brief The threshold by which the goal velocity needs to change before we require
+     * a replan.
+     */
+    static double goal_vel_change_threshold() { return replanner::PARAM_vel_change_threshold; }
 
     /**
      * @brief The duration of the previous path to reuse (from the beginning) in
      * a partial replan. This will be used if possible, although in some cases a
      * full replan will be required.
      */
-    static double partial_replan_lead_time() { return *partial_replan_lead_time_config; }
+    static RJ::Seconds partial_replan_lead_time() { return RJ::Seconds(replanner::PARAM_partial_replan_lead_time); }
 
 private:
     // Attempt a partial replan, and use it only if it is faster.
@@ -81,15 +88,10 @@ private:
     // duration.
     static Trajectory partial_path(const Trajectory& prev_trajectory,
                                   RJ::Time now) {
-        RJ::Time end_time = now + RJ::Seconds(*partial_replan_lead_time_config);
+        RJ::Time end_time = now + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
         return prev_trajectory.sub_trajectory(prev_trajectory.begin_time(),
                                             end_time);
     }
-
-    static ConfigDouble* goal_pos_change_threshold_config;
-    static ConfigDouble* goal_vel_change_threshold_config;
-    static ConfigDouble* partial_replan_lead_time_config;
-    static ConfigDouble* off_path_error_threshold_config;
 
     static constexpr RJ::Seconds kCheckBetterDeltaTime = 0.2s;
 };

@@ -23,7 +23,6 @@ public:
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;
-    QString draw_layer = "Planning";
 
 private:
     [[nodiscard]] static AngleFunction get_angle_function(

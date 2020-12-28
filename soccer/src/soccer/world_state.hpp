@@ -200,7 +200,7 @@ struct RosConverter<RobotState, RobotState::Msg> {
 
     static RobotState from_ros(const RobotState::Msg& value) {
         RobotState result;
-        convert_from_ros(value.stamp, &result.timestamp);
+        result.timestamp = convert_from_ros(value.stamp);
         convert_from_ros(value.pose, &result.pose);
         convert_from_ros(value.velocity, &result.velocity);
         convert_from_ros(value.visible, &result.visible);

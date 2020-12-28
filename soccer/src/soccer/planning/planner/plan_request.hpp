@@ -12,6 +12,7 @@
 #include "planning/dynamic_obstacle.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
+#include "ros_debug_drawer.hpp"
 
 namespace Planning {
 
@@ -27,7 +28,7 @@ struct PlanRequest {
                 rj_geometry::ShapeSet virtual_obstacles,
                 std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, int8_t priority = 0,
-                DebugDrawer* debug_drawer = nullptr)
+                rj_drawing::RosDebugDrawer* debug_drawer = nullptr)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -93,7 +94,7 @@ struct PlanRequest {
      * Allows debug drawing in the world. If this is nullptr, no debug drawing
      * should be performed.
      */
-    DebugDrawer* debug_drawer;
+    rj_drawing::RosDebugDrawer* debug_drawer;
 };
 
 /**

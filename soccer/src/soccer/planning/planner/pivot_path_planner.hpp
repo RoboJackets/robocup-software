@@ -14,7 +14,6 @@ public:
     PivotPathPlanner(const PivotPathPlanner&) = default;
     PivotPathPlanner& operator=(const PivotPathPlanner&) = default;
 
-    static void create_configuration(Configuration* cfg);
     Trajectory plan(const PlanRequest& request) override;
 
     void reset() override {
@@ -27,7 +26,5 @@ private:
 
     // Cache the pivot point so we don't just push the ball across the field.
     std::optional<rj_geometry::Point> cached_pivot_point_;
-
-    static ConfigDouble* pivot_radius_multiplier;
 };
 }  // namespace Planning
