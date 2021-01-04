@@ -1,12 +1,19 @@
 #pragma once
 
+#include "planning/planning_params.hpp"
+
+namespace Planning {
+
 /**
  * This class contains the motion constraints that the high-level logic sets for a robot.
  */
 struct MotionConstraints {
-    static constexpr double kDefaultMaxSpeed = 1.0;
-    static constexpr double kDefaultMaxAcceleration = 3.0;
+    MotionConstraints()
+        : max_speed(constraints::PARAM_max_translational_speed),
+          max_acceleration(constraints::PARAM_max_translational_accel) {}
 
-    double max_speed = kDefaultMaxSpeed;
-    double max_acceleration = kDefaultMaxAcceleration;
+    double max_speed;
+    double max_acceleration;
 };
+
+} // namespace Planning

@@ -139,19 +139,19 @@ public:
     bool behind_ball(rj_geometry::Point ball_pos) const;
 
     // Constraints
-    const RobotConstraints& robot_constraints() const {
+    const Planning::RobotConstraints& robot_constraints() const {
         return context_->robot_constraints[shell()];
     }
 
-    RobotConstraints& robot_constraints() {
+    Planning::RobotConstraints& robot_constraints() {
         return context_->robot_constraints[shell()];
     }
 
-    const MotionConstraints& motion_constraints() const {
+    const Planning::MotionConstraints& motion_constraints() const {
         return robot_constraints().mot;
     }
 
-    MotionConstraints& motion_constraints() { return robot_constraints().mot; }
+    Planning::MotionConstraints& motion_constraints() { return robot_constraints().mot; }
 
     /**
      * Returns a const reference to the path of the robot.
@@ -355,11 +355,11 @@ public:
         intent().motion_command = new_cmd;
     }
 
-    const RotationConstraints& rotation_constraints() const {
+    const Planning::RotationConstraints& rotation_constraints() const {
         return robot_constraints().rot;
     }
 
-    RotationConstraints& rotation_constraints() {
+    Planning::RotationConstraints& rotation_constraints() {
         return robot_constraints().rot;
     }
 
@@ -394,8 +394,6 @@ public:
     bool is_joystick_controlled() const;
 
 protected:
-    RobotConstraints robot_constraints_;
-
     friend class Processor;
     friend class RadioNode;
 

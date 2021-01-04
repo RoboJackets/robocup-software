@@ -14,7 +14,9 @@
 
 namespace Planning {
 
-PlannerNode::PlannerNode() : rclcpp::Node("planner") {
+PlannerNode::PlannerNode()
+    : rclcpp::Node("planner"),
+      param_provider_{this, kPlanningParamModule} {
     robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         auto planner = std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_);
@@ -30,7 +32,6 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
           "planning"} {
-    SPDLOG_INFO("Constructor...");
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
@@ -78,7 +79,6 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto& robot = latest_world_state_.our_robots.at(robot_id_);
     const auto& start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
-    SPDLOG_INFO("Planning for robot {}", robot.timestamp.time_since_epoch().count());
     rj_geometry::ShapeSet obstacles = global_obstacles_;
     if (!is_goalie_) {
         obstacles.add(goal_zone_obstacles_);
@@ -115,7 +115,6 @@ Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request)
         // If this planner could possibly plan for this command, try to make
         // a plan.
         if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
-            RobotInstant start_instant = request.start;
             trajectory = planner->plan(request);
         }
 

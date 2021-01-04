@@ -69,17 +69,17 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
 
     apply_hold(&path, params.hold_time);
 
-    return std::move(path);
+    return path;
 }
 
 Trajectory Replanner::check_better(const Replanner::PlanParams& params, Trajectory previous) {
     Trajectory new_trajectory = partial_replan(params, previous);
     if (!new_trajectory.empty() && new_trajectory.end_time() < previous.end_time()) {
         apply_hold(&new_trajectory, params.hold_time);
-        return std::move(new_trajectory);
+        return new_trajectory;
     }
 
-    return std::move(previous);
+    return previous;
 }
 
 Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous) {

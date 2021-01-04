@@ -2,6 +2,15 @@
 
 namespace Planning {
 
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 2.0,
+                  "Maximum translational speed for planning (m/s)");
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 3.0,
+                  "Maximum translational acceleration for planning (m/s^2)");
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 5.0,
+                  "Maximum rotational speed for planning (rad/s)");
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel, 5.0,
+                  "Maximum rotational acceleration for planning (rad/s^2)");
+
 DEFINE_NS_FLOAT64(
     kPlanningParamModule, replanner, pos_change_threshold, 0.025,
     "Position target threshold (m); if the change in position from the originally planned "

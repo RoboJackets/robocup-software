@@ -92,7 +92,7 @@ void OurRobot::reset_for_next_iteration() {
 }
 
 void OurRobot::reset_motion_constraints() {
-    robot_constraints() = RobotConstraints();
+    robot_constraints() = Planning::RobotConstraints{};
     planning_priority_ = 0;
 }
 

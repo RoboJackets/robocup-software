@@ -308,7 +308,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                                             rj_geometry::Point(path.points(i + 1).vel())) /
                                            2;
                 auto pcntMaxSpd =
-                    static_cast<float>(avgVel.mag() / MotionConstraints::kDefaultMaxSpeed);
+                    static_cast<float>(avgVel.mag() / Planning::MotionConstraints{}.max_speed);
                 QColor mixedColor(std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
                                   std::max(0, std::min((int)(255 * (1 - pcntMaxSpd)), 255)));
                 QPen pen(mixedColor);

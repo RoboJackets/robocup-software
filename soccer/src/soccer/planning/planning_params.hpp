@@ -6,6 +6,11 @@ namespace Planning {
 
 constexpr auto kPlanningParamModule = "planning";
 
+DECLARE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed);
+DECLARE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel);
+DECLARE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed);
+DECLARE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel);
+
 DECLARE_NS_FLOAT64(kPlanningParamModule, replanner, pos_change_threshold);
 DECLARE_NS_FLOAT64(kPlanningParamModule, replanner, vel_change_threshold);
 DECLARE_NS_FLOAT64(kPlanningParamModule, replanner, partial_replan_lead_time);

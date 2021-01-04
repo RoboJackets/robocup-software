@@ -45,7 +45,7 @@ struct Context {
     bool joystick_valid;
 
     std::array<RobotLocalConfig, kNumShells> local_configs;
-    std::array<RobotConstraints, kNumShells> robot_constraints;
+    std::array<Planning::RobotConstraints, kNumShells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
     rj_geometry::ShapeSet global_obstacles;

@@ -50,7 +50,6 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         planning::topics::trajectory_pub(shell_id), rclcpp::QoS(1),
         [this](Planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
-            spdlog::info("Got trajectory");
         });
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
@@ -136,7 +135,7 @@ void MotionControl::run(const RobotState& state, const Planning::Trajectory& tra
     // Use default constraints. Planning should be in charge of enforcing
     // constraints on the trajectory, here we just follow it.
     // TODO(#1500): Use this robot's constraints here.
-    RobotConstraints constraints;
+    Planning::RobotConstraints constraints;
 
     if (result_body.linear().mag() > constraints.mot.max_speed) {
         result_body.linear() *= constraints.mot.max_speed / result_body.linear().mag();
