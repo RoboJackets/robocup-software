@@ -1,4 +1,5 @@
 #include <rj_param_utils/ros2_param_provider.hpp>
+#include <spdlog/spdlog.h>
 
 namespace params {
 
@@ -23,6 +24,20 @@ std::string ROS2ParamProvider::ConvertFullNameToROS2(const std::string& full_nam
     ros2_name.push_back(full_name.back());
 
     return ros2_name;
+}
+
+std::string ROS2ParamProvider::ConvertFullNameFromROS2(const std::string& ros2_name) {
+    std::string full_name;
+
+    full_name.reserve(ros2_name.size());
+    for (char c : ros2_name) {
+        if (c == '.') {
+            full_name.append("::");
+        } else {
+            full_name.push_back(c);
+        }
+    }
+    return full_name;
 }
 
 #define DECLARE_AND_UPDATE_PARAMS(type)                                                   \
@@ -53,41 +68,53 @@ void ROS2ParamProvider::InitUpdateParamCallbacks(rclcpp::Node* node) {
     using rcl_interfaces::msg::SetParametersResult;
     const auto on_update =
         [this](const std::vector<rclcpp::Parameter>& params) -> SetParametersResult {
+        bool all_succeeded = true;
         for (const rclcpp::Parameter& param : params) {
+            std::string full_name = ConvertFullNameFromROS2(param.get_name());
+            bool success = false;
             switch (param.get_type()) {
                 case rclcpp::PARAMETER_BOOL:
-                    Update(param.get_name(), param.as_bool());
+                    success = TryUpdate(full_name, param.as_bool());
                     break;
                 case rclcpp::PARAMETER_INTEGER:
-                    Update(param.get_name(), param.as_int());
+                    success = TryUpdate(full_name, param.as_int());
                     break;
                 case rclcpp::PARAMETER_DOUBLE:
-                    Update(param.get_name(), param.as_double());
+                    success = TryUpdate(full_name, param.as_double());
                     break;
                 case rclcpp::PARAMETER_STRING:
-                    Update(param.get_name(), param.as_string());
+                    success = TryUpdate(full_name, param.as_string());
                     break;
                 case rclcpp::PARAMETER_BYTE_ARRAY:
-                    Update(param.get_name(), param.as_byte_array());
+                    success = TryUpdate(full_name, param.as_byte_array());
                     break;
                 case rclcpp::PARAMETER_BOOL_ARRAY:
-                    Update(param.get_name(), param.as_bool_array());
+                    success = TryUpdate(full_name, param.as_bool_array());
                     break;
                 case rclcpp::PARAMETER_INTEGER_ARRAY:
-                    Update(param.get_name(), param.as_integer_array());
+                    success = TryUpdate(full_name, param.as_integer_array());
                     break;
                 case rclcpp::PARAMETER_DOUBLE_ARRAY:
-                    Update(param.get_name(), param.as_double_array());
+                    success = TryUpdate(full_name, param.as_double_array());
                     break;
                 case rclcpp::PARAMETER_STRING_ARRAY:
-                    Update(param.get_name(), param.as_string_array());
+                    success = TryUpdate(full_name, param.as_string_array());
                     break;
                 default:
                     break;
             }
+
+            // Failure could happen in two main cases:
+            //  - The parameter does not exist
+            //  - The parameter's type as declared does not match the parameter's current type
+            if (!success) {
+                SPDLOG_WARN("Failed to set parameter {}", param.get_name());
+                all_succeeded = false;
+            }
         }
+
         SetParametersResult set_parameters_result;
-        set_parameters_result.successful = true;
+        set_parameters_result.successful = all_succeeded;
         return set_parameters_result;
     };
     callback_handle_ = node->add_on_set_parameters_callback(on_update);
