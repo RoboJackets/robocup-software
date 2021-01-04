@@ -36,7 +36,7 @@ struct Context {
     // Motion control -> Radio
     std::array<MotionSetpoint, kNumShells> motion_setpoints;
     // Planning -> Motion control
-    std::array<Planning::Trajectory, kNumShells> trajectories;
+    std::array<planning::Trajectory, kNumShells> trajectories;
     // Radio -> Gameplay
     std::array<RobotStatus, kNumShells> robot_status;
     // MainWindow -> Manual control
@@ -45,7 +45,7 @@ struct Context {
     bool joystick_valid;
 
     std::array<RobotLocalConfig, kNumShells> local_configs;
-    std::array<Planning::RobotConstraints, kNumShells> robot_constraints;
+    std::array<planning::RobotConstraints, kNumShells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
     rj_geometry::ShapeSet global_obstacles;

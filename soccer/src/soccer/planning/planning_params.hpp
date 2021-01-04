@@ -2,7 +2,7 @@
 
 #include <rj_param_utils/param.hpp>
 
-namespace Planning {
+namespace planning {
 
 constexpr auto kPlanningParamModule = "planning";
 
@@ -53,4 +53,4 @@ DECLARE_NS_FLOAT64(kPlanningParamModule, settle, max_ball_angle_for_reset);
 DECLARE_NS_FLOAT64(kPlanningParamModule, settle, max_ball_vel_for_path_reset);
 DECLARE_NS_FLOAT64(kPlanningParamModule, settle, max_bounce_angle);
 
-}  // namespace Planning
+}  // namespace planning

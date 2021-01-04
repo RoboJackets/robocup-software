@@ -4,8 +4,8 @@
 
 namespace control::testing {
 
-using Planning::RobotInstant;
-using Planning::Trajectory;
+using planning::RobotInstant;
+using planning::Trajectory;
 using rj_geometry::Point;
 using rj_geometry::Pose;
 using rj_geometry::Twist;

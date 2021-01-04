@@ -11,7 +11,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 void apply_hold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
     if (hold_time.has_value() && !trajectory->empty() &&
@@ -164,4 +164,4 @@ bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,
            goal_vel_diff > goal_vel_change_threshold();
 }
 
-}  // namespace Planning
+}  // namespace planning

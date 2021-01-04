@@ -13,7 +13,7 @@
 #include "planning/trajectory_utils.hpp"
 #include "velocity_profiling.hpp"
 
-namespace Planning {
+namespace planning {
 
 using std::vector;
 using namespace rj_geometry;
@@ -91,4 +91,4 @@ vector<Point> generate_rrt(Point start, Point goal, const ShapeSet& obstacles,
     return run_rrt_helper(start, goal, obstacles, waypoints, false);
 }
 
-}  // namespace Planning
+}  // namespace planning

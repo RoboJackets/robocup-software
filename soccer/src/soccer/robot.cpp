@@ -11,8 +11,8 @@
 
 using namespace std;
 using namespace rj_geometry;
-using Planning::LinearMotionInstant;
-using Planning::MotionCommand;
+using planning::LinearMotionInstant;
+using planning::MotionCommand;
 
 // TODO(Kyle): Make these ROS parameters and move them to a central location
 constexpr double kMaxKickSpeed = 7.0;
@@ -92,7 +92,7 @@ void OurRobot::reset_for_next_iteration() {
 }
 
 void OurRobot::reset_motion_constraints() {
-    robot_constraints() = Planning::RobotConstraints{};
+    robot_constraints() = planning::RobotConstraints{};
     planning_priority_ = 0;
 }
 
@@ -116,7 +116,7 @@ void OurRobot::move_direct(rj_geometry::Point goal, float end_speed) {
     LinearMotionInstant goal_instant;
     goal_instant.position = goal;
     goal_instant.velocity = (goal - pos()).normalized(end_speed);
-    set_motion_command(Planning::PathTargetCommand{goal_instant});
+    set_motion_command(planning::PathTargetCommand{goal_instant});
 
     cmd_text_ << "move_direct(" << goal << ")" << endl;
     cmd_text_ << "end_speed(" << end_speed << ")" << endl;
@@ -137,7 +137,7 @@ void OurRobot::move_tuning(rj_geometry::Point goal, float end_speed) {
     rj_geometry::Point target_point = goal;
     rj_geometry::Point target_vel = (goal - pos()).normalized() * end_speed;
     LinearMotionInstant goal_instant{target_point, target_vel};
-    set_motion_command(Planning::PathTargetCommand{goal_instant});
+    set_motion_command(planning::PathTargetCommand{goal_instant});
 
     cmd_text_ << "move_tuning(" << goal << ")" << endl;
     cmd_text_ << "end_speed(" << end_speed << ")" << endl;
@@ -154,14 +154,14 @@ void OurRobot::move(rj_geometry::Point goal, rj_geometry::Point end_velocity) {
              << std::endl;
     }
 
-    Planning::AngleOverride angle_override = Planning::TargetFaceTangent{};
-    if (std::holds_alternative<Planning::PathTargetCommand>(intent().motion_command)) {
+    planning::AngleOverride angle_override = planning::TargetFaceTangent{};
+    if (std::holds_alternative<planning::PathTargetCommand>(intent().motion_command)) {
         angle_override =
-            std::get<Planning::PathTargetCommand>(intent().motion_command).angle_override;
+            std::get<planning::PathTargetCommand>(intent().motion_command).angle_override;
     }
 
     LinearMotionInstant goal_instant{goal, end_velocity};
-    set_motion_command(Planning::PathTargetCommand{goal_instant, angle_override});
+    set_motion_command(planning::PathTargetCommand{goal_instant, angle_override});
 
     cmd_text_ << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
     cmd_text_ << "end_velocity(" << end_velocity.x() << ", " << end_velocity.y() << ")" << endl;
@@ -173,7 +173,7 @@ void OurRobot::settle(std::optional<Point> target) {
     }
 
     // NOLINTNEXTLINE: the CI clang-tidy version (wrongly) suggests std::move
-    set_motion_command(Planning::SettleCommand{target});
+    set_motion_command(planning::SettleCommand{target});
 }
 
 void OurRobot::collect() {
@@ -181,7 +181,7 @@ void OurRobot::collect() {
         return;
     }
 
-    set_motion_command(Planning::CollectCommand{});
+    set_motion_command(planning::CollectCommand{});
 }
 
 void OurRobot::line_kick(Point target) {
@@ -189,7 +189,7 @@ void OurRobot::line_kick(Point target) {
         return;
     }
 
-    set_motion_command(Planning::LineKickCommand{target});
+    set_motion_command(planning::LineKickCommand{target});
 }
 
 void OurRobot::intercept(Point target) {
@@ -197,11 +197,11 @@ void OurRobot::intercept(Point target) {
         return;
     }
 
-    set_motion_command(Planning::InterceptCommand{target});
+    set_motion_command(planning::InterceptCommand{target});
 }
 
 void OurRobot::world_velocity(rj_geometry::Point target_world_vel) {
-    set_motion_command(Planning::WorldVelCommand{target_world_vel});
+    set_motion_command(planning::WorldVelCommand{target_world_vel});
     cmd_text_ << "world_vel(" << target_world_vel.x() << ", " << target_world_vel.y() << ")"
               << endl;
 }
@@ -210,7 +210,7 @@ void OurRobot::pivot(rj_geometry::Point pivot_target) {
     rj_geometry::Point pivot_point = context_->world_state.ball.position;
 
     // reset other conflicting motion commands
-    set_motion_command(Planning::PivotCommand{pivot_point, pivot_target});
+    set_motion_command(planning::PivotCommand{pivot_point, pivot_target});
 
     cmd_text_ << "pivot(" << pivot_target.x() << ", " << pivot_target.y() << ")" << endl;
 }
@@ -317,14 +317,14 @@ void OurRobot::unkick() {
 void OurRobot::kick_immediately() { intent().trigger_mode = RobotIntent::TriggerMode::IMMEDIATE; }
 
 void OurRobot::face(rj_geometry::Point pt) {
-    if (!std::holds_alternative<Planning::PathTargetCommand>(intent().motion_command)) {
-        intent().motion_command.emplace<Planning::PathTargetCommand>();
+    if (!std::holds_alternative<planning::PathTargetCommand>(intent().motion_command)) {
+        intent().motion_command.emplace<planning::PathTargetCommand>();
     }
 
     cmd_text_ << "face(" << pt << ")" << endl;
 
-    auto& command = std::get<Planning::PathTargetCommand>(intent().motion_command);
-    command.angle_override = Planning::TargetFacePoint{pt};
+    auto& command = std::get<planning::PathTargetCommand>(intent().motion_command);
+    command.angle_override = planning::TargetFacePoint{pt};
 }
 
 #pragma mark Motion

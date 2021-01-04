@@ -6,7 +6,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning::CreatePath {
+namespace planning::CreatePath {
 
 Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                   const MotionConstraints& motion_constraints, RJ::Time start_time,
@@ -71,4 +71,4 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
-}  // namespace Planning::CreatePath
+}  // namespace planning::CreatePath

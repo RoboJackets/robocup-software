@@ -11,7 +11,7 @@
 using namespace std;
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     const float approach_speed = 0.25;
@@ -237,4 +237,4 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     return path;
 }
 
-}  // namespace Planning
+}  // namespace planning

@@ -138,7 +138,7 @@ struct BallState {
      * @brief Create a trajectory for the ball.
      * @return A trajectory for this ball to follow. Angles are meaningless.
      */
-    [[nodiscard]] Planning::Trajectory make_trajectory() const;
+    [[nodiscard]] planning::Trajectory make_trajectory() const;
 };
 
 struct WorldState {

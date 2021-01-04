@@ -12,7 +12,7 @@
 
 namespace control {
 
-using Planning::RobotInstant;
+using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
@@ -46,9 +46,9 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
         topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.
-    trajectory_sub_ = node->create_subscription<Planning::Trajectory::Msg>(
+    trajectory_sub_ = node->create_subscription<planning::Trajectory::Msg>(
         planning::topics::trajectory_pub(shell_id), rclcpp::QoS(1),
-        [this](Planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
+        [this](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
         });
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
@@ -72,7 +72,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         });
 }
 
-void MotionControl::run(const RobotState& state, const Planning::Trajectory& trajectory,
+void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
                         const GameState::State& game_state, bool is_joystick_controlled,
                         MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
@@ -135,7 +135,7 @@ void MotionControl::run(const RobotState& state, const Planning::Trajectory& tra
     // Use default constraints. Planning should be in charge of enforcing
     // constraints on the trajectory, here we just follow it.
     // TODO(#1500): Use this robot's constraints here.
-    Planning::RobotConstraints constraints;
+    planning::RobotConstraints constraints;
 
     if (result_body.linear().mag() > constraints.mot.max_speed) {
         result_body.linear() *= constraints.mot.max_speed / result_body.linear().mag();

@@ -10,7 +10,7 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning {
+namespace planning {
 
 /// Drawing
 void draw_rrt(const RRT::Tree<rj_geometry::Point>& rrt, DebugDrawer* debug_drawer,
@@ -34,4 +34,4 @@ std::vector<rj_geometry::Point> generate_rrt(
     const rj_geometry::ShapeSet& obstacles,
     const std::vector<rj_geometry::Point>& waypoints = {});
 
-}  // namespace Planning
+}  // namespace planning

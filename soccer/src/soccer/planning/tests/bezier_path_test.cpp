@@ -6,7 +6,7 @@
 
 using rj_geometry::Point;
 
-static void check_bezier_low_curvature(const Planning::BezierPath& path) {
+static void check_bezier_low_curvature(const planning::BezierPath& path) {
     // Expected error is O(1/N)
     constexpr int kN = 1000;
     double ds = 1.0 / static_cast<double>(kN);
@@ -20,7 +20,7 @@ static void check_bezier_low_curvature(const Planning::BezierPath& path) {
     }
 }
 
-static void check_bezier_smooth(const Planning::BezierPath& path) {
+static void check_bezier_smooth(const planning::BezierPath& path) {
     // Expected error decreases with high N
     constexpr int kN = 10000;
     constexpr double kEpsilon = 1e-2;
@@ -54,16 +54,16 @@ static void check_bezier_smooth(const Planning::BezierPath& path) {
 }
 
 TEST(BezierPath, two_points_path_smooth_and_consistent) {
-    Planning::MotionConstraints constraints;
+    planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{1, 1}};
-    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0), constraints);
+    planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0), constraints);
     check_bezier_smooth(path);
 }
 
 TEST(BezierPath, multiple_points_path_smooth_and_consistent) {
-    Planning::MotionConstraints constraints;
+    planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{1, 1}, Point{2, 0}};
-    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0), constraints);
+    planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0), constraints);
     check_bezier_smooth(path);
 }
 
@@ -80,24 +80,24 @@ TEST(BezierPath, multiple_points_path_smooth_and_consistent) {
 //  is a quadratic in the velocities (decision variables))
 
 TEST(BezierPath, DISABLED_zero_velocity_endpoints_straight_smooth_and_consistent) {
-    Planning::MotionConstraints constraints;
+    planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{2, 0}};
-    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
+    planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
     check_bezier_smooth(path);
 }
 
 TEST(BezierPath, DISABLED_zero_endpoints_curved_smooth_and_consistent) {
-    Planning::MotionConstraints constraints;
+    planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{1, 1}, Point{2, 0}};
-    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
+    planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
     check_bezier_smooth(path);
     check_bezier_low_curvature(path);
 }
 
 TEST(BezierPath, DISABLED_nonzero_start_zero_end_curved_smooth_and_consistent) {
-    Planning::MotionConstraints constraints;
+    planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{2, 2}};
-    Planning::BezierPath path(std::move(points), Point(1, 0), Point(0, 0), constraints);
+    planning::BezierPath path(std::move(points), Point(1, 0), Point(0, 0), constraints);
     check_bezier_smooth(path);
     check_bezier_low_curvature(path);
 }

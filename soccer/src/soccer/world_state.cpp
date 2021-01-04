@@ -107,7 +107,7 @@ std::optional<RJ::Seconds> BallState::query_seconds_to_dist(double distance) con
     return RJ::Seconds(speed - std::sqrt(vf_sq)) / kBallDecayConstant;
 }
 
-Planning::Trajectory BallState::make_trajectory() const {
+planning::Trajectory BallState::make_trajectory() const {
     using namespace rj_geometry;
 
     // The trajectory interface fits cubic splines. Luckily, a cubic spline
@@ -115,14 +115,14 @@ Planning::Trajectory BallState::make_trajectory() const {
     // (like we have here) will be, and so we can use this for our trajectory.
     // The start point is the current instant in time, and the endpoint is the
     // stopping point.
-    Planning::RobotInstant instant0;
+    planning::RobotInstant instant0;
     instant0.pose = Pose(position, 0);
     instant0.velocity = Twist(velocity, 0);
     instant0.stamp = timestamp;
 
     Point stop_position;
     RJ::Time stop_time = timestamp + query_stop_time(&stop_position);
-    Planning::RobotInstant instant1{Pose{stop_position, 0}, Twist::zero(), stop_time};
+    planning::RobotInstant instant1{Pose{stop_position, 0}, Twist::zero(), stop_time};
 
-    return Planning::Trajectory({instant0, instant1});
+    return planning::Trajectory({instant0, instant1});
 }

@@ -12,7 +12,7 @@
 class Configuration;
 class ConfigDouble;
 
-namespace Planning {
+namespace planning {
 /**
  * @brief This planner finds a path to quickly get out of an obstacle. If the
  * start point isn't in an obstacle, returns a path containing only the start
@@ -51,4 +51,4 @@ private:
     PathTargetPlanner planner_;
 };
 
-}  // namespace Planning
+}  // namespace planning

@@ -2,7 +2,7 @@
 
 #include "planning/planning_params.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * This class contains the motion constraints that the high-level logic sets for a robot.
@@ -16,4 +16,4 @@ struct MotionConstraints {
     double max_acceleration;
 };
 
-} // namespace Planning
+} // namespace planning

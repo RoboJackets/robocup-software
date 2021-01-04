@@ -3,7 +3,7 @@
 #include "rotation_constraints.hpp"
 #include "motion_constraints.hpp"
 
-namespace Planning {
+namespace planning {
 
 struct RobotConstraints {
 public:
@@ -13,4 +13,4 @@ public:
     MotionConstraints mot;
 };
 
-} // namespace Planning
+} // namespace planning

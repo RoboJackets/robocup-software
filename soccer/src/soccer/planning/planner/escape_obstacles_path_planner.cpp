@@ -12,7 +12,7 @@
 #include "planning/primitives/rrt_util.hpp"
 
 using namespace rj_geometry;
-namespace Planning {
+namespace planning {
 
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
@@ -90,4 +90,4 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
     return goal;
 }
 
-}  // namespace Planning
+}  // namespace planning

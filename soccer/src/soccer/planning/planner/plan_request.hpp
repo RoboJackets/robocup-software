@@ -15,7 +15,7 @@
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Encapsulates information needed for planner to make a path
@@ -118,4 +118,4 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
                     std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
                     Trajectory* out_ball_trajectory = nullptr);
 
-}  // namespace Planning
+}  // namespace planning

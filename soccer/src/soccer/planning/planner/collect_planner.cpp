@@ -12,7 +12,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
     BallState ball = plan_request.world_state->ball;
@@ -395,4 +395,4 @@ void CollectPlanner::reset() {
     path_coarse_target_initialized_ = false;
 }
 
-}  // namespace Planning
+}  // namespace planning

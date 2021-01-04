@@ -10,7 +10,7 @@
 #include "planning/trajectory.hpp"
 #include "velocity_profiling.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Handles the replanning strategy for an RRT plan generator.
@@ -98,4 +98,4 @@ private:
     static constexpr RJ::Seconds kCheckBetterDeltaTime = 0.2s;
 };
 
-}  // namespace Planning
+}  // namespace planning

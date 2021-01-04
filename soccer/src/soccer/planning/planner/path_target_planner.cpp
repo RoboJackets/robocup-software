@@ -9,7 +9,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
@@ -61,4 +61,4 @@ AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) 
     return AngleFns::tangent;
 }
 
-}  // namespace Planning
+}  // namespace planning

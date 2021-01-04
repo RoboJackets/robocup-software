@@ -2,7 +2,7 @@
 
 #include "planner.hpp"
 
-namespace Planning {
+namespace planning {
 class PivotPathPlanner : public PlannerForCommandType<PivotCommand> {
 public:
     PivotPathPlanner()
@@ -27,4 +27,4 @@ private:
     // Cache the pivot point so we don't just push the ball across the field.
     std::optional<rj_geometry::Point> cached_pivot_point_;
 };
-}  // namespace Planning
+}  // namespace planning

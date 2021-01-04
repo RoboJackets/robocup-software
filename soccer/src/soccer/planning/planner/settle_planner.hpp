@@ -7,7 +7,7 @@
 class Configuration;
 class ConfigDouble;
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Planner which tries to move around the ball to intercept it
@@ -87,4 +87,4 @@ private:
 
     Trajectory previous_;
 };
-}  // namespace Planning
+}  // namespace planning

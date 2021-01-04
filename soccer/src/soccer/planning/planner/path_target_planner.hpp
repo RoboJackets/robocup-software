@@ -6,7 +6,7 @@
 #include "planning/primitives/replanner.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
 
-namespace Planning {
+namespace planning {
 
 class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
 public:
@@ -31,4 +31,4 @@ private:
     Trajectory previous_;
 };
 
-}  // namespace Planning
+}  // namespace planning

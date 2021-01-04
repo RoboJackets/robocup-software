@@ -1,6 +1,6 @@
 #include "plan_request.hpp"
 
-namespace Planning {
+namespace planning {
 
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
                     std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
@@ -44,4 +44,4 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     }
 }
 
-}  // namespace Planning
+}  // namespace planning

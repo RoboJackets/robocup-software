@@ -15,7 +15,7 @@
 #include "planning/primitives/velocity_profiling.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning {
+namespace planning {
 using namespace rj_geometry;
 
 Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
@@ -95,4 +95,4 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     return path;
 }
 
-}  // namespace Planning
+}  // namespace planning

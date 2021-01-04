@@ -16,7 +16,7 @@
 #include "trajectory.hpp"
 #include "world_state.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * A collection of per-robot trajectories.
@@ -54,7 +54,7 @@ public:
 
 private:
     PlanRequest make_request(const RobotIntent& intent);
-    Trajectory plan_for_robot(const Planning::PlanRequest& request);
+    Trajectory plan_for_robot(const planning::PlanRequest& request);
 
     rclcpp::Node* node_;
     std::vector<std::unique_ptr<Planner>> planners_;
@@ -86,4 +86,4 @@ private:
     ::params::ROS2ParamProvider param_provider_;
 };
 
-}  // namespace Planning
+}  // namespace planning

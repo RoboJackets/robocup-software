@@ -2,7 +2,7 @@
 
 #include <control/trapezoidal_motion.hpp>
 
-namespace Planning {
+namespace planning {
 
 using rj_geometry::Point;
 
@@ -230,4 +230,4 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
     }
 }
 
-}  // namespace Planning
+}  // namespace planning

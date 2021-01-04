@@ -1124,9 +1124,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("value", &ConfigInt::value, &ConfigInt::set_value)
         .def("__str__", &ConfigInt::to_string);
 
-    class_<Planning::MotionConstraints>("MotionConstraints")
-        .add_property("max_speed", &Planning::MotionConstraints::max_speed)
-        .add_property("max_accel", &Planning::MotionConstraints::max_acceleration);
+    class_<planning::MotionConstraints>("MotionConstraints")
+        .add_property("max_speed", &planning::MotionConstraints::max_speed)
+        .add_property("max_accel", &planning::MotionConstraints::max_acceleration);
 
     enum_<RefereeModuleEnums::Command>("Command")
         .value("halt", SSL_Referee_Command_HALT)

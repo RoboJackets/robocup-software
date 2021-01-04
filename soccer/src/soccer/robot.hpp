@@ -139,31 +139,31 @@ public:
     bool behind_ball(rj_geometry::Point ball_pos) const;
 
     // Constraints
-    const Planning::RobotConstraints& robot_constraints() const {
+    const planning::RobotConstraints& robot_constraints() const {
         return context_->robot_constraints[shell()];
     }
 
-    Planning::RobotConstraints& robot_constraints() {
+    planning::RobotConstraints& robot_constraints() {
         return context_->robot_constraints[shell()];
     }
 
-    const Planning::MotionConstraints& motion_constraints() const {
+    const planning::MotionConstraints& motion_constraints() const {
         return robot_constraints().mot;
     }
 
-    Planning::MotionConstraints& motion_constraints() { return robot_constraints().mot; }
+    planning::MotionConstraints& motion_constraints() { return robot_constraints().mot; }
 
     /**
      * Returns a const reference to the path of the robot.
      */
-    const Planning::Trajectory& path() const {
+    const planning::Trajectory& path() const {
         return context_->trajectories[shell()];
     }
 
     /**
      * Returns a movable reference to the path of the robot.
      */
-    Planning::Trajectory&& path_movable() {
+    planning::Trajectory&& path_movable() {
         return std::move(context_->trajectories[shell()]);
     }
 
@@ -343,23 +343,23 @@ public:
     double kicker_voltage() const;
     RobotStatus::HardwareVersion hardware_version() const;
 
-    const Planning::MotionCommand& motion_command() const {
+    const planning::MotionCommand& motion_command() const {
         return intent().motion_command;
     }
-    void set_motion_command(const Planning::MotionCommand& new_cmd) {
+    void set_motion_command(const planning::MotionCommand& new_cmd) {
         if (intent().motion_command.index() != new_cmd.index()) {
             // clear path when command type changes
-            context_->trajectories[shell()] = Planning::Trajectory{{}};
+            context_->trajectories[shell()] = planning::Trajectory{{}};
         }
 
         intent().motion_command = new_cmd;
     }
 
-    const Planning::RotationConstraints& rotation_constraints() const {
+    const planning::RotationConstraints& rotation_constraints() const {
         return robot_constraints().rot;
     }
 
-    Planning::RotationConstraints& rotation_constraints() {
+    planning::RotationConstraints& rotation_constraints() {
         return robot_constraints().rot;
     }
 

@@ -2,7 +2,7 @@
 
 #include "planning/planning_params.hpp"
 
-namespace Planning {
+namespace planning {
 
 struct RotationConstraints {
     RotationConstraints()
@@ -11,4 +11,4 @@ struct RotationConstraints {
     double max_accel;
 };
 
-} // namespace Planning
+} // namespace planning

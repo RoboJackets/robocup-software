@@ -17,7 +17,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     BallState ball = plan_request.world_state->ball;
@@ -537,4 +537,4 @@ void SettlePlanner::reset() {
     previous_ = Trajectory{};
 }
 
-}  // namespace Planning
+}  // namespace planning

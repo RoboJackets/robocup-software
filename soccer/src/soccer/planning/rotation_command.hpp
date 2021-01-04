@@ -5,7 +5,7 @@
 
 #include "rj_geometry/point.hpp"
 
-namespace Planning {
+namespace planning {
 struct RotationCommand {
 public:
     enum CommandType { FacePoint, FaceAngle, None };
@@ -62,4 +62,4 @@ struct EmptyAngleCommand : public RotationCommand {
         return "EmptyAngleCommand()";
     }
 };
-}  // namespace Planning
+}  // namespace planning

@@ -8,7 +8,7 @@
 class Configuration;
 class ConfigDouble;
 
-namespace Planning {
+namespace planning {
 
 /**
  * Planner which plans a path to line kick a ball.
@@ -20,10 +20,10 @@ namespace Planning {
  * TODO(Kyle): Overhaul this entire planner. It's sketchy right now.
  */
 class LineKickPlanner
-    : public PlannerForCommandType<Planning::LineKickCommand> {
+    : public PlannerForCommandType<planning::LineKickCommand> {
 public:
     LineKickPlanner()
-        : PlannerForCommandType<Planning::LineKickCommand>("LineKickPlanner"){};
+        : PlannerForCommandType<planning::LineKickCommand>("LineKickPlanner"){};
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {
@@ -40,4 +40,4 @@ private:
     int reuse_path_count_ = 0;
 };
 
-}  // namespace Planning
+}  // namespace planning

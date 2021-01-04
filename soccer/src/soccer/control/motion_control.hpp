@@ -52,7 +52,7 @@ protected:
      * This runs PID control on the position and angle of the robot and
      * sets values in the robot's radio_tx packet.
      */
-    void run(const RobotState& state, const Planning::Trajectory& trajectory,
+    void run(const RobotState& state, const planning::Trajectory& trajectory,
              const GameState::State& game_state, bool is_joystick_controlled,
              MotionSetpoint* setpoint);
 
@@ -94,9 +94,9 @@ private:
 
     GameState::State game_state_ = GameState::State::Halt;
 
-    Planning::Trajectory trajectory_;
+    planning::Trajectory trajectory_;
 
-    rclcpp::Subscription<Planning::Trajectory::Msg>::SharedPtr trajectory_sub_;
+    rclcpp::Subscription<planning::Trajectory::Msg>::SharedPtr trajectory_sub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
     rclcpp::Subscription<GameState::Msg>::SharedPtr game_state_sub_;
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;

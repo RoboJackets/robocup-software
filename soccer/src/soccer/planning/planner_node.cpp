@@ -12,7 +12,7 @@
 #include "planning/planner/settle_planner.hpp"
 #include "robot.hpp"
 
-namespace Planning {
+namespace planning {
 
 PlannerNode::PlannerNode()
     : rclcpp::Node("planner"),
@@ -94,9 +94,10 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         }
     }
 
+    RobotConstraints constraints;
     return PlanRequest{start,
                        intent.motion_command,
-                       RobotConstraints(),
+                       constraints,
                        global_obstacles_,
                        intent.local_obstacles,
                        planned_trajectories,
@@ -106,7 +107,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        &debug_draw_};
 }
 
-Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request) {
+Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request) {
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
@@ -152,4 +153,4 @@ Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request)
     return trajectory;
 }
 
-}  // namespace Planning
+}  // namespace planning

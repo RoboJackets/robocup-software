@@ -2,7 +2,7 @@
 
 #include <optional>
 
-namespace Planning::Trapezoid {
+namespace planning::Trapezoid {
 
 struct State {
     double position;
@@ -37,4 +37,4 @@ double time_remaining(State initial, State goal, double max_velocity,
 State predict_in(State initial, State goal, double max_velocity,
                 double max_acceleration, double time_now);
 
-}  // namespace Planning::Trapezoid
+}  // namespace planning::Trapezoid

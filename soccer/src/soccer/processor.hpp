@@ -42,7 +42,7 @@ namespace Gameplay {
 class GameplayModule;
 }
 
-namespace Planning {
+namespace planning {
 class MultiRobotPathPlanner;
 }
 

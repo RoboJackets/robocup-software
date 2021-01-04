@@ -4,7 +4,7 @@
 #include "planning/planner/planner.hpp"
 #include "planning/primitives/replanner.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Planner that tries to move onto and gain control of a slow moving
@@ -75,4 +75,4 @@ private:
     bool path_coarse_target_initialized_ = false;
 };
 
-}  // namespace Planning
+}  // namespace planning

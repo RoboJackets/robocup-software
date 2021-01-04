@@ -1,6 +1,6 @@
 #include "planning_params.hpp"
 
-namespace Planning {
+namespace planning {
 
 DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 2.0,
                   "Maximum translational speed for planning (m/s)");
@@ -192,4 +192,4 @@ DEFINE_NS_FLOAT64(kPlanningParamModule, settle, max_ball_vel_for_path_reset, 2.0
 DEFINE_NS_FLOAT64(kPlanningParamModule, settle, max_bounce_angle, 45,
                   "Max angle between ball and target bounce direction (deg)")
 
-}  // namespace Planning
+}  // namespace planning
