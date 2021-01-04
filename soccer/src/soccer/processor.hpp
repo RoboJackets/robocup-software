@@ -42,10 +42,6 @@ namespace Gameplay {
 class GameplayModule;
 }
 
-namespace planning {
-class MultiRobotPathPlanner;
-}
-
 /**
  * @brief Brings all the pieces together
  *
