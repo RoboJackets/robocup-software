@@ -108,6 +108,7 @@ void ROS2ParamProvider::InitUpdateParamCallbacks(rclcpp::Node* node) {
             //  - The parameter does not exist
             //  - The parameter's type as declared does not match the parameter's current type
             if (!success) {
+                // NOLINTNEXTLINE(bugprone-lambda-function-name)
                 SPDLOG_WARN("Failed to set parameter {}", param.get_name());
                 all_succeeded = false;
             }
