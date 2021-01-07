@@ -31,7 +31,7 @@ public:
         return robot_trajectories_;
     }
 
-    void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
+    void put(RobotId robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
         std::lock_guard lock(lock_);
         robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
     }
@@ -43,7 +43,7 @@ private:
 
 class PlannerForRobot {
 public:
-    PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories);
+    PlannerForRobot(RobotId robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;
@@ -59,7 +59,7 @@ private:
     rclcpp::Node* node_;
     std::vector<std::unique_ptr<Planner>> planners_;
 
-    int robot_id_;
+    RobotId robot_id_;
     WorldState latest_world_state_;
     TrajectoryCollection* robot_trajectories_;
     rj_geometry::ShapeSet global_obstacles_;

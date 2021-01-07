@@ -30,7 +30,7 @@ static double kicker_strength_to_speed(uint8_t kick_strength) {
  */
 constexpr bool kVerbose = false;
 
-Robot::Robot(Context* context, int shell, bool self)
+Robot::Robot(Context* context, RobotId shell, bool self)
     : context_(context), shell_(shell), self_(self) {}
 
 #pragma mark OurRobot
@@ -44,7 +44,7 @@ void OurRobot::create_configuration(Configuration* cfg) {
         new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
-OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
+OurRobot::OurRobot(Context* context, RobotId shell) : Robot(context, shell, true) {
     clear_cmd_text();
 }
 

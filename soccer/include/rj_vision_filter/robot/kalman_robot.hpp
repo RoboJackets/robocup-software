@@ -47,69 +47,69 @@ public:
      * Returns true when the filter hasn't been updated in a while and should be
      * deleted
      */
-    bool is_unhealthy() const;
+    [[nodiscard]] bool is_unhealthy() const;
 
     /**
      * @return The camera id this belongs to
      */
-    unsigned int get_camera_id() const;
+    [[nodiscard]] unsigned int get_camera_id() const;
 
     /**
      * @return This robot's id
      */
-    int get_robot_id() const;
+    [[nodiscard]] RobotId get_robot_id() const;
 
     /**
      * @return How healthy this filter is. AKA How often it's been updated
      */
-    int get_health() const;
+    [[nodiscard]] int get_health() const;
 
     /**
      * @return Best estimate of the linear position of the robot
      */
-    rj_geometry::Point get_pos() const;
+    [[nodiscard]] rj_geometry::Point get_pos() const;
 
     /**
      * @return Best estimate of the heading. Not bounded
      */
-    double get_theta() const;
+    [[nodiscard]] double get_theta() const;
 
     /**
      * @return Best estimate of the linear velocity of the robot
      */
-    rj_geometry::Point get_vel() const;
+    [[nodiscard]] rj_geometry::Point get_vel() const;
 
     /**
      * @return Best estimate of the angular velocity
      */
-    double get_omega() const;
+    [[nodiscard]] double get_omega() const;
 
     /**
      * @return Covariance in X and Y linear direction of the position of the
      * robot
      */
-    rj_geometry::Point get_pos_cov() const;
+    [[nodiscard]] rj_geometry::Point get_pos_cov() const;
 
     /**
      * @return Covariance of theta of the robot
      */
-    double get_theta_cov() const;
+    [[nodiscard]] double get_theta_cov() const;
 
     /**
      * @return Covariance in X and Y linear direction of the velocity of the
      * robot
      */
-    rj_geometry::Point get_vel_cov() const;
+    [[nodiscard]] rj_geometry::Point get_vel_cov() const;
 
     /**
      * @return Covariance of omega of the robot
      */
-    double get_omega_cov() const;
+    [[nodiscard]] double get_omega_cov() const;
 
     /**
      * @return List of previous camera robot measurements for kick detection
      */
-    const boost::circular_buffer<CameraRobot>& get_prev_measurements() const;
+    [[nodiscard]] const boost::circular_buffer<CameraRobot>& get_prev_measurements() const;
 
 private:
     RJ::Time last_update_time_;
@@ -123,7 +123,7 @@ private:
     int unwrap_theta_ctr_;
     int health_;
 
-    int robot_id_;
+    RobotId robot_id_;
 
     unsigned int camera_id_;
 };

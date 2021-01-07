@@ -14,7 +14,7 @@ using world_robot::PARAM_robot_merger_power;
 
 WorldRobot::WorldRobot() : is_valid_(false) {}
 
-WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
+WorldRobot::WorldRobot(RJ::Time calc_time, Team team, RobotId robot_id,
                        const std::list<KalmanRobot>& kalman_robots)
     : team_(team), robot_id_(robot_id), is_valid_(true), time_(calc_time) {
     // Theta's are converted to rect coords then back to polar to convert
@@ -95,7 +95,9 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
 
 bool WorldRobot::get_is_valid() const { return is_valid_; }
 
-int WorldRobot::get_robot_id() const { return robot_id_; }
+WorldRobot::Team WorldRobot::get_team_color() const { return team_; }
+
+RobotId WorldRobot::get_robot_id() const { return robot_id_; }
 
 rj_geometry::Point WorldRobot::get_pos() const { return pose_.position(); }
 

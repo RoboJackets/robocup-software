@@ -43,7 +43,7 @@ class MotionControlTest;
  */
 class MotionControl {
 public:
-    MotionControl(int shell_id, rclcpp::Node* node);
+    MotionControl(RobotId shell_id, rclcpp::Node* node);
 
 protected:
     friend class testing::MotionControlTest;
@@ -77,7 +77,7 @@ private:
 
     static void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
 
-    int shell_id_;
+    RobotId shell_id_;
 
     /// The last velocity command (in m/s) that we sent / to the robot
     rj_geometry::Twist last_world_vel_command_;

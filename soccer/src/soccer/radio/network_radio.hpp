@@ -25,7 +25,7 @@ public:
     NetworkRadio(int server_port);
 
 protected:
-    void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+    void send(RobotId robot_id, const rj_msgs::msg::MotionSetpoint& motion,
               const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
     void receive() override;
     void switch_team(bool blue) override;

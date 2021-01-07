@@ -102,9 +102,8 @@ private:
                             google::protobuf::io::ZeroCopyOutputStream* out);
     static bool read_from_file(Packet::LogFrame* frame,
                              google::protobuf::io::ZeroCopyInputStream* in);
-    static void fill_robot(Packet::LogFrame::Robot* out, int shell_id,
-                          RobotState const* state, RobotStatus const* status,
-                          MotionSetpoint const* setpoint);
+    static void fill_robot(Packet::LogFrame::Robot* out, RobotId shell_id, RobotState const* state,
+                           RobotStatus const* status, MotionSetpoint const* setpoint);
 
     FRIEND_TEST(Logger, SaveContext);
     FRIEND_TEST(Logger, SerializeDeserialize);

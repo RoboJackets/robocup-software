@@ -158,7 +158,7 @@ struct WorldState {
           our_robots{std::move(our_robots)},
           ball{ball} {}
 
-    RobotState& get_robot(bool ours, int shell) {
+    RobotState& get_robot(bool ours, RobotId shell) {
         if (ours) {
             return our_robots.at(shell);
         } else {
@@ -166,7 +166,7 @@ struct WorldState {
         }
     }
 
-    [[nodiscard]] RobotState get_robot(bool ours, int shell) const {
+    [[nodiscard]] RobotState get_robot(bool ours, RobotId shell) const {
         if (ours) {
             return our_robots.at(shell);
         } else {

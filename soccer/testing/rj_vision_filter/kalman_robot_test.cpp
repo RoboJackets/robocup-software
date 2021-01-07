@@ -9,7 +9,7 @@ namespace vision_filter {
 TEST(KalmanRobot, invalid_world_robot) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b = CameraRobot(t, pose, robot_id);
     int c_id = 1;
@@ -36,7 +36,7 @@ TEST(KalmanRobot, invalid_world_robot) {
 TEST(KalmanRobot, valid_world_robot) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b1 = CameraRobot(t, pose, robot_id);
     CameraRobot b2 = CameraRobot(
@@ -74,7 +74,7 @@ TEST(KalmanRobot, valid_world_robot) {
 TEST(KalmanRobot, predict) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b1 = CameraRobot(t, pose, robot_id);
     CameraRobot b2 = CameraRobot(
@@ -109,7 +109,7 @@ TEST(KalmanRobot, predict) {
 TEST(KalmanRobot, predict_and_update) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b1 = CameraRobot(t, pose, robot_id);
     CameraRobot b2 = CameraRobot(
@@ -143,7 +143,7 @@ TEST(KalmanRobot, predict_and_update) {
 TEST(KalmanRobot, is_unhealthy) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b = CameraRobot(t, pose, robot_id);
     int c_id = 1;
@@ -159,7 +159,7 @@ TEST(KalmanRobot, is_unhealthy) {
 TEST(KalmanRobot, max_measurement_size) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b = CameraRobot(t, pose, robot_id);
     int c_id = 1;
@@ -179,7 +179,7 @@ TEST(KalmanRobot, max_measurement_size) {
 TEST(KalmanRobot, getters) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b = CameraRobot(t, pose, robot_id);
     int c_id = 1;
@@ -224,7 +224,7 @@ TEST(KalmanRobot, getters) {
 TEST(KalmanRobot, wrap_theta_up) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 0);
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b = CameraRobot(t, pose, robot_id);
     int c_id = 1;
@@ -264,7 +264,7 @@ TEST(KalmanRobot, wrap_theta_down) {
     RJ::Time t = RJ::now();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 0);
 
-    int robot_id = 1;
+    RobotId robot_id = 1;
 
     CameraRobot b = CameraRobot(t, pose, robot_id);
     int c_id = 1;

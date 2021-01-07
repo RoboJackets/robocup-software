@@ -40,7 +40,7 @@ void Processor::create_configuration(Configuration* cfg) {
 
     robot_config_init = std::make_unique<RobotConfig>(cfg, "Rev2015");
 
-    for (size_t s = 0; s < kNumShells; ++s) {
+    for (RobotId s = 0; s < kNumShells; ++s) {
         robot_status_init.emplace_back(cfg, QString("Robot Statuses/Robot %1").arg(s));
     }
 }
@@ -105,7 +105,7 @@ Processor::~Processor() {
     // we create and destroy multiple instances of Processor for each test.
     robot_config_init = std::move(context_.robot_config);
 
-    for (size_t i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         robot_status_init.push_back(std::move(context_.local_configs[i]));
     }
 }

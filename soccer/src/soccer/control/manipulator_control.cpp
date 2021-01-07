@@ -11,7 +11,7 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, max_kick_speed, 5.0,
 DEFINE_INT64(params::kMotionControlParamModule, min_safe_kick_power, 64,
              "Minimum safe discharge power for the kicker (0-255)");
 
-ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell_id_(shell_id) {
+ManipulatorControl::ManipulatorControl(RobotId shell_id, rclcpp::Node* node) : shell_id_(shell_id) {
     auto manipulator_pub = node->create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
         topics::manipulator_setpoint_pub(shell_id), rclcpp::QoS(10));
 

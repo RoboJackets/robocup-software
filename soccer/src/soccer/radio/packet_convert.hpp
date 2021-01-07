@@ -48,20 +48,21 @@ void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status);
 
 namespace ConvertTx {
 
-void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
-            int shell, rtp::RobotTxMessage* rtp);
+void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, RobotId shell,
+            rtp::RobotTxMessage* rtp);
 
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp);
+                const rj_msgs::msg::MotionSetpoint& motion, RobotId shell,
+                rtp::RobotTxMessage* rtp);
 
-void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
-              int shell, Packet::Robot* proto);
+void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, RobotId shell,
+              Packet::Robot* proto);
 
-void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
-              int shell, grSim_Robot_Command* grsim);
+void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, RobotId shell,
+              grSim_Robot_Command* grsim);
 
 void ros_to_grsim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
+                  const rj_msgs::msg::MotionSetpoint& motion, RobotId shell,
                   grSim_Robot_Command* grsim);
 
 }  // namespace ConvertTx

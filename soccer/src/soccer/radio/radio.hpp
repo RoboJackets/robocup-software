@@ -33,9 +33,9 @@ public:
     Radio();
 
 protected:
-    void publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status);
+    void publish(RobotId robot_id, const rj_msgs::msg::RobotStatus& robot_status);
 
-    virtual void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+    virtual void send(RobotId robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                       const rj_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
     virtual void receive() = 0;
     virtual void switch_team(bool blue) = 0;

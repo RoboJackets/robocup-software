@@ -61,7 +61,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 
     // Fill our robots
     std::vector<RobotStateMsg> robot_state_msgs(kNumShells);
-    for (size_t i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         const WorldRobot& wr = robots.at(i);
 
         RobotState robot_state;

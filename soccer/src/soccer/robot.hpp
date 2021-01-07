@@ -26,7 +26,7 @@ class GameplayModule;
 
 class Robot {
 public:
-    Robot(Context* context, int shell, bool self);
+    Robot(Context* context, RobotId shell, bool self);
 
     /**
      * Get an immutable reference to the robot's estimated state from vision.
@@ -67,7 +67,7 @@ public:
      * ID number for the robot.  This is the number that the dot pattern on
      * the top of the robot represents
      */
-    [[nodiscard]] int shell() const { return shell_; }
+    [[nodiscard]] RobotId shell() const { return shell_; }
 
     /**
      * Check whether or not this robot is on our team
@@ -92,7 +92,7 @@ protected:
     Context* context_;
 
 private:
-    const int shell_;
+    const RobotId shell_;
     const bool self_;
 };
 
@@ -115,7 +115,7 @@ public:
      * @param context A pointer to the global system context object
      * @param shell The robot ID
      */
-    OurRobot(Context* context, int shell);
+    OurRobot(Context* context, RobotId shell);
 
     void add_status_text();
 
@@ -443,5 +443,5 @@ public:
      * @param context A pointer to the global system context object
      * @param shell The robot ID
      */
-    OpponentRobot(Context* context, int shell) : Robot(context, shell, false) {}
+    OpponentRobot(Context* context, RobotId shell) : Robot(context, shell, false) {}
 };

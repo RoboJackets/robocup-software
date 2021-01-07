@@ -1,8 +1,10 @@
 #pragma once
 
-#include <rj_geometry/pose.hpp>
 #include <optional>
+
 #include <rj_common/time.hpp>
+#include <rj_constants/constants.hpp>
+#include <rj_geometry/pose.hpp>
 
 /**
  * \brief Struct representing data returned from the robot, possibly including
@@ -11,7 +13,7 @@
 struct RobotStatus {
     RJ::Time timestamp;
 
-    int shell_id = 0;
+    RobotId shell_id = 0;
 
     enum class HardwareVersion { kUnknown, kFleet2018, kSimulated };
 

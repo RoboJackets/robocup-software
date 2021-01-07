@@ -2,15 +2,17 @@
 
 #include <string>  // for size_t
 
+using RobotId = size_t;
+
 /// all distances in meters
 /// all times in seconds
 /// all weights in kilograms
 
 // Number of identifiable robots on one team
-constexpr size_t kNumShells = 16;
+constexpr RobotId kNumShells = 16;
 
 // Number of playing robots on one team
-constexpr size_t kRobotsPerTeam = 6;
+constexpr RobotId kRobotsPerTeam = 6;
 
 constexpr size_t kMaxDribble = 128;
 constexpr size_t kMaxKick = 255;

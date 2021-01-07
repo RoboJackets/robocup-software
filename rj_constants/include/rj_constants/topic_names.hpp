@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <rj_constants/constants.hpp>
+
 /**
  * \file This file contains all the topic name strings to avoid typos.
  */
@@ -43,7 +45,7 @@ constexpr auto kWorldStatePub = "vision_filter/world_state";
 
 namespace gameplay::topics {
 
-static inline std::string robot_intent_pub(int robot_id) {
+static inline std::string robot_intent_pub(RobotId robot_id) {
     return "gameplay/robot_intent/robot_" + std::to_string(robot_id);
 }
 
@@ -54,7 +56,7 @@ namespace planning::topics {
 constexpr auto kGlobalObstaclesPub = "planning/global_obstacles";
 constexpr auto kGoalZoneObstacles = "planning/goal_zone_obstacles";
 
-static inline std::string trajectory_pub(int robot_id) {
+static inline std::string trajectory_pub(RobotId robot_id) {
     return "planning/trajectory/robot_" + std::to_string(robot_id);
 }
 
@@ -64,15 +66,15 @@ namespace control {
 
 namespace topics {
 
-static inline std::string manipulator_setpoint_pub(int robot_id) {
+static inline std::string manipulator_setpoint_pub(RobotId robot_id) {
     return "control/manipulator_setpoint/robot_" + std::to_string(robot_id);
 }
 
-static inline std::string motion_setpoint_pub(int robot_id) {
+static inline std::string motion_setpoint_pub(RobotId robot_id) {
     return "control/motion_setpoint/robot_" + std::to_string(robot_id);
 }
 
-static inline std::string robot_controlled_pub(int robot_id) {
+static inline std::string robot_controlled_pub(RobotId robot_id) {
     return "control/robot_controlled/robot_" + std::to_string(robot_id);
 }
 
@@ -88,7 +90,7 @@ constexpr auto kMotionControlParamModule = "motion_control";
 
 namespace radio::topics {
 
-static inline std::string robot_status_pub(int robot_id) {
+static inline std::string robot_status_pub(RobotId robot_id) {
     return "radio/robot_status/robot_" + std::to_string(robot_id);
 }
 

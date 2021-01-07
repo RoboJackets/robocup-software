@@ -28,7 +28,7 @@ void NetworkRadio::start_receive() {
                                       std::size_t num_bytes) { receive_packet(error, num_bytes); });
 }
 
-void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+void NetworkRadio::send(RobotId robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                         const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
     // Build the control packet for this robot.
     std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
@@ -89,7 +89,7 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
 
     robot_endpoint_.port(25566);
 
-    int robot_id = msg->uid;
+    RobotId robot_id = msg->uid;
 
     auto iter = robot_ip_map_.find(robot_endpoint_);
     if (iter != robot_ip_map_.end() && iter->second != robot_id) {

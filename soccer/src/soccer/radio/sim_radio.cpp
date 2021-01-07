@@ -27,7 +27,7 @@ SimRadio::SimRadio(bool blue_team)
     start_receive();
 }
 
-void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+void SimRadio::send(RobotId robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                     const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
     grSim_Packet sim_packet;
     grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
@@ -83,7 +83,7 @@ void SimRadio::stop_robots() {
     grSim_Packet sim_packet;
     grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
 
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (RobotId shell = 0; shell < kNumShells; shell++) {
         grSim_Robot_Command* sim_robot = sim_robot_commands->add_robot_commands();
         sim_robot->set_id(shell);
         sim_robot->set_veltangent(0);

@@ -191,7 +191,7 @@ void Camera::update_robots(RJ::Time calc_time,
                            const std::vector<std::list<CameraRobot>>& blue_robot_list,
                            const std::vector<WorldRobot>& previous_yellow_world_robots,
                            const std::vector<WorldRobot>& previous_blue_world_robots) {
-    for (int i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         const std::list<CameraRobot>& single_yellow_robot_list = yellow_robot_list.at(i);
         const std::list<CameraRobot>& single_blue_robot_list = blue_robot_list.at(i);
 

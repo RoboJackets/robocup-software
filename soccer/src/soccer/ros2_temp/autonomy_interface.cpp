@@ -16,7 +16,7 @@ AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executo
     executor->add_node(node_);
     intent_pubs_.reserve(kNumShells);
     status_subs_.reserve(kNumShells);
-    for (int i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(node_->create_publisher<RobotIntent::Msg>(
             gameplay::topics::robot_intent_pub(i), rclcpp::QoS(1).transient_local()));
         status_subs_.emplace_back(node_->create_subscription<rj_msgs::msg::RobotStatus>(
@@ -28,7 +28,7 @@ AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executo
 }
 
 void AutonomyInterface::run() {
-    for (int i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         const auto& intent = context_->robot_intents.at(i);
         if (intent.is_active) {
             intent_pubs_.at(i)->publish(rj_convert::convert_to_ros(intent));

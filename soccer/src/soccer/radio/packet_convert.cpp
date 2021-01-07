@@ -171,7 +171,7 @@ void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status) {
 namespace ConvertTx {
 
 // NOLINT(cppcoreguidelines-pro-type-union-access)
-void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, RobotId shell,
             rtp::RobotTxMessage* rtp_message) {
     rtp_message->uid = shell;
     rtp::ControlMessage control_message{};
@@ -211,7 +211,7 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     rtp_message->messageType = rtp::RobotTxMessage::ControlMessageType;
 }
 
-void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, RobotId shell,
               Packet::Robot* proto) {
     if (proto == nullptr) {
         return;
@@ -249,7 +249,7 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     }
 }
 
-void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, RobotId shell,
               grSim_Robot_Command* grsim) {
     if (grsim == nullptr) {
         return;
@@ -283,7 +283,8 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     grsim->set_wheelsspeed(false);
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp) {
+                const rj_msgs::msg::MotionSetpoint& motion, RobotId shell,
+                rtp::RobotTxMessage* rtp) {
     rtp->uid = shell;
     rtp->messageType = rtp::RobotTxMessage::ControlMessageType;
 
@@ -302,7 +303,7 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
 }
 
 void ros_to_grsim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
+                  const rj_msgs::msg::MotionSetpoint& motion, RobotId shell,
                   grSim_Robot_Command* grsim) {
     if (grsim == nullptr) {
         return;

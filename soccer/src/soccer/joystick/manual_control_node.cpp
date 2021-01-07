@@ -49,7 +49,7 @@ void ManualControlNode::run() {
 }
 
 void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
-    int shell = robot->shell();
+    RobotId shell = robot->shell();
 
     // Modify robot->setpoint and robot->intent
     RobotIntent& intent = context_->robot_intents[shell];

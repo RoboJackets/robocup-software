@@ -684,7 +684,7 @@ void MainWindow::updateStatus() {
     // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
-    std::vector<int> validIds = _processor->state()->our_valid_ids();
+    std::vector<RobotId> validIds = _processor->state()->our_valid_ids();
 
     for (int i = 1; i <= kNumShells; i++) {
         QStandardItem* item = goalieModel->item(i);

@@ -11,7 +11,7 @@ Radio::Radio() : rclcpp::Node("radio"), param_provider_(this, kRadioParamModule)
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
             switch_team(color->is_blue);
         });
-    for (int i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         robot_status_pubs_.at(i) = create_publisher<rj_msgs::msg::RobotStatus>(
             topics::robot_status_pub(i), rclcpp::QoS(1));
         manipulator_subs_.at(i) = create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
@@ -30,7 +30,7 @@ Radio::Radio() : rclcpp::Node("radio"), param_provider_(this, kRadioParamModule)
     tick_timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { tick(); });
 }
 
-void Radio::publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {
+void Radio::publish(RobotId robot_id, const rj_msgs::msg::RobotStatus& robot_status) {
     robot_status_pubs_.at(robot_id)->publish(robot_status);
 }
 
@@ -39,7 +39,7 @@ void Radio::tick() {
 
     RJ::Time update_time = RJ::now();
 
-    for (int i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         if (last_updates_.at(i) + RJ::Seconds(PARAM_timeout) < update_time) {
             using rj_msgs::msg::ManipulatorSetpoint;
             using rj_msgs::msg::MotionSetpoint;

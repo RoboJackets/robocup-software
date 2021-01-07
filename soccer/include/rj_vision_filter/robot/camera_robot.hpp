@@ -1,10 +1,12 @@
 #pragma once
 
+#include <vector>
+
+#include <rj_common/time.hpp>
+#include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_common/time.hpp>
 #include <rj_msgs/msg/detection_robot.hpp>
-#include <vector>
 
 namespace vision_filter {
 using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
@@ -20,7 +22,7 @@ public:
      * @param theta Heading of the robot observation
      * @param robot_id ID of the robot
      */
-    CameraRobot(RJ::Time time_captured, rj_geometry::Pose pose, int robot_id)
+    CameraRobot(RJ::Time time_captured, rj_geometry::Pose pose, RobotId robot_id)
         : time_captured_(time_captured), pose_(pose), robot_id_(robot_id) {}
 
     /**
@@ -37,27 +39,27 @@ public:
     /**
      * @return the time the detection was captured
      */
-    RJ::Time get_time_captured() const;
+    [[nodiscard]] RJ::Time get_time_captured() const;
 
     /**
      * @return the position of the measurement
      */
-    rj_geometry::Point get_pos() const;
+    [[nodiscard]] rj_geometry::Point get_pos() const;
 
     /**
      * @return the heading of the measurement
      */
-    double get_theta() const;
+    [[nodiscard]] double get_theta() const;
 
     /**
      * @return the robot ID of the measurement
      */
-    int get_robot_id() const;
+    [[nodiscard]] RobotId get_robot_id() const;
 
     /**
      * @return the pose of the measurement
      */
-    rj_geometry::Pose get_pose() const;
+    [[nodiscard]] rj_geometry::Pose get_pose() const;
 
     /**
      * Combines all the robots in the list and returns a robot
@@ -73,6 +75,6 @@ private:
     RJ::Time time_captured_;
     rj_geometry::Pose pose_;
 
-    int robot_id_;
+    RobotId robot_id_;
 };
 }  // namespace vision_filter

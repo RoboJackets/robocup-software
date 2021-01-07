@@ -10,8 +10,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     out_static->add(in.virtual_obstacles);
 
     // Add opponent robots as static obstacles.
-    for (int shell = 0; shell < kNumShells; shell++) {
-        const auto& robot = in.world_state->their_robots.at(shell);
+    for (const auto& robot : in.world_state->their_robots) {
         if (robot.visible) {
             out_static->add(
                 std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius));
@@ -20,7 +19,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
     // Add our robots, either static or dynamic depending on whether they have
     // already been planned.
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (RobotId shell = 0; shell < kNumShells; shell++) {
         const auto& robot = in.world_state->our_robots.at(shell);
         if (!robot.visible || shell == in.shell_id) {
             continue;

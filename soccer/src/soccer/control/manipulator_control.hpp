@@ -14,7 +14,7 @@ DECLARE_INT64(params::kMotionControlParamModule, min_safe_kick_power);
 
 class ManipulatorControl {
 public:
-    ManipulatorControl(int shell_id, rclcpp::Node* node);
+    ManipulatorControl(RobotId shell_id, rclcpp::Node* node);
     ~ManipulatorControl() = default;
 
     ManipulatorControl(ManipulatorControl&& other) = default;
@@ -23,7 +23,7 @@ public:
     ManipulatorControl& operator=(const ManipulatorControl& other) = delete;
 
 private:
-    int shell_id_;
+    RobotId shell_id_;
     rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr manipulator_pub_;
     rclcpp::Subscription<rj_msgs::msg::RobotIntent>::SharedPtr intent_sub_;
 };

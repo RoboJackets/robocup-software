@@ -16,13 +16,13 @@ namespace planning {
 
 PlannerNode::PlannerNode() : rclcpp::Node("planner"), param_provider_{this, kPlanningParamModule} {
     robots_planners_.reserve(kNumShells);
-    for (int i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         auto planner = std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_);
         robots_planners_.emplace_back(std::move(planner));
     }
 }
 
-PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
+PlannerForRobot::PlannerForRobot(RobotId robot_id, rclcpp::Node* node,
                                  TrajectoryCollection* robot_trajectories)
     : node_{node},
       robot_id_{robot_id},
@@ -85,7 +85,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto robot_trajectories_hold = robot_trajectories_->get();
     std::array<const Trajectory*, kNumShells> planned_trajectories = {};
 
-    for (int i = 0; i < kNumShells; i++) {
+    for (RobotId i = 0; i < kNumShells; i++) {
         const auto& [trajectory, priority] = robot_trajectories_hold.at(i);
         if (i != robot_id_ && priority >= intent.priority) {
             planned_trajectories.at(i) = trajectory.get();

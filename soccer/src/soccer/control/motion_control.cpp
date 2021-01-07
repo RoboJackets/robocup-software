@@ -37,7 +37,7 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.0,
 DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
              "Windup limit for translation (unknown units)");
 
-MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
+MotionControl::MotionControl(RobotId shell_id, rclcpp::Node* node)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
       drawer_(
