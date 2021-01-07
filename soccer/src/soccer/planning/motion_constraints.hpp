@@ -16,4 +16,4 @@ struct MotionConstraints {
     double max_acceleration;
 };
 
-} // namespace planning
+}  // namespace planning

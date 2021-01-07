@@ -39,8 +39,8 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
         (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr) &&
-            !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
-                                     nullptr))) {
+         !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
+                                  nullptr))) {
         return straight_trajectory;
     }
 

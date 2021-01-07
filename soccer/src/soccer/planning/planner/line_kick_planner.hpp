@@ -19,11 +19,9 @@ namespace planning {
  *
  * TODO(Kyle): Overhaul this entire planner. It's sketchy right now.
  */
-class LineKickPlanner
-    : public PlannerForCommandType<planning::LineKickCommand> {
+class LineKickPlanner : public PlannerForCommandType<planning::LineKickCommand> {
 public:
-    LineKickPlanner()
-        : PlannerForCommandType<planning::LineKickCommand>("LineKickPlanner"){};
+    LineKickPlanner() : PlannerForCommandType<planning::LineKickCommand>("LineKickPlanner"){};
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {

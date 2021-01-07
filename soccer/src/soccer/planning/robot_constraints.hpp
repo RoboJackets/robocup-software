@@ -13,4 +13,4 @@ public:
     MotionConstraints mot;
 };
 
-} // namespace planning
+}  // namespace planning

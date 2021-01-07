@@ -14,9 +14,7 @@
 
 namespace planning {
 
-PlannerNode::PlannerNode()
-    : rclcpp::Node("planner"),
-      param_provider_{this, kPlanningParamModule} {
+PlannerNode::PlannerNode() : rclcpp::Node("planner"), param_provider_{this, kPlanningParamModule} {
     robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         auto planner = std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_);

@@ -143,9 +143,7 @@ public:
         return context_->robot_constraints[shell()];
     }
 
-    planning::RobotConstraints& robot_constraints() {
-        return context_->robot_constraints[shell()];
-    }
+    planning::RobotConstraints& robot_constraints() { return context_->robot_constraints[shell()]; }
 
     const planning::MotionConstraints& motion_constraints() const {
         return robot_constraints().mot;
@@ -156,16 +154,12 @@ public:
     /**
      * Returns a const reference to the path of the robot.
      */
-    const planning::Trajectory& path() const {
-        return context_->trajectories[shell()];
-    }
+    const planning::Trajectory& path() const { return context_->trajectories[shell()]; }
 
     /**
      * Returns a movable reference to the path of the robot.
      */
-    planning::Trajectory&& path_movable() {
-        return std::move(context_->trajectories[shell()]);
-    }
+    planning::Trajectory&& path_movable() { return std::move(context_->trajectories[shell()]); }
 
     /// clears old radio_tx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -343,9 +337,7 @@ public:
     double kicker_voltage() const;
     RobotStatus::HardwareVersion hardware_version() const;
 
-    const planning::MotionCommand& motion_command() const {
-        return intent().motion_command;
-    }
+    const planning::MotionCommand& motion_command() const { return intent().motion_command; }
     void set_motion_command(const planning::MotionCommand& new_cmd) {
         if (intent().motion_command.index() != new_cmd.index()) {
             // clear path when command type changes
@@ -359,9 +351,7 @@ public:
         return robot_constraints().rot;
     }
 
-    planning::RotationConstraints& rotation_constraints() {
-        return robot_constraints().rot;
-    }
+    planning::RotationConstraints& rotation_constraints() { return robot_constraints().rot; }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
