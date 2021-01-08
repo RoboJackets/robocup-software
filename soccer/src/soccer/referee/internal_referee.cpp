@@ -62,7 +62,7 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
         config_server::topics::kGameSettingsPub, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::GameSettings::SharedPtr
                    msg) {  // NOLINT(performance-unnecessary-value-param)
-            set_team_color(msg->request_blue_team);
+            set_team_color(msg->requested_team_color.is_blue);
             set_goalie(msg->request_goalie_id);
         });
 }

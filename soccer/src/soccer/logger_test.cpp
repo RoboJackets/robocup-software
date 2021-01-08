@@ -1,9 +1,12 @@
+#include "logger.hpp"
+
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/util/message_differencer.h>
 #include <gtest/gtest.h>
 
+#include <rj_common/team_color.hpp>
+
 #include "context.hpp"
-#include "logger.hpp"
 
 // NOLINTNEXTLINE
 TEST(Logger, SaveContext) {
@@ -27,8 +30,8 @@ TEST(Logger, SaveContext) {
     context.robot_status.at(1).kicker = RobotStatus::KickerState::kFailed;
 
     // We should use blue_team from GameState, not GameSettings
-    context.game_settings.request_blue_team = true;
-    context.blue_team = false;
+    context.game_settings.requested_team_color = TeamColor::kBlue;
+    context.our_color = TeamColor::kYellow;
 
     std::shared_ptr<Packet::LogFrame> frame = Logger::create_log_frame(&context);
 

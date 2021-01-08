@@ -9,7 +9,7 @@ Radio::Radio() : rclcpp::Node("radio"), param_provider_(this, kRadioParamModule)
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorPub, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
-            switch_team(color->is_blue);
+            switch_team(rj_convert::convert_from_ros(*color));
         });
     for (RobotId i = 0; i < kNumShells; i++) {
         robot_status_pubs_.at(i) = create_publisher<rj_msgs::msg::RobotStatus>(

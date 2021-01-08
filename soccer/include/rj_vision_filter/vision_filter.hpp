@@ -8,6 +8,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <config_client/config_client.hpp>
+#include <rj_common/team_color.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
@@ -59,11 +60,11 @@ private:
 
     /**
      * @brief Creates a WorldStateMsg from the robot and ball Kalman filters.
-     * @param us_blue True if we are blue.
+     * @param our_team Our team color
      * @return The WorldStateMsg corresponding to the current VisionFilter
      * state.
      */
-    WorldStateMsg build_world_state_msg(bool us_blue) const;
+    WorldStateMsg build_world_state_msg(TeamColor our_team) const;
 
     /**
      * @brief Creates a BallStateMsg from the ball Kalman filter.
@@ -74,11 +75,10 @@ private:
 
     /**
      * @brief Creates a vector of RobotStateMsgs from the robot Kalman filters.
-     * @param blue_team Uses the blue team's robots if true. Otherwise uses the
-     * yellow team's robots.
-     * @return A vector of  RobotStateMsg corresponding to blue_team.
+     * @param team_color Which team's robots to use
+     * @return A vector of RobotStateMsg corresponding to the team
      */
-    std::vector<RobotStateMsg> build_robot_state_msgs(bool blue_team) const;
+    std::vector<RobotStateMsg> build_robot_state_msgs(TeamColor team) const;
 
     /**
      * @brief Publishes the current state of the balls and robots.

@@ -12,6 +12,7 @@
 
 #include <logger.hpp>
 #include <referee/external_referee.hpp>
+#include <rj_common/team_color.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/transform_matrix.hpp>
@@ -70,7 +71,7 @@ public:
 
     static void create_configuration(Configuration* cfg);
 
-    Processor(bool sim, bool blue_team, const std::string& read_log_file = "");
+    Processor(bool sim, TeamColor team, const std::string& read_log_file = "");
     virtual ~Processor();
 
     void stop();

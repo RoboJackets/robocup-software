@@ -2,6 +2,7 @@
 
 #include <set>
 
+#include <rj_common/team_color.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/referee.pb.h>
@@ -55,7 +56,8 @@ struct Context {
     GameState game_state;
     TeamInfo our_info;
     TeamInfo their_info;
-    bool blue_team;
+    TeamColor our_color;
+
     DebugDrawer debug_drawer;
 
     /** \brief Vector of unique IDs of gamepads. First is oldest to connect. */

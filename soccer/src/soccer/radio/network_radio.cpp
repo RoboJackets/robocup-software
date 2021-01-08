@@ -122,6 +122,6 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
     start_receive();
 }
 
-void NetworkRadio::switch_team(bool /*blue_team*/) {}
+void NetworkRadio::switch_team([[maybe_unused]] TeamColor team) {}
 
 }  // namespace radio

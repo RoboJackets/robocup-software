@@ -200,7 +200,7 @@ void MainWindow::configuration(Configuration* config) {
 
 void MainWindow::initialize() {
     // Team
-    if (_game_settings.request_blue_team) {
+    if (_game_settings.requested_team_color.is_blue) {
         _ui.actionTeamBlue->trigger();
     } else {
         _ui.actionTeamYellow->trigger();
@@ -290,9 +290,9 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
             _ui.goalieID->setCurrentIndex(_game_settings.request_goalie_id + 1);
         }
 
-        bool blueTeam = context_->blue_team;
-        if (_game_settings.request_blue_team != blueTeam) {
-            blueTeam ? _ui.actionTeamBlue->trigger() : _ui.actionTeamYellow->trigger();
+        bool blue_team = context_->our_color == TeamColor::kBlue;
+        if (_game_settings.requested_team_color.is_blue != blue_team) {
+            blue_team ? _ui.actionTeamBlue->trigger() : _ui.actionTeamYellow->trigger();
         }
     } else {
         _ui.goalieID->setEnabled(true);
@@ -325,7 +325,7 @@ void MainWindow::updateViews() {
     {
         std::lock_guard<std::mutex> lock(*context__mutex);
         game_state = context_->game_state;
-        blue_team = context_->blue_team;
+        blue_team = context_->our_color == TeamColor::kBlue;
         our_info = context_->our_info;
         their_info = context_->their_info;
     }
@@ -684,11 +684,11 @@ void MainWindow::updateStatus() {
     // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
-    std::vector<RobotId> validIds = _processor->state()->our_valid_ids();
+    std::vector<RobotId> valid_ids = _processor->state()->our_valid_ids();
 
     for (int i = 1; i <= kNumShells; i++) {
         QStandardItem* item = goalieModel->item(i);
-        if (std::find(validIds.begin(), validIds.end(), i - 1) != validIds.end()) {
+        if (std::find(valid_ids.begin(), valid_ids.end(), i - 1) != valid_ids.end()) {
             // The list starts with None so i is 1 higher than the shell id
             item->setFlags(item->flags() | (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
         } else {
@@ -1100,14 +1100,14 @@ void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");
     _ui.team->setStyleSheet("background-color: #4040ff; color: #ffffff");
 
-    update_cache(_game_settings.request_blue_team, true, &_game_settings_valid);
+    update_cache(_game_settings.requested_team_color.is_blue, true, &_game_settings_valid);
 }
 
 void MainWindow::on_actionTeamYellow_triggered() {
     _ui.team->setText("YELLOW");
     _ui.team->setStyleSheet("background-color: #ffff00");
 
-    update_cache(_game_settings.request_blue_team, false, &_game_settings_valid);
+    update_cache(_game_settings.requested_team_color.is_blue, false, &_game_settings_valid);
 }
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {

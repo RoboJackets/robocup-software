@@ -7,6 +7,7 @@
 
 #include <context.hpp>
 #include <radio/packet_convert.hpp>
+#include <rj_common/team_color.hpp>
 #include <rj_utils/logging.hpp>
 
 #include <rc-fshare/git_version.hpp>
@@ -175,7 +176,7 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
     }
     context->referee_packets.clear();
 
-    log_frame->set_blue_team(context->blue_team);
+    log_frame->set_blue_team(context->our_color == TeamColor::kBlue);
     log_frame->set_command_time(RJ::timestamp());
 
     // Our robots
@@ -240,7 +241,7 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
     log_frame->set_behavior_tree(context->behavior_tree);
 
     // Team names
-    if (context->blue_team) {
+    if (context->our_color == TeamColor::kBlue) {
         log_frame->set_team_name_yellow(context->their_info.name);
         log_frame->set_team_name_blue(context->our_info.name);
     } else {

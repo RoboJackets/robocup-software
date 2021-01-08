@@ -5,6 +5,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_common/team_color.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>
@@ -38,7 +39,7 @@ protected:
     virtual void send(RobotId robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                       const rj_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
     virtual void receive() = 0;
-    virtual void switch_team(bool blue) = 0;
+    virtual void switch_team(TeamColor team) = 0;
 
 private:
     void tick();

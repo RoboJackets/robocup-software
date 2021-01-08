@@ -16,9 +16,9 @@ GameSettingsMsg parse_game_settings(const std::vector<std::string>& args) {
     for (int i = 1; i < args.size(); i++) {
         const std::string& arg = args.at(i);
         if (arg == "-b") {
-            game_settings.request_blue_team = true;
+            game_settings.requested_team_color.is_blue = true;
         } else if (arg == "-y") {
-            game_settings.request_blue_team = false;
+            game_settings.requested_team_color.is_blue = false;
         } else if (arg == "-sim") {
             game_settings.simulation = false;
         } else if (arg == "-defend") {

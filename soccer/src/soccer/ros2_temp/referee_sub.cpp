@@ -1,5 +1,6 @@
 #include "referee_sub.hpp"
 
+#include <rj_common/team_color.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging_macros.hpp>
 
@@ -24,7 +25,7 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
 
     team_color_sub_ = node_->create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorPub, keep_latest, [this](TeamColorMsg::UniquePtr msg) {
-            rj_convert::convert_from_ros(msg->is_blue, &context_->blue_team);
+            rj_convert::convert_from_ros(*msg, &context_->our_color);
         });
 
     goalie_sub_ = node_->create_subscription<GoalieMsg>(

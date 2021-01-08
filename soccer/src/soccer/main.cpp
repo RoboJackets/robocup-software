@@ -13,6 +13,7 @@
 
 #include <fcntl.h>
 #include <rj_common/qt_utils.hpp>
+#include <rj_common/team_color.hpp>
 #include <unistd.h>
 
 #include "configuration.hpp"
@@ -62,7 +63,7 @@ int main(int argc, char* argv[]) {
 
     QApplication app(argc, argv);
 
-    bool blue_team = true;
+    TeamColor team = TeamColor::kBlue;
     QString cfg_file;
     vector<const char*> play_dirs;
     bool sim = false;
@@ -83,9 +84,9 @@ int main(int argc, char* argv[]) {
         if (strcmp(var, "--help") == 0) {
             usage(argv[0]);
         } else if (strcmp(var, "-y") == 0) {
-            blue_team = false;
+            team = TeamColor::kYellow;
         } else if (strcmp(var, "-b") == 0) {
-            blue_team = true;
+            team = TeamColor::kBlue;
         } else if (strcmp(var, "-sim") == 0) {
             sim = true;
         } else if (strcmp(var, "-nolog") == 0) {
@@ -170,11 +171,11 @@ int main(int argc, char* argv[]) {
     // ROS2 init
     rclcpp::init(argc, argv);
 
-    auto processor = std::make_unique<Processor>(sim, blue_team, read_log_file);
+    auto processor = std::make_unique<Processor>(sim, team, read_log_file);
 
     Context* context = processor->context();
     context->game_settings.simulation = sim;
-    context->game_settings.request_blue_team = blue_team;
+    context->game_settings.requested_team_color = team;
     context->game_settings.defend_plus_x = defend_plus;
     context->game_settings.request_goalie_id = 0;
 

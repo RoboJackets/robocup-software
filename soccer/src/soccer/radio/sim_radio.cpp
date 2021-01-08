@@ -16,11 +16,19 @@ using namespace boost::asio;
 
 namespace radio {
 
-SimRadio::SimRadio(bool blue_team)
+static int port_for_team(TeamColor team) {
+    switch (team) {
+        case TeamColor::kBlue:
+            return kSimBlueStatusPort;
+        case TeamColor::kYellow:
+            return kSimYellowStatusPort;
+    }
+}
+
+SimRadio::SimRadio(TeamColor team)
     : Radio(),
-      blue_team_(blue_team),
-      socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
-                                                                      : kSimYellowStatusPort)) {
+      team_(team),
+      socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), port_for_team(team))) {
     grsim_endpoint_ = ip::udp::endpoint(ip::udp::v4(), kSimCommandPort);
 
     buffer_.resize(1024);
@@ -38,7 +46,7 @@ void SimRadio::send(RobotId robot_id, const rj_msgs::msg::MotionSetpoint& motion
     grSim_Robot_Command* sim_robot = sim_robot_commands->add_robot_commands();
     ConvertTx::ros_to_grsim(manipulator, motion, robot_id, sim_robot);
 
-    sim_robot_commands->set_isteamyellow(!blue_team_);
+    sim_robot_commands->set_isteamyellow(team_ == TeamColor::kYellow);
     sim_robot_commands->set_timestamp(RJ::timestamp());
 
     std::string out;
@@ -97,7 +105,7 @@ void SimRadio::stop_robots() {
         sim_robot->set_wheelsspeed(false);
     }
 
-    sim_robot_commands->set_isteamyellow(!blue_team_);
+    sim_robot_commands->set_isteamyellow(team_ == TeamColor::kYellow);
     sim_robot_commands->set_timestamp(RJ::timestamp());
 
     std::string out;
@@ -105,12 +113,12 @@ void SimRadio::stop_robots() {
     socket_.send_to(boost::asio::buffer(out), ip::udp::endpoint(ip::udp::v4(), kSimCommandPort));
 }
 
-void SimRadio::switch_team(bool blue_team) {
-    if (blue_team == blue_team_) {
+void SimRadio::switch_team(TeamColor team) {
+    if (team == team_) {
         return;
     }
 
-    blue_team_ = blue_team;
+    team_ = team;
 
     if (socket_.is_open()) {
         stop_robots();
@@ -119,7 +127,7 @@ void SimRadio::switch_team(bool blue_team) {
 
     socket_.open(ip::udp::v4());
 
-    int status_port = blue_team ? kSimBlueStatusPort : kSimYellowStatusPort;
+    int status_port = port_for_team(team);
 
     // Let them throw exceptions
     socket_.bind(ip::udp::endpoint(ip::udp::v4(), status_port));

@@ -6,6 +6,7 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/qt_utils.hpp>
+#include <rj_common/team_color.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
@@ -484,7 +485,7 @@ void Gameplay::GameplayModule::load_test() {
 
                 const int NUM_COLS = 2;
                 const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
-                const int team_direction = context_->blue_team ? -1 : 1;
+                const int team_direction = context_->our_color == TeamColor::kBlue ? -1 : 1;
                 for (int i = 0; i < kRobotsPerTeam; i++) {
                     auto* rob = replacement->add_robots();
 
@@ -512,7 +513,7 @@ void Gameplay::GameplayModule::load_test() {
                         rob->set_dir(0);
                     }
                     rob->set_id(i);
-                    rob->set_yellowteam(not context_->blue_team);
+                    rob->set_yellowteam(context_->our_color == TeamColor::kYellow);
                 }
 
                 // Load TheirRobots information
@@ -550,7 +551,7 @@ void Gameplay::GameplayModule::load_test() {
                         rob->set_dir(0);
                     }
                     rob->set_id(i);
-                    rob->set_yellowteam(context_->blue_team);
+                    rob->set_yellowteam(context_->our_color == TeamColor::kBlueTeam);
                 }
 
                 // Get ball Information

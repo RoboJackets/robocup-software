@@ -36,11 +36,11 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStatePub, 10);
 }
 
-VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) const {
+VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(TeamColor our_team) const {
     return rj_msgs::build<WorldStateMsg>()
         .last_update_time(rj_convert::convert_to_ros(world_.last_update_time()))
-        .their_robots(build_robot_state_msgs(!us_blue))
-        .our_robots(build_robot_state_msgs(us_blue))
+        .their_robots(build_robot_state_msgs(opponent(our_team)))
+        .our_robots(build_robot_state_msgs(our_team))
         .ball(build_ball_state_msg());
 }
 
@@ -56,8 +56,9 @@ VisionFilter::BallStateMsg VisionFilter::build_ball_state_msg() const {
 }
 
 std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
-    bool blue_team) const {
-    const auto& robots = blue_team ? world_.get_robots_blue() : world_.get_robots_yellow();
+    TeamColor team) const {
+    const auto& robots =
+        team == TeamColor::kBlue ? world_.get_robots_blue() : world_.get_robots_yellow();
 
     // Fill our robots
     std::vector<RobotStateMsg> robot_state_msgs(kNumShells);
@@ -79,14 +80,16 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 }
 
 void VisionFilter::publish_state() {
-    std::shared_ptr<TeamColorMsg> team_color = team_color_queue_.get();
-    if (team_color == nullptr) {
+    TeamColorMsg::SharedPtr team_color_message = team_color_queue_.get();
+    if (team_color_message == nullptr) {
         EZ_WARN_STREAM("Returning because team_color is nullptr");
         return;
     }
 
+    TeamColor team_color = rj_convert::convert_from_ros(*team_color_message);
+
     WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>();
-    *msg = build_world_state_msg(team_color->is_blue);
+    *msg = build_world_state_msg(team_color);
     world_state_pub_->publish(std::move(msg));
 }
 

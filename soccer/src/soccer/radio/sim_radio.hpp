@@ -1,11 +1,14 @@
 #pragma once
 
-#include <context.hpp>
-#include <system_state.hpp>
-#include <boost/asio.hpp>
 #include <cstdint>
 
+#include <boost/asio.hpp>
+
+#include <rj_common/team_color.hpp>
+
+#include "context.hpp"
 #include "radio.hpp"
+#include "system_state.hpp"
 
 namespace radio {
 
@@ -14,14 +17,13 @@ namespace radio {
  */
 class SimRadio : public Radio {
 public:
-    static std::size_t instance_count;
-    SimRadio(bool blue_team = false);
+    SimRadio(TeamColor team = TeamColor::kBlue);
 
 protected:
     void send(RobotId robot_id, const rj_msgs::msg::MotionSetpoint& motion,
               const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
     void receive() override;
-    void switch_team(bool blue) override;
+    void switch_team(TeamColor team) override;
 
 private:
     void stop_robots();
@@ -36,7 +38,7 @@ private:
 
     std::vector<char> buffer_;
 
-    bool blue_team_;
+    TeamColor team_;
 };
 
 }  // namespace radio
