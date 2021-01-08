@@ -22,7 +22,7 @@ static void check_bezier_low_curvature(const planning::BezierPath& path) {
 
 static void check_bezier_smooth(const planning::BezierPath& path) {
     // Expected error decreases with high N
-    constexpr int kN = 10000;
+    constexpr int kN = 15000;
     constexpr double kEpsilon = 1e-2;
 
     Point previous_position;
