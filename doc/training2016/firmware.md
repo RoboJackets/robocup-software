@@ -92,4 +92,4 @@
 -   MBED with only radio connected
 -   Uses MBED serial lines to communicate with computer running soccer
 -   Commands are sent from soccer to base station then to each robot
--   Base station recieves replies back from robots then sends this to soccer
+-   Base station receives replies back from robots then sends this to soccer

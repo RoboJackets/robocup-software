@@ -2,6 +2,7 @@
 
 #include <rj_geometry_msgs/msg/rect.hpp>
 
+#include <gtest/gtest.h>
 #include "point.hpp"
 #include "shape.hpp"
 
@@ -14,6 +15,8 @@ class Segment;
 class Rect : public Shape {
 private:
     int cohen_sutherland_out_code(const Point& other) const;
+    FRIEND_TEST(Rect, cohen_codes);
+    FRIEND_TEST(Rect, degenerage_cohen_codes);
 
 public:
     using Msg = rj_geometry_msgs::msg::Rect;

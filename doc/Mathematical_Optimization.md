@@ -34,7 +34,7 @@ Cons:
 
 ## Nelder-Mead
 
-Nelder-Mead involves using a simplex to "flip" its way up a hill, shrinking and expanding when neccessary. The simplex has N+1 vertices in N dimensions. For example, in the two dimensional case, the simplex is a triangle.
+Nelder-Mead involves using a simplex to "flip" its way up a hill, shrinking and expanding when necessary. The simplex has N+1 vertices in N dimensions. For example, in the two dimensional case, the simplex is a triangle.
 
 Pros:
  * Minimizes the number of function calls

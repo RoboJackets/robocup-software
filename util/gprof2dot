@@ -997,7 +997,7 @@ class GprofParser(Parser):
 
                 if child.index not in self.functions:
                     # NOTE: functions that were never called but were discovered by gprof's 
-                    # static call graph analysis dont have a call graph entry so we need
+                    # static call graph analysis don't have a call graph entry so we need
                     # to add them here
                     missing = Function(child.index, child.name)
                     function[TIME] = 0.0
