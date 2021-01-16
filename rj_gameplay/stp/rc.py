@@ -572,19 +572,25 @@ class WorldState:
         self.__field = field
 
     @classmethod
-    def generate_basic_test_worldstate(cls) -> WorldState:
+    def generate_basic_test_worldstate(cls, our_robots = None, their_robots = None, ball = None,
+            game_info = GameInfo.generate_test_playing_gameinfo(), field = Field.generate_divB_field()) -> WorldState:
         """
         generates a test worldstate with 12 robots and a ball in the play state
         """
-        field = Field.generate_divB_field()
         center_field = field.center_field_loc()
-        our_bots = list()
-        their_bots = list()
-        for g in range(1,7):
-            our_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, 1.0]),is_ours = True))
-            their_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, -1.0]),is_ours = False))
-        ball = Ball.generate_test_ball(pos = np.array(center_field))
-        game_info = GameInfo.generate_test_playing_gameinfo()
+        if(our_robots is None or their_robots is None):
+            our_bots = list()
+            their_bots = list()
+            for g in range(1,7):
+                our_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, 1.0]),is_ours = True))
+                their_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, -1.0]),is_ours = False))
+        else: 
+            our_bots = our_robots
+            their_bots = their_robots
+
+        if(ball is None):
+            ball = Ball.generate_test_ball(pos = np.array(center_field))
+
         world = cls(our_bots, their_bots, ball, game_info, field)
         return world
 
