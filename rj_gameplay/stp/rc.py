@@ -27,12 +27,20 @@ class Robot:
     __kicker_healthy: bool
     __lethal_fault: bool
     
-
+    """
     def __init__(
             self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray,
             visible: bool = True, ball_sense_triggered: bool = False,
             has_ball_sense: bool = True, kicker_charged: bool = True,
             kicker_healthy: bool = True, lethal_fault: bool = False):
+    """ 
+
+    def __init__(
+            self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray,
+            visible: bool, ball_sense_triggered: bool,
+            has_ball_sense: bool, kicker_charged: bool,
+            kicker_healthy: bool, lethal_fault: bool):
+
         """
         :param robot_id: Shell id of the robot.
         :param is_ours: Whether the robot is one of our robots
@@ -55,6 +63,16 @@ class Robot:
         self.__kicker_charged = kicker_charged
         self.__kicker_healthy = kicker_healthy
         self.__lethal_fault = lethal_fault
+
+    @classmethod
+    def generate_basic_test_robot(cls, robot_id: RobotId, is_ours: bool = True, pose: np.ndarray = np.array([0.0, 0.0, 0.0]), twist: np.ndarray = np.array([0.0, 0.0, 0.0])):
+        """
+        Returns a robot with default options for use in testing
+        """
+        bot = cls(robot_id, is_ours, pose, twist, ball_sense_triggered = False, visible = True, has_ball_sense = True, kicker_charged = True, kicker_healthy = True, lethal_fault = False)
+        return bot
+
+
 
     def __repr__(self) -> str:
         return "Robot(id:{}, is_ours:{}, pose:{}, twist:{}, visible:{})".format(
@@ -166,10 +184,19 @@ class Ball:
     __vel: np.ndarray
     __visible: bool
 
-    def __init__(self, pos: np.ndarray, vel: np.ndarray, visible: bool = True):
+    def __init__(self, pos: np.ndarray, vel: np.ndarray, visible: bool):
+        """
+        :param pos: ball position np.ndarray([x, y])
+        :param vel: ball velocity np.ndarray([x, y])
+        :param visible: True if the ball is visible
+        """
         self.__pos = pos
         self.__vel = vel
         self.__visible = visible
+
+    @classmethod
+    def generate_test_ball(cls, pos: np.ndarray = np.array([0.0,0.0]), vel: np.ndarray([0.0,0.0])):
+        ball = cls(pos, vel, True)
 
     def __repr__(self) -> str:
         return "Ball(pos:{}, vel:{}, visible:{})".format(self.__pos, self.__vel, self.__visible)
@@ -233,11 +260,22 @@ class GameRestart(Enum):
 class Field:
     """Information about the field."""
 
-    __slots__ = ["__length_m","__width_m","__goal_width_m"]
+    __slots__ =  ["__length_m","__width_m","__border_m","__line_width_m","__goal_width_m","__goal_depth_m","__goal_height_m","__penalty_short_dist_m","__penalty_long_dist_m","__center_radius_m","__center_diameter_m","__goal_flat_m","__floor_length_m","__floor_width_m"]
 
     __length_m: float
     __width_m: float
+    __border_m: float
+    __line_width_m: float
     __goal_width_m: float
+    __goal_depth_m: float
+    __goal_height_m: float
+    __penalty_short_dist_m: float
+    __penalty_long_dist_m: float
+    __center_radius_m: float
+    __center_diameter_m: float
+    __goal_flat_m: float
+    __floor_length_m: float
+    __floor_width_m: float
 
     """
     A list of the information avalible in the FieldDimensions.msg
@@ -258,9 +296,47 @@ class Field:
     float32 floor_width
     """
 
-    def __init__(self, length_m: float, width_m: float, goal_width_m: float):
-        self.length_m = length_m
-        self.width_m = width_m
+
+    
+
+
+    def __init__(self, length_m: float, width_m: float, border_m: float, line_width_m: float, goal_width_m: float, goal_depth_m: float, goal_height_m: float, penalty_short_dist_m: float, penalty_long_dist_m: float, center_radius_m: float, center_diameter_m: float, goal_flat_m: float, floor_length_m: float, floor_width_m: float):
+        self.__length_m = length_m
+        self.__width_m = width_m
+        self.__border_m = border_m
+        self.__line_width_m = line_width_m
+        self.__goal_width_m = goal_width_m
+        self.__goal_depth_m = goal_depth_m
+        self.__goal_height_m = goal_height_m
+        self.__penalty_short_dist_m = penalty_short_dist_m
+        self.__penalty_long_dist_m = penalty_long_dist_m
+        self.__center_radius_m = center_radius_m
+        self.__center_diameter_m = center_diameter_m
+        self.__goal_flat_m = goal_flat_m
+        self.__floor_length_m = floor_length_m
+        self.__floor_width_m = floor_width_m
+
+    @classmethod
+    def generate_divA_field(cls) -> Field:
+        """
+        Generate a division A field
+
+        Penalty distances and "goal_flat" need to be fixed
+        """
+        field = cls(length_m = 12.0, width_m = 9.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.8, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 13.4, floor_width_m = 10.04):
+        return field
+
+    @classmethod
+    def generate_divB_field(cls) -> Field:
+        """
+        Generate a division B field
+
+        Penalty distances and "goal_flat" need to be fixed
+        """
+        field = cls(length_m = 12.0, width_m = 9.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.8, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 13.4, floor_width_m = 10.04):
+        return field
+
+
 
     @property
     def length_m(self) -> float:
