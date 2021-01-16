@@ -571,6 +571,20 @@ class WorldState:
         self.__game_info = game_info
         self.__field = field
 
+    @classmethod
+    def get_basic_test_worldstate(cls) -> WorldState:
+        field = Field.generate_divB_field()
+        center_field = field.center_field_loc()
+        our_bots = list()
+        their_bots = list()
+        for g in range(1,7):
+            our_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, 1.0]),is_ours = True))
+            their_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, -1.0]),is_ours = False))
+        ball = Ball.generate_test_ball(pos = np.array(center_field))
+        game_info = GameInfo.generate_test_playing_gameinfo()
+        world = cls(our_bots, their_bots, ball, game_info, field)
+        return world
+
     @property
     def robots(self) -> List[Robot]:
         """
