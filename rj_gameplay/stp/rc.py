@@ -572,7 +572,10 @@ class WorldState:
         self.__field = field
 
     @classmethod
-    def get_basic_test_worldstate(cls) -> WorldState:
+    def generate_basic_test_worldstate(cls) -> WorldState:
+        """
+        generates a test worldstate with 12 robots and a ball in the play state
+        """
         field = Field.generate_divB_field()
         center_field = field.center_field_loc()
         our_bots = list()
