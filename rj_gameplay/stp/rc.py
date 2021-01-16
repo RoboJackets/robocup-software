@@ -16,6 +16,7 @@ class Robot:
 
     __slots__ = ["__id", "__is_ours", "__pose", "__twist", "__ball_sense_triggered",
             "__visible", "__has_ball_sense", "__kicker_charged", "__kicker_healthy", "__lethal_fault"]
+
     __id: RobotId
     __is_ours: bool
     __pose: np.ndarray
@@ -26,14 +27,7 @@ class Robot:
     __kicker_charged: bool
     __kicker_healthy: bool
     __lethal_fault: bool
-    
-    """
-    def __init__(
-            self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray,
-            visible: bool = True, ball_sense_triggered: bool = False,
-            has_ball_sense: bool = True, kicker_charged: bool = True,
-            kicker_healthy: bool = True, lethal_fault: bool = False):
-    """ 
+   
 
     def __init__(
             self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray,
@@ -50,7 +44,7 @@ class Robot:
         :param visible: Whether the robot is being seen by the global vision system
         :param has_ball_sense: Whether the robots ball sensor is functional
         :param kicker_charged: Whether the robots kicker capacitors are charged
-        :param kicker_healthy: Whether the robots kicker is "healthy" (check on what that means)
+        :param kicker_healthy: Whether the robots kicker is "healthy"
         :param lethal_fault: Whether the robot has experienced a fault that will prevent it from functioning
         """
         self.__id = robot_id
@@ -65,14 +59,15 @@ class Robot:
         self.__lethal_fault = lethal_fault
 
     @classmethod
-    def generate_basic_test_robot(cls, robot_id: RobotId, is_ours: bool = True, pose: np.ndarray = np.array([0.0, 0.0, 0.0]), twist: np.ndarray = np.array([0.0, 0.0, 0.0])):
+    def generate_basic_test_robot(cls, robot_id: RobotId, is_ours: bool = True,
+            pose: np.ndarray = np.array([0.0, 0.0, 0.0]), 
+            twist: np.ndarray = np.array([0.0, 0.0, 0.0])) -> Robot:
         """
         Returns a robot with default options for use in testing
         """
-        bot = cls(robot_id, is_ours, pose, twist, ball_sense_triggered = False, visible = True, has_ball_sense = True, kicker_charged = True, kicker_healthy = True, lethal_fault = False)
+        bot = cls(robot_id, is_ours, pose, twist, ball_sense_triggered = False, visible = True,
+                has_ball_sense = True, kicker_charged = True, kicker_healthy = True, lethal_fault = False)
         return bot
-
-
 
     def __repr__(self) -> str:
         return "Robot(id:{}, is_ours:{}, pose:{}, twist:{}, visible:{})".format(
@@ -103,6 +98,10 @@ class Robot:
         """
         :return: Pose of the robot. [x, y, theta].
         """
+        if(not self.visible):
+            #I could see removing this as it's a thing that may happen fairly often
+            warnings.warn("Attempting to retrieve robot pose from non-visible robot", RuntimeWarning)
+
         return self.__pose
 
     @property
@@ -110,6 +109,10 @@ class Robot:
         """
         :return: Twist of the robot. [dx, dy, dtheta].
         """
+        if(not self.visible):
+            #I could see removing this as it's a thing that may happen fairly often
+            warnings.warn("Attempting to retrieve robot pose from non-visible robot", RuntimeWarning)
+
         return self.__twist
 
     @property
@@ -195,8 +198,9 @@ class Ball:
         self.__visible = visible
 
     @classmethod
-    def generate_test_ball(cls, pos: np.ndarray = np.array([0.0,0.0]), vel: np.ndarray([0.0,0.0])):
-        ball = cls(pos, vel, True)
+    def generate_test_ball(cls, pos: np.ndarray = np.array([0.0,0.0]), vel: np.ndarray([0.0,0.0]), visible: bool = True) -> Ball:
+        ball = cls(pos, vel, visible)
+        return ball
 
     def __repr__(self) -> str:
         return "Ball(pos:{}, vel:{}, visible:{})".format(self.__pos, self.__vel, self.__visible)
@@ -260,7 +264,11 @@ class GameRestart(Enum):
 class Field:
     """Information about the field."""
 
-    __slots__ =  ["__length_m","__width_m","__border_m","__line_width_m","__goal_width_m","__goal_depth_m","__goal_height_m","__penalty_short_dist_m","__penalty_long_dist_m","__center_radius_m","__center_diameter_m","__goal_flat_m","__floor_length_m","__floor_width_m"]
+    __slots__ =  ["__length_m","__width_m","__border_m","__line_width_m",
+            "__goal_width_m","__goal_depth_m","__goal_height_m",
+            "__penalty_short_dist_m","__penalty_long_dist_m",
+            "__center_radius_m","__center_diameter_m","__goal_flat_m",
+            "__floor_length_m","__floor_width_m"]
 
     __length_m: float
     __width_m: float
@@ -277,30 +285,12 @@ class Field:
     __floor_length_m: float
     __floor_width_m: float
 
-    """
-    A list of the information avalible in the FieldDimensions.msg
-    we probably need many of these included in WorldState
-    float32 length
-    float32 width
-    float32 border - What is border?
-    float32 line_width - Does gameplay need this? 
-    float32 goal_width
-    float32 goal_depth - Does gameplay need this?
-    float32 goal_height - Does gameplay need this?
-    float32 penalty_short_dist
-    float32 penalty_long_dist
-    float32 center_radius
-    float32 center_diameter
-    float32 goal_flat
-    float32 floor_length
-    float32 floor_width
-    """
-
-
-    
-
-
-    def __init__(self, length_m: float, width_m: float, border_m: float, line_width_m: float, goal_width_m: float, goal_depth_m: float, goal_height_m: float, penalty_short_dist_m: float, penalty_long_dist_m: float, center_radius_m: float, center_diameter_m: float, goal_flat_m: float, floor_length_m: float, floor_width_m: float):
+    def __init__(self, length_m: float, width_m: float, border_m: float,
+            line_width_m: float, goal_width_m: float, goal_depth_m: float,
+            goal_height_m: float, penalty_short_dist_m: float,
+            penalty_long_dist_m: float, center_radius_m: float,
+            center_diameter_m: float, goal_flat_m: float,
+            floor_length_m: float, floor_width_m: float):
         self.__length_m = length_m
         self.__width_m = width_m
         self.__border_m = border_m
@@ -333,37 +323,24 @@ class Field:
 
         Penalty distances and "goal_flat" need to be fixed
         """
-        field = cls(length_m = 12.0, width_m = 9.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.8, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 13.4, floor_width_m = 10.04):
+        field = cls(length_m = 9.0, width_m = 6.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.0, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 10.04, floor_width_m = 7.4):
         return field
 
+    @classmethod
+    def generate_our_field(cls) -> Field:
+        """
+        Generates the practice field that we have
+        """
+        raise NotImplementedError("Our field specifications need to be entered")
+        #field = cls(length_m = 9.0, width_m = 6.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.0, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 10.04, floor_width_m = 7.4):
+        #return field
 
-
-    @property
-    def length_m(self) -> float:
-        """
-        :returns: The length of the field in meters
-        """
-        return self.__length_m
-
-    @property
-    def width_m(self) -> float:
-        """
-        :returns: the width of the field in meters
-        """
-        return self.__length_m
-
-    @property
-    def goal_width_m(self) -> float:
-        """
-        :returns: the width of the goals in meters
-        """
-        return self.__goal_width_m
 
     @property
     def our_goal_loc(self) -> np.ndarray:
         """
         Conveniance function for getting our goal location
-        :returns: the location of our goal - its always (0,0)
+        :return: the location of our goal - its always (0,0)
         """
         return np.array([0.0,0.0])
 
@@ -371,7 +348,7 @@ class Field:
     def center_field_loc(self) -> np.ndarray:
         """
         Conveniance function for getting the center field location
-        :returns: the location of the center of the field
+        :return: the location of the center of the field
         """
         return np.array([0.0, self.length_m / 2])
 
@@ -379,20 +356,165 @@ class Field:
     def their_goal_loc(self) -> np.ndarray:
         """
         Conveniance function for getting the opponents field location
-        :returns: the location of the opponents goal
+        :return: the location of the opponents goal
         """
         return np.array([0.0, self.length_m])
+
+    @property
+    def floor_width_m(self) -> float:
+        """
+        :return: check on this one
+        """
+        return self.__floor_width_m
+
+
+    @property
+    def floor_length_m(self) -> float:
+        """
+        :return: check on this one
+        """
+        return self.__floor_length_m
+
+    @property
+    def goal_flat_m(self) -> float:
+        """
+        :return: check on this one
+        """
+        return self.__goal_flat_m
+
+    @property
+    def center_diameter_m(self) -> float:
+        """
+        :return: returns the diameter of the center of the field
+        """
+        return self.__center_diameter_m
+
+    @property
+    def center_radius_m(self) -> float:
+        """
+        :return: returns the radius of the center of the field
+        """
+        return self.__center_radius_m
+
+    @property
+    def penalty_long_dist_m(self) -> float:
+        """
+        :return: double check on this one
+        """
+        return self.__penalty_long_dist_m
+
+    @property
+    def penalty_long_dist_m(self) -> float:
+        """
+        :return: double check on this one
+        """
+        return self.__penalty_long_dist_m
+
+    @property
+    def penalty_short_dist_m(self) -> float:
+        """
+        :return: double check on this one
+        """
+        return self.__penalty_short_dist_m
+
+    @property
+    def border_m(self) -> float:
+        """
+        :return: The size of the border of the field
+        """
+        return self.__border_m
+
+    @property
+    def line_width_m(self) -> float:
+        """
+        :return: The width of the lines of the field
+        """
+        return self.__line_width_m
+
+    @property
+    def length_m(self) -> float:
+        """
+        :return: The length of the field in meters
+        """
+        return self.__length_m
+
+    @property
+    def width_m(self) -> float:
+        """
+        :return: the width of the field in meters
+        """
+        return self.__width_m
+
+    @property
+    def goal_width_m(self) -> float:
+        """
+        :return: the width of the goals in meters
+        """
+        return self.__goal_width_m
+
+    @property
+    def goal_depth_m(self) -> float:
+        """
+        :return: the depth of the goals in meters
+        """
+        return self.__goal_depth_m
+
+    @property
+    def goal_height_m(self) -> float:
+        """
+        :return: the height of the goals in meters
+        """
+        return self.__goal_height_m
 
 
 class GameInfo:
     """State of the soccer game"""
 
-    __slots__ = ["period", "state", "restart", "our_restart", "field"]
+    __slots__ = ["__period", "__state", "__restart", "__our_restart"]
 
-    period: GamePeriod
-    state: GameState
-    restart: GameRestart
-    our_restart: bool
+    __period: GamePeriod
+    __state: GameState
+    __restart: GameRestart
+    __our_restart: bool
+
+    def __init__(self, period: GamePeriod, state: GameState, restart: GameRestart, our_restart: bool):
+        self.__period = period
+        self.__state = state
+        self.__restart = restart
+        self.__our_restart = our_restart
+
+    @classmethod
+    def generate_test_playing_gameinfo(cls) -> GameInfo: 
+        info = cls(GamePeriod.FIRST_HALF, GameState.PLAYING, GameRestart.NONE, False)
+        return info
+
+    @property
+    def period(self) -> GamePeriod:
+        """
+        :return: The game period
+        """
+        return self.__period
+
+    @property
+    def state(self) -> GameState:
+        """
+        :return: The game state
+        """
+        return self.__state
+
+    @property
+    def restart(self) -> GameRestart:
+        """
+        :return: The game restart state
+        """
+        return self.__restart
+
+    @property
+    def our_restart(self) -> bool:
+        """
+        :return: True if it is our restart
+        """
+        return self.__our_restart
 
     def is_restart(self) -> bool:
         """
@@ -434,21 +556,61 @@ class GameInfo:
 class WorldState:
     """Current state of the world."""
 
-    __slots__ = ["our_robots", "their_robots", "ball", "game_info", "field"]
+    __slots__ = ["__our_robots", "__their_robots", "__ball", "__game_info", "__field"]
 
-    our_robots: List[Robot]
-    their_robots: List[Robot]
-    ball: Ball
-    game_info: GameInfo
-    field: Field
+    __our_robots: List[Robot]
+    __their_robots: List[Robot]
+    __ball: Ball
+    __game_info: GameInfo
+    __field: Field
 
     def __init__(self, our_robots: List[Robot], their_robots: List[Robot], ball: Ball, game_info: GameInfo, field: Field):
-        self.our_robots = our_robots
-        self.their_robots = their_robots
-        self.ball = ball
-        self.game_info = game_info
-        self.field = field
+        self.__our_robots = our_robots
+        self.__their_robots = their_robots
+        self.__ball = ball
+        self.__game_info = game_info
+        self.__field = field
 
     @property
     def robots(self) -> List[Robot]:
+        """
+        :return: A list of all robots (created by merging our_robots with their_robots)
+        """
         return self.our_robots + self.their_robots
+
+    @property
+    def our_robots(self) -> List[Robot]:
+        """
+        :return: A list of our robots
+        """
+        return self.__our_robots
+
+    @property
+    def their_robots(self) -> List[Robot]:
+        """
+        :return: A list of their robots
+        """
+        return self.__their_robots
+
+    @property
+    def ball(self) -> Ball:
+        """
+        :return: The ball
+        """
+        return self.__ball
+
+    @property
+    def game_info(self) -> GameInfo:
+        """
+        :return: The GameInfo object
+        """
+        return self.__game_info
+
+    @property
+    def field(self) -> Field:
+        """
+        :return: The Field object
+        """
+        return self.__field
+
+
