@@ -59,13 +59,13 @@ class Robot:
         self.__lethal_fault = lethal_fault
 
     @classmethod
-    def generate_basic_test_robot(cls, robot_id: RobotId, is_ours: bool = True,
+    def generate_test_robot(cls, robot_id: RobotId, is_ours: bool = True,
             pose: np.ndarray = np.array([0.0, 0.0, 0.0]), 
-            twist: np.ndarray = np.array([0.0, 0.0, 0.0])):
+            twist: np.ndarray = np.array([0.0, 0.0, 0.0]), ball_sense_triggered = False):
         """
         Returns a robot with default options for use in testing
         """
-        bot = cls(robot_id, is_ours, pose, twist, ball_sense_triggered = False, visible = True,
+        bot = cls(robot_id, is_ours, pose, twist, ball_sense_triggered = ball_sense_triggered, visible = True,
                 has_ball_sense = True, kicker_charged = True, kicker_healthy = True, lethal_fault = False)
         return bot
 
@@ -321,7 +321,9 @@ class Field:
         """
         Generate a division B field
 
-        Penalty distances and "goal_flat" need to be fixed
+        Penalty distances and "goal_flat" need to be fixea
+
+        Note, penalty distances are width and deapth of the penalty area
         """
         field = cls(length_m = 9.0, width_m = 6.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.0, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m =  10.04, floor_width_m = 7.4)
         return field
@@ -332,7 +334,7 @@ class Field:
         Generates the practice field that we have
         """
         raise NotImplementedError("Our field specifications need to be entered")
-        #field = cls(length_m = 9.0, width_m = 6.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.0, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 10.04, floor_width_m = 7.4):
+        #field = cls(length_m = 5918, width_m = , border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.0, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 10.04, floor_width_m = 7.4):
         #return field
 
 
@@ -572,25 +574,21 @@ class WorldState:
         self.__field = field
 
     @classmethod
-    def generate_basic_test_worldstate(cls, our_robots = None, their_robots = None, ball = None,
+    def generate_test_worldstate(cls, our_robots = [], their_robots = [], ball = Ball.generate_test_ball(),
             game_info = GameInfo.generate_test_playing_gameinfo(), field = Field.generate_divB_field()):
         """
         generates a test worldstate with 12 robots and a ball in the play state
         """
-        center_field = field.center_field_loc()
-        if(our_robots is None or their_robots is None):
-            our_bots = list()
-            their_bots = list()
-            for g in range(1,7):
-                our_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, 1.0]),is_ours = True))
-                their_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, -1.0]),is_ours = False))
-        else: 
-            our_bots = our_robots
-            their_bots = their_robots
-
-        if(ball is None):
-            ball = Ball.generate_test_ball(pos = np.array(center_field))
-
+        #center_field = field.center_field_loc()
+        #if(our_robots is None and their_robots is None):
+        #    our_bots = list()
+        #    their_bots = list()
+        #    for g in range(1,7):
+        #        our_bots.append(Robot.generate_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, 1.0]),is_ours = True))
+        #        their_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, -1.0]),is_ours = False))
+        #else: 
+        our_bots = our_robots
+        their_bots = their_robots
         world = cls(our_bots, their_bots, ball, game_info, field)
         return world
 
@@ -636,4 +634,12 @@ class WorldState:
         """
         return self.__field
 
+    def get_visible_robots(self) -> List[Robot]:
+        pass
+
+    def get_our_visible_robots(self) -> List[Robot]:
+        pass
+
+    def get_their_visible_robots(self) -> List[Robot]:
+        pass
 

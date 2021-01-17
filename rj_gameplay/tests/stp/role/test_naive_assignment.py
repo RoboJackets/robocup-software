@@ -177,11 +177,11 @@ def test_get_sorted_requests_multiple() -> None:
     tactic_instance = TacticBase(tactic_ctx)
 
     # Create dummy world_state.
-    out_robots: List[Robot] = []
-    their_robots: List[Robot] = []
-    ball: Ball = Ball(np.zeros(2), np.zeros(2))
+    #out_robots: List[Robot] = []
+    #their_robots: List[Robot] = []
+    #ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState.generate_basic_test_worldstate()
 
     requests: play.RoleRequests = {
         TacticBase: tactic_instance.get_requests(world_state, None)
@@ -258,19 +258,30 @@ def test_compute_costs_matrix() -> None:
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
     free_robots = np.array(
         [
+            Robot.generate_test_robot(robot_id = 1, pose = np.array([0, 0, 0])),
+            Robot.generate_test_robot(robot_id = 2, pose = np.array([1, 1, 0])),
+            Robot.generate_test_robot(robot_id = 3, pose = np.array([2, 2, 0])),
+            Robot.generate_test_robot(robot_id = 4, pose = np.array([3, 3, 0])),
+        ]
+    )
+
+    """ 
+    free_robots = np.array(
+        [
             Robot(0, True, np.array([0, 0, 0]), np.zeros(2)),
             Robot(1, True, np.array([1, 1, 0]), np.zeros(2)),
             Robot(2, True, np.array([2, 2, 0]), np.zeros(2)),
             Robot(3, True, np.array([3, 3, 0]), np.zeros(2)),
         ]
     )
+    """
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
     ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState.generate_test_worldstate(our_robots = out_robots)
     prev_results = {}
 
     # Compute the cost matrix.
@@ -317,19 +328,19 @@ def test_assign_prioritized_roles() -> None:
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
     free_robots = np.array(
         [
-            Robot(0, True, np.array([0, 0, 0]), np.zeros(2)),
-            Robot(1, True, np.array([1, 1, 0]), np.zeros(2)),
-            Robot(2, True, np.array([2, 2, 0]), np.zeros(2)),
-            Robot(3, True, np.array([3, 3, 0]), np.zeros(2)),
+            Robot.generate_test_robot(robot_id = 0, pose = np.array([0, 0, 0])),
+            Robot.generate_test_robot(robot_id = 0, pose = np.array([1, 1, 0])),
+            Robot.generate_test_robot(robot_id = 0, pose = np.array([2, 2, 0])),
+            Robot.generate_test_robot(robot_id = 0, pose = np.array([3, 3, 0])),
         ]
     )
 
     # Construct the world state.
-    out_robots: List[Robot] = list(free_robots)
-    their_robots: List[Robot] = []
-    ball: Ball = Ball(np.zeros(2), np.zeros(2))
+    our_bots: List[Robot] = list(free_robots)
+    their_bots: List[Robot] = []
+    #ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState.generate_test_worldstate(our_robots = our_bots, their_robots = their_bots)
 
     # Assign the roles.
     results, new_free_robots = NaiveRoleAssignment.assign_prioritized_roles(
@@ -383,12 +394,14 @@ def test_assign_roles() -> None:
     # Create the robots at (1, 1), (2, 2), (3, 3), (4, 4).
     free_robots = np.array(
         [
-            Robot(0, True, np.array([1, 1, 0]), np.zeros(2)),
-            Robot(1, True, np.array([2, 2, 0]), np.zeros(2)),
-            Robot(2, True, np.array([3, 3, 0]), np.zeros(2)),
-            Robot(3, True, np.array([4, 4, 0]), np.zeros(2)),
+            Robot.generate_test_robot(robot_id = 0, pose = np.array([1, 1, 0])),
+            Robot.generate_test_robot(robot_id = 1, pose = np.array([2, 2, 0])),
+            Robot.generate_test_robot(robot_id = 2, pose = np.array([3, 3, 0])),
+            Robot.generate_test_robot(robot_id = 3, pose = np.array([4, 4, 0])),
         ]
     )
+
+
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
@@ -451,9 +464,9 @@ def test_assign_roles_constrained() -> None:
     # Create the robots at (0, 0) (1, 1) and (2, 2)
     free_robots = np.array(
         [
-            Robot(0, True, np.array([0, 0, 0]), np.zeros(2), ball_sense_triggered=True),
-            Robot(1, True, np.array([1, 1, 0]), np.zeros(2)),
-            Robot(2, True, np.array([2, 2, 0]), np.zeros(2)),
+            Robot.generate_test_robot(robot_id = 0, pose = np.array([0, 0, 0]), ball_sense_triggered=True),
+            Robot.generate_test_robot(robot_id = 1, pose = np.array([1, 1, 0])),
+            Robot.generate_test_robot(robot_id = 2, pose = np.array([2, 2, 0])),
         ]
     )
 
