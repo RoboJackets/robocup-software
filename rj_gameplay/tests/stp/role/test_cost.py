@@ -14,8 +14,8 @@ def test_constant() -> None:
     switch_cost = 0.5
     cost_fn = cost.constant(0.5, switch_cost)
 
-    robot1 = rc.Robot(1, True, np.array([0, 0, 0]), np.array([0, 0, 0]))
-    robot2 = rc.Robot(2, True,  np.array([0, 0, 0]), np.array([0, 0, 0]))
+    robot1 = rc.Robot.generate_basic_test_robot(robot_id=1)
+    robot2 = rc.Robot.generate_basic_test_robot(robot_id=2)
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
     world_state = rc.WorldState([robot1, robot2], [], create_ball())
