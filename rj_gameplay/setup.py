@@ -13,6 +13,6 @@ setup(
     maintainer_email="oswinso@gmail.com",
     description="Rewrite of the gameplay library.",
     entry_points={
-        "console_scripts": ["gameplay_node = stp.gameplay_node:main"],
+        "console_scripts": ["gameplay_node = rj_gameplay.gameplay_node:main"],
     },
 )
