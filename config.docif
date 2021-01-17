@@ -46,7 +46,7 @@ GH_USER_VAR="GIT_USERNAME"
 GH_EMAIL_VAR="GIT_EMAIL"
 
 # The project root INSIDE THE DOCKER CONTAINER
-# Reccomended to leave as default (not set)
+# Recommended to leave as default (not set)
 # This will act as the 'current directory' within the project
 # This will need to be changed in the dockerfile as well to take effect. (use a custom one!)
 DOCKER_PROJECT_ROOT="/home/developer/project"
@@ -106,7 +106,7 @@ TEST_COMMANDS+=( 'make pylint;python-pylint;Python static code analysis.' )
 TEST_COMMANDS+=( 'make mypy;python-mypy;Python static type analysis.' )
 TEST_COMMANDS+=( 'make coverage;coverage;Coverage build task.' )
 
-# @RECCOMENDED
+# @RECOMMENDED
 # Clean command. Cleans the build files so there is no way the previous build can interfere. Add if you run
 # into issues
 CLEAN_COMMAND="make clean || true"
