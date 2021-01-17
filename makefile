@@ -11,23 +11,23 @@ endif
 
 # Tell CMake to create compile_commands.json for debug builds for clang-tidy
 DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=$(shell pwd)/install"
+CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build-debug
- 	cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
+ 	cd build-debug && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_release
 	mkdir -p build-release
- 	cd build-release && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
+ 	cd build-release && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_perf
 	mkdir -p build-release-debug
- 	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
+ 	cd build-release-debug && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 all:
@@ -122,7 +122,8 @@ behavior-diagrams: all
 	@echo -e "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
 
 clean:
-	cd build-debug && ninja clean || true
+	((cd build-debug && ninja clean); (cd build-release && ninja clean); (cd build-release-debug && ninja clean)) || true
+	rm -rf install/bin install/lib install/share install/include
 
 static-analysis:
 	mkdir -p build/static-analysis
