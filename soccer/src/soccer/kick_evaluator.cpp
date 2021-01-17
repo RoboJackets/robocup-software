@@ -7,8 +7,6 @@
 #include <rj_geometry/util.hpp>
 #include <rj_common/utils.hpp>
 
-REGISTER_CONFIGURABLE(KickEvaluator)
-
 using rj_geometry::Point, rj_geometry::Segment, rj_geometry::Line;
 using std::tuple, std::vector, std::abs, std::make_tuple, std::function, std::pair, std::get;
 
@@ -27,9 +25,6 @@ inline double fast_exp(double x) {
 
 inline float fast_exp(float x) { return static_cast<float>(fast_exp(static_cast<double>(x))); }
 
-void KickEvaluator::create_configuration(Configuration* cfg) {
-    
-}
 
 KickEvaluator::KickEvaluator(SystemState* system_state) : system_(system_state) {}
 
