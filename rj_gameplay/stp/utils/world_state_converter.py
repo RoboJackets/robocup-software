@@ -64,3 +64,4 @@ def worldstate_message_converter(msg: msg.WorldState) -> rc.WorldState:
     world_state = rc.WorldState(our_robots, their_robots, ball)
 
     return world_state
+    
