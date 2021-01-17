@@ -1,5 +1,5 @@
 import rclpy
-import stp.gameplay_node as gameplay_node
+import rj_gameplay.gameplay_node as gameplay_node
 import stp.rc as rc
 
 def test_entry_point() -> None:
