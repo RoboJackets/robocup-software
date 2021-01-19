@@ -176,12 +176,7 @@ def test_get_sorted_requests_multiple() -> None:
     tactic_ctx = get_tactic_ctx()
     tactic_instance = TacticBase(tactic_ctx)
 
-    # Create dummy world_state.
-    #out_robots: List[Robot] = []
-    #their_robots: List[Robot] = []
-    #ball: Ball = Ball(np.zeros(2), np.zeros(2))
-
-    world_state: WorldState = WorldState.generate_basic_test_worldstate()
+    world_state: WorldState = WorldState.generate_test_worldstate()
 
     requests: play.RoleRequests = {
         TacticBase: tactic_instance.get_requests(world_state, None)
@@ -279,7 +274,7 @@ def test_compute_costs_matrix() -> None:
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
-    ball: Ball = Ball(np.zeros(2), np.zeros(2))
+    ball: Ball = Ball.generate_test_ball()
 
     world_state: WorldState = WorldState.generate_test_worldstate(our_robots = out_robots)
     prev_results = {}
@@ -338,7 +333,6 @@ def test_assign_prioritized_roles() -> None:
     # Construct the world state.
     our_bots: List[Robot] = list(free_robots)
     their_bots: List[Robot] = []
-    #ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
     world_state: WorldState = WorldState.generate_test_worldstate(our_robots = our_bots, their_robots = their_bots)
 
@@ -406,9 +400,9 @@ def test_assign_roles() -> None:
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
-    ball: Ball = Ball(np.zeros(2), np.zeros(2))
+    ball: Ball = Ball.generate_test_ball()
 
-    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState.generate_test_worldstate(our_robots = out_robots, their_robots = their_robots)
 
     # Assign the roles.
     results = NaiveRoleAssignment.assign_roles(requests, world_state, {})
@@ -473,9 +467,8 @@ def test_assign_roles_constrained() -> None:
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
-    ball: Ball = Ball(np.zeros(2), np.zeros(2))
 
-    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState.generate_test_worldstate(our_robots = out_robots,their_robots = their_robots)
 
     # Assign the roles.
     results = NaiveRoleAssignment.assign_roles(requests, world_state, {})

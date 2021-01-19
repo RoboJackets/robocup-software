@@ -99,11 +99,7 @@ def test_flatten_requests() -> None:
     tactic_instance = TacticBase(tactic_ctx)
 
     # Create dummy world_state.
-    out_robots: List[Robot] = []
-    their_robots: List[Robot] = []
-    ball: Ball = Ball(np.zeros(2), np.zeros(2))
-
-    world_state: WorldState = WorldState(out_robots, their_robots, ball)
+    world_state: WorldState = WorldState.generate_test_worldstate()
 
     requests: play.RoleRequests = {
         TacticBase: tactic_instance.get_requests(world_state, None)
