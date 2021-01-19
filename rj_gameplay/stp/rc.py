@@ -210,6 +210,9 @@ class Ball:
         """
         :return: Position of the ball. [x, y].
         """
+        if(not self.visible):
+            warnings.warn("Retrieved the position of a non-visible ball", RuntimeWarning)
+
         return self.__pos
 
     @property
@@ -217,6 +220,9 @@ class Ball:
         """
         :return: Velocity of the ball. [dx, dy].
         """
+        if(not self.visible):
+            warnings.warn("Retrieved the velocity of a non-visible ball", RuntimeWarning)
+
         return self.__vel
 
     @property
@@ -577,16 +583,8 @@ class WorldState:
     def generate_test_worldstate(cls, our_robots = [], their_robots = [], ball = Ball.generate_test_ball(),
             game_info = GameInfo.generate_test_playing_gameinfo(), field = Field.generate_divB_field()):
         """
-        generates a test worldstate with 12 robots and a ball in the play state
+        generates a test worldstate
         """
-        #center_field = field.center_field_loc()
-        #if(our_robots is None and their_robots is None):
-        #    our_bots = list()
-        #    their_bots = list()
-        #    for g in range(1,7):
-        #        our_bots.append(Robot.generate_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, 1.0]),is_ours = True))
-        #        their_bots.append(Robot.generate_basic_test_robot(robot_id = g, pose = np.array(center_field + [g*0.1 - 1.0, -1.0]),is_ours = False))
-        #else: 
         our_bots = our_robots
         their_bots = their_robots
         world = cls(our_bots, their_bots, ball, game_info, field)
@@ -634,12 +632,12 @@ class WorldState:
         """
         return self.__field
 
-    def get_visible_robots(self) -> List[Robot]:
-        pass
+    #def get_visible_robots(self) -> List[Robot]:
+    #    pass
 
-    def get_our_visible_robots(self) -> List[Robot]:
-        pass
+    #def get_our_visible_robots(self) -> List[Robot]:
+    #    pass
 
-    def get_their_visible_robots(self) -> List[Robot]:
-        pass
+    #def get_their_visible_robots(self) -> List[Robot]:
+    #    pass
 
