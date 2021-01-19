@@ -14,8 +14,11 @@ class Robot:
     """State of a robot. Pose: [x, y, theta]. Twist: [dx, dy, dtheta]. Properties are
     to enforce that instances of this class should not be mutated."""
 
-    __slots__ = ["__id", "__is_ours", "__pose", "__twist", "__ball_sense_triggered",
-            "__visible", "__has_ball_sense", "__kicker_charged", "__kicker_healthy", "__lethal_fault"]
+    __slots__ = [
+        "__id", "__is_ours", "__pose", "__twist", "__ball_sense_triggered",
+        "__visible", "__has_ball_sense", "__kicker_charged",
+        "__kicker_healthy", "__lethal_fault"
+    ]
 
     __id: RobotId
     __is_ours: bool
@@ -27,14 +30,11 @@ class Robot:
     __kicker_charged: bool
     __kicker_healthy: bool
     __lethal_fault: bool
-   
 
-    def __init__(
-            self, robot_id: RobotId, is_ours: bool, pose: np.ndarray, twist: np.ndarray,
-            visible: bool, ball_sense_triggered: bool,
-            has_ball_sense: bool, kicker_charged: bool,
-            kicker_healthy: bool, lethal_fault: bool):
-
+    def __init__(self, robot_id: RobotId, is_ours: bool, pose: np.ndarray,
+                 twist: np.ndarray, visible: bool, ball_sense_triggered: bool,
+                 has_ball_sense: bool, kicker_charged: bool,
+                 kicker_healthy: bool, lethal_fault: bool):
         """
         :param robot_id: Shell id of the robot.
         :param is_ours: Whether the robot is one of our robots
@@ -59,25 +59,37 @@ class Robot:
         self.__lethal_fault = lethal_fault
 
     @classmethod
-    def generate_test_robot(cls, robot_id: RobotId, is_ours: bool = True,
-            pose: np.ndarray = np.array([0.0, 0.0, 0.0]), 
-            twist: np.ndarray = np.array([0.0, 0.0, 0.0]), ball_sense_triggered = False):
+    def generate_test_robot(cls,
+                            robot_id: RobotId,
+                            is_ours: bool = True,
+                            pose: np.ndarray = np.array([0.0, 0.0, 0.0]),
+                            twist: np.ndarray = np.array([0.0, 0.0, 0.0]),
+                            ball_sense_triggered=False):
         """
         Returns a robot with default options for use in testing
         """
-        bot = cls(robot_id, is_ours, pose, twist, ball_sense_triggered = ball_sense_triggered, visible = True,
-                has_ball_sense = True, kicker_charged = True, kicker_healthy = True, lethal_fault = False)
+        bot = cls(robot_id,
+                  is_ours,
+                  pose,
+                  twist,
+                  ball_sense_triggered=ball_sense_triggered,
+                  visible=True,
+                  has_ball_sense=True,
+                  kicker_charged=True,
+                  kicker_healthy=True,
+                  lethal_fault=False)
         return bot
 
     def __repr__(self) -> str:
         return "Robot(id:{}, is_ours:{}, pose:{}, twist:{}, visible:{})".format(
-            self.__id, self.__is_ours, self.__pose, self.__twist, self.__visible)
+            self.__id, self.__is_ours, self.__pose, self.__twist,
+            self.__visible)
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Robot):
-            if(self.is_ours == other.is_ours and self.id == other.id):
+            if (self.is_ours == other.is_ours and self.id == other.id):
                 return True
-        return False 
+        return False
 
     @property
     def id(self) -> RobotId:
@@ -98,9 +110,11 @@ class Robot:
         """
         :return: Pose of the robot. [x, y, theta].
         """
-        if(not self.visible):
+        if (not self.visible):
             #I could see removing this as it's a thing that may happen fairly often
-            warnings.warn("Attempting to retrieve robot pose from non-visible robot", RuntimeWarning)
+            warnings.warn(
+                "Attempting to retrieve robot pose from non-visible robot",
+                RuntimeWarning)
 
         return self.__pose
 
@@ -109,9 +123,11 @@ class Robot:
         """
         :return: Twist of the robot. [dx, dy, dtheta].
         """
-        if(not self.visible):
+        if (not self.visible):
             #I could see removing this as it's a thing that may happen fairly often
-            warnings.warn("Attempting to retrieve robot pose from non-visible robot", RuntimeWarning)
+            warnings.warn(
+                "Attempting to retrieve robot pose from non-visible robot",
+                RuntimeWarning)
 
         return self.__twist
 
@@ -120,8 +136,10 @@ class Robot:
         """
         :return: True if the ball sense break-beam is triggered
         """
-        if(not self.is_ours):
-            warnings.warn("Attempting to retrieve ball sense information from an opposing robot", RuntimeWarning)
+        if (not self.is_ours):
+            warnings.warn(
+                "Attempting to retrieve ball sense information from an opposing robot",
+                RuntimeWarning)
             return False
 
         return self.__ball_sense_triggered
@@ -138,8 +156,10 @@ class Robot:
         """
         :return: True if this robot has functioning ball sensors
         """
-        if(not self.is_ours):
-            warnings.warn("Attempting to retrieve ball sense status from an opposing robot", RuntimeWarning)
+        if (not self.is_ours):
+            warnings.warn(
+                "Attempting to retrieve ball sense status from an opposing robot",
+                RuntimeWarning)
 
         return self.__has_ball_sense
 
@@ -148,8 +168,10 @@ class Robot:
         """
         :return: True if the kicker capacitors are charged
         """
-        if(not self.is_ours):
-            warnings.warn("Attempting to retrieve kicker charge status from an opposing robot", RuntimeWarning)
+        if (not self.is_ours):
+            warnings.warn(
+                "Attempting to retrieve kicker charge status from an opposing robot",
+                RuntimeWarning)
             return False
 
         return self.__kicker_charged
@@ -159,20 +181,23 @@ class Robot:
         """
         :return: True if the kicker is healthy
         """
-        if(not self.is_ours):
-            warnings.warn("Attempting to retrieve kicker health status from an opposing robot", RuntimeWarning)
+        if (not self.is_ours):
+            warnings.warn(
+                "Attempting to retrieve kicker health status from an opposing robot",
+                RuntimeWarning)
             return False
 
         return self.__kicker_healthy
-
 
     @property
     def lethal_fault(self) -> bool:
         """
         :return: True if the robot has encounted a fault that will prevent further play, such as an FPGA or motor fault.
         """
-        if(not self.is_ours):
-            warnings.warn("Attempting to retrieve lethal fault information from an opposing robot", RuntimeWarning)
+        if (not self.is_ours):
+            warnings.warn(
+                "Attempting to retrieve lethal fault information from an opposing robot",
+                RuntimeWarning)
 
         return self.__lethal_fault
 
@@ -198,20 +223,25 @@ class Ball:
         self.__visible = visible
 
     @classmethod
-    def generate_test_ball(cls, pos: np.ndarray = np.array([0.0,0.0]), vel: np.ndarray = np.array([0.0,0.0]), visible: bool = True):
+    def generate_test_ball(cls,
+                           pos: np.ndarray = np.array([0.0, 0.0]),
+                           vel: np.ndarray = np.array([0.0, 0.0]),
+                           visible: bool = True):
         ball = cls(pos, vel, visible)
         return ball
 
     def __repr__(self) -> str:
-        return "Ball(pos:{}, vel:{}, visible:{})".format(self.__pos, self.__vel, self.__visible)
+        return "Ball(pos:{}, vel:{}, visible:{})".format(
+            self.__pos, self.__vel, self.__visible)
 
     @property
     def pos(self) -> np.ndarray:
         """
         :return: Position of the ball. [x, y].
         """
-        if(not self.visible):
-            warnings.warn("Retrieved the position of a non-visible ball", RuntimeWarning)
+        if (not self.visible):
+            warnings.warn("Retrieved the position of a non-visible ball",
+                          RuntimeWarning)
 
         return self.__pos
 
@@ -220,8 +250,9 @@ class Ball:
         """
         :return: Velocity of the ball. [dx, dy].
         """
-        if(not self.visible):
-            warnings.warn("Retrieved the velocity of a non-visible ball", RuntimeWarning)
+        if (not self.visible):
+            warnings.warn("Retrieved the velocity of a non-visible ball",
+                          RuntimeWarning)
 
         return self.__vel
 
@@ -270,11 +301,13 @@ class GameRestart(Enum):
 class Field:
     """Information about the field."""
 
-    __slots__ =  ["__length_m","__width_m","__border_m","__line_width_m",
-            "__goal_width_m","__goal_depth_m","__goal_height_m",
-            "__penalty_short_dist_m","__penalty_long_dist_m",
-            "__center_radius_m","__center_diameter_m","__goal_flat_m",
-            "__floor_length_m","__floor_width_m"]
+    __slots__ = [
+        "__length_m", "__width_m", "__border_m", "__line_width_m",
+        "__goal_width_m", "__goal_depth_m", "__goal_height_m",
+        "__penalty_short_dist_m", "__penalty_long_dist_m", "__center_radius_m",
+        "__center_diameter_m", "__goal_flat_m", "__floor_length_m",
+        "__floor_width_m"
+    ]
 
     __length_m: float
     __width_m: float
@@ -292,11 +325,11 @@ class Field:
     __floor_width_m: float
 
     def __init__(self, length_m: float, width_m: float, border_m: float,
-            line_width_m: float, goal_width_m: float, goal_depth_m: float,
-            goal_height_m: float, penalty_short_dist_m: float,
-            penalty_long_dist_m: float, center_radius_m: float,
-            center_diameter_m: float, goal_flat_m: float,
-            floor_length_m: float, floor_width_m: float):
+                 line_width_m: float, goal_width_m: float, goal_depth_m: float,
+                 goal_height_m: float, penalty_short_dist_m: float,
+                 penalty_long_dist_m: float, center_radius_m: float,
+                 center_diameter_m: float, goal_flat_m: float,
+                 floor_length_m: float, floor_width_m: float):
         self.__length_m = length_m
         self.__width_m = width_m
         self.__border_m = border_m
@@ -319,7 +352,20 @@ class Field:
 
         Penalty distances and "goal_flat" need to be fixed
         """
-        field = cls(length_m = 12.0, width_m = 9.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.8, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m = 13.4, floor_width_m = 10.04)
+        field = cls(length_m=12.0,
+                    width_m=9.0,
+                    border_m=0.3,
+                    line_width_m=0.01,
+                    goal_width_m=1.8,
+                    goal_depth_m=0.18,
+                    goal_height_m=0.16,
+                    penalty_short_dist_m=float('nan'),
+                    penalty_long_dist_m=float('nan'),
+                    center_radius_m=0.5,
+                    center_diameter_m=1.0,
+                    goal_flat_m=float('nan'),
+                    floor_length_m=13.4,
+                    floor_width_m=10.04)
         return field
 
     @classmethod
@@ -331,7 +377,20 @@ class Field:
 
         Note, penalty distances are width and deapth of the penalty area
         """
-        field = cls(length_m = 9.0, width_m = 6.0, border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.0, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m =  10.04, floor_width_m = 7.4)
+        field = cls(length_m=9.0,
+                    width_m=6.0,
+                    border_m=0.3,
+                    line_width_m=0.01,
+                    goal_width_m=1.0,
+                    goal_depth_m=0.18,
+                    goal_height_m=0.16,
+                    penalty_short_dist_m=float('nan'),
+                    penalty_long_dist_m=float('nan'),
+                    center_radius_m=0.5,
+                    center_diameter_m=1.0,
+                    goal_flat_m=float('nan'),
+                    floor_length_m=10.04,
+                    floor_width_m=7.4)
         return field
 
     @classmethod
@@ -339,10 +398,10 @@ class Field:
         """
         Generates the practice field that we have
         """
-        raise NotImplementedError("Our field specifications need to be entered")
+        raise NotImplementedError(
+            "Our field specifications need to be entered")
         #field = cls(length_m = 5918, width_m = , border_m = 0.3, line_width_m = 0.01, goal_width_m = 1.0, goal_depth_m = 0.18, goal_height_m = 0.16, penalty_short_dist_m = float('nan'), penalty_long_dist_m = float('nan'), center_radius_m = 0.5, center_diameter_m = 1.0, goal_flat_m = float('nan'), floor_length_m: 10.04, floor_width_m = 7.4):
         #return field
-
 
     @property
     def our_goal_loc(self) -> np.ndarray:
@@ -350,7 +409,7 @@ class Field:
         Conveniance function for getting our goal location
         :return: the location of our goal - its always (0,0)
         """
-        return np.array([0.0,0.0])
+        return np.array([0.0, 0.0])
 
     @property
     def center_field_loc(self) -> np.ndarray:
@@ -374,7 +433,6 @@ class Field:
         :return: check on this one
         """
         return self.__floor_width_m
-
 
     @property
     def floor_length_m(self) -> float:
@@ -485,15 +543,17 @@ class GameInfo:
     __restart: GameRestart
     __our_restart: bool
 
-    def __init__(self, period: GamePeriod, state: GameState, restart: GameRestart, our_restart: bool):
+    def __init__(self, period: GamePeriod, state: GameState,
+                 restart: GameRestart, our_restart: bool):
         self.__period = period
         self.__state = state
         self.__restart = restart
         self.__our_restart = our_restart
 
     @classmethod
-    def generate_test_playing_gameinfo(cls): 
-        info = cls(GamePeriod.FIRST_HALF, GameState.PLAYING, GameRestart.NONE, False)
+    def generate_test_playing_gameinfo(cls):
+        info = cls(GamePeriod.FIRST_HALF, GameState.PLAYING, GameRestart.NONE,
+                   False)
         return info
 
     @property
@@ -564,7 +624,9 @@ class GameInfo:
 class WorldState:
     """Current state of the world."""
 
-    __slots__ = ["__our_robots", "__their_robots", "__ball", "__game_info", "__field"]
+    __slots__ = [
+        "__our_robots", "__their_robots", "__ball", "__game_info", "__field"
+    ]
 
     __our_robots: List[Robot]
     __their_robots: List[Robot]
@@ -572,7 +634,8 @@ class WorldState:
     __game_info: GameInfo
     __field: Field
 
-    def __init__(self, our_robots: List[Robot], their_robots: List[Robot], ball: Ball, game_info: GameInfo, field: Field):
+    def __init__(self, our_robots: List[Robot], their_robots: List[Robot],
+                 ball: Ball, game_info: GameInfo, field: Field):
         self.__our_robots = our_robots
         self.__their_robots = their_robots
         self.__ball = ball
@@ -580,8 +643,13 @@ class WorldState:
         self.__field = field
 
     @classmethod
-    def generate_test_worldstate(cls, our_robots = [], their_robots = [], ball = Ball.generate_test_ball(),
-            game_info = GameInfo.generate_test_playing_gameinfo(), field = Field.generate_divB_field()):
+    def generate_test_worldstate(
+        cls,
+        our_robots=[],
+        their_robots=[],
+        ball=Ball.generate_test_ball(),
+        game_info=GameInfo.generate_test_playing_gameinfo(),
+        field=Field.generate_divB_field()):
         """
         generates a test worldstate
         """
@@ -640,4 +708,3 @@ class WorldState:
 
     #def get_their_visible_robots(self) -> List[Robot]:
     #    pass
-

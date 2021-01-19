@@ -2,8 +2,9 @@ import numpy as np
 from stp.rc import Ball, Robot, WorldState, Field, GameInfo, GamePeriod, GameRestart, GameState
 import warnings
 
+
 def test_generate_test_Robot() -> None:
-    bot = Robot.generate_test_robot(robot_id = 0)
+    bot = Robot.generate_test_robot(robot_id=0)
     assert bot.id == 0
     assert bot.is_ours is True
     assert type(bot.pose) is np.ndarray
@@ -17,16 +18,20 @@ def test_generate_test_Robot() -> None:
     assert bot.kicker_healthy is True
     assert bot.lethal_fault is False
 
-    bot2 = Robot.generate_test_robot(robot_id = 2, is_ours = False, pose = np.array([1.0, 2.0, 3.0]), twist = np.array([0.0, 2.0, 1.1]), ball_sense_triggered = True)
+    bot2 = Robot.generate_test_robot(robot_id=2,
+                                     is_ours=False,
+                                     pose=np.array([1.0, 2.0, 3.0]),
+                                     twist=np.array([0.0, 2.0, 1.1]),
+                                     ball_sense_triggered=True)
 
     assert bot2.id == 2
     assert bot2.is_ours is False
     assert np.all(bot2.pose == np.array([1.0, 2.0, 3.0]))
     assert np.all(bot2.twist == np.array([0.0, 2.0, 1.1]))
-    
+
     #Make warnings into errors
     warnings.filterwarnings('error')
-    try: 
+    try:
         assert bot2.ball_sense_triggered is True
     except RuntimeWarning:
         pass
@@ -46,9 +51,12 @@ def test_generate_test_Ball() -> None:
     except RuntimeWarning:
         pass
 
-    ball2 = Ball.generate_test_ball(pos=np.array([1.0,2.0]), vel=np.array([2.0,3.0]), visible=True)
+    ball2 = Ball.generate_test_ball(pos=np.array([1.0, 2.0]),
+                                    vel=np.array([2.0, 3.0]),
+                                    visible=True)
     assert np.all(np.array([1.0, 2.0]) == ball2.pos)
     assert np.all(np.array([2.0, 3.0]) == ball2.vel)
+
 
 def test_generate_test_Field() -> None:
     fieldA = Field.generate_divA_field()
@@ -62,12 +70,14 @@ def test_generate_test_Field() -> None:
     assert np.all(fieldA.center_field_loc == np.array([0.0, 6.0]))
     assert np.all(fieldB.center_field_loc == np.array([0.0, 4.5]))
 
+
 def test_generate_test_GameInfo() -> None:
     info = GameInfo.generate_test_playing_gameinfo()
     assert info.period == GamePeriod.FIRST_HALF
     assert info.state == GameState.PLAYING
     assert info.restart == GameRestart.NONE
     assert info.our_restart == False
+
 
 def test_generate_test_WorldState() -> None:
     worldState = WorldState.generate_test_worldstate()
@@ -78,13 +88,13 @@ def test_generate_test_WorldState() -> None:
     our_bots = list()
     their_bots = list()
     for g in range(1, 12):
-        our_bots.append(Robot.generate_test_robot(robot_id = g))
-        their_bots.append(Robot.generate_test_robot(robot_id = g, is_ours = False))
-    
-    world2 = WorldState.generate_test_worldstate(our_robots = our_bots, their_robots = their_bots, field=Field.generate_divA_field(), ball=Ball.generate_test_ball(pos=np.array([0.0, 1.0])))
+        our_bots.append(Robot.generate_test_robot(robot_id=g))
+        their_bots.append(Robot.generate_test_robot(robot_id=g, is_ours=False))
+
+    world2 = WorldState.generate_test_worldstate(
+        our_robots=our_bots,
+        their_robots=their_bots,
+        field=Field.generate_divA_field(),
+        ball=Ball.generate_test_ball(pos=np.array([0.0, 1.0])))
     assert len(world2.robots) == 22
     assert len(world2.our_robots) == 11
-
-
-
-

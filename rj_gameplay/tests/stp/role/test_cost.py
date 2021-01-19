@@ -13,7 +13,8 @@ def test_constant() -> None:
     robot2 = rc.Robot.generate_test_robot(robot_id=2)
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
-    world_state = rc.WorldState.generate_test_worldstate(our_robots=[robot1, robot2], ball=rc.Ball.generate_test_ball())
+    world_state = rc.WorldState.generate_test_worldstate(
+        our_robots=[robot1, robot2], ball=rc.Ball.generate_test_ball())
 
     cost_none: float = cost_fn(robot1, None, world_state)
     assert cost_none == 0.5
@@ -32,12 +33,19 @@ def test_distance_to_pt() -> None:
     target_pt = np.array([1.0, 2.0])
     cost_fn = cost.distance_to_pt(target_pt, saturate_dist, switch_cost)
 
-    robot1 = rc.Robot.generate_test_robot(robot_id = 1, is_ours = True, pose = np.array([1.0, 2.0, 0]), twist = np.array([0, 0, 0]))
-    robot2 = rc.Robot.generate_test_robot(robot_id = 2, is_ours = True,  pose = np.array([2.0, 3.0, 0]), twist = np.array([0, 0, 0]))
+    robot1 = rc.Robot.generate_test_robot(robot_id=1,
+                                          is_ours=True,
+                                          pose=np.array([1.0, 2.0, 0]),
+                                          twist=np.array([0, 0, 0]))
+    robot2 = rc.Robot.generate_test_robot(robot_id=2,
+                                          is_ours=True,
+                                          pose=np.array([2.0, 3.0, 0]),
+                                          twist=np.array([0, 0, 0]))
 
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
-    world_state = rc.WorldState.generate_test_worldstate(our_robots=[robot1, robot2])
+    world_state = rc.WorldState.generate_test_worldstate(
+        our_robots=[robot1, robot2])
 
     cost_none: float = cost_fn(robot1, None, world_state)
     assert cost_none == 0.0
