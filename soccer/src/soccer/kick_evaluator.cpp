@@ -10,10 +10,10 @@
 using rj_geometry::Point, rj_geometry::Segment, rj_geometry::Line;
 using std::tuple, std::vector, std::abs, std::make_tuple, std::function, std::pair, std::get;
 
-DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_std_dev, 0.04, "kick standard deviation");
-DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_mean, 0, "kick mean");
-DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, robot_std_dev, 0.3, "robot standard deviation");
-DEFINE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, start_x_offset, 0.1, "start x offset");
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_std_dev, 0.04, "kick standard deviation");
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_mean, 0, "kick mean");
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, robot_std_dev, 0.3, "robot standard deviation");
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, start_x_offset, 0.1, "start x offset");
 
 // Fast exp function, valid within 4% at +- 100
 inline double fast_exp(double x) {
@@ -77,7 +77,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     for (tuple<float, float>& loc : bot_locations) {
         bot_means.push_back(get<1>(loc));
         // Want std_dev in radians, not XY distance
-        bot_st_devs.push_back(atan(kick_evaluator::PARAM_robot_std_dev / get<0>(loc)));
+        bot_st_devs.push_back(atan(static_cast<float>(kick_evaluator::PARAM_robot_std_dev) / get<0>(loc)));
 
         // Robot Past Target
         dist_past_target = static_cast<float>(get<0>(loc) - (origin - center).mag());
@@ -85,7 +85,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         // If robot is past target, only use the chance at the target segment
         if (dist_past_target > 0 && fabs(get<1>(loc)) < M_PI / 2) {
             // Evaluate a normal distribution at dist away and scale
-            bot_vert_scales.push_back(1 - erf(dist_past_target / (kick_evaluator::PARAM_robot_std_dev * sqrt(2))));
+            bot_vert_scales.push_back(1 - erf(dist_past_target / (static_cast<float>(kick_evaluator::PARAM_robot_std_dev) * sqrt(2))));
         } else {
             bot_vert_scales.push_back(1);
         }
@@ -96,8 +96,8 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     function<tuple<float, float>(float)> ke_func =
         [&](float x){
             return eval_calculation(x, 
-                kick_evaluator::PARAM_kick_mean,
-                kick_evaluator::PARAM_kick_std_dev,
+                static_cast<float>(kick_evaluator::PARAM_kick_mean),
+                static_cast<float>(kick_evaluator::PARAM_kick_std_dev),
                 std::cref(bot_means),
                 std::cref(bot_st_devs),
                 std::cref(bot_vert_scales),

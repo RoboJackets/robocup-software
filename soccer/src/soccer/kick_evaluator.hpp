@@ -11,12 +11,12 @@
 #include "optimization/parallel_gradient_1d_config.hpp"
 #include "optimization/parallel_gradient_ascent_1d.hpp"
 
-constexpr auto kickEvaluatorParamModule = "kick_evaluator";
+constexpr auto kKickEvaluatorParamModule = "kick_evaluator";
 
-DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_std_dev)
-DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, kick_mean)
-DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, robot_std_dev)
-DECLARE_NS_FLOAT64(kickEvaluatorParamModule, kick_evaluator, start_x_offset)
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_std_dev)
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_mean)
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, robot_std_dev)
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, start_x_offset)
 
 // < [Point along target segment to aim at], [% Chance of success] >
 using KickResults = std::pair<rj_geometry::Point, float>;
