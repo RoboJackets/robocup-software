@@ -77,7 +77,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     for (tuple<float, float>& loc : bot_locations) {
         bot_means.push_back(get<1>(loc));
         // Want std_dev in radians, not XY distance
-        bot_st_devs.push_back(atan(static_cast<float>(kick_evaluator::PARAM_robot_std_dev) / get<0>(loc)));
+        bot_st_devs.push_back(std::atan(static_cast<float>(kick_evaluator::PARAM_robot_std_dev) / get<0>(loc)));
 
         // Robot Past Target
         dist_past_target = static_cast<float>(get<0>(loc) - (origin - center).mag());
