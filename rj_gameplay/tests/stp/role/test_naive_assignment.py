@@ -257,16 +257,6 @@ def test_compute_costs_matrix() -> None:
         Robot.generate_test_robot(robot_id=3, pose=np.array([2, 2, 0])),
         Robot.generate_test_robot(robot_id=4, pose=np.array([3, 3, 0])),
     ])
-    """ 
-    free_robots = np.array(
-        [
-            Robot(0, True, np.array([0, 0, 0]), np.zeros(2)),
-            Robot(1, True, np.array([1, 1, 0]), np.zeros(2)),
-            Robot(2, True, np.array([2, 2, 0]), np.zeros(2)),
-            Robot(3, True, np.array([3, 3, 0]), np.zeros(2)),
-        ]
-    )
-    """
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)

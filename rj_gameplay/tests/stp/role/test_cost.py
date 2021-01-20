@@ -14,7 +14,7 @@ def test_constant() -> None:
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
     world_state = rc.WorldState.generate_test_worldstate(
-        our_robots=[robot1, robot2], ball=rc.Ball.generate_test_ball())
+        our_robots=[robot1, robot2])
 
     cost_none: float = cost_fn(robot1, None, world_state)
     assert cost_none == 0.5
