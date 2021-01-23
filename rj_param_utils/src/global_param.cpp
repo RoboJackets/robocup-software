@@ -1,22 +1,17 @@
 #include <rj_param_utils/global_param.hpp>
 
-template <typename ParamType>
-bool ROS2GlobalParamProvider::UpdateGlobalParameter(    \
-        const std::string& full_name, const ParamType& new_value) {
-    // TODO: Check if parameter is in node and update. 
-    // TODO: Set on parameter event callback.
-    return ;
+ROS2GlobalParameterProvider::ROS2GlobalParamProvider(rclcpp::Node* node, 
+        const rclcpp::Node* global_node) : node_{node}, global_node_{global_node} {
+    params_client_ = std::make_shared<rclcpp::AsyncParametersClient>(node);
+
+    params_client_sub_ = params_client_->on_parameter_event(UpdateGlobalParams);
 }
 
 template <typename ParamType>
-void ROS2GlobalParamProvider::SetGlobalParameter(
-        const std::string& full_name, const ParamType& new_value) {
-    node_->declare_parameter(full_name);
-    parameters_client->set_parameters(rclcpp::Parameter(full_name, new_value));
+void ROS2GlobalParamProvider::UpdateGlobalParams() {
+    // TODO: Update parameters in the global params node.
 }
 
-void ROS2GlobalParamProvider::PropagateParameters(rclcpp::Node* node) {
-    // TODO: Loop through parameters of given node and update if required.
-}
+
 
 

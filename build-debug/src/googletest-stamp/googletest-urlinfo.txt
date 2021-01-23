@@ -1,0 +1,3 @@
+repository='external project URL'
+module='/home/wx/WX/robocup-software/external/googletest/googletest'
+tag=''
