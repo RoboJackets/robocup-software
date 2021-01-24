@@ -18,7 +18,7 @@ public:
 
 private:
     rclcpp::Node* node_;
-    std::string& global_node_;
+    const std::string& global_node_;
     rclcpp::AsyncParameterClient::SharedPtr params_client_;
     rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr params_client_sub_;
     

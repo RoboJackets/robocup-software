@@ -11,6 +11,9 @@ class ROS2ParamProvider : public ::params::ParamProvider {
 public:
     explicit ROS2ParamProvider(rclcpp::Node* node, const std::string& module);
 
+protected:
+    rcl_interfaces::msg::SetParametersResult UpdateParameters(const std::vector<rclcpp::Parameter>& params);
+
 private:
     /**
      * @brief Calls node->declare_parameters on all the registered parameters.
