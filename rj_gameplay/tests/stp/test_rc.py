@@ -20,10 +20,10 @@ def test_generate_test_robot() -> None:
     assert bot.lethal_fault is False
 
     bot2 = testing.generate_test_robot(robot_id=2,
-                                     is_ours=False,
-                                     pose=np.array([1.0, 2.0, 3.0]),
-                                     twist=np.array([0.0, 2.0, 1.1]),
-                                     ball_sense_triggered=True)
+                                       is_ours=False,
+                                       pose=np.array([1.0, 2.0, 3.0]),
+                                       twist=np.array([0.0, 2.0, 1.1]),
+                                       ball_sense_triggered=True)
 
     assert bot2.id == 2
     assert bot2.is_ours is False
@@ -53,8 +53,8 @@ def test_generate_test_ball() -> None:
         pass
 
     ball2 = testing.generate_test_ball(pos=np.array([1.0, 2.0]),
-                                    vel=np.array([2.0, 3.0]),
-                                    visible=True)
+                                       vel=np.array([2.0, 3.0]),
+                                       visible=True)
     assert np.all(np.array([1.0, 2.0]) == ball2.pos)
     assert np.all(np.array([2.0, 3.0]) == ball2.vel)
 
@@ -78,12 +78,11 @@ def test_generate_test_game_info() -> None:
     assert info.state == GameState.PLAYING
     assert info.restart == GameRestart.NONE
     warnings.filterwarnings('error')
-    try: 
+    try:
         assert info.our_restart == False
         assert False
     except RuntimeWarning:
         pass
-
 
 
 def test_generate_test_world_state() -> None:
@@ -96,7 +95,8 @@ def test_generate_test_world_state() -> None:
     their_bots = list()
     for g in range(1, 12):
         our_bots.append(testing.generate_test_robot(robot_id=g))
-        their_bots.append(testing.generate_test_robot(robot_id=g, is_ours=False))
+        their_bots.append(
+            testing.generate_test_robot(robot_id=g, is_ours=False))
 
     world2 = testing.generate_test_worldstate(
         our_robots=our_bots,

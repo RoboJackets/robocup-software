@@ -444,8 +444,8 @@ def test_assign_roles_constrained() -> None:
     # Create the robots at (0, 0) (1, 1) and (2, 2)
     free_robots = np.array([
         testing.generate_test_robot(robot_id=0,
-                                  pose=np.array([0, 0, 0]),
-                                  ball_sense_triggered=True),
+                                    pose=np.array([0, 0, 0]),
+                                    ball_sense_triggered=True),
         testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
         testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
     ])

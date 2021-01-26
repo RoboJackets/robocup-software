@@ -58,7 +58,6 @@ class Robot:
         self.__kicker_healthy = kicker_healthy
         self.__lethal_fault = lethal_fault
 
-
     def __repr__(self) -> str:
         return "Robot(id:{}, is_ours:{}, pose:{}, twist:{}, visible:{})".format(
             self.__id, self.__is_ours, self.__pose, self.__twist,
@@ -200,7 +199,6 @@ class Ball:
         self.__pos = pos
         self.__vel = vel
         self.__visible = visible
-
 
     def __repr__(self) -> str:
         return "Ball(pos:{}, vel:{}, visible:{})".format(
@@ -490,9 +488,11 @@ class GameInfo:
         """
         :return: True if it is our restart
         """
-        if(not self.is_restart()):
-            warnings.warn("Retrieved if it is our restart when it is not a restart at all", RuntimeWarning)
-            return False #Is returning this dangerous?
+        if (not self.is_restart()):
+            warnings.warn(
+                "Retrieved if it is our restart when it is not a restart at all",
+                RuntimeWarning)
+            return False  #Is returning this dangerous?
 
         return self.__our_restart
 
