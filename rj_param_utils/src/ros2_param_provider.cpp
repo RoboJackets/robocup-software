@@ -8,6 +8,7 @@ ROS2ParamProvider::ROS2ParamProvider(rclcpp::Node* node, const std::string& modu
     DeclareParameters(node);
     InitUpdateParamCallbacks(node);
 }
+
 rcl_interfaces::msg::SetParametersResult ROS2ParamProvider::UpdateParameters(const std::vector<rclcpp::Parameter>& params) {
     using rcl_interfaces::msg::SetParametersResult;
 
