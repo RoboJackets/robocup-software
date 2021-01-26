@@ -491,7 +491,7 @@ class GameInfo:
         :return: True if it is our restart
         """
         if(not self.is_restart()):
-            warnings.warn("Retrieved if it is our restart when it is not a restart at all")
+            warnings.warn("Retrieved if it is our restart when it is not a restart at all", RuntimeWarning)
             return False #Is returning this dangerous?
 
         return self.__our_restart

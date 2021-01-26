@@ -2,6 +2,7 @@ import numpy as np
 import stp.rc as rc
 import stp.role as role
 import stp.role.cost as cost
+import stp.testing as testing
 
 
 def test_constant() -> None:
@@ -9,11 +10,11 @@ def test_constant() -> None:
     switch_cost = 0.5
     cost_fn = cost.constant(0.5, switch_cost)
 
-    robot1 = rc.Robot.generate_test_robot(robot_id=1)
-    robot2 = rc.Robot.generate_test_robot(robot_id=2)
+    robot1 = testing.generate_test_robot(robot_id=1)
+    robot2 = testing.generate_test_robot(robot_id=2)
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
-    world_state = rc.WorldState.generate_test_worldstate(
+    world_state = testing.generate_test_worldstate(
         our_robots=[robot1, robot2])
 
     cost_none: float = cost_fn(robot1, None, world_state)
@@ -33,18 +34,18 @@ def test_distance_to_pt() -> None:
     target_pt = np.array([1.0, 2.0])
     cost_fn = cost.distance_to_pt(target_pt, saturate_dist, switch_cost)
 
-    robot1 = rc.Robot.generate_test_robot(robot_id=1,
+    robot1 = testing.generate_test_robot(robot_id=1,
                                           is_ours=True,
                                           pose=np.array([1.0, 2.0, 0]),
                                           twist=np.array([0, 0, 0]))
-    robot2 = rc.Robot.generate_test_robot(robot_id=2,
+    robot2 = testing.generate_test_robot(robot_id=2,
                                           is_ours=True,
                                           pose=np.array([2.0, 3.0, 0]),
                                           twist=np.array([0, 0, 0]))
 
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
-    world_state = rc.WorldState.generate_test_worldstate(
+    world_state = testing.generate_test_worldstate(
         our_robots=[robot1, robot2])
 
     cost_none: float = cost_fn(robot1, None, world_state)

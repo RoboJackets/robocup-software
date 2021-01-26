@@ -6,6 +6,7 @@ import stp.role as role
 import stp.role.cost as cost
 import stp.skill as skill
 import stp.tactic as tactic
+import stp.testing as testing
 from stp import action as action
 from stp.rc import Ball, Robot, WorldState
 from stp.role import Priority
@@ -99,7 +100,7 @@ def test_flatten_requests() -> None:
     tactic_instance = TacticBase(tactic_ctx)
 
     # Create dummy world_state.
-    world_state: WorldState = WorldState.generate_test_worldstate()
+    world_state: WorldState = testing.generate_test_worldstate()
 
     requests: play.RoleRequests = {
         TacticBase: tactic_instance.get_requests(world_state, None)

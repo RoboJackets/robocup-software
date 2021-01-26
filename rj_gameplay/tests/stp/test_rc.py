@@ -1,10 +1,11 @@
 import numpy as np
+import stp.testing as testing
 from stp.rc import Ball, Robot, WorldState, Field, GameInfo, GamePeriod, GameRestart, GameState
 import warnings
 
 
-def test_generate_test_Robot() -> None:
-    bot = Robot.generate_test_robot(robot_id=0)
+def test_generate_test_robot() -> None:
+    bot = testing.generate_test_robot(robot_id=0)
     assert bot.id == 0
     assert bot.is_ours is True
     assert type(bot.pose) is np.ndarray
@@ -18,7 +19,7 @@ def test_generate_test_Robot() -> None:
     assert bot.kicker_healthy is True
     assert bot.lethal_fault is False
 
-    bot2 = Robot.generate_test_robot(robot_id=2,
+    bot2 = testing.generate_test_robot(robot_id=2,
                                      is_ours=False,
                                      pose=np.array([1.0, 2.0, 3.0]),
                                      twist=np.array([0.0, 2.0, 1.1]),
@@ -37,30 +38,30 @@ def test_generate_test_Robot() -> None:
         pass
 
 
-def test_generate_test_Ball() -> None:
-    ball = Ball.generate_test_ball()
+def test_generate_test_ball() -> None:
+    ball = testing.generate_test_ball()
     assert np.all(ball.vel == np.array([0.0, 0.0]))
     assert np.all(ball.pos == np.array([0.0, 0.0]))
     assert ball.visible is True
 
     warnings.filterwarnings('error')
-    invis_ball = Ball.generate_test_ball(visible=False)
+    invis_ball = testing.generate_test_ball(visible=False)
     try:
         assert np.all(invis_ball.vel == np.array([0.0, 0.0]))
         assert False
     except RuntimeWarning:
         pass
 
-    ball2 = Ball.generate_test_ball(pos=np.array([1.0, 2.0]),
+    ball2 = testing.generate_test_ball(pos=np.array([1.0, 2.0]),
                                     vel=np.array([2.0, 3.0]),
                                     visible=True)
     assert np.all(np.array([1.0, 2.0]) == ball2.pos)
     assert np.all(np.array([2.0, 3.0]) == ball2.vel)
 
 
-def test_generate_test_Field() -> None:
-    fieldA = Field.generate_divA_field()
-    fieldB = Field.generate_divB_field()
+def test_generate_test_field() -> None:
+    fieldA = testing.generate_divA_field()
+    fieldB = testing.generate_divB_field()
     assert fieldB.length_m == 9.0
     assert fieldB.width_m == 6.0
     assert fieldA.length_m == 12.0
@@ -71,16 +72,22 @@ def test_generate_test_Field() -> None:
     assert np.all(fieldB.center_field_loc == np.array([0.0, 4.5]))
 
 
-def test_generate_test_GameInfo() -> None:
-    info = GameInfo.generate_test_playing_gameinfo()
+def test_generate_test_game_info() -> None:
+    info = testing.generate_test_playing_gameinfo()
     assert info.period == GamePeriod.FIRST_HALF
     assert info.state == GameState.PLAYING
     assert info.restart == GameRestart.NONE
-    assert info.our_restart == False
+    warnings.filterwarnings('error')
+    try: 
+        assert info.our_restart == False
+        assert False
+    except RuntimeWarning:
+        pass
 
 
-def test_generate_test_WorldState() -> None:
-    worldState = WorldState.generate_test_worldstate()
+
+def test_generate_test_world_state() -> None:
+    worldState = testing.generate_test_worldstate()
     assert len(worldState.our_robots) == 0
     assert len(worldState.their_robots) == 0
     assert len(worldState.robots) == 0
@@ -88,13 +95,13 @@ def test_generate_test_WorldState() -> None:
     our_bots = list()
     their_bots = list()
     for g in range(1, 12):
-        our_bots.append(Robot.generate_test_robot(robot_id=g))
-        their_bots.append(Robot.generate_test_robot(robot_id=g, is_ours=False))
+        our_bots.append(testing.generate_test_robot(robot_id=g))
+        their_bots.append(testing.generate_test_robot(robot_id=g, is_ours=False))
 
-    world2 = WorldState.generate_test_worldstate(
+    world2 = testing.generate_test_worldstate(
         our_robots=our_bots,
         their_robots=their_bots,
-        field=Field.generate_divA_field(),
-        ball=Ball.generate_test_ball(pos=np.array([0.0, 1.0])))
+        field=testing.generate_divA_field(),
+        ball=testing.generate_test_ball(pos=np.array([0.0, 1.0])))
     assert len(world2.robots) == 22
     assert len(world2.our_robots) == 11
