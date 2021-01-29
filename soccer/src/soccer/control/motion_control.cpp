@@ -59,11 +59,10 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
 
             // TODO(Kyle): Handle the joystick-controlled case here. In the long run we want to
             // convert this to an action. Should we do that now?
+            bool is_joystick_controlled = false;
             MotionSetpoint setpoint;
-            run(state, trajectory_, game_state_, false, &setpoint);
-            if (state.visible) {
-                motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
-            }
+            run(state, trajectory_, game_state_, is_joystick_controlled, &setpoint);
+            motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
         });
     game_state_sub_ = node->create_subscription<GameState::Msg>(
         referee::topics::kGameStatePub, rclcpp::QoS(1).transient_local(),

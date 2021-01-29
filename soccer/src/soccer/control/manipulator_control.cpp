@@ -6,8 +6,10 @@
 
 namespace control {
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_kick_speed, 5.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_kick_speed, 7.5,
                "Maximum speed of the kicker (in m/s)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_chip_speed, 3.0,
+               "Maximum speed of the chipper (in m/s)");
 DEFINE_INT64(params::kMotionControlParamModule, min_safe_kick_power, 64,
              "Minimum safe discharge power for the kicker (0-255)");
 
@@ -19,9 +21,13 @@ ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell
     intent_sub_ = node->create_subscription<rj_msgs::msg::RobotIntent>(
         gameplay::topics::robot_intent_pub(shell_id), rclcpp::QoS(1),
         [manipulator_pub](rj_msgs::msg::RobotIntent::SharedPtr intent) {  // NOLINT
+            const double max_speed =
+                intent->shoot_mode == rj_msgs::msg::RobotIntent::SHOOT_MODE_KICK
+                    ? PARAM_max_kick_speed
+                    : PARAM_max_chip_speed;
             int kick_strength =
                 std::max<int>(PARAM_min_safe_kick_power,
-                              std::min<int>(255, intent->kick_speed / PARAM_max_kick_speed));
+                              std::min<int>(255, intent->kick_speed / max_speed * 255));
             manipulator_pub->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
                                          .shoot_mode(intent->shoot_mode)
                                          .trigger_mode(intent->trigger_mode)

@@ -90,7 +90,8 @@ DEFINE_NS_FLOAT64(kPlanningParamModule, collect, approach_dist_target, 0.04,
 // dribbler, increase this number (And check the approach_dist_target)
 DEFINE_NS_FLOAT64(kPlanningParamModule, collect, touch_delta_speed, 0.15,
                   "At what speed should we be when we touch the ball (m/s)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, collect, velocity_control_scale, 1.0, "");
+DEFINE_NS_FLOAT64(kPlanningParamModule, collect, velocity_control_scale, 1.0,
+                  "The amount  (unitless)");
 // How close to the ball do we have to be before transferring to the control state.
 // This should be almost zero. Increase if the noise on vision causes problems and we never
 // transition.

@@ -9,10 +9,10 @@
 #include "robot_status.hpp"
 
 // TODO(#1583): Make these ROS parameters and move them to a central location
-constexpr double kMaxKickSpeed = 7.0;
-constexpr double kMinKickSpeed = 2.1;
+constexpr double kMaxKickSpeed = 7.5;
+constexpr double kMinKickSpeed = kMaxKickSpeed / 4;
 constexpr double kMaxChipSpeed = 3.0;
-constexpr double kMinChipSpeed = 0.5;
+constexpr double kMinChipSpeed = kMaxChipSpeed / 4;
 
 static uint8_t kicker_speed_to_strength(double kick_speed) {
     return static_cast<uint8_t>(
