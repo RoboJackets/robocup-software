@@ -121,8 +121,8 @@ void ROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {
 void ROS2ParamProvider::InitUpdateParamCallbacks(rclcpp::Node* node) {
     using rcl_interfaces::msg::SetParametersResult;
     const auto on_update =
-        [this](const std::vector<rclcpp::Parameter>& params) -> SetParametersResult {
-        UpdateParameters(params);
+        [this](const std::vector<rclcpp::Parameter>& params) {
+        return UpdateParameters(params);
     };
     callback_handle_ = node->add_on_set_parameters_callback(on_update);
 }
