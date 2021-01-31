@@ -11,10 +11,8 @@
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
-constexpr auto kVisionReceiverParamModule = "vision_receiver";
-constexpr auto kGlobalParamModule = "global_params";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, kSharedVisionPortSinglePrimary,
+DEFINE_INT64(vision_receiver::topics::kVisionReceiverParamModule, port, kSharedVisionPortSinglePrimary,
              "The port used for the vision receiver.")
 
 namespace vision_receiver {
@@ -25,8 +23,8 @@ VisionReceiver::VisionReceiver()
       config_{this},
       port_{-1},
       socket_{io_context_},
-      param_provider_(this, kVisionReceiverParamModule),
-      global_param_provider_(this, kGlobalParamModule) {
+      param_provider_(this, topics::kVisionReceiverParamModule),
+      global_param_provider_(this, params::kGlobalParamNodeName) {
     recv_buffer_.resize(65536);
 
     set_port(PARAM_port);

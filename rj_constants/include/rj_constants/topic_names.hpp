@@ -35,6 +35,7 @@ constexpr auto kQuickRestartSrv = "referee/quick_restart";
 namespace vision_receiver::topics {
 constexpr auto kRawProtobufPub = "vision_receiver/raw_protobuf";
 constexpr auto kDetectionFramePub = "vision_receiver/detection_frame";
+constexpr auto kVisionReceiverParamModule = "vision_receiver";
 }  // namespace vision_receiver::topics
 
 namespace vision_filter::topics {
@@ -81,7 +82,7 @@ static inline std::string robot_controlled_pub(int robot_id) {
 namespace params {
 
 constexpr auto kMotionControlParamModule = "motion_control";
-
+constexpr auto kGlobalParamNodeName = "global_params";
 }  // namespace params
 
 }  // namespace control
