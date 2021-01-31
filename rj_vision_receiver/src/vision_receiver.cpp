@@ -11,6 +11,7 @@
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
+constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
 DEFINE_INT64(vision_receiver::topics::kVisionReceiverParamModule, port, kSharedVisionPortSinglePrimary,
              "The port used for the vision receiver.")
@@ -40,6 +41,19 @@ VisionReceiver::VisionReceiver()
         network_thread_.join();
         publish_thread_.join();
     });
+
+    // Testing global param provider
+    publisher_ = this->create_publisher<std_msgs::msg::String>("global_params", 50);
+    timer_ = this->create_wall_timer(std::chrono_literals::500ms, std::bind(&timer_callback, this));
+}
+
+// Testing global param provider
+void VisionReceiver::timer_callback() {
+    auto message = std_msgs::msg::String();
+    for (const auto& [param_name, param] in global_param_provider_.GetParamMap()) {
+        message.data += param_name + ": " + std::to_string(param) +"\n";
+    } 
+    publisher_->publish(message);
 }
 
 void VisionReceiver::receive_thread() {

@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 # ======================================================================
 # Define Targets
 # ======================================================================
-add_executable(global_params)
+add_library(rj_param_utils SHARED)
 
 add_subdirectory(src)
 
@@ -31,8 +31,21 @@ target_link_libraries(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
 ament_target_dependencies(rj_param_utils PUBLIC rclcpp)
 
 # ======================================================================
+# Testing
+# ======================================================================
+if(BUILD_TESTING)
+  enable_testing()
+
+  add_library(rj_param_utils_testing STATIC)
+  add_subdirectory(testing)
+  target_link_libraries(rj_param_utils_testing PUBLIC rj_param_utils ${GTEST_LIBRARIES})
+endif()
+
+# ======================================================================
 # Packaging
 # ======================================================================
 install(
-  TARGETS global_params
-  DESTINATION lib/${CMAKE_PROJECT_NAME})
+  TARGETS rj_param_utils
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)

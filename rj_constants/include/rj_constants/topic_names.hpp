@@ -35,7 +35,6 @@ constexpr auto kQuickRestartSrv = "referee/quick_restart";
 namespace vision_receiver::topics {
 constexpr auto kRawProtobufPub = "vision_receiver/raw_protobuf";
 constexpr auto kDetectionFramePub = "vision_receiver/detection_frame";
-constexpr auto kVisionReceiverParamModule = "vision_receiver";
 }  // namespace vision_receiver::topics
 
 namespace vision_filter::topics {
