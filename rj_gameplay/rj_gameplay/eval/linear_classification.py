@@ -1,5 +1,21 @@
 class LinearClassification:
 
+    def binary_classification(input, weights, bias, cutoff):
+	    score = linear_classification(input, weights, bias)
+	    return (score < cutoff, score)
+
+
+	## Returns the raw output score of the linear classifier based on the dot product
+	#
+	# @param input The vector of input features
+	# @param weights The vector of weights to apply to the input features
+	# @param bias The bias of the features-weight system
+	def linear_classification(input, weights, bias):
+	    # Element wise multiplication
+	    out = map(lambda x, w: x * w, input, weights)
+
+	    return sum(out) + bias
+  
 	## @package Linear Classification
 	#  Classifies a feature into any number of classes
 	#
@@ -20,18 +36,3 @@ class LinearClassification:
 	# @param bias The bias of the features-weight system
 	# @param cutoff The number which splits the output score of the object into two classes
 	# @param Returns tuple of the class (true or false) and the given score
-	def binary_classification(input, weights, bias, cutoff):
-	    score = linear_classification(input, weights, bias)
-	    return (score < cutoff, score)
-
-
-	## Returns the raw output score of the linear classifier based on the dot product
-	#
-	# @param input The vector of input features
-	# @param weights The vector of weights to apply to the input features
-	# @param bias The bias of the features-weight system
-	def linear_classification(input, weights, bias):
-	    # Element wise multiplication
-	    out = map(lambda x, w: x * w, input, weights)
-
-	    return sum(out) + bias
