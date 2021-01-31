@@ -18,6 +18,6 @@ def has_ball() -> role.ConstraintFn:
         prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> bool:
-        return robot.has_ball
+        return robot.ball_sense_triggered
 
     return constraint_fn
