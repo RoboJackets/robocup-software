@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 # ======================================================================
 # Define Targets
 # ======================================================================
-add_library(rj_param_utils SHARED)
+add_executable(global_params)
 
 add_subdirectory(src)
 
@@ -24,9 +24,9 @@ set(RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS include)
 # ======================================================================
 # Include and Linking
 # ======================================================================
-target_include_directories(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS})
+target_include_directories(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS})
 
-target_link_libraries(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
+target_link_libraries(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
 
 ament_target_dependencies(rj_param_utils PUBLIC rclcpp)
 
@@ -45,7 +45,5 @@ endif()
 # Packaging
 # ======================================================================
 install(
-  TARGETS rj_param_utils
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  TARGETS global_params
+  DESTINATION lib/${CMAKE_PROJECT_NAME})
