@@ -2,6 +2,7 @@
 
 #include <config_client/config_client.hpp>
 #include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/global_param.hpp>
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <rj_vision_receiver/stamped_wrapper_packet.hpp>
 
@@ -125,5 +126,6 @@ private:
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
 
     params::ROS2ParamProvider param_provider_;
+    params::ROS2GlobalParamProvider global_param_provider_;
 };
 }  // namespace vision_receiver
