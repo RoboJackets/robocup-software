@@ -10,25 +10,24 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 
-#include <rj_vision_filter/params.hpp>
+#include <rj_param_utils/param.hpp>
 
 namespace Planning {
+constexpr auto kRRTConfigParamModule = "rrt_config";
+
+DECLARE_NS_BOOL(kRRTConfigParamModule, path_planning::rrt, enable_rrt_debug_drawing)
+DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, step_size)
+DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, goal_bias)
+DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, waypoint_bias)
+
+DECLARE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, min_iterations)
+DECLARE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, max_iterations)
+
 class RRTConfig {
 public:
     static void create_configuration(Configuration* cfg);
-
     // if set, enables drawng of rrts to the SystemState so they can be shown in
     // the gui
-    DEFINE_NSstatic ConfigBool* enable_rrt_debug_drawing;
-
-    constexpr auto kRRTConfigParamModule = "rrt_config";
-    DECLARE_BOOL(kRRTConfigParamModule, enable_rrt_debug_drawing)
-    DECLARE_FLOAT64(kRRTConfigParamModule, step_size)
-    DECLARE_FLOAT64(kRRTConfigParamModule, goal_bias)
-    DECLARE_FLOAT64(kRRTConfigParamModule, waypoint_bias)
-
-    DECLARE_INT64(kRRTConfigParamModule, min_iterations)
-    DECLARE_INT64(kRRTConfigParamModule, max_iterations)
 };
 
 /// Drawing
