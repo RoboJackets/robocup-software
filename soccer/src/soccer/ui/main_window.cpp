@@ -512,9 +512,9 @@ void MainWindow::updateViews() {
     _ui.refStage->setText("");
     _ui.refCommand->setText("");
     //    _ui.refStage->setText(
-    //        RefereeModuleEnums::stringFromStage(game_state.raw_stage).c_str());
+    //        referee_module_enums::stringFromStage(game_state.raw_stage).c_str());
     //    _ui.refCommand->setText(
-    //        RefereeModuleEnums::stringFromCommand(game_state.raw_command).c_str());
+    //        referee_module_enums::stringFromCommand(game_state.raw_command).c_str());
 
     // Convert time left from ms to s and display it to two decimal places
     int timeSeconds = static_cast<int>(game_state.stage_time_left.count());
