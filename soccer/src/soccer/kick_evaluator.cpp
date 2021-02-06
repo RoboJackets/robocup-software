@@ -7,15 +7,13 @@
 #include <rj_geometry/util.hpp>
 #include <rj_common/utils.hpp>
 
-REGISTER_CONFIGURABLE(KickEvaluator)
-
 using rj_geometry::Point, rj_geometry::Segment, rj_geometry::Line;
 using std::tuple, std::vector, std::abs, std::make_tuple, std::function, std::pair, std::get;
 
-ConfigDouble* KickEvaluator::kick_std_dev;
-ConfigDouble* KickEvaluator::kick_mean;
-ConfigDouble* KickEvaluator::robot_std_dev;
-ConfigDouble* KickEvaluator::start_x_offset;
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_std_dev, 0.04, "kick standard deviation");
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_mean, 0, "kick mean");
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, robot_std_dev, 0.3, "robot standard deviation");
+DEFINE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, start_x_offset, 0.1, "start x offset");
 
 // Fast exp function, valid within 4% at +- 100
 inline double fast_exp(double x) {
@@ -27,12 +25,6 @@ inline double fast_exp(double x) {
 
 inline float fast_exp(float x) { return static_cast<float>(fast_exp(static_cast<double>(x))); }
 
-void KickEvaluator::create_configuration(Configuration* cfg) {
-    kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.04);
-    kick_mean = new ConfigDouble(cfg, "KickEvaluator/kick_mean", 0);
-    robot_std_dev = new ConfigDouble(cfg, "KickEvaluator/robot_std_dev", 0.3);
-    start_x_offset = new ConfigDouble(cfg, "KickEvaluator/start_x_offset", 0.1);
-}
 
 KickEvaluator::KickEvaluator(SystemState* system_state) : system_(system_state) {}
 
@@ -85,7 +77,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     for (tuple<float, float>& loc : bot_locations) {
         bot_means.push_back(get<1>(loc));
         // Want std_dev in radians, not XY distance
-        bot_st_devs.push_back(atan(*robot_std_dev / get<0>(loc)));
+        bot_st_devs.push_back(std::atan(static_cast<float>(kick_evaluator::PARAM_robot_std_dev) / get<0>(loc)));
 
         // Robot Past Target
         dist_past_target = static_cast<float>(get<0>(loc) - (origin - center).mag());
@@ -93,7 +85,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         // If robot is past target, only use the chance at the target segment
         if (dist_past_target > 0 && fabs(get<1>(loc)) < M_PI / 2) {
             // Evaluate a normal distribution at dist away and scale
-            bot_vert_scales.push_back(1 - erf(dist_past_target / (*robot_std_dev * sqrt(2))));
+            bot_vert_scales.push_back(1 - erf(dist_past_target / (static_cast<float>(kick_evaluator::PARAM_robot_std_dev) * sqrt(2))));
         } else {
             bot_vert_scales.push_back(1);
         }
@@ -102,9 +94,17 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     // Create function with only 1 input
     // Rest are bound to constant values
     function<tuple<float, float>(float)> ke_func =
-        bind(&eval_calculation, std::placeholders::_1, (kick_mean->value()),
-             (kick_std_dev->value()), cref(bot_means), cref(bot_st_devs), cref(bot_vert_scales),
-             target_width / -2, target_width / 2);
+        [&](float x){
+            return eval_calculation(x, 
+                static_cast<float>(kick_evaluator::PARAM_kick_mean),
+                static_cast<float>(kick_evaluator::PARAM_kick_std_dev),
+                std::cref(bot_means),
+                std::cref(bot_st_devs),
+                std::cref(bot_vert_scales),
+                target_width / -2,
+                target_width / 2);
+        };
+        
 
     // No opponent robots on the field
     if (bot_means.empty()) {
@@ -322,18 +322,18 @@ void KickEvaluator::init_gradient_configs(ParallelGradient1DConfig& p_config,
     x_starts.reserve(robot_st_devs.size());
 
     // Add left boundary
-    auto start_x = static_cast<float>(boundary_lower + *start_x_offset * *kick_std_dev);
+    auto start_x = static_cast<float>(boundary_lower + kick_evaluator::PARAM_start_x_offset * kick_evaluator::PARAM_kick_std_dev);
     x_starts.emplace_back(boundary_lower, start_x);
 
     // Add right boundary
-    start_x = boundary_upper - *start_x_offset * *kick_std_dev;
+    start_x = boundary_upper - kick_evaluator::PARAM_start_x_offset * kick_evaluator::PARAM_kick_std_dev;
     x_starts.emplace_back(boundary_upper, start_x);
 
     // For each robot
     for (int i = 0; i < robot_means.size(); i++) {
         // -1 or 1
         for (int side = -1; side <= 1; side += 2) {
-            start_x = robot_means.at(i) + side * *start_x_offset * robot_st_devs.at(i);
+            start_x = robot_means.at(i) + side * kick_evaluator::PARAM_start_x_offset * robot_st_devs.at(i);
 
             x_starts.emplace_back(robot_means.at(i), start_x);
         }
@@ -351,5 +351,5 @@ void KickEvaluator::init_gradient_configs(ParallelGradient1DConfig& p_config,
     }
 
     p_config.x_combine_thresh = static_cast<float>(
-        *min_element(robot_st_devs.begin(), robot_st_devs.end()) * *start_x_offset / 2);
+        *min_element(robot_st_devs.begin(), robot_st_devs.end()) * kick_evaluator::PARAM_start_x_offset / 2);
 }

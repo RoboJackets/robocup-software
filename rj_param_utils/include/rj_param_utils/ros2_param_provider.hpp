@@ -34,6 +34,13 @@ private:
      */
     static std::string ConvertFullNameToROS2(const std::string& full_name);
 
+    /**
+     * @brief Converts the full name of a parameter from using periods (.) as the namespace separator to using double colons (::). Inverts @ref ConvertFullNameToROS2.
+     * @param ros2_name The ros2 name to convert.
+     * @return The full name of the parameter in ROS2 parameter convention.
+     */
+    static std::string ConvertFullNameFromROS2(const std::string& ros2_name);
+
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
         callback_handle_;
 };
