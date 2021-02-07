@@ -92,6 +92,9 @@ endif()
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+
 # ======================================================================
 # QT build tool things
 # ======================================================================
@@ -225,6 +228,8 @@ target_link_libraries(robocup PUBLIC ${ROBOCUP_DEPS_SYSTEM_LIBRARIES} ${ROBOCUP_
 ament_target_dependencies(robocup PUBLIC rj_geometry_msgs)
 ament_target_dependencies(robocup PUBLIC rj_drawing_msgs)
 ament_target_dependencies(robocup PUBLIC rj_msgs)
+ament_target_dependencies(robocup PUBLIC rclcpp)
+ament_target_dependencies(robocup PUBLIC rclcpp_action)
 
 # ---- rj_vision_filter ----
 target_link_libraries(rj_vision_filter PRIVATE robocup ${RJ_VISION_FILTER_DEPS_LIBRARIES} ${RJ_VISION_FILTER_DEPS_SYSTEM_LIBRARIES})

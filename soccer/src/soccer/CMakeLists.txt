@@ -11,6 +11,7 @@ set(SOCCER_UIS
 set(SOCCER_RSRC ui/qt/main_icons.qrc)
 
 set(ROBOCUP_LIB_SRC
+    actions/resource_manager.cpp
     battery_profile.cpp
     configuration.cpp
     gameplay/gameplay_module.cpp
@@ -96,6 +97,7 @@ set(SOCCER_TEST_SRC
     planning/tests/trajectory_test.cpp
     planning/tests/trapezoidal_motion_test.cpp
     planning/tests/velocity_profiling_test.cpp
+    actions/resource_manager_test.cpp
     test_main.cpp
     window_evaluator_test.cpp
     logger_test.cpp)
