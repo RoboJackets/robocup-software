@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 # ======================================================================
 # Define Targets
 # ======================================================================
-add_library(rj_param_utils SHARED)
+add_library(rj_param_utils STATIC)
 
 add_subdirectory(src)
 
@@ -21,14 +21,20 @@ add_subdirectory(src)
 # ======================================================================
 set(RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS include)
 
+set(RJ_PARAM_UTILS_DEPS_LIBRARIES rj_constants)
+
+set(RJ_PARAM_UTILS_SOURCES src/param.cpp src/ros2_param_provider.cpp src/global_param.cpp)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
-target_include_directories(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS})
+target_include_directories(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS})
 
-target_link_libraries(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
+target_link_libraries(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
 
 ament_target_dependencies(rj_param_utils PUBLIC rclcpp)
+
+target_sources(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_SOURCES})
 
 # ======================================================================
 # Testing

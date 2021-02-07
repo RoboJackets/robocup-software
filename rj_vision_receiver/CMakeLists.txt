@@ -16,6 +16,8 @@ find_package(rj_msgs REQUIRED)
 # ======================================================================
 add_executable(vision_receiver)
 
+add_library(rj_vision_receiver STATIC)
+
 add_subdirectory(src)
 
 # ======================================================================
@@ -31,6 +33,9 @@ set(RJ_VISION_RECEIVER_DEPS_LIBRARIES
     rj_param_utils
     rj_utils)
 
+set(RJ_VISION_RECEIVER_SRCS
+    src/vision_receiver.cpp)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -44,7 +49,25 @@ ament_target_dependencies(
   rclcpp
   rj_msgs)
 
+target_include_directories(rj_vision_receiver PUBLIC ${RJ_VISION_RECEIVER_DEPS_INCLUDE_DIRS})
+
+target_link_libraries(rj_vision_receiver PUBLIC ${RJ_VISION_RECEIVER_DEPS_LIBRARIES})
+
+target_sources(rj_vision_receiver PRIVATE ${RJ_VISION_RECEIVER_SRCS})
+
+ament_target_dependencies(
+  rj_vision_receiver
+  PUBLIC
+  rclcpp
+  rj_msgs)
+
 # ======================================================================
 # Packaging
 # ======================================================================
 install(TARGETS vision_receiver DESTINATION lib/${CMAKE_PROJECT_NAME})
+
+install(
+  TARGETS rj_vision_receiver
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)

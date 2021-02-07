@@ -6,17 +6,18 @@ namespace params {
 ROS2ParamProvider::ROS2ParamProvider(rclcpp::Node* node, const std::string& module)
     : ParamProvider{module} {
     DeclareParameters(node);
-    InitUpdateParamCallbacks(node);
+    //InitUpdateParamCallbacks(node);
 }
 
-rcl_interfaces::msg::SetParametersResult ROS2ParamProvider::UpdateParameters(const std::vector<rclcpp::Parameter>& params) {
+rcl_interfaces::msg::SetParametersResult ROS2ParamProvider::UpdateParameters(const std::vector<rcl_interfaces::msg::Parameter_<std::allocator<void>>>& params) {
     using rcl_interfaces::msg::SetParametersResult;
 
     bool all_succeeded = true;
-    for (const rclcpp::Parameter& param : params) {
-        std::string full_name = ConvertFullNameFromROS2(param.get_name());
+    for (const rcl_interfaces::msg::Parameter_<std::allocator<void>>& param : params) {
+        std::string full_name = ConvertFullNameFromROS2(param.name);
         bool success = false;
-        switch (param.get_type()) {
+        //success = this->TryUpdate(full_name, param.value);
+        /*switch (param.type) {
             case rclcpp::PARAMETER_BOOL:
                 success = TryUpdate(full_name, param.as_bool());
                 break;
@@ -47,13 +48,12 @@ rcl_interfaces::msg::SetParametersResult ROS2ParamProvider::UpdateParameters(con
             default:
                 break;
         }
-
+        */
         // Failure could happen in two main cases:
         //  - The parameter does not exist
         //  - The parameter's type as declared does not match the parameter's current type
         if (!success) {
-            // NOLINTNEXTLINE(bugprone-lambda-function-name)
-            SPDLOG_WARN("Failed to set parameter {}", param.get_name());
+            SPDLOG_WARN("Failed to set parameter {}", param.name);
             all_succeeded = false;
         }
     }
@@ -118,12 +118,12 @@ void ROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {
 }
 #undef DECLARE_AND_UPDATE_PARAMS
 
-void ROS2ParamProvider::InitUpdateParamCallbacks(rclcpp::Node* node) {
+/*void ROS2ParamProvider::InitUpdateParamCallbacks(rclcpp::Node* node) {
     using rcl_interfaces::msg::SetParametersResult;
     const auto on_update =
-        [this](const std::vector<rclcpp::Parameter>& params) {
+        [this](const std::vector<rcl_interfaces::msg::Parameter_<std::allocator<void>>>& params) {
         return UpdateParameters(params);
     };
     callback_handle_ = node->add_on_set_parameters_callback(on_update);
-}
+}*/
 }  // namespace params

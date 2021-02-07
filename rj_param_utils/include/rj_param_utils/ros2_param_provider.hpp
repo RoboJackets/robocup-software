@@ -12,7 +12,7 @@ public:
     explicit ROS2ParamProvider(rclcpp::Node* node, const std::string& module);
 
 protected:
-    rcl_interfaces::msg::SetParametersResult UpdateParameters(const std::vector<rclcpp::Parameter>& params);
+    rcl_interfaces::msg::SetParametersResult UpdateParameters(const std::vector<rcl_interfaces::msg::Parameter_<std::allocator<void>>>& params);
 
 private:
     /**
