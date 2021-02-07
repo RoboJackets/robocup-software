@@ -9,8 +9,8 @@ import stp.situation
 
 class Coordinator:
     """The coordinator is responsible for using SituationAnalyzer to select the best
-    play to run, calling tick() on the play to get the list of actions, then ticking
-    all of the resulting actions."""
+    play to run, calling tick() on the play to get the list of skills, then ticking
+    all of the resulting skills."""
 
     __slots__ = [
         "_play_registry",
@@ -39,8 +39,8 @@ class Coordinator:
     def tick(self, world_state: rc.WorldState) -> None:
         """Performs 1 ticks of the STP system:
             1. Selects the best play to run given the passed in world state.
-            2. Ticks the best play, collecting the list of actions to run.
-            3. Ticks the list of actions.
+            2. Ticks the best play, collecting the list of skills to run.
+            3. Ticks the list of skills.
         :param world_state: The current state of the world.
         """
 
@@ -52,14 +52,14 @@ class Coordinator:
         # Update the props.
         cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
 
-        # Collect the list of actions from the play.
-        new_role_results, actions = cur_play.tick(
+        # Collect the list of skills from the play.
+        new_role_results, skills = cur_play.tick(
             world_state, self._prev_role_results, cur_play_props
         )
 
-        # Execute the list of actions.
-        for action in actions:
-            action.tick()
+        # Execute the list of skills.
+        for skill in skills:
+            skill.tick(world_state)
 
         # Update _prev_*.
         self._prev_situation = cur_situation

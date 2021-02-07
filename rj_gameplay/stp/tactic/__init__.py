@@ -133,11 +133,25 @@ class ITactic(Generic[PropT], ABC):
         ...
 
     @abstractmethod
-    def tick(self, role_results: RoleResults, props: PropT) -> List[action.IAction]:
-        """Ticks the tactic, returning a tuple of the actions and the skills executed.
+    def create_request(self, **kwargs) -> role.RoleRequest:
+        """Creates a sane default RoleRequest.
+        :return: A list of size 1 of a sane default RoleRequest.
+        """
+        ...
+
+    def create_requests(self, num_requests: int, **kwargs) -> List[role.RoleRequest]:
+        """Creates a list of sane default RoleRequests.
+        :param num_requests: Number of role requests to create.
+        :return: A list of size num_requests of sane default RoleRequsts.
+        """
+        return [self.create_request(**kwargs) for _ in range(num_requests)]
+
+    @abstractmethod
+    def tick(self, role_results: RoleResults, props: PropT) -> List[skill.ISkill]:
+        """Ticks the tactic, returning a tuple of the skills and the skills executed.
         :param role_results: The results of role assignment.
         :param props: The state of the current tactic.
-        :return: A list of actions to be executed.
+        :return: A list of skills to be executed.
         """
         ...
 
