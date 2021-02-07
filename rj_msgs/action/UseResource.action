@@ -1,0 +1,4 @@
+uint8 priority
+Resource[] resources_requested
+---
+---

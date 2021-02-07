@@ -1,0 +1,17 @@
+# Goal
+rj_geometry_msgs/Point[<=1] maybe_capture_point
+rj_geometry_msgs/Point[<=1] maybe_face_point
+builtin_interfaces/Time maybe_capture_time
+
+# Common fields for all motion actions
+int8 priority
+rj_geometry_msgs/ShapeSet local_obstacles
+---
+# Result
+float64 error_position
+float64 error_velocity
+---
+# Feedback
+float64 estimated_time_to_completion
+float64 error_position
+float64 error_velocity
