@@ -2,12 +2,12 @@
 
 #include <mutex>
 
-#include <boost/config.hpp>
-
-#include <robot_intent.hpp>
 #include <boost/asio.hpp>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#include <boost/config.hpp>
+
+#include <robot_intent.hpp>
 
 #include "radio.hpp"
 
@@ -43,8 +43,7 @@ protected:
     // Map from IP address to robot ID.
     std::map<boost::asio::ip::udp::endpoint, int> robot_ip_map_{};
 
-    void receive_packet(const boost::system::error_code& error,
-                       std::size_t num_bytes);
+    void receive_packet(const boost::system::error_code& error, std::size_t num_bytes);
 
     void start_receive();
 
@@ -56,10 +55,7 @@ protected:
     boost::asio::ip::udp::endpoint robot_endpoint_;
 
     // Read from by `async_send_to`
-    std::vector<
-        std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>>
-        send_buffers_{};
+    std::vector<std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>> send_buffers_{};
 
-    constexpr static std::chrono::duration kTimeout =
-        std::chrono::milliseconds(250);
+    constexpr static std::chrono::duration kTimeout = std::chrono::milliseconds(250);
 };

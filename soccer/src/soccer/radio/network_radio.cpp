@@ -12,10 +12,19 @@ using namespace boost::asio;
 using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port)
-    : socket_(context_, udp::endpoint(udp::v4(), server_port)),
-      recv_buffer_{},
-      send_buffers_(kNumShells) {
+    : socket_(context_), recv_buffer_{}, send_buffers_(kNumShells) {
     connections_.resize(kNumShells);
+
+    // TODO move hardcoded multicast address
+    const auto multicast_address = ip::address::from_string("239.255.0.1");
+
+    udp::endpoint listen_endpoint(multicast_address, server_port);
+    socket_.open(listen_endpoint.protocol());
+    socket_.set_option(udp::socket::reuse_address(true));
+    socket_.bind(listen_endpoint);
+
+    socket_.set_option(ip::multicast::join_group(multicast_address));
+
     start_receive();
 }
 
