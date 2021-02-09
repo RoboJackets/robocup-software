@@ -25,9 +25,6 @@ DECLARE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, max_iterations)
 
 class RRTConfig {
 public:
-    static void create_configuration(Configuration* cfg);
-    // if set, enables drawng of rrts to the SystemState so they can be shown in
-    // the gui
 };
 
 /// Drawing
