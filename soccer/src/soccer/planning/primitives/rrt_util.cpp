@@ -13,9 +13,6 @@
 #include "planning/trajectory_utils.hpp"
 
 namespace Planning {
-REGISTER_CONFIGURABLE(RRTConfig)
-
-
 
 using std::vector;
 using namespace rj_geometry;
@@ -35,10 +32,6 @@ DEFINE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, min_iterations, 100, 
 // todo(Ethan) can this be increased? RRT fails sometimes. testing needed
 // //NOLINTNEXTLINE
 DEFINE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, max_iterations, 250, "The maximum number of iterations for running RRT");
-
-void RRTConfig::create_configuration(Configuration* cfg) {
-
-}
 
 ConfigBool enable_expensive_rrt_debug_drawing();
 
