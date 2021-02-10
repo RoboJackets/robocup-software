@@ -1,4 +1,4 @@
-"""This module contains all the plays used by the decision tree situation analyzer.
+"""This module contains all the situations used by the decision tree situation analyzer.
 Ported from the old situation alaysis."""
 
 import stp.situation

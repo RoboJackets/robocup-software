@@ -12,6 +12,7 @@ import stp.role.assignment as assignment
 import stp.tactic as tactic
 import stp.utils.enum as enum
 import stp.utils.typed_key_dict as tkdict
+import stp.situation as situation
 from stp.role import RoleResult
 from stp.tactic import SkillEntry
 
@@ -150,6 +151,17 @@ class IPlay(Generic[PropT], ABC):
         :return: Tuple of the role and actions.
         """
         ...
+
+    @abstractmethod
+    def is_valid_situation(self, situation: situaion.ISituation) -> bool:
+        """Returns true if this play is considered a valid play for the passed situation
+        
+        :param situation: The situation to check for
+        :return: True if this play is valid for the situation
+        """
+        ...
+
+
 
 
 RoleRequests = Dict[Type[tactic.ITactic], tactic.RoleRequests]
