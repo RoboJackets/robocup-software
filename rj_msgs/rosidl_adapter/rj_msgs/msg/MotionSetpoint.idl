@@ -1,0 +1,16 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/MotionSetpoint.msg
+// generated code does not contain a copyright notice
+
+
+module rj_msgs {
+  module msg {
+    struct MotionSetpoint {
+      double velocity_x_mps;
+
+      double velocity_y_mps;
+
+      double velocity_z_radps;
+    };
+  };
+};

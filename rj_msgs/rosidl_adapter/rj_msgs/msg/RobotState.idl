@@ -1,0 +1,24 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/RobotState.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "rj_geometry_msgs/msg/Pose.idl"
+#include "rj_geometry_msgs/msg/Twist.idl"
+
+module rj_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      " This message contains data that comes from the vision system" "\n"
+      " including position data what time it was last seen.")
+    struct RobotState {
+      builtin_interfaces::msg::Time stamp;
+
+      rj_geometry_msgs::msg::Pose pose;
+
+      rj_geometry_msgs::msg::Twist velocity;
+
+      boolean visible;
+    };
+  };
+};

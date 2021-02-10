@@ -1,0 +1,1 @@
+bool global_bool

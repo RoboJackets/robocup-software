@@ -1,0 +1,3 @@
+float64 velocity_x_mps
+float64 velocity_y_mps
+float64 velocity_z_radps

@@ -1,0 +1,29 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/DetectionFrame.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "rj_msgs/msg/DetectionBall.idl"
+#include "rj_msgs/msg/DetectionRobot.idl"
+
+module rj_msgs {
+  module msg {
+    struct DetectionFrame {
+      uint32 frame_number;
+
+      builtin_interfaces::msg::Time t_capture;
+
+      builtin_interfaces::msg::Time t_sent;
+
+      builtin_interfaces::msg::Time t_received;
+
+      uint32 camera_id;
+
+      sequence<rj_msgs::msg::DetectionBall> balls;
+
+      sequence<rj_msgs::msg::DetectionRobot> robots_yellow;
+
+      sequence<rj_msgs::msg::DetectionRobot> robots_blue;
+    };
+  };
+};

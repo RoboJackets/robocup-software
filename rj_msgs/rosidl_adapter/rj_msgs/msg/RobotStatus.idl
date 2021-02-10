@@ -1,0 +1,28 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/RobotStatus.msg
+// generated code does not contain a copyright notice
+
+
+module rj_msgs {
+  module msg {
+    typedef boolean boolean__5[5];
+    typedef int16 int16__4[4];
+    struct RobotStatus {
+      uint8 robot_id;
+
+      double battery_voltage;
+
+      boolean__5 motor_errors;
+
+      boolean has_ball_sense;
+
+      boolean kicker_charged;
+
+      boolean kicker_healthy;
+
+      boolean fpga_error;
+
+      int16__4 encoder_deltas;
+    };
+  };
+};

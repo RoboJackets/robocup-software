@@ -1,0 +1,12 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/EmptyMotionCommand.msg
+// generated code does not contain a copyright notice
+
+
+module rj_msgs {
+  module msg {
+    struct EmptyMotionCommand {
+      uint8 structure_needs_at_least_one_member;
+    };
+  };
+};

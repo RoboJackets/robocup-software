@@ -1,0 +1,25 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/WorldState.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "rj_msgs/msg/BallState.idl"
+#include "rj_msgs/msg/RobotState.idl"
+
+module rj_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      " Our belief about the state of the world from vision_filter.")
+    struct WorldState {
+      @verbatim (language="comment", text=
+        " Last time that we updated the KF with vision receiver information.")
+      builtin_interfaces::msg::Time last_update_time;
+
+      sequence<rj_msgs::msg::RobotState> their_robots;
+
+      sequence<rj_msgs::msg::RobotState> our_robots;
+
+      rj_msgs::msg::BallState ball;
+    };
+  };
+};

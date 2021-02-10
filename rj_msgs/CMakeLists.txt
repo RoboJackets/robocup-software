@@ -52,6 +52,7 @@ rosidl_generate_interfaces(
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+  msg/GlobalParams.msg
   # Services
   srv/QuickCommands.srv
   srv/QuickRestart.srv
@@ -61,6 +62,7 @@ rosidl_generate_interfaces(
   std_msgs
   builtin_interfaces
   rj_geometry_msgs)
+
 
 # ======================================================================
 # ROS2 packaging

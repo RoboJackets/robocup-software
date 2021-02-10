@@ -129,7 +129,7 @@ private:
     params::ROS2GlobalParamProvider global_param_provider_;
     // Testing global param provider
     rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+    rclcpp::Publisher<std::string>::SharedPtr publisher_;
     void timer_callback();
 };
 }  // namespace vision_receiver

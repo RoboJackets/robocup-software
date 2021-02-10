@@ -1,0 +1,26 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/DetectionRobot.msg
+// generated code does not contain a copyright notice
+
+
+module rj_msgs {
+  module msg {
+    struct DetectionRobot {
+      float confidence;
+
+      uint32 robot_id;
+
+      float x;
+
+      float y;
+
+      float orientation;
+
+      float pixel_x;
+
+      float pixel_y;
+
+      float height;
+    };
+  };
+};

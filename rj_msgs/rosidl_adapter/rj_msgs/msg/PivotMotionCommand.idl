@@ -1,0 +1,15 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/PivotMotionCommand.msg
+// generated code does not contain a copyright notice
+
+#include "rj_geometry_msgs/msg/Point.idl"
+
+module rj_msgs {
+  module msg {
+    struct PivotMotionCommand {
+      rj_geometry_msgs::msg::Point pivot_point;
+
+      rj_geometry_msgs::msg::Point pivot_target;
+    };
+  };
+};

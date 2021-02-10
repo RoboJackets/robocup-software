@@ -1,0 +1,27 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/TeamInfo.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Duration.idl"
+
+module rj_msgs {
+  module msg {
+    struct TeamInfo {
+      string name;
+
+      int32 score;
+
+      uint64 num_red_cards;
+
+      uint64 num_yellow_cards;
+
+      sequence<builtin_interfaces::msg::Duration> yellow_card_remaining_times;
+
+      uint64 timeouts_left;
+
+      builtin_interfaces::msg::Duration remaining_timeout_time;
+
+      uint8 goalie_id;
+    };
+  };
+};

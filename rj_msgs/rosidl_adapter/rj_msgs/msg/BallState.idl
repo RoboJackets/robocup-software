@@ -1,0 +1,24 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/BallState.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "rj_geometry_msgs/msg/Point.idl"
+
+module rj_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      " Our belief about the ball's current position and velocity.")
+    struct BallState {
+      builtin_interfaces::msg::Time stamp;
+
+      rj_geometry_msgs::msg::Point position;
+
+      rj_geometry_msgs::msg::Point velocity;
+
+      @verbatim (language="comment", text=
+        " If this is false, then all the above fields are invalid.")
+      boolean visible;
+    };
+  };
+};

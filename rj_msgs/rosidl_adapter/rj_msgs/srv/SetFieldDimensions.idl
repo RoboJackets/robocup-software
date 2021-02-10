@@ -1,0 +1,16 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from rj_msgs/srv/SetFieldDimensions.srv
+// generated code does not contain a copyright notice
+
+#include "rj_msgs/msg/FieldDimensions.idl"
+
+module rj_msgs {
+  module srv {
+    struct SetFieldDimensions_Request {
+      rj_msgs::msg::FieldDimensions field_dimensions;
+    };
+    struct SetFieldDimensions_Response {
+      uint8 structure_needs_at_least_one_member;
+    };
+  };
+};

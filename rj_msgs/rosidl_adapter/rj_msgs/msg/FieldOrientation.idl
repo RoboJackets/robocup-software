@@ -1,0 +1,12 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/FieldOrientation.msg
+// generated code does not contain a copyright notice
+
+
+module rj_msgs {
+  module msg {
+    struct FieldOrientation {
+      boolean defend_plus_x;
+    };
+  };
+};

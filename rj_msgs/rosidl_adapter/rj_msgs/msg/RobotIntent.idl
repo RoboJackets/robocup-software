@@ -1,0 +1,41 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from rj_msgs/msg/RobotIntent.msg
+// generated code does not contain a copyright notice
+
+#include "rj_geometry_msgs/msg/ShapeSet.idl"
+#include "rj_msgs/msg/MotionCommand.idl"
+
+module rj_msgs {
+  module msg {
+    module RobotIntent_Constants {
+      const uint8 SHOOT_MODE_KICK = 0;
+      const uint8 SHOOT_MODE_CHIP = 1;
+      const uint8 TRIGGER_MODE_STAND_DOWN = 0;
+      const uint8 TRIGGER_MODE_IMMEDIATE = 1;
+      const uint8 TRIGGER_MODE_ON_BREAK_BEAM = 2;
+    };
+    struct RobotIntent {
+      rj_msgs::msg::MotionCommand motion_command;
+
+      @verbatim (language="comment", text=
+        " Set of obstacles added by plays")
+      rj_geometry_msgs::msg::ShapeSet local_obstacles;
+
+      uint8 shoot_mode;
+
+      uint8 trigger_mode;
+
+      float kick_speed;
+
+      @verbatim (language="comment", text=
+        " In range [0, 1]")
+      float dribbler_speed;
+
+      boolean is_active;
+
+      @verbatim (language="comment", text=
+        " Priority for motion planner")
+      int8 priority;
+    };
+  };
+};
