@@ -10,21 +10,21 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 
+#include <rj_param_utils/param.hpp>
+
 namespace Planning {
+constexpr auto kRRTConfigParamModule = "rrt_config";
+
+DECLARE_NS_BOOL(kRRTConfigParamModule, path_planning::rrt, enable_rrt_debug_drawing)
+DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, step_size)
+DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, goal_bias)
+DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, waypoint_bias)
+
+DECLARE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, min_iterations)
+DECLARE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, max_iterations)
+
 class RRTConfig {
 public:
-    static void create_configuration(Configuration* cfg);
-
-    // if set, enables drawng of rrts to the SystemState so they can be shown in
-    // the gui
-    static ConfigBool* enable_rrt_debug_drawing;
-
-    static ConfigDouble* step_size;
-    static ConfigDouble* goal_bias;
-    static ConfigDouble* waypoint_bias;
-
-    static ConfigInt* min_iterations;
-    static ConfigInt* max_iterations;
 };
 
 /// Drawing
