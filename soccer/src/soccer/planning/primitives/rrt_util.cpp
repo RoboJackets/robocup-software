@@ -6,34 +6,17 @@
 
 #include "debug_drawer.hpp"
 #include "path_smoothing.hpp"
-#include "velocity_profiling.hpp"
 #include "planning/instant.hpp"
 #include "planning/motion_constraints.hpp"
+#include "planning/planning_params.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/trajectory_utils.hpp"
+#include "velocity_profiling.hpp"
 
-namespace Planning {
+namespace planning {
 
 using std::vector;
 using namespace rj_geometry;
-
-DEFINE_NS_BOOL(kRRTConfigParamModule, path_planning::rrt, enable_rrt_debug_drawing, false, "Whether or not to enable debug drawing");
-// NOLINTNEXTLINE
-DEFINE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, step_size, 0.15, "Step size for the path planner"); //step_size = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
-// NOLINTNEXTLINE
-DEFINE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, goal_bias, 0.3, "Value from 0 to 1 that determines what proportion of the time the RRT "
-                     "will grow towards the goal rather than towards a random point")
-// NOLINTNEXTLINE
-DEFINE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, waypoint_bias, 0.5, "Value from 0 to 1 that determines the portion of the time that the "
-                     "RRT will"
-                     " grow towards given waypoints rather than towards a random point")
-// NOLINTNEXTLINE
-DEFINE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, min_iterations, 100, "The minimum number of iterations for running RRT");
-// todo(Ethan) can this be increased? RRT fails sometimes. testing needed
-// //NOLINTNEXTLINE
-DEFINE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, max_iterations, 250, "The maximum number of iterations for running RRT");
-
-ConfigBool enable_expensive_rrt_debug_drawing();
 
 void draw_rrt(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer, unsigned shell_id) {
     // Draw each robot's rrts in a different color
@@ -77,14 +60,14 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
         bi_rrt.setMinIterations(0);
         bi_rrt.setMaxIterations(5);
     } else {
-        bi_rrt.setStepSize(path_planning::rrt::PARAM_step_size);
-        bi_rrt.setMinIterations(path_planning::rrt::PARAM_min_iterations);
-        bi_rrt.setMaxIterations(path_planning::rrt::PARAM_max_iterations);
-        bi_rrt.setGoalBias(path_planning::rrt::PARAM_goal_bias);
+        bi_rrt.setStepSize(rrt::PARAM_step_size);
+        bi_rrt.setMinIterations(rrt::PARAM_min_iterations);
+        bi_rrt.setMaxIterations(rrt::PARAM_max_iterations);
+        bi_rrt.setGoalBias(rrt::PARAM_goal_bias);
 
         if (!waypoints.empty()) {
             bi_rrt.setWaypoints(waypoints);
-            bi_rrt.setWaypointBias(path_planning::rrt::PARAM_waypoint_bias);
+            bi_rrt.setWaypointBias(rrt::PARAM_waypoint_bias);
         }
     }
 
@@ -108,4 +91,4 @@ vector<Point> generate_rrt(Point start, Point goal, const ShapeSet& obstacles,
     return run_rrt_helper(start, goal, obstacles, waypoints, false);
 }
 
-}  // namespace Planning
+}  // namespace planning

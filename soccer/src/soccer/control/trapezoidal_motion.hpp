@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * This function evaluates a motion situation using "bang-bang". The robot
+ * This function evaluates a control situation using "bang-bang". The robot
  * accelerates at maxAcceleration until it hits max speed, then decelerates at
  * max acc to the end point.
  *

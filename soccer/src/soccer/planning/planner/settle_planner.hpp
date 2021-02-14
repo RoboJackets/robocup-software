@@ -7,7 +7,7 @@
 class Configuration;
 class ConfigDouble;
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Planner which tries to move around the ball to intercept it
@@ -86,60 +86,5 @@ private:
     bool path_created_for_dampen_ = false;
 
     Trajectory previous_;
-
-    // How much of the ball seed to contact the ball with
-    // before slowing down to dampen the initial hit
-    static ConfigDouble* ball_speed_percent_for_dampen;  // %
-
-    // Closest dist to start searching for intercept points
-    static ConfigDouble* search_start_dist;  // m
-    // Furthest dist to search for intercept points
-    static ConfigDouble* search_end_dist;  // m
-    // What dist increment to search for intercepts
-    static ConfigDouble* search_inc_dist;  // m
-
-    // How much sooner should we reach the intercept point than we need to
-    // This is a percent of the calculated intercept time
-    // Numbers greater than 1 mean we increase intercept time needed by X% over
-    // actual Numbers less than 1 mean we get there X% faster than we plan
-    // (Shouldn't ever happen)
-    static ConfigDouble* intercept_buffer_time;  // %
-
-    // Gain on the averaging function to smooth the target point to intercept
-    // This is due to the high flucations in the ball velocity frame to frame
-    // a*new_point + (1-a)*old_point
-    // The lower the number, the less noise affects the system, but the slower
-    // it responds to changes The higher the number, the more noise affects the
-    // system, but the faster it responds to changes
-    static ConfigDouble* target_point_gain;
-
-    // Gain on the averaging function to smooth the ball velocity to for any
-    // motion commands This is due to the high flucations in the ball velocity
-    // frame to frame a*new_point + (1-a)*old_point The lower the number, the less
-    // noise affects the system, but the slower it responds to changes The
-    // higher the number, the more noise affects the system, but the faster it
-    // responds to changes
-    static ConfigDouble* ball_vel_gain;
-
-    // Distance between robot and closest point on ball line such that we move
-    // directly into the ball line instead of trying to find the point we hit
-    // first This does take into account slow moving balls in which we should
-    // move onto the ball to capture it
-    static ConfigDouble* shortcut_dist;  // m
-
-    // If the ball velocity angle changes by a large amount
-    // we want to quickly react and clear all the smoothing filters
-    // Lower numbers means it reacts faster, but more chance for false positives
-    // Higher numbers means slower reaction, but less false positives
-    static ConfigDouble* max_ball_angle_for_reset;  // Deg
-
-    // If the ball velocity itself changes by a large amount
-    // we want to quickly react and clear all the smoothing filters
-    // Lower numbers means it reacts faster, but more chance for false positives
-    // Higher numbers means slower reaction, but less false positives
-    static ConfigDouble* max_ball_vel_for_path_reset;  // m/s
-
-    // Max angle between ball and target bounce direction
-    static ConfigDouble* max_bounce_angle;  // Deg
 };
-}  // namespace Planning
+}  // namespace planning

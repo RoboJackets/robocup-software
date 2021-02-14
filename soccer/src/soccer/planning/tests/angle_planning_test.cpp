@@ -4,7 +4,7 @@
 
 #include "planning/primitives/angle_planning.hpp"
 
-using namespace Planning;
+using namespace planning;
 using namespace rj_geometry;
 
 // (For the case where constraints are not saturated) check that we follow the

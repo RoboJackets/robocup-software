@@ -8,7 +8,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 TEST(CreatePath, smoke_test_efficiency) {
     MotionConstraints mot;
@@ -88,4 +88,4 @@ TEST(CreatePath, success_rate) {
     EXPECT_GT(success_rate, 0.75);
 }
 
-}  // namespace Planning
+}  // namespace planning

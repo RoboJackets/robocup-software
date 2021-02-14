@@ -10,22 +10,7 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 
-#include <rj_param_utils/param.hpp>
-
-namespace Planning {
-constexpr auto kRRTConfigParamModule = "rrt_config";
-
-DECLARE_NS_BOOL(kRRTConfigParamModule, path_planning::rrt, enable_rrt_debug_drawing)
-DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, step_size)
-DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, goal_bias)
-DECLARE_NS_FLOAT64(kRRTConfigParamModule, path_planning::rrt, waypoint_bias)
-
-DECLARE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, min_iterations)
-DECLARE_NS_INT64(kRRTConfigParamModule, path_planning::rrt, max_iterations)
-
-class RRTConfig {
-public:
-};
+namespace planning {
 
 /// Drawing
 void draw_rrt(const RRT::Tree<rj_geometry::Point>& rrt, DebugDrawer* debug_drawer,
@@ -49,4 +34,4 @@ std::vector<rj_geometry::Point> generate_rrt(
     const rj_geometry::ShapeSet& obstacles,
     const std::vector<rj_geometry::Point>& waypoints = {});
 
-}  // namespace Planning
+}  // namespace planning

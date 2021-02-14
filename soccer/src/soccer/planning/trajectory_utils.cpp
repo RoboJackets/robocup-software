@@ -2,7 +2,7 @@
 
 #include <rj_constants/constants.hpp>
 
-namespace Planning {
+namespace planning {
 
 bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::ShapeSet& obstacles,
                             RJ::Time start_time, RJ::Time* hit_time) {
@@ -140,4 +140,4 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
     return maybe_hit_time.has_value();
 }
 
-}  // namespace Planning
+}  // namespace planning

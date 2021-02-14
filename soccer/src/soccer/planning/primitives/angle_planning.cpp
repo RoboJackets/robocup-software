@@ -2,7 +2,7 @@
 
 #include "trapezoidal_motion.hpp"
 
-namespace Planning {
+namespace planning {
 
 void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                  const AngleFunction& angle_function,
@@ -146,4 +146,4 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
     trajectory->mark_angles_valid();
 }
 
-}  // namespace Planning
+}  // namespace planning

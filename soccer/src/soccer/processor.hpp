@@ -18,6 +18,7 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_topic_utils/async_message_queue.hpp>
+#include <ros2_temp/autonomy_interface.hpp>
 #include <ros2_temp/debug_draw_interface.hpp>
 #include <ros2_temp/raw_vision_packet_sub.hpp>
 #include <ros2_temp/referee_sub.hpp>
@@ -28,11 +29,7 @@
 #include "gr_sim_communicator.hpp"
 #include "joystick/manual_control_node.hpp"
 #include "joystick/sdl_joystick_node.hpp"
-#include "motion/motion_control_node.hpp"
 #include "node.hpp"
-#include "planning/planner_node.hpp"
-#include "radio/radio.hpp"
-#include "radio/radio_node.hpp"
 
 #include "rc-fshare/rtp.hpp"
 
@@ -40,14 +37,9 @@ class Configuration;
 class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
-class Radio;
 
 namespace Gameplay {
 class GameplayModule;
-}
-
-namespace Planning {
-class MultiRobotPathPlanner;
 }
 
 /**
@@ -109,16 +101,12 @@ public:
 
     std::mutex* loop_mutex() { return &loop_mutex_; }
 
-    Radio* radio() { return radio_->get_radio(); }
-
     /**
      * Stops all robots by clearing their intents and setpoints
      */
     void stop_robots();
 
     void set_field_dimensions(const FieldDimensions& dims);
-
-    bool is_radio_open() const;
 
     bool is_initialized() const;
 
@@ -170,9 +158,6 @@ private:
 
     // modules
     std::shared_ptr<Gameplay::GameplayModule> gameplay_module_;
-    std::unique_ptr<MotionControlNode> motion_control_;
-    std::unique_ptr<Planning::PlannerNode> planner_node_;
-    std::unique_ptr<RadioNode> radio_;
     std::unique_ptr<GrSimCommunicator> gr_sim_com_;
     std::unique_ptr<joystick::SDLJoystickNode> sdl_joystick_node_;
     std::unique_ptr<joystick::ManualControlNode> manual_control_node_;
@@ -191,6 +176,7 @@ private:
     std::unique_ptr<ros2_temp::RawVisionPacketSub> raw_vision_packet_sub_;
     std::unique_ptr<ros2_temp::RefereeSub> referee_sub_;
     std::unique_ptr<ros2_temp::DebugDrawInterface> debug_draw_sub_;
+    std::unique_ptr<ros2_temp::AutonomyInterface> autonomy_interface_;
 
     std::vector<Node*> nodes_;
 
