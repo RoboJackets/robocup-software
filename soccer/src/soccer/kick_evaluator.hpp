@@ -2,6 +2,7 @@
 
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/segment.hpp>
+#include <rj_param_utils/param.hpp>
 #include <functional>
 #include <vector>
 
@@ -9,6 +10,13 @@
 #include "system_state.hpp"
 #include "optimization/parallel_gradient_1d_config.hpp"
 #include "optimization/parallel_gradient_ascent_1d.hpp"
+
+constexpr auto kKickEvaluatorParamModule = "kick_evaluator";
+
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_std_dev)
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, kick_mean)
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, robot_std_dev)
+DECLARE_NS_FLOAT64(kKickEvaluatorParamModule, kick_evaluator, start_x_offset)
 
 // < [Point along target segment to aim at], [% Chance of success] >
 using KickResults = std::pair<rj_geometry::Point, float>;
@@ -100,7 +108,6 @@ public:
      */
     std::vector<rj_geometry::Point> hypothetical_robot_locations;
 
-    static ConfigDouble* kick_std_dev;
 
 private:
     SystemState* system_;
@@ -141,7 +148,4 @@ private:
         const std::vector<float>& robot_st_devs, float boundary_lower,
         float boundary_upper);
 
-    static ConfigDouble* kick_mean;
-    static ConfigDouble* robot_std_dev;
-    static ConfigDouble* start_x_offset;
 };

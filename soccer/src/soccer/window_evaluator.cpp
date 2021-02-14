@@ -13,16 +13,18 @@ REGISTER_CONFIGURABLE(WindowEvaluator)
 
 using namespace rj_geometry;
 
-ConfigDouble* WindowEvaluator::angle_score_coefficient;
-ConfigDouble* WindowEvaluator::distance_score_coefficient;
+//currently unused variable
+DEFINE_NS_FLOAT64(kWindowConfigParamModule, optimization, angle_score_coefficient, 0.7,
+                  "Angle score coefficient.");
+DEFINE_NS_FLOAT64(kWindowConfigParamModule, optimization, distance_score_coefficient, 0.3,
+                  "Distance score coefficient.");
 
 Window::Window() : t0(0), t1(0), a0(0), a1(0), shot_success(0) {}
 
 Window::Window(double t0, double t1) : t0(t0), t1(t1), a0(0), a1(0), shot_success(0) {}
 
 void WindowEvaluator::create_configuration(Configuration* cfg) {
-    angle_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/angleScoreCoeff", 0.7);
-    distance_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
+	
 }
 
 WindowEvaluator::WindowEvaluator(Context* context) : context_(context) {}
@@ -240,11 +242,12 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     float longest_possible_shot =
         std::sqrt(pow(FieldDimensions::current_dimensions.length(), 2.0f) +
                   pow(FieldDimensions::current_dimensions.width(), 2.0f));
-    const auto& std = *KickEvaluator::kick_std_dev;
+    const auto& std = kick_evaluator::PARAM_kick_std_dev;
     auto angle_prob =
         phi(angle_between_shot_and_window / (std)) - phi(-angle_between_shot_and_window / (std));
 
     auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
 
-    window.shot_success = angle_prob + *distance_score_coefficient * distance_score;
+    window.shot_success =
+        angle_prob + optimization::PARAM_distance_score_coefficient * distance_score;
 }
