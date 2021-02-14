@@ -37,7 +37,7 @@ def ballstate_to_ball(ball_msg: msg._ball_state.BallState) -> rc.Ball:
 
     dx = ball_msg.velocity.x
     dy = ball_msg.velocity.y
-    vel = np.array([x,y])
+    vel = np.array([dx,dy])
 
     ball = rc.Ball(pos,vel)
 
