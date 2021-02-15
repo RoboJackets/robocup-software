@@ -26,6 +26,7 @@ set(RJ_PARAM_UTILS_DEPS_LIBRARIES rj_constants)
 
 set(RJ_PARAM_UTILS_SOURCES src/param.cpp src/ros2_param_provider.cpp src/global_param.cpp)
 
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
