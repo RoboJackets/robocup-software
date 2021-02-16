@@ -8,7 +8,7 @@
 #include "instant.hpp"
 #include "planning/dynamic_obstacle.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief An ordered sequence (by time) of RobotInstants
@@ -436,13 +436,13 @@ private:
     bool has_angle_profile_{false};
 };
 
-}  // namespace Planning
+}  // namespace planning
 
 namespace rj_convert {
 
 template <>
-struct RosConverter<Planning::Trajectory, rj_msgs::msg::Trajectory> {
-    static rj_msgs::msg::Trajectory to_ros(const Planning::Trajectory& from) {
+struct RosConverter<planning::Trajectory, rj_msgs::msg::Trajectory> {
+    static rj_msgs::msg::Trajectory to_ros(const planning::Trajectory& from) {
         if (!from.angles_valid()) {
             throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
         }
@@ -451,14 +451,14 @@ struct RosConverter<Planning::Trajectory, rj_msgs::msg::Trajectory> {
             .instants(convert_to_ros(from.instants()));
     }
 
-    static Planning::Trajectory from_ros(const rj_msgs::msg::Trajectory& from) {
-        auto trajectory = Planning::Trajectory{convert_from_ros(from.instants)};
+    static planning::Trajectory from_ros(const rj_msgs::msg::Trajectory& from) {
+        auto trajectory = planning::Trajectory{convert_from_ros(from.instants)};
         trajectory.stamp(convert_from_ros(from.stamp));
         trajectory.mark_angles_valid();
         return trajectory;
     }
 };
 
-ASSOCIATE_CPP_ROS(Planning::Trajectory, Planning::Trajectory::Msg);
+ASSOCIATE_CPP_ROS(planning::Trajectory, planning::Trajectory::Msg);
 
 }  // namespace rj_convert

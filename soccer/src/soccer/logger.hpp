@@ -1,13 +1,13 @@
 #pragma once
 
-#include <rj_protos/LogFrame.pb.h>
-
 #include <deque>
 #include <fstream>
-#include <motion/motion_setpoint.hpp>
 #include <optional>
+
+#include <control/motion_setpoint.hpp>
 #include <radio/robot_status.hpp>
 #include <rj_common/time.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 #include "node.hpp"
 #include "robot_intent.hpp"

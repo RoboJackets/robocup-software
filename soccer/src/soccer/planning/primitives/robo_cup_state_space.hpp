@@ -5,7 +5,7 @@
 #include <rj_geometry/shape_set.hpp>
 #include <rrt/2dplane/PlaneStateSpace.hpp>
 
-namespace Planning {
+namespace planning {
 
 /**
  * Represents the robocup field for path-planning purposes.
@@ -67,4 +67,4 @@ private:
     const FieldDimensions field_dimensions_;
 };
 
-}  // namespace Planning
+}  // namespace planning

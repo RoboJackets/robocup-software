@@ -3,55 +3,59 @@
 #include <deque>
 #include <mutex>
 
+#include <rclcpp/rclcpp.hpp>
+
+#include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_msgs/msg/motion_setpoint.hpp>
+#include <rj_msgs/msg/robot_status.hpp>
+#include <rj_msgs/msg/team_color.hpp>
+#include <rj_param_utils/param.hpp>
+#include <rj_param_utils/ros2_param_provider.hpp>
+
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
-#include "motion/motion_setpoint.hpp"
+
+namespace radio {
+
+constexpr auto kRadioParamModule = "radio";
+DECLARE_FLOAT64(kRadioParamModule, timeout);
 
 /**
  * @brief Sends and receives information to/from our robots.
  *
  * @details This is the abstract superclass for USBRadio and SimRadio, which do
- * the actual work - this just declares the interface.
+ * the actual work - this just declares the interface and handles sending stop commands when no new
+ * commands come in for a while.
  */
-class Radio {
+class Radio : public rclcpp::Node {
 public:
-    Radio() { channel_ = 0; }
-
-    [[nodiscard]] virtual bool is_open() const = 0;
-
-    virtual void send(
-        const std::array<RobotIntent, kNumShells>& intents,
-        const std::array<MotionSetpoint, kNumShells>& setpoints) = 0;
-    virtual void receive() = 0;
-
-    virtual void switch_team(bool blue_team) = 0;
-
-    virtual void channel(int n) { channel_ = n; }
-
-    int channel() const { return channel_; }
-
-    bool has_reverse_packets() {
-        std::lock_guard<std::mutex> lock(reverse_packets_mutex_);
-        return reverse_packets_.size();
-    }
-
-    RobotStatus pop_reverse_packet() {
-        std::lock_guard<std::mutex> lock(reverse_packets_mutex_);
-        RobotStatus packet = reverse_packets_.front();
-        reverse_packets_.pop_front();
-        return packet;
-    }
-
-    void clear() {
-        std::lock_guard<std::mutex> lock(reverse_packets_mutex_);
-        reverse_packets_.clear();
-    }
+    Radio();
 
 protected:
-    // A queue for the reverse packets as they come in.
-    // Access to this queue should be controlled by locking the mutex.
-    std::deque<RobotStatus> reverse_packets_;
-    std::mutex reverse_packets_mutex_;
+    void publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status);
 
-    int channel_;
+    virtual void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+                      const rj_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
+    virtual void receive() = 0;
+    virtual void switch_team(bool blue) = 0;
+
+private:
+    void tick();
+
+    std::array<rclcpp::Publisher<rj_msgs::msg::RobotStatus>::SharedPtr, kNumShells>
+        robot_status_pubs_;
+    std::array<rclcpp::Subscription<rj_msgs::msg::MotionSetpoint>::SharedPtr, kNumShells>
+        motion_subs_;
+    std::array<rclcpp::Subscription<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr, kNumShells>
+        manipulator_subs_;
+    rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
+    rclcpp::TimerBase::SharedPtr tick_timer_;
+
+    std::array<rj_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;
+    std::array<RJ::Time, kNumShells> last_updates_ = {};
+
+    ::params::ROS2ParamProvider param_provider_;
 };
+
+}  // namespace radio

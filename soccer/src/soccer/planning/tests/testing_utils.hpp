@@ -6,7 +6,7 @@
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning::TestingUtils {
+namespace planning::TestingUtils {
 /**
  * test if a path is continuous and well behaved
  * @param path
@@ -42,4 +42,4 @@ inline double random(std::mt19937* generator, double lo, double hi) {
  */
 RobotInstant random_instant(std::mt19937* generator);
 
-}  // namespace Planning::TestingUtils
+}  // namespace planning::TestingUtils

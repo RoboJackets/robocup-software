@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace Planning::Trapezoid {
+namespace planning::Trapezoid {
 
 /**
  * Is the profile "inverted"? That is, do we first accelerate in the positive
@@ -128,4 +128,4 @@ State predict_in(State initial, State goal, double max_velocity, double max_acce
     return result;
 }
 
-}  // namespace Planning::Trapezoid
+}  // namespace planning::Trapezoid

@@ -1,25 +1,25 @@
 #pragma once
 
+#include <set>
+
+#include <rj_constants/constants.hpp>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/referee.pb.h>
 
-#include <rj_constants/constants.hpp>
-#include <set>
-
+#include "control/motion_setpoint.hpp"
 #include "debug_drawer.hpp"
 #include "game_settings.hpp"
 #include "game_state.hpp"
+#include "joystick/gamepad_message.hpp"
 #include "logger.hpp"
+#include "planning/robot_constraints.hpp"
+#include "planning/trajectory.hpp"
+#include "radio/robot_status.hpp"
 #include "robot_config.hpp"
 #include "robot_intent.hpp"
 #include "system_state.hpp"
 #include "team_info.hpp"
 #include "world_state.hpp"
-#include "joystick/gamepad_message.hpp"
-#include "motion/motion_setpoint.hpp"
-#include "planning/robot_constraints.hpp"
-#include "planning/trajectory.hpp"
-#include "radio/robot_status.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
@@ -36,7 +36,7 @@ struct Context {
     // Motion control -> Radio
     std::array<MotionSetpoint, kNumShells> motion_setpoints;
     // Planning -> Motion control
-    std::array<Planning::Trajectory, kNumShells> trajectories;
+    std::array<planning::Trajectory, kNumShells> trajectories;
     // Radio -> Gameplay
     std::array<RobotStatus, kNumShells> robot_status;
     // MainWindow -> Manual control
@@ -45,7 +45,7 @@ struct Context {
     bool joystick_valid;
 
     std::array<RobotLocalConfig, kNumShells> local_configs;
-    std::array<RobotConstraints, kNumShells> robot_constraints;
+    std::array<planning::RobotConstraints, kNumShells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
     rj_geometry::ShapeSet global_obstacles;

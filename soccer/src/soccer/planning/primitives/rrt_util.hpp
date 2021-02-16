@@ -10,22 +10,7 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning {
-class RRTConfig {
-public:
-    static void create_configuration(Configuration* cfg);
-
-    // if set, enables drawng of rrts to the SystemState so they can be shown in
-    // the gui
-    static ConfigBool* enable_rrt_debug_drawing;
-
-    static ConfigDouble* step_size;
-    static ConfigDouble* goal_bias;
-    static ConfigDouble* waypoint_bias;
-
-    static ConfigInt* min_iterations;
-    static ConfigInt* max_iterations;
-};
+namespace planning {
 
 /// Drawing
 void draw_rrt(const RRT::Tree<rj_geometry::Point>& rrt, DebugDrawer* debug_drawer,
@@ -49,4 +34,4 @@ std::vector<rj_geometry::Point> generate_rrt(
     const rj_geometry::ShapeSet& obstacles,
     const std::vector<rj_geometry::Point>& waypoints = {});
 
-}  // namespace Planning
+}  // namespace planning
