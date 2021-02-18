@@ -15,7 +15,7 @@ class Robot:
     to enforce that instances of this class should not be mutated."""
 
     __slots__ = [
-        "__id", "__is_ours", "__pose", "__twist", "__ball_sense_triggered",
+        "__id", "__is_ours", "__pose", "__twist",
         "__visible", "__has_ball_sense", "__kicker_charged",
         "__kicker_healthy", "__lethal_fault"
     ]
@@ -25,14 +25,13 @@ class Robot:
     __pose: np.ndarray
     __twist: np.ndarray
     __visible: bool
-    __ball_sense_triggered: bool
     __has_ball_sense: bool
     __kicker_charged: bool
     __kicker_healthy: bool
     __lethal_fault: bool
 
     def __init__(self, robot_id: RobotId, is_ours: bool, pose: np.ndarray,
-                 twist: np.ndarray, visible: bool, ball_sense_triggered: bool,
+                 twist: np.ndarray, visible: bool,
                  has_ball_sense: bool, kicker_charged: bool,
                  kicker_healthy: bool, lethal_fault: bool):
         """
@@ -40,7 +39,6 @@ class Robot:
         :param is_ours: Whether the robot is one of our robots
         :param pose: Pose of the Robot. [x, y, theta].
         :param twist: Twist of the robot. [dx, dy, dtheta].
-        :param ball_sense_triggered: Whether the ball sensor is triggered
         :param visible: Whether the robot is being seen by the global vision system
         :param has_ball_sense: Whether the robots ball sensor is functional
         :param kicker_charged: Whether the robots kicker capacitors are charged
@@ -51,7 +49,6 @@ class Robot:
         self.__is_ours = is_ours
         self.__pose = pose
         self.__twist = twist
-        self.__ball_sense_triggered = ball_sense_triggered
         self.__visible = visible
         self.__has_ball_sense = has_ball_sense
         self.__kicker_charged = kicker_charged
@@ -108,19 +105,6 @@ class Robot:
                 RuntimeWarning)
 
         return self.__twist
-
-    @property
-    def ball_sense_triggered(self) -> bool:
-        """
-        :return: True if the ball sense break-beam is triggered
-        """
-        if (not self.is_ours):
-            warnings.warn(
-                "Attempting to retrieve ball sense information from an opposing robot",
-                RuntimeWarning)
-            return False
-
-        return self.__ball_sense_triggered
 
     @property
     def visible(self) -> bool:
