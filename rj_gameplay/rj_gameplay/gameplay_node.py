@@ -17,7 +17,9 @@ class EmptyPlaySelector(situation.IPlaySelector):
         return None
 
 class GameplayNode(Node):
-    """A node which subscribes to the world_state and game state topics and creates the converts the messages to python types."""
+    """
+    A node which subscribes to the world_state,  game state, robot status, and field topics and converts the messages to python types.
+    """
 
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
@@ -40,20 +42,32 @@ class GameplayNode(Node):
 
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
+        """
+        Creates a partial world state from a world state message
+        """
         if msg is not None:
             self.partial_world_state = conv.worldstate_message_converter(msg)
 
     def create_partial_robots(self, msg: msg.RobotStatus) -> None:
+        """
+        Creates the robot status which makes up part of the whole Robot class
+        """
         if msg is not None:
             robot = conv.robotstatus_to_partial_robot(msg)
             index = robot.robot_id
             self.robot_statuses.insert(index, robot)
         
     def create_game_info(self, msg: msg.GameState) -> None:
+        """
+        Create game info object from Game State message
+        """
         if msg is not None:
             self.game_info = conv.gamestate_to_gameinfo(msg)
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
+        """
+        Creates field object from Field Dimensions message
+        """
         if msg is not None:
             self.field = conv.field_msg_to_field(msg)
 
@@ -72,7 +86,6 @@ class GameplayNode(Node):
         """
         ticks the gameplay coordinator using recent world_state
         """
-        # print(self.game_info is not None)
         if self.partial_world_state is not None and self.field is not None:
 
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)

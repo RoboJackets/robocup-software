@@ -7,6 +7,9 @@ from typing import List
 RobotId = int
 
 class RobotStatus():
+    """
+    A class to contain the information from the robot status messsage
+    """
 
     __slots = [
         "robot_id", "has_ball_sense", "kicker_charged",
@@ -31,6 +34,9 @@ class RobotStatus():
         self.lethal_fault = lethal_fault
 
 class RobotState():
+    """
+    A class to contain the infomration from the robot state message
+    """
 
     __slots = [
         "id", "pose", "twist",
@@ -51,6 +57,9 @@ class RobotState():
         self.visible = visible
 
 class PartialWorldState():
+    """
+    A class that contains all the ball, and robot states
+    """
 
     __slots = [
         "our_robots", "their_robots", "ball"
@@ -127,6 +136,9 @@ def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
     return ball
 
 def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
+    """
+        :return: GameInfo class from rc.py
+    """
 
     period = game_state_msg.period
 
@@ -141,6 +153,9 @@ def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
     return game_info
 
 def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
+    """
+        :return: Field class from rc.py
+    """
 
     length = field_msg.length
     width = field_msg.width
@@ -164,7 +179,7 @@ def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
 
 def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
     """
-        :return: world state class representing the state of the world.
+        :return: partial world state class representing the state of the robots and ball.
     """
     our_robots: List[RobotState]
     our_robots = []
@@ -184,7 +199,11 @@ def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
 
     return world_state
 
-def robot_creator(robot_state: RobotState, robot_status: RobotStatus):
+def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robot:
+    """
+    A function which combines the robot state and robot status to create a rc.Robot class
+        :return: Robot class from rc.Robot representing the status and state of the robot
+    """
 
     if robot_status is None:
         is_ours = False
@@ -212,6 +231,10 @@ def robot_creator(robot_state: RobotState, robot_status: RobotStatus):
 
 
 def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: List[RobotStatus], game_info: rc.GameInfo, field: rc.Field) -> rc.WorldState:
+    """
+    A function which combines the partial world state, robot statuses, game info, and field to create a whole world state
+        :return: a world state as a rc.WorldState object
+    """
 
     our_partial_robots = partial_world_state.our_robots
     their_partial_robots = partial_world_state.their_robots
