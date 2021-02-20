@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 // Here's how networking works:
 //
 // Vision:  Shared or simulated.

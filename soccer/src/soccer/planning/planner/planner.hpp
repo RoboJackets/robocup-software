@@ -5,7 +5,7 @@
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning {
+namespace planning {
 class Planner {
 public:
     explicit Planner(std::string name) : name_(std::move(name)) {}
@@ -70,4 +70,4 @@ public:
     }
 };
 
-}  // namespace Planning
+}  // namespace planning

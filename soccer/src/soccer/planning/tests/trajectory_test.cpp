@@ -11,9 +11,9 @@
 #include "planning/primitives/rrt_util.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
 
-using namespace Planning;
+using namespace planning;
 using namespace rj_geometry;
-using namespace Planning::TestingUtils;
+using namespace planning::TestingUtils;
 
 TEST(Trajectory, Interpolation) {
     // Test the basics of the Trajectory class, including interpolation, instant
@@ -132,7 +132,7 @@ TEST(Trajectory, BezierPath) {
     constraints.max_speed = 3.0;
     constraints.max_acceleration = 3.0;
 
-    Planning::BezierPath path(points, vi, vf, constraints);
+    planning::BezierPath path(points, vi, vf, constraints);
 
     for (int i = 0; i < 4; i++) {
         Point p;

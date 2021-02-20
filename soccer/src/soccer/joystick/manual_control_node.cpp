@@ -65,7 +65,7 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
         // If robot isn't visible, then stop
         if (!robot->visible()) {
             intent = {};
-            setpoint.clear();
+            setpoint = {};
             return;
         }
 

@@ -11,7 +11,6 @@
 #include "debug_drawer.hpp"
 #include "gameplay/gameplay_module.hpp"
 #include "radio/packet_convert.hpp"
-#include "radio/radio_node.hpp"
 #include "robot.hpp"
 #include "robot_config.hpp"
 
@@ -54,7 +53,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     running_ = true;
     framerate_ = 0;
     initialized_ = false;
-    radio_ = nullptr;
 
     // Configuration-time variables.
     context_.robot_config = std::move(robot_config_init);
@@ -69,9 +67,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
     gameplay_module_ = std::make_shared<Gameplay::GameplayModule>(&context_);
-    motion_control_ = std::make_unique<MotionControlNode>(&context_);
-    planner_node_ = std::make_unique<Planning::PlannerNode>(&context_);
-    radio_ = std::make_unique<RadioNode>(&context_, sim, blue_team);
     gr_sim_com_ = std::make_unique<GrSimCommunicator>(&context_);
     logger_ = std::make_unique<Logger>(&context_);
 
@@ -81,6 +76,9 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
     debug_draw_sub_ =
         std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());
+    autonomy_interface_ =
+        std::make_unique<ros2_temp::AutonomyInterface>(&context_, ros_executor_.get());
+
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStatePub);
 
@@ -94,7 +92,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     logger_->start();
 
-    nodes_.push_back(motion_control_.get());
     nodes_.push_back(gr_sim_com_.get());
     nodes_.push_back(logger_.get());
 }
@@ -162,12 +159,6 @@ void Processor::run() {
             set_field_dimensions(context_.field_dimensions);
         }
 
-        radio_->run();
-
-        if (radio_) {
-            cur_status.last_radio_rx_time = radio_->get_last_radio_rx_time();
-        }
-
         const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
         if (world_state_msg != nullptr) {
             context_.world_state = rj_convert::convert_from_ros(*world_state_msg);
@@ -178,19 +169,15 @@ void Processor::run() {
         // Run high-level soccer logic
         gameplay_module_->run();
 
+        update_intent_active();
+
+        autonomy_interface_->run();
+
         // recalculates Field obstacles on every run through to account for
         // changing inset
         if (gameplay_module_->has_field_edge_inset_changed()) {
             gameplay_module_->calculate_field_obstacles();
         }
-
-        // In: Global Obstacles
-        // Out: context_->trajectories
-        planner_node_->run();
-
-        // In: context_->trajectories
-        // Out: context_->motion_setpoints
-        motion_control_->run();
 
         gr_sim_com_->run();
 
@@ -203,7 +190,6 @@ void Processor::run() {
         if (context_.game_state.halt()) {
             stop_robots();
         }
-        update_intent_active();
         manual_control_node_->run();
 
         // Store processing loop status
@@ -241,8 +227,8 @@ void Processor::stop_robots() {
         RobotIntent& intent = context_.robot_intents[r->shell()];
         MotionSetpoint& setpoint = context_.motion_setpoints[r->shell()];
 
-        setpoint.clear();
         intent = {};
+        setpoint = {};
     }
 }
 
@@ -261,5 +247,4 @@ void Processor::set_field_dimensions(const FieldDimensions& dims) {
     gameplay_module_->update_field_dimensions();
 }
 
-bool Processor::is_radio_open() const { return radio_->is_open(); }
 bool Processor::is_initialized() const { return initialized_; }
