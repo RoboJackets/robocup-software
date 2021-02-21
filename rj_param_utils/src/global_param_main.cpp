@@ -1,6 +1,6 @@
 #include <rj_param_utils/global_param.hpp>
 #include <rj_constants/topic_names.hpp>
-#include <rj_vision_receiver/vision_receiver.hpp>
+// #include <rj_vision_receiver/vision_receiver.hpp>
 // #include <rj_msgs/msg/globalparams.hpp>
 
 /* class MinimalSubscriber : public rclcpp::Node */

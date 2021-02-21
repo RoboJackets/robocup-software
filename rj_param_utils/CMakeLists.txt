@@ -24,7 +24,7 @@ set(RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS include)
 
 set(RJ_PARAM_UTILS_DEPS_LIBRARIES rj_constants)
 
-set(RJ_PARAM_UTILS_SOURCES src/param.cpp src/ros2_param_provider.cpp src/global_param.cpp)
+# set(RJ_PARAM_UTILS_SRCS src/param.cpp src/ros2_param_provider.cpp src/global_param.cpp)
 
 
 # ======================================================================
@@ -36,7 +36,7 @@ target_link_libraries(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
 
 ament_target_dependencies(rj_param_utils PUBLIC rclcpp)
 
-target_sources(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_SOURCES})
+target_sources(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_SRCS})
 
 # ======================================================================
 # Testing
@@ -48,6 +48,9 @@ if(BUILD_TESTING)
   add_subdirectory(testing)
   target_link_libraries(rj_param_utils_testing PUBLIC rj_param_utils ${GTEST_LIBRARIES})
 endif()
+
+# position-independent-code flag
+target_compile_options(rj_param_utils PRIVATE "-fPIC")
 
 # ======================================================================
 # Packaging
