@@ -6,7 +6,7 @@ namespace rj_param_utils::Testing {
 
 class ReceiverNode : public rclcpp::Node {
 public:
-    ReceiverNode();
+    ReceiverNode() : rclcpp::Node("receiver_node") {};
 
     params::ROS2GlobalParamProvider global_param_provider_ = params::ROS2GlobalParamProvider(this, "test_global_node");
 };
