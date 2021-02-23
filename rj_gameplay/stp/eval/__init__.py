@@ -151,19 +151,22 @@ Fit (dynamic)
 class PlaySelectInfo():
     """
     The idea would be that these would be added in the playbook alongside the play for the play selector to use when determining which play to run. That would allow for the tuning of play 
+
+    This could be an interface, and playbooks and playselectors just have to provide some kind of play selection info along with the play list...
     """
 
     ##How long does this play need to execute in relation to other plays in the same situation (0, 1.0)
     speed: float
     ##How reliable do we consider this play (0,1)
     reliability: float
+    ##???
     reward: float
+    ##How well does the play think it fits within the situation
     fit: float
+    ##Ad-Hoc bias term to increase or decrease the probability of a play running (-inf, inf)
     bias: float
-
     ##If this list is not empty than this play will be considered for additional situations listed here
     add_situations: List[Situation]
-
     ##This play will be considered blacklisted from the listed situations
     blacklist_situations: List[Situation]
 
