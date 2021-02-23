@@ -4,19 +4,23 @@ from enum import Enum
 
 import numpy as np
 
-import stp.situation
 import stp.rc
-import stp.situation
+import time
+import stp.evaluation
 
-import rj_gameplay.situation.decision_tree as dt
+import rj_gameplay.eval.possession_evaluator as poss_eval
+import rj_gameplay.eval.pileup_evaluator as pile_eval
+import rj_gameplay.eval.situation_utils
 
+def get_situation(world_state: stp.rc.WorldState, possession_state: poss_eval.PossessionEvaluator.PropsT, pileup_state: pile_eval.PileupEvaluator.PropsT):
 
-class BallPos(Enum):
-    """Enum for representing the possession of the ball."""
+    if(world_state.game_info.game_state is rc.GameState.HALT):
+        return rc.evaluation.Situation.NO_SITUATION
 
-    OUR_BALL = 1
-    FREE_BALL = 2
-    THEIR_BALL = 3
+    field_loc = situation_utils.ballLocation(world_state)
+    possession = possession_state.possession
+    pileup = pileup_state.is_pileup
+    gamestate = 
 
 
 class FieldLoc(Enum):
@@ -27,17 +31,43 @@ class FieldLoc(Enum):
     ATTACK_SIDE = 3
 
 
-class HeuristicInformation:
-    """Class that represents all the heuristic information needed by the decision
-    tree situation analyzer.
-    """
-
+class Possession(Enum):
+    """Enum for representing possession."""
+    OUR_BALL = 1
+    FREE_BALL = 2
+    THEIR_BALL = 3
 
 
 class SituationEvaluator(stp.evaluation.ISituationEvaluator):
     """Class for decision tree based situation analyzer."""
 
-    __slots__ = []
+    @dataclass
+    class PropT:
+        situation: stp.evaluation.Situation = None
+        last_situation: stp.evaluation.Situation = None
+        situation_change_time: float = None
+        fieldloc: FieldLoc = None
+        last_fieldloc: FieldLoc = None
+
+        current_pileup: bool = None
+        has_ball: dict = None
+        has_ball_change_time: dict = None
+        has_ball_dutation: dict = None
+
+
+
+
+    @staticmethod
+    def tick(world_state: stp.rc.WorldState, prev_props: Optional[PropT]) -> (PropT, dict):
+       
+    if(prev_props is None):
+        props = Props()
+    else:
+        props = prev_props
+
+
+
+
 
     def analyze_situation(
         self, world_state: stp.rc.WorldState, game_info: stp.rc.GameInfo
