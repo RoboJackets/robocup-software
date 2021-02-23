@@ -102,28 +102,32 @@ class Situation(Enum):
 PropT = TypeVar("PropT")
 
 class IEvaluator(Generic[PropT], ABC):
+    """
+    Current plan, evaluators tick on the old evaluation state and produce a new one.
+    Inside the PropT object evaluated information can be found
+    """
 
     @abstractmethod
-    def tick(self, world_state: rc.WorldState, prev_props: Optional[PropT]) -> (PropT, dict):
+    def tick(self, world_state: rc.WorldState, prev_props: Optional[PropT]) -> PropT:
         """
         Performs a tick of this evaluator
         :param world_state: The state of the world
         :param prev_props: The props from the previous tick if available
-        :return: tuple of the new props and a dict containing evaluated values
+        :return: new props
         """
         ...
 
 
-class ISituationEvaluator(IEvaluator):
-    """Interface for situation evaluator"""
-
-    @abstractmethod
-    def get_situation(self, props: PropT) -> Situation:
-        """
-        :param props: The properties from a tick of the evaluator
-        :return: The situation from the props
-        """
-        ...
+#class ISituationEvaluator(IEvaluator):
+#    """Interface for situation evaluator"""
+#
+#    @abstractmethod
+#    def get_situation(self, props: PropT) -> Situation:
+#        """
+#        :param props: The properties from a tick of the evaluator
+#        :return: The situation from the props
+#        """
+#        ...
 
 
 """
@@ -143,30 +147,45 @@ Reward
 Fit (dynamic)
 """
 
+@dataclass
 class PlaySelectInfo():
-    speed = 0.0
-    reliability = 0.0
-    reward = 0.0
+    """
+    The idea would be that these would be added in the playbook alongside the play for the play selector to use when determining which play to run. That would allow for the tuning of play 
+    """
 
+    ##How long does this play need to execute in relation to other plays in the same situation (0, 1.0)
+    speed: float
+    ##How reliable do we consider this play (0,1)
+    reliability: float
+    reward: float
+    fit: float
+    bias: float
 
+    ##If this list is not empty than this play will be considered for additional situations listed here
+    add_situations: List[Situation]
 
-class Playbook():
+    ##This play will be considered blacklisted from the listed situations
+    blacklist_situations: List[Situation]
 
-    plays: List[stp.play.IPlay]
+class Playbook(ABC):
 
-
+    @abstractmethod
     def get_plays(self) -> List[stp.play.IPlay]:
         ...
 
+    @abstractmethod
     def get_situational_plays(self, situation) -> List[stp.play.IPlay]:
         ...
 
+    @abstractmethod
+    def get_info_plays(self) -> Dict[stp.play.IPlay, PlaySelectInfo]:
+        ...
 
-class IPlaySelector(ABC):
+class IPlaySelector(Generic[PropT], ABC):
     """Interface for play selector."""
 
     @abstractmethod
-    def tick(self, world_state: rc.WorldState, playbook: IPlaybook) -> stp.play.IPlay:
+    def tick(self, world_state: rc.WorldState, playbook: IPlaybook, prev_props: Optional[PropT]) -> (stp.play.IPlay, PropT):
         """Selects the best play given given the current world state.
         :param world_state: The current state of the world.
         :param analyzer: A situation source

@@ -1,5 +1,11 @@
 
 
+class FieldLoc(Enum):
+    """Enum for representing where the ball is on the field."""
+    DEFEND_SIDE = 1
+    MIDFIELD = 2
+    ATTACK_SIDE = 3
+
 def situationFieldLoc(stp.rc.WorldState) -> 
 
 
