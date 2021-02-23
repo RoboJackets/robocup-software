@@ -153,7 +153,7 @@ class IPlay(Generic[PropT], ABC):
         ...
 
     @abstractmethod
-    def is_valid_situation(self, situation: situaion.ISituation) -> bool:
+    def is_valid_situation(self, situation: evaluation.Situation) -> bool:
         """Returns true if this play is considered a valid play for the passed situation
         
         :param situation: The situation to check for
@@ -161,6 +161,13 @@ class IPlay(Generic[PropT], ABC):
         """
         ...
 
+    @abstractmethod
+    @staticmethod
+    def fit(world_state: rc.WorldState) -> float:
+        """
+        Returns a score from 0 to 1 of how well this 
+        """
+        ...
 
 
 

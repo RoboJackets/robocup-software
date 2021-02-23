@@ -1,8 +1,8 @@
 """This module contains the interfaces ISituation, IAnalyzer and IPlaySelector."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple, Generic
-from enum import IntEnum, auto
+from typing import Dict, Tuple, Generic, Optional
+from enum import IntEnum, auto, Enum
 
 
 import stp.play
@@ -10,7 +10,7 @@ import stp.rc as rc
 import string
 
 
-class Situation(enum.Enum):
+class Situation(Enum):
     NO_SITUATION = auto()
     KICKOFF = auto()
     DEFEND_RESTART_OFFENSIVE = auto()
@@ -99,46 +99,66 @@ class Situation(enum.Enum):
     def is_defensive(self):
         pass
 
-
-class ISituation(ABC):
-    """Interface for a situation."""
-
-    @property
-    @abstractclass
-    def description(self) -> str: 
-        ...
-
-    @property
-    @abstractclass
-    def name(self) -> str:
-        ...
-
 PropT = TypeVar("PropT")
 
 class IEvaluator(Generic[PropT], ABC):
 
     @abstractmethod
-    def compute_props(self, prev_props: Optional[PropT]) -> PropT:
-        """Computes the props(state) required for the current tick.
-        :param prev_props: The props from the previous tick, if available.
-        :return: The props for the current tick.
+    def tick(self, world_state: rc.WorldState, prev_props: Optional[PropT]) -> (PropT, dict):
         """
-        ...
-
-    @abstractmethod
-    def tick(self, props: PropT) -> None:
-        """
-        :param props: The state of the current tactic.
-        :return: A list of actions to be executed.
+        Performs a tick of this evaluator
+        :param world_state: The state of the world
+        :param prev_props: The props from the previous tick if available
+        :return: tuple of the new props and a dict containing evaluated values
         """
         ...
 
 
-class ISituationAnalyzer(IEvaluator):
-    """Interface for situation analyzer."""
+class ISituationEvaluator(IEvaluator):
+    """Interface for situation evaluator"""
 
     @abstractmethod
-    def get_situation(self) -> ISituation:
+    def get_situation(self, props: PropT) -> Situation:
+        """
+        :param props: The properties from a tick of the evaluator
+        :return: The situation from the props
+        """
+        ...
+
+
+"""
+Situation Characteristics:
+Pressure
+Optimism/Advantage
+
+
+Match Characteristics:
+Exploration
+Bias (per play)
+
+Play Characteristics:
+Speed
+Reliability
+Reward
+Fit (dynamic)
+"""
+
+class PlaySelectInfo():
+    speed = 0.0
+    reliability = 0.0
+    reward = 0.0
+
+
+
+class Playbook():
+
+    plays: List[stp.play.IPlay]
+
+
+    def get_plays(self) -> List[stp.play.IPlay]:
+        ...
+
+    def get_situational_plays(self, situation) -> List[stp.play.IPlay]:
         ...
 
 
@@ -146,7 +166,7 @@ class IPlaySelector(ABC):
     """Interface for play selector."""
 
     @abstractmethod
-    def select(self, world_state: rc.WorldState, analyzer: ISituationAnalyzer) -> stp.play.IPlay:
+    def tick(self, world_state: rc.WorldState, playbook: IPlaybook) -> stp.play.IPlay:
         """Selects the best play given given the current world state.
         :param world_state: The current state of the world.
         :param analyzer: A situation source
