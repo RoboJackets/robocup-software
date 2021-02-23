@@ -1,6 +1,0 @@
-uint8 COMMAND_HALT = 0
-uint8 COMMAND_STOP = 1
-uint8 COMMAND_READY = 2
-uint8 COMMAND_PLAY = 3
-
-uint8 state
