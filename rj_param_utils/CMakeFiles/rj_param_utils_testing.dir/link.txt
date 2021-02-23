@@ -1,2 +1,0 @@
-ccache /usr/bin/ar qc librj_param_utils_testing.a  CMakeFiles/rj_param_utils_testing.dir/testing/src/declare_test.cpp.o CMakeFiles/rj_param_utils_testing.dir/testing/src/param_test.cpp.o
-ccache /usr/bin/ranlib librj_param_utils_testing.a
