@@ -8,7 +8,7 @@
 
 using rj_geometry::Point;
 
-namespace Planning {
+namespace planning {
 
 [[maybe_unused]] void dump_trajectory(const std::string& filename, const Trajectory& trajectory) {
     std::ofstream out(filename);
@@ -55,4 +55,4 @@ TEST(VelocityProfiling, ClampAccel) {
     ASSERT_NEAR(limit_acceleration(2, 0.0, 1, 3), 0.0, 1e-6);
 }
 
-}  // namespace Planning
+}  // namespace planning

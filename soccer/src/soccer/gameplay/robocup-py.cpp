@@ -29,10 +29,10 @@ using namespace boost::python;
 #include <rj_geometry/rect.hpp>
 #include <rj_protos/LogFrame.pb.h>
 
+#include "control/motion_control.hpp"
+#include "control/trapezoidal_motion.hpp"
 #include "debug_drawer.hpp"
 #include "kick_evaluator.hpp"
-#include "motion/motion_control.hpp"
-#include "motion/trapezoidal_motion.hpp"
 #include "optimization/nelder_mead_2d.hpp"
 #include "optimization/nelder_mead_2d_config.hpp"
 #include "optimization/python_function_wrapper.hpp"
@@ -1124,11 +1124,11 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("value", &ConfigInt::value, &ConfigInt::set_value)
         .def("__str__", &ConfigInt::to_string);
 
-    class_<MotionConstraints>("MotionConstraints")
-        .def_readonly("MaxRobotSpeed", &MotionConstraints::max_speed_config)
-        .def_readonly("MaxRobotAccel", &MotionConstraints::max_acceleration_config);
+    class_<planning::MotionConstraints>("MotionConstraints")
+        .add_property("max_speed", &planning::MotionConstraints::max_speed)
+        .add_property("max_accel", &planning::MotionConstraints::max_acceleration);
 
-    enum_<RefereeModuleEnums::Command>("Command")
+    enum_<referee_module_enums::Command>("Command")
         .value("halt", SSL_Referee_Command_HALT)
         .value("stop", SSL_Referee_Command_STOP)
         .value("normal_start", SSL_Referee_Command_NORMAL_START)

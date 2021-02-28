@@ -11,6 +11,8 @@
 using namespace boost::asio;
 using ip::udp;
 
+namespace radio {
+
 NetworkRadio::NetworkRadio(int server_port)
     : socket_(context_, udp::endpoint(udp::v4(), server_port)),
       recv_buffer_{},
@@ -26,54 +28,44 @@ void NetworkRadio::start_receive() {
                                       std::size_t num_bytes) { receive_packet(error, num_bytes); });
 }
 
-bool NetworkRadio::is_open() const { return socket_.is_open(); }
+void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+                        const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
+    // Build the control packet for this robot.
+    std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
+        send_buffers_[robot_id];
 
-void NetworkRadio::send(const std::array<RobotIntent, kNumShells>& intents,
-                        const std::array<MotionSetpoint, kNumShells>& setpoints) {
-    for (int shell = 0; shell < kNumShells; shell++) {
-        const auto& intent = intents[shell];
-        if (!intent.is_active) {
-            continue;
-        }
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+    auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
+    fill_header(header);
 
-        const auto& setpoint = setpoints[shell];
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+    auto* body = reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
 
-        // Build the control packet for this robot.
-        std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
-            send_buffers_[shell];
+    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body);
 
-        auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
-        fill_header(header);
+    // Fetch the connection
+    auto maybe_connection = connections_.at(robot_id);
 
-        auto* body =
-            reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
-
-        ConvertTx::to_rtp(intent, setpoint, shell, body);
-
-        // Fetch the connection
-        auto maybe_connection = connections_.at(shell);
-
-        // If there exists a connection, we can send.
-        if (maybe_connection) {
-            const RobotConnection& connection = maybe_connection.value();
-            // Check if we've timed out.
-            if (RJ::now() + kTimeout < connection.last_received) {
-                // Remove the endpoint from the IP map and the connection list
-                assert(robot_ip_map_.erase(connection.endpoint) == 1);
-                connections_.at(shell) = std::nullopt;
-            } else {
-                // Send to the given IP address
-                const udp::endpoint& robot_endpoint = connection.endpoint;
-                socket_.async_send_to(
-                    boost::asio::buffer(forward_packet_buffer), robot_endpoint,
-                    [](const boost::system::error_code& error, std::size_t num_bytes) {
-                        // Handle errors.
-                        if (static_cast<bool>(error)) {
-                            SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)
-                                "Error sending: {}.", error);
-                        }
-                    });
-            }
+    // If there exists a connection, we can send.
+    if (maybe_connection) {
+        const RobotConnection& connection = maybe_connection.value();
+        // Check if we've timed out.
+        if (RJ::now() + kTimeout < connection.last_received) {
+            // Remove the endpoint from the IP map and the connection list
+            assert(robot_ip_map_.erase(connection.endpoint) == 1);  // NOLINT
+            connections_.at(robot_id) = std::nullopt;
+        } else {
+            // Send to the given IP address
+            const udp::endpoint& robot_endpoint = connection.endpoint;
+            socket_.async_send_to(
+                boost::asio::buffer(forward_packet_buffer), robot_endpoint,
+                [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
+                    // Handle errors.
+                    if (static_cast<bool>(error)) {
+                        SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)
+                            "Error sending: {}.", error);
+                    }
+                });
         }
     }
 }
@@ -119,17 +111,17 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
     }
 
     // Extract the rtp to a regular struct.
+    rj_msgs::msg::RobotStatus status_ros;
     RobotStatus status;
     ConvertRx::rtp_to_status(*msg, &status);
+    ConvertRx::status_to_ros(status, &status_ros);
 
-    {
-        // Add reverse packets
-        std::lock_guard<std::mutex> lock(reverse_packets_mutex_);
-        reverse_packets_.push_back(status);
-    }
+    publish(robot_id, status_ros);
 
     // Restart receiving
     start_receive();
 }
 
 void NetworkRadio::switch_team(bool /*blue_team*/) {}
+
+}  // namespace radio

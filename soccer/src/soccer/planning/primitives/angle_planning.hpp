@@ -6,7 +6,7 @@
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Represents a functor that calculates the next angular target given the
@@ -102,4 +102,4 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 
-}  // namespace Planning
+}  // namespace planning
