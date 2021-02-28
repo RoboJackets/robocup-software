@@ -8,7 +8,7 @@ import math
 #max parameters for the various cost functions
 MAX_ROBOT_DISTANCE = 5
 
-def test_cost(world_state: rc.WorldState, target_robot: rc.Robot) -> float:
+def cost_heuristic(world_state: rc.WorldState, target_robot: rc.Robot) -> float:
     our_robots = world_state.our_robots
     their_robots = world_state.their_robots
     robot_with_ball = our_robots[0]
@@ -74,7 +74,7 @@ def main():
         their_robots.append(their_robot)
     world_state = rc.WorldState(our_robots, their_robots, None, None, None)
     for i in world_state.our_robots:
-        print(test_cost(world_state, i))
+        print(cost_heuristic(world_state, i))
 
 if __name__ == "__main__":
     main()
