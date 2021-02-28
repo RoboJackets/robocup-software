@@ -2,14 +2,20 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict, MutableMapping, Type, TypeVar
+import stp.rc as rc
 
 
 class IAction(ABC):
     """Interface for actions."""
 
     @abstractmethod
-    def tick(self) -> None:
-        """Ticks the action."""
+    def tick(self, ctx: Ctx) -> None:
+        """Ticks the action"""
+        ...
+
+    @abstractmethod
+    def done(self) -> bool:
+        """Checks to see if the action is done running"""
         ...
 
 
@@ -74,3 +80,7 @@ class Factory:
             )
 
         return self._registry[action]
+
+class Ctx:
+    """Context for actions, dummy for now"""
+    ...
