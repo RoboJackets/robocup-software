@@ -3,14 +3,14 @@ import rj_gameplay.gameplay_node as gameplay_node
 import rclpy
 
 
-def fumble_classifier(world_state: rc.WorldState, possess) -> None:
+def fumble_classifier(world_state: rc.WorldState, possess) -> bool:
 	if possess is None:
 		return True
 	else: 
 		return False
 
 
-def pass_classifier(world_state: rc.WorldState, possess)-> None:
+def pass_classifier(world_state: rc.WorldState, possess)-> bool:
 	if possess is not None:
 		return True
 	else: 
@@ -21,7 +21,7 @@ def pass_classifier(world_state: rc.WorldState, possess)-> None:
 get_distance returns the distance between the ball and the kicker
 num: kicker's id
 """
-def get_distance(world_state: rc.WorldState, kicker) -> None:
+def get_distance(world_state: rc.WorldState, kicker) -> float:
 	if world_state is not None:
 		robot = world_state.our_robots[kicker]
 		pose_x = robot.pose[0]
@@ -35,7 +35,7 @@ def get_distance(world_state: rc.WorldState, kicker) -> None:
 get_velocity_angle returns the ratio of y component of the velocity vector to x component
 """
 
-def get_velocity_angle(world_state: rc.WorldState) -> None:
+def get_velocity_angle(world_state: rc.WorldState) -> float:
 	if world_state is not None:
 		ball_vel = world_state.ball.vel
 		vel = (ball_vel[0]**2 + ball_vel[1]**2) ** 0.5
@@ -47,7 +47,7 @@ def get_velocity_angle(world_state: rc.WorldState) -> None:
 
 """ ball_possession returns the id of the robot who has the ball"""
 
-def ball_possession(world_state: rc.WorldState) -> None:
+def ball_possession(world_state: rc.WorldState) -> int:
 	for robot in world_state.our_robots:
 		if robot.has_ball:
 			num = robot.id
