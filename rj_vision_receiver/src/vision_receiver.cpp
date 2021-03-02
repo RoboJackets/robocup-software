@@ -10,8 +10,6 @@
 #include <rj_utils/conversions.hpp>
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
-#include <rj_param_utils/global_param.hpp>
-// #include <rj_msgs/msg/globalparams.hpp>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
@@ -26,8 +24,7 @@ VisionReceiver::VisionReceiver()
       config_{this},
       port_{-1},
       socket_{io_context_},
-      param_provider_(this, kVisionReceiverParamModule),
-      global_param_provider_(this, control::params::kGlobalParamNodeName) {
+      param_provider_(this, kVisionReceiverParamModule) {
     recv_buffer_.resize(65536);
 
     set_port(PARAM_port);
@@ -43,21 +40,8 @@ VisionReceiver::VisionReceiver()
         network_thread_.join();
         publish_thread_.join();
     });
-
-    // Testing global param provider
-    // publisher_ = this->create_publisher<rj_msgs::msg::globalparams>("global_params", 50);
-    //timer_ = this->create_wall_timer(std::chrono_literals::500ms, std::bind(&timer_callback, this));
 }
 
-// Testing global param provider
-/*void VisionReceiver::timer_callback() {
-    auto message = std_msgs::msg::String();
-    for (const auto& [param_name, param] in global_param_provider_.GetParamMap()) {
-        message.data += param_name + ": " + std::to_string(param) +"\n";
-    } 
-    publisher_->publish(message);
-}
-*/
 void VisionReceiver::receive_thread() {
     while (rclcpp::ok()) {
         io_context_.run_for(kTimeout);

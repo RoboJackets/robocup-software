@@ -1,7 +1,7 @@
 # ======================================================================
 # Set Testing Sources
 # ======================================================================
-set(RJ_PARAM_UTILS_TESTING_SRCS declare_test.cpp param_test.cpp gpp_test.cpp)
+set(RJ_PARAM_UTILS_TESTING_SRCS src/declare_test.cpp src/param_test.cpp src/gpp_test.cpp)
 
 # ======================================================================
 # Add Sources

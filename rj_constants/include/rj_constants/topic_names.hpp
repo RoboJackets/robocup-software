@@ -81,7 +81,6 @@ static inline std::string robot_controlled_pub(int robot_id) {
 namespace params {
 
 constexpr auto kMotionControlParamModule = "motion_control";
-constexpr auto kGlobalParamNodeName = "global_params";
 }  // namespace params
 
 }  // namespace control

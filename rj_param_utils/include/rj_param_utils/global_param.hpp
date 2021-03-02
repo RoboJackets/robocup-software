@@ -22,8 +22,6 @@ private:
     std::vector<rclcpp::Parameter> ConvertToParam(const std::vector<rcl_interfaces::msg::Parameter_<ParamType>>& param_msgs);
     rclcpp::Node* node_;
     const std::string& global_node_;
-    // rclcpp::AsyncParametersClient::SharedPtr params_client_;
     rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr params_client_sub_;
-    
 };
 } // namespace params
