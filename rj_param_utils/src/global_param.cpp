@@ -1,6 +1,5 @@
 #include <rj_param_utils/param.hpp>
 #include <rj_param_utils/global_param.hpp>
-#include <rj_constants/topic_names.hpp>
 
 params::ROS2GlobalParamProvider::ROS2GlobalParamProvider(rclcpp::Node* node, 
         const std::string& global_node) : params::ROS2ParamProvider{node, global_node}, global_node_(global_node) {
