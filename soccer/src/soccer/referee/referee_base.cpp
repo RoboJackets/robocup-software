@@ -1,9 +1,18 @@
 #include "referee_base.hpp"
 
+#include <rj_common/time.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_constants/topic_names.hpp>
 
 namespace referee {
+
+/// Distance in meters that the ball must travel for a kick to be detected
+static const float kKickThreshold = kBallRadius * 3;
+
+/// How many seconds the ball must be more than KickThreshold meters away
+/// from its position when the referee indicated Ready for us to detect the ball
+/// as having been kicked.
+static const float kKickVerifyTime = 0.250;
 
 RefereeBase::RefereeBase(const std::string& name)
     : rclcpp::Node(name), param_provider_(this, kRefereeParamModule) {
@@ -15,6 +24,12 @@ RefereeBase::RefereeBase(const std::string& name)
     their_team_info_pub_ =
         create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoPub, keep_latest);
     game_state_pub_ = create_publisher<GameStateMsg>(referee::topics::kGameStatePub, keep_latest);
+
+    auto callback = [this](WorldState::Msg::SharedPtr world_state) {  // NOLINT
+        ball_state_ = rj_convert::convert_from_ros(world_state->ball);
+    };
+    world_state_sub_ = create_subscription<WorldState::Msg>(vision_filter::topics::kWorldStatePub,
+                                                            rclcpp::QoS(1), callback);
 }
 
 void RefereeBase::play() {
@@ -25,6 +40,7 @@ void RefereeBase::play() {
 void RefereeBase::stop() {
     update_cache(state_.state, GameState::State::Stop, &state_valid_);
     update_cache(state_.restart, GameState::Restart::None, &state_valid_);
+    kick_detect_state_ = Capture_Position;
 }
 
 void RefereeBase::halt() {
@@ -33,9 +49,15 @@ void RefereeBase::halt() {
     update_cache(state_.state, GameState::State::Halt, &state_valid_);
 }
 
-void RefereeBase::setup() { update_cache(state_.state, GameState::State::Setup, &state_valid_); }
+void RefereeBase::setup() {
+    update_cache(state_.state, GameState::State::Setup, &state_valid_);
+    kick_detect_state_ = Capture_Position;
+}
 
-void RefereeBase::ready() { update_cache(state_.state, GameState::State::Ready, &state_valid_); }
+void RefereeBase::ready() {
+    update_cache(state_.state, GameState::State::Ready, &state_valid_);
+    kick_detect_state_ = Capture_Position;
+}
 
 void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
     update_cache(state_.restart, type, &state_valid_);
@@ -96,6 +118,39 @@ void RefereeBase::set_goalie(uint8_t goalie_id) {
                  &valid);
     team_info_valid_ &= valid;
     goalie_valid_ &= valid;
+}
+
+void RefereeBase::spin_kick_detector() {
+    // Only run kick detector when ball is visible
+    if (!ball_state_.visible) {
+        return;
+    }
+
+    switch (kick_detect_state_) {
+        case Capture_Position:
+            capture_ready_point_ = ball_state_.position;
+            kick_detect_state_ = Wait_For_Kick;
+            break;
+        case Wait_For_Kick:
+            if (ball_state_.position.near_point(capture_ready_point_, kKickThreshold)) {
+                kick_time_ = RJ::now();
+                kick_detect_state_ = Verify_Kick;
+            }
+            break;
+        case Verify_Kick: {
+            const RJ::Seconds elapsed_time = RJ::now() - kick_time_;
+
+            if (ball_state_.position.near_point(capture_ready_point_, kKickThreshold)) {
+                kick_detect_state_ = Wait_For_Kick;
+            } else if (elapsed_time.count() >= kKickVerifyTime) {
+                play();
+                kick_detect_state_ = Stand_By;
+            }
+            break;
+        }
+        case Stand_By:
+            break;
+    }
 }
 
 void RefereeBase::send() {
