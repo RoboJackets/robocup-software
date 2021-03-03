@@ -8,7 +8,6 @@ project(rj_param_utils)
 # Find package
 # ======================================================================
 find_package(rclcpp REQUIRED)
-find_package(rj_msgs REQUIRED)
 
 # ======================================================================
 # Define Targets
