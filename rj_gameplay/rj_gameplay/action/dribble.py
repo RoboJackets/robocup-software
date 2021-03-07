@@ -15,7 +15,7 @@ class IDribble(action.IAction, ABC):
 class Drible(IDribble):
 
     def __init__(self):
-    	pass
+        pass
 
 
     def tick(self, ctx: action.Ctx) -> None:

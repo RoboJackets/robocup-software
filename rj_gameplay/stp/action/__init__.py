@@ -8,10 +8,10 @@ import stp.rc as rc
 class IAction(ABC):
     """Interface for actions."""
 
-    @abstractmethod
-    def tick(self, ctx: Ctx) -> None:
-        """Ticks the action"""
-        ...
+    
+    def spin(self) -> None:
+        """Spins the action"""
+        pass
 
     @abstractmethod
     def done(self) -> bool:

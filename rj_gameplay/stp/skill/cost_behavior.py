@@ -1,29 +1,42 @@
 import py_trees
 import random
-import random stp.action as action
-from typing import Optional, Any
+import stp.action as action
+from rj_gameplay.action import move as Move
+import stp.rc as rc
+from typing import Optional, Any, Callable
 import numpy as np
 
 
-"""
-A behavior for skills with cost functions, for skills like seek or mark
-"""
-class CostBehavior(py_trees.behaviour.Behaviour):
-    def __init__(self, name: str, heuristic: Callable[np.array, float]) -> None:
 
+class CostBehavior(py_trees.behaviour.Behaviour):
+    """
+    A behavior for skills which use the smove action based on a heuristic function, for skills like seek or mark
+    """
+    def __init__(self, name: str, heuristic: Callable[[np.array], float], robot: rc.Robot=None, ctx=None) -> None:
         self.heuristic = heuristic
+        self.robot = robot
+        self.ctx = ctx
         super(CostBehavior, self).__init__(name)
 
+    def tick_once(self, robot: rc.Robot, ctx=None):
+        """
+        Ticks its action using the robot given (if root) or the robot from its parent.
+        """
+        self.robot = robot
+        self.ctx = ctx
+        super().tick_once()
 
     def initialise(self) -> None:
         pass
 
-    def update(self) -> py.trees.common.Status:
+    def update(self) -> py_trees.common.Status:
         """
         Uses heursitc to optimizes and find best position to move to
         Creates new move action to get robot to move there
         Always returns running
         """
+        move = Move.Move(np.array([0,1+self.robot.id]))
+        move.tick(self.robot)
         return py_trees.common.Status.RUNNING 
         
 

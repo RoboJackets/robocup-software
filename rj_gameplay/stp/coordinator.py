@@ -31,7 +31,7 @@ class Coordinator:
 
     def __init__(self, play_selector: stp.situation.IPlaySelector):
         self._play_selector = play_selector
-
+        self._props = {}
         self._prev_situation = None
         self._prev_play = None
         self._prev_role_results = {}
@@ -52,14 +52,18 @@ class Coordinator:
         # Update the props.
         cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
 
+        if type(cur_play) == type(self._prev_play):
+            cur_play = self._prev_play
+            # This should be checked here or in the play selector, so we can restart a play easily
+
         # Collect the list of skills from the play.
         new_role_results, skills = cur_play.tick(
             world_state, self._prev_role_results, cur_play_props
         )
-
-        # Execute the list of skills.
+        # Execute the list of skills from their skill entry.
         for skill in skills:
-            skill.tick(world_state)
+            robot = new_role_results[skill][0].role.robot
+            skill.skill.tick(world_state,robot)
 
         # Update _prev_*.
         self._prev_situation = cur_situation

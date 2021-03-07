@@ -15,6 +15,9 @@ class ISeek(skill.ISkill, ABC):
     ...
 
 class Seek(ISeek):
+	"""
+	A seeker skill based off of some heuristic
+	"""
 
     def __init__(self, role: role.Role, heuristic: Callable[np.array, float]) -> None:
         self.robot = role.robot
@@ -23,5 +26,5 @@ class Seek(ISeek):
         root.add_children(seek_behavior)
         root.setup_with_descendants()
 
-    def tick():
-        root.tick_once()
+    def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
+        root.tick_once(robot)

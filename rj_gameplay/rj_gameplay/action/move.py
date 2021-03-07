@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 import stp.role as role
 import stp.action as action
+import stp.rc as rc
 import numpy as np
 
 class IMove(action.IAction, ABC):
@@ -12,9 +13,12 @@ class IMove(action.IAction, ABC):
         pass
 
 class Move(IMove):
-
-    def __init__(self, point: np.ndarray)
+    """
+    Move Action
+    """
+    def __init__(self, point: np.ndarray):
         self.point = point
 
-    def tick(self, ctx: action.Ctx) -> None:
-        pass
+    def tick(self, robot: rc.Robot, ctx: action.Ctx=None) -> None:
+        print('robot:', robot.id, 'moving to', self.point)
+        # print for stub

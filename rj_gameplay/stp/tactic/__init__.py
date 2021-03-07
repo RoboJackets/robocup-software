@@ -28,7 +28,7 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
         """
         super().__init__(entry_skill)
 
-        self._skill = None
+        self._skill = entry_skill
         self._idx = None
 
     def set_idx(self, num: int) -> None:

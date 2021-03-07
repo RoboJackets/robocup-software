@@ -13,6 +13,20 @@ class ICapture(action.IAction, ABC):
         pass
 
 class Capture(ICapture):
+    """
+    Capture action
+    """
 
-    def tick(self, ctx: action.Ctx):
-    	pass
+    def __init__(self):
+        self.count = -1
+        # For stub
+
+    def tick(self, robot: int, ctx: action.Ctx):
+        print('robot:', robot.id, 'is capturing')
+        self.count += 1
+
+    def done(self) -> bool:
+        return self.count == 1
+
+    def fail(self):
+        return False

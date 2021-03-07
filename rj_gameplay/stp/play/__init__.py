@@ -137,7 +137,7 @@ class IPlay(Generic[PropT], ABC):
         world_state: rc.WorldState,
         prev_results: assignment.FlatRoleResults,
         props: PropT,
-    ) -> Tuple[assignment.FlatRoleResults, List[skill.ISkill]]:
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
         """Performs one "tick" of the specified play.
 
         This should:

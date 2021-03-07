@@ -16,6 +16,9 @@ class IPivotKick(skill.ISkill, ABC):
     ...
 
 class PivotKick(IPivotKick):
+    """
+    A pivot kick skill
+    """
 
     def __init__(self, role: role.Role, target_point: np.array) -> None:
         self.robot = role.robot
@@ -29,5 +32,5 @@ class PivotKick(IPivotKick):
         self.root.add_children([capture_behavior, pivot_behavior, kick_behavior])
         self.root.setup_with_descendants()
 
-    def tick():
-        self.root.tick_once()
+    def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
+        self.root.tick_once(robot)
