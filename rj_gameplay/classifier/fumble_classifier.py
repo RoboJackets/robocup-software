@@ -9,14 +9,6 @@ def fumble_classifier(world_state: rc.WorldState, possess) -> bool:
 	else: 
 		return False
 
-
-def pass_classifier(world_state: rc.WorldState, possess)-> bool:
-	if possess is not None:
-		return True
-	else: 
-		return False
-	
-
 """
 get_distance returns the distance between the ball and the kicker
 num: kicker's id
@@ -47,44 +39,79 @@ def get_velocity_angle(world_state: rc.WorldState) -> float:
 
 """ ball_possession returns the id of the robot who has the ball"""
 
-def ball_possession(world_state: rc.WorldState) -> int:
+def ball_possession(world_state: rc.WorldState):
 	for robot in world_state.our_robots:
 		if robot.has_ball:
 			num = robot.id
 			return num
+		else:
+			return None
 
+"""
+fumbling: boolean whether it is fumbled or not
+"""
+def pass_or_fumble(world_state: rc.WorldState, kicker, old_angle, new_angle):
+	possess = ball_possession(world_state)
+	if kicker is None:
+		kicker = possess
+
+	old_angle = new_angle
+	new_angle = get_velocity_angle(world_state)
+
+	#When the velocity angle changes, if the member possesses the ball, passing is succeeded, otherwise intercepted.
+	
+	if old_angle is not None and kicker is not None:
+		if old_angle != new_angle and possess != kicker:
+			fumbling = fumble_classifier(world_state, possess)
+			if fumbling:
+				print('Fumbled!')
+				kicker = None
+			else: 
+				print(f'Successful Pass from #{kicker} to #{possess}')
+				kicker = possess
+	return kicker, old_angle, new_angle
 
 
 play_selector = gameplay_node.EmptyPlaySelector()
 gameplay_node = gameplay_node.GameplayNode(play_selector)
+kicker = None
+old_angle = None
+new_angle = None
+
 while (True):
 	rclpy.spin_once(gameplay_node)
-	possess = ball_possession(gameplay_node.get_world_state())
-	try:
-		if kicker is None:
-			kicker = possess
-	except NameError:
-		kicker = possess
+	[kicker, old_angle, new_angle] = pass_or_fumble(gameplay_node.get_world_state(), kicker, old_angle, new_angle)
 
-	try:
-		old_angle = new_angle
-		new_angle = get_velocity_angle(gameplay_node.get_world_state())
-	except NameError:
-		new_angle = get_velocity_angle(gameplay_node.get_world_state())
 
-	#When the velocity angle changes, if the member possesses the ball, passing is succeeded, otherwise intercepted.
-	try:
-		if old_angle is not None and kicker is not None:
-			if old_angle != new_angle and possess != kicker:
-				passing = pass_classifier(gameplay_node.get_world_state(), possess, kicker)
-				fumbling = fumble_classifier(gameplay_node.get_world_state(), possess, kicker)
-				if passing:
-					kicker = possess
-				else: 
-					kicker = None
-	except NameError:
-		pass
 
+
+# def pass_fumble(world_state: rc.WorldState, kicker  ):
+# 	possess = ball_possession(world_state)
+# 	try:
+# 		if kicker is None:
+# 			kicker = possess
+# 	except NameError:
+# 		kicker = possess
+
+# 	try:
+# 		old_angle = new_angle
+# 		new_angle = get_velocity_angle(world_state)
+# 	except NameError:
+# 		new_angle = get_velocity_angle(world_state)
+
+# 	#When the velocity angle changes, if the member possesses the ball, passing is succeeded, otherwise intercepted.
+# 	try:
+# 		if old_angle is not None and kicker is not None:
+# 			if old_angle != new_angle and possess != kicker:
+# 				passing = pass_classifier(world_state, possess)
+# 				fumbling = fumble_classifier(gameplay_node.get_world_state(), possess)
+# 				if passing:
+# 					kicker = possess
+# 				else: 
+# 					kicker = None
+# 	except NameError:
+# 		pass
+# 	return 
 
 	# try:
 	# 	distance = get_distance(gameplay_node.get_world_state(), kicker)
