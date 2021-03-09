@@ -44,6 +44,7 @@ rosidl_generate_interfaces(
   msg/MotionCommand.msg
 
   msg/RawProtobuf.msg
+  msg/Resource.msg
   msg/RobotIntent.msg
   msg/RobotInstant.msg
   msg/RobotState.msg
@@ -57,6 +58,12 @@ rosidl_generate_interfaces(
   srv/QuickRestart.srv
   srv/SetFieldDimensions.srv
   srv/SetGameSettings.srv
+
+  # Actions
+  action/UseResource.action
+  action/CaptureBall.action
+  action/MoveToPoint.action
+
   DEPENDENCIES
   std_msgs
   builtin_interfaces

@@ -1,0 +1,18 @@
+# Goal
+rj_geometry_msgs/Point target_point
+
+# Optional target angle
+float64[<=1] maybe_target_angle
+
+# Common fields for all motion actions
+int8 priority
+rj_geometry_msgs/ShapeSet local_obstacles
+---
+# Result
+float64 error_position
+float64 error_velocity
+---
+# Feedback
+float64 estimated_time_to_completion
+float64 error_position
+float64 error_velocity
