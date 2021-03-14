@@ -7,7 +7,7 @@
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/param.hpp>
 
 #include "game_state.hpp"
 #include "team_info.hpp"
@@ -23,6 +23,9 @@ using TeamInfoMsg = rj_msgs::msg::TeamInfo;
 using WorldStateMsg = rj_msgs::msg::WorldState;
 
 constexpr auto kRefereeParamModule = "referee";
+
+DECLARE_FLOAT64(kRefereeParamModule, kick_threshold);
+DECLARE_FLOAT64(kRefereeParamModule, kick_verify_time);
 
 /**
  * @brief Base class for both types of referee. Handles sending ROS messages to
@@ -158,13 +161,11 @@ private:
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
     BallState ball_state_;
 
-    enum KickDetectState { Stand_By, Capture_Position, Wait_For_Kick, Verify_Kick };
+    enum class KickDetectState { kStandBy, kCapturePosition, kWaitForKick, kVerifyKick };
     RJ::Time kick_time_;
-    KickDetectState kick_detect_state_ = Stand_By;
+    KickDetectState kick_detect_state_ = KickDetectState::kStandBy;
 
     rj_geometry::Point capture_ready_point_;
-
-    params::ROS2ParamProvider param_provider_;
 };
 
 }  // namespace referee
