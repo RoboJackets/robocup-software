@@ -5,6 +5,11 @@ from typing import Dict, MutableMapping, Type, TypeVar
 import stp.rc as rc
 
 
+class Ctx:
+    """Context for actions, dummy for now"""
+    ...
+
+
 class IAction(ABC):
     """Interface for actions."""
 
@@ -81,6 +86,4 @@ class Factory:
 
         return self._registry[action]
 
-class Ctx:
-    """Context for actions, dummy for now"""
-    ...
+
