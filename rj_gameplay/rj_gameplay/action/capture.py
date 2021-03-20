@@ -8,11 +8,10 @@ import numpy as np
 
 
 class ICapture(action.IAction, ABC):
-
     def done(self) -> bool:
         pass
 
-class Capture(ICapture):
 
+class Capture(ICapture):
     def tick(self, ctx: action.Ctx):
-    	pass
+        pass

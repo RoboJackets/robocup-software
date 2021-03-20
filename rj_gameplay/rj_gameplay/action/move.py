@@ -6,14 +6,14 @@ import stp.role as role
 import stp.action as action
 import numpy as np
 
-class IMove(action.IAction, ABC):
 
+class IMove(action.IAction, ABC):
     def done(self) -> bool:
         pass
 
-class Move(IMove):
 
-    def __init__(self, point: np.ndarray)
+class Move(IMove):
+    def __init__(self, point: np.ndarray):
         self.point = point
 
     def tick(self, ctx: action.Ctx) -> None:

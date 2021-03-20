@@ -8,15 +8,13 @@ import numpy as np
 
 
 class IDribble(action.IAction, ABC):
-
     def done(self) -> bool:
         pass
 
+
 class Drible(IDribble):
-
     def __init__(self):
-    	pass
-
+        pass
 
     def tick(self, ctx: action.Ctx) -> None:
         pass

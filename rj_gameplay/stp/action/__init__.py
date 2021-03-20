@@ -85,5 +85,3 @@ class Factory:
             )
 
         return self._registry[action]
-
-
