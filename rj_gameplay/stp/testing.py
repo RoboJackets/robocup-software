@@ -8,7 +8,7 @@ def generate_test_robot(robot_id: RobotId,
                         is_ours: bool = True,
                         pose: np.ndarray = np.array([0.0, 0.0, 0.0]),
                         twist: np.ndarray = np.array([0.0, 0.0, 0.0]),
-                        ball_sense_triggered=False):
+                        has_ball_sense=False):
     """
     Returns a robot with default options for use in testing
     """
@@ -16,9 +16,8 @@ def generate_test_robot(robot_id: RobotId,
                 is_ours,
                 pose,
                 twist,
-                ball_sense_triggered=ball_sense_triggered,
+                has_ball_sense=has_ball_sense,
                 visible=True,
-                has_ball_sense=True,
                 kicker_charged=True,
                 kicker_healthy=True,
                 lethal_fault=False)
