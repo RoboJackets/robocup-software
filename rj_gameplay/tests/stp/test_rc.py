@@ -13,7 +13,7 @@ def test_generate_test_robot() -> None:
     assert type(bot.twist) is np.ndarray
     assert np.all(bot.twist == np.array([0.0, 0.0, 0.0]))
     assert bot.visible is True
-    assert bot.has_ball_sense is True
+    assert bot.has_ball_sense is False
     assert bot.kicker_charged is True
     assert bot.kicker_healthy is True
     assert bot.lethal_fault is False
