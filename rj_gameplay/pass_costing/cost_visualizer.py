@@ -14,6 +14,7 @@ from matplotlib.patches import Circle
 import sys
 import random
 import stp.rc as rc
+import stp.testing as testing
 
 from tkinter import *
 from tkinter import font
@@ -80,11 +81,11 @@ def plot_field():
 	f = plt.figure()
 	a = f.add_subplot(111)
 	ax = f.axes[0]
-	ax.set_xlim(0, 9)
-	ax.set_ylim(0, 6)
+	ax.set_xlim(-3, 3)
+	ax.set_ylim(0, 9)
 
 	field = mpimg.imread('field.jpeg')
-	plt.imshow(field, alpha=0.5, aspect='auto', extent=[0, 9, 0, 6])
+	plt.imshow(field, alpha=0.5, aspect='auto', extent=[-3, 3, 0, 9])
 
 	our_bots = get_our_bots()
 	count = 0
@@ -95,7 +96,7 @@ def plot_field():
 		count += 1
 	for bot in their_bots:
 		ax.add_patch(Circle((bot.pose[0], bot.pose[1]), 0.18, zorder=10, color='#d94025'))
-	world_state = rc.WorldState(our_bots, their_bots, None, None, None)
+	world_state = rc.WorldState(our_bots, their_bots, None, None, field=testing.generate_divB_field())
 	costs = []
 	for bot in our_bots:
 		costs.append((len(costs), cost_heuristic.cost_heuristic(world_state, bot)))
@@ -113,7 +114,6 @@ def plot_field():
 			text += "Robot " + str(cost[0]) + " has cost " + str(cost[1]) + "\n"
 	textBox.delete(1.0,"end")
 	textBox.insert(1.0, text)
-	print(text)
 	plt.grid()
 	plt.draw()
 	return f

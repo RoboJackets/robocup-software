@@ -1,14 +1,14 @@
 This is Line 1. Lines 2-7 for our robots, Lines 8-13 for their robots, Line 14 for which of our robots has the ball
-1, 1.5
-2, 2
+-1, 1.5
+-2, 2
 1.5, 2.5
-3, 4.5
-4, 3
-5, 3
-8, 3
-7, 2
-7, 4.5
-8.5, 4.5
-5.5, 5.5
-7, 4
+-2, 4.5
+2, 3
+-2, 5
+0, 8
+-1, 7
+1.5, 7
+1.5, 8
+0, 5.5
+-1.5, 4
 3
