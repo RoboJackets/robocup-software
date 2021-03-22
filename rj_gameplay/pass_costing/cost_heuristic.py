@@ -15,6 +15,8 @@ def cost_heuristic(world_state: rc.WorldState, target_robot: rc.Robot) -> float:
     for robot in our_robots:
         if robot.ball_sense_triggered:
             robot_with_ball = robot
+            if robot_with_ball == target_robot:
+                return 99999
 
     running_cost = 0
     running_cost += normalize_cost(robot_distance(robot_with_ball, target_robot), 0, MAX_ROBOT_DISTANCE)
