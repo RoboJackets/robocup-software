@@ -2,14 +2,40 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict, MutableMapping, Type, TypeVar
+from rclpy.publisher import publisher
 
 
 class IAction(ABC):
     """Interface for actions."""
 
     @abstractmethod
-    def tick(self) -> None:
-        """Ticks the action."""
+    def tick(self, publisher: publisher) -> None:
+        """Ticks the action. Publishing RobotIntent on the provided publisher if applicable"""
+        ...
+
+    #@abstractmethod
+    #def tick(self) -> rj_msgs.RobotIntent:
+    #    """Ticks the action, returns a RobotIntent to forward the action"""
+    #    ...
+
+    #@abstractmethod
+    #def tick(self) -> RobotIntent:
+    #    """Ticks the action, returns an object with only relavant fields of the RobotIntent message"""
+    #    ...
+    #"""
+
+class IFiniteAction(IAction, ABC):
+    """Represents actions that have a start and a finish
+        
+       It's likly that this won't be needed once we have a proper action implementation.
+    """
+    
+    @abstractmethod
+    def done(self, world_state: rc.WorldState) -> bool:
+        """
+        Function that detects if an action is complete by looking at the world state.
+        We don't want to have to do this and we won't once there is bidirectional communication between gameplay and robot-driving systems, which should happen with a proper action implementation.
+        """
         ...
 
 

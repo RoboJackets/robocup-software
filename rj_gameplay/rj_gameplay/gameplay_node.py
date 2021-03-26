@@ -27,9 +27,20 @@ class GameplayNode(Node):
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimenstions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
-        for i in range(16):
-            self.game_state_sub = self.create_subscription(msg.RobotStatus, '/radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
-        
+       
+        NUM_ROBOTS = 16
+
+        self.robot_status_subs = [None] * NUM_ROBOTS
+        for i in range(NUM_ROBOTS):
+            self.robot_status_subs[i] = self.create_subscription(msg.RobotStatus, '/radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
+     
+        #TODO: Get the correct name for these topics
+        self.robot_intent_pubs = [None] * NUM_ROBOTS
+        for i in range(NUM_ROBOTS):
+            self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, '/TOPICNAME/robot_'+str(i), 10)
+
+        self.feedback_subs = [None] * NUM_ROBOTS
+
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
         self.game_info: rc.GameInfo = None
