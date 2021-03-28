@@ -8,13 +8,13 @@ from rclpy.publisher import publisher
 class IAction(ABC):
     """Interface for actions."""
 
-    @abstractmethod
-    def tick(self, publisher: publisher) -> None:
+    #@abstractmethod
+    def tick(self) -> None:
         """Ticks the action. Publishing RobotIntent on the provided publisher if applicable"""
         ...
 
     #@abstractmethod
-    #def tick(self) -> rj_msgs.RobotIntent:
+    #def tick(self) -> RobotIntent:
     #    """Ticks the action, returns a RobotIntent to forward the action"""
     #    ...
 
@@ -24,6 +24,7 @@ class IAction(ABC):
     #    ...
     #"""
 
+
 class IFiniteAction(IAction, ABC):
     """Represents actions that have a start and a finish
         
@@ -31,10 +32,17 @@ class IFiniteAction(IAction, ABC):
     """
     
     @abstractmethod
-    def done(self, world_state: rc.WorldState) -> bool:
+    def is_done(self, world_state: rc.WorldState) -> bool:
         """
         Function that detects if an action is complete by looking at the world state.
         We don't want to have to do this and we won't once there is bidirectional communication between gameplay and robot-driving systems, which should happen with a proper action implementation.
+        """
+        ...
+
+    @abstractmethod
+    def finish(self) -> rj_msgs.msgs.RobotIntent:
+        """
+        Returns a robot-intent that stops the current function???
         """
         ...
 

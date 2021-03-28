@@ -39,7 +39,7 @@ class GameplayNode(Node):
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, '/TOPICNAME/robot_'+str(i), 10)
 
-        self.feedback_subs = [None] * NUM_ROBOTS
+        #self.feedback_subs = [None] * NUM_ROBOTS
 
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
@@ -105,6 +105,13 @@ class GameplayNode(Node):
             pass
             # self.gameplay.tick(self.world_state)
             # Uncomment when a real play selector is created
+
+    #def test_lineup_tick(self) -> None:
+    #    """
+    #        function that tries to run a lineup function
+    #    """
+    #    self.robot_intent_pubs[0]
+
 
     def shutdown(self) -> None:
         """
