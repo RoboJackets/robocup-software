@@ -5,6 +5,7 @@ from rj_geometry_msgs.msg import Point
 import numpy as np
 from typing import Optional
 import rclpy
+import time
 
 class Move(IFiniteAction):
     """
@@ -51,9 +52,14 @@ class Move(IFiniteAction):
         self.publisher.publish(self.intent)
 
     def is_done(self, world_state, threshold=0.08, time=0.4) -> bool:
-        if()
+        if(math.sqrt((world_state.our_robots[self.robot_id].pose[0] - self.target_point[0])**2 + (world_state.our_robots[self.robot_id].pose[1] - self.target_point[1])**2) < threshold):
+            return True
+        else:
+            return False
 
-        pass
+        #TODO: Filter this with time, probably should be eval functions for doing that cleanly
+
+        #Should we also check for the target angle here? It's probably fine if it's just assumed that the angle isn't a guarantee and a pivot is needed to guarantee things.
 
     def finish(self) -> None:
         intent = RobotIntent()
