@@ -2,7 +2,9 @@
 
 from abc import ABC, abstractmethod
 from typing import Dict, MutableMapping, Type, TypeVar
-from rclpy.publisher import publisher
+import stp.rc as rc
+from rj_msgs.msg import RobotIntent
+#from rclpy.publisher import Publisher
 
 
 class IAction(ABC):
@@ -40,7 +42,7 @@ class IFiniteAction(IAction, ABC):
         ...
 
     @abstractmethod
-    def finish(self) -> rj_msgs.msgs.RobotIntent:
+    def finish(self) -> None:
         """
         Returns a robot-intent that stops the current function???
         """

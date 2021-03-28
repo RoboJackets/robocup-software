@@ -7,7 +7,8 @@ import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.coordinator as coordinator
 import numpy as np
-from actions import Move, Pivot
+from rj_gameplay.action.move import Move
+from rj_msgs.msg import RobotIntent
 
 from typing import List, Optional
 
@@ -39,7 +40,7 @@ class GameplayNode(Node):
         self.robot_intent_pubs = [None] * NUM_ROBOTS
         self.robot_setup_actions = [None] * NUM_ROBOTS
         for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, '/TOPICNAME/robot_'+str(i), 10)
+            self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, '/gameplay/robot_intent/robot_'+str(i), 10)
             #These are essentially to test actions 
             self.robot_setup_actions[i] = Move(self.robot_intent_pubs[i], i, np.array([0, 0.1 * i]), face_angle=0.2)
         
@@ -109,8 +110,11 @@ class GameplayNode(Node):
 
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
 
+        self.robot_intent_pubs[0].publish(self.robot_setup_actions[0].get_intent())
+
         for g in self.robot_setup_actions:
             g.tick()
+            
 
         if self.world_state is not None:
             pass

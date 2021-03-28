@@ -27,16 +27,18 @@ class Move(IFiniteAction):
         self.robot_id = robot_id
         self.intent = RobotIntent()
 
+        self.publisher = publisher
+
         self.intent.motion_command.empty_command = []
 
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=target_point[0],y=target_point[1])
         path_command.target.velocity = Point(x=target_vel[0],y=target_vel[1])
         if(face_angle is not None):
-            path_command.target.face_angle=[face_angle]
+            path_command.override_angle=[face_angle]
 
         if(face_point is not None):
-            path_command.target.face_point=[Point(face_point[0], face_point[1])]
+            path_command.override_face_point=[Point(face_point[0], face_point[1])]
             
         self.intent.motion_command.path_target_command = [path_command]
         self.intent.motion_command.pivot_command = []
@@ -50,6 +52,9 @@ class Move(IFiniteAction):
 
     def tick(self) -> None:
         self.publisher.publish(self.intent)
+
+    def get_intent(self):
+        return self.intent
 
     def is_done(self, world_state, threshold=0.08, time=0.4) -> bool:
         if(math.sqrt((world_state.our_robots[self.robot_id].pose[0] - self.target_point[0])**2 + (world_state.our_robots[self.robot_id].pose[1] - self.target_point[1])**2) < threshold):
