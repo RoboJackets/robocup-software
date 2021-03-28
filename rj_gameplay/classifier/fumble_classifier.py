@@ -27,11 +27,12 @@ def get_distance(world_state: rc.WorldState, robot_id) -> float:
 		
 
 #get_recipient guessing the intended recipient
+
 def get_recipient(world_state: rc.WorldState, team, vel_angle):
 	ball_pos_x = world_state.ball.pos[0]
 	ball_pos_y = world_state.ball.pos[1]
 	angle = 6.28
-	if team == 'our':
+	if team:
 		for robot in world_state.our_robots:
 			pose_x = robot.pose[0]
 			pose_y = robot.pose[1]
@@ -40,7 +41,7 @@ def get_recipient(world_state: rc.WorldState, team, vel_angle):
 			if angle_diff < angle:
 				recipient = robot.id
 				angle = angle_diff
-	elif team == 'their':
+	else:
 		for robot in world_state.their_robots:
 			pose_x = robot.pose[0]
 			pose_y = robot.pose[1]
@@ -69,12 +70,12 @@ def ball_possession(world_state: rc.WorldState)-> Union[int, str]:
 	for robot in world_state.our_robots:
 		if robot.has_ball:
 			possess_id = robot.id
-			team = 'our'
+			team = True #our team
 			return possess_id, team
 	for robot in world_state.their_robots:
 		if robot.has_ball:
 			possess_id = robot.id
-			team = 'their'
+			team = False #opponent
 			return possess_id, team
 	return None, None
 			
