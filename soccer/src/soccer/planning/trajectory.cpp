@@ -6,7 +6,7 @@
 
 #include "instant.hpp"
 
-namespace Planning {
+namespace planning {
 
 using rj_geometry::Pose;
 using rj_geometry::Twist;
@@ -338,4 +338,4 @@ void Trajectory::Cursor::next_knot() {
     }
 }
 
-}  // namespace Planning
+}  // namespace planning
