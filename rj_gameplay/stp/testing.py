@@ -18,7 +18,6 @@ def generate_test_robot(robot_id: RobotId,
                 twist,
                 has_ball_sense=has_ball_sense,
                 visible=True,
-                has_ball_sense=True,
                 kicker_charged=True,
                 kicker_healthy=True,
                 lethal_fault=False)
