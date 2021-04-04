@@ -32,3 +32,4 @@ class Kick(IKick):
 
     def fail(self):
         return False
+        

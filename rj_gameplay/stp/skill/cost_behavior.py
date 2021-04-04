@@ -10,7 +10,7 @@ import numpy as np
 
 class CostBehavior(py_trees.behaviour.Behaviour):
     """
-    A behavior for skills which use the smove action based on a heuristic function, for skills like seek or mark
+    A behavior for skills which use the move action based on a heuristic function, for skills like seek or mark
     """
     def __init__(self, name: str, heuristic: Callable[[np.array], float], robot: rc.Robot=None, ctx=None) -> None:
         self.heuristic = heuristic
@@ -42,3 +42,4 @@ class CostBehavior(py_trees.behaviour.Behaviour):
 
     def terminate(self, new_status):
         pass
+        

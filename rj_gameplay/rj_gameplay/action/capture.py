@@ -31,3 +31,4 @@ class Capture(ICapture):
 
     def fail(self):
         return False
+        

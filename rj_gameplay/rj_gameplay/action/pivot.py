@@ -34,3 +34,4 @@ class Pivot(IPivot):
 
     def fail(self):
         return False
+        

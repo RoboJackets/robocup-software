@@ -86,3 +86,4 @@ class Striker(tactic.ITactic):
         if shoot_result and shoot_result[0].is_filled():
             return [self.shoot]
         return []
+        
