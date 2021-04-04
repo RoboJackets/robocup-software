@@ -15,7 +15,9 @@ class IKick(action.IAction, ABC):
 class Kick(IKick):
     """
     Kick action
+    TODO: update with actions implementation
     """
+
     def __init__(self, point: np.ndarray):
         self.point = point
         self.count = -1

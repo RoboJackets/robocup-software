@@ -19,6 +19,7 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
         """
         Ticks its action using the robot given (if root) or the robot from its parent.
         This will probably become tick() or spin() once action server is implemented
+        TODO: Should return a list of robot intents
         """
         self.robot = robot
         if robot is None:
@@ -35,6 +36,7 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
     def update(self) -> py_trees.common.Status:
         """
         Check action and return the current state of the aciton
+        TODO: Needs to somehow use robot intents to check on status of action
         """
         if self.robot is None:
             self.robot = self.parent.robot

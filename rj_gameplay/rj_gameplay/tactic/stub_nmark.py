@@ -16,6 +16,10 @@ import stp.skill as skill
 import numpy as np
 
 class marker_cost(role.CostFn):
+    """
+    A cost function for how to choose a marker
+    TODO: Implement a better cost function
+    """
 
     def __call__(
         self,

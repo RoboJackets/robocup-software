@@ -30,4 +30,5 @@ class Move(IMove):
         self.root.setup_with_descendants()
 
     def tick(self, world_state) -> None:
-        self.root.tick_once()
+        self.root.tick_once(self.robot)
+        # TODO: change so this properly returns the actions intent messages

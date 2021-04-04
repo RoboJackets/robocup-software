@@ -15,6 +15,7 @@ class ICapture(action.IAction, ABC):
 class Capture(ICapture):
     """
     Capture action
+    TODO: update with actions implementation
     """
 
     def __init__(self):

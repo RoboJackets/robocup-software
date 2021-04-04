@@ -16,6 +16,7 @@ class IPivot(action.IAction, ABC):
 class Pivot(IPivot):
     """
     Pivot Skill
+    TODO: update with actions implementation
     """
     def __init__(self, pivot_point: np.ndarray, target_point: np.ndarray):
         self.pivot_point = pivot_point

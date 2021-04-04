@@ -16,6 +16,10 @@ import stp.skill as skill
 
 
 class striker_cost(role.CostFn):
+    """
+    A cost function for how to choose a striker
+    TODO: Implement a better cost function
+    """
 
     def __call__(
         self,

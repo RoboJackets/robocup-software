@@ -15,6 +15,7 @@ class IMove(action.IAction, ABC):
 class Move(IMove):
     """
     Move Action
+    TODO: update with actions implementation
     """
     def __init__(self, point: np.ndarray):
         self.point = point

@@ -34,3 +34,4 @@ class PivotKick(IPivotKick):
 
     def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
         self.root.tick_once(robot)
+        # TODO: change so this properly returns the actions intent messages
