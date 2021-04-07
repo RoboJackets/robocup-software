@@ -42,7 +42,7 @@ class GameplayNode(Node):
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, 'gameplay/robot_intent/robot_'+str(i), 10)
             #These are essentially to test actions 
-            self.robot_setup_actions[i] = Move(i, np.array([0, 0.1 * i]), face_angle=0.2)
+            self.robot_setup_actions[i] = Move(i, np.array([1.0, 1.0 + 0.2 * i]), face_angle=0.2)
         
         
         #self.feedback_subs = [None] * NUM_ROBOTS
@@ -106,10 +106,11 @@ class GameplayNode(Node):
         if self.partial_world_state is not None and self.field is not None:
 
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
+        
+        for i in range(0,16):
 
-        self.robot_intent_pubs[0].publish(self.robot_setup_actions[0].get_intent())
+            self.robot_intent_pubs[i].publish(self.robot_setup_actions[i].get_intent())
 
-        self.robot_intent_pubs[1].publish(self.robot_setup_actions[1].get_intent())
 
 
 
