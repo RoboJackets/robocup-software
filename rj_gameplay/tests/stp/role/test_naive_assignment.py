@@ -97,6 +97,9 @@ class TacticBase(tactic.ITactic[None]):
 
         return role_requests
 
+    def create_request(self):
+        pass
+
 
 def get_simple_role_ids() -> List[RoleId]:
     """Creates and returns a list of role ids with skills SkillA, SkillB and SkillC for
