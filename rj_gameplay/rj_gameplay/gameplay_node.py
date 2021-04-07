@@ -25,7 +25,7 @@ class GameplayNode(Node):
 
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
-        super().__init__('minimal_subscriber')
+        super().__init__('gameplay_node')
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimenstions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
@@ -40,14 +40,11 @@ class GameplayNode(Node):
         self.robot_intent_pubs = [None] * NUM_ROBOTS
         self.robot_setup_actions = [None] * NUM_ROBOTS
         for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, '/gameplay/robot_intent/robot_'+str(i), 10)
+            self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, 'gameplay/robot_intent/robot_'+str(i), 10)
             #These are essentially to test actions 
-            self.robot_setup_actions[i] = Move(self.robot_intent_pubs[i], i, np.array([0, 0.1 * i]), face_angle=0.2)
+            self.robot_setup_actions[i] = Move(i, np.array([0, 0.1 * i]), face_angle=0.2)
         
-
-
-
-
+        
         #self.feedback_subs = [None] * NUM_ROBOTS
 
         self.world_state = world_state
@@ -112,6 +109,11 @@ class GameplayNode(Node):
 
         self.robot_intent_pubs[0].publish(self.robot_setup_actions[0].get_intent())
 
+        self.robot_intent_pubs[1].publish(self.robot_setup_actions[1].get_intent())
+
+
+
+        self.get_logger().info("gameplay is ticking")
         for g in self.robot_setup_actions:
             g.tick()
             

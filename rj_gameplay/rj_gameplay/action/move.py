@@ -12,7 +12,7 @@ class Move(IFiniteAction):
     Basic move, used for moves avoiding all obstacles.
     """
 
-    def __init__(self, publisher:  rclpy.publisher,
+    def __init__(self,
             robot_id : int,
             target_point : np.ndarray,
             target_vel : np.ndarray = np.array([0.0,0.0]),
@@ -27,7 +27,6 @@ class Move(IFiniteAction):
         self.robot_id = robot_id
         self.intent = RobotIntent()
 
-        self.publisher = publisher
 
         self.intent.motion_command.empty_command = []
 
@@ -51,7 +50,7 @@ class Move(IFiniteAction):
         self.intent.is_active = True
 
     def tick(self) -> None:
-        self.publisher.publish(self.intent)
+        return self.get_intent()
 
     def get_intent(self):
         return self.intent
