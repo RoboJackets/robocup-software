@@ -42,7 +42,7 @@ class GameplayNode(Node):
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(RobotIntent, 'gameplay/robot_intent/robot_'+str(i), 10)
             #These are essentially to test actions 
-            self.robot_setup_actions[i] = Move(i, np.array([1.0, 1.0 + 0.2 * i]), face_angle=0.2)
+            self.robot_setup_actions[i] = Move(i, np.array([1.0, 1.0 + 0.5 * i]), face_angle=0.2)
         
         
         #self.feedback_subs = [None] * NUM_ROBOTS
