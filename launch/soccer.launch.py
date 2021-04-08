@@ -76,5 +76,5 @@ def generate_launch_description():
         DeclareLaunchArgument('ref_flag', default_value=''),
         DeclareLaunchArgument('direction_flag', default_value='plus'),
         stdout_linebuf_envvar, config_server, soccer, radio, control, planner,
-        vision_receiver, vision_filter, ref_receiver
+        vision_receiver, vision_filter, ref_receiver, gameplay
     ])
