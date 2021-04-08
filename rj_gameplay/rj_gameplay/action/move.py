@@ -12,7 +12,6 @@ from rj_geometry_msgs.msg import Point
 class Move(action.IFiniteAction):
     """
     Move Action
-    TODO: update with actions implementation
     """
     def __init__(self,
             robot_id : int,

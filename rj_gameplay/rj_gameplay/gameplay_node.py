@@ -130,11 +130,11 @@ class GameplayNode(Node):
             if(self.override_actions[i] is not None):
                 if(self.override_actions[i].is_done(world_state)):
                     if(self.override_actions[i].target_point[0] == left_x):
-                        self.override_actions[i] = Move()
+                        self.override_actions[i] = Move(robot_id = i, target_point=np.array([right_x,start_y + i * y_inc]))
                     else:
-                        self.override_actions[i] = Move()
+                        self.override_actions[i] = Move(robot_id = i, target_point=np.array(left_x,start_y + i * y_inc))
             else:
-                self.override_actions[i] = Move()
+                self.override_actions[i] = Move(robot_id = i, target_point=np.array([right_x,start_y + i * y_inc]))
 
     def shutdown(self) -> None:
         """
