@@ -7,6 +7,7 @@ import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.coordinator as coordinator
 import numpy as np
+from rj_gameplay.action.move import Move
 
 from typing import List, Optional
 
@@ -42,7 +43,7 @@ class GameplayNode(Node):
             self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, '/gameplay/robot_intent/robot_'+str(i), 10)
 
         
-
+        self.get_logger().info("Gameplay node started")
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
         self.game_info: rc.GameInfo = None
@@ -89,8 +90,9 @@ class GameplayNode(Node):
         """
         returns: an updated world state
         """
-        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= 16:
-
+        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
+            #self.ger_logger().info("Robot Status Len: " +  str(len(self.robot_status)))
+            #self.get_logger().info("Our Robots Len: " + str(len(self.partial_world_state.our_robots)))
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
 
         return self.world_state
@@ -99,27 +101,33 @@ class GameplayNode(Node):
         """
         ticks the gameplay coordinator using recent world_state
         """
-        if self.partial_world_state is not None and self.field is not None:
+        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
 
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
 
+        #self.get_logger().info("Gameplay node is ticked")
+
         if self.world_state is not None:
-            self.debug_lineup(world_state)
-            self.run_override_actions(self.world_state)
+            self.debug_async_lineup(self.world_state)
+            self.tick_override_actions(self.world_state)
             # self.gameplay.tick(self.world_state)
             # Uncomment when a real play selector is created
-
+        else:
+            pass
+            #self.get_logger().info("World state was none!")
+    
     def tick_override_actions(self, world_state) -> None:
         for i in range(0,NUM_ROBOTS):
             if(self.override_actions[i] is not None):
-                fresh_intent = RobotIntent()
+                #self.get_logger().info("Intent published")
+                fresh_intent = msg.RobotIntent()
                 self.override_actions[i].tick(fresh_intent)
                 self.robot_intent_pubs[i].publish(fresh_intent)
 
     def clear_override_actions(self) -> None:
         self.override_actions = [None] * NUM_ROBOTS
 
-    def debug_lineup(self, world_state) -> None:
+    def debug_async_lineup(self, world_state) -> None:
 
         left_x = -1.0
         right_x = 1.0
@@ -132,9 +140,36 @@ class GameplayNode(Node):
                     if(self.override_actions[i].target_point[0] == left_x):
                         self.override_actions[i] = Move(robot_id = i, target_point=np.array([right_x,start_y + i * y_inc]))
                     else:
-                        self.override_actions[i] = Move(robot_id = i, target_point=np.array(left_x,start_y + i * y_inc))
+                        self.override_actions[i] = Move(robot_id = i, target_point=np.array([left_x,start_y + i * y_inc]))
             else:
                 self.override_actions[i] = Move(robot_id = i, target_point=np.array([right_x,start_y + i * y_inc]))
+
+    def debug_sync_lineup(self, world_state) -> None:
+
+        left_x = -1.0
+        right_x = 1.0
+        start_y = 2.0
+        y_inc = 0.4
+
+        for i in range(len(self.override_actions)):
+            if(self.override_actions[i] is None):
+                self.override_actions[i] = Move(robot_id = i, target_point=np.array([left_x,start_y + i * y_inc]))
+
+        done = True
+        for i in range(len(self.override_actions)):
+            if(not self.override_actions[i].is_done(world_state)):
+                self.get_logger().info("move not done: " + str(i))
+                done = False
+
+        if(done):
+            self.get_logger().info("Lineup done")
+            left = self.override_actions[0].target_point[0] == left_x
+            for i in range(len(self.override_actions)):
+                if(left):
+                    self.override_actions[i] = Move(robot_id = i, target_point=np.array([right_x,start_y + i * y_inc]))
+                else:
+                    self.override_actions[i] = Move(robot_id = i, target_point=np.array([left_x,start_y + i * y_inc]))
+
 
     def shutdown(self) -> None:
         """
