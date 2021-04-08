@@ -33,11 +33,15 @@ class GameplayNode(Node):
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
 
+        self.override_actions = [None] * NUM_ROBOTS
+
         for i in range(NUM_ROBOTS):
             self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, '/radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
  
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, '/gameplay/robot_intent/robot_'+str(i), 10)
+
+        
 
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
@@ -100,9 +104,37 @@ class GameplayNode(Node):
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
 
         if self.world_state is not None:
-            pass
+            self.debug_lineup(world_state)
+            self.run_override_actions(self.world_state)
             # self.gameplay.tick(self.world_state)
             # Uncomment when a real play selector is created
+
+    def tick_override_actions(self, world_state) -> None:
+        for i in range(0,NUM_ROBOTS):
+            if(self.override_actions[i] is not None):
+                fresh_intent = RobotIntent()
+                self.override_actions[i].tick(fresh_intent)
+                self.robot_intent_pubs[i].publish(fresh_intent)
+
+    def clear_override_actions(self) -> None:
+        self.override_actions = [None] * NUM_ROBOTS
+
+    def debug_lineup(self, world_state) -> None:
+
+        left_x = -1.0
+        right_x = 1.0
+        start_y = 2.0
+        y_inc = 0.3
+
+        for i in range(len(self.override_actions)):
+            if(self.override_actions[i] is not None):
+                if(self.override_actions[i].is_done(world_state)):
+                    if(self.override_actions[i].target_point[0] == left_x):
+                        self.override_actions[i] = Move()
+                    else:
+                        self.override_actions[i] = Move()
+            else:
+                self.override_actions[i] = Move()
 
     def shutdown(self) -> None:
         """
