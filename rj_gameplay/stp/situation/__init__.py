@@ -7,27 +7,6 @@ import stp.play
 import stp.rc as rc
 
 
-class ISituation(ABC):
-    """Interface for a situation."""
-
-    ...
-
-
-class IAnalyzer(ABC):
-    """Interface for situation analyzer."""
-
-    @abstractmethod
-    def analyze_situation(
-        self, world_state: rc.WorldState, game_info: rc.GameInfo
-    ) -> ISituation:
-        """Returns the best situation for the current world state.
-        :param world_state: The current state of the world.
-        :param game_info: The information about the state of the game.
-        :return: The best situation for the current world state.
-        """
-        ...
-
-
 class IPlaySelector(ABC):
     """Interface for play selector."""
 
