@@ -9,9 +9,9 @@ import stp.rc as rc
 
 
 class IPivot(action.IAction, ABC):
-
     def done(self) -> bool:
         pass
+
 
 class Pivot(IPivot):
     """
@@ -24,14 +24,12 @@ class Pivot(IPivot):
         self.count = -1
         #for stub
 
-
     def tick(self, robot: rc.Robot, ctx: action.Ctx) -> None:
-       print('robot:', robot.id, 'pivoting')
-       self.count += 1
+        print('robot:', robot.id, 'pivoting')
+        self.count += 1
 
     def done(self) -> bool:
         return self.count == 1
 
     def fail(self):
         return False
-        

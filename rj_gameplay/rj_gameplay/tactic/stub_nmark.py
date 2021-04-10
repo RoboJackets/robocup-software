@@ -81,4 +81,3 @@ class NMark(tactic.ITactic):
                 skills.append(self.markers_dict[i])
 
         return skills
-        

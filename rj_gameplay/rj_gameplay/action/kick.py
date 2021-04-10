@@ -7,17 +7,17 @@ import stp.action as action
 import numpy as np
 import stp.rc as rc
 
+
 class IKick(action.IAction, ABC):
-    
     def done(self) -> bool:
         pass
+
 
 class Kick(IKick):
     """
     Kick action
     TODO: update with actions implementation
     """
-
     def __init__(self, point: np.ndarray):
         self.point = point
         self.count = -1
@@ -32,4 +32,3 @@ class Kick(IKick):
 
     def fail(self):
         return False
-        

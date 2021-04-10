@@ -8,16 +8,15 @@ import numpy as np
 
 
 class ICapture(action.IAction, ABC):
-
     def done(self) -> bool:
         pass
+
 
 class Capture(ICapture):
     """
     Capture action
     TODO: update with actions implementation
     """
-
     def __init__(self):
         self.count = -1
         # For stub
@@ -31,4 +30,3 @@ class Capture(ICapture):
 
     def fail(self):
         return False
-        
