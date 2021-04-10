@@ -20,6 +20,9 @@ class SkillBase(skill.ISkill):
     def define(self):
         pass
 
+    def tick(self):
+        pass
+
     def create_request(self) -> role.RoleRequest:
         switch_cost = 0.0
         return role.RoleRequest(
@@ -93,6 +96,9 @@ class TacticBase(tactic.ITactic[None]):
         }
 
         return role_requests
+
+    def create_request(self):
+        pass
 
 
 def get_simple_role_ids() -> List[RoleId]:
