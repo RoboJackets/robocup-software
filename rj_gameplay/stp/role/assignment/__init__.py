@@ -7,7 +7,7 @@ import stp.rc
 import stp.role as role
 import stp.tactic as tactic
 
-RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry, int]
+RoleId = Tuple[Type[tactic.ITactic], int]
 
 FlatRoleRequests = Dict[RoleId, role.RoleRequest]
 FlatRoleResults = Dict[RoleId, role.RoleResult]
