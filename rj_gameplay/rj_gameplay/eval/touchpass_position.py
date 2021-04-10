@@ -1,4 +1,12 @@
 class TouchpassPosition:
+    
+      
+import sys
+sys.path.insert(1, "../../stp")
+import rc
+import pass
+import chip
+from typing import List, Optional, Tuple, Union
 
 '''
 import robocup
