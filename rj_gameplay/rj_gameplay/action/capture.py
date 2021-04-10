@@ -7,7 +7,6 @@ import stp.action as action
 import numpy as np
 from rj_msgs.msg import RobotIntent
 
-
 class Capture(ICapture):
     """
     Capture action
@@ -17,6 +16,7 @@ class Capture(ICapture):
     def __init__(self, robot_id):
         self.robot_id = robot_id
 
+
     def tick(self, intent) -> None:\
         settle_command = SettleMotionCommand()
         intent.motion_command.settle_command = [settle_command] 
@@ -25,4 +25,3 @@ class Capture(ICapture):
 
     def is_done(self) -> bool:
         return False
-        

@@ -24,4 +24,3 @@ class IFiniteAction(IAction, ABC):
 class Ctx:
     """Context for actions, dummy for now"""
     ...
-    

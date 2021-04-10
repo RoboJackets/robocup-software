@@ -50,4 +50,3 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
 
     def terminate(self, new_status):
         pass
-        

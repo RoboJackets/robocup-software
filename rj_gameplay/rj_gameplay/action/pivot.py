@@ -10,7 +10,9 @@ from rj_msgs.msg import RobotIntent, PivotMotionCommand
 from rj_geometry_msgs.msg import Point
 
 
+
 class Pivot(IFiniteAction):
+
     """
     Pivot Skill
     """
@@ -28,4 +30,3 @@ class Pivot(IFiniteAction):
         #vec = self.target_point
         #world_state.our_robots[self.robot_id].pose[2]
         return False
-        

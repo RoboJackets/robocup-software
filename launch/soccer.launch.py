@@ -51,11 +51,10 @@ def generate_launch_description():
                    output='screen',
                    on_exit=Shutdown())
 
-    gameplay = Node(
-        package='rj_robocup',
-        executable='gameplay_node',
-        output='screen',
-        on_exit=Shutdown())
+    gameplay = Node(package='rj_robocup',
+                    executable='gameplay_node',
+                    output='screen',
+                    on_exit=Shutdown())
 
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
     vision_receiver = IncludeLaunchDescription(
