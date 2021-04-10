@@ -21,12 +21,11 @@ class Pivot(IFiniteAction):
     def tick(self, intent) -> None:
         pivot_command = PivotMotionCommand()
         pivot_command.pivot_point = Point(x=self.pivot_point[0], y=self.pivot_point=[1])
-        intent.motion_command.pivot_motion_command.pivot_point = Point(x=)
+        intent.motion_command.pivot_motion_command = [pivot_command]
         intent.active = True
-        pass
 
     def is_done(self, world_state) -> bool:
         #vec = self.target_point
         #world_state.our_robots[self.robot_id].pose[2]
-        return True
+        return False
         

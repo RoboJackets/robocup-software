@@ -17,9 +17,12 @@ class Capture(ICapture):
     def __init__(self, robot_id):
         self.robot_id = robot_id
 
-    def tick(self, intent) -> None:
-        
+    def tick(self, intent) -> None:\
+        settle_command = SettleMotionCommand()
+        intent.motion_command.settle_command = [settle_command] 
+        intent.dribbler_speed = 1.0
+        intent.active = True
 
     def is_done(self) -> bool:
-        pass
+        return False
         
