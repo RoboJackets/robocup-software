@@ -10,7 +10,7 @@ class ITestSkill1(skill.ISkill):
     def define(self):
         pass
 
-    def create_request(self) -> role.RoleRequest:
+    def tick(self) -> None:
         pass
 
 
@@ -21,7 +21,7 @@ class ITestSkill2(skill.ISkill):
     def define(self):
         pass
 
-    def create_request(self) -> role.RoleRequest:
+    def tick(self) -> None:
         pass
 
 

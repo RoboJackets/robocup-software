@@ -18,14 +18,11 @@ class SkillBase(skill.ISkill):
     def define(self):
         pass
 
-    def create_request(self) -> role.RoleRequest:
-        switch_cost = 0.0
-        return role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost.constant(0.5, switch_cost)
-        )
-
     def __repr__(self) -> str:
         return "<{} object>".format(self.__class__.__name__)
+
+    def tick(self) -> None:
+        pass
 
 
 class SkillA(SkillBase):
@@ -63,18 +60,24 @@ class TacticBase(tactic.ITactic[None]):
     def compute_props(self, prev_props: None) -> None:
         return None
 
+    def create_request(self) -> role.RoleRequest:
+        switch_cost = 0.0
+        return role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost.constant(0.5, switch_cost)
+        )
+
     def tick(self, role_results: RoleResults, props: None) -> List[action.IAction]:
         # Dummy tick function doesn't return any actions.
         return []
 
     def get_requests(self, world_state: WorldState, props: None) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
-            self.A1: [self.A1.skill.create_request()],
-            self.A2: self.A2.skill.create_requests(5),
-            self.B1: self.B1.skill.create_requests(3),
-            self.B2: [self.B2.skill.create_request()],
-            self.C1: [self.C1.skill.create_request()],
-            self.C2: [self.C2.skill.create_request()],
+            self.A1: [self.create_request()],
+            self.A2: self.create_requests(5),
+            self.B1: self.create_requests(3),
+            self.B2: [self.create_request()],
+            self.C1: [self.create_request()],
+            self.C2: [self.create_request()],
         }
 
         return role_requests
