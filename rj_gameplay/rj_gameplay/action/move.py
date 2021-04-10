@@ -38,7 +38,6 @@ class Move(action.IFiniteAction):
         else:
             return False
 
-
     def tick(self, intent) -> None:
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=self.target_point[0],y=self.target_point[1])
