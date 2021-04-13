@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
 import stp.action as action
 import stp.skill as skill
@@ -12,20 +12,16 @@ import stp.role as role
 import stp.role.assignment as assignment
 import stp.tactic as tactic
 import stp.utils.enum as enum
-import stp.utils.typed_key_dict as tkdict
 from stp.role import RoleResult
-from stp.tactic import SkillEntry
 
 class Ctx:
     """Context for plays."""
 
-    __slots__ = ["tactic_factory", "role_assignment"]
+    __slots__ = ["role_assignment"]
 
-    tactic_factory: tactic.Factory
     role_assignment: assignment.IRoleAssignment
 
     def __init__(self, tactic_factory: tactic.Factory, role_assignment):
-        self.tactic_factory = tactic_factory
         self.role_assignment = role_assignment
 
 
@@ -38,20 +34,12 @@ class IPlay(Generic[PropT], ABC):
     __slots__ = ()
 
     @abstractmethod
-    def compute_props(self, prev_props: Optional[PropT]) -> PropT:
-        """Computes the props(state) required for the current tick.
-        :param prev_props: The props from the previous tick, if available.
-        :return: The props for the current tick.
-        """
-        ...
-
-    @abstractmethod
     def tick(
         self,
         world_state: rc.WorldState,
         prev_results: assignment.FlatRoleResults,
         props: PropT,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[skill.ISkill, role.RoleRequest], PropT]:
         """Performs one "tick" of the specified play.
 
         This should:
