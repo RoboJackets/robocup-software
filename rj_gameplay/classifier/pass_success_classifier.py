@@ -15,6 +15,10 @@ def classifier(world_state: rc.WorldState) -> bool:
         if robot.has_ball:
             return True
 
+    for robot in opp_robots:
+        if robot.has_ball:
+            return False
+
     net_robot_list = our_robots + opp_robots
 
     robot = shortest_distance(rc.WorldState, net_robot_list, ball)
