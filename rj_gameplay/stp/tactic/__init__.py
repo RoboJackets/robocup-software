@@ -11,8 +11,9 @@ import stp.skill as skill
 import stp.utils.enum as enum
 import stp.utils.typed_key_dict as tkdict
 
-RoleRequests = Dict[SkillEntry, List[role.RoleRequest]]
-RoleResults = Dict[SkillEntry, List[role.RoleResult]]
+RoleRequests = Dict[skill.ISkill, List[role.RoleRequest]]
+RoleResults = Dict[skill.ISkill, List[role.RoleResult]]
+
 PropT = TypeVar("PropT")
 
 class ITactic(Generic[PropT], ABC):
