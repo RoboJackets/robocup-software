@@ -37,7 +37,7 @@ class SkillC(SkillBase):
     ...
 
 
-class Skills(tactic.SkillsEnum):
+class Skills():
     A1 = SkillA
     A2 = SkillA
     B1 = SkillB
@@ -47,8 +47,8 @@ class Skills(tactic.SkillsEnum):
 
 
 class TacticBase(tactic.ITactic[None]):
-    def __init__(self, ctx: tactic.Ctx):
-
+    def __init__(self):
+        self.skills = Skills()
         self.A1 = self.skills.A1
         self.A2 = self.skills.A2
         self.B1 = self.skills.B1
@@ -84,8 +84,7 @@ class TacticBase(tactic.ITactic[None]):
 
 def test_flatten_requests() -> None:
     """Tests that play.flatten_requests works as expected."""
-    tactic_ctx = get_tactic_ctx()
-    tactic_instance = TacticBase(tactic_ctx)
+    tactic_instance = TacticBase()
 
     # Create dummy world_state.
     world_state: WorldState = testing.generate_test_worldstate()
