@@ -11,6 +11,9 @@ import stp.skill as skill
 import stp.utils.enum as enum
 import stp.utils.typed_key_dict as tkdict
 
+
+PropT = TypeVar("PropT")
+
 class ITactic(Generic[PropT], ABC):
     """The interface class for all tactics."""
 
