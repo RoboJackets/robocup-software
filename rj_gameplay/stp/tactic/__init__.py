@@ -11,7 +11,8 @@ import stp.skill as skill
 import stp.utils.enum as enum
 import stp.utils.typed_key_dict as tkdict
 
-
+RoleRequests = Dict[SkillEntry, List[role.RoleRequest]]
+RoleResults = Dict[SkillEntry, List[role.RoleResult]]
 PropT = TypeVar("PropT")
 
 class ITactic(Generic[PropT], ABC):
@@ -35,7 +36,8 @@ class ITactic(Generic[PropT], ABC):
         ...
 
     @abstractmethod
-    def tick(self, role_results: RoleResults, props: PropT) -> List[action.IAction]:
+    def tick(self, role_results: RoleResults,
+             props: PropT) -> List[action.IAction]:
         """Ticks the tactic, returning a tuple of the actions and the skills executed.
         :param role_results: The results of role assignment.
         :param props: The state of the current tactic.
