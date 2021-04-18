@@ -1,6 +1,7 @@
 from stp import rc
 from rj_gameplay import gameplay_node
 import rclpy
+from typing import Union
 
 
 """
@@ -30,17 +31,17 @@ def get_velocity(world_state: rc.WorldState) -> float:
 def possession_classifier(world_state: rc.WorldState)-> Union[int, bool]:
 	possess_id, team = None, None
 	min_dist = 100
-	ball_vel = util.get_velocity()
+	ball_vel = get_velocity(world_state)
 
 	for robot in world_state.our_robots:
 		if robot.has_ball:
-			distance = get_distance(gameplay_node.get_world_state(), robot.id)
+			distance = get_distance(world_state, robot.id)
 			if min_dist > distance:
 				min_dist = distance
 				possess_id = robot.id
 				team = True #our team
 		else:
-			distance = get_distance(gameplay_node.get_world_state(), robot.id)
+			distance = get_distance(world_state, robot.id)
 			if distance < 0.1 and min_dist > distance and ball_vel < 0.05:
 				possess_id = robot.id
 				min_dist = distance
@@ -48,13 +49,13 @@ def possession_classifier(world_state: rc.WorldState)-> Union[int, bool]:
 
 	for robot in world_state.their_robots:
 		if robot.has_ball:
-			distance = get_distance(gameplay_node.get_world_state(), robot.id)
+			distance = get_distance(world_state, robot.id)
 			if min_dist > distance:
 				min_dist = distance
 				possess_id = robot.id
 				team = False #opponent
 		else:
-			distance = get_distance(gameplay_node.get_world_state(), robot.id)
+			distance = get_distance(world_state, robot.id)
 			if distance < 0.1 and min_dist > distance and ball_vel < 0.05:
 				possess_id = robot.id
 				min_dist = distance

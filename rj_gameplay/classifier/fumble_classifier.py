@@ -5,7 +5,13 @@ from math import atan2
 from typing import Union
 import util
 
-
+play_selector = gameplay_node.EmptyPlaySelector()
+gameplay_node = gameplay_node.GameplayNode(play_selector)
+recipient_id = None
+kicker_id = None
+kicker_team = None
+old_angle = None
+new_angle = None
 
 #get_recipient guessing the intended recipient
 
@@ -13,6 +19,7 @@ def get_recipient(world_state: rc.WorldState, team, vel_angle) -> int:
 	ball_pos_x = world_state.ball.pos[0]
 	ball_pos_y = world_state.ball.pos[1]
 	angle = 6.28
+	recipient = None
 	if team:
 		for robot in world_state.our_robots:
 			pose_x = robot.pose[0]
@@ -31,6 +38,7 @@ def get_recipient(world_state: rc.WorldState, team, vel_angle) -> int:
 			if angle_diff < angle:
 				recipient = robot.id
 				angle = angle_diff
+	# print(recipient)
 	return recipient
 
 """
@@ -50,11 +58,16 @@ def pass_or_fumble(world_state: rc.WorldState, kicker_id, old_angle, new_angle) 
 	if kicker_id is None:
 		kicker_id = possess
 		kicker_team = team
-
+	kicker_team = True
+	team = True
+	kicker_id = 1
+	recipient_id = None
+	possess = None
 	old_angle = new_angle
 	new_angle = get_velocity_angle(world_state)
 	if possess is None and recipient_id is None:
 		recipient_id = get_recipient(world_state, team, new_angle)
+		print(recipient_id)
 
 	if recipient_id is not None:
 		try:
@@ -62,13 +75,14 @@ def pass_or_fumble(world_state: rc.WorldState, kicker_id, old_angle, new_angle) 
 			new_distance = util.get_distance(world_state, recipient_id)
 			if old_distance < new_distance:
 				print('Fumbled')
+				print('here')
 		except:
 			new_distance = util.get_distance(world_state, recipient_id)
 		
 	#When the velocity angle changes, if the member possesses the ball, passing is succeeded, otherwise intercepted.
 
 	if old_angle is not None and kicker_id is not None:
-		if abs(old_angle-new_angle) > 0.001 and possess != kicker_id:
+		if abs(old_angle-new_angle) > 0.1 and possess != kicker_id:
 			# fumbling = fumble_classifier(world_state, possess)
 			if recipient_id == possess and team == kicker_team:
 				print(f'Successful Pass from #{kicker_id} to #{possess}')
@@ -81,17 +95,13 @@ def pass_or_fumble(world_state: rc.WorldState, kicker_id, old_angle, new_angle) 
 	return kicker_id, old_angle, new_angle
 
 
-play_selector = gameplay_node.EmptyPlaySelector()
-gameplay_node = gameplay_node.GameplayNode(play_selector)
-recipient_id = None
-kicker_id = None
-kicker_team = None
-old_angle = None
-new_angle = None
+
 
 while (True):
 	rclpy.spin_once(gameplay_node)
-	[kicker_id, old_angle, new_angle] = pass_or_fumble(gameplay_node.get_world_state(), kicker_id, old_angle, new_angle)
+	world_state = gameplay_node.get_world_state()
+	if world_state is not None:
+		[kicker_id, old_angle, new_angle] = pass_or_fumble(world_state, kicker_id, old_angle, new_angle)
 
 
 
