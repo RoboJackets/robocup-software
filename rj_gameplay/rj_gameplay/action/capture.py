@@ -5,28 +5,23 @@ from abc import ABC, abstractmethod
 import stp.role as role
 import stp.action as action
 import numpy as np
+from rj_msgs.msg import RobotIntent
 
-
-class ICapture(action.IAction, ABC):
-    def done(self) -> bool:
-        pass
-
-
-class Capture(ICapture):
+class Capture(action.IAction):
     """
     Capture action
     TODO: update with actions implementation
     """
-    def __init__(self):
-        self.count = -1
-        # For stub
 
-    def tick(self, robot: int, ctx: action.Ctx):
-        print('robot:', robot.id, 'is capturing')
-        self.count += 1
+    def __init__(self, robot_id):
+        self.robot_id = robot_id
 
-    def done(self) -> bool:
-        return self.count == 1
 
-    def fail(self):
+    def tick(self, intent) -> None:
+        settle_command = SettleMotionCommand()
+        intent.motion_command.settle_command = [settle_command] 
+        intent.dribbler_speed = 1.0
+        intent.active = True
+
+    def is_done(self) -> bool:
         return False

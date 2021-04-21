@@ -23,9 +23,9 @@ class RobotStatus():
     kicker_healthy: bool
     lethal_fault: bool
 
-    def __init__(self, robot_id: RobotId,
-                 has_ball_sense: bool, kicker_charged: bool,
-                 kicker_healthy: bool, lethal_fault: bool):
+    def __init__(self, robot_id: RobotId = None,
+                 has_ball_sense: bool = None, kicker_charged: bool = None,
+                 kicker_healthy: bool = None, lethal_fault: bool = None):
         
         self.robot_id = robot_id
         self.has_ball_sense = has_ball_sense

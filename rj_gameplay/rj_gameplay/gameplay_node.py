@@ -41,6 +41,7 @@ class GameplayNode(Node):
 
         self.override_actions = [None] * NUM_ROBOTS
 
+
         for i in range(NUM_ROBOTS):
             self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, '/radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
  
@@ -96,6 +97,7 @@ class GameplayNode(Node):
         returns: an updated world state
         """
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) == len(self.partial_world_state.our_robots):
+
             #self.ger_logger().info("Robot Status Len: " +  str(len(self.robot_status)))
             #self.get_logger().info("Our Robots Len: " + str(len(self.partial_world_state.our_robots)))
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
@@ -113,6 +115,8 @@ class GameplayNode(Node):
 
         #self.get_logger().info("Gameplay node is ticked")
 
+        #self.get_logger().info("Gameplay node is ticked")
+
         if self.world_state is not None:
             # self.debug_async_lineup(self.world_state)
             # self.tick_override_actions(self.world_state)
@@ -126,7 +130,7 @@ class GameplayNode(Node):
     
     def tick_override_actions(self, world_state) -> None:
         for i in range(0,NUM_ROBOTS):
-            if(self.actions[i] is not None):
+            if(self.override_actions[i] is not None):
                 #self.get_logger().info("Intent published")
                 fresh_intent = msg.RobotIntent()
                 self.override_actions[i].tick(fresh_intent)

@@ -31,7 +31,7 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
         """
         Begin spinning the action
         """
-        self.action.spin()
+        pass
 
     def update(self) -> py_trees.common.Status:
         """
