@@ -34,9 +34,11 @@ class Move(action.IFiniteAction):
                     
     def is_done(self, world_state) -> bool:
         threshold = 0.3
-        if self.robot_id is None:
+        print(self.robot_id)
+        if self.robot_id is None or world_state is None:
             return False
         elif(math.sqrt((world_state.our_robots[self.robot_id].pose[0] - self.target_point[0])**2 + (world_state.our_robots[self.robot_id].pose[1] - self.target_point[1])**2) < threshold):
+            print('HERE2')
             return True
         else:
             return False
