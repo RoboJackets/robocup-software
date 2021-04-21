@@ -6,6 +6,10 @@ import numpy as np
 from typing import Optional
 
 class Ball:
+    
+    def distance(loc1, loc2):
+        #return (abs())
+        return 0.0
     """manifestation of a ball"""
 
     '''
@@ -67,39 +71,151 @@ class Ball:
         return False
 
     def is_in_our_goalie_zone(ball, field):
+        if ball != None:
+            return False
+            #return constants.Field.OurGoalZoneShape.contains_point(main.ball().pos)
+        else:
+            return False
+
+    def we_are_closer(worldstate):
+       
+        ball = rc.ball()
+        our_robots = rc.our_robots()
+        their_robots = rc.their_robots()
+        '''
+        return min([(ball.pos - rob.pos).mag()
+                for rob in main.system_state().their_robots]) > min(
+                    [(main.ball().pos - rob.pos).mag()
+                     for rob in main.system_state().our_robots])
+        '''
+        
     	return False
 
-    def we_are_closer(ball):
-    	return False
-
-    def opponent_is_much_closer(ball):
+    def opponent_is_much_closer(worldstate):
+        ball = rc.ball()
+        our_robots = rc.our_robots()
+        their_robots = rc.their_robots()
+        '''
+        return min([(ball.pos - rob.pos).mag()
+                for rob in main.system_state().their_robots]) * 3 < min(
+                    [(main.ball().pos - rob.pos).mag()
+                     for rob in main.system_state().our_robots])
+        '''
     	return False
 
     def moving_slow(ball):
+        vel = sqrt(ball.vel()[0]**2 + ball.vel()[1]**2)
+        #return vel <= constants.Evaluation.SlowThreshold
     	return False
 
     FrictionCoefficient = 0.04148
     GravitationalCoefficient = 9.81  # in m/s^2
 
     def predict_stop_time(ball):
+        #return main.ball().predict_seconds_to_stop()
     	return 0
 
     def predict_stop(ball):
+        #return ball.predict_pos(ball.predict_seconds_to_stop())
     	return 0
 
     def rev_predict(dist, ball):
-        return dist
+        """predict how much time it will take the ball to travel the given distance"""
+        #return main.ball().estimate_seconds_to_dist(dist)
+        vel = ball.vel()
+        v = sqrt(vel[0]**2 + vel[1]**2)
+        
+        return 0.0
 
     def opponent_with_ball(ball):
+        max_dist = float('inf')
+        '''
+        closest_bot, closest_dist = None, float("inf")
+    for bot in main.their_robots():
+        if bot.visible:
+            dist = (bot.pos - main.ball().pos).mag()
+            if dist < closest_dist:
+                closest_bot, closest_dist = bot, dist
+
+    if closest_bot is None:
+        return None
+    else:
+        if robot_has_ball(closest_bot):
+            return closest_bot
+        else:
+            return None
+        '''
     	return None
 
     def our_robot_with_ball(ball):
+        max_dist = float('inf')
+        '''
+        closest_bot, closest_dist = None, float("inf")
+    for bot in main.our_robots():
+        if bot.visible:
+            dist = (bot.pos - main.ball().pos).mag()
+            if dist < closest_dist:
+                closest_bot, closest_dist = bot, dist
+
+    if closest_bot == None:
+        return None
+    else:
+        if robot_has_ball(closest_bot):
+            return closest_bot
+        else:
+            return None
+        '''
         return None
 
     def robot_has_ball(ball):
+        mouth_half_angle = math.pi / 12
+        
+        '''
+    max_dist_from_mouth = 1.13 * (
+        constants.Robot.Radius + constants.Ball.Radius)
+
+    # Create triangle between bot pos and two points of the mouth
+    A = robot.pos
+    B = A + robocup.Point(
+        max_dist_from_mouth * math.cos(robot.angle - mouth_half_angle),
+        max_dist_from_mouth * math.sin(robot.angle - mouth_half_angle))
+    C = A + robocup.Point(
+        max_dist_from_mouth * math.cos(robot.angle + mouth_half_angle),
+        max_dist_from_mouth * math.sin(robot.angle + mouth_half_angle))
+    D = main.ball().pos
+
+    # Barycentric coordinates to solve whether the ball is in that triangle
+    area = 0.5 * (-B.y * C.x + A.y * (-B.x + C.x) + A.x *
+                  (B.y - C.y) + B.x * C.y)
+    s = 1 / (2 * area) * (A.y * C.x - A.x * C.y + (C.y - A.y) * D.x +
+                          (A.x - C.x) * D.y)
+    t = 1 / (2 * area) * (A.x * B.y - A.y * B.x + (A.y - B.y) * D.x +
+                          (B.x - A.x) * D.y)
+
+    # Due to the new camera configuration in the 2019 year,
+    # the ball dissapears consistently when we go to capture a ball near the
+    # edge of the field. This causes the ball to "appear" inside the robot
+    # so we should assume that if the ball is inside, we probably have
+    # the ball
+    ball_inside_robot = (robot.pos - main.ball().pos).mag() < \
+                        constants.Robot.Radius + constants.Ball.Radius
+
+    return (s > 0 and t > 0 and (1 - s - t) > 0) or ball_inside_robot
+        '''
     	return None
 
-    def time_to_ball(ball):
+    def time_to_ball(ball, robot):
+        
+        '''
+        max_vel = robocup.MotionConstraints().max_speed
+    max_accel = robocup.MotionConstraints().max_accel
+    delay = .1  # TODO: tune this better
+    rpos = robot.pos
+    bpos = main.ball().pos
+    # calculate time for self to reach ball using max_vel + a slight delay for capture
+    dist_to_ball = robot.pos.dist_to(main.ball().pos)
+    return (dist_to_ball / max_vel) + delay
+        '''
     	return 0
 
     ball = rc.Ball([0,4.5],[0, -1], True)
