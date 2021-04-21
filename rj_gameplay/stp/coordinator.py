@@ -1,11 +1,13 @@
 """This module contains the implementation of the coordinator."""
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, List
 
 import stp.play
 import stp.rc as rc
 import stp.role.assignment as assignment
 import stp.situation
+from rj_msgs import msg
 
+NUM_ROBOTS = 16
 
 class Coordinator:
     """The coordinator is responsible for using SituationAnalyzer to select the best
@@ -36,7 +38,7 @@ class Coordinator:
         self._prev_play = None
         self._prev_role_results = {}
 
-    def tick(self, world_state: rc.WorldState) -> None:
+    def tick(self, world_state: rc.WorldState) -> List[msg.RobotIntent]:
         """Performs 1 ticks of the STP system:
             1. Selects the best play to run given the passed in world state.
             2. Ticks the best play, collecting the list of skills to run.
@@ -52,7 +54,7 @@ class Coordinator:
         # Update the props.
         cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
 
-        if type(cur_play) == type(self._prev_play):
+        if type(cur_play) == type(self._prev_play) and not self._prev_play.is_done(world_state):
             cur_play = self._prev_play
             # This should be checked here or in the play selector, so we can restart a play easily
 
@@ -60,13 +62,23 @@ class Coordinator:
         new_role_results, skills = cur_play.tick(
             world_state, self._prev_role_results, cur_play_props
         )
-        # Execute the list of skills from their skill entry.
+    
+        # Get the list of actions from the skills
+        actions = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
-            skill.skill.tick(world_state,robot)
+            actions.update(skill.skill.tick(robot, world_state))
+        intents = [msg.RobotIntent()] * NUM_ROBOTS
+        # Get the list of robot intents from the actions
+        for i in range(NUM_ROBOTS):
+            if i in actions.keys() and actions[i]:
+                for action in actions[i]:
+                    intents[i] = action.tick(intents[i])
 
         # Update _prev_*.
         self._prev_situation = cur_situation
         self._prev_play = cur_play
         self._prev_role_results = new_role_results
         self._props[cur_play_type] = cur_play_props
+
+        return intents
