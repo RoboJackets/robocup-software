@@ -9,6 +9,7 @@ get_distance returns the distance between the ball and the player
 robot_id: robot's id
 """
 def get_distance(world_state: rc.WorldState, robot_id) -> float:
+	distance = None
 	if world_state is not None:
 		robot = world_state.our_robots[robot_id]
 		pose_x = robot.pose[0]
@@ -42,7 +43,7 @@ def possession_classifier(world_state: rc.WorldState)-> Union[int, bool]:
 				team = True #our team
 		else:
 			distance = get_distance(world_state, robot.id)
-			if distance < 0.1 and min_dist > distance and ball_vel < 0.05:
+			if distance < 0.15 and min_dist > distance:
 				possess_id = robot.id
 				min_dist = distance
 				team = True
@@ -56,7 +57,7 @@ def possession_classifier(world_state: rc.WorldState)-> Union[int, bool]:
 				team = False #opponent
 		else:
 			distance = get_distance(world_state, robot.id)
-			if distance < 0.1 and min_dist > distance and ball_vel < 0.05:
+			if distance < 0.15 and min_dist > distance:
 				possess_id = robot.id
 				min_dist = distance
 				team = False
