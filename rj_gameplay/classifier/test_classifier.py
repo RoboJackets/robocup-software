@@ -6,9 +6,7 @@ def test_classifier(world_state: rc.WorldState, robot: rc.Robot) -> float:
 
 	if world_state is not None:
 		print(world_state.ball.pos)
-		for their_robot in world_state.their_robots:
-			print(cost)
-	pass
+
 
 
 play_selector = gameplay_node.EmptyPlaySelector()
