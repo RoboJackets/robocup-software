@@ -1,12 +1,28 @@
 import sys
 sys.path.insert(1, "../../stp")
 import rc
+from ball import Ball
 
 class DefensivePosition:
 
     robot = rc.Robot.generate_test_robot(1)
 
-    def predict_kick_direction()
+    ## Predicts the impending kick direction based on the orientation of the robot and the
+    #  angle of approach
+    #
+    # @param robot: The robot which we want to estimate
+    # @return Angle of most likely kick
+    def predict_kick_direction(robot):
+        pose = robot.pose()
+        angle = pose[2]
+        pos = pose[:-1]
+        
+        # Use distance from bot to ball to predict time it takes to intercept
+        # Calculates direct robot to future ball position
+        inst_ball_time = Ball.time_to_ball(robot)
+        
+        #future_ball_pos = 
+        
     '''
     ## Predicts the impending kick direction based on the orientation of the robot and the
     #  angle of approach
