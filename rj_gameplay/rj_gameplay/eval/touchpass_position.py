@@ -1,39 +1,40 @@
-class TouchpassPosition:
-    
-      
 import sys
 sys.path.insert(1, "../../stp")
 import rc
-import pass
+import Pass
 import chip
 from typing import List, Optional, Tuple, Union
 
+class TouchpassPosition:
+    
+    ## The Touchpass positioning file finds the best location within a rectangle to ricochet
+    # a ball into the goal.
+    #
+    # By default, this will select a rectangle that is across the field from the current ball position.
+    # The best location is found by multiplying the chance the pass from the ball's position to the point will make it
+    # with the chance a shot into a goal will make it. The greatest probability is selected, and returned.
+    #
+    # Example usage:
+    # tpass = evaluation.touchpass_positioning
+    # tpass.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
+    
+    ## Returns a robocup.Rect object that is the default location to be evaluated
+    # This rectangle will only include points with a lower y value that the ball's current location, and will be on the side of the field
+    # opposite to the ball.
+    #
+    # @param kick_point current ball position/initial kick position (robocup.Point)
+    def generate_default_rectangle(point, field, ball):
+        edge_offset = 0.25
+        ball_offset = 0.4
+        
+        if point[0] > 0:
+            #ball on right side of field
+            #from_point = [0, min(field.length_m - edge_offset, ball.pos.y - ball_offset)]
+            to_point = []
+            toReturn = []
+
 '''
-import robocup
-import constants
-import main
-import evaluation.passing
-import evaluation.chipping
-from typing import List, Optional, Tuple, Union
 
-
-## The Touchpass positioning file finds the best location within a rectangle to ricochet
-# a ball into the goal.
-#
-# By default, this will select a rectangle that is across the field from the current ball position.
-# The best location is found by multiplying the chance the pass from the ball's position to the point will make it
-# with the chance a shot into a goal will make it. The greatest probability is selected, and returned.
-#
-# Example usage:
-# tpass = evaluation.touchpass_positioning
-# tpass.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
-
-
-## Returns a robocup.Rect object that is the default location to be evaluated
-# This rectangle will only include points with a lower y value that the ball's current location, and will be on the side of the field
-# opposite to the ball.
-#
-# @param kick_point current ball position/initial kick position (robocup.Point)
 def generate_default_rectangle(kick_point: robocup.Point) -> robocup.Rect:
     offset_from_edge = 0.25
     offset_from_ball = 0.4
