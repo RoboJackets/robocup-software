@@ -45,7 +45,7 @@ all-perf:
 perf: all-perf
 
 launch: 
-    ./launch.sh
+	./start.sh
 	
 run: all
 	ros2 launch rj_robocup soccer.launch.py
