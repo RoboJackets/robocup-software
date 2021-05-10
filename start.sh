@@ -15,5 +15,3 @@ source /opt/ros/foxy/setup.bash
 make
 source install/setup.bash
 ros2 launch rj_robocup soccer.launch.py
-
-echo "Soccer exited normally."
