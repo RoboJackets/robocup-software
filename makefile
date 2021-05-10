@@ -44,6 +44,9 @@ all-perf:
 	$(call cmake_build_target_perf, all)
 perf: all-perf
 
+launch: 
+    ./launch.sh
+	
 run: all
 	ros2 launch rj_robocup soccer.launch.py
 run-comp:
