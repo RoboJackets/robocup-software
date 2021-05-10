@@ -44,7 +44,7 @@ all-perf:
 	$(call cmake_build_target_perf, all)
 perf: all-perf
 
-launch: 
+start: 
 	./start.sh
 	
 run: all
