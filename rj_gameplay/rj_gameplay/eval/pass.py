@@ -20,7 +20,11 @@ class Pass:
         # we then use the window evaluator on this scenario to see if the pass is open
         pass_angle = math.pi / 32.0
         #pass_dist = to_point.dist_to(from_point)
-        #pass_dir = to_point - from_point
+        pass_dist = sqrt(abs(from_point[0] - to_point[0])**2 + abs(from_point[1] - to_point[1])**2)
+        pass_dir = to_point - from_point
+        
+        '''
+        pass_dir = to_point - from_point
         pass_perp = pass_dir.perp_ccw()
         receive_seg_half_len = math.tan(pass_angle) * pass_dist
         receive_seg = robocup.Segment(to_point + pass_perp * receive_seg_half_len,
@@ -39,3 +43,5 @@ class Pass:
         else:
             # the pass is completely blocked
             return 0
+        '''
+        return 0
