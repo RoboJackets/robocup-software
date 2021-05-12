@@ -11,7 +11,7 @@ from typing import Optional
 import stp.skill as skill
 import stp.role as role
 import stp.action as action
-from rj_gameplay.action import move
+from rj_gameplay.action import kick
 from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 from rj_msgs import msg
@@ -21,7 +21,7 @@ class IKick(skill.ISkill, ABC):
 
 
 """
-A skill version of move so that actions don't have to be called in tactics
+A skill version of kick so that actions don't have to be called in tactics
 """
 class Kick(IKick):
     
