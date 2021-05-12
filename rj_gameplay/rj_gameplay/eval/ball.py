@@ -40,7 +40,16 @@ class Ball:
         print(s2[0], s2[1])
         print(b1[0], b1[1])
         print(b2[0], b2[1])
-        return False;
+        
+        #x check
+        xmin = min(s1[0], s2[0])
+        xmax = max(s1[0], s2[0])
+        x = ((xmin <= b1[0] <= xmax) or (xmin <= b2[0] <= xmax))
+        #y check
+        ymin = min(s1[1], s2[1])
+        ymax = max(s1[1], s2[1])
+        y = ((ymin <= b1[1] <= ymax) or (ymin <= b2[1] <= ymax))
+        return (x and y)
 
     def is_moving_backward(ball, field):
 
@@ -62,12 +71,10 @@ class Ball:
                             0],
                     [-field. goal_width_m/2.0 - fudge_factor,
                             0]]   
-                print(GoalSegment[0], GoalSegment[1])
+                #print(GoalSegment[0], GoalSegment[1])
                 #pt = ball_path.segment_intersection(WiderGoalSegment)
                 pt = intersect(GoalSegment[0], GoalSegment[1], ball_path[0], ball_path[1])
-                
-                return pt != False
-
+                return pt
         return False
 
     def is_in_our_goalie_zone(ball, field):
