@@ -33,15 +33,18 @@ class Kick(IKick):
         self.count = -1
 
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
-        # print('robot:', self.robot_id, 'kicking')
-        intent.shoot_mode = intent.SHOOT_MODE_KICK # not sure if this is how you ref that constant in RobotIntent.msg
-        intent.kick_speed = kMaxKick #255
-        intent.is_active = True
+        if self.count < 0:
+            intent.shoot_mode = intent.SHOOT_MODE_KICK # not sure if this is how you ref that constant in RobotIntent.msg
+            intent.kick_speed = kMaxKick # this is in rj_constants, not sure how to reference it
+            intent.is_active = True
+        elif self.count == 0:
+            intent.kick_speed = 0
+            intent.is_active = False
 
         self.count += 1
 
     def done(self) -> bool:
         return self.count == 1
 
-    def fail(self):
-        return False
+    # def fail(self):
+    #    return False
