@@ -1,13 +1,14 @@
 import constants
 import math
-import robocup
+import sys
 import main
 import evaluation.field
 import evaluation.passing
 import evaluation.shooting
 import functools
 from typing import Tuple, List
-
+sys.path.insert(1, "../../stp")
+import rc
 
 ## Finds the best location with a rectangle to pass the ball into
 #
@@ -31,21 +32,21 @@ from typing import Tuple, List
 # @param recieve_x: X position of the receive point
 # @param recieve_y: Y position of the receive point
 # @return Returns a score between 0 and 1 on how good of pass would be
-def eval_single_point(kick_point: robocup.Point,
-                      ignore_robots: List[robocup.Robot], min_pass_dist: float,
-                      field_weights: Tuple[float, float, float],
-                      weights: Tuple[float, float, float, float],
-                      receive_x: float, receive_y: float) -> float:
-    receive_point = robocup.Point(receive_x, receive_y)
+def eval_single_point(ball, field, kick_point,
+                      ignore_robots, min_pass_dist,
+                      field_weights,
+                      weights,
+                      receive_x, receive_y):
+    receive_point = [receive_x, receive_y]
 
     if kick_point is None:
-        if main.ball().valid:
-            kick_point = main.ball().pos
+        if ball.visible:
+            kick_point = ball.pos
         else:
             return 0
 
-    w = constants.Field.Width
-    l = constants.Field.Length
+    w = field.width_m
+    l = field.length_m
     x_offset = .1 * w
     y_offset = .1 * l
 
