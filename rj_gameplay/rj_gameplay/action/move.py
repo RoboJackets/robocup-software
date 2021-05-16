@@ -22,23 +22,21 @@ class Move(action.IFiniteAction):
             target_vel : np.ndarray = np.array([0.0,0.0]),
             face_angle : Optional[float] = None,
             face_point : Optional[np.ndarray] = None,
-            priority : int = 0):
+            priority : int = 0) -> None:
             
-            self.robot_id = robot_id
-            self.target_point = target_point
-            self.target_vel = target_vel
-            self.face_angle = face_angle
-            self.face_point = face_point
-            self.priority = priority
+        self.robot_id = robot_id
+        self.target_point = target_point
+        self.target_vel = target_vel
+        self.face_angle = face_angle
+        self.face_point = face_point
+        self.priority = priority
             
                     
-    def is_done(self, world_state) -> bool:
+    def is_done(self, world_state: rc.WorldState) -> bool:
         threshold = 0.3
-        print(self.robot_id)
         if self.robot_id is None or world_state is None:
             return False
         elif(math.sqrt((world_state.our_robots[self.robot_id].pose[0] - self.target_point[0])**2 + (world_state.our_robots[self.robot_id].pose[1] - self.target_point[1])**2) < threshold):
-            print('HERE2')
             return True
         else:
             return False

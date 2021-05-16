@@ -4,8 +4,9 @@ from abc import ABC, abstractmethod
 
 import stp.role as role
 import stp.action as action
+import stp.rc as rc
 import numpy as np
-from rj_msgs.msg import RobotIntent
+from rj_msgs.msg import RobotIntent, SettleMotionCommand
 
 class Capture(action.IAction):
     """
@@ -23,5 +24,9 @@ class Capture(action.IAction):
         intent.dribbler_speed = 1.0
         intent.active = True
 
-    def is_done(self) -> bool:
+        return intent
+
+    def is_done(self, world_state) -> bool:
+        if world_state.our_robots[self.robot_id].has_ball_sense:
+            return True
         return False
