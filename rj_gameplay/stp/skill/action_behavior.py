@@ -44,7 +44,6 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
         """
 
         if self.action.is_done(self.world_state):
-            print('HEREERHERHE')
             return py_trees.common.Status.SUCCESS
         else:
             return py_trees.common.Status.RUNNING
