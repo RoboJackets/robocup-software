@@ -33,7 +33,9 @@ class move_cost(role.CostFn):
     ) -> float:
     
         # raw dist
-        return (robot.pose[0] - self.target_point[0])**2 + (robot.pose[1] - self.target_point[1])**2
+        if robot.visible:
+            return (robot.pose[0] - self.target_point[0])**2 + (robot.pose[1] - self.target_point[1])**2
+        return 0
 
 class LineKick(tactic.ITactic):
     """LineKick skill wrapper"""

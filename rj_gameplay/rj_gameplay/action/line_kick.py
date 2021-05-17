@@ -41,5 +41,6 @@ class LineKick(action.IFiniteAction):
         return intent 
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return False
+        if self.robot_id is None or world_state is None: 
+            return False
         return self.count >= 2

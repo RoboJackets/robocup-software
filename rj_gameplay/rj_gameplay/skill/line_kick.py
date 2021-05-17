@@ -5,6 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
+import numpy as np
 
 import stp.skill as skill
 import stp.role as role
@@ -30,7 +31,10 @@ class LineKick(ILineKick):
         self.robot = robot
 
         # setup line kick action
-        self.target_point = world_state.ball.pos 
+        self.target_point = np.array([0.0, 0.0])
+        if world_state.ball.visible:
+            self.target_point = world_state.ball.pos 
+
         if self.robot is not None:
             self.line_kick = line_kick.LineKick(self.robot.id, self.target_point)
         else:
