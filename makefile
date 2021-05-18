@@ -124,6 +124,9 @@ behavior-diagrams: all
 clean:
 	cd build-debug && ninja clean || true
 
+test-python-new:
+	source /opt/ros/foxy/setup.sh && source install/setup.bash && PYTHONPATH="$(readlink -f rj_gameplay):$PYTHONPATH" python3 -m pytest --cov rj_gameplay --cov stp rj_gameplay --cov-report xml
+
 static-analysis:
 	mkdir -p build/static-analysis
 	cd build/static-analysis; scan-build cmake ../.. -Wno-dev -DSTATIC_ANALYSIS=ON && scan-build -o output make $(MAKE_FLAGS)
