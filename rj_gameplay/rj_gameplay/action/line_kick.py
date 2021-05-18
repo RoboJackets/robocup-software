@@ -27,6 +27,7 @@ class LineKick(action.IFiniteAction):
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
         line_kick_command = LineKickMotionCommand()
         line_kick_command.target = Point(x=self.target[0],y=self.target[1])
+        """
         # not sure if this is how you ref this constant (in RobotIntent.msg)
         intent.shoot_mode = intent.SHOOT_MODE_KICK 
 
@@ -35,6 +36,7 @@ class LineKick(action.IFiniteAction):
             intent.kick_speed = 255.0 # kMaxKick is in rj_constants, not sure how to reference it
         elif self.count >= 1:
             intent.kick_speed = 0.0
+        """
 
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True

@@ -23,7 +23,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         # when ball is still, kick it
-        if np.sum(world_state.ball.vel) < 0.1:
+        if world_state.ball.visible and np.sum(world_state.ball.vel) < 0.1:
             return (None, temp_line_kick.LineKick(world_state))
         # else move to points in LineUp
         return (None, line_up.LineUp())
