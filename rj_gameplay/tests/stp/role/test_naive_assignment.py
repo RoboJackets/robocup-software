@@ -82,12 +82,12 @@ class TacticBase(tactic.ITactic[None]):
 
     def get_requests(self, world_state: WorldState, props: None) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
-            self.A1: [self.A1.skill.create_request().with_priority(Priority.LOW)],
-            self.A2: [self.A2.skill.create_request().with_priority(Priority.MEDIUM)],
-            self.B1: [self.B1.skill.create_request().with_priority(Priority.MEDIUM)],
-            self.B2: [self.B2.skill.create_request().with_priority(Priority.HIGH)],
-            self.C1: [self.C1.skill.create_request().with_priority(Priority.LOW)],
-            self.C2: [self.C2.skill.create_request().with_priority(Priority.MEDIUM)],
+            self.A1: [self.A1.create_request().with_priority(Priority.LOW)],
+            self.A2: [self.A2.create_request().with_priority(Priority.MEDIUM)],
+            self.B1: [self.B1.create_request().with_priority(Priority.MEDIUM)],
+            self.B2: [self.B2.create_request().with_priority(Priority.HIGH)],
+            self.C1: [self.C1.create_request().with_priority(Priority.LOW)],
+            self.C2: [self.C2.create_request().with_priority(Priority.MEDIUM)],
             self.BALL_SKILL: [
                 self.BALL_SKILL.skill.create_request()
                 .with_priority(Priority.HIGH)
