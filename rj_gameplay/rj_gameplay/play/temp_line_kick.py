@@ -9,7 +9,7 @@ import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 
-class LineKick(play.IPlay):
+class LineKickPlay(play.IPlay):
     """
     Dummy play to kick a stationary ball, to test the line_kick skill.
     """
@@ -23,7 +23,7 @@ class LineKick(play.IPlay):
         self.move_right = move_tactic.Move(np.array([self.right_x, self.start_y]))
         self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
         """
-        self.kicker = temp_line_kick.LineKick(world_state)
+        self.kicker = temp_line_kick.LineKickTactic(world_state)
         self.role_assigner = NaiveRoleAssignment()
 
 
@@ -39,7 +39,6 @@ class LineKick(play.IPlay):
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        # print(world_state)
         role_requests[self.kicker] = self.kicker.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them, then unflatten

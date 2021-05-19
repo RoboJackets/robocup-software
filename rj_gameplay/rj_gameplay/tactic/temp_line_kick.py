@@ -33,18 +33,20 @@ class move_cost(role.CostFn):
     ) -> float:
     
         # raw dist
-        if robot.visible:
+        if robot and robot.visible:
             return (robot.pose[0] - self.target_point[0])**2 + (robot.pose[1] - self.target_point[1])**2
         return 0
 
-class LineKick(tactic.ITactic):
-    """LineKick skill wrapper"""
+class LineKickTactic(tactic.ITactic):
+    """LineKickSkill wrapper"""
 
     def __init__(self, world_state: rc.WorldState):
-        self.line_kick = tactic.SkillEntry(line_kick.LineKick(None, world_state = world_state))
+        self.line_kick_skill_entry = tactic.SkillEntry(line_kick.LineKickSkill(None, world_state = world_state))
         # TODO: base on the target of the tactic?
-        self.cost = move_cost(world_state.ball.pos)
-        # self.cost = move_cost(self.line_kick.move.target_point)
+        self.cost = 0
+        if world_state:
+            self.cost = move_cost(world_state.ball.pos)
+        # self.cost = move_cost(self.line_kick_skill_entry.move.target_point)
         
     def compute_props(self):
         pass
@@ -65,7 +67,7 @@ class LineKick(tactic.ITactic):
         role_requests: tactic.RoleRequests = {}
 
         line_kick_request = role.RoleRequest(role.Priority.HIGH, True, self.cost)
-        role_requests[self.line_kick] = [line_kick_request]
+        role_requests[self.line_kick_skill_entry] = [line_kick_request]
 
         return role_requests
 
@@ -73,11 +75,11 @@ class LineKick(tactic.ITactic):
         """
         :return: A list of size 1 skill depending on which role is filled
         """
-        line_kick_result = role_results[self.line_kick]
+        line_kick_result = role_results[self.line_kick_skill_entry]
 
         if line_kick_result and line_kick_result[0].is_filled():
-            return [self.line_kick]
+            return [self.line_kick_skill_entry]
         return []
 
     def is_done(self, world_state):
-        return self.line_kick.skill.is_done(world_state)
+        return self.line_kick_skill_entry.skill.is_done(world_state)

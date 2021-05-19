@@ -12,7 +12,7 @@ from typing import Optional
 import math
 from rj_msgs import msg
 
-class LineKick(action.IFiniteAction):
+class LineKickAction(action.IFiniteAction):
     """
     Activates kicker. Intended to be used after an aim/drive action in a skill.
     """
@@ -27,6 +27,8 @@ class LineKick(action.IFiniteAction):
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
         line_kick_command = LineKickMotionCommand()
         line_kick_command.target = Point(x=self.target[0],y=self.target[1])
+        # line_kick_command.target.x = self.target[0]
+        # line_kick_command.target.y = self.target[1]
         """
         # not sure if this is how you ref this constant (in RobotIntent.msg)
         intent.shoot_mode = intent.SHOOT_MODE_KICK 
