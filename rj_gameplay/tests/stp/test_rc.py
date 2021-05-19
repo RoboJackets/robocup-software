@@ -13,8 +13,7 @@ def test_generate_test_robot() -> None:
     assert type(bot.twist) is np.ndarray
     assert np.all(bot.twist == np.array([0.0, 0.0, 0.0]))
     assert bot.visible is True
-    assert bot.ball_sense_triggered is False
-    assert bot.has_ball_sense is True
+    assert bot.has_ball_sense is False
     assert bot.kicker_charged is True
     assert bot.kicker_healthy is True
     assert bot.lethal_fault is False
@@ -23,7 +22,7 @@ def test_generate_test_robot() -> None:
                                        is_ours=False,
                                        pose=np.array([1.0, 2.0, 3.0]),
                                        twist=np.array([0.0, 2.0, 1.1]),
-                                       ball_sense_triggered=True)
+                                       has_ball_sense=True)
 
     assert bot2.id == 2
     assert bot2.is_ours is False
@@ -33,7 +32,7 @@ def test_generate_test_robot() -> None:
     #Make warnings into errors
     warnings.filterwarnings('error')
     try:
-        assert bot2.ball_sense_triggered is True
+        assert bot2.has_ball_sense is True
     except RuntimeWarning:
         pass
 

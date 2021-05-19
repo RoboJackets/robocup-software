@@ -188,8 +188,8 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # Calculate how much further the ball will move before we reach the point
 
-        max_speed = robocup.MotionConstraints.MaxRobotSpeed.value
-        max_acc = robocup.MotionConstraints.MaxRobotAccel.value
+        max_speed = float(robocup.MotionConstraints().max_speed)
+        max_acc = float(robocup.MotionConstraints().max_accel)
 
         # How long it will take the robot/ball to reach that intercept point
         ball_secs = main.ball().estimate_seconds_to(ball_line_intercept)

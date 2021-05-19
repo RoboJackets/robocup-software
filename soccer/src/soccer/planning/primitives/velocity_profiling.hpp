@@ -6,7 +6,7 @@
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Find the final (tangential) speed, at most velocity_final, that we can
@@ -39,4 +39,4 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed,
                            const MotionConstraints& constraints,
                            RJ::Time initial_time = RJ::now());
 
-}  // namespace Planning
+}  // namespace planning

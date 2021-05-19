@@ -9,7 +9,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
@@ -32,8 +32,8 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
-        request.debug_drawer->draw_circle(goal_point, static_cast<float>(draw_radius), draw_color,
-                                          draw_layer);
+        request.debug_drawer->draw_circle(Circle(goal_point, static_cast<float>(draw_radius)),
+                                          draw_color);
     }
 
     AngleFunction angle_function = get_angle_function(request);
@@ -61,4 +61,4 @@ AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) 
     return AngleFns::tangent;
 }
 
-}  // namespace Planning
+}  // namespace planning

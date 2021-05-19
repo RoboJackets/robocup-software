@@ -1,16 +1,15 @@
 #pragma once
 
-#include <configuration.hpp>
+#include "planning/planning_params.hpp"
+
+namespace planning {
 
 struct RotationConstraints {
-public:
     RotationConstraints()
-        : max_speed(*max_rotation_speed),
-          max_accel(*max_rotation_acceleration) {}
+        : max_speed(constraints::PARAM_max_rotational_speed),
+          max_accel(constraints::PARAM_max_rotational_accel) {}
     double max_speed;
     double max_accel;
-
-    static void create_configuration(Configuration* cfg);
-    static ConfigDouble* max_rotation_speed;
-    static ConfigDouble* max_rotation_acceleration;
 };
+
+}  // namespace planning

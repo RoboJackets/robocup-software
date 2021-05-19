@@ -2,7 +2,7 @@
 
 #include "planning/primitives/trapezoidal_motion.hpp"
 
-using namespace Planning;
+using namespace planning;
 
 class TrapezoidalMotionTest : public ::testing::Test {
 public:
