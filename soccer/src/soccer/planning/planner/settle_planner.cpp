@@ -17,52 +17,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
-
-REGISTER_CONFIGURABLE(SettlePlanner);
-
-ConfigDouble* SettlePlanner::ball_speed_percent_for_dampen;
-ConfigDouble* SettlePlanner::search_start_dist;
-ConfigDouble* SettlePlanner::search_end_dist;
-ConfigDouble* SettlePlanner::search_inc_dist;
-ConfigDouble* SettlePlanner::intercept_buffer_time;
-ConfigDouble* SettlePlanner::target_point_gain;
-ConfigDouble* SettlePlanner::ball_vel_gain;
-ConfigDouble* SettlePlanner::shortcut_dist;
-ConfigDouble* SettlePlanner::max_ball_vel_for_path_reset;
-ConfigDouble* SettlePlanner::max_ball_angle_for_reset;
-ConfigDouble* SettlePlanner::max_bounce_angle;
-
-void SettlePlanner::create_configuration(Configuration* cfg) {
-    // NOLINTNEXTLINE
-    ball_speed_percent_for_dampen =
-        new ConfigDouble(cfg, "Capture/Settle/ballSpeedPercentForDampen", 0.1);  // %
-    // NOLINTNEXTLINE
-    search_start_dist = new ConfigDouble(cfg, "Capture/Settle/searchStartDist", 0.0);  // m
-    // NOLINTNEXTLINE
-    search_end_dist = new ConfigDouble(cfg, "Capture/Settle/searchEndDist", 7.0);  // m
-    // NOLINTNEXTLINE
-    search_inc_dist = new ConfigDouble(cfg, "Capture/Settle/searchIncDist", 0.2);  // m
-    // NOLINTNEXTLINE
-    intercept_buffer_time = new ConfigDouble(cfg, "Capture/Settle/interceptBufferTime", 0.0);  // %
-    // NOLINTNEXTLINE
-    target_point_gain = new ConfigDouble(cfg, "Capture/Settle/targetPointGain",
-                                         0.5);  // gain between 0 and 1
-    // NOLINTNEXTLINE
-    ball_vel_gain = new ConfigDouble(cfg, "Capture/Settle/ballVelGain",
-                                     0.5);  // gain between 0 and 1
-    // NOLINTNEXTLINE
-    shortcut_dist = new ConfigDouble(cfg, "Capture/Settle/shortcutDist",
-                                     kRobotRadius);  // m
-    // NOLINTNEXTLINE
-    max_ball_vel_for_path_reset =
-        new ConfigDouble(cfg, "Capture/Settle/maxBallVelForPathReset", 2);  // m/s
-    // NOLINTNEXTLINE
-    max_ball_angle_for_reset =
-        new ConfigDouble(cfg, "Capture/Settle/maxBallAngleForReset", 20);  // Deg
-    // NOLINTNEXTLINE
-    max_bounce_angle = new ConfigDouble(cfg, "Capture/Settle/maxBounceAngle", 45);  // Deg
-}
+namespace planning {
 
 Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     BallState ball = plan_request.world_state->ball;
@@ -90,8 +45,8 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     // Smooth out the ball velocity a little bit so we can get a better estimate
     // of intersect points
     if (first_ball_vel_found_) {
-        average_ball_vel_ =
-            apply_low_pass_filter<Point>(average_ball_vel_, ball.velocity, *ball_vel_gain);
+        average_ball_vel_ = apply_low_pass_filter<Point>(average_ball_vel_, ball.velocity,
+                                                         settle::PARAM_ball_vel_gain);
     } else {
         average_ball_vel_ = ball.velocity;
         first_ball_vel_found_ = true;
@@ -110,9 +65,10 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     check_solution_validity(ball, start_instant, delta_pos);
 
     if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_line(
-            Segment(ball.position, ball.position + average_ball_vel_ * 10), QColor(255, 255, 255),
-            "AverageBallVel");
+        plan_request.debug_drawer->draw_segment(
+            Segment(ball.position, ball.position + average_ball_vel_ * 10), QColor(255, 255, 255));
+        plan_request.debug_drawer->draw_text("Average Ball Velocity",
+                                             ball.position + average_ball_vel_ * 5);
     }
 
     // Check if we should transition from intercept to dampen
@@ -142,12 +98,13 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
 
 void SettlePlanner::check_solution_validity(BallState ball, RobotInstant start_instant,
                                             rj_geometry::Point delta_pos) {
-    const double max_ball_angle_change_for_path_reset = *max_ball_angle_for_reset * M_PI / 180.0f;
+    const double max_ball_angle_change_for_path_reset =
+        settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
 
     // If the ball changed directions or magnitude really quickly, do a reset of
     // target
     if (average_ball_vel_.angle_between(ball.velocity) > max_ball_angle_change_for_path_reset ||
-        (average_ball_vel_ - ball.velocity).mag() > *max_ball_vel_for_path_reset) {
+        (average_ball_vel_ - ball.velocity).mag() > settle::PARAM_max_ball_vel_for_path_reset) {
         first_intercept_target_found_ = false;
         first_ball_vel_found_ = false;
     }
@@ -225,10 +182,12 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);
 
-    int num_iterations = std::ceil((*search_end_dist - *search_start_dist) / *search_inc_dist);
+    int num_iterations =
+        std::ceil((settle::PARAM_search_end_dist - settle::PARAM_search_start_dist) /
+                  settle::PARAM_search_inc_dist);
 
     for (int iteration = 0; iteration < num_iterations; iteration++) {
-        double dist = *search_start_dist + iteration * *search_inc_dist;
+        double dist = settle::PARAM_search_start_dist + iteration * settle::PARAM_search_inc_dist;
         // Time for ball to reach the target point
         std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist);
 
@@ -273,7 +232,7 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
         //
         // Don't do the average here so we can project the intercept point
         // inside the field
-        if (!path.empty() && best_buffer > RJ::Seconds(*intercept_buffer_time)) {
+        if (!path.empty() && best_buffer > RJ::Seconds(settle::PARAM_intercept_buffer_time)) {
             break;
         }
     }
@@ -332,8 +291,9 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
 
         first_intercept_target_found_ = true;
     } else {
-        avg_instantaneous_intercept_target_ = apply_low_pass_filter<Point>(
-            avg_instantaneous_intercept_target_, ball_vel_intercept, *target_point_gain);
+        avg_instantaneous_intercept_target_ =
+            apply_low_pass_filter<Point>(avg_instantaneous_intercept_target_, ball_vel_intercept,
+                                         settle::PARAM_target_point_gain);
     }
 
     // Shortcuts the crazy path planner to just move into the path of the ball
@@ -347,8 +307,8 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     // If we are within a single radius of the ball path
     // and in front of it
     // just move directly to the path location
-    Segment ball_line =
-        Segment(ball.position, ball.position + average_ball_vel_.norm() * *search_end_dist);
+    Segment ball_line = Segment(
+        ball.position, ball.position + average_ball_vel_.norm() * settle::PARAM_search_end_dist);
     Point closest_pt = ball_line.nearest_point(start_instant.position()) + delta_pos;
 
     Point ball_to_pt_dir = closest_pt - ball.position;
@@ -358,12 +318,14 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     // we have run the algorithm at least once AND
     // the target point found in the algorithm is further than we are or just
     // about equal
-    if (in_front_of_ball && (closest_pt - start_instant.position()).mag() < *shortcut_dist &&
+    if (in_front_of_ball &&
+        (closest_pt - start_instant.position()).mag() < settle::PARAM_shortcut_dist &&
         first_intercept_target_found_ &&
         (closest_pt - ball.position).mag() -
                 (avg_instantaneous_intercept_target_ - ball.position).mag() <
-            *shortcut_dist) {
-        LinearMotionInstant target{closest_pt, *ball_speed_percent_for_dampen * average_ball_vel_};
+            settle::PARAM_shortcut_dist) {
+        LinearMotionInstant target{closest_pt,
+                                   settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut =
             CreatePath::rrt(start_instant.linear_motion(), target, plan_request.constraints.mot,
@@ -392,7 +354,7 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     // Since the replanner exists, we don't have to deal with partial paths,
     // just use the interface
     LinearMotionInstant target_robot_intersection{
-        path_intercept_target_, *ball_speed_percent_for_dampen * average_ball_vel_};
+        path_intercept_target_, settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
 
     Replanner::PlanParams params{
         start_instant,     target_robot_intersection, static_obstacles,
@@ -433,7 +395,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant s
 
     if (plan_request.debug_drawer != nullptr) {
         plan_request.debug_drawer->draw_text("Damping", ball.position + Point(.1, .1),
-                                             QColor(255, 255, 255), "DampState");
+                                             QColor(255, 255, 255));
     }
 
     if (path_created_for_dampen_ && !previous_.empty()) {
@@ -540,7 +502,7 @@ void SettlePlanner::calc_delta_pos_for_dir(BallState ball, RobotInstant start_in
         *angle_out = normal_face_vector.angle_between(target_face_vector);
 
         // Clamp so we don't try to bounce behind us
-        *angle_out = std::min(*angle_out, (double)*max_bounce_angle);
+        *angle_out = std::min(*angle_out, settle::PARAM_max_bounce_angle);
 
         // Since we loose the sign for the angle between call, there are two
         // possibilities
@@ -575,4 +537,4 @@ void SettlePlanner::reset() {
     previous_ = Trajectory{};
 }
 
-}  // namespace Planning
+}  // namespace planning

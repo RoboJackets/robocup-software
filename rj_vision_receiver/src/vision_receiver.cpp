@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <boost/exception/diagnostic_information.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/multicast.hpp>
@@ -13,7 +14,7 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, kSharedVisionPortSinglePrimary,
+DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
              "The port used for the vision receiver.")
 
 namespace vision_receiver {
@@ -67,6 +68,8 @@ void VisionReceiver::set_port(int port) {
     if (socket_.is_open()) {
         socket_.close();
     }
+
+    port_ = port;
 
     // Open the socket and allow address reuse. We need this to allow
     // multiple instances of soccer to listen on the same multicast port.

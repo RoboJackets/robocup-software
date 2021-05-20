@@ -35,6 +35,7 @@ def generate_launch_description():
         }.items())
 
     return LaunchDescription([
+        stdout_linebuf_envvar,
         DeclareLaunchArgument('team_flag', default_value='-y'),
         DeclareLaunchArgument('ref_flag', default_value='-noref'),
         DeclareLaunchArgument('headless_flag', default_value=''),
