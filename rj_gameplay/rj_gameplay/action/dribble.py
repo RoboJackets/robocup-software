@@ -25,7 +25,7 @@ class Dribble(IDribble):
             priority : int = 0) -> None:
 
         self.robot_id = robot_id
-        self.dribbler_speed = 1.0
+        self.dribbler_speed = dribbler_speed
 
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
     	intent.dribbler_speed = self.dribbler_speed
