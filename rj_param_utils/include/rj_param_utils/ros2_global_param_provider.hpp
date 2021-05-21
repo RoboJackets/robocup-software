@@ -5,7 +5,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_param_utils/param.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 namespace params {
 

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <rj_param_utils/ros2_param_provider.hpp>
-
 #include <rclcpp/rclcpp.hpp>
+
 #include <rj_msgs/msg/game_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "game_state.hpp"
 #include "team_info.hpp"

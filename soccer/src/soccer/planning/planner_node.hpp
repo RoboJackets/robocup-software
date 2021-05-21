@@ -7,7 +7,7 @@
 #include <context.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/goalie.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
 #include "planner/plan_request.hpp"

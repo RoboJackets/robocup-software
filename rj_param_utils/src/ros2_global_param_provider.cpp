@@ -1,7 +1,7 @@
 #include <spdlog/spdlog.h>
 
-#include <rj_param_utils/global_param_provider.hpp>
 #include <rj_param_utils/param.hpp>
+#include <rj_param_utils/ros2_global_param_provider.hpp>
 
 namespace params {
 

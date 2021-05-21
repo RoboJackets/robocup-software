@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 # ======================================================================
 # Define Targets
 # ======================================================================
-add_library(rj_param_utils STATIC)
+add_library(rj_param_utils SHARED)
 
 add_subdirectory(src)
 
@@ -40,9 +40,6 @@ if(BUILD_TESTING)
   add_subdirectory(testing)
   target_link_libraries(rj_param_utils_testing PUBLIC rj_param_utils ${GTEST_LIBRARIES})
 endif()
-
-# position-independent-code flag
-target_compile_options(rj_param_utils PRIVATE "-fPIC")
 
 # ======================================================================
 # Packaging

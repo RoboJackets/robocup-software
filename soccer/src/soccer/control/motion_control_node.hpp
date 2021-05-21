@@ -4,7 +4,7 @@
 
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_topic_utils/async_message_queue.hpp>
 
 #include "manipulator_control.hpp"

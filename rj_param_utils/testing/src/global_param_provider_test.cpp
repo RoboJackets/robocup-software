@@ -1,8 +1,7 @@
-#include "rj_param_utils/global_param_provider.hpp"
-
 #include <gtest/gtest.h>
 
 #include "rj_param_utils/param.hpp"
+#include "rj_param_utils/ros2_global_param_provider.hpp"
 
 namespace params::testing {
 
