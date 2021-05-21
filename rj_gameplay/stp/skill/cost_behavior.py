@@ -2,7 +2,8 @@ import py_trees
 import random
 import stp.action as action
 # from rj_gameplay.action import move as Move
-from rj_gameplay.skill import move
+# from rj_gameplay.skill import move
+from rj_gameplay.action import move
 import stp.rc as rc
 from typing import Optional, Any, Callable
 import numpy as np
@@ -36,7 +37,9 @@ class CostBehavior(py_trees.behaviour.Behaviour):
         Creates new move action to get robot to move there
         Always returns running
         """
-        self.move = move.Move(target_point = np.array([0,1+self.robot.id]))
+        # self.move = move.Move(target_point = np.array([0,1+self.robot.id]))
+        # self.move.tick(self.robot)
+        self.move = move.Move(self.robot.id, target_point = np.array([0.0,1.0+self.robot.id]))
         self.move.tick(self.robot)
         return py_trees.common.Status.RUNNING 
         
