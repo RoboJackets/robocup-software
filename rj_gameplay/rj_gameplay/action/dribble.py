@@ -21,7 +21,7 @@ class Dribble(IDribble):
     """
     def __init__(self,
             robot_id : int,
-            dribbler_speed : int = 1.0,
+            dribbler_speed : float = 1.0,
             priority : int = 0) -> None:
 
         self.robot_id = robot_id
