@@ -69,9 +69,8 @@ def make_robot(x, y, ours, has_ball=False):
         is_ours=ours,
         pose=np.array([x,y,0]),
         twist=np.array([0,0,0]),
-        ball_sense_triggered=has_ball,
         visible=True,
-        has_ball_sense=True,
+        has_ball_sense=has_ball,
         kicker_charged=True,
         kicker_healthy=True,
         lethal_fault=False)
@@ -100,10 +99,7 @@ def plot_field():
 	costs = []
 	i = 0
 	for bot in our_bots:
-		print(i)
 		costs.append((len(costs), cost_heuristic.cost_heuristic(world_state, bot)))
-		i += 1
-		print()
 	def descending_costs(val):
 		if val[1] == 99999:
 			return -1

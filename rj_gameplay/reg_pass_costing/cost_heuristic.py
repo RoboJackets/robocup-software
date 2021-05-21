@@ -29,12 +29,12 @@ def cost_heuristic(world_state: rc.WorldState, robot: rc.Robot) -> float:
 
     robot_with_ball = our_robots[0]
     for bot in our_robots:
-        if bot.ball_sense_triggered:
+        if bot.has_ball_sense:
             robot_with_ball = bot
             if robot_with_ball == robot:
                 return -1
 
-    # return 1 if robot is too far awat from robot_with_ball
+    # return 1 if robot is too far away from robot_with_ball
     if (distance_from_ball(robot, robot_with_ball) > MAX_PASS_DIST):
         return 1 
 
