@@ -23,15 +23,19 @@ A skill which marks a given opponent robot according to some heuristic cost func
 """
 class Mark(IMark):
 
-    def __init__(self, mark_heuristic: Callable[[np.array], float]):
-        self.__name__ = 'Mark'
+    def __init__(self, robot: rc.Robot, mark_heuristic: Callable[[np.array], float]):
+        # mark_heuristic(np.array) -> float
+
+        self.__name__ = 'Mark Skill'
+        self.robot = robot
         self.mark_heuristic = mark_heuristic
         self.mark_behavior = CostBehavior('Mark', self.mark_heuristic)
         self.root = self.mark_behavior
         self.root.setup_with_descendants()
 
-    def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
-        print('marking')
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
+        self.robot = robot
         # Print for stub
-        self.root.tick_once(robot)
+        actions = self.root.tick_once(robot, world_state)
+        return actions
         # TODO: change so this properly returns the actions intent messages

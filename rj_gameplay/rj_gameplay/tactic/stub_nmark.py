@@ -1,4 +1,4 @@
-"""Contains the stub for the striker tactic. """
+"""Contains the stub for the mark tactic. """
 
 from dataclasses import dataclass
 from typing import List, Optional
@@ -14,6 +14,10 @@ from rj_gameplay.skill import mark
 import stp.skill as skill
 
 import numpy as np
+from rj_geometry_msgs.msg import Point, Segment
+import stp.utils.constants 
+# new constants file
+# import constants
 
 class marker_cost(role.CostFn):
     """
@@ -28,9 +32,14 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        return robot.pose[1] - world_state.ball.pos[1]
+        # currently, dist to ball
+        # TODO: should be dist to closest robot by angle
+        ball_pos = world_state.ball.pos
+        return (robot.pose[0] - ball_pos[0])**2 + (robot.pose[1] - ball_pos[1])**2
 
 def marker_heuristic(point: np.array):
+    # given point is mark point
+    print(constants.Robot.radius)
     return 1
 
 class NMark(tactic.ITactic):
@@ -41,7 +50,7 @@ class NMark(tactic.ITactic):
         self.num_markers = n
         self.markers_dict = {}
         for i in range(self.num_markers):
-            self.markers_dict[i] = tactic.SkillEntry(mark.Mark(marker_heuristic))
+            self.markers_dict[i] = tactic.SkillEntry(mark.Mark(None, marker_heuristic))
         self.cost = marker_cost()
         
     def compute_props(self):
