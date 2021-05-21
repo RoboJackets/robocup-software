@@ -171,7 +171,7 @@ private:
     // Kick detector information
     std::optional<rj_geometry::Point> capture_ready_point_;
 
-    params::ROS2ParamProvider param_provider_;
+    params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace referee

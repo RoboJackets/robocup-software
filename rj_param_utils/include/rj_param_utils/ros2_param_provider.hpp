@@ -7,14 +7,35 @@ namespace params {
  * An implementation of ParamProvider that integrates with the ROS2 parameter
  * system.
  */
-class ROS2ParamProvider : public ::params::ParamProvider {
+class BaseROS2ParamProvider : public ::params::ParamProvider {
+protected:
+    BaseROS2ParamProvider(const std::string& module) : ParamProvider{module} {}
+
+    rcl_interfaces::msg::SetParametersResult UpdateParameters(
+        const std::vector<rclcpp::Parameter>& params);
+
+    /**
+     * @brief Converts the full_name of a parameter from using double colons
+     * (::) as the namespace separator to using periods (.).
+     * @param full_name The full_name to convert.
+     * @return The full name of the parameter in ROS2 parameter convention.
+     */
+    static std::string ConvertFullNameToROS2(const std::string& full_name);
+
+    /**
+     * @brief Converts the full name of a parameter from using periods (.) as the namespace
+     * separator to using double colons (::). Inverts @ref ConvertFullNameToROS2.
+     * @param ros2_name The ros2 name to convert.
+     * @return The full name of the parameter in ROS2 parameter convention.
+     */
+    static std::string ConvertFullNameFromROS2(const std::string& ros2_name);
+};
+
+class LocalROS2ParamProvider : public BaseROS2ParamProvider {
 public:
-    explicit ROS2ParamProvider(rclcpp::Node* node, const std::string& module);
+    explicit LocalROS2ParamProvider(rclcpp::Node* node, const std::string& module);
 
 protected:
-    rcl_interfaces::msg::SetParametersResult UpdateParameters(const std::vector<rclcpp::Parameter>& params);
-
-private:
     /**
      * @brief Calls node->declare_parameters on all the registered parameters.
      * @param node
@@ -29,22 +50,7 @@ private:
      */
     void InitUpdateParamCallbacks(rclcpp::Node* node);
 
-    /**
-     * @brief Converts the full_name of a parameter from using double colons
-     * (::) as the namespace separator to using periods (.).
-     * @param full_name The full_name to convert.
-     * @return The full name of the parameter in ROS2 parameter convention.
-     */
-    static std::string ConvertFullNameToROS2(const std::string& full_name);
-
-    /**
-     * @brief Converts the full name of a parameter from using periods (.) as the namespace separator to using double colons (::). Inverts @ref ConvertFullNameToROS2.
-     * @param ros2_name The ros2 name to convert.
-     * @return The full name of the parameter in ROS2 parameter convention.
-     */
-    static std::string ConvertFullNameFromROS2(const std::string& ros2_name);
-
-    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
-        callback_handle_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr callback_handle_;
 };
+
 }  // namespace params

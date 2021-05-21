@@ -30,8 +30,6 @@ target_link_libraries(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
 
 ament_target_dependencies(rj_param_utils PUBLIC rclcpp)
 
-target_sources(rj_param_utils PRIVATE ${RJ_PARAM_UTILS_SRCS})
-
 # ======================================================================
 # Testing
 # ======================================================================

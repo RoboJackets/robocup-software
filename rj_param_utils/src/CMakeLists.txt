@@ -4,7 +4,7 @@
 set(RJ_PARAM_UTILS_SRCS
     param.cpp
     ros2_param_provider.cpp
-    global_param.cpp)
+    global_param_provider.cpp)
 
 # ======================================================================
 # Add sources

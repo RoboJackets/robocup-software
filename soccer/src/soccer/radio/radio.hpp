@@ -55,7 +55,7 @@ private:
     std::array<rj_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;
     std::array<RJ::Time, kNumShells> last_updates_ = {};
 
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace radio

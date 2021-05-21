@@ -145,6 +145,6 @@ private:
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
 
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
 };
 }  // namespace vision_filter

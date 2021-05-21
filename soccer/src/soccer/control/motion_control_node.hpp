@@ -23,7 +23,7 @@ public:
     explicit MotionControlNode();
 
 private:
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
     std::vector<MotionControl> controllers_{};
     std::vector<ManipulatorControl> manipulators_{};
 };

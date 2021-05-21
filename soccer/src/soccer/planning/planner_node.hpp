@@ -83,7 +83,7 @@ public:
 private:
     std::vector<std::unique_ptr<PlannerForRobot>> robots_planners_;
     TrajectoryCollection robot_trajectories_;
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace planning

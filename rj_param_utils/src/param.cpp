@@ -4,6 +4,7 @@
 #include <string>
 
 #include <rj_param_utils/param.hpp>
+#include <rj_param_utils/ros2_param_provider.hpp>
 
 namespace params {
 namespace internal {
@@ -201,6 +202,11 @@ internal::ParamMap<ParamType>& ParamProvider::GetParamMap() {
     return internal::ParamRegistry::GlobalRegistry().GetParamMap<ParamType>(module_);
 }
 
+template <typename ParamType>
+const internal::ParamMap<ParamType>& ParamProvider::GetParamMap() const {
+    return internal::ParamRegistry::GlobalRegistry().GetParamMap<ParamType>(module_);
+}
+
 // Instantiate Update, TryUpdate and GetParamMap for all supported types.
 #define INSTANTIATE_PARAM_PROVIDER_FNS(type)                                                     \
     template bool ParamProvider::Get(const std::string& full_name, type* value) const;           \
@@ -219,6 +225,25 @@ INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<int64_t>)
 INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<double>)
 INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<std::string>)
 #undef INSTANTIATE_PARAM_PROVIDER_FNS
+
+#define ADD_PARAM_NAMES_TO_LIST(type, list)                       \
+    for (const auto& [param_name, param] : GetParamMap<type>()) { \
+        list.push_back(param_name);                               \
+    }
+
+std::vector<std::string> ParamProvider::GetParamNames() const {
+    std::vector<std::string> result;
+    ADD_PARAM_NAMES_TO_LIST(bool, result)
+    ADD_PARAM_NAMES_TO_LIST(int64_t, result)
+    ADD_PARAM_NAMES_TO_LIST(double, result)
+    ADD_PARAM_NAMES_TO_LIST(std::string, result)
+    ADD_PARAM_NAMES_TO_LIST(std::vector<uint8_t>, result)
+    ADD_PARAM_NAMES_TO_LIST(std::vector<bool>, result)
+    ADD_PARAM_NAMES_TO_LIST(std::vector<int64_t>, result)
+    ADD_PARAM_NAMES_TO_LIST(std::vector<double>, result)
+    ADD_PARAM_NAMES_TO_LIST(std::vector<std::string>, result)
+    return result;
+}
 
 template <typename ParamType>
 std::ostream& operator<<(std::ostream& os, const Param<ParamType>& param) {
