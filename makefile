@@ -98,9 +98,9 @@ test-soccer-nobuild:
 	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 
 test-python: all
-	cd soccer/src/soccer/gameplay && source /opt/foxy/setup.sh && ./run_tests.sh
+	cd soccer/src/soccer/gameplay && source /opt/ros/foxy/setup.sh && ./run_tests.sh
 test-python-nobuild:
-	cd soccer/src/soccer/gameplay && source /opt/foxy/setup.sh && ./run_tests.sh
+	cd soccer/src/soccer/gameplay && source /opt/ros/foxy/setup.sh && ./run_tests.sh
 pylint:
 	pylint -j8 --reports=n soccer/src/soccer/gameplay
 mypy:

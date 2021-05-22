@@ -1,0 +1,30 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>running.png</file>
+    <file>halt.svg</file>
+    <file>force_start.svg</file>
+    <file>kickoff_blue.svg</file>
+    <file>kickoff_yellow.svg</file>
+    <file>direct_blue.svg</file>
+    <file>direct_yellow.svg</file>
+    <file>indirect_blue.svg</file>
+    <file>indirect_yellow.svg</file>
+    <file>ready.svg</file>
+    <file>stop.svg</file>
+    <file>SoccerBall.png</file>
+    <file>rewind.svg</file>
+    <file>prev-frame.svg</file>
+    <file>pause.svg</file>
+    <file>next-frame.svg</file>
+    <file>play.svg</file>
+    <file>live.svg</file>
+
+    <file>nyan.svg</file>
+    <file>rainbow.svg</file>
+
+    <file>vision-available.svg</file>
+    <file>vision-unavailable.svg</file>
+    <file>radio-connected.svg</file>
+    <file>radio-disconnected.svg</file>
+  </qresource>
+</RCC>

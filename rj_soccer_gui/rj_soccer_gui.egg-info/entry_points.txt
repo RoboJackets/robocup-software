@@ -1,0 +1,3 @@
+[console_scripts]
+soccer_gui = rj_soccer_gui.soccer_gui:main
+

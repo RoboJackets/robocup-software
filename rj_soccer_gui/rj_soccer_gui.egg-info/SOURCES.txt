@@ -1,0 +1,16 @@
+package.xml
+setup.cfg
+setup.py
+resource/rj_soccer_gui
+rj_soccer_gui/__init__.py
+rj_soccer_gui/soccer_gui.py
+rj_soccer_gui.egg-info/PKG-INFO
+rj_soccer_gui.egg-info/SOURCES.txt
+rj_soccer_gui.egg-info/dependency_links.txt
+rj_soccer_gui.egg-info/entry_points.txt
+rj_soccer_gui.egg-info/requires.txt
+rj_soccer_gui.egg-info/top_level.txt
+rj_soccer_gui.egg-info/zip-safe
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py
