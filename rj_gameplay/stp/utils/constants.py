@@ -1,4 +1,4 @@
-import robocup
+import stp.rc as rc
 import math
 
 DegreesToRadians = math.pi / 180.0
@@ -44,4 +44,5 @@ class Evaluation:
     SlowThreshold = 1
 
 # Set to the global FieldDimensions object by the GameplayModule
-Field = robocup.FieldDimensions.CurrentDimensions
+Field = rc.Field
+# Field = rc.FieldDimensions.CurrentDimensions
