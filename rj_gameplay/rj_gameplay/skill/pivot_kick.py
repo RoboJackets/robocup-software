@@ -20,18 +20,26 @@ class PivotKick(IPivotKick):
     A pivot kick skill
     """
 
-    def __init__(self, role: role.Role, target_point: np.array) -> None:
-        self.robot = role.robot
+    def __init__(self, robot: rc.Robot=None, target_point: np.array) -> None:
+        self.robot = robot
         self.root = py_trees.composites.Sequence("Sequence")
-        self.capture = action.Capture()
-        self.pivot = action.Pivot(robot.pos, target_point)
+        if robot is not None:
+            self.pivot = action.Pivot(robot.pose[0:2], target_point)
+        else:
+            self.pivot = action.Pivot(np.array([0.0,0.0]), target_point)
         self.kick = action.Kick(target_point)
-        self.capture_behavior = ActionBehavior('Capture', capture)
         self.pivot_behavior = ActionBehavior('Pivot', pivot) 
         self.kick_behavior = ActionBehavior('Kick', kick)
-        self.root.add_children([capture_behavior, pivot_behavior, kick_behavior])
+        self.root.add_children([pivot_behavior, kick_behavior])
         self.root.setup_with_descendants()
 
-    def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
-        self.root.tick_once(robot)
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
+        self.robot = robot
+        if robot is not None:
+            self.pivot.pivot_point = robot.pose[0:2]
+        actions = self.root.tick_once(robot)
+        return actions
         # TODO: change so this properly returns the actions intent messages
+
+    def is_done(self, world_state: rc.WorldState) -> bool:
+        return self.kick.is_done(world_state)
