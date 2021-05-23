@@ -4,12 +4,14 @@ import rc
 import math
 import numpy as np
 from typing import Optional
+sys.path.append("/utils")
+import constants
 
 class Ball:
     
     def distance(loc1, loc2):
-        #return (abs())
-        return 0.0
+        return sqrt(abs(loc1[1] - loc2[1])**2 + abs(loc1[0] - loc2[0])**2)
+        #return 0.0
     """manifestation of a ball"""
 
     '''
@@ -80,7 +82,15 @@ class Ball:
     def is_in_our_goalie_zone(ball, field):
         if ball != None:
             return False
-            #return constants.Field.OurGoalZoneShape.contains_point(main.ball().pos)
+            width = field.penalty_long_dist_m / 2
+            height = field.penalty_short_dist_m
+            
+            if ball.pos[1] >= height: 
+                return False
+            elif abs(ball.pos[0]) >= width:
+                return False
+            return True #if both checks pass
+            
         else:
             return False
 
@@ -89,6 +99,8 @@ class Ball:
         ball = rc.ball()
         our_robots = rc.our_robots()
         their_robots = rc.their_robots()
+        return min([distance(ball.pos, rob.pos) for rob in their_robots]) > min([distance(ball.pos, rob.pos) for rob in our_robots])
+        
         '''
         return min([(ball.pos - rob.pos).mag()
                 for rob in main.system_state().their_robots]) > min(
@@ -102,24 +114,18 @@ class Ball:
         ball = rc.ball()
         our_robots = rc.our_robots()
         their_robots = rc.their_robots()
-        '''
-        return min([(ball.pos - rob.pos).mag()
-                for rob in main.system_state().their_robots]) * 3 < min(
-                    [(main.ball().pos - rob.pos).mag()
-                     for rob in main.system_state().our_robots])
-        '''
-    	return False
+        return min([distance(ball.pos, rob.pos) for rob in their_robots]) * 3 < min([distance(ball.pos, rob.pos) for rob in our_robots])
 
     def moving_slow(ball):
         vel = sqrt(ball.vel()[0]**2 + ball.vel()[1]**2)
-        #return vel <= constants.Evaluation.SlowThreshold
-    	return False
+        return vel <= constants.Evaluation.SlowThreshold
 
     FrictionCoefficient = 0.04148
     GravitationalCoefficient = 9.81  # in m/s^2
 
     def predict_stop_time(ball):
-        #return main.ball().predict_seconds_to_stop()
+        v = ball.vel
+        
     	return 0
 
     def predict_stop(ball):
