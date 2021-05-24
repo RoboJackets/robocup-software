@@ -37,19 +37,18 @@ class SkillC(SkillBase):
     ...
 
 
-class Skills(tactic.SkillsEnum):
-    A1 = tactic.SkillEntry(SkillA)
-    A2 = tactic.SkillEntry(SkillA)
-    B1 = tactic.SkillEntry(SkillB)
-    B2 = tactic.SkillEntry(SkillB)
-    C1 = tactic.SkillEntry(SkillC)
-    C2 = tactic.SkillEntry(SkillC)
+class Skills():
+    A1 = SkillA
+    A2 = SkillA
+    B1 = SkillB
+    B2 = SkillB
+    C1 = SkillC
+    C2 = SkillC
 
 
 class TacticBase(tactic.ITactic[None]):
-    def __init__(self, ctx: tactic.Ctx):
-        self.skills = Skills(ctx.skill_factory)
-
+    def __init__(self):
+        self.skills = Skills()
         self.A1 = self.skills.A1
         self.A2 = self.skills.A2
         self.B1 = self.skills.B1
@@ -83,24 +82,9 @@ class TacticBase(tactic.ITactic[None]):
         return role_requests
 
 
-def get_tactic_ctx() -> tactic.Ctx:
-    """Creates a simple tactic context for convenience.
-    :return: Tactic context containing SkillA, SkillB and SkillC.
-    """
-    skill_registry = skill.Registry()
-
-    skill_registry[SkillA] = SkillA()
-    skill_registry[SkillB] = SkillB()
-    skill_registry[SkillC] = SkillC()
-
-    skill_factory = skill.Factory(skill_registry)
-    return tactic.Ctx(skill_factory)
-
-
 def test_flatten_requests() -> None:
     """Tests that play.flatten_requests works as expected."""
-    tactic_ctx = get_tactic_ctx()
-    tactic_instance = TacticBase(tactic_ctx)
+    tactic_instance = TacticBase()
 
     # Create dummy world_state.
     world_state: WorldState = testing.generate_test_worldstate()
