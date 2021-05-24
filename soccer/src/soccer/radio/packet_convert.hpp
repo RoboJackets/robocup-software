@@ -1,16 +1,20 @@
 #pragma once
 
+#include <set>
+
+#include <control/motion_setpoint.hpp>
+#include <rj_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_msgs/msg/motion_setpoint.hpp>
+#include <rj_msgs/msg/robot_status.hpp>
 #include <rj_protos/RadioRx.pb.h>
 #include <rj_protos/RadioTx.pb.h>
 #include <rj_protos/Robot.pb.h>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
-
 #include <robot_intent.hpp>
-#include <motion/motion_setpoint.hpp>
-#include <set>
 
 #include "robot_status.hpp"
+
 #include "rc-fshare/rtp.hpp"
 
 /**
@@ -36,6 +40,10 @@ void grsim_to_status(const Robot_Status& grsim, RobotStatus* status);
 
 void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto);
 
+void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg);
+
+void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status);
+
 }  // namespace ConvertRx
 
 namespace ConvertTx {
@@ -43,11 +51,18 @@ namespace ConvertTx {
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
             int shell, rtp::RobotTxMessage* rtp);
 
+void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp);
+
 void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
               int shell, Packet::Robot* proto);
 
 void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
               int shell, grSim_Robot_Command* grsim);
+
+void ros_to_grsim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
+                  grSim_Robot_Command* grsim);
 
 }  // namespace ConvertTx
 

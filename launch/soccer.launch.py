@@ -36,6 +36,26 @@ def generate_launch_description():
         arguments=[team_flag, sim_flag, ref_flag, '-defend', direction_flag],
         on_exit=Shutdown())
 
+    radio = Node(package='rj_robocup',
+                 executable='sim_radio_node',
+                 output='screen',
+                 on_exit=Shutdown())
+
+    control = Node(package='rj_robocup',
+                   executable='control_node',
+                   output='screen',
+                   on_exit=Shutdown())
+
+    planner = Node(package='rj_robocup',
+                   executable='planner_node',
+                   output='screen',
+                   on_exit=Shutdown())
+
+    gameplay = Node(package='rj_robocup',
+                    executable='gameplay_node',
+                    output='screen',
+                    on_exit=Shutdown())
+
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
     vision_receiver = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(vision_receiver_launch_path))
@@ -53,7 +73,7 @@ def generate_launch_description():
         DeclareLaunchArgument('team_flag', default_value=''),
         DeclareLaunchArgument('sim_flag', default_value=''),
         DeclareLaunchArgument('ref_flag', default_value=''),
-        DeclareLaunchArgument('direction_flag',
-                              default_value='plus'), stdout_linebuf_envvar,
-        config_server, soccer, vision_receiver, vision_filter, ref_receiver
+        DeclareLaunchArgument('direction_flag', default_value='plus'),
+        stdout_linebuf_envvar, config_server, soccer, radio, control, planner,
+        vision_receiver, vision_filter, ref_receiver, gameplay
     ])

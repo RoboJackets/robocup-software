@@ -8,12 +8,10 @@
 #include <rj_msgs/msg/ball_state.hpp>
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <global_params.hpp>
 
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
-
-// TODO(#1498): Make this configurable
-constexpr double kBallDecayConstant = 0.180;
 
 /**
  * @brief Contains robot motion state data
@@ -138,7 +136,7 @@ struct BallState {
      * @brief Create a trajectory for the ball.
      * @return A trajectory for this ball to follow. Angles are meaningless.
      */
-    [[nodiscard]] Planning::Trajectory make_trajectory() const;
+    [[nodiscard]] planning::Trajectory make_trajectory() const;
 };
 
 struct WorldState {
@@ -200,7 +198,7 @@ struct RosConverter<RobotState, RobotState::Msg> {
 
     static RobotState from_ros(const RobotState::Msg& value) {
         RobotState result;
-        convert_from_ros(value.stamp, &result.timestamp);
+        result.timestamp = convert_from_ros(value.stamp);
         convert_from_ros(value.pose, &result.pose);
         convert_from_ros(value.velocity, &result.velocity);
         convert_from_ros(value.visible, &result.visible);

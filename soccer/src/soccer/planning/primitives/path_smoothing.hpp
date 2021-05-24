@@ -4,7 +4,7 @@
 
 #include "planning/motion_constraints.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief A spatial path with no time or angle information.
@@ -70,4 +70,4 @@ private:
     std::vector<CubicBezierControlPoints> control_;
 };
 
-}  // namespace Planning
+}  // namespace planning

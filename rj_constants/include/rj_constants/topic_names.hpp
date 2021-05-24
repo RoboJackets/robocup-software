@@ -44,7 +44,7 @@ constexpr auto kWorldStatePub = "vision_filter/world_state";
 namespace gameplay::topics {
 
 static inline std::string robot_intent_pub(int robot_id) {
-    return "robot/" + std::to_string(robot_id) + "/gameplay/robot_intent";
+    return "gameplay/robot_intent/robot_" + std::to_string(robot_id);
 }
 
 }  // namespace gameplay::topics
@@ -55,7 +55,7 @@ constexpr auto kGlobalObstaclesPub = "planning/global_obstacles";
 constexpr auto kGoalZoneObstacles = "planning/goal_zone_obstacles";
 
 static inline std::string trajectory_pub(int robot_id) {
-    return "robot/" + std::to_string(robot_id) + "/planning/trajectory";
+    return "planning/trajectory/robot_" + std::to_string(robot_id);
 }
 
 }  // namespace planning::topics
@@ -65,15 +65,15 @@ namespace control {
 namespace topics {
 
 static inline std::string manipulator_setpoint_pub(int robot_id) {
-    return "robot/" + std::to_string(robot_id) + "/control/manipulator_setpoint";
+    return "control/manipulator_setpoint/robot_" + std::to_string(robot_id);
 }
 
 static inline std::string motion_setpoint_pub(int robot_id) {
-    return "robot/" + std::to_string(robot_id) + "/control/motion_setpoint";
+    return "control/motion_setpoint/robot_" + std::to_string(robot_id);
 }
 
 static inline std::string robot_controlled_pub(int robot_id) {
-    return "robot/" + std::to_string(robot_id) + "/control/robot_controlled";
+    return "control/robot_controlled/robot_" + std::to_string(robot_id);
 }
 
 }  // namespace topics
@@ -81,7 +81,6 @@ static inline std::string robot_controlled_pub(int robot_id) {
 namespace params {
 
 constexpr auto kMotionControlParamModule = "motion_control";
-
 }  // namespace params
 
 }  // namespace control
@@ -89,7 +88,7 @@ constexpr auto kMotionControlParamModule = "motion_control";
 namespace radio::topics {
 
 static inline std::string robot_status_pub(int robot_id) {
-    return "robot/" + std::to_string(robot_id) + "/radio/robot_status";
+    return "radio/robot_status/robot_" + std::to_string(robot_id);
 }
 
 }  // namespace radio::topics

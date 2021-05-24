@@ -482,7 +482,7 @@ git checkout myrelease
 git reset --hard myrelease
 git diff myrelease
 
-# where myrelease refrences the commit you were on.
+# where myrelease references the commit you were on.
 # Use git push --tags to push your tags as well.
 # Tags give a name to A SPECIFIC COMMIT, not to a branch.
 ```

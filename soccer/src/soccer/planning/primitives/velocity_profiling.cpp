@@ -3,7 +3,7 @@
 #include "trapezoidal_motion.hpp"
 #include "planning/instant.hpp"
 
-namespace Planning {
+namespace planning {
 
 using rj_geometry::Point;
 using rj_geometry::Pose;
@@ -169,4 +169,4 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
     return std::move(trajectory);
 }
 
-}  // namespace Planning
+}  // namespace planning

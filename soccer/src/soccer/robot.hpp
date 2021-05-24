@@ -139,33 +139,27 @@ public:
     bool behind_ball(rj_geometry::Point ball_pos) const;
 
     // Constraints
-    const RobotConstraints& robot_constraints() const {
+    const planning::RobotConstraints& robot_constraints() const {
         return context_->robot_constraints[shell()];
     }
 
-    RobotConstraints& robot_constraints() {
-        return context_->robot_constraints[shell()];
-    }
+    planning::RobotConstraints& robot_constraints() { return context_->robot_constraints[shell()]; }
 
-    const MotionConstraints& motion_constraints() const {
+    const planning::MotionConstraints& motion_constraints() const {
         return robot_constraints().mot;
     }
 
-    MotionConstraints& motion_constraints() { return robot_constraints().mot; }
+    planning::MotionConstraints& motion_constraints() { return robot_constraints().mot; }
 
     /**
      * Returns a const reference to the path of the robot.
      */
-    const Planning::Trajectory& path() const {
-        return context_->trajectories[shell()];
-    }
+    const planning::Trajectory& path() const { return context_->trajectories[shell()]; }
 
     /**
      * Returns a movable reference to the path of the robot.
      */
-    Planning::Trajectory&& path_movable() {
-        return std::move(context_->trajectories[shell()]);
-    }
+    planning::Trajectory&& path_movable() { return std::move(context_->trajectories[shell()]); }
 
     /// clears old radio_tx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -343,25 +337,21 @@ public:
     double kicker_voltage() const;
     RobotStatus::HardwareVersion hardware_version() const;
 
-    const Planning::MotionCommand& motion_command() const {
-        return intent().motion_command;
-    }
-    void set_motion_command(const Planning::MotionCommand& new_cmd) {
+    const planning::MotionCommand& motion_command() const { return intent().motion_command; }
+    void set_motion_command(const planning::MotionCommand& new_cmd) {
         if (intent().motion_command.index() != new_cmd.index()) {
             // clear path when command type changes
-            context_->trajectories[shell()] = Planning::Trajectory{{}};
+            context_->trajectories[shell()] = planning::Trajectory{{}};
         }
 
         intent().motion_command = new_cmd;
     }
 
-    const RotationConstraints& rotation_constraints() const {
+    const planning::RotationConstraints& rotation_constraints() const {
         return robot_constraints().rot;
     }
 
-    RotationConstraints& rotation_constraints() {
-        return robot_constraints().rot;
-    }
+    planning::RotationConstraints& rotation_constraints() { return robot_constraints().rot; }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
@@ -394,8 +384,6 @@ public:
     bool is_joystick_controlled() const;
 
 protected:
-    RobotConstraints robot_constraints_;
-
     friend class Processor;
     friend class RadioNode;
 

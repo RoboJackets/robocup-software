@@ -1,7 +1,7 @@
 #pragma once
 #include <rj_geometry/circle.hpp>
 
-namespace Planning {
+namespace planning {
 
 class Trajectory;
 
@@ -21,4 +21,4 @@ struct DynamicObstacle {
     const Trajectory* path;
 };
 
-}  // namespace Planning
+}  // namespace planning

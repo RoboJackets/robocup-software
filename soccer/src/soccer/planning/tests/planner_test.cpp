@@ -20,9 +20,9 @@
  * it makes debugging a lot easier
  */
 
-using namespace Planning;
+using namespace planning;
 using namespace rj_geometry;
-using namespace Planning::TestingUtils;
+using namespace planning::TestingUtils;
 
 TEST(Planning, path_target_random) {
     std::mt19937 gen(1337);
