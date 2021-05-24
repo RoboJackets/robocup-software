@@ -100,7 +100,7 @@ test-soccer-nobuild:
 test-python: perf
 	python3 -m pytest --cov rj_gameplay --cov stp rj_gameplay --cov-report xml
 pylint:
-	pylint -j8 --reports=n rj_gameplay
+	pylint -j8 --reports=n rj_gameplay/rj_gameplay rj_gameplay/stp
 mypy:
 	mypy rj_gameplay
 
