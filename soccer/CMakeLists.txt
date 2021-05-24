@@ -119,6 +119,7 @@ add_executable(planner_node)
 add_executable(control_node)
 add_executable(sim_radio_node)
 add_executable(network_radio_node)
+add_executable(manual_control_node)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -211,6 +212,9 @@ set(CONTROL_NODE_DEPS_LIBRARIES robocup)
 set(PLANNER_NODE_DEPS_SYSTEM_LIBRARIES)
 set(PLANNER_NODE_DEPS_LIBRARIES robocup)
 
+set(MANUAL_CONTROL_NODE_DEPS_SYSTEM_LIBRARIES)
+set(MANUAL_CONTROL_NODE_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -261,6 +265,10 @@ target_link_libraries(control_node PRIVATE ${CONTROL_NODE_DEPS_SYSTEM_LIBRARIES}
 target_link_libraries(planner_node PRIVATE ${PLANNER_NODE_DEPS_SYSTEM_LIBRARIES}
         ${PLANNER_NODE_DEPS_LIBRARIES})
 
+# -- manual_control_node --
+target_link_libraries(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${MANUAL_CONTROL_NODE_DEPS_LIBRARIES})
+
 
 # ======================================================================
 # Testing
@@ -304,6 +312,7 @@ install(
         control_node
         sim_radio_node
         network_radio_node
+        manual_control_node
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

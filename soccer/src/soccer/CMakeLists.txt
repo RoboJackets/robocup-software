@@ -17,6 +17,8 @@ set(ROBOCUP_LIB_SRC
     control/motion_control.cpp
     control/motion_control_node.cpp
     control/trapezoidal_motion.cpp
+    joystick/manual_control_node.cpp
+    joystick/sdl_manual_control.cpp
     optimization/gradient_ascent_1d.cpp
     optimization/parallel_gradient_ascent_1d.cpp
     optimization/nelder_mead_2d.cpp
@@ -107,6 +109,8 @@ set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
+set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -140,6 +144,9 @@ target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
+
+# ---- manual_control_node ----
+target_sources(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})

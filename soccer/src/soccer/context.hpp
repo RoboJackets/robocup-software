@@ -10,7 +10,6 @@
 #include "debug_drawer.hpp"
 #include "game_settings.hpp"
 #include "game_state.hpp"
-#include "joystick/gamepad_message.hpp"
 #include "logger.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
@@ -50,10 +49,6 @@ struct Context {
     TeamInfo their_info;
     bool blue_team = true;
     DebugDrawer debug_drawer;
-
-    /** \brief Vector of unique IDs of gamepads. First is oldest to connect. */
-    std::vector<int> gamepads;
-    std::vector<joystick::GamepadMessage> gamepad_messages;
 
     std::vector<SSL_Referee> referee_packets;
     std::vector<SSL_WrapperPacket> raw_vision_packets;

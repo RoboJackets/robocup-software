@@ -3,99 +3,58 @@
 #include <functional>
 #include <unordered_map>
 
-#include <joystick/gamepad_message.hpp>
+#include <SDL.h>
+#include <fmt/format.h>
+#include <spdlog/spdlog.h>
+
 #include <node.hpp>
-#include <rj_param_utils/param.hpp>
+#include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_msgs/msg/motion_setpoint.hpp>
+#include <rj_msgs/srv/list_joysticks.hpp>
+#include <rj_msgs/srv/set_manual.hpp>
+#include <rj_param_utils/ros2_param_provider.hpp>
 
 #include "context.hpp"
+#include "manual_control.hpp"
+#include "sdl_manual_control.hpp"
 
 namespace joystick {
-static constexpr auto kDribbleStepTime = RJ::Seconds(0.125);
-static constexpr auto kKickerStepTime = RJ::Seconds(0.125);
-
-static constexpr float kAxisMax = 32768.0f;
-static constexpr float kTriggerCutoff = 0.9;
-
-constexpr auto kJoystickModule = "joystick";
-
-DECLARE_BOOL(kJoystickModule, use_field_oriented_drive)
-DECLARE_BOOL(kJoystickModule, kick_on_break_beam)
-DECLARE_BOOL(kJoystickModule, damped_translation)
-DECLARE_BOOL(kJoystickModule, damped_rotation)
-DECLARE_INT64(kJoystickModule, manual_robot_id)
-DECLARE_FLOAT64(kJoystickModule, max_rotation_speed)
-DECLARE_FLOAT64(kJoystickModule, max_damped_rotation_speed)
-DECLARE_FLOAT64(kJoystickModule, max_translation_speed)
-DECLARE_FLOAT64(kJoystickModule, max_damped_translation_speed)
 
 /**
- * A node that receives joystick::GamepadMessage and converts that to
- * RobotIntent.
+ * Keeps track of joysticks (and other manual control methods) and assigning them to robots.
  *
- * For now (since the GUI has no way of assigning robots to multiple
- * joysticks) it maintains a stack of which gamepad connected first,
- * and uses the oldest connected gamepad.
+ * Services:
+ *  - ListJoysticks: get a list of joysticks and robots to which they are assigned
+ *  - SetManual: assign a particular robot to a joystick and remove the robot previously assigned to
+ * that joystick, if any
+ *
+ * Publishes on manipulator and motion setpoints, only for the robots being controlled.
  */
-class ManualControlNode : Node {
+class ManualControlNode : public rclcpp::Node {
 public:
-    ManualControlNode(Context* context);
-
-    /**
-     * Perform manual control things to our robots by
-     * modifying intent and setpoint.
-     */
-    void run() override;
+    ManualControlNode();
 
 private:
-    /**
-     * Performs the logic for converting from a gamepad scheme
-     * to controls for a robot.
-     * @param msg
-     */
-    void callback(const GamepadMessage& msg);
+    void stop_robot(int robot_id);
+    void publish(int robot_id, const ControllerCommand& command);
 
-    /**
-     * Updates the current list of gamepads.
-     */
-    void update_gamepad_list();
+    void set_manual(const std::string& uuid, std::optional<int> robot_id);
+    void remove_controller(ManualController* controller);
 
-#if 0
-    /**
-     * Updates the intent and setpoint using controls_;
-     * @param robot
-     */
-    void update_intent_and_setpoint(OurRobot* robot);
-#endif
+    std::vector<std::unique_ptr<ManualControllerProvider>> providers_;
+    std::map<ManualController*, std::optional<int>> controllers_;
 
-    /**
-     * Updates the context_->joystick_valid
-     */
-    void update_joystick_valid() const;
+    rclcpp::Service<rj_msgs::srv::ListJoysticks>::SharedPtr list_joysticks_;
+    rclcpp::Service<rj_msgs::srv::SetManual>::SharedPtr set_manual_;
 
-    /**
-     * Apply things like translation damping, rotation damping etc.
-     */
-    void apply_control_modifiers();
+    std::vector<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr> motion_setpoint_pubs_;
+    std::vector<rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr>
+        manipulator_setpoint_pubs_;
 
-    std::vector<int> gamepad_stack_;
+    rclcpp::TimerBase::SharedPtr timer_;
 
-    struct ManualControls {
-        float x_vel;
-        float y_vel;
-        float a_vel;
-        int kick_power;
-        float dribbler_power;
-        bool kick;
-        bool dribble;
-        bool chip;
-    };
-
-    Context* context_;
-
-    ManualControls controls_{};
-
-    // And then random state needed for the control logic
-    RJ::Time last_dribbler_time_;
-    RJ::Time last_kicker_time_;
+    ::params::ROS2ParamProvider param_provider_;
 };
+
 }  // namespace joystick
