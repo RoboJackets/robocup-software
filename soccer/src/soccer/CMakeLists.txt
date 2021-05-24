@@ -15,6 +15,7 @@ set(ROBOCUP_LIB_SRC
     configuration.cpp
     gameplay/gameplay_module.cpp
     gameplay/robocup-py.cpp
+    global_params.cpp
     joystick/sdl_joystick_node.cpp
     joystick/sdl_gamepad.cpp
     joystick/manual_control_node.cpp
@@ -28,7 +29,6 @@ set(ROBOCUP_LIB_SRC
     optimization/parallel_gradient_ascent_1d.cpp
     optimization/nelder_mead_2d.cpp
     optimization/python_function_wrapper.cpp
-    global_params.cpp
     planning/primitives/angle_planning.cpp
     planning/primitives/create_path.cpp
     planning/primitives/path_smoothing.cpp
@@ -119,6 +119,8 @@ set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
+set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -152,6 +154,9 @@ target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
+
+# ---- global_param_server_node ----
+target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})

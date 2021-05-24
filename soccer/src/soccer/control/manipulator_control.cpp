@@ -2,16 +2,16 @@
 
 #include <spdlog/spdlog.h>
 
+#include "global_params.hpp"
 #include "rosidl_typesupport_introspection_cpp/message_introspection.hpp"
 
 namespace control {
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_kick_speed, 7.5,
-               "Maximum speed of the kicker (in m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_chip_speed, 3.0,
-               "Maximum speed of the chipper (in m/s)");
-DEFINE_INT64(params::kMotionControlParamModule, min_safe_kick_power, 64,
-             "Minimum safe discharge power for the kicker (0-255)");
+using soccer::robot::PARAM_max_chip_speed;
+using soccer::robot::PARAM_max_kick_speed;
+using soccer::robot::PARAM_min_chip_speed;
+using soccer::robot::PARAM_min_kick_speed;
+using soccer::robot::PARAM_min_safe_kick_power;
 
 ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell_id_(shell_id) {
     auto manipulator_pub = node->create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
