@@ -1,0 +1,20 @@
+/listener:
+  ros__parameters:
+    use_sim_time: false
+
+/parameter_blackboard:
+  ros__parameters:
+    soccer:
+      physics:
+        ball_decay_constant: 0.18
+      robot:
+        max_acceleration: 2.0
+        max_chip_speed: 4.0
+        max_kick_speed: 7.0
+        max_speed: 2.0
+        min_chip_speed: 0.5
+        min_kick_speed: 1.0
+        min_safe_kick_power: 64
+        robot_radius: 0.09
+    use_sim_time: false
+
