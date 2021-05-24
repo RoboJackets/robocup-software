@@ -4,9 +4,7 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rrt/BiRRT.hpp>
 
-#include "configuration.hpp"
 #include "robo_cup_state_space.hpp"
-#include "system_state.hpp"
 #include "planning/motion_constraints.hpp"
 #include "planning/trajectory.hpp"
 

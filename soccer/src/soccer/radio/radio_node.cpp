@@ -1,6 +1,5 @@
 #include "radio_node.hpp"
 
-#include <robot.hpp>
 #include <gameplay/gameplay_module.hpp>
 #include <rj_common/network.hpp>
 #include <rj_protos/LogFrame.pb.h>

@@ -12,7 +12,6 @@
 #include <QString>
 #include <google/protobuf/descriptor.h>
 
-#include <gameplay/gameplay_module.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_protos/grSim_Packet.pb.h>
@@ -21,9 +20,8 @@
 #include <ui_MainWindow.h>
 
 #include "battery_profile.hpp"
-#include "configuration.hpp"
-#include "robot_status_widget.hpp"
 #include "radio/radio.hpp"
+#include "robot_status_widget.hpp"
 
 #include "rc-fshare/git_version.hpp"
 
@@ -191,11 +189,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         config_server::topics::kGameSettingsSrv);
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
-}
-
-void MainWindow::configuration(Configuration* config) {
-    _config = config;
-    _config->tree(_ui.configTree);
 }
 
 void MainWindow::initialize() {
@@ -664,9 +657,11 @@ void MainWindow::updateStatus() {
         return;
     }
 
+#if 0
     if (_processor->gameplay_module()->check_playbook_status()) {
         playIndicatorStatus(false);
     }
+#endif
 
     // Some conditions are different in simulation
     bool sim = _game_settings.simulation;
@@ -684,12 +679,10 @@ void MainWindow::updateStatus() {
     // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
-    std::vector<int> validIds = _processor->state()->our_valid_ids();
-
-    for (int i = 1; i <= kNumShells; i++) {
-        QStandardItem* item = goalieModel->item(i);
-        if (std::find(validIds.begin(), validIds.end(), i - 1) != validIds.end()) {
-            // The list starts with None so i is 1 higher than the shell id
+    for (int i = 0; i < kNumShells; i++) {
+        // The list starts with None so i is 1 higher than the shell id
+        QStandardItem* item = goalieModel->item(i + 1);
+        if (context_->world_state.our_robots.at(i).visible) {
             item->setFlags(item->flags() | (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
         } else {
             item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
@@ -889,7 +882,8 @@ void MainWindow::on_actionStopBall_triggered() {
     grSim_Packet simPacket;
     grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
 
-    rj_geometry::Point ballPos = _ui.fieldView->getTeamToWorld() * state()->ball->position;
+    rj_geometry::Point ballPos =
+        _ui.fieldView->getTeamToWorld() * context_->world_state.ball.position;
     ball_replace->set_x(ballPos.x());
     ball_replace->set_y(ballPos.y());
     ball_replace->set_vx(0);
@@ -1182,74 +1176,6 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item) {
     }
     _ui.fieldView->update();
 }
-
-void MainWindow::on_configTree_itemChanged(QTreeWidgetItem* item, int column) {}
-
-void MainWindow::on_loadConfig_clicked() {
-    QString filename = QFileDialog::getOpenFileName(this, "Load Configuration");
-    if (!filename.isNull()) {
-        QString error;
-        if (!_config->load(filename, error)) {
-            QMessageBox::critical(this, "Load Configuration", error);
-        }
-    }
-}
-
-void MainWindow::on_saveConfig_clicked() {
-    QString filename = QFileDialog::getSaveFileName(this, "Save Configuration");
-    if (!filename.isNull()) {
-        QString error;
-        if (!_config->save(filename, error)) {
-            QMessageBox::critical(this, "Save Configuration", error);
-        }
-    }
-}
-
-void MainWindow::on_loadPlaybook_clicked() {
-    QString filename = QFileDialog::getOpenFileName(
-        this, "Load Playbook",
-        application_run_directory().filePath("../soccer/gameplay/playbooks/"));
-    if (!filename.isNull()) {
-        try {
-            _processor->gameplay_module()->load_playbook(filename.toStdString(), true);
-            playIndicatorStatus(true);
-        } catch (const runtime_error&) {
-            QMessageBox::critical(this, "File not found",
-                                  QString("File not found: %1").arg(filename));
-        }
-    }
-}
-
-void MainWindow::on_savePlaybook_clicked() {
-    QString filename = QFileDialog::getSaveFileName(
-        this, "Save Playbook",
-        application_run_directory().filePath("../soccer/gameplay/playbooks/"));
-    if (!filename.isNull()) {
-        try {
-            _processor->gameplay_module()->save_playbook(filename.toStdString(), true);
-            playIndicatorStatus(true);
-        } catch (const runtime_error&) {
-            QMessageBox::critical(this, "File not found",
-                                  QString("File not found: %1").arg(filename));
-        }
-    }
-}
-
-void MainWindow::on_clearPlays_clicked() {
-    _processor->gameplay_module()->clear_plays();
-    playIndicatorStatus(true);
-}
-
-////////
-// Testing Tab
-
-void MainWindow::on_testRun_clicked() { _processor->gameplay_module()->load_test(); }
-
-void MainWindow::on_addToTable_clicked() { _processor->gameplay_module()->add_tests(); }
-
-void MainWindow::on_removeFromTable_clicked() { _processor->gameplay_module()->remove_test(); }
-
-void MainWindow::on_testNext_clicked() { _processor->gameplay_module()->next_test(); }
 
 // NOLINTNEXTLINE(readability-make-member-function-const): this modifies state
 void MainWindow::setUseRefChecked(bool /* use_ref */) {

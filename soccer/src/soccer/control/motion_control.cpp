@@ -6,7 +6,6 @@
 #include <rj_common/utils.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_utils/logging.hpp>
-#include <robot_config.hpp>
 
 #include "planning/instant.hpp"
 

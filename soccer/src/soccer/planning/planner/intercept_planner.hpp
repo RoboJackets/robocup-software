@@ -1,8 +1,6 @@
 #pragma once
 
 #include "planner.hpp"
-class Configuration;
-class ConfigDouble;
 
 namespace planning {
 

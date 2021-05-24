@@ -1,11 +1,13 @@
 #pragma once
 
-#include <node.hpp>
-#include <robot.hpp>
-#include <system_state.hpp>
 #include <functional>
-#include <joystick/gamepad_message.hpp>
 #include <unordered_map>
+
+#include <joystick/gamepad_message.hpp>
+#include <node.hpp>
+#include <rj_param_utils/param.hpp>
+
+#include "context.hpp"
 
 namespace joystick {
 static constexpr auto kDribbleStepTime = RJ::Seconds(0.125);
@@ -13,6 +15,18 @@ static constexpr auto kKickerStepTime = RJ::Seconds(0.125);
 
 static constexpr float kAxisMax = 32768.0f;
 static constexpr float kTriggerCutoff = 0.9;
+
+constexpr auto kJoystickModule = "joystick";
+
+DECLARE_BOOL(kJoystickModule, use_field_oriented_drive)
+DECLARE_BOOL(kJoystickModule, kick_on_break_beam)
+DECLARE_BOOL(kJoystickModule, damped_translation)
+DECLARE_BOOL(kJoystickModule, damped_rotation)
+DECLARE_INT64(kJoystickModule, manual_robot_id)
+DECLARE_FLOAT64(kJoystickModule, max_rotation_speed)
+DECLARE_FLOAT64(kJoystickModule, max_damped_rotation_speed)
+DECLARE_FLOAT64(kJoystickModule, max_translation_speed)
+DECLARE_FLOAT64(kJoystickModule, max_damped_translation_speed)
 
 /**
  * A node that receives joystick::GamepadMessage and converts that to
@@ -31,8 +45,6 @@ public:
      * modifying intent and setpoint.
      */
     void run() override;
-
-    static void create_configuration(Configuration* cfg);
 
 private:
     /**
@@ -79,11 +91,6 @@ private:
     Context* context_;
 
     ManualControls controls_{};
-
-    static ConfigDouble* joystick_rotation_max_speed;
-    static ConfigDouble* joystick_rotation_max_damped_speed;
-    static ConfigDouble* joystick_translation_max_speed;
-    static ConfigDouble* joystick_translation_max_damped_speed;
 
     // And then random state needed for the control logic
     RJ::Time last_dribbler_time_;

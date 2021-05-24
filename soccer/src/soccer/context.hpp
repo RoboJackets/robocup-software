@@ -15,14 +15,12 @@
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 #include "radio/robot_status.hpp"
-#include "robot_config.hpp"
 #include "robot_intent.hpp"
-#include "system_state.hpp"
 #include "team_info.hpp"
 #include "world_state.hpp"
 
 struct Context {
-    Context() : state(this), debug_drawer(this) {}
+    Context() : debug_drawer(this) {}
 
     // Delete copy, copy-assign, move, and move-assign because
     // many places are expected to hold Context* pointers.
@@ -44,14 +42,9 @@ struct Context {
     /** \brief Whether at least one joystick is connected */
     bool joystick_valid;
 
-    std::array<RobotLocalConfig, kNumShells> local_configs;
-    std::array<planning::RobotConstraints, kNumShells> robot_constraints;
-    std::unique_ptr<RobotConfig> robot_config;
-
     rj_geometry::ShapeSet global_obstacles;
     rj_geometry::ShapeSet goal_zone_obstacles;
 
-    SystemState state;
     GameState game_state;
     TeamInfo our_info;
     TeamInfo their_info;

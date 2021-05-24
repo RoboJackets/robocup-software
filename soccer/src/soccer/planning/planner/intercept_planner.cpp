@@ -2,12 +2,9 @@
 
 #include <rj_constants/constants.hpp>
 
-#include "configuration.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
-#include "planning/primitives/rrt_util.hpp"
-#include "planning/primitives/velocity_profiling.hpp"
 
 namespace planning {
 

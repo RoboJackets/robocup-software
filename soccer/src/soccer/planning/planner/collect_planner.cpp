@@ -4,7 +4,6 @@
 
 #include <rj_constants/constants.hpp>
 
-#include "configuration.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"

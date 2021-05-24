@@ -17,7 +17,6 @@
 #include "game_state.hpp"
 #include "node.hpp"
 #include "referee_base.hpp"
-#include "system_state.hpp"
 #include "team_info.hpp"
 #include "config_client/config_client.hpp"
 
