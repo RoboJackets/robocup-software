@@ -9,7 +9,7 @@
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 
-namespace Planning::TestingUtils {
+namespace planning::TestingUtils {
 
 using rj_geometry::Point;
 using rj_geometry::Pose;
@@ -78,4 +78,4 @@ RobotInstant random_instant(std::mt19937* generator) {
     return RobotInstant{rand_pose, rand_twist, RJ::now()};
 }
 
-}  // namespace Planning::TestingUtils
+}  // namespace planning::TestingUtils

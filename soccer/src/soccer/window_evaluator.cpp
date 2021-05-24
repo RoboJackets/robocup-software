@@ -242,7 +242,7 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     float longest_possible_shot =
         std::sqrt(pow(FieldDimensions::current_dimensions.length(), 2.0f) +
                   pow(FieldDimensions::current_dimensions.width(), 2.0f));
-    const auto& std = *KickEvaluator::kick_std_dev;
+    const auto& std = kick_evaluator::PARAM_kick_std_dev;
     auto angle_prob =
         phi(angle_between_shot_and_window / (std)) - phi(-angle_between_shot_and_window / (std));
 

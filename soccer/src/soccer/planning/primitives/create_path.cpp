@@ -6,7 +6,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning::CreatePath {
+namespace planning::CreatePath {
 
 Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                   const MotionConstraints& motion_constraints, RJ::Time start_time,
@@ -20,7 +20,7 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
     BezierPath bezier(points, start.velocity, goal.velocity, motion_constraints);
     Trajectory path = profile_velocity(bezier, start.velocity.mag(), goal.velocity.mag(),
                                        motion_constraints, start_time);
-    return std::move(path);
+    return path;
 }
 
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
@@ -38,10 +38,10 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        !trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr) &&
-            !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
-                                     nullptr)) {
-        return std::move(straight_trajectory);
+        (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr) &&
+         !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
+                                  nullptr))) {
+        return straight_trajectory;
     }
 
     ShapeSet obstacles = static_obstacles;
@@ -67,7 +67,8 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         hit_circle.radius(hit_circle.radius() * 1.5f);
         obstacles.add(std::make_shared<Circle>(hit_circle));
     }
-    return std::move(path);
+
+    return path;
 }
 
-}  // namespace Planning::CreatePath
+}  // namespace planning::CreatePath

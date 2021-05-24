@@ -4,7 +4,7 @@
 #include "planning/trajectory.hpp"
 #include "planning/primitives/path_smoothing.hpp"
 
-namespace Planning::CreatePath {
+namespace planning::CreatePath {
 
 /**
  * Generate a smooth path from start to goal avoiding obstacles.
@@ -24,4 +24,4 @@ Trajectory simple(
     const MotionConstraints& motion_constraints, RJ::Time start_time,
     const std::vector<rj_geometry::Point>& intermediate_points = {});
 
-}  // namespace Planning::CreatePath
+}  // namespace planning::CreatePath

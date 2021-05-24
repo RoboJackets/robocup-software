@@ -13,6 +13,8 @@
 
 #include "rc-fshare/rtp.hpp"
 
+namespace radio {
+
 /**
  * @brief Interface for the radio over regular network interface
  *
@@ -22,16 +24,12 @@ class NetworkRadio : public Radio {
 public:
     NetworkRadio(int server_port);
 
-    [[nodiscard]] bool is_open() const override;
-
-    void send(const std::array<RobotIntent, kNumShells>& intents,
-              const std::array<MotionSetpoint, kNumShells>& setpoints) override;
-
-    void receive() override;
-
-    void switch_team(bool blue_team) override;
-
 protected:
+    void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+              const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
+    void receive() override;
+    void switch_team(bool blue) override;
+
     struct RobotConnection {
         boost::asio::ip::udp::endpoint endpoint;
         RJ::Time last_received;
@@ -43,8 +41,7 @@ protected:
     // Map from IP address to robot ID.
     std::map<boost::asio::ip::udp::endpoint, int> robot_ip_map_{};
 
-    void receive_packet(const boost::system::error_code& error,
-                       std::size_t num_bytes);
+    void receive_packet(const boost::system::error_code& error, std::size_t num_bytes);
 
     void start_receive();
 
@@ -56,10 +53,9 @@ protected:
     boost::asio::ip::udp::endpoint robot_endpoint_;
 
     // Read from by `async_send_to`
-    std::vector<
-        std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>>
-        send_buffers_{};
+    std::vector<std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>> send_buffers_{};
 
-    constexpr static std::chrono::duration kTimeout =
-        std::chrono::milliseconds(250);
+    constexpr static std::chrono::duration kTimeout = std::chrono::milliseconds(250);
 };
+
+}  // namespace radio

@@ -2,7 +2,7 @@
 
 #include "trajectory.hpp"
 
-namespace Planning {
+namespace planning {
 
 // TODO(#1501): both of these functions should be able to be abstracted under a
 //  single interface templated on either a shape set or a collection of dynamic
@@ -39,4 +39,4 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
                            rj_geometry::Circle* out_hit_obstacle,
                            RJ::Time* out_hit_time);
 
-}  // namespace Planning
+}  // namespace planning

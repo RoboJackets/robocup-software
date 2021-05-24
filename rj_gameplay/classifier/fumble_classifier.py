@@ -25,7 +25,6 @@ def get_recipient(world_state: rc.WorldState, team, vel_angle) -> int:
 			pose_x = robot.pose[0]
 			pose_y = robot.pose[1]
 			recp_angle = math.atan2(pose_y - ball_pos_y, pose_x - ball_pos_x)
-			# angle_diff = abs(vel_angle - recp_angle)
 			angle_diff = vel_angle - recp_angle
 			if angle_diff > math.pi:
 				angle_diff -= math.pi * 2
@@ -40,7 +39,6 @@ def get_recipient(world_state: rc.WorldState, team, vel_angle) -> int:
 			pose_x = robot.pose[0]
 			pose_y = robot.pose[1]
 			recp_angle = math.atan2(pose_y - ball_pos_y, pose_x - ball_pos_x)
-			# angle_diff = abs(vel_angle - recp_angle)
 			angle_diff = vel_angle - recp_angle
 			if angle_diff > math.pi:
 				angle_diff -= math.pi * 2
@@ -50,7 +48,6 @@ def get_recipient(world_state: rc.WorldState, team, vel_angle) -> int:
 			if angle_diff < angle:
 				recipient = robot.id
 				angle = angle_diff
-	# print(recipient)
 	if angle < math.pi / 6:
 		return recipient
 	else:
@@ -97,7 +94,6 @@ def pass_or_fumble(world_state: rc.WorldState, kicker_id, kicker_team, recipient
 
 	if old_angle is not None and kicker_id is not None and recipient_id is not None and possess is not None:
 		if abs(old_angle-new_angle) > 0.1 and possess != kicker_id:
-			# fumbling = fumble_classifier(world_state, possess)
 			if recipient_id == possess and team == kicker_team:
 				print(f'Successful Pass from #{kicker_id} to #{possess}')
 				kicker_id = possess
@@ -131,7 +127,6 @@ def pass_or_fumble(world_state: rc.WorldState, kicker_id, kicker_team, recipient
 			# print(f'angle_diff:{angle_diff}, distance:{distance}')
 		
 	return kicker_id, kicker_team, recipient_id, old_angle, new_angle
-
 
 
 
