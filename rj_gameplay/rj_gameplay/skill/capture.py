@@ -30,6 +30,10 @@ class Capture(ICapture):
         self.root = self.capture_behavior
         self.root.setup_with_descendants()
 
-    def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
-        self.root.tick_once(robot)
-        # TODO: change so this properly returns the actions intent messages
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
+    	self.robot = robot
+        self.root.tick_once(self.robot, world_state)
+
+        
+    def is_done(self, world_state) -> bool:
+    	self.capture.is_done(world_state)
