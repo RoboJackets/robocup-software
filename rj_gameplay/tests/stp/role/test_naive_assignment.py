@@ -20,6 +20,9 @@ class SkillBase(skill.ISkill):
     def define(self):
         pass
 
+    def tick(self):
+        pass
+
     def create_request(self) -> role.RoleRequest:
         switch_cost = 0.0
         return role.RoleRequest(
@@ -93,6 +96,9 @@ class TacticBase(tactic.ITactic[None]):
         }
 
         return role_requests
+
+    def create_request(self):
+        pass
 
 
 def get_simple_role_ids() -> List[RoleId]:
@@ -445,7 +451,7 @@ def test_assign_roles_constrained() -> None:
     free_robots = np.array([
         testing.generate_test_robot(robot_id=0,
                                     pose=np.array([0, 0, 0]),
-                                    ball_sense_triggered=True),
+                                    has_ball_sense=True),
         testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
         testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
     ])

@@ -11,7 +11,7 @@
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 
@@ -145,6 +145,6 @@ private:
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
 
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
 };
 }  // namespace vision_filter
