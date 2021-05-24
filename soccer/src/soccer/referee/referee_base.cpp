@@ -13,7 +13,7 @@ DEFINE_FLOAT64(
     kRefereeParamModule, kick_verify_time, 0.250,
     "How long in seconds ball must be more than kick_threshold meters away to detect kick")
 
-RefereeBase::RefereeBase(const std::string& name) : rclcpp::Node(name) {
+RefereeBase::RefereeBase(const std::string& name) : rclcpp::Node(name), param_provider_(this, kRefereeParamModule) {
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorPub, keep_latest);
