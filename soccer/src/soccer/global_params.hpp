@@ -7,7 +7,7 @@
 #include <rj_param_utils/ros2_global_param_provider.hpp>
 
 constexpr auto kGlobalParamModule = "soccer";
-constexpr auto kGlobalParamServerNode = "parameter_blackboard";
+constexpr auto kGlobalParamServerNode = "global_parameter_server";
 
 DECLARE_BOOL(kGlobalParamModule, use_sim_time)
 DECLARE_NS_FLOAT64(kGlobalParamModule, soccer::physics, ball_decay_constant)
