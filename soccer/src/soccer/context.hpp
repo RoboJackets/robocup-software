@@ -38,9 +38,9 @@ struct Context {
     // Radio -> Gameplay
     std::array<RobotStatus, kNumShells> robot_status;
     // MainWindow -> Manual control
-    std::array<bool, kNumShells> is_joystick_controlled;
+    std::array<bool, kNumShells> is_joystick_controlled{};
     /** \brief Whether at least one joystick is connected */
-    bool joystick_valid;
+    bool joystick_valid = false;
 
     rj_geometry::ShapeSet global_obstacles;
     rj_geometry::ShapeSet goal_zone_obstacles;
@@ -48,7 +48,7 @@ struct Context {
     GameState game_state;
     TeamInfo our_info;
     TeamInfo their_info;
-    bool blue_team;
+    bool blue_team = true;
     DebugDrawer debug_drawer;
 
     /** \brief Vector of unique IDs of gamepads. First is oldest to connect. */

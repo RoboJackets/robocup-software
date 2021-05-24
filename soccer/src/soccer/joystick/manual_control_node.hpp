@@ -59,11 +59,13 @@ private:
      */
     void update_gamepad_list();
 
+#if 0
     /**
      * Updates the intent and setpoint using controls_;
      * @param robot
      */
     void update_intent_and_setpoint(OurRobot* robot);
+#endif
 
     /**
      * Updates the context_->joystick_valid

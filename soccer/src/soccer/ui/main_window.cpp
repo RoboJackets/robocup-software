@@ -882,10 +882,10 @@ void MainWindow::on_actionStopBall_triggered() {
     grSim_Packet simPacket;
     grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
 
-    rj_geometry::Point ballPos =
+    rj_geometry::Point ball_pos =
         _ui.fieldView->getTeamToWorld() * context_->world_state.ball.position;
-    ball_replace->set_x(ballPos.x());
-    ball_replace->set_y(ballPos.y());
+    ball_replace->set_x(ball_pos.x());
+    ball_replace->set_y(ball_pos.y());
     ball_replace->set_vx(0);
     ball_replace->set_vy(0);
 

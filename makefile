@@ -97,14 +97,12 @@ test-soccer:
 test-soccer-nobuild:
 	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 
-test-python: all
-	cd soccer/src/soccer/gameplay && source /opt/foxy/setup.sh && ./run_tests.sh
-test-python-nobuild:
-	cd soccer/src/soccer/gameplay && source /opt/foxy/setup.sh && ./run_tests.sh
+test-python: perf
+	python3 -m pytest --cov rj_gameplay --cov stp rj_gameplay --cov-report xml
 pylint:
-	pylint -j8 --reports=n soccer/src/soccer/gameplay
+	pylint -j8 --reports=n rj_gameplay
 mypy:
-	mypy soccer/src/soccer/gameplay
+	mypy rj_gameplay
 
 COV_BUILD_DIR=build/coverage
 coverage:
@@ -116,10 +114,6 @@ coverage:
 		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \
 		-E '(^.*((moc_)|(automoc)|(ui_)|([Tt]est)).*$$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$$)' \
 		--gcov-options '\-lp'
-
-behavior-diagrams: all
-	cd soccer/gameplay && python3 generate_fsm_diagrams.py
-	@echo -e "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
 
 clean:
 	cd build-debug && ninja clean || true

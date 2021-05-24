@@ -1,7 +1,8 @@
 #include "manual_control_node.hpp"
 
 #include "context.hpp"
-#include "robot.hpp"
+
+#if 0
 
 namespace joystick {
 
@@ -246,3 +247,4 @@ void ManualControlNode::update_joystick_valid() const {
     context_->joystick_valid = !gamepad_stack_.empty();
 }
 }  // namespace joystick
+#endif
