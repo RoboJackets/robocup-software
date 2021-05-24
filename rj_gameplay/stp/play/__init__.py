@@ -6,6 +6,7 @@ from collections import defaultdict
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 
 import stp.action as action
+import stp.skill as skill
 import stp.rc as rc
 import stp.role as role
 import stp.role.assignment as assignment
@@ -136,7 +137,7 @@ class IPlay(Generic[PropT], ABC):
         world_state: rc.WorldState,
         prev_results: assignment.FlatRoleResults,
         props: PropT,
-    ) -> Tuple[assignment.FlatRoleResults, List[action.IAction]]:
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
         """Performs one "tick" of the specified play.
 
         This should:
@@ -147,7 +148,7 @@ class IPlay(Generic[PropT], ABC):
         :param world_state: Current state of the world.
         :param prev_results: Previous results of role assignment.
         :param props: Props from compute_props.
-        :return: Tuple of the role and actions.
+        :return: Tuple of the role and skills.
         """
         ...
 

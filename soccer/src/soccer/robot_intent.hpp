@@ -13,7 +13,7 @@ struct RobotIntent {
     enum class ShootMode { KICK, CHIP };
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
 
-    Planning::MotionCommand motion_command;
+    planning::MotionCommand motion_command;
 
     /// Set of obstacles added by plays
     rj_geometry::ShapeSet local_obstacles;

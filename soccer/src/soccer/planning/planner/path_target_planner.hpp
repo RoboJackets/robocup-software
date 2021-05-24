@@ -6,7 +6,7 @@
 #include "planning/primitives/replanner.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
 
-namespace Planning {
+namespace planning {
 
 class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
 public:
@@ -23,7 +23,6 @@ public:
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;
-    QString draw_layer = "Planning";
 
 private:
     [[nodiscard]] static AngleFunction get_angle_function(
@@ -32,4 +31,4 @@ private:
     Trajectory previous_;
 };
 
-}  // namespace Planning
+}  // namespace planning

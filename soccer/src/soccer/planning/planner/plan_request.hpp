@@ -2,18 +2,20 @@
 
 #include <map>
 #include <memory>
-#include <planning/motion_constraints.hpp>
-#include <planning/trajectory.hpp>
-#include <planning/planner/motion_command.hpp>
 #include <utility>
 
+#include <planning/motion_constraints.hpp>
+#include <planning/planner/motion_command.hpp>
+#include <planning/trajectory.hpp>
+
 #include "context.hpp"
-#include "world_state.hpp"
 #include "planning/dynamic_obstacle.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
+#include "ros_debug_drawer.hpp"
+#include "world_state.hpp"
 
-namespace Planning {
+namespace planning {
 
 /**
  * @brief Encapsulates information needed for planner to make a path
@@ -23,12 +25,11 @@ namespace Planning {
  */
 struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
-                RobotConstraints constraints,
-                rj_geometry::ShapeSet field_obstacles,
+                RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles,
-                std::array<Trajectory*, kNumShells> planned_trajectories,
-                unsigned shell_id, const WorldState* world_state,
-                int8_t priority = 0, DebugDrawer* debug_drawer = nullptr)
+                std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
+                const WorldState* world_state, int8_t priority = 0,
+                rj_drawing::RosDebugDrawer* debug_drawer = nullptr)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -70,7 +71,7 @@ struct PlanRequest {
      * Trajectories for each of the robots that has already been planned.
      * nullptr for unplanned robots.
      */
-    std::array<Trajectory*, kNumShells> planned_trajectories;
+    std::array<const Trajectory*, kNumShells> planned_trajectories;
 
     /**
      * The robot's shell ID. Used for debug drawing.
@@ -94,7 +95,7 @@ struct PlanRequest {
      * Allows debug drawing in the world. If this is nullptr, no debug drawing
      * should be performed.
      */
-    DebugDrawer* debug_drawer;
+    rj_drawing::RosDebugDrawer* debug_drawer;
 };
 
 /**
@@ -114,7 +115,7 @@ struct PlanRequest {
  *  nullptr.
  */
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                   std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
-                   Trajectory* out_ball_trajectory = nullptr);
+                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
+                    Trajectory* out_ball_trajectory = nullptr);
 
-}  // namespace Planning
+}  // namespace planning

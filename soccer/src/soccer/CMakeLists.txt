@@ -2,11 +2,11 @@
 # Set Sources
 # ======================================================================
 set(SOCCER_UIS
-    ui/qt/ConfigFileTab.ui
-    ui/qt/LogViewer.ui
-    ui/qt/MainWindow.ui
-    ui/qt/RefereeTab.ui
-    ui/qt/RobotStatusWidget.ui)
+        ui/qt/ConfigFileTab.ui
+        ui/qt/LogViewer.ui
+        ui/qt/MainWindow.ui
+        ui/qt/RefereeTab.ui
+        ui/qt/RobotStatusWidget.ui)
 
 set(SOCCER_RSRC ui/qt/main_icons.qrc)
 
@@ -20,9 +20,10 @@ set(ROBOCUP_LIB_SRC
     joystick/manual_control_node.cpp
     kick_evaluator.cpp
     logger.cpp
-    motion/motion_control.cpp
-    motion/motion_control_node.cpp
-    motion/trapezoidal_motion.cpp
+    control/manipulator_control.cpp
+    control/motion_control.cpp
+    control/motion_control_node.cpp
+    control/trapezoidal_motion.cpp
     optimization/gradient_ascent_1d.cpp
     optimization/parallel_gradient_ascent_1d.cpp
     optimization/nelder_mead_2d.cpp
@@ -43,16 +44,15 @@ set(ROBOCUP_LIB_SRC
     planning/planner/pivot_path_planner.cpp
     planning/planner/plan_request.cpp
     planning/planner/settle_planner.cpp
-    planning/motion_constraints.cpp
     planning/planner_node.cpp
-    planning/rotation_constraints.cpp
     planning/trajectory.cpp
     planning/trajectory_utils.cpp
+    planning/planning_params.cpp
     processor.cpp
     radio/network_radio.cpp
     radio/packet_convert.cpp
-    radio/radio_node.cpp
     radio/sim_radio.cpp
+    radio/radio.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
     referee/internal_referee.cpp
@@ -75,6 +75,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp
     ros2_temp/referee_sub.cpp
+    ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     window_evaluator.cpp)
 
@@ -82,7 +83,8 @@ set(SOCCER_TEST_SRC
     battery_profile_test.cpp
     ball_test.cpp
     kick_evaluator_test.cpp
-    motion/trapezoidal_motion_test.cpp
+    control/trapezoidal_motion_test.cpp
+    control/motion_control_test.cpp
     optimization/gradient_ascent_1d_test.cpp
     optimization/parallel_gradient_ascent_1d_test.cpp
     optimization/nelder_mead_2d_test.cpp
@@ -109,6 +111,14 @@ set(EXTERNAL_REFEREE_NODE_SRC referee/external_referee_main.cpp)
 
 set(INTERNAL_REFEREE_NODE_SRC referee/internal_referee_main.cpp)
 
+set(PLANNER_NODE_SRC planning/planner_node_main.cpp)
+
+set(CONTROL_NODE_SRC control/control_node_main.cpp)
+
+set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
+
+set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -125,11 +135,23 @@ target_sources(soccer PRIVATE main.cpp)
 # ---- log_viewer ----
 target_sources(log_viewer PRIVATE ${LOG_VIEWER_SRC} ${LOG_VIEWER_UIS} ${LOG_VIEWER_RSRC})
 
-# ---- external referee_node ----
+# ---- external_referee_node ----
 target_sources(external_referee_node PRIVATE ${EXTERNAL_REFEREE_NODE_SRC})
 
-# ---- internal referee_node ----
+# ---- internal_referee_node ----
 target_sources(internal_referee_node PRIVATE ${INTERNAL_REFEREE_NODE_SRC})
+
+# ---- planner_node ----
+target_sources(planner_node PRIVATE ${PLANNER_NODE_SRC})
+
+# ---- control_node ----
+target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
+
+# ---- sim_radio_node ----
+target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
+
+# ---- sim_radio_node ----
+target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
