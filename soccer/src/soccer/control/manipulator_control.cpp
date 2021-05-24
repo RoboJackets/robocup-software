@@ -9,8 +9,6 @@ namespace control {
 
 using soccer::robot::PARAM_max_chip_speed;
 using soccer::robot::PARAM_max_kick_speed;
-using soccer::robot::PARAM_min_chip_speed;
-using soccer::robot::PARAM_min_kick_speed;
 using soccer::robot::PARAM_min_safe_kick_power;
 
 ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell_id_(shell_id) {
