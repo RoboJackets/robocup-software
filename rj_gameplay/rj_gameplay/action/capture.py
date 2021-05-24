@@ -6,7 +6,7 @@ import stp.role as role
 import stp.action as action
 import stp.rc as rc
 import numpy as np
-from rj_msgs.msg import RobotIntent, SettleMotionCommand
+from rj_msgs.msg import RobotIntent, CollectMotionCommand
 
 class Capture(action.IAction):
     """
@@ -19,8 +19,8 @@ class Capture(action.IAction):
 
 
     def tick(self, intent) -> None:
-        settle_command = SettleMotionCommand()
-        intent.motion_command.settle_command = [settle_command] 
+        collect_command = CollectMotionCommand()
+        intent.motion_command.collect_command = [collect_command] 
         intent.dribbler_speed = 1.0
         intent.active = True
 
