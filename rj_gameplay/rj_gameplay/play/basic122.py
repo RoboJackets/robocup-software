@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import stub_striker, stub_nmark
+from rj_gameplay.tactic import stub_striker, nmark
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -15,7 +15,8 @@ class Basic122(play.IPlay):
 
     def __init__(self):
         # self.striker_tactic = stub_striker.Striker()
-        self.two_mark = stub_nmark.NMark(2)
+        # TODO: change back to 2
+        self.two_mark = nmark.NMark(1)
         self.role_assigner = NaiveRoleAssignment()
 
 
@@ -48,4 +49,5 @@ class Basic122(play.IPlay):
 
     	return (skill_dict ,skills)
 
-
+    def is_done(self, world_state):
+        return self.two_mark.is_done(world_state)

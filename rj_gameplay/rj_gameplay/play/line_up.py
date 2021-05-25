@@ -34,7 +34,7 @@ class LineUp(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        print(world_state)
+
         if self.move_right.is_done(world_state):
             role_requests[self.move_left] = self.move_left.get_requests(world_state, None)
         else:
