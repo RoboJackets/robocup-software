@@ -12,7 +12,6 @@ import stp.skill as skill
 import stp.role as role
 import stp.action as action
 from stp.skill.action_behavior import ActionBehavior
-from stp.skill.cost_behavior import CostBehavior
 import stp.rc as rc
 
 class IMark(skill.ISkill, ABC):
@@ -23,19 +22,35 @@ A skill which marks a given opponent robot according to some heuristic cost func
 """
 class Mark(IMark):
 
-    def __init__(self, robot: rc.Robot, mark_heuristic: Callable[[np.array], float]):
-        # mark_heuristic(np.array) -> float
+    def __init__(self,
+            robot : rc.Robot = None,
+            target_point : np.ndarray = np.array([0.0,0.0]),
+            target_vel : np.ndarray = np.array([0.0,0.0]),
+            face_angle : Optional[float] = None,
+            face_point : Optional[np.ndarray] = None):
+
+        # TODO: use mark_heuristic & CostBehavior to handle marking, rather than having tactic give target_point
+        # argument: mark_heuristic: Callable[[np.array], float]
+        # > self.mark_heuristic = mark_heuristic
+
+        # workaround for non-working CostBehavior: 
+        # initialize move action, update target point every tick (target point being opponent robot pos)
 
         self.__name__ = 'Mark Skill'
         self.robot = robot
-        self.mark_heuristic = mark_heuristic
-        self.mark_behavior = CostBehavior('Mark', self.mark_heuristic)
+
+        self.target_point = target_point
+        if self.robot is not None:
+            self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point)
+        else:
+            self.move = move.Move(self.robot, target_point, target_vel, face_angle, face_point)
+
+        self.mark_behavior = ActionBehavior('Mark', self.move)
         self.root = self.mark_behavior
         self.root.setup_with_descendants()
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
+    def tick(self, robot: rc.Robot, new_target: np.ndarray, world_state: rc.WorldState) -> None:
         self.robot = robot
-        # Print for stub
+        self.target_point = new_target
         actions = self.root.tick_once(robot, world_state)
         return actions
-        # TODO: change so this properly returns the actions intent messages
