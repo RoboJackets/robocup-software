@@ -14,10 +14,6 @@ from rj_gameplay.skill import mark
 import stp.skill as skill
 
 import numpy as np
-from rj_geometry_msgs.msg import Point, Segment
-import stp.utils.constants 
-# new constants file
-# import constants
 
 class marker_cost(role.CostFn):
     """
@@ -32,14 +28,11 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        # currently, dist to ball
-        # TODO: should be dist to closest robot by angle
-        ball_pos = world_state.ball.pos
-        return (robot.pose[0] - ball_pos[0])**2 + (robot.pose[1] - ball_pos[1])**2
+        if robot.id == 7:
+            return 0.0
+        return 1.0
 
 def marker_heuristic(point: np.array):
-    # given point is mark point
-    print(constants.Robot.radius)
     return 1
 
 class NMark(tactic.ITactic):
@@ -48,9 +41,10 @@ class NMark(tactic.ITactic):
     """
     def __init__(self, n: int):
         self.num_markers = n
-        self.markers_dict = {}
+        self.markers_list = []
         for i in range(self.num_markers):
-            self.markers_dict[i] = tactic.SkillEntry(mark.Mark(None, marker_heuristic))
+            # self.markers_list[i] = tactic.SkillEntry(mark.Mark(None, marker_heuristic))
+            self.markers_list.append(tactic.SkillEntry(mark.Mark(None)))
         self.cost = marker_cost()
         
     def compute_props(self):
@@ -73,7 +67,7 @@ class NMark(tactic.ITactic):
         role_requests = {}
 
         for i in range(self.num_markers):
-            role_requests[self.markers_dict[i]] = [role.RoleRequest(role.Priority.LOW, False, self.cost)]
+            role_requests[self.markers_list[i]] = [role.RoleRequest(role.Priority.LOW, False, self.cost)]
 
         return role_requests
 
@@ -85,8 +79,14 @@ class NMark(tactic.ITactic):
 
 
         for i in range(self.num_markers):
-            if role_results[self.markers_dict[i]][0]:
-                # print(role_results[self.markers_dict[i]][0])
-                skills.append(self.markers_dict[i])
+            if role_results[self.markers_list[i]][0]:
+                # print(role_results[self.markers_list[i]][0])
+                skills.append(self.markers_list[i])
 
         return skills
+
+    def is_done(self, world_state):
+        for mark_skill in self.markers_list:
+            if not mark_skill.skill.is_done(world_state):
+                return False
+        return True
