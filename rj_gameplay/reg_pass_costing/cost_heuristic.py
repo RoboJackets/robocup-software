@@ -32,18 +32,18 @@ def cost_heuristic(world_state: rc.WorldState, robot: rc.Robot) -> float:
         if bot.has_ball_sense:
             robot_with_ball = bot
             if robot_with_ball == robot:
-                return -1
+                return float("inf")
 
     # return 1 if robot is too far away from robot_with_ball
     if (distance_from_ball(robot, robot_with_ball) > MAX_PASS_DIST):
         return 1 
 
     running_cost = 0
-    running_cost += distance_from_goal(robot, robot_with_ball, field)
-    running_cost += average_opponent_distance(robot, their_robots)
-    running_cost += nearest_opponent_distance(robot, their_robots)
-    running_cost += opponents_between_robot_goal(robot, their_robots, field)
-    running_cost += opponents_between_robot_ball(robot, their_robots, robot_with_ball)
+    running_cost += GOAL_DIST_COST * distance_from_goal_cost(robot, robot_with_ball, field)
+    running_cost += AVG_OPP_DIST_COST * average_opponent_distance_cost(robot, their_robots)
+    running_cost += NEAREST_OPP_DIST_COST * nearest_opponent_distance_cost(robot, their_robots)
+    running_cost += OPP_BETWEEN_ROBOT_GOAL_COST * opponents_between_robot_goal_cost(robot, their_robots, field)
+    running_cost += OPP_BETWEEN_ROBOT_BALL_COST * opponents_between_robot_ball_cost(robot, their_robots, robot_with_ball)
 
     if running_cost >= MAX_COST:
         return 1
@@ -67,14 +67,14 @@ def intercept_calc(A: np.array, B: np.array, E: np.array, target_dist: float) ->
     return False
 
 # returns the cost for the robot's distance from goal
-def distance_from_goal(robot: rc.Robot, robot_with_ball: rc.Robot, field: rc.Field) -> float:
+def distance_from_goal_cost(robot: rc.Robot, robot_with_ball: rc.Robot, field: rc.Field) -> float:
     robot_pos = robot.pose[0:2]
     opp_goal_pos = field.their_goal_loc
     goal_dist = np.linalg.norm(opp_goal_pos - robot_pos)
 
     if goal_dist > MAX_GOAL_DIST:
         goal_dist = MAX_GOAL_DIST
-    return (goal_dist / MAX_GOAL_DIST) * GOAL_DIST_COST * distance_from_goal_bonus(robot, robot_with_ball)
+    return (goal_dist / MAX_GOAL_DIST) * distance_from_goal_bonus(robot, robot_with_ball)
 
 # returns the multiplier bonus for the robot's distance from goal based on robot positioning
 def distance_from_goal_bonus(robot: rc.Robot, robot_with_ball: rc.Robot) -> float:
@@ -96,7 +96,7 @@ def distance_from_goal_bonus(robot: rc.Robot, robot_with_ball: rc.Robot) -> floa
     return bonus
 
 # returns the cost for the robot's average distance from opponent robots
-def average_opponent_distance(robot: rc.Robot, their_robots: list) -> float:
+def average_opponent_distance_cost(robot: rc.Robot, their_robots: list) -> float:
     robot_pos = robot.pose[0:2]
     total_opp_dist = 0
     for their_robot in their_robots:
@@ -108,10 +108,10 @@ def average_opponent_distance(robot: rc.Robot, their_robots: list) -> float:
 
     if avg_opp_dist > MAX_AVG_OPP_DIST:
         avg_opp_dist = MAX_AVG_OPP_DIST
-    return ((MAX_AVG_OPP_DIST - avg_opp_dist) / MAX_AVG_OPP_DIST) * AVG_OPP_DIST_COST
+    return ((MAX_AVG_OPP_DIST - avg_opp_dist) / MAX_AVG_OPP_DIST)
 
 # returns the cost for the robot's distance from the nearest opponent robot
-def nearest_opponent_distance(robot: rc.Robot, their_robots: list) -> float:
+def nearest_opponent_distance_cost(robot: rc.Robot, their_robots: list) -> float:
     robot_pos = robot.pose[0:2]
     nearest_opp_dist = float("inf")
     for their_robot in their_robots:
@@ -122,10 +122,10 @@ def nearest_opponent_distance(robot: rc.Robot, their_robots: list) -> float:
 
     if nearest_opp_dist > MAX_NEAREST_OPP_DIST:
         nearest_opp_dist = MAX_NEAREST_OPP_DIST
-    return ((MAX_NEAREST_OPP_DIST - nearest_opp_dist) / MAX_NEAREST_OPP_DIST) * NEAREST_OPP_DIST_COST
+    return ((MAX_NEAREST_OPP_DIST - nearest_opp_dist) / MAX_NEAREST_OPP_DIST)
 
 # returns the cost for the number of opponent robots between the robot and the opponent goal
-def opponents_between_robot_goal(robot: rc.Robot, their_robots: list, field: rc.Field) -> float:
+def opponents_between_robot_goal_cost(robot: rc.Robot, their_robots: list, field: rc.Field) -> float:
     robot_pos = robot.pose[0:2]
     opp_goal_pos = field.their_goal_loc
     goal_dist = np.linalg.norm(opp_goal_pos - robot_pos)
@@ -138,10 +138,10 @@ def opponents_between_robot_goal(robot: rc.Robot, their_robots: list, field: rc.
 
     if opp_between_robot_goal > MAX_OPP_BETWEEN_ROBOT_GOAL:
             opp_between_robot_goal = MAX_OPP_BETWEEN_ROBOT_GOAL
-    return (opp_between_robot_goal / MAX_OPP_BETWEEN_ROBOT_GOAL) * OPP_BETWEEN_ROBOT_GOAL_COST
+    return (opp_between_robot_goal / MAX_OPP_BETWEEN_ROBOT_GOAL)
 
 # returns the cost for the number of opponent robots between the robot and the robot_with_ball
-def opponents_between_robot_ball(robot: rc.Robot, their_robots: list, robot_with_ball: rc.Robot) -> float:
+def opponents_between_robot_ball_cost(robot: rc.Robot, their_robots: list, robot_with_ball: rc.Robot) -> float:
     robot_pos = robot.pose[0:2]
     robot_with_ball_pos = robot_with_ball.pose[0:2]
     ball_dist = np.linalg.norm(robot_with_ball_pos - robot_pos)
@@ -154,4 +154,4 @@ def opponents_between_robot_ball(robot: rc.Robot, their_robots: list, robot_with
 
     if opp_between_robot_ball > MAX_OPP_BETWEEN_ROBOT_BALL:
             opp_between_robot_ball = MAX_OPP_BETWEEN_ROBOT_BALL
-    return (opp_between_robot_ball / MAX_OPP_BETWEEN_ROBOT_BALL) * OPP_BETWEEN_ROBOT_BALL_COST
+    return (opp_between_robot_ball / MAX_OPP_BETWEEN_ROBOT_BALL)

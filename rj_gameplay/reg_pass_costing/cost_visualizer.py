@@ -100,15 +100,10 @@ def plot_field():
 	i = 0
 	for bot in our_bots:
 		costs.append((len(costs), cost_heuristic.cost_heuristic(world_state, bot)))
-	def descending_costs(val):
-		if val[1] == 99999:
-			return -1
-		else:
-			return val[1]
-	costs.sort(key=descending_costs)
+	costs.sort(key=lambda x:x[1])
 	text = ""
 	for cost in costs:
-		if cost[1] == -1:
+		if cost[1] == float("inf"):
 			text += "Robot " + str(cost[0]) + " has the ball.\n"
 		else:
 			text += "Robot " + str(cost[0]) + " has cost " + str(cost[1]) + "\n"
