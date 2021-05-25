@@ -1,6 +1,5 @@
 #pragma once
 
-#include <configuration.hpp>
 #include <QMainWindow>
 #include <QTime>
 #include <QTimer>
@@ -19,7 +18,6 @@
 
 class TestResultTab;
 class StripChart;
-class ConfigBool;
 
 namespace {
 // Style sheets used for live/non-live controls
@@ -38,11 +36,7 @@ public:
     MainWindow(Processor* processor, bool has_external_ref,
                QWidget* parent = nullptr);
 
-    void configuration(Configuration* config);
-
     void initialize();
-
-    SystemState* state() { return _processor->state(); }
 
     /// Deselects all debug layers
     void allDebugOff();
@@ -153,21 +147,6 @@ private Q_SLOTS:
     void on_debugLayers_itemChanged(QListWidgetItem* item);
     void on_debugLayers_customContextMenuRequested(const QPoint& pos);
 
-    /// Testing Tab
-    void on_testRun_clicked();
-    void on_addToTable_clicked();
-    void on_removeFromTable_clicked();
-    void on_testNext_clicked();
-
-    /// Configuration
-    void on_configTree_itemChanged(QTreeWidgetItem* item, int column);
-    void on_loadConfig_clicked();
-    void on_saveConfig_clicked();
-
-    // Playbook
-    void on_loadPlaybook_clicked();
-    void on_savePlaybook_clicked();
-    void on_clearPlays_clicked();
     void playIndicatorStatus(bool color);
 
     // Fast Ref Buttons
@@ -202,7 +181,6 @@ private:
     const QStandardItemModel* goalieModel{};
 
     Processor* const _processor;
-    Configuration* _config{};
     bool _has_external_ref;
 
     // Log history, copied from Logger.
