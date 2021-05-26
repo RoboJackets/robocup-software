@@ -35,9 +35,12 @@ def get_mark_point(world_state: rc.WorldState, mark_robot_id: int):
     opp_pos = world_state.their_robots[mark_robot_id].pose[0:2]
 
     mark_dir = (ball_pos - opp_pos) / np.linalg.norm(ball_pos - opp_pos)
-    mark_pt = opp_pos + mark_dir * (2.0 * constants.Robot.Radius + SAG_DIST)
+    mark_dist = mark_dir * (2.0 * constants.Robot.Radius + SAG_DIST)
 
-    return mark_pt 
+    # if ball too close to robot, can't mark successfully
+    if np.linalg.norm(mark_dist) < 2.0 * constants.Robot.Radius:
+        return None
+    return opp_pos + mark_dist
 
 class IMark(skill.ISkill, ABC):
     ...
@@ -72,8 +75,10 @@ class Mark(IMark):
 
         # update target point every tick to match movement of ball & target robot
         if world_state and world_state.ball.visible:
-            self.target_point = get_mark_point(world_state, 1)
-            self.move.target_point = self.target_point
+            mark_point = get_mark_point(world_state, 1)
+            if mark_point is None: 
+                return None
+            self.move.target_point = mark_point
 
         actions = self.root.tick_once(robot, world_state)
         return actions
