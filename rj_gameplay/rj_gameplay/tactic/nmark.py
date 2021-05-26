@@ -45,7 +45,7 @@ class NMark(tactic.ITactic):
         self.num_markers = n
         self.markers_list = []
         for i in range(self.num_markers):
-            self.markers_list.append(tactic.SkillEntry(mark.Mark(None)))
+            self.markers_list.append(tactic.SkillEntry(mark.Mark(None, None)))
         self.cost = marker_cost()
         
     def compute_props(self):

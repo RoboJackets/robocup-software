@@ -18,7 +18,7 @@ import stp.utils.constants as constants
 
 from rj_geometry_msgs.msg import Point, Segment
 
-def get_mark_point(world_state: rc.WorldState, mark_robot_id: int):
+def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
     # workaround for non-working CostBehavior: 
     # initialize move action, update target point every tick (target point being opponent robot pos)
 
@@ -32,7 +32,7 @@ def get_mark_point(world_state: rc.WorldState, mark_robot_id: int):
 
     # find point between ball and target robot that leaves SAG_DIST between edges of robots
     ball_pos = world_state.ball.pos
-    opp_pos = world_state.their_robots[mark_robot_id].pose[0:2]
+    opp_pos = world_state.their_robots[target_robot_id].pose[0:2]
 
     mark_dir = (ball_pos - opp_pos) / np.linalg.norm(ball_pos - opp_pos)
     mark_dist = mark_dir * (2.0 * constants.Robot.Radius + SAG_DIST)
@@ -52,19 +52,16 @@ class Mark(IMark):
 
     def __init__(self,
             robot : rc.Robot = None,
-            target_point : np.ndarray = np.array([0.0,0.0]),
-            target_vel : np.ndarray = np.array([0.0,0.0]),
-            face_angle : Optional[float] = None,
-            face_point : Optional[np.ndarray] = None):
+            target_robot : rc.Robot = None):
 
         self.__name__ = 'Mark Skill'
         self.robot = robot
+        self.target_robot = target_robot
 
-        self.target_point = target_point
         if self.robot is not None:
-            self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point)
+            self.move = move.Move(self.robot.id, np.array([0.0, 0.0]), np.array([0.0, 0.0]), None, None)
         else:
-            self.move = move.Move(self.robot, target_point, target_vel, face_angle, face_point)
+            self.move = move.Move(None, np.array([0.0, 0.0]), np.array([0.0, 0.0]), None, None)
 
         self.mark_behavior = ActionBehavior('Mark', self.move)
         self.root = self.mark_behavior
@@ -75,10 +72,15 @@ class Mark(IMark):
 
         # update target point every tick to match movement of ball & target robot
         if world_state and world_state.ball.visible:
-            mark_point = get_mark_point(world_state, 1)
+            if self.target_robot is None:
+                mark_point = get_mark_point(1, world_state)
+            else:
+                mark_point = get_mark_point(self.target_robot.id, world_state)
+
             if mark_point is None: 
                 return None
             self.move.target_point = mark_point
+            self.move.face_point = world_state.ball.pos 
 
         actions = self.root.tick_once(robot, world_state)
         return actions
