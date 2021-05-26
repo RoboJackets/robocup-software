@@ -28,12 +28,14 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+        # TODO: make it not just robot 7 that marks 
         if robot.id == 7:
             return 0.0
         return 1.0
 
 def marker_heuristic(point: np.array):
-    return 1
+    # TODO: use with CostBehavior
+    return -1
 
 class NMark(tactic.ITactic):
     """
@@ -43,7 +45,6 @@ class NMark(tactic.ITactic):
         self.num_markers = n
         self.markers_list = []
         for i in range(self.num_markers):
-            # self.markers_list[i] = tactic.SkillEntry(mark.Mark(None, marker_heuristic))
             self.markers_list.append(tactic.SkillEntry(mark.Mark(None)))
         self.cost = marker_cost()
         
@@ -77,10 +78,8 @@ class NMark(tactic.ITactic):
         """
         skills = []
 
-
         for i in range(self.num_markers):
             if role_results[self.markers_list[i]][0]:
-                # print(role_results[self.markers_list[i]][0])
                 skills.append(self.markers_list[i])
 
         return skills
