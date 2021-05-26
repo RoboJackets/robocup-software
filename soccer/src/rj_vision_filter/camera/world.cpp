@@ -20,8 +20,12 @@ World::World()
       robots_yellow_(kNumShells, WorldRobot()),
       robots_blue_(kNumShells, WorldRobot()) {}
 
-void World::update_with_camera_frame(RJ::Time calc_time,
-                                     const std::vector<CameraFrame>& new_frames) {
+void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame) {
+    update_with_camera_frame(calc_time, {frame}, false);
+}
+
+void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
+                                     bool update_all) {
     calc_ball_bounce();
 
     std::vector<bool> camera_updated(PARAM_max_num_cameras, false);
@@ -57,9 +61,11 @@ void World::update_with_camera_frame(RJ::Time calc_time,
         last_update_time_ = std::max(last_update_time_, frame.t_capture);
     }
 
-    for (int i = 0; i < cameras_.size(); i++) {
-        if (!camera_updated.at(i) && cameras_.at(i).get_is_valid()) {
-            cameras_.at(i).update_without_frame(calc_time);
+    if (update_all) {
+        for (int i = 0; i < cameras_.size(); i++) {
+            if (!camera_updated.at(i) && cameras_.at(i).get_is_valid()) {
+                cameras_.at(i).update_without_frame(calc_time);
+            }
         }
     }
 

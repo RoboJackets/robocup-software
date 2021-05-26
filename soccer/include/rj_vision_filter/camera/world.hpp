@@ -1,12 +1,13 @@
 #include <list>
+#include <vector>
+
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/camera/camera.hpp>
 #include <rj_vision_filter/camera/camera_frame.hpp>
-#include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 #include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
+#include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
-#include <vector>
 
 namespace vision_filter {
 /**
@@ -22,11 +23,22 @@ public:
      *
      * @param calc_time Current iteration time
      * @param new_frames List of new frames from ssl vision
+     * @param update_all Whether to update the cameras without vision measurements
      *
      * @note Call this OR update_without_camera_frame ONCE an iteration
      */
-    void update_with_camera_frame(RJ::Time calc_time,
-                               const std::vector<CameraFrame>& new_frames);
+    void update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
+                                  bool update_all);
+
+    /**
+     * Updates all the child cameras given a set of new camera frames
+     *
+     * @param calc_time Current iteration time
+     * @param frame new frame for a single camera, from vision
+     *
+     * @note Call this once per camera per iteration
+     */
+    void update_single_camera(RJ::Time calc_time, const CameraFrame& frame);
 
     /**
      * Updates all the child cameras when there are no new camera frames
@@ -61,9 +73,7 @@ public:
      * @return Timestamp of the latest vision receiver message that was used to
      * updated the states. Initialized with RJ::Time::min().
      */
-    [[nodiscard]] RJ::Time last_update_time() const {
-        return last_update_time_;
-    }
+    [[nodiscard]] RJ::Time last_update_time() const { return last_update_time_; }
 
 private:
     /**
