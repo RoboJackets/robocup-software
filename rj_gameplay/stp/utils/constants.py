@@ -2,11 +2,8 @@
 import stp.rc as rc
 import math
 
-DegreesToRadians = math.pi / 180.0
-RadiansToDegrees = 180.0 / math.pi
-OurChipRoll = 3  # Average distance at which a ball is slow enough to capture
-TheirChipping = (.1, .8)
-
+OUR_CHIP_ROLL = 3  # Average distance at which a ball is slow enough to capture
+THEIR_CHIPPING = (.1, .8)
 
 class OurChipping:
     MIN_CARRY = .1
@@ -17,33 +14,31 @@ class OurChipping:
     CAPTURE_DISTANCE_TIME = 1.2
 
 class Colors:
-    White = (255, 255, 255)
-    Black = (0, 0, 0)
-    Green = (0, 255, 0)
-    Red = (255, 0, 0)
-    Blue = (0, 0, 255)
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    GREEN = (0, 255, 0)
+    RED = (255, 0, 0)
+    BLUE = (0, 0, 255)
 
 
 class Robot:
-    Radius = 0.09
-    MaxKickSpeed = 8  # m/s
-    ChipClearance = (
+    RADIUS = 0.09
+    MAX_KICK_SPEED = 8  # m/s
+    CHIP_CLEARANCE = (
         .1, .6)  # min and max distance a chip will go over another robot
 
     class Dribbler:
-        MaxPower = 127
+        MAX_POWER = 127
 
         # "Normal" Dribbler speed to be used for generic ball capture/movement
-        StandardPower = 127
+        STANDARD_POWER = 127
 
 
 class Ball:
-    Radius = 0.0215
-    Mass = 0.04593  # mass of golf ball (kg)
+    RADIUS = 0.0215
+    MASS = 0.04593  # mass of golf ball (kg)
 
 class Evaluation:
-    SlowThreshold = 1
+    SLOW_THRESHOLD = 1
 
-# Set to the global FieldDimensions object by the GameplayModule
-Field = rc.Field
-# Field = rc.FieldDimensions.CurrentDimensions
+# for field dimensions, use world_state.field (see /stp/rc.py for details)
