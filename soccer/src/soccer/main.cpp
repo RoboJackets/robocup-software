@@ -15,8 +15,6 @@
 #include <rj_common/qt_utils.hpp>
 #include <unistd.h>
 
-#include "configuration.hpp"
-#include "gameplay/gameplay_module.hpp"
 #include "global_params.hpp"
 #include "ui/main_window.hpp"
 #include "ui/style_sheet_manager.hpp"
@@ -166,8 +164,6 @@ int main(int argc, char* argv[]) {
         cfg_file = QString::fromStdString(config_path);
     }
 
-    std::shared_ptr<Configuration> config = Configuration::from_registered_configurables();
-
     // ROS2 init
     rclcpp::init(argc, argv);
 
@@ -184,16 +180,7 @@ int main(int argc, char* argv[]) {
     // If we're reading a log file, we should start off paused.
     context->game_settings.paused = !read_log_file.empty();
 
-    // Load config file
-    QString error;
-    if (!config->load(cfg_file, error)) {
-        QMessageBox::critical(
-            nullptr, "Soccer",
-            QString("Can't read initial configuration %1:\n%2").arg(cfg_file, error));
-    }
-
     auto win = std::make_unique<MainWindow>(processor.get(), !noref);
-    win->configuration(config.get());
     win->initialize();
 
     win->setUseRefChecked(!noref);
@@ -217,8 +204,6 @@ int main(int argc, char* argv[]) {
     while (!processor->is_initialized()) {  // Wait until processor finishes initializing
     }
 
-    if (!playbook_file.empty()) processor->gameplay_module()->load_playbook(playbook_file);
-
     // Sets the initial stylesheet for the application
     // based on the environment variable "SOCCER_THEME"
     if (getenv("SOCCER_THEME") != nullptr) {
@@ -226,8 +211,6 @@ int main(int argc, char* argv[]) {
     }
 
     win->show();
-
-    processor->gameplay_module()->setup_ui();
 
     int ret = QApplication::exec();
     processor->stop();

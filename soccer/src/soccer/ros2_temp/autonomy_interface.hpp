@@ -24,7 +24,6 @@ public:
 private:
     std::shared_ptr<rclcpp::Node> node_;
     Context* context_;
-    std::vector<rclcpp::Publisher<RobotIntent::Msg>::SharedPtr> intent_pubs_;
     std::vector<rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr> status_subs_;
 };
 

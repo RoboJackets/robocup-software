@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include "rj_geometry/pose.hpp"
-#include "system_state.hpp"
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/planner/collect_planner.hpp"
