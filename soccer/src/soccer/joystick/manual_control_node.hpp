@@ -13,7 +13,7 @@
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/srv/list_joysticks.hpp>
 #include <rj_msgs/srv/set_manual.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "context.hpp"
 #include "manual_control.hpp"
@@ -54,7 +54,7 @@ private:
 
     rclcpp::TimerBase::SharedPtr timer_;
 
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace joystick
