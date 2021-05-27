@@ -41,8 +41,8 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
     # if ball too close to opp robot, can't get between ball and robot
     if np.linalg.norm(mark_dist) < 2.0 * constants.Robot.RADIUS:
         # instead, get in front of opp robot holding ball 
-        # (by adding ball's diameter to mark_dist)
-        mark_dist += 2 * constants.Ball.RADIUS
+        print("HERE"*80)
+        mark_dist += mark_dir * (2 * constants.Robot.RADIUS)
 
     # ret final mark point
     return opp_pos + mark_dist
