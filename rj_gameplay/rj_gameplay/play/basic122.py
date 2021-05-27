@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import stub_striker, nmark
+from rj_gameplay.tactic import stub_striker, test_mark_skill
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -17,8 +17,8 @@ class Basic122(play.IPlay):
         # TODO: uncomment lines below on striker tactic completion
         # self.striker_tactic = stub_striker.Striker()
 
-        # TODO: change below back to 2
-        self.two_mark = nmark.NMark(1)
+        # TODO: change below to NMark when that tactic is done 
+        self.two_mark = test_mark_skill.TestMarkTactic(1)
         self.role_assigner = NaiveRoleAssignment()
 
 

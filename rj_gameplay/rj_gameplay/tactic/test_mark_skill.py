@@ -37,7 +37,7 @@ def marker_heuristic(point: np.array):
     # TODO: use with CostBehavior
     return -1
 
-class NMark(tactic.ITactic):
+class TestMarkTactic(tactic.ITactic):
     """
     A tactic which creates n robots with some marking heuristic
     """
