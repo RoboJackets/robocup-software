@@ -28,9 +28,9 @@ class Dribble(IDribble):
         self.dribbler_speed = dribbler_speed
 
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
-    	intent.dribbler_speed = self.dribbler_speed
+        intent.dribbler_speed = self.dribbler_speed
         intent.is_active = True
         return intent
 
     def is_done(self) -> bool:
-        return False;
+        return False
