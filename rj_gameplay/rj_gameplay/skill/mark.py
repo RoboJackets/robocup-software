@@ -14,7 +14,7 @@ import stp.action as action
 from rj_gameplay.action import move
 from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
-import stp.utils.constants as constants
+from stp.utils.constants import RobotConstants
 
 from rj_geometry_msgs.msg import Point, Segment
 
@@ -28,7 +28,7 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
 
     # dist away from target_robot to mark
     # TODO: add to global param server
-    SAG_DIST = constants.Robot.RADIUS * 0.5
+    SAG_DIST = RobotConstants.RADIUS * 0.5
 
     # find point between ball and target robot that leaves SAG_DIST between edges of robots
     # this will be mark point
@@ -36,16 +36,14 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
     opp_pos = world_state.their_robots[target_robot_id].pose[0:2]
 
     mark_dir = (ball_pos - opp_pos) / np.linalg.norm(ball_pos - opp_pos)
-    mark_dist = mark_dir * (2 * constants.Robot.RADIUS + SAG_DIST)
+    mark_pos = opp_pos + mark_dir * (2 * RobotConstants.RADIUS + SAG_DIST)
 
-    # if ball too close to opp robot, can't get between ball and robot
-    if np.linalg.norm(mark_dist) < 2.0 * constants.Robot.RADIUS:
+    # if ball inside robot radius of mark_pos, can't mark normally
+    if np.linalg.norm(mark_pos - ball_pos) < RobotConstants.RADIUS:
         # instead, get in front of opp robot holding ball 
-        print("HERE"*80)
-        mark_dist += mark_dir * (2 * constants.Robot.RADIUS)
+        mark_pos += mark_dir * 2 * RobotConstants.RADIUS
 
-    # ret final mark point
-    return opp_pos + mark_dist
+    return mark_pos
 
 class IMark(skill.ISkill, ABC):
     ...
