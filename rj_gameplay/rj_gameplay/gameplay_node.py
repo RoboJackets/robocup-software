@@ -10,7 +10,6 @@ import stp
 import numpy as np
 from rj_gameplay.action.move import Move
 from rj_gameplay.play import basic122 
-# from rj_gameplay.play import line_up
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16
@@ -24,7 +23,6 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         return (None, basic122.Basic122())
-        # return (None, line_up.LineUp())
 
 class GameplayNode(Node):
     """
