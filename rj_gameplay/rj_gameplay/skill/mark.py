@@ -31,15 +31,20 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
     SAG_DIST = constants.Robot.RADIUS * 0.5
 
     # find point between ball and target robot that leaves SAG_DIST between edges of robots
+    # this will be mark point
     ball_pos = world_state.ball.pos
     opp_pos = world_state.their_robots[target_robot_id].pose[0:2]
 
     mark_dir = (ball_pos - opp_pos) / np.linalg.norm(ball_pos - opp_pos)
-    mark_dist = mark_dir * (2.0 * constants.Robot.RADIUS + SAG_DIST)
+    mark_dist = mark_dir * (2 * constants.Robot.RADIUS + SAG_DIST)
 
-    # if ball too close to robot, can't mark successfully
+    # if ball too close to opp robot, can't get between ball and robot
     if np.linalg.norm(mark_dist) < 2.0 * constants.Robot.RADIUS:
-        return None
+        # instead, get in front of opp robot holding ball 
+        # (by adding ball's diameter to mark_dist)
+        mark_dist += 2 * constants.Ball.RADIUS
+
+    # ret final mark point
     return opp_pos + mark_dist
 
 class IMark(skill.ISkill, ABC):
@@ -78,7 +83,7 @@ class Mark(IMark):
                 mark_point = get_mark_point(self.target_robot.id, world_state)
 
             if mark_point is None: 
-                return None
+                return []
             self.move.target_point = mark_point
             self.move.face_point = world_state.ball.pos 
 
