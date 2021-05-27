@@ -1,4 +1,4 @@
-"""Contains the stub for the mark tactic. """
+"""Tactic to test the mark skill. """
 
 from dataclasses import dataclass
 from typing import List, Optional

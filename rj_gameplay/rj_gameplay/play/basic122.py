@@ -14,8 +14,10 @@ class Basic122(play.IPlay):
     """
 
     def __init__(self):
+        # TODO: uncomment lines below on striker tactic completion
         # self.striker_tactic = stub_striker.Striker()
-        # TODO: change back to 2
+
+        # TODO: change below back to 2
         self.two_mark = nmark.NMark(1)
         self.role_assigner = NaiveRoleAssignment()
 
@@ -41,6 +43,7 @@ class Basic122(play.IPlay):
     	role_results = play.unflatten_results(flat_results)
 
     	# Get list of all skills with assigned roles from tactics
+
     	# skills = self.striker_tactic.tick(role_results[self.striker_tactic]) + self.two_mark.tick(role_results[self.two_mark])
     	skills = self.two_mark.tick(role_results[self.two_mark])
     	skill_dict = {}
