@@ -68,12 +68,14 @@ class Coordinator:
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
             actions.update(skill.skill.tick(robot, world_state))
-        intents = [msg.RobotIntent()] * NUM_ROBOTS
+        intents = [msg.RobotIntent() for i in range(NUM_ROBOTS)]
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):
             if i in actions.keys() and actions[i]:
                 for action in actions[i]:
                     intents[i] = action.tick(intents[i])
+            else:
+                intents[i].motion_command.empty_command = [msg.EmptyMotionCommand()]
 
         # Update _prev_*.
         self._prev_situation = cur_situation
