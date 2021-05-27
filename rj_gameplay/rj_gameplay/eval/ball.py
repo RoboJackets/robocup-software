@@ -122,72 +122,71 @@ class Ball:
 
     FrictionCoefficient = 0.04148
     GravitationalCoefficient = 9.81  # in m/s^2
+    decel = GravitationalCoefficient * FrictionCoefficient
 
     def predict_stop_time(ball):
-        v = ball.vel
-        
-    	return 0
+        vel = ball.vel()
+        v = sqrt(vel[0]**2 + vel[1]**2)
+        return v / decel
 
     def predict_stop(ball):
         #return ball.predict_pos(ball.predict_seconds_to_stop())
-    	return 0
+        vel = ball.vel()
+        v = sqrt(vel[0]**2 + vel[1]**2)
+    	return (v / 2) * predict_stop_time(ball) #very simplified
 
     def rev_predict(dist, ball):
         """predict how much time it will take the ball to travel the given distance"""
         #return main.ball().estimate_seconds_to_dist(dist)
         vel = ball.vel()
-        v = sqrt(vel[0]**2 + vel[1]**2)
-        
-        return 0.0
+        vi_sq = vel[0]**2 + vel[1]**2
+        if dist > predict_stop(ball):
+            return -1 #it will not reach this point
+        #vf^2 - vi^2 = 2ad => vf = sqrt(vi^2 + 2ad)
+        change = 2 * decel * dist
+        vf_sq = vi_sq - change
+        return sqrt(vf_sq)
 
-    def opponent_with_ball(ball):
-        max_dist = float('inf')
-        '''
-        closest_bot, closest_dist = None, float("inf")
-    for bot in main.their_robots():
-        if bot.visible:
-            dist = (bot.pos - main.ball().pos).mag()
-            if dist < closest_dist:
-                closest_bot, closest_dist = bot, dist
+    def opponent_with_ball(ball, their_robots, our_robots):
+        c_dist = float('inf')
+        c_bot = None
+        for bot in their_robots:
+            if bot.visible:
+                dist = distance(ball.pos, bot.pos)
+                if dist < c_dist:
+                    c_bot = bot
+                    c_dist = dist
+        for bot in our_robots:
+            if bot.visible:
+                dist = distance(ball.pos, bot.pos)
+                if dist < c_dist:
+                    return None
+        return c_bot
 
-    if closest_bot is None:
-        return None
-    else:
-        if robot_has_ball(closest_bot):
-            return closest_bot
-        else:
-            return None
-        '''
-    	return None
+    def our_robot_with_ball(ball, their_robots, our_robots):
+        c_dist = float('inf')
+        c_bot = None
+        for bot in our_robots:
+            if bot.visible:
+                dist = distance(ball.pos, bot.pos)
+                if dist < c_dist:
+                    c_bot = bot
+                    c_dist = dist
+        for bot in their_robots:
+            if bot.visible:
+                dist = distance(ball.pos, bot.pos)
+                if dist < c_dist:
+                    return None
+        return c_bot
 
-    def our_robot_with_ball(ball):
-        max_dist = float('inf')
-        '''
-        closest_bot, closest_dist = None, float("inf")
-    for bot in main.our_robots():
-        if bot.visible:
-            dist = (bot.pos - main.ball().pos).mag()
-            if dist < closest_dist:
-                closest_bot, closest_dist = bot, dist
-
-    if closest_bot == None:
-        return None
-    else:
-        if robot_has_ball(closest_bot):
-            return closest_bot
-        else:
-            return None
-        '''
-        return None
-
-    def robot_has_ball(ball):
+    def robot_has_ball(ball, robot):
         mouth_half_angle = math.pi / 12
-        
+        mouth_max_dist = 1.13 * (constants.Robot.Radius + constants.Ball.Radius)
+        # Create triangle between bot pos and two points of the mouth
+        A = robot.pos
+        #B = A + [mouth_max_dist * math.cos(
         '''
-    max_dist_from_mouth = 1.13 * (
-        constants.Robot.Radius + constants.Ball.Radius)
 
-    # Create triangle between bot pos and two points of the mouth
     A = robot.pos
     B = A + robocup.Point(
         max_dist_from_mouth * math.cos(robot.angle - mouth_half_angle),
