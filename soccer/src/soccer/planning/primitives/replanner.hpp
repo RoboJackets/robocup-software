@@ -2,7 +2,6 @@
 
 #include <rj_param_utils/param.hpp>
 
-#include "configuration.hpp"
 #include "planning/instant.hpp"
 #include "planning/planning_params.hpp"
 #include "planning/primitives/angle_planning.hpp"

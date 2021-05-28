@@ -1,6 +1,5 @@
 #pragma once
 
-#include <configuration.hpp>
 #include <context.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/topic_names.hpp>
@@ -8,7 +7,6 @@
 #include <rj_param_utils/param.hpp>
 
 #include "control/motion_setpoint.hpp"
-#include "robot.hpp"
 #include "ros_debug_drawer.hpp"
 
 #include <rc-fshare/pid.hpp>
@@ -35,11 +33,7 @@ class MotionControlTest;
 /**
  * @brief Handles computer-side motion control
  * @details This class handles the details of creating velocity commands for a
- *     robot given the desired path to follow.  It is responsible for most of
- *     what gets sent out in a RadioTx packet. The MotionControl object is given
- *     an OurRobot at initialization and from then on will set the values in
- *     that robot's RadioTx packet directly whenever run() or stopped() is
- *     called.
+ *     robot given the desired path to follow.
  */
 class MotionControl {
 public:
@@ -90,7 +84,6 @@ private:
     Pid angle_controller_;
 
     rj_drawing::RosDebugDrawer drawer_;
-    RobotConfig* config_{};
 
     GameState::State game_state_ = GameState::State::Halt;
 

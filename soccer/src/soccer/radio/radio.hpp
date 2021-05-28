@@ -11,7 +11,7 @@
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_param_utils/param.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
@@ -55,7 +55,7 @@ private:
     std::array<rj_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;
     std::array<RJ::Time, kNumShells> last_updates_ = {};
 
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace radio

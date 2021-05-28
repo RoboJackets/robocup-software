@@ -10,7 +10,6 @@
 #include "planning/planner/path_target_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
 #include "planning/planner/settle_planner.hpp"
-#include "robot.hpp"
 
 namespace planning {
 

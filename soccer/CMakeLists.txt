@@ -307,13 +307,6 @@ install(
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(
-        DIRECTORY src/soccer/gameplay
-        DESTINATION share/${CMAKE_PROJECT_NAME}
-        FILES_MATCHING
-        PATTERN "*.py"
-        PATTERN "*.pbk")
-
-install(
         FILES config/realShopField.xml
         DESTINATION share/${CMAKE_PROJECT_NAME}/config
         RENAME soccer-real.cfg)
