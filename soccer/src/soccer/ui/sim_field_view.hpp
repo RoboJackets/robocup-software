@@ -18,6 +18,13 @@ public:
     SimFieldView(QWidget* parent);
     void setup(Context* context, rclcpp::Node* node);
 
+    void dragBall(const rj_geometry::Point& field_pos);
+    void kickBall(const rj_geometry::Point& shot);
+    void dragRobot(const rj_geometry::Pose& field_pose, int robot_id, bool is_blue);
+
+    void dragBall(const QPoint& screen_pos);
+    void dragRobot(const QPoint& screen_pos, int robot_id, bool is_blue);
+
 Q_SIGNALS:
     // Emitted when the user selects a robot.
     // The robot is identified by shell number.
@@ -32,10 +39,6 @@ protected:
     virtual void drawTeamSpace(QPainter& p) override;
 
 private:
-    void dragBall(const QPoint& screen_pos);
-    void kickBall(const rj_geometry::Point& shot);
-    void dragRobot(const QPoint& screen_pos, int robot_id);
-
     // True while a line is being dragged from the ball
     enum { DRAG_NONE = 0, DRAG_PLACE, DRAG_SHOOT } _dragMode;
 

@@ -92,7 +92,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 
         case DRAG_PLACE:
             if (_dragRobot >= 0) {
-                dragRobot(me->pos(), _dragRobot);
+                dragRobot(me->pos(), _dragRobot, _dragRobotBlue);
             } else {
                 dragBall(me->pos());
             }
@@ -105,6 +105,10 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 }
 
 void SimFieldView::dragBall(const QPoint& screen_pos) {
+    dragBall(_screenToWorld * screen_pos);
+}
+
+void SimFieldView::dragBall(const rj_geometry::Point& screen_pos) {
     auto request = std::make_shared<rj_msgs::srv::SimPlacement::Request>();
     request->ball.position.push_back(rj_convert::convert_to_ros(_screenToWorld * screen_pos));
     _sim_placement->async_send_request(request);
@@ -117,12 +121,16 @@ void SimFieldView::kickBall(const rj_geometry::Point& shot) {
     _sim_placement->async_send_request(request);
 }
 
-void SimFieldView::dragRobot(const QPoint& screen_pos, int robot_id) {
+void SimFieldView::dragRobot(const QPoint& screen_pos, int robot_id, bool is_blue) {
+    dragRobot(rj_geometry::Pose(_screenToWorld * screen_pos, 0), robot_id, is_blue);
+}
+
+void SimFieldView::dragRobot(const rj_geometry::Pose& field_pose, int robot_id, bool is_blue) {
     auto request = std::make_shared<rj_msgs::srv::SimPlacement::Request>();
     rj_msgs::msg::RobotPlacement robot;
-    robot.pose.position = rj_convert::convert_to_ros(_screenToWorld * screen_pos);
-    robot.robot_id = _dragRobot;
-    robot.is_blue_team = _dragRobotBlue;
+    robot.pose = rj_convert::convert_to_ros(field_pose);
+    robot.robot_id = robot_id;
+    robot.is_blue_team = is_blue;
     request->robots.emplace_back(robot);
     _sim_placement->async_send_request(request);
 }
