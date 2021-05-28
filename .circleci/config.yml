@@ -71,8 +71,7 @@ jobs:
       - checkout
       - <<: *install_deps
       - run: |
-        source /opt/ros/foxy/setup.sh && source install/setup.bash
-        make pylint
+        source install/setup.bash && make pylint
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
 
