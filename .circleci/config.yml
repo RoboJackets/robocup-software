@@ -70,7 +70,9 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
-      - run: source /opt/ros/foxy/setup.sh && source install/setup.bash && make pylint
+      - run: |
+          source /opt/ros/foxy/setup.sh && source install/setup.bash
+      - run: make pylint
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
 
