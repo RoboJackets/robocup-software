@@ -70,8 +70,7 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
-      - run: |
-        source install/setup.bash && make pylint
+      - run: source install/setup.bash && make pylint
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
 
