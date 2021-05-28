@@ -65,8 +65,8 @@ class Ball:
         nvel = vel / mag
         if mag > 0.18: #vision noise should be thresholded out
             if vel.dot([0, -1]) > 0:	
-                ball_path = [ball.pos, (
-                ball.pos + nvel)]
+                ball_path = [ball.pos[:-1], (
+                ball.pos[:-1] + nvel)]
                 print(ball_path[0], ball_path[1])
                 fudge_factor = 0.15  # TODO: this could be tuned better
                 GoalSegment = [[field.goal_width_m / 2.0 + fudge_factor,
@@ -99,7 +99,7 @@ class Ball:
         ball = rc.ball()
         our_robots = rc.our_robots()
         their_robots = rc.their_robots()
-        return min([distance(ball.pos, rob.pos) for rob in their_robots]) > min([distance(ball.pos, rob.pos) for rob in our_robots])
+        return min([distance(ball.pos[:-1], rob.pos[:-1]) for rob in their_robots]) > min([distance(ball.pos[:-1], rob.pos[:-1]) for rob in our_robots])
         
         '''
         return min([(ball.pos - rob.pos).mag()
@@ -114,7 +114,7 @@ class Ball:
         ball = rc.ball()
         our_robots = rc.our_robots()
         their_robots = rc.their_robots()
-        return min([distance(ball.pos, rob.pos) for rob in their_robots]) * 3 < min([distance(ball.pos, rob.pos) for rob in our_robots])
+        return min([distance(ball.pos[:-1], rob.pos[:-1]) for rob in their_robots]) * 3 < min([distance(ball.pos[:-1], rob.pos[:-1]) for rob in our_robots])
 
     def moving_slow(ball):
         vel = sqrt(ball.vel()[0]**2 + ball.vel()[1]**2)
@@ -183,8 +183,18 @@ class Ball:
         mouth_half_angle = math.pi / 12
         mouth_max_dist = 1.13 * (constants.Robot.Radius + constants.Ball.Radius)
         # Create triangle between bot pos and two points of the mouth
-        A = robot.pos
-        #B = A + [mouth_max_dist * math.cos(
+        A = robot.pos[:-1]
+        B = A + [mouth_max_dist * math.cos(robot.pos[-1] - mouth_half_angle), mouth_max_dist * math.sin(robot.pos[-1] - mouth_half_angle)]
+        C = A + [mouth_max_dist * math.cos(robot.pos[-1] + mouth_half_angle), mouth_max_dist * math.sin(robot.pos[-1] + mouth_half_angle)]
+        D = ball.pos
+        
+        # Barycentric coordinates to solve whether the ball is in that triangle
+        area = 0.5 * (-B[1] * C[0] + A[1] * (-B[0] + C[0]) + A[0] *
+                  (B[1] - C[1]) + B[0] * C[1])
+        s = 1 / (2 * area) * (A[1] * C[0] - A[0] * C[1] + (C[1] - A[1]) * D[0] +
+                          (A[0] - C[0]) * D[1])
+        t = 1 / (2 * area) * (A[0] * B[1] - A[1] * B[0] + (A[1] - B[1]) * D[0] +
+                          (B[0] - A[0]) * D[1])
         '''
 
     A = robot.pos
