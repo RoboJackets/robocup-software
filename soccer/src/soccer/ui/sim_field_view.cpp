@@ -129,14 +129,7 @@ void SimFieldView::dragRobot(const QPoint& screen_pos, int robot_id) {
 
 void SimFieldView::mouseReleaseEvent(QMouseEvent* /*me*/) {
     if (_dragMode == DRAG_SHOOT) {
-        grSim_Packet simPacket;
-        grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
-
-        ball_replace->set_vx(_teamToWorld.transform_direction(_shot).x());
-        ball_replace->set_vy(_teamToWorld.transform_direction(_shot).y());
-        context_->grsim_command = simPacket;
         kickBall(_shot);
-
         update();
     }
 
