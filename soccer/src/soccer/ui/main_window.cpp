@@ -156,13 +156,15 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     // properly
     goalieModel = qobject_cast<const QStandardItemModel*>(_ui.goalieID->model());
 
+    _node = std::make_shared<rclcpp::Node>("main_window");
+
     // Append short Git hash to the main window title with an asterisk if the
     // current Git index is dirty
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash + (git_version_dirty ? "*" : ""));
 
     // Pass context into fieldview
     // (apparently simfieldview is used even outside of simulation)
-    _ui.fieldView->setContext(context_);
+    _ui.fieldView->setup(context_, _node.get());
 
     if (!_game_settings.simulation) {
         _ui.menu_Simulator->setEnabled(false);
@@ -180,7 +182,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     //_ui.actionResetField->setEnabled(false);
     _ui.actionStopRobots->setEnabled(false);
 
-    _node = std::make_shared<rclcpp::Node>("main_window");
     _quick_commands_srv =
         _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
     _quick_restart_srv =

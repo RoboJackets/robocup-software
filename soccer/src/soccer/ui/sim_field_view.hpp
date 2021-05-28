@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include <context.hpp>
+#include <rj_msgs/srv/sim_placement.hpp>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/grSim_Replacement.pb.h>
-
-#include <context.hpp>
 
 #include "field_view.hpp"
 
@@ -15,8 +15,8 @@ class SimFieldView : public FieldView {
     Q_OBJECT;
 
 public:
-    SimFieldView(QWidget* parent = nullptr);
-    void setContext(Context* context);
+    SimFieldView(QWidget* parent);
+    void setup(Context* context, rclcpp::Node* node);
 
 Q_SIGNALS:
     // Emitted when the user selects a robot.
@@ -32,6 +32,9 @@ protected:
     virtual void drawTeamSpace(QPainter& p) override;
 
 private:
+    void dragBall(const QPoint& screen_pos);
+    void kickBall(const rj_geometry::Point& shot);
+    void dragRobot(const QPoint& screen_pos, int robot_id);
 
     // True while a line is being dragged from the ball
     enum { DRAG_NONE = 0, DRAG_PLACE, DRAG_SHOOT } _dragMode;
@@ -41,4 +44,6 @@ private:
     rj_geometry::Point _dragTo;
     rj_geometry::Point _shot;
     Context* context_{};
+    rclcpp::Node* _node = nullptr;
+    rclcpp::Client<rj_msgs::srv::SimPlacement>::SharedPtr _sim_placement;
 };

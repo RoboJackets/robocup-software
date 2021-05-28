@@ -64,9 +64,6 @@ struct Context {
 
     std::optional<grSim_Packet> grsim_command;
 
-    std::optional<QPointF> ball_command;
-    std::optional<rj_geometry::TransformMatrix> screen_to_world_command;
-
     GameSettings game_settings;
 
     Logs logs;
