@@ -70,6 +70,7 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
+      - <<: *load_workspace
       - run: source /opt/ros/foxy/setup.sh && source install/setup.bash && make pylint
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
@@ -149,7 +150,9 @@ workflows:
       - test-all:
           requires:
             - compile
-      - python-static
+      - python-static:
+          requires:
+            -compile
       - style
       - clang-tidy:
           requires:
