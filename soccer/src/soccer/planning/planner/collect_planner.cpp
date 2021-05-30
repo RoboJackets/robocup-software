@@ -4,7 +4,6 @@
 
 #include <rj_constants/constants.hpp>
 
-#include "configuration.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
@@ -12,50 +11,7 @@
 
 using namespace rj_geometry;
 
-namespace Planning {
-
-REGISTER_CONFIGURABLE(CollectPlanner);
-
-ConfigDouble* CollectPlanner::ball_speed_approach_direction_cutoff;
-ConfigDouble* CollectPlanner::approach_accel_scale_percent;
-ConfigDouble* CollectPlanner::control_accel_scale_percent;
-ConfigDouble* CollectPlanner::approach_dist_target;
-ConfigDouble* CollectPlanner::touch_delta_speed;
-ConfigDouble* CollectPlanner::velocity_control_scale;
-ConfigDouble* CollectPlanner::dist_cutoff_to_control;
-ConfigDouble* CollectPlanner::vel_cutoff_to_control;
-ConfigDouble* CollectPlanner::dist_cutoff_to_approach;
-ConfigDouble* CollectPlanner::stop_dist_scale;
-ConfigDouble* CollectPlanner::target_point_averaging_gain;
-
-void CollectPlanner::create_configuration(Configuration* cfg) {
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    ball_speed_approach_direction_cutoff =
-        new ConfigDouble(cfg, "Capture/Collect/ballSpeedApproachDirectionCutoff", 0.1);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    approach_accel_scale_percent =
-        new ConfigDouble(cfg, "Capture/Collect/approachAccelScalePercent", 0.7);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    control_accel_scale_percent =
-        new ConfigDouble(cfg, "Capture/Collect/controlAccelScalePercent", 0.8);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    approach_dist_target = new ConfigDouble(cfg, "Capture/Collect/approachDistTarget", 0.04);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    touch_delta_speed = new ConfigDouble(cfg, "Capture/Collect/touchDeltaSpeed", 0.1);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    velocity_control_scale = new ConfigDouble(cfg, "Capture/Collect/velocityControlScale", 1);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    dist_cutoff_to_control = new ConfigDouble(cfg, "Capture/Collect/distCutoffToControl", 0.05);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    vel_cutoff_to_control = new ConfigDouble(cfg, "Capture/Collect/velCutoffToControl", 1);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    dist_cutoff_to_approach = new ConfigDouble(cfg, "Capture/Collect/distCutoffToApproach", 0.3);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    stop_dist_scale = new ConfigDouble(cfg, "Capture/Collect/stopDistScale", 1);
-    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    target_point_averaging_gain =
-        new ConfigDouble(cfg, "Capture/Collect/targetPointAveragingGain", 0.8);
-}
+namespace planning {
 
 Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
     BallState ball = plan_request.world_state->ball;
@@ -125,13 +81,13 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
         average_ball_vel_ = ball.velocity;
         average_ball_vel_initialized_ = true;
     } else {
-        average_ball_vel_ = *target_point_averaging_gain * average_ball_vel_ +
-                            (1 - *target_point_averaging_gain) * ball.velocity;
+        average_ball_vel_ = collect::PARAM_target_point_lowpass_gain * average_ball_vel_ +
+                            (1 - collect::PARAM_target_point_lowpass_gain) * ball.velocity;
     }
 
     // Approach direction is the direction we move towards the ball and through
     // it
-    if (ball.velocity.mag() < *ball_speed_approach_direction_cutoff) {
+    if (ball.velocity.mag() < collect::PARAM_ball_speed_approach_direction_cutoff) {
         // Move directly to the ball
         approach_direction_ = (ball.position - start_instant.position()).norm();
     } else {
@@ -166,7 +122,7 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
 
 void CollectPlanner::check_solution_validity(BallState ball, RobotInstant start) {
     bool near_ball = (ball.position - start.position()).mag() <
-                     *dist_cutoff_to_approach + *dist_cutoff_to_control;
+                     collect::PARAM_dist_cutoff_to_approach + collect::PARAM_dist_cutoff_to_control;
 
     // Check if we need to go back into approach
     //
@@ -181,19 +137,20 @@ void CollectPlanner::check_solution_validity(BallState ball, RobotInstant start)
 void CollectPlanner::process_state_transition(BallState ball, RobotInstant start_instant) {
     // Do the transitions
     double dist = (start_instant.position() - ball.position).mag() - kRobotMouthRadius;
-    double speed_diff =
-        (start_instant.linear_velocity() - average_ball_vel_).mag() - *touch_delta_speed;
+    double speed_diff = (start_instant.linear_velocity() - average_ball_vel_).mag() -
+                        collect::PARAM_touch_delta_speed;
 
     // If we are in range to the slow dist
-    if (dist < *approach_dist_target + kRobotMouthRadius && current_state_ == CourseApproach) {
+    if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
+        current_state_ == CourseApproach) {
         current_state_ = FineApproach;
     }
 
     // If we are close enough to the target point near the ball
     // and almost the same speed we want, start slowing down
     // TODO(#1518): Check for ball sense?
-    if (dist < *dist_cutoff_to_control && speed_diff < *vel_cutoff_to_control &&
-        current_state_ == FineApproach) {
+    if (dist < collect::PARAM_dist_cutoff_to_control &&
+        speed_diff < collect::PARAM_vel_cutoff_to_control && current_state_ == FineApproach) {
         current_state_ = Control;
     }
 }
@@ -220,13 +177,15 @@ Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, Robo
 
     // Setup targets for path planner
     Point target_slow_pos =
-        ball.position - (*approach_dist_target + kRobotMouthRadius) * approach_direction_;
-    Point target_slow_vel = average_ball_vel_ + approach_direction_ * *touch_delta_speed;
+        ball.position -
+        (collect::PARAM_approach_dist_target + kRobotMouthRadius) * approach_direction_;
+    Point target_slow_vel =
+        average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
 
     // Force the path to use the same target if it doesn't move too much
     if (!path_coarse_target_initialized_ ||
         (path_coarse_target_ - target_slow_pos).mag() >
-            (*approach_dist_target - *dist_cutoff_to_control) / 2) {
+            (collect::PARAM_approach_dist_target - collect::PARAM_dist_cutoff_to_control) / 2) {
         path_coarse_target_ = target_slow_pos;
     }
 
@@ -241,7 +200,7 @@ Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, Robo
     Trajectory coarse_path = Replanner::create_plan(params, previous_);
 
     if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_line(
+        plan_request.debug_drawer->draw_segment(
             Segment(start.position(),
                     start.position() + Point::direction(AngleFns::face_point(ball.position)(
                                            start.linear_motion(), start.heading(), nullptr))));
@@ -278,12 +237,13 @@ Trajectory CollectPlanner::fine_approach(
 
     // Setup targets for path planner
     Point target_hit_pos = ball.position - kRobotMouthRadius * approach_direction_;
-    Point target_hit_vel = average_ball_vel_ + approach_direction_ * *touch_delta_speed;
+    Point target_hit_vel =
+        average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
 
     LinearMotionInstant target_hit{target_hit_pos, target_hit_vel};
 
     // Decrease accel at the end so we more smoothly touch the ball
-    motion_constraints_hit.max_acceleration *= *approach_accel_scale_percent;
+    motion_constraints_hit.max_acceleration *= collect::PARAM_approach_accel_scale;
     // Prevent a last minute accel at the end if the approach dist allows for
     // acceleration in the trapezoid
     motion_constraints_hit.max_speed =
@@ -298,7 +258,7 @@ Trajectory CollectPlanner::fine_approach(
     path_hit.stamp(RJ::now());
 
     if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_line(
+        plan_request.debug_drawer->draw_segment(
             Segment(start_instant.position(),
                     start_instant.position() +
                         Point::direction(AngleFns::face_point(ball.position)(
@@ -333,34 +293,36 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
     //
     // If the ball is moving towards us (like receiving a pass) just move
     // forward at touch_delta_speed
-    double current_speed = average_ball_vel_.mag() + *touch_delta_speed;
+    double current_speed = average_ball_vel_.mag() + collect::PARAM_touch_delta_speed;
 
-    double velocity_scale = *velocity_control_scale;
+    double velocity_scale = collect::PARAM_velocity_control_scale;
 
     // Moving at us
     if (average_ball_vel_.angle_between((ball.position - start.position())) > 3.14 / 2) {
-        current_speed = *touch_delta_speed;
+        current_speed = collect::PARAM_touch_delta_speed;
         velocity_scale = 0;
     }
 
-    motion_constraints.max_acceleration *= *control_accel_scale_percent;
+    motion_constraints.max_acceleration *= collect::PARAM_control_accel_scale;
     motion_constraints.max_speed = std::min(current_speed, motion_constraints.max_speed);
 
     // Using the current velocity
     // Calculate stopping distance given the acceleration
     double max_accel = motion_constraints.max_acceleration;
 
-    double non_zero_vel_time_delta = *approach_dist_target / *touch_delta_speed;
+    double non_zero_vel_time_delta =
+        collect::PARAM_approach_dist_target / collect::PARAM_touch_delta_speed;
 
     // Assuming const accel going to zero velocity
     // speed / accel gives time to stop
     // speed / 2 is average speed over entire operation
-    double stopping_dist = *approach_dist_target + current_speed * current_speed / (2 * max_accel);
+    double stopping_dist =
+        collect::PARAM_approach_dist_target + current_speed * current_speed / (2 * max_accel);
 
     // Move through the ball some distance
     // The initial part will be at a constant speed, then it will decelerate to
     // 0 m/s
-    double dist_from_ball = *stop_dist_scale * stopping_dist;
+    double dist_from_ball = collect::PARAM_stop_dist_scale * stopping_dist;
 
     Point target_pos = start.position() + dist_from_ball * (ball.position - start.position() +
                                                             velocity_scale * average_ball_vel_ *
@@ -375,9 +337,9 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
                                       start.stamp, static_obstacles, dynamic_obstacles);
 
     if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_line(
+        plan_request.debug_drawer->draw_segment(
             Segment(start.position(), start.position() + (target.position - start.position()) * 10),
-            QColor(255, 255, 255), "Control");
+            QColor(255, 255, 255));
     }
 
     if (path.empty()) {
@@ -393,7 +355,7 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
     plan_angles(&path, start, AngleFns::face_point(face_pt), robot_constraints.rot);
 
     if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_line(
+        plan_request.debug_drawer->draw_segment(
             Segment(start.position(),
                     start.position() + Point::direction(AngleFns::face_point(face_pt)(
                                            start.linear_motion(), start.heading(), nullptr))));
@@ -432,4 +394,4 @@ void CollectPlanner::reset() {
     path_coarse_target_initialized_ = false;
 }
 
-}  // namespace Planning
+}  // namespace planning

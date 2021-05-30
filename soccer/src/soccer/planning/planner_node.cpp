@@ -1,9 +1,9 @@
 #include "planner_node.hpp"
 
 #include <rj_constants/topic_names.hpp>
+#include <ros_debug_drawer.hpp>
 
 #include "instant.hpp"
-#include "robot.hpp"
 #include "planning/planner/collect_planner.hpp"
 #include "planning/planner/escape_obstacles_path_planner.hpp"
 #include "planning/planner/line_kick_planner.hpp"
@@ -11,92 +11,24 @@
 #include "planning/planner/pivot_path_planner.hpp"
 #include "planning/planner/settle_planner.hpp"
 
-namespace Planning {
+namespace planning {
 
-PlannerNode::PlannerNode(Context* context) : context_(context) {
-    robots_planners_.resize(kNumShells);
-
-    world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
-        "planner_node_game_state_sub", vision_filter::topics::kWorldStatePub);
-}
-
-using namespace rj_geometry;
-void PlannerNode::run() {
-    const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
-    if (world_state_msg == nullptr) {
-        return;
-    }
-
-    const WorldState world_state = rj_convert::convert_from_ros(*world_state_msg);
-    const ShapeSet& global_obstacles = context_->global_obstacles;
-    const ShapeSet& goal_zones = context_->goal_zone_obstacles;
-    const auto& robot_intents = context_->robot_intents;
-    DebugDrawer* debug_drawer = &context_->debug_drawer;
-    auto* trajectories = &context_->trajectories;
-    int goalie_id = context_->our_info.goalie;
-
-    if (context_->game_state.state == GameState::Halt) {
-        context_->trajectories.fill(Trajectory());
-        return;
-    }
-
-    std::array<Trajectory*, kNumShells> planned{};
-
-    // Sort the robots by priority
-    std::array<int, kNumShells> shells{};
+PlannerNode::PlannerNode() : rclcpp::Node("planner"), param_provider_{this, kPlanningParamModule} {
+    robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
-        shells[i] = i;
-    }
-    std::sort(shells.begin(), shells.end(), [&](int a, int b) {
-        return robot_intents.at(a).priority > robot_intents.at(b).priority;
-    });
-
-    for (int i = 0; i < kNumShells; i++) {
-        unsigned int shell = shells.at(i);
-        const auto& robot = world_state.our_robots.at(shell);
-        const auto& intent = robot_intents.at(shell);
-
-        if (!robot.visible) {
-            // For invalid robots, early return with an empty path.
-            trajectories->at(shell) = Trajectory();
-            planned.at(shell) = &trajectories->at(shell);
-            continue;
-        }
-
-        RobotInstant start{robot.pose, robot.velocity, robot.timestamp};
-
-        ShapeSet local_obstacles = intent.local_obstacles;
-        if (goalie_id != shell) {
-            local_obstacles.add(goal_zones);
-        }
-
-        if (debug_drawer != nullptr) {
-            for (const auto& shape : local_obstacles.shapes()) {
-                debug_drawer->draw_shape(shape, QColor(0, 0, 0, 16));
-            }
-        }
-
-        // TODO(#1500): Put motion constraints in intent.
-        PlanRequest request{start,
-                            intent.motion_command,
-                            RobotConstraints(),
-                            global_obstacles,
-                            local_obstacles,
-                            planned,
-                            shell,
-                            &world_state,
-                            intent.priority,
-                            debug_drawer};
-
-        Trajectory trajectory = robots_planners_.at(shell).plan_for_robot(request);
-        trajectory.draw(&context_->debug_drawer);
-        trajectories->at(shell) = std::move(trajectory);
-
-        planned.at(shell) = &trajectories->at(shell);
+        auto planner = std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_);
+        robots_planners_.emplace_back(std::move(planner));
     }
 }
 
-PlannerForRobot::PlannerForRobot() {
+PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
+                                 TrajectoryCollection* robot_trajectories)
+    : node_{node},
+      robot_id_{robot_id},
+      robot_trajectories_{robot_trajectories},
+      debug_draw_{
+          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
+          "planning"} {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
@@ -105,9 +37,74 @@ PlannerForRobot::PlannerForRobot() {
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
+
+    // Set up ROS
+    trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
+        planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
+    intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
+        gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
+        [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT
+            auto plan_request = make_request(rj_convert::convert_from_ros(*intent));
+            auto trajectory = plan_for_robot(plan_request);
+            trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+            robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
+                                     intent->priority);
+        });
+    world_state_sub_ = node_->create_subscription<WorldState::Msg>(
+        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
+        [this](WorldState::Msg::SharedPtr world_state) {  // NOLINT
+            auto robots = world_state->our_robots;
+            latest_world_state_ = rj_convert::convert_from_ros(*world_state);
+        });
+    global_obstacles_sub_ = node_->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
+        planning::topics::kGlobalObstaclesPub, rclcpp::QoS(1).transient_local(),
+        [this](rj_geometry::ShapeSet::Msg::SharedPtr global_obstacles) {  // NOLINT
+            global_obstacles_ = rj_convert::convert_from_ros(*global_obstacles);
+        });
+    goal_zone_obstacles_sub_ = node_->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
+        planning::topics::kGoalZoneObstacles, rclcpp::QoS(1).transient_local(),
+        [this](rj_geometry::ShapeSet::Msg::SharedPtr goal_zone_obstacles) {  // NOLINT
+            goal_zone_obstacles_ = rj_convert::convert_from_ros(*goal_zone_obstacles);
+        });
+    goalie_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
+        planning::topics::kGoalZoneObstacles, rclcpp::QoS(1).transient_local(),
+        [this](rj_msgs::msg::Goalie::SharedPtr goalie) {  // NOLINT
+            is_goalie_ = (robot_id_ == goalie->goalie_id);
+        });
 }
 
-Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request) {
+PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
+    const auto& robot = latest_world_state_.our_robots.at(robot_id_);
+    const auto& start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
+    rj_geometry::ShapeSet obstacles = global_obstacles_;
+    if (!is_goalie_) {
+        obstacles.add(goal_zone_obstacles_);
+    }
+
+    const auto robot_trajectories_hold = robot_trajectories_->get();
+    std::array<const Trajectory*, kNumShells> planned_trajectories = {};
+
+    for (int i = 0; i < kNumShells; i++) {
+        const auto& [trajectory, priority] = robot_trajectories_hold.at(i);
+        if (i != robot_id_ && priority >= intent.priority) {
+            planned_trajectories.at(i) = trajectory.get();
+        }
+    }
+
+    RobotConstraints constraints;
+    return PlanRequest{start,
+                       intent.motion_command,
+                       constraints,
+                       global_obstacles_,
+                       intent.local_obstacles,
+                       planned_trajectories,
+                       static_cast<unsigned int>(robot_id_),
+                       &latest_world_state_,
+                       intent.priority,
+                       &debug_draw_};
+}
+
+Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request) {
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
@@ -116,7 +113,6 @@ Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request)
         // If this planner could possibly plan for this command, try to make
         // a plan.
         if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
-            RobotInstant start_instant = request.start;
             trajectory = planner->plan(request);
         }
 
@@ -141,9 +137,17 @@ Trajectory PlannerForRobot::plan_for_robot(const Planning::PlanRequest& request)
         SPDLOG_ERROR("No valid planner! Did you forget to specify a default planner?");
         trajectory = Trajectory{{request.start}};
         trajectory.set_debug_text("Error: No Valid Planners");
+    } else {
+        std::vector<rj_geometry::Point> path;
+        std::transform(trajectory.instants().begin(), trajectory.instants().end(),
+                       std::back_inserter(path),
+                       [](const auto& instant) { return instant.position(); });
+        debug_draw_.draw_path(path);
     }
+
+    debug_draw_.publish();
 
     return trajectory;
 }
 
-}  // namespace Planning
+}  // namespace planning

@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include "rj_geometry/pose.hpp"
-#include "system_state.hpp"
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/planner/collect_planner.hpp"
@@ -20,9 +19,9 @@
  * it makes debugging a lot easier
  */
 
-using namespace Planning;
+using namespace planning;
 using namespace rj_geometry;
-using namespace Planning::TestingUtils;
+using namespace planning::TestingUtils;
 
 TEST(Planning, path_target_random) {
     std::mt19937 gen(1337);

@@ -2,14 +2,11 @@
 
 #include <rj_constants/constants.hpp>
 
-#include "configuration.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
-#include "planning/primitives/rrt_util.hpp"
-#include "planning/primitives/velocity_profiling.hpp"
 
-namespace Planning {
+namespace planning {
 
 Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     InterceptCommand command = std::get<InterceptCommand>(plan_request.motion_command);
@@ -81,4 +78,4 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-}  // namespace Planning
+}  // namespace planning

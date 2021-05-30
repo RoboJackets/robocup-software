@@ -10,7 +10,7 @@ class BaseSkill(skill.ISkill):
     def define(self):
         pass
 
-    def create_request(self) -> role.RoleRequest:
+    def tick(self) -> None:
         pass
 
 

@@ -1,10 +1,8 @@
 #pragma once
 
 #include "planner.hpp"
-class Configuration;
-class ConfigDouble;
 
-namespace Planning {
+namespace planning {
 
 /**
  * Planner which tries to intercept the path ball as quickly as possible
@@ -21,4 +19,4 @@ public:
 
     Trajectory plan(const PlanRequest& request) override;
 };
-}  // namespace Planning
+}  // namespace planning

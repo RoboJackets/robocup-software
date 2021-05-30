@@ -4,9 +4,81 @@ import numpy as np
 
 from typing import List
 
-def robotstate_to_robot(robot_msg: msg._robot_state.RobotState, index: int) -> rc.Robot:
+RobotId = int
+
+class RobotStatus():
     """
-        :return: robot class representing the state of the robot.
+    A class to contain the information from the robot status messsage
+    """
+
+    __slots = [
+        "robot_id", "has_ball_sense", "kicker_charged",
+        "kicker_healthy", "lethal_fault"
+    ]
+
+    robot_id: RobotId
+    visible: bool
+    has_ball_sense: bool
+    kicker_charged: bool
+    kicker_healthy: bool
+    lethal_fault: bool
+
+    def __init__(self, robot_id: RobotId = None,
+                 has_ball_sense: bool = None, kicker_charged: bool = None,
+                 kicker_healthy: bool = None, lethal_fault: bool = None):
+        
+        self.robot_id = robot_id
+        self.has_ball_sense = has_ball_sense
+        self.kicker_charged = kicker_charged
+        self.kicker_healthy = kicker_healthy
+        self.lethal_fault = lethal_fault
+
+class RobotState():
+    """
+    A class to contain the infomration from the robot state message
+    """
+
+    __slots = [
+        "id", "pose", "twist",
+        "visible"
+    ]
+
+    id: RobotId
+    pose: np.ndarray
+    twist: np.ndarray
+    visible: bool
+
+    def __init__(self, robot_id: RobotId, pose: np.ndarray,
+                 twist: np.ndarray, visible: bool):
+
+        self.id = robot_id
+        self.pose = pose
+        self.twist = twist
+        self.visible = visible
+
+class PartialWorldState():
+    """
+    A class that contains all the ball, and robot states
+    """
+
+    __slots = [
+        "our_robots", "their_robots", "ball"
+    ]
+
+    our_robots: List[RobotState]
+    their_robots: List[RobotState]
+    ball: rc.Ball
+
+    def __init__(self, our_robots: List[rc.Robot], their_robots: List[rc.Robot],
+                 ball: rc.Ball):
+
+        self.our_robots = our_robots
+        self.their_robots = their_robots
+        self.ball = ball
+
+def robotstate_to_partial_robot(robot_msg: msg.RobotState, index: int) -> RobotState:
+    """
+        :return: robot state class representing the state of the robot, partially representing the larger Robot class.
     """
     robot_id = index
 
@@ -20,14 +92,32 @@ def robotstate_to_robot(robot_msg: msg._robot_state.RobotState, index: int) -> r
     dtheta = robot_msg.velocity.angular
     twist = np.array([dx,dy,dtheta])
 
-    has_ball: bool
-    has_ball = None
+    is_visible = robot_msg.visible
 
-    robot = rc.Robot(robot_id, pose, twist, has_ball)
+    robot = RobotState(robot_id, pose, twist, is_visible)
 
     return robot
 
-def ballstate_to_ball(ball_msg: msg._ball_state.BallState) -> rc.Ball:
+def robotstatus_to_partial_robot(robot_msg: msg.RobotStatus) -> RobotStatus:
+    """
+        :return: robot status class representing the status of the robot, partially representing the larger Robot class.
+    """
+    robot_id = robot_msg.robot_id
+
+    ball_sense = robot_msg.has_ball_sense
+
+    kicker_charged = robot_msg.kicker_charged
+
+    kicker_healthy = robot_msg.kicker_healthy
+
+    lethal_fault = robot_msg.fpga_error
+
+    robot = RobotStatus(robot_id, ball_sense, kicker_charged, kicker_healthy, lethal_fault)
+
+    return robot
+
+
+def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
     """
         :return: ball class representing the state of the ball.
     """
@@ -39,29 +129,130 @@ def ballstate_to_ball(ball_msg: msg._ball_state.BallState) -> rc.Ball:
     dy = ball_msg.velocity.y
     vel = np.array([dx,dy])
 
-    ball = rc.Ball(pos,vel)
+    visible = ball_msg.visible
+
+    ball = rc.Ball(pos,vel, visible)
 
     return ball
 
-def worldstate_message_converter(msg: msg.WorldState) -> rc.WorldState:
+def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
     """
-        :return: world state class representing the state of the world.
+        :return: GameInfo class from rc.py
     """
-    our_robots: List[rc.Robot]
+
+    period = game_state_msg.period
+
+    state = game_state_msg.state
+
+    restart = game_state_msg.restart
+
+    our_restart = game_state_msg.our_restart
+
+    game_info = rc.GameInfo(period, state, restart, our_restart)
+
+    return game_info
+
+def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
+    """
+        :return: Field class from rc.py
+    """
+
+    length = field_msg.length
+    width = field_msg.width
+    border = field_msg.border
+    line_width = field_msg.line_width
+    goal_width = field_msg.goal_width
+    goal_depth = field_msg.goal_depth
+    goal_height = field_msg.goal_height
+    penalty_short_dist = field_msg.penalty_short_dist
+    penalty_long_dist = field_msg.penalty_long_dist
+    center_radius = field_msg.center_radius
+    center_diameter = field_msg.center_diameter
+    goal_flat = field_msg.goal_flat
+    floor_length = field_msg.floor_length
+    floor_width = field_msg.floor_width
+
+    field = rc.Field(length, width, border, line_width, goal_width, goal_depth, goal_height,
+        penalty_short_dist, penalty_long_dist, center_radius, center_diameter, goal_flat, floor_length, floor_width)
+
+    return field
+
+def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
+    """
+        :return: partial world state class representing the state of the robots and ball.
+    """
+    our_robots: List[RobotState]
     our_robots = []
 
-    their_robots: List[rc.Robot]
+    their_robots: List[RobotState]
     their_robots = []
 
     for i in range(len(msg.our_robots)):
-        our_robots.append(robotstate_to_robot(msg.our_robots[i], i))
+        our_robots.append(robotstate_to_partial_robot(msg.our_robots[i], i))
 
     for i in range(len(msg.their_robots)):
-        our_robots.append(robotstate_to_robot(msg.their_robots[i], i))
+        their_robots.append(robotstate_to_partial_robot(msg.their_robots[i], i))
 
     ball = ballstate_to_ball(msg.ball)
 
-    world_state = rc.WorldState(our_robots, their_robots, ball)
+    world_state = PartialWorldState(our_robots, their_robots, ball)
+
+    return world_state
+
+def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robot:
+    """
+    A function which combines the robot state and robot status to create a rc.Robot class
+        :return: Robot class from rc.Robot representing the status and state of the robot
+    """
+
+    if robot_status is None:
+        is_ours = False
+        robot_id = robot_state.id
+        ball_sense = False
+        kicker_charged = False
+        kicker_healthy = False
+        lethal_fault = False
+    else:
+        is_ours = True
+        robot_id = robot_state.id
+        ball_sense = robot_status.has_ball_sense
+        kicker_charged = robot_status.kicker_charged
+        kicker_healthy = robot_status.kicker_healthy
+        lethal_fault = robot_status.lethal_fault
+    pose = robot_state.pose
+    twist = robot_state.twist
+    is_visible = robot_state.visible
+
+    robot = rc.Robot(robot_id, is_ours, pose, twist, is_visible, ball_sense, kicker_charged,
+        kicker_healthy, lethal_fault)
+
+    return robot
+
+
+
+def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: List[RobotStatus], game_info: rc.GameInfo, field: rc.Field) -> rc.WorldState:
+    """
+    A function which combines the partial world state, robot statuses, game info, and field to create a whole world state
+        :return: a world state as a rc.WorldState object
+    """
+
+    our_partial_robots = partial_world_state.our_robots
+    their_partial_robots = partial_world_state.their_robots
+    our_robots = []
+    their_robots = []
+
+    for i in range(len(our_partial_robots)):
+        robot = robot_creator(our_partial_robots[i], robot_statuses[i])
+        our_robots.append(robot)
+
+    for partial_bot in their_partial_robots:
+        robot = robot_creator(partial_bot, None)
+        their_robots.append(robot)
+
+    if game_info is None:
+        game_info = None
+
+    world_state = rc.WorldState(our_robots, their_robots, partial_world_state.ball, game_info, field)
 
     return world_state
     

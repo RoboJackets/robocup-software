@@ -1,3 +1,5 @@
+builtin_interfaces/Time timestamp
+
 uint8 robot_id
 float64 battery_voltage
 bool[5] motor_errors

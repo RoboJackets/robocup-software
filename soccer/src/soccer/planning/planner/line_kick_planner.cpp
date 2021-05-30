@@ -1,17 +1,16 @@
 #include "line_kick_planner.hpp"
 
-#include <configuration.hpp>
 #include <rj_geometry/util.hpp>
-#include <motion/trapezoidal_motion.hpp>
 
+#include "control/trapezoidal_motion.hpp"
 #include "escape_obstacles_path_planner.hpp"
-#include "planning/trajectory_utils.hpp"
 #include "planning/primitives/create_path.hpp"
+#include "planning/trajectory_utils.hpp"
 
 using namespace std;
 using namespace rj_geometry;
 
-namespace Planning {
+namespace planning {
 
 Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     const float approach_speed = 0.25;
@@ -237,4 +236,4 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     return path;
 }
 
-}  // namespace Planning
+}  // namespace planning

@@ -18,36 +18,23 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_topic_utils/async_message_queue.hpp>
+#include <ros2_temp/autonomy_interface.hpp>
 #include <ros2_temp/debug_draw_interface.hpp>
 #include <ros2_temp/raw_vision_packet_sub.hpp>
 #include <ros2_temp/referee_sub.hpp>
 #include <ros2_temp/soccer_config_client.hpp>
-#include <system_state.hpp>
 
 #include "context.hpp"
 #include "gr_sim_communicator.hpp"
-#include "joystick/manual_control_node.hpp"
-#include "joystick/sdl_joystick_node.hpp"
-#include "motion/motion_control_node.hpp"
 #include "node.hpp"
-#include "planning/planner_node.hpp"
-#include "radio/radio.hpp"
-#include "radio/radio_node.hpp"
 
 #include "rc-fshare/rtp.hpp"
 
-class Configuration;
-class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
-class Radio;
 
 namespace Gameplay {
 class GameplayModule;
-}
-
-namespace Planning {
-class MultiRobotPathPlanner;
 }
 
 /**
@@ -76,8 +63,6 @@ public:
         RJ::Time last_radio_rx_time;
     };
 
-    static void create_configuration(Configuration* cfg);
-
     Processor(bool sim, bool blue_team, const std::string& read_log_file = "");
     virtual ~Processor();
 
@@ -86,8 +71,6 @@ public:
     std::shared_ptr<Gameplay::GameplayModule> gameplay_module() const {
         return gameplay_module_;
     }
-
-    SystemState* state() { return &context_.state; }
 
     Status status() {
         std::lock_guard lock(status_mutex_);
@@ -109,16 +92,12 @@ public:
 
     std::mutex* loop_mutex() { return &loop_mutex_; }
 
-    Radio* radio() { return radio_->get_radio(); }
-
     /**
      * Stops all robots by clearing their intents and setpoints
      */
     void stop_robots();
 
     void set_field_dimensions(const FieldDimensions& dims);
-
-    bool is_radio_open() const;
 
     bool is_initialized() const;
 
@@ -127,13 +106,6 @@ public:
     void run();
 
 private:
-    // Configuration for the robot.
-    // TODO(Kyle): Add back in configuration values for different years.
-    static std::unique_ptr<RobotConfig> robot_config_init;
-
-    // per-robot status configs
-    static std::vector<RobotLocalConfig*> robot_statuses;
-
     /**
      * Updates the intent.active for each robot.
      *
@@ -170,12 +142,7 @@ private:
 
     // modules
     std::shared_ptr<Gameplay::GameplayModule> gameplay_module_;
-    std::unique_ptr<MotionControlNode> motion_control_;
-    std::unique_ptr<Planning::PlannerNode> planner_node_;
-    std::unique_ptr<RadioNode> radio_;
     std::unique_ptr<GrSimCommunicator> gr_sim_com_;
-    std::unique_ptr<joystick::SDLJoystickNode> sdl_joystick_node_;
-    std::unique_ptr<joystick::ManualControlNode> manual_control_node_;
     std::unique_ptr<Logger> logger_;
 
     std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> ros_executor_;
@@ -191,6 +158,7 @@ private:
     std::unique_ptr<ros2_temp::RawVisionPacketSub> raw_vision_packet_sub_;
     std::unique_ptr<ros2_temp::RefereeSub> referee_sub_;
     std::unique_ptr<ros2_temp::DebugDrawInterface> debug_draw_sub_;
+    std::unique_ptr<ros2_temp::AutonomyInterface> autonomy_interface_;
 
     std::vector<Node*> nodes_;
 

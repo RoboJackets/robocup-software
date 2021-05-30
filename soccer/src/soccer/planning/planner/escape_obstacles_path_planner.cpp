@@ -3,27 +3,14 @@
 #include <optional>
 #include <vector>
 
-#include <configuration.hpp>
-
+#include "planning/planning_params.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
-#include "planning/primitives/rrt_util.hpp"
 #include "planning/primitives/robo_cup_state_space.hpp"
+#include "planning/primitives/rrt_util.hpp"
 
 using namespace rj_geometry;
-namespace Planning {
-
-REGISTER_CONFIGURABLE(EscapeObstaclesPathPlanner);
-
-ConfigDouble* EscapeObstaclesPathPlanner::step_size_config;
-ConfigDouble* EscapeObstaclesPathPlanner::goal_change_threshold;
-
-void EscapeObstaclesPathPlanner::create_configuration(Configuration* cfg) {
-    step_size_config =
-        new ConfigDouble(cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
-    goal_change_threshold = new ConfigDouble(
-        cfg, "PathPlanner/EscapeObstaclesPathPlanner/goalChangeThreshold", kRobotRadius);
-}
+namespace planning {
 
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
@@ -91,7 +78,7 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
         // at least a certain threshold
         float old_dist = (*prev_goal - goal).mag();
         float new_dist = (new_goal - goal).mag();
-        if (new_dist + *goal_change_threshold < old_dist) {
+        if (new_dist + escape::PARAM_goal_change_threshold < old_dist) {
             return new_goal;
         } else {
             return *prev_goal;
@@ -101,4 +88,4 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
     return goal;
 }
 
-}  // namespace Planning
+}  // namespace planning

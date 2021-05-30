@@ -1,12 +1,23 @@
 #include "manual_control_node.hpp"
 
-namespace joystick {
-REGISTER_CONFIGURABLE(ManualControlNode);
+#include "context.hpp"
 
-ConfigDouble* ManualControlNode::joystick_rotation_max_speed;
-ConfigDouble* ManualControlNode::joystick_rotation_max_damped_speed;
-ConfigDouble* ManualControlNode::joystick_translation_max_speed;
-ConfigDouble* ManualControlNode::joystick_translation_max_damped_speed;
+#if 0
+
+namespace joystick {
+
+DEFINE_BOOL(kJoystickModule, use_field_oriented_drive, false, "Whether to use field oriented drive")
+DEFINE_BOOL(kJoystickModule, kick_on_break_beam, false,
+            "Wait for break beam when kick button is held")
+DEFINE_BOOL(kJoystickModule, damped_translation, false, "Move slowly")
+DEFINE_BOOL(kJoystickModule, damped_rotation, false, "Turn slowly")
+DEFINE_INT64(kJoystickModule, manual_robot_id, -1, "Which robot to control manually (temporary)")
+DEFINE_FLOAT64(kJoystickModule, max_rotation_speed, 4.0, "Maximum rotation speed, rad/s")
+DEFINE_FLOAT64(kJoystickModule, max_damped_rotation_speed, 1.0,
+               "Maximum damped rotation speed, rad/s")
+DEFINE_FLOAT64(kJoystickModule, max_translation_speed, 2.0, "Maximum translation speed, m/s")
+DEFINE_FLOAT64(kJoystickModule, max_damped_translation_speed, 0.5,
+               "Maximum damped translation speed, m/s")
 
 ManualControlNode::ManualControlNode(Context* context) : context_{context} {}
 
@@ -30,7 +41,7 @@ void ManualControlNode::run() {
         return;
     }
 
-    const int manual_id = context_->game_settings.joystick_config.manual_id;
+    const int manual_id = PARAM_manual_robot_id;
 
     // Find the robot that we are supposed to control
     const auto pred = [manual_id](const OurRobot* r) { return r->shell() == manual_id; };
@@ -61,11 +72,11 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
     float y_vel = controls_.y_vel;
 
     // Field oriented control
-    if (context_->game_settings.joystick_config.use_field_oriented_drive) {
+    if (PARAM_use_field_oriented_drive) {
         // If robot isn't visible, then stop
         if (!robot->visible()) {
             intent = {};
-            setpoint.clear();
+            setpoint = {};
             return;
         }
 
@@ -86,9 +97,8 @@ void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
 
     // kick/chip
     bool kick = controls_.kick || controls_.chip;
-    intent.trigger_mode = kick ? (context_->game_settings.joystick_config.use_kick_on_break_beam
-                                      ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                                      : RobotIntent::TriggerMode::IMMEDIATE)
+    intent.trigger_mode = kick ? (PARAM_kick_on_break_beam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                                           : RobotIntent::TriggerMode::IMMEDIATE)
                                : RobotIntent::TriggerMode::STAND_DOWN;
 
     // TODO(#1583): The controller should directly work in the (0, max_kick_speed] range
@@ -216,16 +226,16 @@ void ManualControlNode::apply_control_modifiers() {
     trans.clamp(std::sqrt(2.0));
     controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
 
-    if (context_->game_settings.joystick_config.damped_translation) {
-        trans *= joystick_translation_max_damped_speed->value();
+    if (PARAM_damped_translation) {
+        trans *= PARAM_max_damped_translation_speed;
     } else {
-        trans *= joystick_translation_max_speed->value();
+        trans *= PARAM_max_translation_speed;
     }
 
-    if (context_->game_settings.joystick_config.damped_rotation) {
-        trans *= joystick_rotation_max_damped_speed->value();
+    if (PARAM_damped_rotation) {
+        trans *= PARAM_max_damped_rotation_speed;
     } else {
-        trans *= joystick_rotation_max_speed->value();
+        trans *= PARAM_max_rotation_speed;
     }
 
     // Scale up kicker and dribbler speeds
@@ -233,18 +243,8 @@ void ManualControlNode::apply_control_modifiers() {
     controls_.kick_power *= kMaxKick;
 }
 
-void ManualControlNode::create_configuration(Configuration* cfg) {
-    joystick_rotation_max_speed =  // NOLINT
-        new ConfigDouble(cfg, "Joystick/Max Rotation Speed", .5);
-    joystick_rotation_max_damped_speed =  // NOLINT
-        new ConfigDouble(cfg, "Joystick/Max Damped Rotation Speed", .25);
-    joystick_translation_max_speed =  // NOLINT
-        new ConfigDouble(cfg, "Joystick/Max Translation Speed", 3.0);
-    joystick_translation_max_damped_speed =  // NOLINT
-        new ConfigDouble(cfg, "Joystick/Max Damped Translation Speed", 1.0);
-}
-
 void ManualControlNode::update_joystick_valid() const {
     context_->joystick_valid = !gamepad_stack_.empty();
 }
 }  // namespace joystick
+#endif

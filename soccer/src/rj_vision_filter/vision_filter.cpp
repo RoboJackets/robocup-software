@@ -6,7 +6,8 @@
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/vision_filter.hpp>
-#include <robot.hpp>
+
+#include "world_state.hpp"
 
 namespace vision_filter {
 DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 120.0,
@@ -116,7 +117,7 @@ void VisionFilter::predict_states() {
         constexpr int kWarningThrottleMS = 1000;
         EZ_WARN_STREAM_THROTTLE(kWarningThrottleMS,
                                 "Predict is not called fast enough. Iteration took "
-                                    << diff_duration.count() << " seconds, should be "
+                                    << predict_time.count() << " seconds, should be "
                                     << PARAM_vision_loop_dt << ".");
     }
 }
