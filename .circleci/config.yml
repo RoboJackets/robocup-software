@@ -152,7 +152,7 @@ workflows:
             - compile
       - python-static:
           requires:
-            -compile
+            - compile
       - style
       - clang-tidy:
           requires:
