@@ -29,9 +29,10 @@ class Pivot(action.IFiniteAction):
         new_intent.is_active = True
         return new_intent
 
-    def is_done(self, world_state) -> bool:
-        # This is very very rough and results in qute bad turns
-        angle_threshold = np.pi / 18
+    def is_done(self, world_state:rc.WorldState) -> bool:
+        #TODO: Change this when we get action state feedback
+        angle_threshold = 0.65
+        stopped_threshold = 1*10**(-5)
         if self.robot_id is None:
             return False
         robot = world_state.our_robots[self.robot_id]
@@ -40,7 +41,7 @@ class Pivot(action.IFiniteAction):
         target_point_unit = self.target_point / np.linalg.norm(self.target_point)
         dot_product = np.dot(robot_pos_unit, target_point_unit)
         angle = np.arccos(dot_product)
-        if abs(angle - angle_threshold) < angle_threshold:
+        if abs(angle - angle_threshold) < angle_threshold and abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold:
             return True
         else:
             return False

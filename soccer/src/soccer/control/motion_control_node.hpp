@@ -4,7 +4,7 @@
 
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_topic_utils/async_message_queue.hpp>
 
 #include "manipulator_control.hpp"
@@ -23,7 +23,7 @@ public:
     explicit MotionControlNode();
 
 private:
-    ::params::ROS2ParamProvider param_provider_;
+    ::params::LocalROS2ParamProvider param_provider_;
     std::vector<MotionControl> controllers_{};
     std::vector<ManipulatorControl> manipulators_{};
 };

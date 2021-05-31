@@ -3,8 +3,6 @@
 #include <optional>
 #include <vector>
 
-#include <configuration.hpp>
-
 #include "planning/planning_params.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"

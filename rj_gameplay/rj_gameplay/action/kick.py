@@ -6,6 +6,9 @@ import stp.role as role
 import stp.action as action
 import numpy as np
 import stp.rc as rc
+from typing import Optional
+from rj_msgs.msg import RobotIntent, EmptyMotionCommand
+from rj_geometry_msgs.msg import Point
 
 
 class IKick(action.IAction, ABC):
@@ -16,19 +19,22 @@ class IKick(action.IAction, ABC):
 class Kick(IKick):
     """
     Kick action
-    TODO: update with actions implementation
     """
-    def __init__(self, point: np.ndarray):
-        self.point = point
-        self.count = -1
-        #for stub
+    def __init__(self, robot_id:Optional[int]=None, chip:Optional[bool]=False, kick_speed:Optional[float]=255.0) -> None:
+        #TODO: Cahnge kick speed to use max_kick_speed param for default value
+        self.robot_id = robot_id
+        self.chip = chip
+        self.kick_speed = kick_speed
 
-    def tick(self, robot: rc.Robot, ctx: action.Ctx) -> None:
-        print('robot:', robot.id, 'kicking')
-        self.count += 1
+    def tick(self, intent:RobotIntent) -> RobotIntent:
+        new_intent = intent
+        empty_command = EmptyMotionCommand()
+        new_intent.motion_command.empty_command = [empty_command]
+        intent.kick_speed = self.kick_speed
+        new_intent.trigger_mode = 2
+        new_intent.shoot_mode = self.chip
+        new_intent.is_active = True
+        return new_intent
 
-    def done(self) -> bool:
-        return self.count == 1
-
-    def fail(self):
-        return False
+    def is_done(self, world_state:rc.WorldState) -> bool:
+        return np.linalg.norm(world_state.ball.vel) > 1

@@ -57,7 +57,7 @@ jobs:
       - run: |
           source /opt/ros/foxy/setup.sh && source install/setup.bash && ./install/lib/rj_robocup/test-soccer --gtest_filter="*"
       - run: |
-          source /opt/ros/foxy/setup.sh && source install/setup.bash && cd soccer/src/soccer/gameplay && ./run_tests.sh
+          source /opt/ros/foxy/setup.sh && source install/setup.bash
       # Run tests for rj_gameplay
       - run: source /opt/ros/foxy/setup.sh && source install/setup.bash
       - run: pip3 install -r rj_gameplay/requirements.txt
@@ -70,7 +70,8 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
-      - run: make pylint
+      - <<: *load_workspace
+      - run: source /opt/ros/foxy/setup.sh && source install/setup.bash && make pylint
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
 
@@ -149,7 +150,9 @@ workflows:
       - test-all:
           requires:
             - compile
-      - python-static
+      - python-static:
+          requires:
+            - compile
       - style
       - clang-tidy:
           requires:

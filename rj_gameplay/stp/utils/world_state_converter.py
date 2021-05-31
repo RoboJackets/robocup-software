@@ -191,7 +191,7 @@ def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
         our_robots.append(robotstate_to_partial_robot(msg.our_robots[i], i))
 
     for i in range(len(msg.their_robots)):
-        our_robots.append(robotstate_to_partial_robot(msg.their_robots[i], i))
+        their_robots.append(robotstate_to_partial_robot(msg.their_robots[i], i))
 
     ball = ballstate_to_ball(msg.ball)
 

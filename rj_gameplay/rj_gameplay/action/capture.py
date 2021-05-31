@@ -14,7 +14,7 @@ class Capture(action.IAction):
     TODO: update with actions implementation
     """
 
-    def __init__(self, robot_id):
+    def __init__(self, robot_id: int = None):
         self.robot_id = robot_id
 
 
@@ -22,7 +22,7 @@ class Capture(action.IAction):
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command] 
         intent.dribbler_speed = 1.0
-        intent.active = True
+        intent.is_active = True
 
         return intent
 

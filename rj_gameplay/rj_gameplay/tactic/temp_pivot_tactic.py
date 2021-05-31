@@ -11,7 +11,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import temp_pivot_skill
+from rj_gameplay.skill import temp_pivot_skill, pivot_kick
 import stp.skill as skill
 import numpy as np
 
@@ -42,7 +42,8 @@ class Pivot(tactic.ITactic):
 
 
     def __init__(self, target_point : np.ndarray):
-        self.pivot = tactic.SkillEntry(temp_pivot_skill.Pivot(pivot_point = [0.0,0.0],target_point = target_point))
+        self.target_point = target_point
+        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point))
         self.cost = pivot_cost(target_point)
         
     def compute_props(self):
@@ -75,7 +76,7 @@ class Pivot(tactic.ITactic):
         #     role_requests[self.capture] = [striker_request]
         #     role_requests[self.shoot] = []
         # role_requests
-        role_requests[self.pivot] = [pivot_request]
+        role_requests[self.pivot_kick] = [pivot_request]
 
         return role_requests
 
@@ -86,11 +87,11 @@ class Pivot(tactic.ITactic):
         # capture_result: tactic.RoleResults
         # capture_result = role_results[self.capture]
         # shoot_result = role_results[self.shoot]
-        pivot_result = role_results[self.pivot]
+        pivot_result = role_results[self.pivot_kick]
 
         if pivot_result and pivot_result[0].is_filled():
-            return [self.pivot]
+            return [self.pivot_kick]
         return []
 
     def is_done(self, world_state):
-        return self.pivot.skill.is_done(world_state)
+        return self.pivot_kick.skill.is_done(world_state)

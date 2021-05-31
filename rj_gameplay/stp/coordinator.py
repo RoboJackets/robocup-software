@@ -70,7 +70,6 @@ class Coordinator:
             robot = new_role_results[skill][0].role.robot
             actions.update(skill.skill.tick(robot, world_state))
         intents = [msg.RobotIntent() for i in range(NUM_ROBOTS)]
-        # intents = [msg.RobotIntent()] * NUM_ROBOTS
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):
             if i in actions.keys() and actions[i]:
@@ -78,14 +77,7 @@ class Coordinator:
                     intents[i] = action.tick(intents[i])
             else:
                 intents[i].motion_command.empty_command = [msg.EmptyMotionCommand()]
-        # pos = world_state.our_robots[1].pose[0:2]
-        # pivot_command = msg.PivotMotionCommand()
-        # pivot_command.pivot_point = Point(x=pos[0], y=pos[1])
-        # pivot_command.pivot_target = Point(x=0.0, y=0.0)
-        # intents[1] = msg.RobotIntent()
-        # intents[1].motion_command.pivot_command = [pivot_command]
-        # intents[1].dribbler_speed = 0.0
-        # intents[1].is_active = True
+
         # Update _prev_*.
         self._prev_situation = cur_situation
         self._prev_play = cur_play

@@ -31,5 +31,5 @@ class Capture(ICapture):
         self.root.setup_with_descendants()
 
     def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
-        self.root.tick_once(robot)
+        self.root.tick_once(robot, world_state)
         # TODO: change so this properly returns the actions intent messages

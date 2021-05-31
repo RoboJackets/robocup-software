@@ -1,18 +1,19 @@
 #pragma once
 
-#include <config_client/config_client.hpp>
-#include <rj_param_utils/ros2_param_provider.hpp>
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
-#include <rj_vision_receiver/stamped_wrapper_packet.hpp>
+#include <cstdint>
+#include <vector>
 
 #include <boost/asio.hpp>
-#include <cstdint>
 #include <rclcpp/rclcpp.hpp>
+
+#include <config_client/config_client.hpp>
 #include <rj_common/network.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
+#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <rj_utils/concurrent_queue.hpp>
-#include <vector>
+#include <rj_vision_receiver/stamped_wrapper_packet.hpp>
 
 namespace vision_receiver {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
@@ -124,6 +125,6 @@ private:
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_packet_pub_;
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
 
-    params::ROS2ParamProvider param_provider_;
+    params::LocalROS2ParamProvider param_provider_;
 };
 }  // namespace vision_receiver

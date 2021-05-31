@@ -49,7 +49,7 @@ class Move(action.IFiniteAction):
             path_command.override_angle=[self.face_angle]
 
         if(self.face_point is not None):
-            path_command.override_face_point=[Point(self.face_point[0], self.face_point[1])]
+            path_command.override_face_point=[Point(x=self.face_point[0], y=self.face_point[1])]
         
         intent.motion_command.path_target_command = [path_command]   
         intent.is_active = True
