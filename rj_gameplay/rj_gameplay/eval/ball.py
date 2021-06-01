@@ -82,17 +82,14 @@ class Ball:
     def is_in_our_goalie_zone(ball, field):
         if ball != None:
             return False
-            width = field.penalty_long_dist_m / 2
-            height = field.penalty_short_dist_m
+        width = field.penalty_long_dist_m / 2
+        height = field.penalty_short_dist_m
             
-            if ball.pos[1] >= height: 
-                return False
-            elif abs(ball.pos[0]) >= width:
-                return False
-            return True #if both checks pass
-            
-        else:
+        if ball.pos[1] >= height: 
             return False
+        elif abs(ball.pos[0]) >= width:
+            return False
+        return True #if both checks pass
 
     def we_are_closer(worldstate):
        
