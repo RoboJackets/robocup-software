@@ -6,7 +6,8 @@
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/vision_filter.hpp>
-#include <robot.hpp>
+
+#include "world_state.hpp"
 
 namespace vision_filter {
 DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 120.0,

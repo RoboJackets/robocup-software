@@ -12,14 +12,7 @@ set(SOCCER_RSRC ui/qt/main_icons.qrc)
 
 set(ROBOCUP_LIB_SRC
     battery_profile.cpp
-    configuration.cpp
-    gameplay/gameplay_module.cpp
-    gameplay/robocup-py.cpp
     global_params.cpp
-    joystick/sdl_joystick_node.cpp
-    joystick/sdl_gamepad.cpp
-    joystick/manual_control_node.cpp
-    kick_evaluator.cpp
     logger.cpp
     control/manipulator_control.cpp
     control/motion_control.cpp
@@ -56,9 +49,6 @@ set(ROBOCUP_LIB_SRC
     referee/referee_base.cpp
     referee/external_referee.cpp
     referee/internal_referee.cpp
-    robot.cpp
-    robot_config.cpp
-    system_state.cpp
     debug_drawer.cpp
     ui/battery_widget.cpp
     ui/field_view.cpp
@@ -77,13 +67,12 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/referee_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
-    window_evaluator.cpp)
+        )
 
 set(SOCCER_TEST_SRC
     battery_profile_test.cpp
     ball_test.cpp
-    kick_evaluator_test.cpp
-    control/trapezoidal_motion_test.cpp
+        control/trapezoidal_motion_test.cpp
     control/motion_control_test.cpp
     optimization/gradient_ascent_1d_test.cpp
     optimization/parallel_gradient_ascent_1d_test.cpp
@@ -98,8 +87,7 @@ set(SOCCER_TEST_SRC
     planning/tests/trapezoidal_motion_test.cpp
     planning/tests/velocity_profiling_test.cpp
     test_main.cpp
-    window_evaluator_test.cpp
-    logger_test.cpp)
+        logger_test.cpp)
 
 set(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
 

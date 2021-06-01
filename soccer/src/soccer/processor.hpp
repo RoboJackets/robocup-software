@@ -23,18 +23,13 @@
 #include <ros2_temp/raw_vision_packet_sub.hpp>
 #include <ros2_temp/referee_sub.hpp>
 #include <ros2_temp/soccer_config_client.hpp>
-#include <system_state.hpp>
 
 #include "context.hpp"
 #include "gr_sim_communicator.hpp"
-#include "joystick/manual_control_node.hpp"
-#include "joystick/sdl_joystick_node.hpp"
 #include "node.hpp"
 
 #include "rc-fshare/rtp.hpp"
 
-class Configuration;
-class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
 
@@ -68,8 +63,6 @@ public:
         RJ::Time last_radio_rx_time;
     };
 
-    static void create_configuration(Configuration* cfg);
-
     Processor(bool sim, bool blue_team, const std::string& read_log_file = "");
     virtual ~Processor();
 
@@ -78,8 +71,6 @@ public:
     std::shared_ptr<Gameplay::GameplayModule> gameplay_module() const {
         return gameplay_module_;
     }
-
-    SystemState* state() { return &context_.state; }
 
     Status status() {
         std::lock_guard lock(status_mutex_);
@@ -115,13 +106,6 @@ public:
     void run();
 
 private:
-    // Configuration for the robot.
-    // TODO(Kyle): Add back in configuration values for different years.
-    static std::unique_ptr<RobotConfig> robot_config_init;
-
-    // per-robot status configs
-    static std::vector<RobotLocalConfig*> robot_statuses;
-
     /**
      * Updates the intent.active for each robot.
      *
@@ -159,8 +143,6 @@ private:
     // modules
     std::shared_ptr<Gameplay::GameplayModule> gameplay_module_;
     std::unique_ptr<GrSimCommunicator> gr_sim_com_;
-    std::unique_ptr<joystick::SDLJoystickNode> sdl_joystick_node_;
-    std::unique_ptr<joystick::ManualControlNode> manual_control_node_;
     std::unique_ptr<Logger> logger_;
 
     std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> ros_executor_;

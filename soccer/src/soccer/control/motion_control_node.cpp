@@ -1,9 +1,5 @@
 #include "motion_control_node.hpp"
 
-#include <spdlog/spdlog.h>
-
-#include "robot.hpp"
-
 namespace control {
 
 MotionControlNode::MotionControlNode()
