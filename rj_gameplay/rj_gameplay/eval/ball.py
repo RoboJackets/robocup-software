@@ -195,36 +195,16 @@ class Ball:
                           (A[0] - C[0]) * D[1])
         t = 1 / (2 * area) * (A[0] * B[1] - A[1] * B[0] + (A[1] - B[1]) * D[0] +
                           (B[0] - A[0]) * D[1])
-        '''
+        
+        # Due to the new camera configuration in the 2019 year,
+        # the ball dissapears consistently when we go to capture a ball near the
+        # edge of the field. This causes the ball to "appear" inside the robot
+        # so we should assume that if the ball is inside, we probably have
+        # the ball
+        ball_inside_robot = distance(robot.pos[:-1], ball.pos) < \
+                            constants.Robot.Radius + constants.Ball.Radius
 
-    A = robot.pos
-    B = A + robocup.Point(
-        max_dist_from_mouth * math.cos(robot.angle - mouth_half_angle),
-        max_dist_from_mouth * math.sin(robot.angle - mouth_half_angle))
-    C = A + robocup.Point(
-        max_dist_from_mouth * math.cos(robot.angle + mouth_half_angle),
-        max_dist_from_mouth * math.sin(robot.angle + mouth_half_angle))
-    D = main.ball().pos
-
-    # Barycentric coordinates to solve whether the ball is in that triangle
-    area = 0.5 * (-B.y * C.x + A.y * (-B.x + C.x) + A.x *
-                  (B.y - C.y) + B.x * C.y)
-    s = 1 / (2 * area) * (A.y * C.x - A.x * C.y + (C.y - A.y) * D.x +
-                          (A.x - C.x) * D.y)
-    t = 1 / (2 * area) * (A.x * B.y - A.y * B.x + (A.y - B.y) * D.x +
-                          (B.x - A.x) * D.y)
-
-    # Due to the new camera configuration in the 2019 year,
-    # the ball dissapears consistently when we go to capture a ball near the
-    # edge of the field. This causes the ball to "appear" inside the robot
-    # so we should assume that if the ball is inside, we probably have
-    # the ball
-    ball_inside_robot = (robot.pos - main.ball().pos).mag() < \
-                        constants.Robot.Radius + constants.Ball.Radius
-
-    return (s > 0 and t > 0 and (1 - s - t) > 0) or ball_inside_robot
-        '''
-    	return None
+        return (s > 0 and t > 0 and (1 - s - t) > 0) or ball_inside_robot
 
     def time_to_ball(ball, robot):
         
@@ -238,8 +218,16 @@ class Ball:
     dist_to_ball = robot.pos.dist_to(main.ball().pos)
     return (dist_to_ball / max_vel) + delay
         '''
-    	return 0
+        max_vel = 2.0
+        max_accel = 0.5
+        delay = 0.1
+        rpos = robot.pos[:-1]
+        bpos = ball.pos
+        # calculate time for self to reach ball using max_vel + a slight delay for capture
+        dist = distance(rpos, bpos)
+    	return (dist / max_vel) + delay
 
+    #testing purposes
     ball = rc.Ball([0,4.5],[0, -1], True)
     field = rc.Field(9, 6, 1, 1, 2, 0.5, 0.5, 1, 2, 1.5, 3, 1, 8, 10)
 
