@@ -1,6 +1,7 @@
 import sys
 sys.path.insert(1, "../../stp")
 import rc
+import numpy as np
 from ball import Ball
 
 class DefensivePosition:
@@ -14,69 +15,46 @@ class DefensivePosition:
     # @return Angle of most likely kick
     def predict_kick_direction(robot):
         pose = robot.pose()
+        twist = robot.twist()
         angle = pose[2]
         pos = pose[:-1]
+        angle_vel = twist[2]
         
         # Use distance from bot to ball to predict time it takes to intercept
         # Calculates direct robot to future ball position
         inst_ball_time = Ball.time_to_ball(robot)
         
-        #future_ball_pos = 
+        future_ball_pos = Ball.predict_pos(inst_ball_time)
+        change = future_ball_pos - ball.pos
+        direction = change/np.linalg.norm(change) #direction the ball travels in
+        zero_angle = [0, 1]
+        #find angle of approach
+        dot_product = np.dot(zero_angle, direction)
+        ball_angle_predict = np.arccos(dot_product)
         
-    '''
-    ## Predicts the impending kick direction based on the orientation of the robot and the
-    #  angle of approach
-#
-# @param robot: The robot which we want to estimate
-# @return Angle of most likely kick
-def predict_kick_direction(robot: robocup.Robot) -> float:
-    angle = robot.angle
-    pos = robot.pos
-    angle_vel = robot.angle_vel
+        # Predict the robot direction based on angular velocity and angle
+        robot_angle_predict = angle + angle_vel * inst_ball_time
 
-    # Use distance from bot to ball to predict time it takes to intercept
-    # Calculates direct robot to future ball position
-    inst_ball_time = evaluation.ball.time_to_ball(robot)
+        filter_coeff = 0.7
+        return filter_coeff * robot_angle_predict + (1 - filter_coeff) * ball_angle_predict
 
-    future_ball_pos = main.ball().predict_pos(inst_ball_time)
-    direction = (future_ball_pos - pos).normalized()
-    ball_angle_predict = direction.angle()
-
-    # Predict the robot direction based on angular velocity and angle
-    robot_angle_predict = angle + angle_vel * inst_ball_time
-
-    filter_coeff = 0.7
-    return filter_coeff * robot_angle_predict + \
-           (1 - filter_coeff) * ball_angle_predict
-    '''
-
-    def predict_kick_direction(robot):
-        angle = robot.angle
-
-    '''
-    def get_points_from_rect(rect, step=0.5):
-    outlist = []
-    currentx = rect.min_x()
-    currenty = rect.min_y()
-
-    while currenty <= rect.max_y():
-        while currentx <= rect.max_x():
-            if constants.Field.OurGoalZoneShape.contains_point(
-                    robocup.Point(currentx, currenty)):
-                currentx += step
-                continue
-
-            outlist.extend([robocup.Point(currentx, currenty)])
-
-            currentx += step
-        currenty += step
-        currentx = rect.min_x()
-
-    return outlist
-    '''
-
-    def get_points_from_rect(robot, step=0.5):
-        return []
+    def get_points_from_rect(field, step=0.5):
+        out = []
+        goal_width = field.penalty_long_dist_m / 2
+        goal_height = field.penalty_short_dist_m
+        x = -(field.width_m / 2)
+        max_x = (field.width_m / 2)
+        y = 0
+        max_y = field.length_m
+        
+        while x <= max_x:
+            while y <= max_y:
+                if ball.pos[1] > height or abs(ball.pos[0]) > width:
+                    out.append([x, y])
+                y += step
+            x += step
+        
+        return out
 
     '''
     ## Creates a zone that may cause a risk in the future
@@ -176,6 +154,26 @@ def create_area_defense_zones(
     '''
 
     def create_area_defense_zones(ignore_robots):
+        # Create a 2D list [N][M] where N is the bucket
+        # and M is the index along that point
+        # The lists contains (robocup.Point, score)
+        points = [[]]
+        
+        # Amnt each bucket holds
+        angle_inc = math.pi / 10
+        # Amnt to inc each value by
+        dist_inc = 2.5
+        
+        # Holds the float angle (Radians)
+        angle = 0.0
+        # Holds the integer bucket based on angle
+        angle_cnt = 0
+        # Holds dist
+        dist = dist_inc
+
+        score_sum = 0.0
+        point_cnt = 0
+
         return None
 
     '''
