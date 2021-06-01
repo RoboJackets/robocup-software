@@ -85,9 +85,9 @@ class Ball:
         width = field.penalty_long_dist_m / 2
         height = field.penalty_short_dist_m
             
-        if ball.pos[1] >= height: 
+        if ball.pos[1] > height: 
             return False
-        elif abs(ball.pos[0]) >= width:
+        elif abs(ball.pos[0]) > width:
             return False
         return True #if both checks pass
 
