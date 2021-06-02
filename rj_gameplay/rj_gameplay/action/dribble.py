@@ -8,8 +8,6 @@ import stp.rc as rc
 from rj_msgs.msg import RobotIntent
 from typing import Optional
 from rj_msgs import msg
-from rj_gameplay.action import move, activate_dribbler
-
 
 class IDribble(action.IAction, ABC):
 
@@ -35,11 +33,28 @@ class Dribble(IDribble):
         self.face_point = face_point
         self.priority = priority
 
+
+    def is_done(self, world_state: rc.WorldState) -> bool:
+        threshold = 0.3
+        if self.robot_id is None or world_state is None:
+            return False
+        elif(math.sqrt((world_state.our_robots[self.robot_id].pose[0] - self.target_point[0])**2 + (world_state.our_robots[self.robot_id].pose[1] - self.target_point[1])**2) < threshold):
+            return True
+        else:
+            return False
+
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
-        # TODO: should both move and dribble at max speed
-        intent.dribbler_speed = self.dribbler_speed
+        path_command = PathTargetMotionCommand()
+        path_command.target.position = Point(x=self.target_point[0],y=self.target_point[1])
+        path_command.target.velocity = Point(x=self.target_vel[0],y=self.target_vel[1])
+        if(self.face_angle is not None):
+            path_command.override_angle=[self.face_angle]
+
+        if(self.face_point is not None):
+            path_command.override_face_point=[Point(self.face_point[0], self.face_point[1])]
+
+        intent.motion_command.path_target_command = [path_command]
+
+        intent.dribbler_speed = 1.0
         intent.is_active = True
         return intent
-
-    def is_done(self) -> bool:
-        return False
