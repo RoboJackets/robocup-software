@@ -6,6 +6,8 @@ import stp.rc as rc
 import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.coordinator as coordinator
+import stp.local_parameters as local_parameters
+from stp.global_parameters import GlobalParameterClient
 import numpy as np
 
 from typing import List, Optional
@@ -25,18 +27,22 @@ class GameplayNode(Node):
 
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
-        super().__init__('minimal_subscriber')
+        super().__init__('gameplay_node')
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimenstions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
         for i in range(NUM_ROBOTS):
             self.game_state_sub = self.create_subscription(msg.RobotStatus, '/radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
-        
+
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
         self.game_info: rc.GameInfo = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = []
+
+        self.global_parameter_client = GlobalParameterClient(
+            self, '/global_parameter_server')
+        local_parameters.register_parameters(self)
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
@@ -58,7 +64,7 @@ class GameplayNode(Node):
             robot = conv.robotstatus_to_partial_robot(msg)
             index = robot.robot_id
             self.robot_statuses.insert(index, robot)
-        
+
     def create_game_info(self, msg: msg.GameState) -> None:
         """
         Create game info object from Game State message
