@@ -10,7 +10,7 @@
 #include "world_state.hpp"
 
 namespace vision_filter {
-DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 120.0,
+DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
                "The rate in Hz at which VisionFilter publishes ball and robot "
                "observations.")
 
@@ -22,13 +22,16 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
       param_provider_{this, kVisionFilterParamModule} {
     // Create a timer that calls predict on all of the Kalman filters.
     const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
-    auto predict_callback = [this]() { predict_states(); };
-    predict_timer_ = create_wall_timer(predict_timer_period, predict_callback);
+    auto publish_callback = [this]() { publish_state(); };
+    publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
 
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
-        detection_frame_queue_.push(std::move(msg));
+        const double current_team_angle = team_angle();
+        const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
+        auto frame = CameraFrame(*msg, current_world_to_team, current_team_angle);
+        world_.update_single_camera(RJ::now(), frame);
     };
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
         vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize), callback);
@@ -82,7 +85,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 void VisionFilter::publish_state() {
     std::shared_ptr<TeamColorMsg> team_color = team_color_queue_.get();
     if (team_color == nullptr) {
-        EZ_WARN_STREAM("Returning because team_color is nullptr");
+        EZ_WARN_THROTTLE(1000, "Returning because team_color is nullptr");
         return;
     }
 
@@ -91,49 +94,4 @@ void VisionFilter::publish_state() {
     world_state_pub_->publish(std::move(msg));
 }
 
-void VisionFilter::get_frames() {
-    std::vector<DetectionFrameMsg::UniquePtr> raw_frames = detection_frame_queue_.get_all();
-    if (raw_frames.empty()) {
-        return;
-    }
-
-    const double current_team_angle = team_angle();
-    const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
-    for (const DetectionFrameMsg::UniquePtr& msg : raw_frames) {
-        frame_buffer_.emplace_back(*msg, current_world_to_team, current_team_angle);
-    }
-}
-void VisionFilter::predict_states() {
-    const RJ::Time start = RJ::now();
-
-    // Perform the updates on the Kalman Filters.
-    predict_states_impl();
-
-    // Check that predict_states runs fast enough, otherwise print a warning.
-    const RJ::Seconds predict_time = RJ::now() - start;
-    const RJ::Seconds diff_duration = RJ::Seconds(PARAM_vision_loop_dt) - predict_time;
-
-    if (diff_duration < RJ::Seconds{0}) {
-        constexpr int kWarningThrottleMS = 1000;
-        EZ_WARN_STREAM_THROTTLE(kWarningThrottleMS,
-                                "Predict is not called fast enough. Iteration took "
-                                    << predict_time.count() << " seconds, should be "
-                                    << PARAM_vision_loop_dt << ".");
-    }
-}
-
-void VisionFilter::predict_states_impl() {
-    // Do update with whatever is in frame buffer
-    get_frames();
-
-    if (!frame_buffer_.empty()) {
-        world_.update_with_camera_frame(RJ::now(), frame_buffer_);
-        frame_buffer_.clear();
-    } else {
-        world_.update_without_camera_frame(RJ::now());
-    }
-
-    // Publish the updated world state at the end.
-    publish_state();
-}
 }  // namespace vision_filter
