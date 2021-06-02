@@ -8,6 +8,7 @@ import stp.rc as rc
 from rj_msgs.msg import RobotIntent
 from typing import Optional
 from rj_msgs import msg
+from rj_gameplay.action import move, activate_dribbler
 
 
 class IDribble(action.IAction, ABC):
@@ -21,13 +22,21 @@ class Dribble(IDribble):
     """
     def __init__(self,
             robot_id : int,
-            dribbler_speed : float = 1.0,
+            target_point : np.ndarray,
+            target_vel : np.ndarray = np.array([0.0,0.0]),
+            face_angle : Optional[float] = None,
+            face_point : Optional[np.ndarray] = None,
             priority : int = 0) -> None:
 
         self.robot_id = robot_id
-        self.dribbler_speed = dribbler_speed
+        self.target_point = target_point
+        self.target_vel = target_vel
+        self.face_angle = face_angle
+        self.face_point = face_point
+        self.priority = priority
 
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
+        # TODO: should both move and dribble at max speed
         intent.dribbler_speed = self.dribbler_speed
         intent.is_active = True
         return intent
