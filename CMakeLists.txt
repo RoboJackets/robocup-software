@@ -119,6 +119,7 @@ add_subdirectory(docs)
 # Packaging
 # ======================================================================
 install(DIRECTORY launch DESTINATION share/${CMAKE_PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${CMAKE_PROJECT_NAME})
 
 install(FILES external/sdlcontrollerdb/gamecontrollerdb.txt DESTINATION share/${CMAKE_PROJECT_NAME})
 

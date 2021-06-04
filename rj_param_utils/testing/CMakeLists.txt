@@ -8,7 +8,6 @@ set(RJ_PARAM_UTILS_TESTING_SRCS src/declare_test.cpp src/param_test.cpp src/glob
 # ======================================================================
 target_sources(rj_param_utils_testing PRIVATE ${RJ_PARAM_UTILS_TESTING_SRCS})
 
-message(WARNING "Build testing is ${BUILD_TESTING}")
 # ======================================================================
 # Include directories
 # ======================================================================
