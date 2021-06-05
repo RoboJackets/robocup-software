@@ -11,7 +11,6 @@ from rj_msgs.msg import RobotIntent, CollectMotionCommand
 class Capture(action.IAction):
     """
     Capture action
-    TODO: update with actions implementation
     """
 
     def __init__(self, robot_id: int = None):

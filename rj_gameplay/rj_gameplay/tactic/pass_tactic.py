@@ -1,5 +1,3 @@
-"""Contains the stub for the move tactic. """
-
 from dataclasses import dataclass
 from typing import List, Optional
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
@@ -18,10 +16,10 @@ import numpy as np
 
 class pass_cost(role.CostFn):
     """
-    A cost function for how to choose a striker
+    A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
     """
-    def __init__(self, target_point : np.ndarray):
+    def __init__(self, target_point:Optional[np.ndarray] = None):
         self.target_point = target_point
 
     def __call__(
@@ -36,6 +34,10 @@ class pass_cost(role.CostFn):
         return 1.0
 
 class passer_cost(role.CostFn):
+    """
+    A cost function for how to choose a robot that will pass
+    TODO: Implement a better cost function
+    """
     def __call__(self,
                 robot:rc.Robot,
                 prev_result:Optional["RoleResult"],
@@ -50,13 +52,12 @@ class passer_cost(role.CostFn):
 
 
 
-class Pivot(tactic.ITactic):
+class Pass(tactic.ITactic):
     """
-    A striker tactic which captures then shoots the ball
+    A passing tactic which captures then passes the ball
     """
 
-
-    def __init__(self, target_point : np.ndarray):
+    def __init__(self, target_point:np.ndarray):
         self.target_point = target_point
         self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point))
         self.receive = tactic.SkillEntry(receive.Receive())
@@ -73,10 +74,9 @@ class Pivot(tactic.ITactic):
         pass
 
     def get_requests(
-        self, world_state: rc.WorldState, props
-    ) -> List[tactic.RoleRequests]:
+        self, world_state:rc.WorldState, props) -> List[tactic.RoleRequests]:
         """ Checks if we have the ball and returns the proper request
-        :return: A list of size 1 of role requests
+        :return: A list of size 2 of role requests
         """
 
         role_requests: tactic.RoleRequests = {}
@@ -85,27 +85,14 @@ class Pivot(tactic.ITactic):
         role_requests[self.pivot_kick] = [passer_request]
         receive_request = role.RoleRequest(role.Priority.HIGH, True, self.pass_cost)
         role_requests[self.receive] = [receive_request]
-        # has_ball = True
-        # for robot in world_state.our_robots:
-        #     if robot.has_ball_sense:
-        #         has_ball = True
-        # if has_ball:
-        #     role_requests[self.shoot] = [striker_request]
-        #     role_requests[self.capture] = []
-        # else:
-        #     role_requests[self.capture] = [striker_request]
-        #     role_requests[self.shoot] = []
-        # role_requests
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults, world_state:rc.WorldState) -> List[tactic.SkillEntry]:
+    def tick(self, role_results:tactic.RoleResults, world_state:rc.WorldState) -> List[tactic.SkillEntry]:
         """
-        :return: A list of size 1 skill depending on which role is filled
+        :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
+        TODO: Come up with better timings for starting receive
         """
-        # capture_result: tactic.RoleResults
-        # capture_result = role_results[self.capture]
-        # shoot_result = role_results[self.shoot]
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
 
@@ -119,5 +106,5 @@ class Pivot(tactic.ITactic):
             return [self.pivot_kick]
         return []
 
-    def is_done(self, world_state):
+    def is_done(self, world_state:rc.WorldState):
         return self.receive.skill.is_done(world_state)

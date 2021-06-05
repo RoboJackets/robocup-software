@@ -26,6 +26,7 @@ class PivotKick(IPivotKick):
         self.__name__ = 'pivot kick'
         self.robot = robot
         self.root = Sequence("Sequence")
+        self.target_point = target_point
         if robot is not None:
             self.pivot = action.pivot.Pivot(robot.id ,robot.pose[0:2], target_point)
         else:
@@ -41,6 +42,7 @@ class PivotKick(IPivotKick):
     def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:
         self.robot = robot
         self.pivot.pivot_point = world_state.ball.pos
+        self.pivot.target_point = self.target_point
         actions = self.root.tick_once(robot, world_state)
         return actions
 
