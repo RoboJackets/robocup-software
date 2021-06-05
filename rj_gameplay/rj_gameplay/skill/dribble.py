@@ -46,7 +46,6 @@ class Dribble(IDribble):
         self.robot = robot
         actions = self.root.tick_once(self.robot, world_state)
         return actions
-        # TODO: change so this properly returns the actions intent messages
 
     def is_done(self, world_state):
         return self.move.is_done(world_state)
