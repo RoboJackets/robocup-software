@@ -75,7 +75,10 @@ class Mark(IMark):
 
         # update target point every tick to match movement of ball & target robot
         if world_state and world_state.ball.visible:
-            mark_point = get_mark_point(self.target_robot.id, world_state)
+            if self.target_robot is None:
+                mark_point = get_mark_point(1, world_state)
+            else:
+                mark_point = get_mark_point(self.target_robot.id, world_state)
 
             if mark_point is None: 
                 return []
