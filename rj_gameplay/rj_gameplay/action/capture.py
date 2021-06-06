@@ -14,7 +14,7 @@ class Capture(action.IAction):
     TODO: update with actions implementation
     """
 
-    def __init__(self, robot_id):
+    def __init__(self, robot_id: int = None):
         self.robot_id = robot_id
 
 

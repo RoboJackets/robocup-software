@@ -1,7 +1,7 @@
 #include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
-DEFINE_FLOAT64(kVisionFilterParamModule, vision_loop_dt, 1.0 / 100.0,
+DEFINE_FLOAT64(kVisionFilterParamModule, vision_loop_dt, 1.0 / 60.0,
                "1/freq of the vision loop. In seconds.")
 
 DEFINE_INT64(kVisionFilterParamModule, max_num_cameras, 12,

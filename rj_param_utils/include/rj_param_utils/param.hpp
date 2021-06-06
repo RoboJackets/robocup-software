@@ -140,6 +140,19 @@ public:
     template <typename ParamType>
     ParamMap<ParamType>& GetParamMap();
 
+    /**
+     * Returns the corresponding parameter map of the given ParamType.
+     * @tparam ParamType The type of the ParamMap to return.
+     * @return The ParamMap for ParamType.
+     */
+    template <typename ParamType>
+    const ParamMap<ParamType>& GetParamMap() const;
+
+    /**
+     * @return A vector containing the names of all parameters served by this provider.
+     */
+    [[nodiscard]] std::vector<std::string> GetParamNames() const;
+
 protected:
     std::string module_;
 };

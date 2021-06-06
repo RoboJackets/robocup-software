@@ -366,13 +366,6 @@ class Field:
         return self.__penalty_long_dist_m
 
     @property
-    def penalty_long_dist_m(self) -> float:
-        """
-        :return: double check on this one
-        """
-        return self.__penalty_long_dist_m
-
-    @property
     def penalty_short_dist_m(self) -> float:
         """
         :return: double check on this one
