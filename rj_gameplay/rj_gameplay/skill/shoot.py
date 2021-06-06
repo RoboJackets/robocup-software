@@ -9,7 +9,7 @@ import time
 import stp.skill as skill
 import stp.role as role
 import stp.action as action
-from rj_gameplay.action import capture, pivot, kick
+from rj_gameplay.action import pivot, kick
 from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 import stp.skill.sequence as sequence
@@ -26,10 +26,8 @@ class Shoot(IShoot):
         self.robot: rc.Robot = None
         self.__name__ = 'Shoot'
         self.root = sequence.RJSequence()
-        self.capture = capture.Capture()
-        self.pivot = pivot.Pivot(self.robot.pose[0:2],[1,1], rc.Field.their_goal_loc)
+        self.pivot = pivot.Pivot(self.robot.pose[0:2], rc.Field.their_goal_loc)
         self.kick = kick.Kick(rc.Field.their_goal_loc)
-        self.capture_behavior = ActionBehavior('Capture', self.capture ,self.robot)
         #Add more logic for aiming and kicking
         self.pivot_behavior = ActionBehavior('Pivot', self.pivot, self.robot) 
         self.kick_behavior = ActionBehavior('Kick', self.kick, self.robot)
@@ -38,6 +36,11 @@ class Shoot(IShoot):
 
     def tick(self, world_state: rc.WorldState, robot:rc.Robot) -> None:
         self.root.tick_once(robot)
-        # TODO: change so this properly returns the actions intent messages
+        
+    def is_done(self, world_state) -> bool:
+    	if self.pivot.is_done(world_state) and self.kick.done(): 
+    		return True
+    	else:
+    		return False
 
     
