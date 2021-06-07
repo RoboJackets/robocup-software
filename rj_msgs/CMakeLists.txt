@@ -53,10 +53,12 @@ rosidl_generate_interfaces(
   msg/Trajectory.msg
   msg/WorldState.msg
   # Services
+  srv/ListJoysticks.srv
   srv/QuickCommands.srv
   srv/QuickRestart.srv
   srv/SetFieldDimensions.srv
   srv/SetGameSettings.srv
+  srv/SetManual.srv
   DEPENDENCIES
   std_msgs
   builtin_interfaces

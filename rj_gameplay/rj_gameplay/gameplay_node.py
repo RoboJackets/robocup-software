@@ -7,9 +7,11 @@ import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.coordinator as coordinator
 import stp
+import stp.local_parameters as local_parameters
+from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import line_up
+from rj_gameplay.play import basic122 
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16
@@ -22,7 +24,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, line_up.LineUp())
+        return (None, basic122.Basic122())
 
 class GameplayNode(Node):
     """
@@ -31,7 +33,7 @@ class GameplayNode(Node):
 
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
-        super().__init__('minimal_subscriber')
+        super().__init__('gameplay_node')
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimenstions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
@@ -55,6 +57,10 @@ class GameplayNode(Node):
         self.game_info: rc.GameInfo = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()]*NUM_ROBOTS*2
+
+        self.global_parameter_client = GlobalParameterClient(
+            self, '/global_parameter_server')
+        local_parameters.register_parameters(self)
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
