@@ -22,14 +22,8 @@ namespace vision_filter {
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 
 /**
- * Uses a separate thread to filter the vision measurements into
- * a smoother velocity/position estimate for both the ball and robots.
- *
- * Add vision frames directly into the filter call the fill states functions
- * to push the newest estimates directly into the system state.
- *
- * Note: There may be a 1 frame delay between the measurements being added
- * and the measurements being included in the filter estimate.
+ * Filters the vision measurements into a smoother velocity/position estimate for both the ball and
+ * robots.
  */
 class VisionFilter : public rclcpp::Node {
 public:
@@ -38,25 +32,11 @@ public:
     using BallStateMsg = rj_msgs::msg::BallState;
 
     /**
-     * Starts a worker thread to do the vision processing
+     * Initialize the vision filter and all callbacks.
      */
     VisionFilter(const rclcpp::NodeOptions& options);
 
 private:
-    /**
-     * @brief Runs prediction on all the Kalman Filters by calling out to
-     * PredictStatesImpl. Also prints a warning if predict isn't running fast
-     * enough.
-     */
-    void predict_states();
-
-    /**
-     * @brief Runs prediction on all the Kalman Filters. For now, also performs
-     * the update / merge step of the Kalman filters by emptying
-     * detection_frame_queue_;
-     */
-    void predict_states_impl();
-
     /**
      * @brief Creates a WorldStateMsg from the robot and ball Kalman filters.
      * @param us_blue True if we are blue.
@@ -85,13 +65,6 @@ private:
      */
     void publish_state();
 
-    /**
-     * @brief Obtains a std::vector<DetectionFrameMsg::UniqePtr> from
-     * detection_frame_sub_, then converts that to std::vector<CameraFrame>
-     * and stores it in new_frames_.
-     */
-    void get_frames();
-
     // TODO(1562): (It's horrible, but it's only temporary until VisionFilter
     // gets refactored).
     /**
@@ -119,11 +92,8 @@ private:
      */
     World world_;
 
-    std::vector<CameraFrame> frame_buffer_{};
-
     using TeamColorMsgQueue =
         rj_topic_utils::MessageQueue<TeamColorMsg, rj_topic_utils::MessagePolicy::kLatest>;
-    using TimeMsg = builtin_interfaces::msg::Time;
 
     config_client::ConfigClient config_client_;
 
@@ -133,12 +103,11 @@ private:
     TeamColorMsgQueue team_color_queue_;
 
     /**
-     * @brief Timer driving regular predictions.
+     * @brief Timer driving regular publication.
      */
-    rclcpp::TimerBase::SharedPtr predict_timer_;
+    rclcpp::TimerBase::SharedPtr publish_timer_;
 
     rclcpp::Subscription<DetectionFrameMsg>::SharedPtr detection_frame_sub_;
-    rj_utils::ConcurrentQueue<DetectionFrameMsg::UniquePtr> detection_frame_queue_;
 
     /**
      * @brief Publisher for WorldStateMsg.

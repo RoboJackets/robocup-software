@@ -8,7 +8,7 @@ namespace vision_filter {
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, init_covariance, 100.0,
                   "Initial covariance of the filter. Controls how fast it gets "
                   "to the target.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, process_noise, 0.1,
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, process_noise, 0.5,
                   "Controls how quickly it reacts to changes in ball accelerations.")
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, observation_noise, 2.0,
                   "Controls how much it trusts measurements from the camera.")

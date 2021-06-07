@@ -13,40 +13,40 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
         self.action = action
         self.ctx = ctx
         self.robot = robot
+        self.world_state = None
         super(ActionBehavior, self).__init__(name)
 
-    def tick_once(self, robot: rc.Robot, ctx=None) -> None:
+    def tick_once(self, robot: rc.Robot, world_state, ctx=None) -> None:
         """
         Ticks its action using the robot given (if root) or the robot from its parent.
         This will probably become tick() or spin() once action server is implemented
         TODO: Should return a list of robot intents
         """
         self.robot = robot
-        if robot is None:
-            self.robot = self.parent.robot
+        self.action.robot_id = robot.id
+        self.world_state = world_state
+        # if robot is None:
+        #     self.robot = self.parent.robot
         self.ctx = ctx
         super().tick_once()
+        return {self.robot.id : [self.action]}
 
     def initialise(self) -> None:
         """
         Begin spinning the action
         """
-        self.action.spin()
+        pass
 
     def update(self) -> py_trees.common.Status:
         """
         Check action and return the current state of the aciton
         TODO: Needs to somehow use robot intents to check on status of action
         """
-        if self.robot is None:
-            self.robot = self.parent.robot
-        self.action.tick(self.robot, self.ctx)
-        if not self.action.done():
-            return py_trees.common.Status.RUNNING
-        elif not self.action.fail():
+
+        if self.action.is_done(self.world_state):
             return py_trees.common.Status.SUCCESS
         else:
-            return py_trees.common.Status.FAILURE
+            return py_trees.common.Status.RUNNING
 
     def terminate(self, new_status):
         pass
