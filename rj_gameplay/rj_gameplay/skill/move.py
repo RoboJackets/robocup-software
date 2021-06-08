@@ -42,8 +42,9 @@ class Move(IMove):
         self.root.setup_with_descendants()
         self.__name__ = 'move skill'
 
-    def tick(self, robot: rc.Robot, world_state): #returns dict of robot and actions
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState): #returns dict of robot and actions
         self.robot = robot
+        self.move.target_point = self.target_point
         actions = self.root.tick_once(self.robot, world_state)
         return actions
 
