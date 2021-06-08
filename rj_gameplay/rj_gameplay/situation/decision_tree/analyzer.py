@@ -179,7 +179,7 @@ class Analyzer(stp.situation.IAnalyzer):
             else:
                 raise RuntimeError("Unknown situation")
 
-        elif heuristics.field_loc == FieldLoc.MIDFIELD_SIDE:
+        elif heuristics.field_loc == FieldLoc.MIDFIELD:
             if heuristics.is_pileup:
                 return dt.plays.MidfieldPileup()
             elif heuristics.ball_pos == BallPos.FREE_BALL:

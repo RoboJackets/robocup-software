@@ -1,8 +1,13 @@
 # python requirements
 
+numpy
+scipy
+matplotlib
+
 graphviz # make pretty graphs/diagrams
 watchdog # file-system event notifications
 munkres	# provides the 'hungarian algorithm', which we use for robot role assignment
+py_trees
 
 pylint # static checker for python
 mypy == 0.770 # static arugment checker. Pinned to 0.770 because something is broken with 0.780

@@ -2,8 +2,6 @@
 
 #include "context.hpp"
 
-#if 0
-
 namespace joystick {
 
 DEFINE_BOOL(kJoystickModule, use_field_oriented_drive, false, "Whether to use field oriented drive")
@@ -11,240 +9,119 @@ DEFINE_BOOL(kJoystickModule, kick_on_break_beam, false,
             "Wait for break beam when kick button is held")
 DEFINE_BOOL(kJoystickModule, damped_translation, false, "Move slowly")
 DEFINE_BOOL(kJoystickModule, damped_rotation, false, "Turn slowly")
-DEFINE_INT64(kJoystickModule, manual_robot_id, -1, "Which robot to control manually (temporary)")
 DEFINE_FLOAT64(kJoystickModule, max_rotation_speed, 4.0, "Maximum rotation speed, rad/s")
 DEFINE_FLOAT64(kJoystickModule, max_damped_rotation_speed, 1.0,
                "Maximum damped rotation speed, rad/s")
 DEFINE_FLOAT64(kJoystickModule, max_translation_speed, 2.0, "Maximum translation speed, m/s")
 DEFINE_FLOAT64(kJoystickModule, max_damped_translation_speed, 0.5,
                "Maximum damped translation speed, m/s")
+DEFINE_FLOAT64(kJoystickModule, kick_power_increment, 0.1, "Kick power increment, 0-1")
+DEFINE_FLOAT64(kJoystickModule, dribble_power_increment, 0.1, "Dribble power increment, 0-1")
 
-ManualControlNode::ManualControlNode(Context* context) : context_{context} {}
+ManualControlNode::ManualControlNode()
+    : rclcpp::Node("manual_control"), param_provider_(this, kJoystickModule) {
+    auto on_connect = [this](ManualController* controller) {
+        controllers_.insert({controller, std::nullopt});
+    };
+    auto on_disconnect = [this](ManualController* controller) { remove_controller(controller); };
 
-void ManualControlNode::run() {
-    // Update list of connected gamepads
-    update_gamepad_list();
+    providers_.push_back(std::make_unique<SDLControllerProvider>(true, on_connect, on_disconnect));
 
-    // "Manually" call the fake callback on the data in context_
-    for (const auto& msg : context_->gamepad_messages) {
-        callback(msg);
+    using rj_msgs::srv::ListJoysticks;
+    list_joysticks_ = create_service<ListJoysticks>(
+        "list_joysticks",
+        [this]([[maybe_unused]] const ListJoysticks::Request::SharedPtr request,  // NOLINT
+               ListJoysticks::Response::SharedPtr response) {                     // NOLINT
+            for (const auto& [controller, robot] : controllers_) {
+                response->descriptions.push_back(controller->get_description());
+                response->uuids.push_back(controller->get_uuid());
+                response->robots.push_back(robot.value_or(-1));
+            }
+        });
+
+    using rj_msgs::srv::SetManual;
+    set_manual_ = create_service<SetManual>(
+        "select_manual",
+        [this](const SetManual::Request::SharedPtr request,                 // NOLINT
+               [[maybe_unused]] SetManual::Response::SharedPtr response) {  // NOLINT
+            set_manual(request->controller_uuid,
+                       request->connect ? std::make_optional(request->robot_id) : std::nullopt);
+        });
+
+    for (int i = 0; i < kNumShells; i++) {
+        motion_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::MotionSetpoint>(
+            control::topics::motion_setpoint_pub(i), 10));
+        manipulator_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
+            control::topics::manipulator_setpoint_pub(i), 10));
     }
 
-    const auto robots = context_->state.self;
-    // Set all robots to not be joystick controlled
-    for (OurRobot* robot : robots) {
-        robot->set_joystick_controlled(false);
-    }
+    timer_ = create_wall_timer(std::chrono::microseconds(1'000'000 / 60), [this]() {
+        for (const auto& provider : providers_) {
+            provider->update();
+        }
 
-    // If there aren't any gamepads that are connected, return
-    if (gamepad_stack_.empty()) {
+        for (const auto& [controller, robot] : controllers_) {
+            if (robot.has_value()) {
+                publish(robot.value(), controller->get_command());
+            }
+        }
+    });
+}
+
+void ManualControlNode::set_manual(const std::string& uuid, std::optional<int> robot_id) {
+    auto it = std::find_if(
+        controllers_.begin(), controllers_.end(),
+        [uuid](const auto& controller_pair) { return controller_pair.first->get_uuid() == uuid; });
+    if (it == controllers_.end()) {
+        SPDLOG_WARN("Requested invalid controller {}", uuid);
         return;
     }
 
-    const int manual_id = PARAM_manual_robot_id;
-
-    // Find the robot that we are supposed to control
-    const auto pred = [manual_id](const OurRobot* r) { return r->shell() == manual_id; };
-    const auto it = std::find_if(robots.begin(), robots.end(), pred);
-
-    // Return if we can't find the robot we're supposed to control
-    if (it == robots.end()) {
-        return;
+    auto& [controller, robot] = *it;
+    if (robot.has_value()) {
+        stop_robot(robot.value());
     }
 
-    OurRobot* robot = *it;
-
-    robot->set_joystick_controlled(true);
-
-    update_intent_and_setpoint(robot);
+    robot = robot_id;
 }
 
-void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
-    int shell = robot->shell();
-
-    // Modify robot->setpoint and robot->intent
-    RobotIntent& intent = context_->robot_intents[shell];
-    MotionSetpoint& setpoint = context_->motion_setpoints[shell];
-
-    intent.is_active = true;
-
-    float x_vel = controls_.x_vel;
-    float y_vel = controls_.y_vel;
-
-    // Field oriented control
-    if (PARAM_use_field_oriented_drive) {
-        // If robot isn't visible, then stop
-        if (!robot->visible()) {
-            intent = {};
-            setpoint = {};
-            return;
-        }
-
-        // Rotate x_vel and y_vel so that it's the field's x and y
-        rj_geometry::Point translation{x_vel, y_vel};
-        translation.rotate(-M_PI / 2 - robot->angle());
-
-        x_vel = static_cast<float>(translation.x());
-        y_vel = static_cast<float>(translation.y());
-    }
-
-    // translation
-    setpoint.xvelocity = x_vel;
-    setpoint.yvelocity = y_vel;
-
-    // rotation
-    setpoint.avelocity = controls_.a_vel;
-
-    // kick/chip
-    bool kick = controls_.kick || controls_.chip;
-    intent.trigger_mode = kick ? (PARAM_kick_on_break_beam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                                                           : RobotIntent::TriggerMode::IMMEDIATE)
-                               : RobotIntent::TriggerMode::STAND_DOWN;
-
-    // TODO(#1583): The controller should directly work in the (0, max_kick_speed] range
-    constexpr float kMaxKickSpeed = 7.0;
-    intent.kick_speed = static_cast<float>(controls_.kick_power) / kMaxKick * kMaxKickSpeed;
-    intent.shoot_mode =
-        controls_.kick ? RobotIntent::ShootMode::KICK : RobotIntent::ShootMode::CHIP;
-
-    // dribbler
-    intent.dribbler_speed = controls_.dribble ? controls_.dribbler_power : 0;
-}
-
-void ManualControlNode::update_gamepad_list() {
-    gamepad_stack_ = context_->gamepads;
-    update_joystick_valid();
-}
-
-void ManualControlNode::callback(const GamepadMessage& msg) {
-    // Scheme:
-    //   Y              - Increase dribbler power
-    //   A              - Decrease dribbler power
-    //
-    //   B              - Increase kicker power
-    //   X              - Decrease kicker power
-    //
-    //   RightShoulder  - Kick
-    //   TriggerRight   - Chip
-    //
-    //   RightStickX    - Rotation
-    //   LeftStickX     - Translation X
-    //   LeftStickY     - Translation Y
-    //
-    //   DPAD           - "Align along an axis using the DPAD"
-    if (msg.unique_id != gamepad_stack_.front()) {
-        return;
-    }
-
-    const auto now = RJ::now();
-    // Dribbler Power
-    if (msg.buttons.a) {
-        if ((now - last_dribbler_time_) >= kDribbleStepTime) {
-            controls_.dribbler_power = std::max(controls_.dribbler_power - 0.1, 0.0);
-            last_dribbler_time_ = now;
-        }
-    } else if (msg.buttons.y) {
-        if ((now - last_dribbler_time_) >= kDribbleStepTime) {
-            controls_.dribbler_power = std::min(controls_.dribbler_power + 0.1, 1.0);
-            last_dribbler_time_ = now;
-        }
+void ManualControlNode::remove_controller(ManualController* controller) {
+    auto found = controllers_.find(controller);
+    if (found != controllers_.end()) {
+        controllers_.erase(found);
     } else {
-        // Let dribbler speed change immediately
-        last_dribbler_time_ = now - kDribbleStepTime;
+        SPDLOG_WARN("Trying to remove non-existent controller!");
     }
-
-    // Kicker Power
-    if (msg.buttons.x) {
-        if ((now - last_kicker_time_) >= kKickerStepTime) {
-            controls_.kick_power = std::max(controls_.kick_power - 0.1, 0.0);
-            last_kicker_time_ = now;
-        }
-    } else if (msg.buttons.b) {
-        if ((now - last_kicker_time_) >= kKickerStepTime) {
-            controls_.kick_power = std::min(controls_.kick_power + 0.1, 1.0);
-            last_kicker_time_ = now;
-        }
-    } else {
-        last_kicker_time_ = now - kKickerStepTime;
-    }
-
-    // Kick True/False
-    controls_.kick = msg.buttons.right_shoulder;
-
-    // Chip
-    controls_.chip = static_cast<float>(msg.triggers.right) / kAxisMax > kTriggerCutoff;
-
-    // Rotation Velocity
-    controls_.a_vel = -1.f * static_cast<float>(msg.sticks.right.x) / kAxisMax;
-
-    // Translation Velocity
-    float left_x = static_cast<float>(msg.sticks.left.x) / kAxisMax;
-    float left_y = static_cast<float>(msg.sticks.left.y) / kAxisMax;
-
-    // Align along an axis using the DPAD as modifier buttons
-    float trans_x = left_x;
-    float trans_y = left_y;
-    if (msg.dpad.down) {
-        trans_y = -std::abs(left_y);
-        trans_x = 0;
-    } else if (msg.dpad.up) {
-        trans_y = std::abs(left_y);
-        trans_x = 0;
-    } else if (msg.dpad.left) {
-        trans_y = 0;
-        trans_x = -std::abs(left_x);
-    } else if (msg.dpad.right) {
-        trans_y = 0;
-        trans_x = std::abs(left_x);
-    }
-
-    // Floating point precision error rounding
-    if (controls_.kick_power < 1e-1) {
-        controls_.kick_power = 0;
-    }
-    if (controls_.dribbler_power < 1e-1) {
-        controls_.dribbler_power = 0;
-    }
-    if (std::abs(controls_.a_vel) < 5e-2) {
-        controls_.a_vel = 0;
-    }
-    if (std::abs(trans_x) < 5e-2) {
-        trans_x = 0;
-    }
-    if (std::abs(trans_y) < 5e-2) {
-        trans_y = 0;
-    }
-
-    controls_.x_vel = trans_x;
-    controls_.y_vel = trans_y;
-
-    apply_control_modifiers();
 }
 
-void ManualControlNode::apply_control_modifiers() {
-    rj_geometry::Point trans{controls_.x_vel, controls_.y_vel};
-    trans.clamp(std::sqrt(2.0));
-    controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
-
-    if (PARAM_damped_translation) {
-        trans *= PARAM_max_damped_translation_speed;
-    } else {
-        trans *= PARAM_max_translation_speed;
-    }
-
-    if (PARAM_damped_rotation) {
-        trans *= PARAM_max_damped_rotation_speed;
-    } else {
-        trans *= PARAM_max_rotation_speed;
-    }
-
-    // Scale up kicker and dribbler speeds
-    controls_.dribbler_power *= kMaxDribble;
-    controls_.kick_power *= kMaxKick;
+void ManualControlNode::stop_robot(int robot_id) {
+    motion_setpoint_pubs_.at(robot_id)->publish(rj_msgs::msg::MotionSetpoint{});
+    manipulator_setpoint_pubs_.at(robot_id)->publish(rj_msgs::msg::ManipulatorSetpoint{});
 }
 
-void ManualControlNode::update_joystick_valid() const {
-    context_->joystick_valid = !gamepad_stack_.empty();
+void ManualControlNode::publish(int robot_id, const ControllerCommand& command) {
+    motion_setpoint_pubs_.at(robot_id)->publish(rj_msgs::build<rj_msgs::msg::MotionSetpoint>()
+                                                    .velocity_x_mps(command.translation.x())
+                                                    .velocity_y_mps(command.translation.y())
+                                                    .velocity_z_radps(command.rotation));
+    uint8_t trigger_mode = PARAM_kick_on_break_beam
+                               ? rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_ON_BREAK_BEAM
+                               : rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_IMMEDIATE;
+    uint8_t shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
+    if (command.kick) {
+        shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK;
+    } else if (command.chip) {
+        shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
+    } else {
+        trigger_mode = rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN;
+    }
+
+    manipulator_setpoint_pubs_.at(robot_id)->publish(
+        rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
+            .shoot_mode(shoot_mode)
+            .trigger_mode(trigger_mode)
+            .kick_strength(static_cast<int8_t>(command.kick_power * 255))
+            .dribbler_speed(static_cast<float>(command.dribble_power)));
 }
+
 }  // namespace joystick
-#endif
