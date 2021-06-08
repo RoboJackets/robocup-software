@@ -55,8 +55,9 @@ SimRadio::SimRadio(bool blue_team)
     start_receive();
 
     const auto& placement_callback =
-        [this](const rj_msgs::srv::SimPlacement::Request::SharedPtr request,
-               const rj_msgs::srv::SimPlacement::Response::SharedPtr response) {
+        [this](const rj_msgs::srv::SimPlacement::Request::SharedPtr request,  // NOLINT
+               [[maybe_unused]] const rj_msgs::srv::SimPlacement::Response::SharedPtr
+                   response) {  // NOLINT
             send_sim_command(convert_placement_to_proto(*request));
         };
     sim_placement_service_ = create_service<rj_msgs::srv::SimPlacement>(

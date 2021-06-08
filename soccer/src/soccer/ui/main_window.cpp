@@ -867,11 +867,11 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
 }
 
 void MainWindow::on_actionCenterBall_triggered() {
-    _ui.fieldView->dragBall(rj_geometry::Point(0, 0));
+    _ui.fieldView->set_ball_position(rj_geometry::Point(0, 0));
 }
 
 void MainWindow::on_actionStopBall_triggered() {
-    _ui.fieldView->kickBall(rj_geometry::Point(0, 0));
+    _ui.fieldView->set_ball_velocity(rj_geometry::Point(0, 0));
 }
 
 void MainWindow::on_actionResetField_triggered() {
@@ -887,7 +887,7 @@ void MainWindow::on_actionResetField_triggered() {
         double x_pos = -2.5 + i / ROBOTS_PER_COL;
         double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
 
-        _ui.fieldView->dragRobot(rj_geometry::Pose(x_pos, y_pos, 0), i, true);
+        _ui.fieldView->set_robot_pose(rj_geometry::Pose(x_pos, y_pos, 0), i, true);
     }
 
     for (int i = 0; i < kRobotsPerTeam; ++i) {
@@ -897,11 +897,11 @@ void MainWindow::on_actionResetField_triggered() {
         double x_pos = +2.5 - i / ROBOTS_PER_COL;
         double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
 
-        _ui.fieldView->dragRobot(rj_geometry::Pose(x_pos, y_pos, 0), i, false);
+        _ui.fieldView->set_robot_pose(rj_geometry::Pose(x_pos, y_pos, 0), i, false);
     }
 
-    _ui.fieldView->dragBall(rj_geometry::Point(0.0, 0.0));
-    _ui.fieldView->kickBall(rj_geometry::Point(0.0, 0.0));
+    _ui.fieldView->set_ball_position(rj_geometry::Point(0.0, 0.0));
+    _ui.fieldView->set_ball_velocity(rj_geometry::Point(0.0, 0.0));
 }
 
 void MainWindow::on_actionStopRobots_triggered() {}
