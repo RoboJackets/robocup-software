@@ -11,8 +11,9 @@ from typing import Optional
 import stp.skill as skill
 import stp.role as role
 import stp.action as action
-from rj_gameplay.action import receive
+from rj_gameplay.action import receive, capture
 from stp.skill.action_behavior import ActionBehavior
+from stp.skill.rj_sequence import RjSequence as Sequence
 import stp.rc as rc
 from rj_msgs import msg
 
@@ -33,12 +34,16 @@ class Receive(IReceive):
         self.one_touch_target = one_touch_target
         if self.robot is not None:
             self.receive = receive.Receive(self.robot.id, self.one_touch_target)
+            self.capture = capture.Capture(self.robot.id)
         else:
             self.receive = receive.Receive(self.robot, self.one_touch_target)
+            self.capture = capture.Capture()
         self.receive_behavior = ActionBehavior('Receive', self.receive)
-        self.root = self.receive_behavior
+        self.capture_behavior = ActionBehavior('Capture', self.capture)
+        self.root = Sequence('Sequence')
+        self.root.add_children([self.receive_behavior, self.capture_behavior])
         self.root.setup_with_descendants()
-        self.__name__ = 'move skill'
+        self.__name__ = 'receive skill'
 
     def tick(self, robot:rc.Robot, world_state:rc.WorldState): #returns dict of robot and actions
         self.robot = robot
@@ -46,4 +51,4 @@ class Receive(IReceive):
         return actions
 
     def is_done(self, world_state:rc.WorldState):
-        return self.receive.is_done(world_state)
+        return self.capture.is_done(world_state)

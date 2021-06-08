@@ -29,6 +29,6 @@ class Receive(action.IAction):
         return intent
 
     def is_done(self, world_state) -> bool:
-        if self.robot_id is not None and world_state.our_robots[self.robot_id].has_ball_sense:
+        if np.linalg.norm(world_state.ball.vel) < 0.1:
             return True
         return False
