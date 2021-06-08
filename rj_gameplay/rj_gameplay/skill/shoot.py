@@ -34,7 +34,7 @@ class Shoot(IShoot):
         self.root.add_children([self.capture_behavior, self.pivot_behavior, self.kick_behavior])
         self.root.setup_with_descendants()
 
-    def tick(self robot:rc.Robot, ctx) -> None:
+    def tick(self, robot:rc.Robot, ctx) -> None:
         self.root.tick_once(robot, ctx)
      
 
