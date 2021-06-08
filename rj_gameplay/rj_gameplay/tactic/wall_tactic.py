@@ -28,16 +28,22 @@ class wall_cost(role.CostFn):
         world_state: rc.WorldState
     ) -> float:
 
+        # TODO: make closest robots form wall, rather than setting on init
         return 0.0
 
-def my_robot_assigner(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
+def match_robots_to_wall(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
     print("-"*80)
     print("called")
 
     # [robot_id] = [rc.Robot, pt]
     assignments = {}
 
-    for wall_pt in find_wall_pts(num_robots, mark_pt, def_pt):
+    wall_pts = find_wall_pts(num_robots, mark_pt, def_pt)
+    # sometimes tactic is called before ball_pos is seen
+    if not wall_pts: 
+        return None
+
+    for wall_pt in wall_pts:
         robot = robot_to_wall_pt(wall_pt, world_state, assignments)
 
         assignments[robot.id] = (robot, wall_pt)
@@ -45,24 +51,20 @@ def my_robot_assigner(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, 
     return assignments
 
 def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignments):
-    # TODO: dict type here?
+    # TODO: dict type for assignments arg?
     """
     A function that chooses which robot to move to a specific wall pt.
     """
-    """
-    for robot in world_state.our_robots:
-        if robot.id is 2: 
-            if 2 not in assignments:
-                return robot
-        if robot.id is 1: 
-            if 1 not in assignments:
-                return robot
-    """
+    print()
+    print("wall_pt:", wall_pt)
+    # print([r.id for r in world_state.our_robots])
+    # print([r.id for r in world_state.their_robots])
 
     min_robot = None
     min_dist = float('inf')
     for robot in world_state.our_robots:
-        # no duplicates
+        # prevent duplicate assignments
+        # TODO: reduce extra travel time when wall moves
         if robot.id in assignments: 
             continue
 
@@ -71,8 +73,9 @@ def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignment
         if dist < min_dist:
             min_dist = dist
             min_robot = robot
+            print(min_dist)
+            print(min_robot.id)
 
-    print("wall_pt:", wall_pt)
     print("closest bot:", min_robot.id)
     return min_robot
 
@@ -81,13 +84,19 @@ def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray):
 
     # TODO: param server this const
     WALL_SPACING = RobotConstants.RADIUS / 2 # 1/4th robot diameter
+    DIST_FROM_DEF_PT = RobotConstants.RADIUS * 10 # 5 robot diameters
 
-    # set midpoint first
-    mid_pt = (mark_pt + def_pt) / 2
+    # check if vision is up and running
+    if (mark_pt==def_pt).all():
+        return None
+
+    # get direction vec
+    dir_vec = (mark_pt - def_pt) / np.linalg.norm(mark_pt - def_pt)
+    mid_pt = def_pt + (dir_vec * DIST_FROM_DEF_PT)
+    # mid_pt = (mark_pt + def_pt) / 2
     wall_pts = [mid_pt]
 
-    # get dir, find perp vec to that
-    dir_vec = (mark_pt - def_pt) / np.linalg.norm(mark_pt - def_pt)
+    # find perp vec to direction
     perp = np.array([dir_vec[1], -dir_vec[0]])
 
     print("find_wall_pts")
@@ -112,7 +121,6 @@ class WallTactic(tactic.ITactic):
         ):
 
         self.num_robots = num_robots
-        # these will be defaulted to world_state on get_requests(), which is ticked by play
         self.mark_pt = mark_pt 
         self.def_pt = def_pt
 
@@ -124,7 +132,7 @@ class WallTactic(tactic.ITactic):
         self.wall_pts = None
         self.cost = wall_cost()
         self.world_state = None
-        self.my_assignments = None
+        self.wall_spots = None
         
     def compute_props(self):
         pass
@@ -138,39 +146,30 @@ class WallTactic(tactic.ITactic):
     def get_requests(
         self, world_state: rc.WorldState, props
     ) -> List[tactic.RoleRequests]:
-        """ Checks if we have the ball and returns the proper request
-        :return: A list of size 1 of role requests
+        """
+        :return: A list of role requests for move skills needed
         """
 
-        if world_state:
+        if world_state and world_state.ball.visible:
+            # update world_state, ball pos, goal loc
+            # TODO: resolve scenario when mark_pt/def_pt don't need to be updated every tick (e.g. manually given)
             self.world_state = world_state
             self.mark_pt = world_state.ball.pos
             self.def_pt = world_state.field.our_goal_loc
 
-            # TODO: make closest robots form wall, rather than setting on init
-            """
-            if self.my_assignments is not None:
-                # clear old assignments
+            # get dict of robot to pos in wall
+            self.wall_spots = match_robots_to_wall(self.num_robots, self.mark_pt, self.def_pt, self.world_state)
+            if self.wall_spots is not None:
+                i = 0
+                for robot, pt in self.wall_spots.values():
+                    # assign correct robots, target points to each move skill
+                    self.move_list[i].skill.robot = robot
+                    self.move_list[i].skill.target_point = pt
+                    i += 1
+
+                # make all robots face mark_pt on move
                 for move_skill_entry in self.move_list:
-                    robot = move_skill_entry.robot
-                    move_skill_entry.skill.target_point = 
-            """
-
-            # TODO: make this stanza less ugly
-            self.my_assignments = my_robot_assigner(self.num_robots, self.mark_pt, self.def_pt, self.world_state)
-            i = 0
-            for robot, pt in self.my_assignments.values():
-                # assigns target point to each move skill
-                self.move_list[i].skill.robot = robot
-                self.move_list[i].skill.target_point = pt
-                i+=1
-
-            for se in self.move_list:
-                print(se.skill.robot.id)
-                print(se.skill.target_point)
-
-            for move_skill_entry in self.move_list:
-                move_skill_entry.skill.face_point = self.mark_pt
+                    move_skill_entry.skill.face_point = self.mark_pt
 
         role_requests = {
             move_skill_entry: [role.RoleRequest(role.Priority.LOW, False, self.cost)] 
@@ -181,7 +180,7 @@ class WallTactic(tactic.ITactic):
 
     def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
-        :return: A list of size 1 skill depending on which role is filled
+        :return: A list of skills depending on which roles are filled
         """
 
         skills = [
