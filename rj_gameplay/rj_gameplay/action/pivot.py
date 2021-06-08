@@ -6,30 +6,27 @@ import stp.role as role
 import stp.action as action
 import numpy as np
 import stp.rc as rc
+from rj_msgs.msg import RobotIntent, PivotMotionCommand
+from rj_geometry_msgs.msg import Point
 
 
-class IPivot(action.IAction, ABC):
-    def done(self) -> bool:
-        pass
 
+class Pivot(action.IFiniteAction):
 
-class Pivot(IPivot):
     """
     Pivot Skill
-    TODO: update with actions implementation
     """
-    def __init__(self, pivot_point: np.ndarray, target_point: np.ndarray):
+    def __init__(self, robot_id : int, pivot_point: np.ndarray, target_point: np.ndarray, priority : int = 1):
         self.pivot_point = pivot_point
         self.target_point = target_point
-        self.count = -1
-        #for stub
 
-    def tick(self, robot: rc.Robot, ctx: action.Ctx) -> None:
-        print('robot:', robot.id, 'pivoting')
-        self.count += 1
+    def tick(self, intent) -> None:
+        pivot_command = PivotMotionCommand()
+        pivot_command.pivot_point = Point(x=self.pivot_point[0], y=self.pivot_point[1])
+        intent.motion_command.pivot_motion_command = [pivot_command]
+        intent.active = True
 
-    def done(self) -> bool:
-        return self.count == 1
-
-    def fail(self):
+    def is_done(self, world_state) -> bool:
+        #vec = self.target_point
+        #world_state.our_robots[self.robot_id].pose[2]
         return False

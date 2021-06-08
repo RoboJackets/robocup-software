@@ -8,9 +8,10 @@ import time
 
 import stp.skill as skill
 import stp.role as role
-import stp.action as action
-from stp.action_behavior import ActionBehavior
+import rj_gameplay.action as action
+from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
+import numpy as np
 
 class IPivotKick(skill.ISkill, ABC):
     ...
@@ -23,13 +24,13 @@ class PivotKick(IPivotKick):
     def __init__(self, role: role.Role, target_point: np.array) -> None:
         self.robot = role.robot
         self.root = py_trees.composites.Sequence("Sequence")
-        self.capture = action.Capture()
-        self.pivot = action.Pivot(robot.pos, target_point)
-        self.kick = action.Kick(target_point)
-        self.capture_behavior = ActionBehavior('Capture', capture)
-        self.pivot_behavior = ActionBehavior('Pivot', pivot) 
-        self.kick_behavior = ActionBehavior('Kick', kick)
-        self.root.add_children([capture_behavior, pivot_behavior, kick_behavior])
+        self.capture = action.capture.Capture()
+        self.pivot = action.pivot.Pivot(self.robot.pos, self.robot.pose, target_point)
+        self.kick = action.kick.Kick(target_point)
+        self.capture_behavior = ActionBehavior('Capture', self.capture)
+        self.pivot_behavior = ActionBehavior('Pivot', self.pivot) 
+        self.kick_behavior = ActionBehavior('Kick', self.kick)
+        self.root.add_children([self.capture_behavior, self.pivot_behavior, self.kick_behavior])
         self.root.setup_with_descendants()
 
     def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:

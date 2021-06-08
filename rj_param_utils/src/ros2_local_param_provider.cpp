@@ -8,14 +8,16 @@ LocalROS2ParamProvider::LocalROS2ParamProvider(rclcpp::Node* node, const std::st
     InitUpdateParamCallbacks(node);
 }
 
-#define DECLARE_AND_UPDATE_PARAMS(type)                                                   \
-    for (const auto& [param_name, param] : GetParamMap<type>()) {                         \
+#define DECLARE_AND_UPDATE_PARAMS(TYPE)                                                   \
+    for (const auto& [param_name, param] : GetParamMap<TYPE>()) {                         \
         rcl_interfaces::msg::ParameterDescriptor descriptor;                              \
         descriptor.description = param->help();                                           \
         const std::string& ros2_param_name = ConvertFullNameToROS2(param_name);           \
-        const type& val =                                                                 \
+        /* Don't redeclare parameters. This is important so that we respect parameters */ \
+        /* set via the command-line or builtins like use_sim_time. */                     \
+        if (!node->has_parameter(ros2_param_name)) {                                      \
             node->declare_parameter(ros2_param_name, param->default_value(), descriptor); \
-        Update(param_name, val);                                                          \
+        }                                                                                 \
     }
 
 void LocalROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {

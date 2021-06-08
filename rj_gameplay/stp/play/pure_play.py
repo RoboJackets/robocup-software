@@ -79,7 +79,7 @@ class PurePlay(play.IPlay["Prop"], ABC):
         )
 
         # Give each tactic its assigned roles and get the list of skills.
-        actions = self.get_actions_from_tactics(assignment_results)
+        actions = self.get_actions_from_tactics(assignment_results, props)
 
         # Return the role assignment results and the list of skills.
         return assignment_results, actions

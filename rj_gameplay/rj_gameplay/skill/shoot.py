@@ -27,7 +27,7 @@ class Shoot(IShoot):
         self.__name__ = 'Shoot'
         self.root = sequence.RJSequence()
         self.capture = capture.Capture()
-        self.pivot = pivot.Pivot([1,1], rc.Field.their_goal_loc)
+        self.pivot = pivot.Pivot(self.robot.pose[0:2],[1,1], rc.Field.their_goal_loc)
         self.kick = kick.Kick(rc.Field.their_goal_loc)
         self.capture_behavior = ActionBehavior('Capture', self.capture ,self.robot)
         #Add more logic for aiming and kicking

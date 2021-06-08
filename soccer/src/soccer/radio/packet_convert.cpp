@@ -5,35 +5,37 @@
 #include <rj_geometry/util.hpp>
 
 #include "control/motion_setpoint.hpp"
+#include "global_params.hpp"
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
 
-// TODO(#1583): Make these ROS parameters and move them to a central location
-constexpr double kMaxKickSpeed = 7.5;
-constexpr double kMinKickSpeed = kMaxKickSpeed / 4;
-constexpr double kMaxChipSpeed = 3.0;
-constexpr double kMinChipSpeed = kMaxChipSpeed / 4;
+using soccer::robot::PARAM_max_chip_speed;
+using soccer::robot::PARAM_max_kick_speed;
+using soccer::robot::PARAM_min_chip_speed;
+using soccer::robot::PARAM_min_kick_speed;
 
 static uint8_t kicker_speed_to_strength(double kick_speed) {
-    return static_cast<uint8_t>(
-        std::min(1.0, (kick_speed - kMinKickSpeed) / (kMaxKickSpeed - kMinKickSpeed)) * kMaxKick);
+    return static_cast<uint8_t>(std::min(1.0, (kick_speed - PARAM_min_kick_speed) /
+                                                  (PARAM_max_kick_speed - PARAM_min_kick_speed)) *
+                                kMaxKick);
 }
 
 static double kicker_strength_to_speed(uint8_t kick_strength) {
     return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) *
-               (kMaxKickSpeed - kMinKickSpeed) +
-           kMinKickSpeed;
+               (PARAM_max_kick_speed - PARAM_min_kick_speed) +
+           PARAM_min_kick_speed;
 }
 
 static uint8_t chipper_speed_to_strength(double kick_speed) {
-    return static_cast<uint8_t>(
-        std::min(1.0, (kick_speed - kMinChipSpeed) / (kMaxChipSpeed - kMinChipSpeed)) * kMaxKick);
+    return static_cast<uint8_t>(std::min(1.0, (kick_speed - PARAM_min_chip_speed) /
+                                                  (PARAM_max_chip_speed - PARAM_min_chip_speed)) *
+                                kMaxKick);
 }
 
 static double chipper_strength_to_speed(uint8_t kick_strength) {
     return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) *
-               (kMaxChipSpeed - kMinChipSpeed) +
-           kMinChipSpeed;
+               (PARAM_max_chip_speed - PARAM_min_chip_speed) +
+           PARAM_min_chip_speed;
 }
 
 namespace ConvertRx {
