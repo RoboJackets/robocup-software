@@ -35,7 +35,7 @@ class Shoot(IShoot):
         self.root.setup_with_descendants()
 
     def tick(self, world_state: rc.WorldState, robot:rc.Robot) -> None:
-        self.root.tick_once(robot)
+        return self.root.tick_once(robot)
         
     def is_done(self, world_state) -> bool:
     	if self.pivot.is_done(world_state) and self.kick.done(): 
