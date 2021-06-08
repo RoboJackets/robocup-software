@@ -16,7 +16,7 @@ class WallBall(play.IPlay):
 
     def __init__(self):
         # defaults to walling between ball pos and goal pos
-        self.wall_tactic = wall_tactic.WallTactic(2)
+        self.wall_tactic = wall_tactic.WallTactic(3)
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):

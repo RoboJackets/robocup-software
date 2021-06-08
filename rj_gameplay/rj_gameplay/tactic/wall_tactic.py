@@ -31,6 +31,8 @@ class wall_cost(role.CostFn):
         return 0.0
 
 def my_robot_assigner(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
+    print("-"*80)
+    print("called")
 
     # [robot_id] = [rc.Robot, pt]
     assignments = {}
@@ -47,6 +49,16 @@ def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignment
     """
     A function that chooses which robot to move to a specific wall pt.
     """
+    """
+    for robot in world_state.our_robots:
+        if robot.id is 2: 
+            if 2 not in assignments:
+                return robot
+        if robot.id is 1: 
+            if 1 not in assignments:
+                return robot
+    """
+
     min_robot = None
     min_dist = float('inf')
     for robot in world_state.our_robots:
@@ -60,18 +72,36 @@ def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignment
             min_dist = dist
             min_robot = robot
 
+    print("wall_pt:", wall_pt)
+    print("closest bot:", min_robot.id)
     return min_robot
 
 def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray):
-    """
-    # TODO: fill out multiple wall_pts
+    # TODO: introduce curvature (currently flat wall)
+
+    # TODO: param server this const
+    WALL_SPACING = RobotConstants.RADIUS / 2 # 1/4th robot diameter
+
+    # set midpoint first
     mid_pt = (mark_pt + def_pt) / 2
-    wall_pts = []
-    for i in range(num_robots):
-        wall_pts.append(i)
+    wall_pts = [mid_pt]
+
+    # get dir, find perp vec to that
+    dir_vec = (mark_pt - def_pt) / np.linalg.norm(mark_pt - def_pt)
+    perp = np.array([dir_vec[1], -dir_vec[0]])
+
+    print("find_wall_pts")
+    print("mark_pt:", mark_pt)
+    print("def_pt:", def_pt)
+
+    # set wall points in middle out pattern, given perp vector and WALL_SPACING constant
+    for i in range(num_robots-1):
+        mult = i//2 + 1
+        delta = (mult * (2 * RobotConstants.RADIUS + WALL_SPACING)) * perp
+        if i % 2: delta = -delta
+        wall_pts.append(mid_pt + delta)
+
     return wall_pts
-    """
-    return [mark_pt, def_pt]
 
 class WallTactic(tactic.ITactic):
 
@@ -94,6 +124,7 @@ class WallTactic(tactic.ITactic):
         self.wall_pts = None
         self.cost = wall_cost()
         self.world_state = None
+        self.my_assignments = None
         
     def compute_props(self):
         pass
@@ -113,10 +144,33 @@ class WallTactic(tactic.ITactic):
 
         if world_state:
             self.world_state = world_state
-            if self.mark_pt is None:
-                self.mark_pt = world_state.ball.pos
-            if self.def_pt is None:
-                self.def_pt = world_state.field.our_goal_loc
+            self.mark_pt = world_state.ball.pos
+            self.def_pt = world_state.field.our_goal_loc
+
+            # TODO: make closest robots form wall, rather than setting on init
+            """
+            if self.my_assignments is not None:
+                # clear old assignments
+                for move_skill_entry in self.move_list:
+                    robot = move_skill_entry.robot
+                    move_skill_entry.skill.target_point = 
+            """
+
+            # TODO: make this stanza less ugly
+            self.my_assignments = my_robot_assigner(self.num_robots, self.mark_pt, self.def_pt, self.world_state)
+            i = 0
+            for robot, pt in self.my_assignments.values():
+                # assigns target point to each move skill
+                self.move_list[i].skill.robot = robot
+                self.move_list[i].skill.target_point = pt
+                i+=1
+
+            for se in self.move_list:
+                print(se.skill.robot.id)
+                print(se.skill.target_point)
+
+            for move_skill_entry in self.move_list:
+                move_skill_entry.skill.face_point = self.mark_pt
 
         role_requests = {
             move_skill_entry: [role.RoleRequest(role.Priority.LOW, False, self.cost)] 
@@ -129,19 +183,6 @@ class WallTactic(tactic.ITactic):
         """
         :return: A list of size 1 skill depending on which role is filled
         """
-
-        # TODO: make this stanza less ugly
-        # TODO: make assignment only happen ONCE
-        # TODO: make assignment have no duplicates
-        pt_to_robot = my_robot_assigner(self.num_robots, self.mark_pt, self.def_pt, self.world_state)
-        i = 0
-        for robot, pt in pt_to_robot.values():
-            # assigns target point to each move skill
-            self.move_list[i].skill.robot = robot
-            self.move_list[i].skill.target_point = pt
-            print("-"*80)
-            print(robot.id, pt)
-            i+=1
 
         skills = [
             move_skill_entry
