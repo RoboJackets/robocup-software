@@ -45,6 +45,7 @@ class Move(IMove):
     def tick(self, robot: rc.Robot, world_state: rc.WorldState): #returns dict of robot and actions
         self.robot = robot
         self.move.target_point = self.target_point
+        self.move.face_point = self.face_point
         actions = self.root.tick_once(self.robot, world_state)
         return actions
 
