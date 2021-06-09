@@ -110,7 +110,7 @@ void SimFieldView::drag_ball(const QPoint& screen_pos) {
 
 void SimFieldView::set_ball_position(const rj_geometry::Point& field_pos) {
     auto request = std::make_shared<rj_msgs::srv::SimPlacement::Request>();
-    request->ball.position.push_back(rj_convert::convert_to_ros(_screenToWorld * field_pos));
+    request->ball.position.push_back(rj_convert::convert_to_ros(field_pos));
     sim_placement_->async_send_request(request);
 }
 
