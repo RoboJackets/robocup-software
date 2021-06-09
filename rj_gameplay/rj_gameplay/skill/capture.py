@@ -30,9 +30,9 @@ class Capture(ICapture):
         self.root = self.capture_behavior
         self.root.setup_with_descendants()
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState):
     	self.robot = robot
-        self.root.tick_once(robot, world_state)
+        return self.root.tick_once(robot, world_state)
 
     def is_done(self, world_state) -> bool:
-    	self.capture.is_done(world_state)
+    	return self.capture.is_done(world_state)
