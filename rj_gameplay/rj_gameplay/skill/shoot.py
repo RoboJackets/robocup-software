@@ -35,7 +35,7 @@ class Shoot(IShoot):
         self.root.setup_with_descendants()
 
     def tick(self, robot:rc.Robot, ctx) -> None:
-        self.root.tick_once(robot, ctx)
+        return self.root.tick_once(robot, ctx)
      
 
     #if Kick and Pivot is done, Shoot should be done.
