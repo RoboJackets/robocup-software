@@ -62,7 +62,6 @@ set(ROBOCUP_LIB_SRC
     ui/sim_field_view.cpp
     ui/strip_chart.cpp
     ui/style_sheet_manager.cpp
-    gr_sim_communicator.cpp
     world_state.cpp
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp

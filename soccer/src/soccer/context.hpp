@@ -3,7 +3,6 @@
 #include <set>
 
 #include <rj_constants/constants.hpp>
-#include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/referee.pb.h>
 
 #include "control/motion_setpoint.hpp"
@@ -56,11 +55,6 @@ struct Context {
     WorldState world_state;
 
     FieldDimensions field_dimensions;
-
-    std::optional<grSim_Packet> grsim_command;
-
-    std::optional<QPointF> ball_command;
-    std::optional<rj_geometry::TransformMatrix> screen_to_world_command;
 
     GameSettings game_settings;
 

@@ -4,6 +4,11 @@
 
 #include <boost/asio.hpp>
 
+#include <rj_msgs/srv/sim_placement.hpp>
+#include <rj_protos/grSim_Commands.pb.h>
+#include <rj_protos/grSim_Packet.pb.h>
+#include <rj_protos/grSim_Replacement.pb.h>
+
 #include "context.hpp"
 #include "radio.hpp"
 
@@ -14,7 +19,6 @@ namespace radio {
  */
 class SimRadio : public Radio {
 public:
-    static std::size_t instance_count;
     SimRadio(bool blue_team = false);
 
 protected:
@@ -30,13 +34,18 @@ private:
     void start_receive();
     void receive_packet(const boost::system::error_code& error, size_t num_bytes);
 
+    // For ball and robot placement
+    void send_sim_command(const grSim_Packet& cmd);
+
     boost::asio::io_service io_service_;
     boost::asio::ip::udp::socket socket_;
-    boost::asio::ip::udp::endpoint grsim_endpoint_;
+    boost::asio::ip::udp::endpoint sim_endpoint_;
 
     std::vector<char> buffer_;
 
     bool blue_team_;
+
+    rclcpp::Service<rj_msgs::srv::SimPlacement>::SharedPtr sim_placement_service_;
 };
 
 }  // namespace radio
