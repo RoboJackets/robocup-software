@@ -78,6 +78,10 @@ static inline std::string motion_setpoint_pub(int robot_id) {
     return "control/motion_setpoint/robot_" + std::to_string(robot_id);
 }
 
+static inline std::string desired_state_pub(int robot_id) {
+    return "control/desired_state/robot_" + std::to_string(robot_id);
+}
+
 static inline std::string robot_controlled_pub(int robot_id) {
     return "control/robot_controlled/robot_" + std::to_string(robot_id);
 }
