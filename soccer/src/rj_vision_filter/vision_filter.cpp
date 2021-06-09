@@ -28,6 +28,10 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
+        if (!config_client_.connected()) {
+            return;
+        }
+
         const double current_team_angle = team_angle();
         const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
         auto frame = CameraFrame(*msg, current_world_to_team, current_team_angle);

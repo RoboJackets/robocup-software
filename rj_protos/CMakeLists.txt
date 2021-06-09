@@ -22,20 +22,25 @@ target_compile_options(rj_protos PRIVATE "-fPIC")
 # ======================================================================
 set(PROTO_FILES
     protos/Control.proto
+    protos/grSim_Commands.proto
+    protos/grSim_Packet.proto
+    protos/grSim_Replacement.proto
     protos/LogFrame.proto
     protos/Point.proto
     protos/RadioRx.proto
     protos/RadioTx.proto
+    protos/referee.proto
     protos/Robot.proto
-    protos/grSim_Commands.proto
-    protos/grSim_Packet.proto
-    protos/grSim_Replacement.proto
-    protos/messages_robocup_ssl_detection.proto
-    protos/messages_robocup_ssl_geometry.proto
-    protos/messages_robocup_ssl_refbox_log.proto
-    protos/messages_robocup_ssl_robot_status.proto
-    protos/messages_robocup_ssl_wrapper.proto
-    protos/referee.proto)
+    protos/ssl_gc_common.proto
+    protos/ssl_simulation_config.proto
+    protos/ssl_simulation_control.proto
+    protos/ssl_simulation_error.proto
+    protos/ssl_simulation_robot_control.proto
+    protos/ssl_simulation_robot_feedback.proto
+    protos/ssl_simulation_synchronous.proto
+    protos/ssl_vision_detection.proto
+    protos/ssl_vision_geometry.proto
+    protos/ssl_vision_wrapper.proto)
 
 # ======================================================================
 # Add sources

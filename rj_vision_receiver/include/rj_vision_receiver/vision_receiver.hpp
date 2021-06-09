@@ -11,7 +11,7 @@
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
+#include <rj_protos/ssl_vision_wrapper.pb.h>
 #include <rj_utils/concurrent_queue.hpp>
 #include <rj_vision_receiver/stamped_wrapper_packet.hpp>
 

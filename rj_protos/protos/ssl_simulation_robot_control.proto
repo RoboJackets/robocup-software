@@ -1,0 +1,66 @@
+syntax = "proto2";
+option go_package = "github.com/RoboCup-SSL/ssl-simulation-protocol/pkg/sim";
+
+// Full command for a single robot
+message RobotCommand {
+    // Id of the robot
+    required uint32 id = 1;
+    // Movement command
+    optional RobotMoveCommand move_command = 2;
+    // Absolute (3 dimensional) kick speed [m/s]
+    optional float kick_speed = 3;
+    // Kick angle [degree] (defaults to 0 degrees for a straight kick)
+    optional float kick_angle = 4 [default = 0];
+    // Dribbler speed in rounds per minute [rpm]
+    optional float dribbler_speed = 5;
+}
+
+// Wrapper for different kinds of movement commands
+message RobotMoveCommand {
+    oneof command {
+        // Move with wheel velocities
+        MoveWheelVelocity wheel_velocity = 1;
+        // Move with local velocity
+        MoveLocalVelocity local_velocity = 2;
+        // Move with global velocity
+        MoveGlobalVelocity global_velocity = 3;
+    }
+}
+
+// Move robot with wheel velocities
+message MoveWheelVelocity {
+    // Velocity [m/s] of front right wheel
+    required float front_right = 1;
+    // Velocity [m/s] of back right wheel
+    required float back_right = 2;
+    // Velocity [m/s] of back left wheel
+    required float back_left = 3;
+    // Velocity [m/s] of front left wheel
+    required float front_left = 4;
+}
+
+// Move robot with local velocity
+message MoveLocalVelocity {
+    // Velocity forward [m/s] (towards the dribbler)
+    required float forward = 1;
+    // Velocity to the left [m/s]
+    required float left = 2;
+    // Angular velocity counter-clockwise [rad/s]
+    required float angular = 3;
+}
+
+// Move robot with global velocity
+message MoveGlobalVelocity {
+    // Velocity on x-axis of the field [m/s]
+    required float x = 1;
+    // Velocity on y-axis of the field [m/s]
+    required float y = 2;
+    // Angular velocity counter-clockwise [rad/s]
+    required float angular = 3;
+}
+
+// Command from the connected client to the simulator
+message RobotControl {
+    // Control the robots
+    repeated RobotCommand robot_commands = 1;
+}

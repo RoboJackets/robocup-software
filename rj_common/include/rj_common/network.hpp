@@ -33,10 +33,12 @@
 static const std::string kRefereeAddress = "224.5.23.1";
 static const std::string kSharedVisionAddress = "224.5.23.2";
 
-static const int kSimCommandPort = 20011;
 static const int kSimVisionPort = 10020;
 static const int kSimBlueStatusPort = 30011;
 static const int kSimYellowStatusPort = 30012;
+static const int kSimCommandPort = 10300;
+static const int kSimBlueCommandPort = 10301;
+static const int kSimYellowCommandPort = 10302;
 
 static const int kLegacyRefereePort = 10001;
 static const int kProtobufRefereePort = 10003;
