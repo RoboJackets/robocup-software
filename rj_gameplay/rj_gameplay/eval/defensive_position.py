@@ -56,104 +56,7 @@ class DefensivePosition:
         
         return out
 
-    '''
-    ## Creates a zone that may cause a risk in the future
-#  Based off the...
-#   Risk score in that position
-#   Availability of opponent robots to reach that point
-#   Space in that area
-#
-# @param ignore_robots: Ignore these robots in defensive calculations
-# @return Returns the best position to cover an error
-def create_area_defense_zones(
-        ignore_robots: List[robocup.Robot] = []) -> Optional[robocup.Point]:
-    # Create a 2D list [N][M] where N is the bucket
-    # and M is the index along that point
-    # The lists contains (robocup.Point, score)
-    points: List[List[Tuple[robocup.Point, float]]] = [[]]
-
-    # Amnt each bucket holds
-    angle_inc = math.pi / 10
-    # Amnt to inc each value by
-    dist_inc = 2.5
-
-    # Holds the float angle (Radians)
-    angle = 0.0
-    # Holds the integer bucket based on angle
-    angle_cnt = 0
-    # Holds dist
-    dist = dist_inc
-
-    score_sum = 0.0
-    point_cnt = 0
-
-    # Populates all the buckets with values
-    while angle < 2 * math.pi:
-
-        point = main.ball().pos
-        while constants.Field.FieldRect.contains_point(point):
-            x = math.cos(angle) * dist + main.ball().pos.x
-            y = math.sin(angle) * dist + main.ball().pos.y
-            point = robocup.Point(x, y)
-            score = estimate_risk_score(point, ignore_robots)
-
-            # Add into bucketed list
-            points[angle_cnt].extend([(point, score)])
-
-            # Keep track of all the big stuff for later
-            score_sum += score
-            point_cnt += 1
-
-            dist += dist_inc
-
-        points.extend([[]])
-        angle_cnt += 1
-        angle += angle_inc
-        dist = dist_inc
-
-    # Bot outside field
-    if (point_cnt == 0):
-        return None
-
-    avg = score_sum / point_cnt
-    largest_bucket = 0
-
-    # Removes any point-scores that are under the avg in all the buckets
-    # Finds the bucket with the most values above avg
-    for i in range(angle_cnt):
-        points[i] = list(filter(lambda point_score: point_score[1] > avg,
-                                points[i]))
-
-        if len(points[i]) > len(points[largest_bucket]):
-            largest_bucket = i
-
-    # Max amount to go in either direction (Total area covers ~PI/4)
-    max_bucket_dist = round(1 / angle_inc * math.pi / 2)
-    # Min amount in bucket to be counted in terms of % of max
-    min_bucket_amnt = 0.25 * len(points[largest_bucket])
-
-    # Move a max of X buckets in either direction
-    # where the number of buckets is > N and
-    # the number of buckets is decreasing a certain amount
-    # based on how far away it is
-    bucket_list = []
-    bucket_pt_sum = robocup.Point(0, 0)
-    bucket_score_sum = 0
-
-    for i in range(-largest_bucket - 1, max_bucket_dist + 1):
-        index = (largest_bucket + i) % angle_cnt
-        if len(points[index]) > min_bucket_amnt:
-            bucket_list.extend(points[index])
-
-    # Do a psudo-density centroid calculation to find where to defend
-    for point in bucket_list:
-        bucket_pt_sum += point[0] * point[1]**2
-        bucket_score_sum += point[1]**2
-
-    return bucket_pt_sum / bucket_score_sum
-    '''
-
-    def create_area_defense_zones(ignore_robots):
+    def create_area_defense_zones(field, ball, ignore_robots):
         # Create a 2D list [N][M] where N is the bucket
         # and M is the index along that point
         # The lists contains (robocup.Point, score)
@@ -173,8 +76,76 @@ def create_area_defense_zones(
 
         score_sum = 0.0
         point_cnt = 0
+        
+        x = -(field.width_m / 2)
+        max_x = (field.width_m / 2)
+        y = 0
+        max_y = field.length_m
+        
+        # Populates all the buckets with values
+        while angle < 2 * math.pi:
 
-        return None
+            point = ball.pos
+            while (point[0] >= x and point[0] <= max_x and point[1] >= y and point[1] <= max_y):
+                x = math.cos(angle) * dist + ball.pos[0]
+                y = math.sin(angle) * dist + ball.pos[1]
+                point = [x, y]
+                score = estimate_risk_score(point, ignore_robots)
+
+                # Add into bucketed list
+                points[angle_cnt].extend([(point, score)])
+
+                # Keep track of all the big stuff for later
+                score_sum += score
+                point_cnt += 1
+
+                dist += dist_inc
+
+            points.extend([[]])
+            angle_cnt += 1
+            angle += angle_inc
+            dist = dist_inc
+
+        # Bot outside field
+        if (point_cnt == 0):
+            return None
+
+        avg = score_sum / point_cnt
+        largest_bucket = 0
+
+        # Removes any point-scores that are under the avg in all the buckets
+        # Finds the bucket with the most values above avg
+        for i in range(angle_cnt):
+            points[i] = list(filter(lambda point_score: point_score[1] > avg,
+                                points[i]))
+
+            if len(points[i]) > len(points[largest_bucket]):
+                largest_bucket = i
+
+        # Max amount to go in either direction (Total area covers ~PI/4)
+        max_bucket_dist = round(1 / angle_inc * math.pi / 2)
+        # Min amount in bucket to be counted in terms of % of max
+        min_bucket_amnt = 0.25 * len(points[largest_bucket])
+
+        # Move a max of X buckets in either direction
+        # where the number of buckets is > N and
+        # the number of buckets is decreasing a certain amount
+        # based on how far away it is
+        bucket_list = []
+        bucket_pt_sum = [0, 0]
+        bucket_score_sum = 0
+
+        for i in range(-largest_bucket - 1, max_bucket_dist + 1):
+            index = (largest_bucket + i) % angle_cnt
+            if len(points[index]) > min_bucket_amnt:
+                 bucket_list.extend(points[index])
+
+        # Do a psudo-density centroid calculation to find where to defend
+        for point in bucket_list:
+            bucket_pt_sum += point[0] * point[1]**2
+            bucket_score_sum += point[1]**2
+
+        return bucket_pt_sum / bucket_score_sum
 
     '''
     ## Estimates how dangerous an enemy robot can be at a certain point
