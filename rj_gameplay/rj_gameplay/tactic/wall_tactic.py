@@ -29,23 +29,89 @@ class wall_cost(role.CostFn):
     ) -> float:
 
         # TODO: make closest robots form wall, rather than setting on init
+        # (aka this method should be filled in)
         return 0.0
 
-def match_robots_to_wall(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
-    print("-"*80)
-    print("called")
+def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
+    # TODO: param server this const
+    WALL_SPACING = RobotConstants.RADIUS / 2 # 1/4th robot diameter
 
-    # [robot_id] = [rc.Robot, pt]
-    assignments = {}
-
-    wall_pts = find_wall_pts(num_robots, mark_pt, def_pt)
-    # sometimes tactic is called before ball_pos is seen
-    if not wall_pts: 
+    # check if vision is up and running
+    # (if it is these points should not be equal)
+    if (mark_pt == def_pt).all():
         return None
 
+    print("-"*70)
+    print("find_wall_pts")
+
+    # get direction vec
+    dir_vec = (mark_pt - def_pt) / np.linalg.norm(mark_pt - def_pt)
+
+    # find angle of dir_vec from side
+    side_vec = np.array([1.0, 0.0])
+    theta = np.arccos(np.dot(dir_vec, side_vec))
+    print(theta)
+
+    # find (x,y) of midpoint for wall, wall_vec
+    # midpoint will be on bound of penalty box
+    box_w = world_state.field.penalty_long_dist_m
+    box_h = world_state.field.penalty_short_dist_m
+    wall_vec = None
+    x, y = 0, 0
+    if theta < np.pi/4:
+        x = box_w/2
+        y = x * np.tan(theta)
+        wall_vec = np.array([0.0, 1.0])
+    elif theta < np.pi/2:
+        y = box_h
+        x = y * np.tan(theta)
+        wall_vec = np.array([1.0, 0.0])
+    elif theta < 3*np.pi/4:
+        y = box_h
+        x = -y * np.tan(theta)
+        wall_vec = np.array([1.0, 0.0])
+    elif theta < np.pi:
+        x = -box_w/2
+        y = x * np.tan(theta)
+        wall_vec = np.array([0.0, 1.0])
+    else:
+        print("Ball behind goal")
+        # TODO: handle this better
+
+    # account for line width
+    line_w = world_state.field.line_width_m
+    x += line_w
+    y += line_w
+    mid_pt = np.array([x,y])
+    print(mid_pt)
+
+    # set wall points in middle out pattern, given wall dir vector and WALL_SPACING constant
+    wall_pts = [mid_pt]
+    for i in range(num_robots-1):
+        mult = i//2 + 1
+        delta = (mult * (2 * RobotConstants.RADIUS + WALL_SPACING)) * wall_vec 
+        if i % 2: delta = -delta
+        wall_pts.append(mid_pt + delta)
+
+    print(wall_pts)
+
+    return wall_pts
+
+def match_robots_to_wall(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
+    """
+    Matches all wall_points to a robot.
+    """
+    # assignments[robot_id] = [rc.Robot, pt]
+    assignments = {}
+
+    wall_pts = find_wall_pts(num_robots, mark_pt, def_pt, world_state)
+    if not wall_pts: 
+        # sometimes tactic is called before ball_pos is seen
+        return None
+
+    # assign every wall pt a robot to move there
     for wall_pt in wall_pts:
         robot = robot_to_wall_pt(wall_pt, world_state, assignments)
-
         assignments[robot.id] = (robot, wall_pt)
 
     return assignments
@@ -53,18 +119,13 @@ def match_robots_to_wall(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarra
 def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignments):
     # TODO: dict type for assignments arg?
     """
-    A function that chooses which robot to move to a specific wall pt.
+    Chooses which robot to move to a specific wall pt.
     """
-    print()
-    print("wall_pt:", wall_pt)
-    # print([r.id for r in world_state.our_robots])
-    # print([r.id for r in world_state.their_robots])
-
+    # find closest robot by dist, return it
     min_robot = None
     min_dist = float('inf')
     for robot in world_state.our_robots:
         # prevent duplicate assignments
-        # TODO: reduce extra travel time when wall moves
         if robot.id in assignments: 
             continue
 
@@ -73,44 +134,8 @@ def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignment
         if dist < min_dist:
             min_dist = dist
             min_robot = robot
-            print(min_dist)
-            print(min_robot.id)
 
-    print("closest bot:", min_robot.id)
     return min_robot
-
-def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray):
-    # TODO: introduce curvature (currently flat wall)
-
-    # TODO: param server this const
-    WALL_SPACING = RobotConstants.RADIUS / 2 # 1/4th robot diameter
-    DIST_FROM_DEF_PT = RobotConstants.RADIUS * 10 # 5 robot diameters
-
-    # check if vision is up and running
-    if (mark_pt==def_pt).all():
-        return None
-
-    # get direction vec
-    dir_vec = (mark_pt - def_pt) / np.linalg.norm(mark_pt - def_pt)
-    mid_pt = def_pt + (dir_vec * DIST_FROM_DEF_PT)
-    # mid_pt = (mark_pt + def_pt) / 2
-    wall_pts = [mid_pt]
-
-    # find perp vec to direction
-    perp = np.array([dir_vec[1], -dir_vec[0]])
-
-    print("find_wall_pts")
-    print("mark_pt:", mark_pt)
-    print("def_pt:", def_pt)
-
-    # set wall points in middle out pattern, given perp vector and WALL_SPACING constant
-    for i in range(num_robots-1):
-        mult = i//2 + 1
-        delta = (mult * (2 * RobotConstants.RADIUS + WALL_SPACING)) * perp
-        if i % 2: delta = -delta
-        wall_pts.append(mid_pt + delta)
-
-    return wall_pts
 
 class WallTactic(tactic.ITactic):
 
