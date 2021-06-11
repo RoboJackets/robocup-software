@@ -12,7 +12,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic122 
+from rj_gameplay.play import line_up 
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16
@@ -25,7 +25,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, basic122.Basic122())
+        return (None, line_up.LineUp())
 
 class GameplayNode(Node):
     """
@@ -128,17 +128,21 @@ class GameplayNode(Node):
             for i in range(NUM_ROBOTS):
                 self.robot_intent_pubs[i].publish(intents[i])
 
-            # create penalty_box rect
-            penalty_box = geo_msg.Rect()
-            penalty_box.pt = [geo_msg.Point(x=1.2, y=0.0), geo_msg.Point(x=-1.2, y=1.2)]
+            # create our_penalty rect
+            our_penalty = geo_msg.Rect()
             top_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=0.0)
             bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.penalty_short_dist_m)
-            penalty_box.pt = [top_left, bot_right] 
-            # print(penalty_box.pt)
+            our_penalty.pt = [top_left, bot_right] 
+
+            # create their_penalty rect
+            their_penalty = geo_msg.Rect()
+            bot_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=self.field.length_m)
+            top_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.length_m - self.field.penalty_short_dist_m)
+            their_penalty.pt = [bot_left, top_right] 
 
             # publish Rect shape to global_obstacles topic
             global_obstacles = geo_msg.ShapeSet()
-            global_obstacles.rectangles = [penalty_box]
+            global_obstacles.rectangles = [our_penalty, their_penalty]
             self.global_obstacles_pub.publish(global_obstacles)
         else:
             self.get_logger().warn("World state was none!")
