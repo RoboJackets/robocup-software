@@ -64,15 +64,15 @@ def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, worl
         wall_vec = np.array([0.0, 1.0])
     elif theta < np.pi/2:
         y = box_h
-        x = y * np.tan(theta)
+        x = y * np.tan(theta - np.pi/4)
         wall_vec = np.array([1.0, 0.0])
     elif theta < 3*np.pi/4:
         y = box_h
-        x = -y * np.tan(theta)
+        x = -y * np.tan(theta - np.pi/2)
         wall_vec = np.array([1.0, 0.0])
     elif theta < np.pi:
         x = -box_w/2
-        y = x * np.tan(theta)
+        y = x * np.tan(theta - 3*np.pi/4)
         wall_vec = np.array([0.0, 1.0])
     else:
         print("Ball behind goal")
@@ -90,6 +90,8 @@ def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, worl
     for i in range(num_robots-1):
         mult = i//2 + 1
         delta = (mult * (2 * RobotConstants.RADIUS + WALL_SPACING)) * wall_vec 
+        print(delta)
+        print(mid_pt + delta)
         if i % 2: delta = -delta
         wall_pts.append(mid_pt + delta)
 
