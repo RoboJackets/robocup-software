@@ -40,7 +40,7 @@ class Shoot(IShoot):
 
     #if Kick and Pivot is done, Shoot should be done.
     def is_done(self, world_state: rc.WorldState) -> bool:
-    	if self.pivot.is_done(world_state) and self.kick.done(): 
+    	if self.pivot.is_done(world_state) and self.kick.is_done(world_state): 
     		return True
     	else:
     		return False
