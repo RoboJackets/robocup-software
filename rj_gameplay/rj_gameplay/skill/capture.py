@@ -31,7 +31,7 @@ class Capture(ICapture):
         self.root.setup_with_descendants()
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState):
-    	self.robot = robot
+        self.robot = robot
         return self.root.tick_once(robot, world_state)
 
     def is_done(self, world_state) -> bool:
