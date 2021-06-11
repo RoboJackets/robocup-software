@@ -156,13 +156,15 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     // properly
     goalieModel = qobject_cast<const QStandardItemModel*>(_ui.goalieID->model());
 
+    _node = std::make_shared<rclcpp::Node>("main_window");
+
     // Append short Git hash to the main window title with an asterisk if the
     // current Git index is dirty
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash + (git_version_dirty ? "*" : ""));
 
     // Pass context into fieldview
     // (apparently simfieldview is used even outside of simulation)
-    _ui.fieldView->setContext(context_);
+    _ui.fieldView->setup(context_, _node.get());
 
     if (!_game_settings.simulation) {
         _ui.menu_Simulator->setEnabled(false);
@@ -180,7 +182,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     //_ui.actionResetField->setEnabled(false);
     _ui.actionStopRobots->setEnabled(false);
 
-    _node = std::make_shared<rclcpp::Node>("main_window");
     _quick_commands_srv =
         _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
     _quick_restart_srv =
@@ -866,31 +867,11 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
 }
 
 void MainWindow::on_actionCenterBall_triggered() {
-    grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
-
-    ball_replace->set_x(0);
-    ball_replace->set_y(0);
-    ball_replace->set_vx(0);
-    ball_replace->set_vy(0);
-
-    std::lock_guard<std::mutex> lock(*context__mutex);
-    context_->grsim_command = simPacket;
+    _ui.fieldView->set_ball_position(rj_geometry::Point(0, 0));
 }
 
 void MainWindow::on_actionStopBall_triggered() {
-    grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
-
-    rj_geometry::Point ball_pos =
-        _ui.fieldView->getTeamToWorld() * context_->world_state.ball.position;
-    ball_replace->set_x(ball_pos.x());
-    ball_replace->set_y(ball_pos.y());
-    ball_replace->set_vx(0);
-    ball_replace->set_vy(0);
-
-    std::lock_guard<std::mutex> lock(*context__mutex);
-    context_->grsim_command = simPacket;
+    _ui.fieldView->set_ball_velocity(rj_geometry::Point(0, 0));
 }
 
 void MainWindow::on_actionResetField_triggered() {
@@ -906,37 +887,21 @@ void MainWindow::on_actionResetField_triggered() {
         double x_pos = -2.5 + i / ROBOTS_PER_COL;
         double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
 
-        rob->set_x(x_pos);
-        rob->set_y(y_pos);
-        rob->set_dir(0);
-        rob->set_id(i);
-        rob->set_yellowteam(false);
+        _ui.fieldView->set_robot_pose(rj_geometry::Pose(x_pos, y_pos, 0), i, true);
     }
 
     for (int i = 0; i < kRobotsPerTeam; ++i) {
-        auto rob = replacement->add_robots();
-
         const int NUM_COLS = 2;
         const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
 
         double x_pos = +2.5 - i / ROBOTS_PER_COL;
         double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
 
-        rob->set_x(x_pos);
-        rob->set_y(y_pos);
-        rob->set_dir(180);
-        rob->set_id(i);
-        rob->set_yellowteam(true);
+        _ui.fieldView->set_robot_pose(rj_geometry::Pose(x_pos, y_pos, 0), i, false);
     }
 
-    auto ball_replace = replacement->mutable_ball();
-    ball_replace->set_x(0.0);
-    ball_replace->set_y(0.0);
-    ball_replace->set_vx(0.0);
-    ball_replace->set_vy(0.0);
-
-    std::lock_guard<std::mutex> lock(*context__mutex);
-    context_->grsim_command = simPacket;
+    _ui.fieldView->set_ball_position(rj_geometry::Point(0.0, 0.0));
+    _ui.fieldView->set_ball_velocity(rj_geometry::Point(0.0, 0.0));
 }
 
 void MainWindow::on_actionStopRobots_triggered() {}
