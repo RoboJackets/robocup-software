@@ -34,7 +34,12 @@ class wall_cost(role.CostFn):
 
 def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
     # TODO: param server this const
-    WALL_SPACING = RobotConstants.RADIUS / 2 # 1/4th robot diameter
+    WALL_SPACING = RobotConstants.RADIUS / 4 
+    # dist is slightly greater than penalty box bounds
+    box_w = world_state.field.penalty_long_dist_m
+    box_h = world_state.field.penalty_short_dist_m
+    line_w = world_state.field.line_width_m
+    DIST_FROM_DEF = RobotConstants.RADIUS + line_w + np.hypot(box_w/2, box_h)
 
     # check if vision is up and running
     # (if it is these points should not be equal)
@@ -46,7 +51,12 @@ def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, worl
 
     # get direction vec
     dir_vec = (mark_pt - def_pt) / np.linalg.norm(mark_pt - def_pt)
+    wall_vec = np.array([dir_vec[1], -dir_vec[0]])
 
+    mid_pt = def_pt + (dir_vec * DIST_FROM_DEF)
+    wall_pts = [mid_pt]
+    
+    """
     # find angle of dir_vec from side
     side_vec = np.array([1.0, 0.0])
     theta = np.arccos(np.dot(dir_vec, side_vec))
@@ -84,6 +94,7 @@ def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, worl
     y += line_w
     mid_pt = np.array([x,y])
     print(mid_pt)
+    """
 
     # set wall points in middle out pattern, given wall dir vector and WALL_SPACING constant
     wall_pts = [mid_pt]
