@@ -90,7 +90,7 @@ class DefensivePosition:
                 x = math.cos(angle) * dist + ball.pos[0]
                 y = math.sin(angle) * dist + ball.pos[1]
                 point = [x, y]
-                score = estimate_risk_score(point, ignore_robots)
+                score = estimate_risk_score(ball, point, ignore_robots)
 
                 # Add into bucketed list
                 points[angle_cnt].extend([(point, score)])
@@ -221,8 +221,138 @@ def estimate_risk_score(pos: robocup.Point,
 
     return score / sum(weights)
     '''
+    
+    ## Estimates how dangerous an enemy robot can be at a certain point
+    #  Takes pass / shot and time to execute on ball into account
+    #
+    # @param pos: Position in which to estimate score at
+    # @return Risk score at that point
+    def estimate_risk_score(ball, pos, ignore_robots):
+        # Caches some kick eval functions
+        max_time = 1
+        max_ball_vel = 8  # m/s per the rules
+        est_turn_vel = 8  # rad/s per a random dice roll (Over estimates oppnents abilities)
+        
+        robotRadius = 0.09 #radius of robot
+        #_, pass_score = kick_eval.eval_pt_to_robot(ball.pos, pos) - 54 lines to return 
+        # origin = ball.pos
+        # target = pos
+        # target_width = 2 * robotRadius
+        dir_raw = pos - ball.pos
+        dir_un = [-dir_raw[1], dir_raw[0]]
+        dir_n = sqrt(dir_un[0]**2 + dir_un[1]**2)
+        dir = dir_un / dir_n
+        seg = [pos + dir * (robotRadius), pos - dir * (robotRadius)]
+        
+        center = [(seg[0][0] + seg[1][0]) / 2, (seg[0][1] + seg[1][1]) / 2]
+        '''
+        return eval_pt_to_seg(origin, seg);
+    float target_width = get_target_angle(origin, target);
+    Point left = seg.pt[0] - ball.pos;
+    Point right = seg.pt[1] - ball.pos;
 
-    def estimate_risk_score(pos, ignore_robots):
+    return static_cast<float>(abs(left.angle_between(right)));
+
+    // Polar bot locations
+    // <Dist, Angle>
+    vector<tuple<float, float> > bot_locations = convert_robots_to_polar(origin, center);
+
+    // Convert polar to mean / std_dev / Vertical Scales
+    vector<float> bot_means;
+    vector<float> bot_st_devs;
+    vector<float> bot_vert_scales;
+
+    bot_means.reserve(bot_locations.size());
+    bot_st_devs.reserve(bot_locations.size());
+    bot_vert_scales.reserve(bot_locations.size());
+
+    float dist_past_target{};
+
+    for (tuple<float, float>& loc : bot_locations) {
+        bot_means.push_back(get<1>(loc));
+        // Want std_dev in radians, not XY distance
+        bot_st_devs.push_back(std::atan(static_cast<float>(kick_evaluator::PARAM_robot_std_dev) / get<0>(loc)));
+
+        // Robot Past Target
+        dist_past_target = static_cast<float>(get<0>(loc) - (origin - center).mag());
+
+        // If robot is past target, only use the chance at the target segment
+        if (dist_past_target > 0 && fabs(get<1>(loc)) < M_PI / 2) {
+            // Evaluate a normal distribution at dist away and scale
+            bot_vert_scales.push_back(1 - erf(dist_past_target / (static_cast<float>(kick_evaluator::PARAM_robot_std_dev) * sqrt(2))));
+        } else {
+            bot_vert_scales.push_back(1);
+        }
+    }
+
+    // Create function with only 1 input
+    // Rest are bound to constant values
+    function<tuple<float, float>(float)> ke_func =
+        [&](float x){
+            return eval_calculation(x, 
+                static_cast<float>(kick_evaluator::PARAM_kick_mean),
+                static_cast<float>(kick_evaluator::PARAM_kick_std_dev),
+                std::cref(bot_means),
+                std::cref(bot_st_devs),
+                std::cref(bot_vert_scales),
+                target_width / -2,
+                target_width / 2);
+        };
+        
+
+    // No opponent robots on the field
+    if (bot_means.empty()) {
+        // Push it off to the side
+        bot_means.push_back(4);
+        // Must be non-zero as 1 / bot_st_dev is used
+        bot_st_devs.push_back(0.1);
+        bot_vert_scales.push_back(0.001);
+
+        // Center will always be the best target X with no robots
+        return pair<Point, float>(center, get<0>(ke_func(0)));
+    }
+
+    ParallelGradient1DConfig parallel_config;
+    KickEvaluator::init_gradient_configs(parallel_config, ke_func, bot_means, bot_st_devs,
+                                         target_width / -2, target_width / 2);
+
+    // Create Gradient Ascent Optimizer and run it
+    ParallelGradientAscent1D optimizer(&parallel_config);
+
+    optimizer.execute();
+
+    // Grab the lcoal max values and their X location
+    vector<float> max_x_values = optimizer.get_max_x_values();
+    vector<float> max_values = optimizer.get_max_values();
+
+    // Default to a local max
+    int index = distance(max_values.begin(), max_element(max_values.begin(), max_values.end()));
+    float max_x = max_x_values.at(index);
+    float max_chance = max_values.at(index);
+
+    // See if there is a segment which is longer
+    // Since local maxes stop on either side of the segment
+    if (max_x_values.size() > 1) {
+        for (int i = 0; i < max_x_values.size() - 1; i++) {
+            // Finds the score at the average between two local maxes
+            float mid_point = (max_x_values.at(i) + max_x_values.at(i + 1)) / 2;
+            float chance = get<0>(ke_func(mid_point));
+
+            // chance >= max_chance
+            if (chance > max_chance || nearly_equal(chance, max_chance)) {
+                max_x = mid_point;
+                max_chance = chance;
+            }
+        }
+    }
+
+    // Angle in reference to the field
+    float real_max_angle = static_cast<float>(max_x + (center - origin).angle());
+    Line best_kick_line(origin, origin + Point{cos(real_max_angle), sin(real_max_angle)});
+
+    // Return point on target segment and chance
+    return pair<Point, float>(target.nearest_point(best_kick_line), max_chance);
+        '''
         return 0.0
 
     '''
