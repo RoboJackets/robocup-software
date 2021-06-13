@@ -31,17 +31,17 @@ class Pivot(action.IFiniteAction):
 
     def is_done(self, world_state:rc.WorldState) -> bool:
         #TODO: Change this when we get action state feedback
-        angle_threshold = 0.65
+        angle_threshold = 0.1
         stopped_threshold = 1*10**(-5)
         if self.robot_id is None:
             return False
         robot = world_state.our_robots[self.robot_id]
-        robot_pos = robot.pose[0:2]
-        robot_pos_unit =  robot_pos / np.linalg.norm(robot_pos)
-        target_point_unit = self.target_point / np.linalg.norm(self.target_point)
-        dot_product = np.dot(robot_pos_unit, target_point_unit)
+        robot_pos_to_target = self.target_point - robot.pose[0:2]
+        robot_to_target_unit =  robot_pos_to_target / np.linalg.norm(robot_pos_to_target)
+        heading_vect = np.array([np.cos(robot.pose[2]), np.sin(robot.pose[2])])
+        dot_product = np.dot(heading_vect, robot_to_target_unit)
         angle = np.arccos(dot_product)
-        if (abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold):
+        if (angle < angle_threshold) and (abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold):
             return True
         else:
             return False

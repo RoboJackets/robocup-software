@@ -20,6 +20,7 @@ def seek_heuristic(point: Tuple[float, float], world_state: Tuple[rc.WorldState]
     cost = 0
     for robot in world_state.their_robots:
         cost-= np.linalg.norm(np.array(point)-np.array(robot.pose[0:2]))
+    cost -= 7 * point[1]
     return cost
 
 class seek_cost(role.CostFn):

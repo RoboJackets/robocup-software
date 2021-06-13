@@ -79,7 +79,7 @@ class Pass(tactic.ITactic):
             if self.pass_cost(robot, None, world_state) < cost:
                 cost = self.pass_cost(robot, None, world_state)
                 receive_robot = robot        
-            return receive_robot
+        return receive_robot
 
     def get_requests(
         self, world_state:rc.WorldState, props) -> List[tactic.RoleRequests]:
