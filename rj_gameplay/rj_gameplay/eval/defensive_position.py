@@ -228,6 +228,7 @@ def estimate_risk_score(pos: robocup.Point,
     # @param pos: Position in which to estimate score at
     # @return Risk score at that point
     def estimate_risk_score(ball, pos, their_robots, our_robots, ignore_robots):
+        #TODO: Finish this
         # Caches some kick eval functions
         max_time = 1
         max_ball_vel = 8  # m/s per the rules
@@ -259,46 +260,12 @@ def estimate_risk_score(pos: robocup.Point,
             obstacle_dir = b.pos - origin
             target_dir = center - origin
             mag = sqrt(obstacle_dir[0]**2 + obstacle_dir[1]**2)
-            polar_bots.append([mag])
+            o = obstacle_dir / np.linalg.norm(obstacle_dir)
+            t = target_dir / np.linalg.norm(target_dir)
+            ot = np.dot(o, t)
+            polar_bots.append([mag, np.arccos(ot)])
         '''
         return eval_pt_to_seg(origin, seg);
-
-    // Polar bot locations
-    // <Dist, Angle>
-    vector<tuple<float, float> > bot_locations = convert_robots_to_polar(origin, center);
-
-    vector<tuple<float, float> > bot_locations;
-    bot_locations.reserve(bots.size() + bot_locations.size());
-
-    // Convert each bot position to polar
-    transform(
-        bots.begin(), bots.end(), back_inserter(bot_locations),
-        [target, origin, this](Robot* bot) { return rect_to_polar(origin, target, bot->pos()); });
-
-    Point obstacle_dir = obstacle - origin;
-    Point target_dir = target - origin;
-
-    return make_tuple(obstacle_dir.mag(),
-                      fix_angle_radians(target_dir.angle_between(obstacle_dir)));
-
-    // Convert imaginary obstacles to polar
-    transform(hypothetical_robot_locations.begin(), hypothetical_robot_locations.end(),
-              back_inserter(bot_locations), [target, origin, this](Point obstacle) {
-                  return rect_to_polar(origin, target, obstacle);
-              });
-
-    return bot_locations;
-
-    // Convert polar to mean / std_dev / Vertical Scales
-    vector<float> bot_means;
-    vector<float> bot_st_devs;
-    vector<float> bot_vert_scales;
-
-    bot_means.reserve(bot_locations.size());
-    bot_st_devs.reserve(bot_locations.size());
-    bot_vert_scales.reserve(bot_locations.size());
-
-    float dist_past_target{};
 
     for (tuple<float, float>& loc : bot_locations) {
         bot_means.push_back(get<1>(loc));
