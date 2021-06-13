@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import pass_tactic
+from rj_gameplay.tactic import pass_tactic, pass_seek
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -16,6 +16,7 @@ class PassPlay(play.IPlay):
     def __init__(self):
         self.target_point  = np.array([1.0,1.0])
         self.pass_tactic = pass_tactic.Pass(self.target_point)
+        self.seek_tactic = pass_seek.Seek(self.target_point)
         self.role_assigner = NaiveRoleAssignment()
 
 
@@ -32,6 +33,7 @@ class PassPlay(play.IPlay):
         role_requests: play.RoleRequests = {}
         if not self.pass_tactic.is_done(world_state):
             role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
+            role_requests[self.seek_tactic] = self.seek_tactic.get_requests(world_state, None)
         else:
             pass
         # Flatten requests and use role assigner on them
@@ -43,7 +45,9 @@ class PassPlay(play.IPlay):
         skill_dict = {}
         if not self.pass_tactic.is_done(world_state):
             skills = self.pass_tactic.tick(role_results[self.pass_tactic], world_state)
+            skills += self.seek_tactic.tick(role_results[self.seek_tactic], world_state)
             skill_dict.update(role_results[self.pass_tactic])
+            skill_dict.update(role_results[self.seek_tactic])
         else:
             skills = []
 

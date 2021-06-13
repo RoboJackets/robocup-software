@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Callable
 
 import stp.action as action
 import stp.rc as rc
@@ -9,6 +9,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
+import rj_gameplay.tactic.pass_seek as pass_seek
 from rj_gameplay.skill import temp_pivot_skill, pivot_kick, receive
 import stp.skill as skill
 import numpy as np
@@ -50,18 +51,24 @@ class passer_cost(role.CostFn):
             else:
                 return 1
 
+
+
 class Pass(tactic.ITactic):
     """
     A passing tactic which captures then passes the ball
     """
 
-    def __init__(self, target_point:np.ndarray):
+    def __init__(self, seeker_heuristics: List[Callable[[float, float], float]], target_point:np.ndarray):
         self.target_point = target_point
+        self.seeker_heuristics = seeker_heuristics
         self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point))
         self.receive = tactic.SkillEntry(receive.Receive())
         self.pass_cost = pass_cost(target_point)
         self.passer_cost = passer_cost()
-
+        self.seek_tactics = []
+        for heuristic in self.seeker_heuristics:
+            self.seek_tactics.append(pass_seek.Seek(self.target_point))
+        
     def compute_props(self):
         pass
 
@@ -71,15 +78,15 @@ class Pass(tactic.ITactic):
         """
         pass
 
-    def find_potential_receiver(self, world_state: rc.WorldState) -> rc.Robot:
+    def find_potential_receiver(world_state: rc.WorldState) -> rc.Robot:
         cost = float('inf')
         receive_robot = None
         for robot in world_state.our_robots:
-            self.pass_cost(robot, None, world_state) < cost
-            if self.pass_cost(robot, None, world_state) < cost:
-                cost = self.pass_cost(robot, None, world_state)
-                receive_robot = robot        
-            return receive_robot
+            if pass_cost(robot, None, world_state) < cost:
+                cost = pass_cost(robot, None, world_state)
+                receive_robot = robot
+        return robot
+
 
     def get_requests(
         self, world_state:rc.WorldState, props) -> List[tactic.RoleRequests]:
@@ -91,9 +98,10 @@ class Pass(tactic.ITactic):
 
         passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
-        if self.pivot_kick.skill.pivot.is_done(world_state):
-            receive_request = role.RoleRequest(role.Priority.HIGH, True, self.pass_cost)
-            role_requests[self.receive] = [receive_request]
+        for seeker in self.seek_tactics:
+            role_requests[seeker] = role.RoleRequest(role.Priority.LOW, False, pass_seek.seek_cost)
+        receive_request = role.RoleRequest(role.Priority.HIGH, True, self.pass_cost)
+        role_requests[self.receive] = [receive_request]
 
         return role_requests
 
@@ -104,6 +112,7 @@ class Pass(tactic.ITactic):
         """
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
+
         if pivot_result and receive_result and pivot_result[0].is_filled() and receive_result[0].is_filled():
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             if self.pivot_kick.skill.pivot.is_done(world_state):
@@ -111,8 +120,6 @@ class Pass(tactic.ITactic):
             else:
                 return [self.pivot_kick]
         elif pivot_result and pivot_result[0].is_filled():
-            potential_receiver = self.find_potential_receiver(world_state)
-            self.pivot_kick.skill.target_point = np.array([potential_receiver.pose[0], potential_receiver.pose[1]])
             return [self.pivot_kick]
         return []
 

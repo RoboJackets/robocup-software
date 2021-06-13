@@ -41,7 +41,7 @@ class Pivot(action.IFiniteAction):
         target_point_unit = self.target_point / np.linalg.norm(self.target_point)
         dot_product = np.dot(robot_pos_unit, target_point_unit)
         angle = np.arccos(dot_product)
-        if abs(angle - angle_threshold) < angle_threshold and abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold:
+        if (abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold):
             return True
         else:
             return False
