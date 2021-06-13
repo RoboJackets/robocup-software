@@ -9,26 +9,30 @@ class Opponent:
 	## Estimates the number of robots on offense on the opposing team
 #
 # @return Num of robots on offense
-    def num_on_offense() -> int:
+    def num_on_offense(field, ball, their_robots):
         # Complementary filter based on...
         #	Distance to their goal
         #	Distance to the ball
-        goal_loc = robocup.Point(0, constants.Field.Length)
-        corner_loc = robocup.Point(constants.Field.Width / 2, 0)
-        ball_loc = main.ball().pos
+        goal_loc = [0, field.length_m]
+        corner_loc = [field.width / 2, 0]
+        ball_loc = ball.pos
 
-        max_goal_dis = (goal_loc - corner_loc).mag()
-        ball_to_goal = (goal_loc - ball_loc).mag()
+        gc = (goal_loc - corner_loc)
+        max_goal_dis = sqrt(gc[0]**2 + gc[1]**2)
+        bg = (goal_loc - ball_loc)
+        ball_to_goal = sqrt(bg[0]**2 + bg[1]**2)
         offense_ctr = 0
 
         filter_coeff = 0.7
         score_cutoff = .3
 
         # For each of their robots
-        for bot in main.their_robots():
+        for bot in their_robots:
             if bot.visible:
-                dist_to_ball = (bot.pos - ball_loc).mag()
-                dist_to_goal = (bot.pos - goal_loc).mag()
+                pb = (bot.pos - ball_loc)
+                dist_to_ball = sqrt(pb[0]**2 + pb[1]**2)
+                pg = (bot.pos - goal_loc)
+                dist_to_goal = sqrt(pg[0]**2 + pg[1]**2)
 
                 goal_coeff = dist_to_goal / max_goal_dis
                 if ball_to_goal != 0:
@@ -44,83 +48,38 @@ class Opponent:
                      offense_ctr += 1
 
         return offense_ctr
+    
+    ## Returns the closest opponent to the pos inclusive of the directional weight
+    #
+    # @param direction_weight: How much to weight the positive y direction,
+    #     0 <= direction weight <= 2
+    #     If < 1, then robots < pos.y are weighted by direction_weight
+    def get_closest_opponent(pos, direction_weight, excluded_robots, their_robots):
+        if excluded_robots is None:
+            excluded_robots = []
+
+        closest_bot, closest_dist = None, float("inf")
+        for bot in their_robots:
+            if bot.visible and bot not in excluded_robots:
+                p = (bot.pos - pos)
+                dist = sqrt(p[0]**2 + p[1]**2)
+
+                if (pos[1] <= bot.pos[1]):
+                    dist *= (2 - direction_weight / 2)
+                else:
+                    dist *= (2 + direction_weight / 2)
+
+                if dist < closest_dist:
+                    closest_bot = bot
+                    closest_dist = dist
+
+        return closest_bot
 
 	'''import main
 import robocup
 import constants
 
 import single_robot_behavior
-
-
-## Estimates the number of robots on offense on the opposing team
-#
-# @return Num of robots on offense
-def num_on_offense() -> int:
-    # Complementary filter based on...
-    #	Distance to their goal
-    #	Distance to the ball
-    goal_loc = robocup.Point(0, constants.Field.Length)
-    corner_loc = robocup.Point(constants.Field.Width / 2, 0)
-    ball_loc = main.ball().pos
-
-    max_goal_dis = (goal_loc - corner_loc).mag()
-    ball_to_goal = (goal_loc - ball_loc).mag()
-    offense_ctr = 0
-
-    filter_coeff = 0.7
-    score_cutoff = .3
-
-    # For each of their robots
-    for bot in main.their_robots():
-        if bot.visible:
-            dist_to_ball = (bot.pos - ball_loc).mag()
-            dist_to_goal = (bot.pos - goal_loc).mag()
-
-            goal_coeff = dist_to_goal / max_goal_dis
-            if ball_to_goal != 0:
-                ball_coeff = 1 - (dist_to_ball / ball_to_goal)
-            else:
-                ball_coeff = 1
-            ball_coeff = max(0, ball_coeff * ball_coeff)
-
-            score = filter_coeff * goal_coeff + (1 - filter_coeff) * ball_coeff
-
-            # Only count if their score is above the cutoff
-            if (score > score_cutoff):
-                offense_ctr += 1
-
-    return offense_ctr
-
-
-## Returns the closest opponent to the pos inclusive of the directional weight
-#
-# @param direction_weight: How much to weight the positive y direction,
-#     0 <= direction weight <= 2
-#     If < 1, then robots < pos.y are weighted by direction_weight
-def get_closest_opponent(
-    pos: robocup.Point,
-    direction_weight: float = 0,
-    excluded_robots: Optional[List[robocup.Robot]] = None
-) -> robocup.OpponentRobot:
-    if excluded_robots is None:
-        excluded_robots = []
-
-    closest_bot, closest_dist = None, float("inf")
-    for bot in main.their_robots():
-        if bot.visible and bot not in excluded_robots:
-            dist = (bot.pos - pos).mag()
-
-            if (pos.y <= bot.pos.y):
-                dist *= (2 - direction_weight / 2)
-            else:
-                dist *= (2 + direction_weight / 2)
-
-            if dist < closest_dist:
-                closest_bot = bot
-                closest_dist = dist
-
-    return closest_bot
-
 
 Threat = Tuple[robocup.Point, float, Optional[robocup.OpponentRobot]]
 
