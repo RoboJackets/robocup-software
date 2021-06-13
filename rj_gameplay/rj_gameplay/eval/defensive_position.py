@@ -56,7 +56,7 @@ class DefensivePosition:
         
         return out
 
-    def create_area_defense_zones(field, ball, ignore_robots):
+    def create_area_defense_zones(field, ball, their_robots, our_robots, ignore_robots):
         # Create a 2D list [N][M] where N is the bucket
         # and M is the index along that point
         # The lists contains (robocup.Point, score)
@@ -90,7 +90,7 @@ class DefensivePosition:
                 x = math.cos(angle) * dist + ball.pos[0]
                 y = math.sin(angle) * dist + ball.pos[1]
                 point = [x, y]
-                score = estimate_risk_score(ball, point, ignore_robots)
+                score = estimate_risk_score(ball, point, their_robots, our_robots, ignore_robots)
 
                 # Add into bucketed list
                 points[angle_cnt].extend([(point, score)])
@@ -227,7 +227,7 @@ def estimate_risk_score(pos: robocup.Point,
     #
     # @param pos: Position in which to estimate score at
     # @return Risk score at that point
-    def estimate_risk_score(ball, pos, ignore_robots):
+    def estimate_risk_score(ball, pos, their_robots, our_robots, ignore_robots):
         # Caches some kick eval functions
         max_time = 1
         max_ball_vel = 8  # m/s per the rules
@@ -245,17 +245,49 @@ def estimate_risk_score(pos: robocup.Point,
         seg = [pos + dir * (robotRadius), pos - dir * (robotRadius)]
         
         center = [(seg[0][0] + seg[1][0]) / 2, (seg[0][1] + seg[1][1]) / 2]
+        left = seg.pt[0] - ball.pos;
+        right = seg.pt[1] - ball.pos;
+        l0 = left / np.linalg.norm(left)
+        r0 = right / np.linalg.norm(right)
+        dp = np.dot(l0, r0)
+        target_width = abs(np.arccos(dp))
+        
+        bots = [their_robots + our_robots - ignore_robots]
+        polar_bots = []
+        
+        for b in bots:
+            obstacle_dir = b.pos - origin
+            target_dir = center - origin
+            mag = sqrt(obstacle_dir[0]**2 + obstacle_dir[1]**2)
+            polar_bots.append([mag])
         '''
         return eval_pt_to_seg(origin, seg);
-    float target_width = get_target_angle(origin, target);
-    Point left = seg.pt[0] - ball.pos;
-    Point right = seg.pt[1] - ball.pos;
-
-    return static_cast<float>(abs(left.angle_between(right)));
 
     // Polar bot locations
     // <Dist, Angle>
     vector<tuple<float, float> > bot_locations = convert_robots_to_polar(origin, center);
+
+    vector<tuple<float, float> > bot_locations;
+    bot_locations.reserve(bots.size() + bot_locations.size());
+
+    // Convert each bot position to polar
+    transform(
+        bots.begin(), bots.end(), back_inserter(bot_locations),
+        [target, origin, this](Robot* bot) { return rect_to_polar(origin, target, bot->pos()); });
+
+    Point obstacle_dir = obstacle - origin;
+    Point target_dir = target - origin;
+
+    return make_tuple(obstacle_dir.mag(),
+                      fix_angle_radians(target_dir.angle_between(obstacle_dir)));
+
+    // Convert imaginary obstacles to polar
+    transform(hypothetical_robot_locations.begin(), hypothetical_robot_locations.end(),
+              back_inserter(bot_locations), [target, origin, this](Point obstacle) {
+                  return rect_to_polar(origin, target, obstacle);
+              });
+
+    return bot_locations;
 
     // Convert polar to mean / std_dev / Vertical Scales
     vector<float> bot_means;
