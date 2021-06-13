@@ -15,11 +15,10 @@ from rj_gameplay.skill import move
 import stp.skill as skill
 import numpy as np
 # TODO: replace w/ global param server
-from stp.utils.constants import RobotConstants
+from stp.utils.constants import RobotConstants, BallConstants
 
 class wall_cost(role.CostFn):
-    """
-    Cost function for role request.
+    """Cost function for role request.
     """
     def __call__(
         self,
@@ -29,12 +28,16 @@ class wall_cost(role.CostFn):
     ) -> float:
 
         # TODO: make closest robots form wall, rather than setting on init
-        # (aka this method should be filled in)
+        # aka actually use this method
         return 0.0
 
-def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
+def find_wall_pts(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, world_state: rc.WorldState):
+    """Calculates num_robots points to form a wall between the ball and goal.
+    :return list of wall_pts (numpy)
+    """
     # TODO: param server this const
-    WALL_SPACING = RobotConstants.RADIUS / 4 
+    WALL_SPACING = BallConstants.RADIUS * 1.9
+
     # dist is slightly greater than penalty box bounds
     box_w = world_state.field.penalty_long_dist_m
     box_h = world_state.field.penalty_short_dist_m
@@ -43,81 +46,34 @@ def find_wall_pts(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, worl
 
     # check if vision is up and running
     # (if it is these points should not be equal)
-    if (mark_pt == def_pt).all():
+    if (ball_pt == goal_pt).all():
         return None
 
-    print("-"*70)
-    print("find_wall_pts")
-
     # get direction vec
-    dir_vec = (mark_pt - def_pt) / np.linalg.norm(mark_pt - def_pt)
+    dir_vec = (ball_pt - goal_pt) / np.linalg.norm(ball_pt - goal_pt)
     wall_vec = np.array([dir_vec[1], -dir_vec[0]])
 
-    mid_pt = def_pt + (dir_vec * DIST_FROM_DEF)
+    mid_pt = goal_pt + (dir_vec * DIST_FROM_DEF)
     wall_pts = [mid_pt]
-    
-    """
-    # find angle of dir_vec from side
-    side_vec = np.array([1.0, 0.0])
-    theta = np.arccos(np.dot(dir_vec, side_vec))
-    print(theta)
-
-    # find (x,y) of midpoint for wall, wall_vec
-    # midpoint will be on bound of penalty box
-    box_w = world_state.field.penalty_long_dist_m
-    box_h = world_state.field.penalty_short_dist_m
-    wall_vec = None
-    x, y = 0, 0
-    if theta < np.pi/4:
-        x = box_w/2
-        y = x * np.tan(theta)
-        wall_vec = np.array([0.0, 1.0])
-    elif theta < np.pi/2:
-        y = box_h
-        x = y * np.tan(theta - np.pi/4)
-        wall_vec = np.array([1.0, 0.0])
-    elif theta < 3*np.pi/4:
-        y = box_h
-        x = -y * np.tan(theta - np.pi/2)
-        wall_vec = np.array([1.0, 0.0])
-    elif theta < np.pi:
-        x = -box_w/2
-        y = x * np.tan(theta - 3*np.pi/4)
-        wall_vec = np.array([0.0, 1.0])
-    else:
-        print("Ball behind goal")
-        # TODO: handle this better
-
-    # account for line width
-    line_w = world_state.field.line_width_m
-    x += line_w
-    y += line_w
-    mid_pt = np.array([x,y])
-    print(mid_pt)
-    """
 
     # set wall points in middle out pattern, given wall dir vector and WALL_SPACING constant
     wall_pts = [mid_pt]
     for i in range(num_robots-1):
         mult = i//2 + 1
         delta = (mult * (2 * RobotConstants.RADIUS + WALL_SPACING)) * wall_vec 
-        print(delta)
-        print(mid_pt + delta)
         if i % 2: delta = -delta
         wall_pts.append(mid_pt + delta)
 
-    print(wall_pts)
-
     return wall_pts
 
-def match_robots_to_wall(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarray, world_state: rc.WorldState):
-    """
-    Matches all wall_points to a robot.
+def match_robots_to_wall(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, world_state: rc.WorldState):
+    """Matches all wall_points to a robot.
+    :return dictionary of robot_id to List(rc.Robot, pt)
     """
     # assignments[robot_id] = [rc.Robot, pt]
     assignments = {}
 
-    wall_pts = find_wall_pts(num_robots, mark_pt, def_pt, world_state)
+    wall_pts = find_wall_pts(num_robots, ball_pt, goal_pt, world_state)
     if not wall_pts: 
         # sometimes tactic is called before ball_pos is seen
         return None
@@ -131,8 +87,8 @@ def match_robots_to_wall(num_robots: int, mark_pt: np.ndarray, def_pt: np.ndarra
 
 def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignments):
     # TODO: dict type for assignments arg?
-    """
-    Chooses which robot to move to a specific wall pt.
+    """Chooses which robot to move to a specific wall pt.
+    :return closest Robot object by dist
     """
     # find closest robot by dist, return it
     min_robot = None
@@ -154,14 +110,15 @@ class WallTactic(tactic.ITactic):
 
     def __init__(self, 
             num_robots: int, 
-            mark_pt: np.ndarray = None, 
-            def_pt: np.ndarray = None,
+            ball_pt: np.ndarray = None, 
+            goal_pt: np.ndarray = None,
         ):
 
         self.num_robots = num_robots
-        self.mark_pt = mark_pt 
-        self.def_pt = def_pt
+        self.ball_pt = ball_pt 
+        self.goal_pt = goal_pt
 
+        # create move SkillEntry for every robot
         self.move_list = [
             tactic.SkillEntry(move.Move()) 
             for _ in range(num_robots)
@@ -190,13 +147,13 @@ class WallTactic(tactic.ITactic):
 
         if world_state and world_state.ball.visible:
             # update world_state, ball pos, goal loc
-            # TODO: resolve scenario when mark_pt/def_pt don't need to be updated every tick (e.g. manually given)
+            # TODO: resolve scenario when ball_pt/goal_pt don't need to be updated every tick (e.g. manually given)
             self.world_state = world_state
-            self.mark_pt = world_state.ball.pos
-            self.def_pt = world_state.field.our_goal_loc
+            self.ball_pt = world_state.ball.pos
+            self.goal_pt = world_state.field.our_goal_loc
 
             # get dict of robot to pos in wall
-            self.wall_spots = match_robots_to_wall(self.num_robots, self.mark_pt, self.def_pt, self.world_state)
+            self.wall_spots = match_robots_to_wall(self.num_robots, self.ball_pt, self.goal_pt, self.world_state)
             if self.wall_spots is not None:
                 i = 0
                 for robot, pt in self.wall_spots.values():
@@ -205,10 +162,11 @@ class WallTactic(tactic.ITactic):
                     self.move_list[i].skill.target_point = pt
                     i += 1
 
-                # make all robots face mark_pt on move
+                # make all robots face ball_pt on move
                 for move_skill_entry in self.move_list:
-                    move_skill_entry.skill.face_point = self.mark_pt
+                    move_skill_entry.skill.face_point = self.ball_pt
 
+        # create a RoleRequest for each SkillEntry
         role_requests = {
             move_skill_entry: [role.RoleRequest(role.Priority.LOW, False, self.cost)] 
             for move_skill_entry in self.move_list
@@ -221,6 +179,7 @@ class WallTactic(tactic.ITactic):
         :return: A list of skills depending on which roles are filled
         """
 
+        # create list of skills based on if RoleResult exists for SkillEntry 
         skills = [
             move_skill_entry
             for move_skill_entry in self.move_list
@@ -230,6 +189,9 @@ class WallTactic(tactic.ITactic):
         return skills
 
     def is_done(self, world_state):
+        """
+        :return boolean indicating if tactic is done
+        """
         for move_skill in self.move_list:
             if not move_skill.skill.is_done(world_state):
                 return False
