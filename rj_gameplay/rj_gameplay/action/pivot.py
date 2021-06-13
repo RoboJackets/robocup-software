@@ -17,7 +17,7 @@ class Pivot(action.IFiniteAction):
         self.robot_id = robot_id
         self.pivot_point = pivot_point
         self.target_point = target_point
-        self.dribble_speed =dribble_speed
+        self.dribble_speed = dribble_speed
 
     def tick(self, intent: RobotIntent) -> None:
         new_intent = intent

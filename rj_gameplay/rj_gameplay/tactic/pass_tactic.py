@@ -9,7 +9,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import temp_pivot_skill, pivot_kick, receive
+from rj_gameplay.skill import pivot_kick, receive
 import stp.skill as skill
 import numpy as np
 
