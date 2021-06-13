@@ -46,7 +46,7 @@ class Move(IMove):
         self.robot = robot
         self.move.target_point = self.target_point
         # TODO: figure out why AttributeError: 'Move object has no attribute face_point' keeps popping up (move action does have a face_point)
-        # self.move.face_point = self.face_point
+        self.move.face_point = self.face_point
         actions = self.root.tick_once(self.robot, world_state)
         return actions
 
