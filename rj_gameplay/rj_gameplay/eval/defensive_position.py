@@ -353,36 +353,24 @@ def estimate_risk_score(pos: robocup.Point,
     return pair<Point, float>(target.nearest_point(best_kick_line), max_chance);
         '''
         return 0.0
-
-    '''
+    
     ## Decides where the best positions for defense is
-#
-# @return area_defense_position, highest_risk_robot, 2nd_highest_risk_robot
-def find_defense_positions(
-    ignore_robots: List[robocup.Robot] = []
-) -> Tuple[robocup.Point, robocup.OpponentRobot, robocup.OpponentRobot]:
-
-    their_risk_scores = []
-
-    for bot in main.their_robots():
-        score = estimate_risk_score(bot.pos, ignore_robots)
-        main.debug_drawer().draw_text("Risk: " + str(int(score * 100)),
-                                      bot.pos, constants.Colors.White,
-                                      "Defense")
-        their_risk_scores.extend([score])
-
-    # Sorts bot array based on their score
-    zipped_array = zip(their_risk_scores, main.their_robots())
-    sorted_array = sorted(zipped_array, reverse=True)
-    sorted_bot = [bot for (scores, bot) in sorted_array]
-
-    area_def_pos = create_area_defense_zones(ignore_robots)
-
-    return area_def_pos, sorted_bot[0], sorted_bot[1]
-    '''
-
-    def find_defense_positions(ignore_robots = []):
-        return None, None, None
+    #
+    # @return area_defense_position, highest_risk_robot, 2nd_highest_risk_robot
+    def find_defense_positions(ball, our_robots, ignore_robots, their_robots):
+        their_risk_scores = []
+        for bot in their_robots:
+            score = estimate_risk_score(ball, bot.pos, their_robots, our_robots, ignore_robots)
+            their_risk_scores.extend(score])
+            
+        # Sorts bot array based on their score
+        zipped_array = zip(their_risk_scores, their_robots)
+        sorted_array = sorted(zipped_array, reverse=True)
+        sorted_bot = [bot for (scores, bot) in sorted_array]
+        
+        area_def_pos = create_area_defense_zones(field, ball, their_robots, our_robots, ignore_robots)
+        
+        return area_def_pos, sorted_bot[0], sorted_bot[1]
 
     '''
     ## Finds the line segment between the mark_pos and the highest danger shot point
@@ -442,17 +430,16 @@ def goalside_mark_segment(
 ## Finds the line segment between the mark_pos and the ball
 # @param mark_pos: Point (usually robot position) to defend against
 # @return: LineSegment to defend on
-    def ballside_mark_segment(
-        mark_pos: robocup.Point,
-        ball_pos: Optional[robocup.Point] = None) -> robocup.Line:
+    def ballside_mark_segment(mark_pos, ball_pos, ball):
         # offsets on ball and mark_pos sides
         if ball_pos is None:
-            ball_pos = main.ball().pos
-        offsets = [constants.Robot.Radius, constants.Ball.Radius]
-        mark_line_dir = (ball_pos - mark_pos).normalized()
-        ball_mark_line = robocup.Segment(
-            ball_pos - mark_line_dir * constants.Ball.Radius,
-            mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
+            ball_pos = ball.pos
+        offsets = [0.09, 0.0215]
+        mld = (ball_pos - mark_pos)
+        mldn = sqrt(mld[0]**2 + mld[1]**2)
+        mark_line_dir = mld / mldn
+        ball_mark_line = [ball_pos - mark_line_dir * offsets[1],
+            mark_pos + mark_line_dir * 2.0 * offsets[0]]
         # End the mark line segment 1 radius away from the opposing robot
         # Or 1 ball radius away if marking a position
         return ball_mark_line
