@@ -74,6 +74,40 @@ class Opponent:
                     closest_dist = dist
 
         return closest_bot
+    
+    ## Estimate potential reciever score (likelihood of opponent passing to this robot)
+#
+#  @param bot Robot to estimate score at
+#  @return The potential receiver score at that point
+def estimate_potential_recievers_score(bot, ball):
+    ball_travel_line = [ball.pos, ball.pos + ball.vel]
+
+    dot_product = np.dot((bot.pos[:-1] - ball.pos), ball.vel)
+    nearest_pt = ball_travel_line.nearest_point(bot.pos)
+    dx = (nearest_pt - main.ball().pos).mag()
+    dy = (bot.pos[:-1] - nearest_pt).mag()
+    angle = abs(math.atan2(dy, dx))
+
+    # Only returns 1 if the opp is moving in the opposite direction as the ball
+    # and the angle between the ball ray starting at its current position and the opp position
+    # is less than pi/4
+    if (angle < math.pi / 4 and dot_product > 0):
+        return 1
+    else:
+        return 0
+    
+    
+## Returns whether a position is marked by one of our robots
+#
+# @param pos Position to check
+# @return True or False if a robot is on the mark line
+def is_marked(pos, our_robots):
+    line = [pos, [0, 0]]
+
+    for bot in our_robots:
+        if line.dist_to(bot.pos) < constants.Robot.Radius / 2:
+            return True
+    return False
 
 	'''import main
 import robocup
