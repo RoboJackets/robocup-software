@@ -18,132 +18,96 @@ class TouchpassPosition:
     # tpass = evaluation.touchpass_positioning
     # tpass.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
     
-    ## Returns a robocup.Rect object that is the default location to be evaluated
+    ## Returns a rectangle (two diagonal corners) that is the default location to be evaluated
     # This rectangle will only include points with a lower y value that the ball's current location, and will be on the side of the field
     # opposite to the ball.
     #
-    # @param kick_point current ball position/initial kick position (robocup.Point)
+    # @param point current ball position/initial kick position (robocup.Point)
+    # @param field rc.Field
+    # @param ball rc.Ball
     def generate_default_rectangle(point, field, ball):
         edge_offset = 0.25
         ball_offset = 0.4
         
         if point[0] > 0:
             #ball on right side of field
-            #from_point = [0, min(field.length_m - edge_offset, ball.pos.y - ball_offset)]
-            to_point = []
-            toReturn = []
+            from_point = [0, min(field.length_m - edge_offset, ball.pos[1] - ball_offset)]
+            to_point = [((-field.width_m / 2) + edge_offset), min(field.length_m * 3 / 4, ball.pos[1] - 2)]
+            rectangle = [from_point, to_point]
+            return rectangle
+        else: 
+            #left side of field
+            from_point = [0, min(field.length_m - edge_offset, ball.pos[1] - ball_offset)]
+            to_point = [((field.width_m / 2) - edge_offset), min(field.length_m * 3 / 4, ball.pos[1] - 2)]
+            rectangle = [from_point, to_point]
+            return rectangle
+        
+    ## Returns a list of robocup.Segment object that represent candidate lines. Takes in a rectangle (two diagonal corner points)
+    #
+    # These lines will be evaluated later by the window_evaluator.
+    def get_segments_from_rect(rect, threshold):
+        outlist = []
+        curr_x = min(rect[0][0], rect[1][0]) #current x
+        max_x = max(rect[0][0], rect[1][0])
+        max_y = max(rect[0][1], rect[1][1])
+        min_y = min(rect[0][1], rect[1][1])
+        
+        # loop through top left to bottom right
+        while curr_x <= max_x:
+            curry = max_y # you get variable names like this when you have an Indian writing your code. Current y 
+            # don't include goal area
+            width = field.penalty_long_dist_m / 2
+            height = (field.length - field.penalty_short_dist_m)
+            while (curry <= height and abs(curr_x) > width):
+                curry -= threshold
+            candidate = [[curr_x, min_y], [curr_x, curry]]
+            outlist.append(candidate)
+            curr_x += threshold
+        curr_x = min_x
+        return outlist
 
-'''
+    ## Evaluates a single point, and returns the probability of it making it.
+    #
+    # The value returned is the probability that a pass from the kick_point to the receive_point will make it,
+    # multiplied by the probability that a goal can be scored from receive_point. This probablity will be between 0 and 1.
+    def eval_single_point(ball, field, kick_point, receive_point, targetPoint, ignore_robots):
+        if kick_point is None:
+            if ball.valid:
+                kick_point = ball.pos
+            else:
+                return None
 
-def generate_default_rectangle(kick_point: robocup.Point) -> robocup.Rect:
-    offset_from_edge = 0.25
-    offset_from_ball = 0.4
-    # offset_from_ball = 0.7
-
-    if kick_point.x > 0:
-        # Ball is on right side of field
-        toReturn = robocup.Rect(
-            robocup.Point(0, min(constants.Field.Length - offset_from_edge,
-                                 main.ball().pos.y - offset_from_ball)),
-            robocup.Point(-constants.Field.Width / 2 + offset_from_edge,
-                          min(constants.Field.Length * 3 / 4,
-                              main.ball().pos.y - 2)))
-    else:
-        # Ball is on left side of field
-        toReturn = robocup.Rect(
-            robocup.Point(0, min(constants.Field.Length - offset_from_edge,
-                                 main.ball().pos.y - offset_from_ball)),
-            robocup.Point(constants.Field.Width / 2 - offset_from_edge,
-                          min(constants.Field.Length * 3 / 4,
-                              main.ball().pos.y - 2)))
-    return toReturn
-
-
-## Returns a list of robocup.Segment object that represent candidate lines. Takes in a robocup.Rect.
-#
-# These lines will be evaluated later by the window_evaluator.
-def get_segments_from_rect(rect: robocup.Rect,
-                           threshold: float = 0.75) -> List[robocup.Segment]:
-    outlist = []
-    currentx = rect.min_x()
-    currenty = rect.max_y()
-
-    # Loop through from top left to bottom right
-
-    while currentx <= rect.max_x():
-        currenty = rect.max_y()
-        # Don't include goal area.
-        if constants.Field.TheirGoalZoneShape.contains_point(
-                robocup.Point(currentx, rect.min_y())):
-            continue
-        while constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
-            currentx, currenty)):
-            currenty = currenty - threshold
-
-        candidate = robocup.Segment(robocup.Point(currentx, rect.min_y()),
-                                    robocup.Point(currentx, currenty))
-        outlist.extend([candidate])
-        currentx = currentx + threshold
-    currentx = rect.min_x()
-    return outlist
-
-
-## Evaluates a single point, and returns the probability of it making it.
-#
-# The value returned is the probability that a pass from the kick_point to the receive_point will make it,
-# multiplied by the probability that a goal can be scored from receive_point. This probablity will be between 0 and 1.
-def eval_single_point(
-        kick_point: Optional[robocup.Point],
-        receive_point: robocup.Point,
-        targetPoint: Optional[robocup.Point] = None,
-        ignore_robots: List[robocup.Robot] = []) -> Optional[float]:
-    if kick_point is None:
-        if main.ball().valid:
-            kick_point = main.ball().pos
-        else:
-            return None
-
-    currentChance = evaluation.passing.eval_pass(kick_point, receive_point,
+        currentChance = Pass.eval_pass(kick_point, receive_point,
                                                  ignore_robots)
-    # TODO don't only aim for center of goal. Waiting on window_evaluator returning a probability.
-    if targetPoint is None:
-        targetPoint = constants.Field.TheirGoalSegment.center()
-    currentChance = currentChance * evaluation.passing.eval_pass(
-        receive_point, targetPoint, ignore_robots)
-    return currentChance
-
-
-## Finds the best receive point for a bounce-pass.
-# @param kick_point the point we will kick from (robocup.Point)
-# @param evaluation_zone the zone that will be evaluated to try to find points.
-# If none, it will try to guess a good receive area.
-# This is a robocup.Rect
-# @param ignore_robots a list of robots to be ignored when trying to find the best receive point.
-def eval_best_receive_point(
-    kick_point: robocup.Point,
-    evaluation_zone: Optional[robocup.Rect] = None,
-    ignore_robots: List[robocup.Robot] = []
-) -> Union[Tuple[robocup.Point, robocup.Point, float], Tuple[None, None,
-                                                             None]]:
-    win_eval = robocup.WindowEvaluator(main.context())
-    for r in ignore_robots:
-        win_eval.add_excluded_robot(r)
-
-    targetSeg = constants.Field.TheirGoalSegment
-
-    # Autogenerate kick point
-    if evaluation_zone is None:
-        evaluation_zone = generate_default_rectangle(kick_point)
-
-    segments = get_segments_from_rect(evaluation_zone)
-
-    if segments is None or len(segments) == 0:
-        # We can't do anything.
+        # TODO don't only aim for center of goal. Waiting on window_evaluator returning a probability.
+        if targetPoint is None:
+            targetPoint = [0,field.length_m]
+        currentChance = currentChance * Pass.eval_pass(receive_point, targetPoint, ignore_robots)
+        return currentChance
+        
+    ## Finds the best receive point for a bounce-pass.
+    # @param kick_point the point we will kick from (robocup.Point)
+    # @param evaluation_zone the zone that will be evaluated to try to find points.
+    # If none, it will try to guess a good receive area.
+    # This is a robocup.Rect
+    # @param ignore_robots a list of robots to be ignored when trying to find the best receive point.
+    def eval_best_receive_point(kick_point, evaluation_zone, ignore_robots):
+        #TODO: finish this function
         return None, None, None
-    bestChance = None
 
-    for segment in segments:
-        main.debug_drawer().draw_line(segment, constants.Colors.Blue,
+        # Autogenerate kick point
+        if evaluation_zone is None:
+            evaluation_zone = generate_default_rectangle(kick_point)
+
+        segments = get_segments_from_rect(evaluation_zone)
+
+        if segments is None or len(segments) == 0:
+            # We can't do anything.
+            return None, None, None
+        bestChance = None
+
+        for segment in segments:
+            main.debug_drawer().draw_line(segment, constants.Colors.Blue,
                                       "Candidate Lines")
         _, best = win_eval.eval_pt_to_seg(kick_point, segment)
 
@@ -167,4 +131,3 @@ def eval_best_receive_point(
         return None, None, None
 
     return bestpt, targetPoint, bestChance
-'''
