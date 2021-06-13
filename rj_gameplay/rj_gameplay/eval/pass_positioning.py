@@ -1,12 +1,7 @@
-import constants
-import math
-import sys
-import main
-import evaluation.field
-import evaluation.passing
-import evaluation.shooting
-import functools
-from typing import Tuple, List
+
+import Field
+import Pass
+import Shoot
 sys.path.insert(1, "../../stp")
 import rc
 
@@ -49,29 +44,28 @@ def eval_single_point(ball, field, kick_point,
     l = field.length_m
     x_offset = .1 * w
     y_offset = .1 * l
+    
+    robotRadius = 0.09
 
     # Check boundaries
     # Can be smoothed for a better solution
-    robot_offset = constants.Robot.Radius * 6
-    if (receive_point.x - x_offset < w / -2
-            or receive_point.x + x_offset > w / 2
-            or receive_point.y - y_offset < 0
-            or receive_point.y + y_offset > constants.Field.Length
-            or constants.Field.TheirGoalZoneShape.contains_point(
-                receive_point + robocup.Point(0, y_offset) +
-                robocup.Point(robot_offset, robot_offset))
-            or constants.Field.TheirGoalZoneShape.contains_point(
-                receive_point + robocup.Point(0, y_offset) -
-                robocup.Point(robot_offset, robot_offset))):
+    width = field.penalty_short_dist_m
+    height = field.length_m - field.penalty_long_dist_m
+    robot_offset = robotRadius * 6
+    if (receive_point[0] - x_offset < w / -2
+            or receive_point[0] + x_offset > w / 2
+            or receive_point[1] - y_offset < 0
+            or receive_point[1] + y_offset > field.length_m
+            or (abs(receive_point[0] + robot_offset) <= width and (receive_point[1] + y_offset + robot_offset) < height)
+            or (abs(receive_point[0] - robot_offset) <= width and (receive_point[1] + y_offset - robot_offset) < height):
         return 0
 
     # Check if we are too close to the ball
     if ((receive_point - kick_point).mag() < min_pass_dist):
         return 0
 
-    shotChance = evaluation.shooting.eval_shot(receive_point, ignore_robots)
-
-    passChance = evaluation.passing.eval_pass(kick_point, receive_point,
+    shotChance = Shot.eval_shot(receive_point, ignore_robots)
+    passChance = Pass.eval_pass(kick_point, receive_point,
                                               ignore_robots)
 
     space = evaluation.field.space_coeff_at_pos(receive_point, ignore_robots)
