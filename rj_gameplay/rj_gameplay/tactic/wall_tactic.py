@@ -31,9 +31,9 @@ class wall_cost(role.CostFn):
         # aka actually use this method
         return 0.0
 
-def find_wall_pts(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, world_state: rc.WorldState):
+def find_wall_pts(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, world_state: rc.WorldState) -> List[np.ndarray]:
     """Calculates num_robots points to form a wall between the ball and goal.
-    :return list of wall_pts (numpy)
+    :return list of wall_pts (as numpy arrays)
     """
     # TODO: param server this const
     WALL_SPACING = BallConstants.RADIUS * 1.9
@@ -66,11 +66,11 @@ def find_wall_pts(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, wor
 
     return wall_pts
 
-def match_robots_to_wall(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, world_state: rc.WorldState):
+def match_robots_to_wall(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, world_state: rc.WorldState) -> Dict[int, Tuple[rc.Robot, np.ndarray]]:
     """Matches all wall_points to a robot.
-    :return dictionary of robot_id to List(rc.Robot, pt)
+    :return dictionary of robot_id to (rc.Robot, pt)
     """
-    # assignments[robot_id] = [rc.Robot, pt]
+    # assignments[robot_id] = (rc.Robot, pt)
     assignments = {}
 
     wall_pts = find_wall_pts(num_robots, ball_pt, goal_pt, world_state)
@@ -85,8 +85,7 @@ def match_robots_to_wall(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarr
 
     return assignments
 
-def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignments):
-    # TODO: dict type for assignments arg?
+def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignments: Dict[int, Tuple[rc.Robot, np.ndarray]])-> rc.Robot:
     """Chooses which robot to move to a specific wall pt.
     :return closest Robot object by dist
     """
@@ -115,8 +114,6 @@ class WallTactic(tactic.ITactic):
         ):
 
         self.num_robots = num_robots
-        self.ball_pt = ball_pt 
-        self.goal_pt = goal_pt
 
         # create move SkillEntry for every robot
         self.move_list = [
@@ -126,7 +123,6 @@ class WallTactic(tactic.ITactic):
 
         self.wall_pts = None
         self.cost = wall_cost()
-        self.world_state = None
         self.wall_spots = None
         
     def compute_props(self):
@@ -148,12 +144,11 @@ class WallTactic(tactic.ITactic):
         if world_state and world_state.ball.visible:
             # update world_state, ball pos, goal loc
             # TODO: resolve scenario when ball_pt/goal_pt don't need to be updated every tick (e.g. manually given)
-            self.world_state = world_state
-            self.ball_pt = world_state.ball.pos
-            self.goal_pt = world_state.field.our_goal_loc
+            ball_pt = world_state.ball.pos
+            goal_pt = world_state.field.our_goal_loc
 
             # get dict of robot to pos in wall
-            self.wall_spots = match_robots_to_wall(self.num_robots, self.ball_pt, self.goal_pt, self.world_state)
+            self.wall_spots = match_robots_to_wall(self.num_robots, ball_pt, goal_pt, world_state)
             if self.wall_spots is not None:
                 i = 0
                 for robot, pt in self.wall_spots.values():
@@ -164,7 +159,7 @@ class WallTactic(tactic.ITactic):
 
                 # make all robots face ball_pt on move
                 for move_skill_entry in self.move_list:
-                    move_skill_entry.skill.face_point = self.ball_pt
+                    move_skill_entry.skill.face_point = ball_pt
 
         # create a RoleRequest for each SkillEntry
         role_requests = {
