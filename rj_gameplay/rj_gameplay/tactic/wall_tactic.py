@@ -85,7 +85,7 @@ def match_robots_to_wall(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarr
 
     return assignments
 
-def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignments: Dict[int, Tuple[rc.Robot, np.ndarray]])-> rc.Robot:
+def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignments: Dict[int, Tuple[rc.Robot, np.ndarray]]) -> rc.Robot:
     """Chooses which robot to move to a specific wall pt.
     :return closest Robot object by dist
     """
@@ -191,4 +191,3 @@ class WallTactic(tactic.ITactic):
             if not move_skill.skill.is_done(world_state):
                 return False
         return True
-
