@@ -14,7 +14,7 @@ import stp.skill as skill
 import numpy as np
 
 
-class pass_cost(role.CostFn):
+class receiver_cost(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
@@ -59,7 +59,7 @@ class Pass(tactic.ITactic):
         self.target_point = target_point
         self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point))
         self.receive = tactic.SkillEntry(receive.Receive())
-        self.pass_cost = pass_cost(target_point)
+        self.receiver_cost = receiver_cost(target_point)
         self.passer_cost = passer_cost()
 
     def compute_props(self):

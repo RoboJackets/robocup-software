@@ -3,14 +3,12 @@
 #include <set>
 
 #include <rj_constants/constants.hpp>
-#include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/referee.pb.h>
 
 #include "control/motion_setpoint.hpp"
 #include "debug_drawer.hpp"
 #include "game_settings.hpp"
 #include "game_state.hpp"
-#include "joystick/gamepad_message.hpp"
 #include "logger.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
@@ -51,21 +49,12 @@ struct Context {
     bool blue_team = true;
     DebugDrawer debug_drawer;
 
-    /** \brief Vector of unique IDs of gamepads. First is oldest to connect. */
-    std::vector<int> gamepads;
-    std::vector<joystick::GamepadMessage> gamepad_messages;
-
     std::vector<SSL_Referee> referee_packets;
     std::vector<SSL_WrapperPacket> raw_vision_packets;
 
     WorldState world_state;
 
     FieldDimensions field_dimensions;
-
-    std::optional<grSim_Packet> grsim_command;
-
-    std::optional<QPointF> ball_command;
-    std::optional<rj_geometry::TransformMatrix> screen_to_world_command;
 
     GameSettings game_settings;
 

@@ -1,0 +1,4 @@
+uint8 robot_id
+string controller_uuid
+bool connect
+---

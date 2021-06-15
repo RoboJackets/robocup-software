@@ -45,3 +45,4 @@ class Pivot(action.IFiniteAction):
             return True
         else:
             return False
+

@@ -36,7 +36,7 @@ class PivotKick(IPivotKick):
         self.capture_behavior = ActionBehavior('Capture', self.capture)
         self.pivot_behavior = ActionBehavior('Pivot', self.pivot) 
         self.kick_behavior = ActionBehavior('Kick', self.kick)
-        self.root.add_children([self.capture_behavior , self.pivot_behavior, self.kick_behavior])
+        self.root.add_children([self.capture_behavior, self.pivot_behavior, self.kick_behavior])
         self.root.setup_with_descendants()
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:

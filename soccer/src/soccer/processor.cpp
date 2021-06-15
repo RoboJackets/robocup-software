@@ -31,7 +31,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-    gr_sim_com_ = std::make_unique<GrSimCommunicator>(&context_);
     logger_ = std::make_unique<Logger>(&context_);
 
     // ROS2 temp nodes
@@ -52,7 +51,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     logger_->start();
 
-    nodes_.push_back(gr_sim_com_.get());
     nodes_.push_back(logger_.get());
 }
 
@@ -114,8 +112,6 @@ void Processor::run() {
         }
 
         autonomy_interface_->run();
-
-        gr_sim_com_->run();
 
         // TODO(#1505): Run all modules in sequence using the vector. For now we
         // still have to update things manually.

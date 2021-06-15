@@ -69,11 +69,24 @@ def generate_launch_description():
     vision_filter = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(vision_filter_launch_path))
 
+    global_param_server = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            str(launch_dir / 'global_param_server.launch.py')))
+
     return LaunchDescription([
         DeclareLaunchArgument('team_flag', default_value=''),
         DeclareLaunchArgument('sim_flag', default_value=''),
         DeclareLaunchArgument('ref_flag', default_value=''),
         DeclareLaunchArgument('direction_flag', default_value='plus'),
-        stdout_linebuf_envvar, config_server, soccer, radio, control, planner,
-        vision_receiver, vision_filter, ref_receiver, gameplay
+        stdout_linebuf_envvar,
+        config_server,
+        global_param_server,
+        soccer,
+        radio,
+        control,
+        planner,
+        vision_receiver,
+        vision_filter,
+        ref_receiver,
+        gameplay,
     ])
