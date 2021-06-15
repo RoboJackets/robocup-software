@@ -55,6 +55,7 @@ class NMarkTactic(tactic.ITactic):
             for i in range(self.num_markers)
         ]
 
+        # create cost func for each robot
         self.cost_list = [
             marker_cost()
             for _ in self.mark_list
