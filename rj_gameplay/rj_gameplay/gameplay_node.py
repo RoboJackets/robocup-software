@@ -11,7 +11,11 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
+<<<<<<< HEAD
 from rj_gameplay.play import basic122 
+=======
+from rj_gameplay.play import defensive_clear 
+>>>>>>> b954a28871... create nmark tactic
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16
@@ -24,7 +28,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, basic122.Basic122())
+        return (None, defensive_clear.DefensiveClear())
 
 class GameplayNode(Node):
     """
