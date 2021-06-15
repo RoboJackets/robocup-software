@@ -78,7 +78,7 @@ class NMarkTactic(tactic.ITactic):
         """
 
         if world_state is not None and world_state.ball.visible:
-            # this has to be here bc it needs world_state
+            # assign n closest enemies to respective skill and role costFn
             closest_enemies = get_closest_enemies_to_ball(self.num_markers, world_state)
             for i in range(self.num_markers):
                 self.mark_list[i].skill.target_robot = closest_enemies[i]
