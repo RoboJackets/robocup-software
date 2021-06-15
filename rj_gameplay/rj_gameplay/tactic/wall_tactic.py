@@ -107,11 +107,7 @@ def robot_to_wall_pt(wall_pt: np.ndarray, world_state: rc.WorldState, assignment
 
 class WallTactic(tactic.ITactic):
 
-    def __init__(self, 
-            num_robots: int, 
-            ball_pt: np.ndarray = None, 
-            goal_pt: np.ndarray = None,
-        ):
+    def __init__(self, num_robots: int):
 
         self.num_robots = num_robots
 
