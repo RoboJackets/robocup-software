@@ -14,6 +14,12 @@ constexpr auto kGameSettingsSrv = "config/set_game_settings";
 constexpr auto kFieldDimensionsSrv = "config/set_field_dimensions";
 }  // namespace config_server::topics
 
+namespace sim::topics {
+
+constexpr auto kSimPlacementSrv = "sim/placement";
+
+}  // namespace sim::topics
+
 namespace viz::topics {
 
 constexpr auto kDebugDrawPub = "viz/debug_draw";

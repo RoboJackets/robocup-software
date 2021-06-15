@@ -1,4 +1,4 @@
-"""Contains the stub for the mark tactic. """
+"""Tactic to test the mark skill. """
 
 from dataclasses import dataclass
 from typing import List, Optional
@@ -28,12 +28,16 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        return robot.pose[1] - world_state.ball.pos[1]
+        # TODO: make it not just robot 7 that marks 
+        if robot.id == 7:
+            return 0.0
+        return 1.0
 
 def marker_heuristic(point: np.array):
-    return 1
+    # TODO: use with CostBehavior
+    return -1
 
-class NMark(tactic.ITactic):
+class TestMarkTactic(tactic.ITactic):
     """
     A tactic which creates n robots with some marking heuristic
     """
