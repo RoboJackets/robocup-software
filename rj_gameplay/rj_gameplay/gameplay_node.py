@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 from rj_msgs import msg
+from rj_geometry_msgs import msg as geo_msg
 import stp.rc as rc
 import stp.utils.world_state_converter as conv
 import stp.situation as situation
@@ -11,7 +12,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic122 
+from rj_gameplay.play import line_up 
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16
@@ -24,7 +25,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, basic122.Basic122())
+        return (None, line_up.LineUp())
 
 class GameplayNode(Node):
     """
@@ -35,8 +36,9 @@ class GameplayNode(Node):
         rclpy.init()
         super().__init__('gameplay_node')
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
-        self.field_dimenstions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
+        self.field_dimensions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
+
 
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
@@ -61,6 +63,9 @@ class GameplayNode(Node):
         self.global_parameter_client = GlobalParameterClient(
             self, '/global_parameter_server')
         local_parameters.register_parameters(self)
+
+        # publish global obstacles
+        self.global_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, '/planning/global_obstacles', 10)
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
@@ -105,13 +110,14 @@ class GameplayNode(Node):
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) == len(self.partial_world_state.our_robots):
 
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
-
+        
         return self.world_state
 
     def gameplay_tick(self) -> None:
         """
         ticks the gameplay coordinator using recent world_state
         """
+
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
         else:
@@ -121,6 +127,23 @@ class GameplayNode(Node):
             intents = self.gameplay.tick(self.world_state)
             for i in range(NUM_ROBOTS):
                 self.robot_intent_pubs[i].publish(intents[i])
+
+            # create our_penalty rect
+            our_penalty = geo_msg.Rect()
+            top_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=0.0)
+            bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.penalty_short_dist_m)
+            our_penalty.pt = [top_left, bot_right] 
+
+            # create their_penalty rect
+            their_penalty = geo_msg.Rect()
+            bot_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=self.field.length_m)
+            top_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.length_m - self.field.penalty_short_dist_m)
+            their_penalty.pt = [bot_left, top_right] 
+
+            # publish Rect shape to global_obstacles topic
+            global_obstacles = geo_msg.ShapeSet()
+            global_obstacles.rectangles = [our_penalty, their_penalty]
+            self.global_obstacles_pub.publish(global_obstacles)
         else:
             self.get_logger().warn("World state was none!")
     
