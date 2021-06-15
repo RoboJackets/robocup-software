@@ -75,9 +75,9 @@ class Pass(tactic.ITactic):
         cost = float('inf')
         receive_robot = None
         for robot in world_state.our_robots:
-            self.pass_cost(robot, None, world_state) < cost
-            if self.pass_cost(robot, None, world_state) < cost:
-                cost = self.pass_cost(robot, None, world_state)
+            self.receiver_cost(robot, None, world_state) < cost
+            if self.receiver_cost(robot, None, world_state) < cost:
+                cost = self.receiver_cost(robot, None, world_state)
                 receive_robot = robot        
         return receive_robot
 
@@ -92,7 +92,7 @@ class Pass(tactic.ITactic):
         passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         if self.pivot_kick.skill.pivot.is_done(world_state):
-            receive_request = role.RoleRequest(role.Priority.HIGH, True, self.pass_cost)
+            receive_request = role.RoleRequest(role.Priority.HIGH, True, self.receiver_cost)
             role_requests[self.receive] = [receive_request]
 
         return role_requests
