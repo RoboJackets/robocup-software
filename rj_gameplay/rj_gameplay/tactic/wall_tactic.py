@@ -29,6 +29,8 @@ class wall_cost(role.CostFn):
 
         # TODO: make closest robots form wall, rather than setting on init
         # aka actually use this method
+        # can do this by creating mult cost instances, adding attr like "wall_pt" to this class, 
+        # and giving each roleRequest the correct cost in tactic below
         return 0.0
 
 def find_wall_pts(num_robots: int, ball_pt: np.ndarray, goal_pt: np.ndarray, world_state: rc.WorldState) -> List[np.ndarray]:
