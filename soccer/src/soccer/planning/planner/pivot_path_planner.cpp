@@ -31,15 +31,19 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     double radius = pivot::PARAM_radius_multiplier * kRobotRadius;
     auto pivot_point = command.pivot_point;
+    auto pivot_target = command.pivot_target;
 
-    if (cached_pivot_point_.has_value() &&
+    // TODO(Kyle): These need real constants
+    if (cached_pivot_target_.has_value() &&
+        cached_pivot_target_.value().dist_to(pivot_target) < kRobotMouthWidth / 2 &&
+        cached_pivot_point_.has_value() &&
         cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2) {
-        pivot_point = cached_pivot_point_.value();
         return previous_;
     }
+
+    cached_pivot_target_ = pivot_target;
     cached_pivot_point_ = pivot_point;
 
-    auto pivot_target = command.pivot_target;
     auto final_position = pivot_point + (pivot_point - pivot_target).normalized(radius);
     std::vector<Point> points;
 
@@ -67,9 +71,14 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     Trajectory path = profile_velocity(path_bezier, start_instant.linear_velocity().mag(), 0,
                                        linear_constraints, start_instant.stamp);
-    if (Twist::nearly_equals(path.last().velocity, Twist::zero())) {
-        path.hold_for(RJ::Seconds(3.0));
+    if (!Twist::nearly_equals(path.last().velocity, Twist::zero())) {
+        RobotInstant last;
+        last.position() = final_position;
+        last.velocity = Twist::zero();
+        last.stamp = path.end_time() + 100ms;
+        path.append_instant(last);
     }
+    path.hold_for(RJ::Seconds(3.0));
 
     AngleFunction function = [pivot_point, pivot_target](const LinearMotionInstant& instant,
                                                          double /*previous_angle*/,
