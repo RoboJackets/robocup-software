@@ -1,5 +1,3 @@
-"""Contains the stub for the mark tactic. """
-
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -23,17 +21,12 @@ def get_closest_enemies_to_ball(num_enemies: int, world_state: rc.WorldState) ->
         for robot in world_state.their_robots
     }
 
-    print(dist_to_enemies.keys())
-    print(sorted(dist_to_enemies.keys()))
-    print(sorted(dist_to_enemies.keys())[0:num_enemies])
-
     # sort dict keys by dist (shortest first)
     # return enemies that correspond to n shortest dists
     return [dist_to_enemies[dist] for dist in sorted(dist_to_enemies.keys())[0:num_enemies]]
 
 class marker_cost(role.CostFn):
-    """
-    A cost function for how to choose a marker
+    """Pick mark robots based on dist to the ball point
     """
     def __init__(self, enemy_to_mark: rc.Robot=None):
         self.enemy_to_mark = enemy_to_mark 
@@ -45,15 +38,13 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        # pick mark robots based on dist to the ball point
         # TODO: can role.CostFn be expanded to include more params?
         #       e.g. non-WorldState pt
 
         return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2])
 
 class NMarkTactic(tactic.ITactic):
-    """
-    A tactic which creates n robots with some marking heuristic
+    """Marks the n closest enemies to ball with the closest robots on our team to said enemies.
     """
     def __init__(self, n: int):
         self.num_markers = n
@@ -111,14 +102,6 @@ class NMarkTactic(tactic.ITactic):
             for mark_skill_entry in self.mark_list
             if role_results[mark_skill_entry][0]
         ]
-
-        for mse in self.mark_list:
-            if role_results[mse][0]:
-                # print(dir(mse))
-                # print(dir(mse.skill))
-                print(mse.skill.robot)
-                if mse.skill.robot:
-                    print(mse.skill.robot.id)
 
         return skills
 
