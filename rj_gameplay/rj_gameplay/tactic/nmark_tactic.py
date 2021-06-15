@@ -41,6 +41,9 @@ class marker_cost(role.CostFn):
         # TODO: can role.CostFn be expanded to include more params?
         #       e.g. non-WorldState pt
 
+        # TODO: prevent gameplay crashing w/out this check
+        if robot is None or self.enemy_to_mark is None: 
+            return 0
         return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2])
 
 class NMarkTactic(tactic.ITactic):
