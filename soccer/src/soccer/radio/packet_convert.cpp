@@ -259,7 +259,7 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
             // Chip kick
             sim->set_kick_speed(intent.kick_speed);
             // Chip angle is already in degrees
-            sim->set_kick_angle(PARAM_chip_angle);
+            sim->set_kick_angle(static_cast<float>(PARAM_chip_angle));
         }
     }
 
@@ -268,7 +268,7 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     command->set_left(-static_cast<float>(setpoint.xvelocity));
     command->set_angular(static_cast<float>(setpoint.avelocity));
 
-    sim->set_dribbler_speed(PARAM_max_dribbler_speed * intent.dribbler_speed);
+    sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * intent.dribbler_speed));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp) {
@@ -324,7 +324,7 @@ void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     command->set_left(-static_cast<float>(motion.velocity_x_mps));
     command->set_angular(static_cast<float>(motion.velocity_z_radps));
 
-    sim->set_dribbler_speed(PARAM_max_dribbler_speed * manipulator.dribbler_speed);
+    sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * manipulator.dribbler_speed));
 }
 
 }  // namespace ConvertTx
