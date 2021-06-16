@@ -12,6 +12,8 @@ import stp.skill as skill
 
 import numpy as np
 
+import stp.global_parameters as global_parameters
+
 def get_closest_enemies_to_ball(num_enemies: int, world_state: rc.WorldState) -> List[rc.Robot]:
     ball_pt = world_state.ball.pos
 
@@ -40,7 +42,8 @@ class marker_cost(role.CostFn):
         # TODO: prevent gameplay crashing w/out this check
         if robot is None or self.enemy_to_mark is None: 
             return 0
-        return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2])
+
+        return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2]) / global_parameters.soccer.robot.max_speed
 
 class NMarkTactic(tactic.ITactic):
     """Marks the n closest enemies to ball with the closest robots on our team to said enemies.
