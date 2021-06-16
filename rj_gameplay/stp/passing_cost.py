@@ -19,7 +19,7 @@ class PassingCost(role.costFn):
 		try:
 			kicker = kicker[0]
 		except:
-			return float('inf')
+			return 9999.
 
 		kicker_loc = kicker.pose[0:2]
 		recip_loc = recipient.pose[0:2]
