@@ -9,7 +9,7 @@ from stp.skill.action_behavior import ActionBehavior, RobotActions
 class RjSequence(py_trees.composites.Sequence):
     """
     A sequence block for our use
-    This is currently needed since we need a way to send actions back up the tree
+    This is currently needed since we need a way to send wolrdstate down the tree for actions's is_done() functions
     This will not be needed once the action server is implemented
     """
 

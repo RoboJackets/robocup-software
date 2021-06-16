@@ -13,7 +13,7 @@ from rj_geometry_msgs.msg import Point
 
 class Pivot(action.IFiniteAction):
 
-    def __init__(self, robot_id:int, pivot_point:np.ndarray, target_point:np.ndarray, dribble_speed:float=1.0, priority:int=1):
+    def __init__(self, robot_id:int, pivot_point:np.ndarray, target_point:np.ndarray, dribble_speed:float, priority:int=1):
         self.robot_id = robot_id
         self.pivot_point = pivot_point
         self.target_point = target_point
@@ -32,6 +32,7 @@ class Pivot(action.IFiniteAction):
     def is_done(self, world_state:rc.WorldState) -> bool:
         #TODO: Change this when we get action state feedback
         angle_threshold = 0.1
+        #TODO: Make these local params
         stopped_threshold = 1*10**(-5)
         if self.robot_id is None:
             return False
@@ -45,3 +46,4 @@ class Pivot(action.IFiniteAction):
             return True
         else:
             return False
+

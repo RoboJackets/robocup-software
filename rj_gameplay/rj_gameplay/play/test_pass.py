@@ -10,11 +10,11 @@ from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 
 class PassPlay(play.IPlay):
-    """A play which lines up two robots, one on the right the one on the left
+    """A play which makes one robot pass to another
     """
 
     def __init__(self):
-        self.target_point  = np.array([1.0,1.0])
+        self.target_point = np.array([1.0,1.0])
         self.pass_tactic = pass_tactic.Pass(self.target_point)
         self.seek_tactic = pass_seek.Seek(self.target_point)
         self.role_assigner = NaiveRoleAssignment()
@@ -51,7 +51,7 @@ class PassPlay(play.IPlay):
         else:
             skills = []
 
-        return (skill_dict ,skills)
+        return (skill_dict, skills)
 
     def is_done(self ,world_state):
         return self.pass_tactic.is_done(world_state)

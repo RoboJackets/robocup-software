@@ -25,7 +25,6 @@
 #include <ros2_temp/soccer_config_client.hpp>
 
 #include "context.hpp"
-#include "gr_sim_communicator.hpp"
 #include "node.hpp"
 
 #include "rc-fshare/rtp.hpp"
@@ -142,7 +141,6 @@ private:
 
     // modules
     std::shared_ptr<Gameplay::GameplayModule> gameplay_module_;
-    std::unique_ptr<GrSimCommunicator> gr_sim_com_;
     std::unique_ptr<Logger> logger_;
 
     std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> ros_executor_;

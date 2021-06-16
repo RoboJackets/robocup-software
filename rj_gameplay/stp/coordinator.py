@@ -6,7 +6,6 @@ import stp.rc as rc
 import stp.role.assignment as assignment
 import stp.situation
 from rj_msgs import msg
-from rj_geometry_msgs.msg import Point
 
 NUM_ROBOTS = 16
 

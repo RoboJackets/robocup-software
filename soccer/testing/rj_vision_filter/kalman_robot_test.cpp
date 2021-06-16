@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/kalman_robot.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
@@ -234,14 +235,14 @@ TEST(KalmanRobot, wrap_theta_up) {
 
     double ut = 0;
     for (int i = 0; i < 800; i++) {
-        pose.heading() += 1.0 / 100.0;
-        ut += 1.0 / 100.0;
+        pose.heading() += 1 * PARAM_vision_loop_dt;
+        ut += 1 * PARAM_vision_loop_dt;
 
         if (pose.heading() > M_PI) {
             pose.heading() -= 2 * M_PI;
         }
 
-        pose.position() += rj_geometry::Point(1, 1) * 1.0 / 100.0;
+        pose.position() += rj_geometry::Point(1, 1) * PARAM_vision_loop_dt;
 
         b = CameraRobot(t, pose, robot_id);
         kb.predict_and_update(RJ::now() + RJ::Seconds(10), b);
@@ -274,14 +275,14 @@ TEST(KalmanRobot, wrap_theta_down) {
 
     double ut = 0;
     for (int i = 0; i < 800; i++) {
-        pose.heading() -= 1.0 / 100.0;
-        ut -= 1.0 / 100.0;
+        pose.heading() -= 1.0 * PARAM_vision_loop_dt;
+        ut -= 1.0 * PARAM_vision_loop_dt;
 
         if (pose.heading() < -M_PI) {
             pose.heading() += 2 * M_PI;
         }
 
-        pose.position() -= rj_geometry::Point(1, 1) * 1.0 / 100.0;
+        pose.position() -= rj_geometry::Point(1, 1) * PARAM_vision_loop_dt;
 
         b = CameraRobot(t, pose, robot_id);
         kb.predict_and_update(RJ::now() + RJ::Seconds(10), b);

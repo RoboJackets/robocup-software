@@ -1,4 +1,4 @@
-"""Contains the stub for the striker tactic. """
+"""Contains the stub for the mark tactic. """
 
 from dataclasses import dataclass
 from typing import List, Optional
@@ -39,9 +39,9 @@ class NMark(tactic.ITactic):
     """
     def __init__(self, n: int):
         self.num_markers = n
-        self.markers_dict = {}
+        self.markers_list = []
         for i in range(self.num_markers):
-            self.markers_dict[i] = tactic.SkillEntry(mark.Mark(marker_heuristic))
+            self.markers_list.append(tactic.SkillEntry(mark.Mark(None, None)))
         self.cost = marker_cost()
         
     def compute_props(self):
@@ -64,7 +64,7 @@ class NMark(tactic.ITactic):
         role_requests = {}
 
         for i in range(self.num_markers):
-            role_requests[self.markers_dict[i]] = [role.RoleRequest(role.Priority.LOW, False, self.cost)]
+            role_requests[self.markers_list[i]] = [role.RoleRequest(role.Priority.LOW, False, self.cost)]
 
         return role_requests
 
@@ -74,10 +74,14 @@ class NMark(tactic.ITactic):
         """
         skills = []
 
-
         for i in range(self.num_markers):
-            if role_results[self.markers_dict[i]][0]:
-                # print(role_results[self.markers_dict[i]][0])
-                skills.append(self.markers_dict[i])
+            if role_results[self.markers_list[i]][0]:
+                skills.append(self.markers_list[i])
 
         return skills
+
+    def is_done(self, world_state):
+        for mark_skill in self.markers_list:
+            if not mark_skill.skill.is_done(world_state):
+                return False
+        return True

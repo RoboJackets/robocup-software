@@ -37,8 +37,8 @@ jobs:
       - checkout
       - <<: *install_deps
       - run: |
+          source /opt/ros/foxy/setup.bash && source install/setup.bash
           mkdir -p build-debug && cd build-debug
-          source /opt/ros/foxy/setup.bash
           export CMAKE_PREFIX_PATH=/opt/ros/foxy
           cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=../install --target -DBUILD_TESTS=ON ..
           ninja -j2 install
