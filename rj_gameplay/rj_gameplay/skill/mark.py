@@ -53,9 +53,7 @@ A skill which marks a given opponent robot according to some heuristic cost func
 """
 class Mark(IMark):
 
-    def __init__(self,
-            robot : rc.Robot = None,
-            target_robot : rc.Robot = None):
+    def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None) -> None:
 
         self.__name__ = 'Mark Skill'
         self.robot = robot
