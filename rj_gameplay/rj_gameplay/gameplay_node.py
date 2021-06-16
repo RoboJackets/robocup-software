@@ -53,7 +53,6 @@ class GameplayNode(Node):
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, '/gameplay/robot_intent/robot_'+str(i), 10)
 
-
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None

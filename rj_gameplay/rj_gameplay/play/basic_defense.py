@@ -8,10 +8,10 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 
+
 class BasicDefense(play.IPlay):
     """For when we don't have the ball and are trying to stop the opponent from scoring.
     """
-
     def __init__(self):
         self.tactics = [
             wall_tactic.WallTactic(3),
@@ -29,7 +29,8 @@ class BasicDefense(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+               List[tactic.SkillEntry]]:
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {
@@ -39,7 +40,9 @@ class BasicDefense(play.IPlay):
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)
+        flat_results = self.role_assigner.assign_roles(flat_requests,
+                                                       world_state,
+                                                       prev_results)
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all SkillEntries from all tactics
