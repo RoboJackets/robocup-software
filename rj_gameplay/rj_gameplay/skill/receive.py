@@ -27,16 +27,14 @@ A skill version of receive so that actions don't have to be called in tactics
 class Receive(IReceive):
     
     def __init__(self,
-            robot:rc.Robot = None,
-            one_touch_target:np.ndarray = None):
+            robot:rc.Robot = None):
 
         self.robot = robot
-        self.one_touch_target = one_touch_target
         if self.robot is not None:
-            self.receive = receive.Receive(self.robot.id, self.one_touch_target)
+            self.receive = receive.Receive(self.robot.id)
             self.capture = capture.Capture(self.robot.id)
         else:
-            self.receive = receive.Receive(self.robot, self.one_touch_target)
+            self.receive = receive.Receive(self.robot)
             self.capture = capture.Capture()
         self.receive_behavior = ActionBehavior('Receive', self.receive)
         self.capture_behavior = ActionBehavior('Capture', self.capture)

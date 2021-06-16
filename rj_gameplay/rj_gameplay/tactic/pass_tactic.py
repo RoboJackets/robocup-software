@@ -14,7 +14,7 @@ import stp.skill as skill
 import numpy as np
 
 
-class receiver_cost(role.CostFn):
+class Receiver_cost(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
@@ -33,7 +33,7 @@ class receiver_cost(role.CostFn):
             return 0.0
         return 1.0
 
-class passer_cost(role.CostFn):
+class Passer_cost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     TODO: Implement a better cost function
@@ -59,10 +59,10 @@ class Pass(tactic.ITactic):
 
     def __init__(self, target_point:np.ndarray):
         self.target_point = target_point
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point))
+        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point, chip=False, kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
-        self.receiver_cost = receiver_cost(target_point)
-        self.passer_cost = passer_cost()
+        self.receiver_cost = Receiver_cost(target_point)
+        self.Passer_cost = Passer_cost()
         
     def compute_props(self):
         pass
@@ -81,7 +81,7 @@ class Pass(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
+        passer_request = role.RoleRequest(role.Priority.HIGH, True, self.Passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         receive_request = role.RoleRequest(role.Priority.HIGH, True, self.receiver_cost)
         role_requests[self.receive] = [receive_request]
