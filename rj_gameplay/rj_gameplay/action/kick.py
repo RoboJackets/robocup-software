@@ -21,7 +21,7 @@ class Kick(IKick):
     Kick action
     """
     def __init__(self, robot_id:Optional[int]=None, chip:Optional[bool]=False, kick_speed:Optional[float]=255.0) -> None:
-        #TODO: Cahnge kick speed to use max_kick_speed param for default value
+        #TODO: Change kick speed to use max_kick_speed param for default value
         self.robot_id = robot_id
         self.chip = chip
         self.kick_speed = kick_speed
