@@ -21,6 +21,7 @@ rosidl_generate_interfaces(
   rj_msgs
   # Messages
   msg/BallState.msg
+  msg/BallPlacement.msg
   msg/DetectionBall.msg
   msg/DetectionFrame.msg
   msg/DetectionRobot.msg
@@ -46,6 +47,7 @@ rosidl_generate_interfaces(
   msg/RawProtobuf.msg
   msg/RobotIntent.msg
   msg/RobotInstant.msg
+  msg/RobotPlacement.msg
   msg/RobotState.msg
   msg/RobotStatus.msg
   msg/TeamColor.msg
@@ -53,10 +55,13 @@ rosidl_generate_interfaces(
   msg/Trajectory.msg
   msg/WorldState.msg
   # Services
+  srv/ListJoysticks.srv
   srv/QuickCommands.srv
   srv/QuickRestart.srv
   srv/SetFieldDimensions.srv
   srv/SetGameSettings.srv
+  srv/SimPlacement.srv
+  srv/SetManual.srv
   DEPENDENCIES
   std_msgs
   builtin_interfaces

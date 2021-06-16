@@ -9,9 +9,6 @@
 
 namespace control {
 
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_kick_speed);
-DECLARE_INT64(params::kMotionControlParamModule, min_safe_kick_power);
-
 class ManipulatorControl {
 public:
     ManipulatorControl(int shell_id, rclcpp::Node* node);
