@@ -51,11 +51,6 @@ def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarr
     line_w = world_state.field.line_width_m
     DIST_FROM_DEF = RobotConstants.RADIUS + line_w + np.hypot(box_w/2, box_h)
 
-    # check if vision is up and running
-    # (if it is these points should not be equal)
-    # if not world_state.ball.visible:
-    #    return None
-
     # get direction vec
     dir_vec = (ball_pt - goal_pt) / np.linalg.norm(ball_pt - goal_pt)
     wall_vec = np.array([dir_vec[1], -dir_vec[0]])
