@@ -34,6 +34,9 @@ class wall_cost(role.CostFn):
         if robot is None or self.wall_pt is None:
             return 0
 
+        if not robot.visible:
+            return 99999 # float('inf') threw ValueError
+
         # costs should be in seconds, not dist
         return np.linalg.norm(robot.pose[0:2]-self.wall_pt) / global_parameters.soccer.robot.max_speed
 
@@ -120,6 +123,10 @@ class WallTactic(tactic.ITactic):
             self.move_list[i]: [role.RoleRequest(role.Priority.HIGH, False, self.cost_list[i])]
             for i in range(self.num_wallers)
         }
+
+        for se, rr in role_requests.items():
+            print(se.skill.robot)
+            # print(rr)
 
         return role_requests
 
