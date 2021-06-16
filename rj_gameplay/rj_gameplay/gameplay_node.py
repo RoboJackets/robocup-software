@@ -12,7 +12,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import defensive_clear 
+from rj_gameplay.play import basic_defense
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16
@@ -25,7 +25,8 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, line_up.LineUp())
+        return (None, basic_defense.BasicDefense())
+
 
 class GameplayNode(Node):
     """
@@ -48,11 +49,11 @@ class GameplayNode(Node):
 
         for i in range(NUM_ROBOTS):
             self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, '/radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
- 
+
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, '/gameplay/robot_intent/robot_'+str(i), 10)
 
-        
+
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
@@ -87,7 +88,7 @@ class GameplayNode(Node):
             robot = conv.robotstatus_to_partial_robot(msg)
             index = robot.robot_id
             self.robot_statuses[index] = robot
-        
+
     def create_game_info(self, msg: msg.GameState) -> None:
         """
         Create game info object from Game State message
@@ -110,7 +111,7 @@ class GameplayNode(Node):
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) == len(self.partial_world_state.our_robots):
 
             self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
-        
+
         return self.world_state
 
     def gameplay_tick(self) -> None:
@@ -132,13 +133,13 @@ class GameplayNode(Node):
             our_penalty = geo_msg.Rect()
             top_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=0.0)
             bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.penalty_short_dist_m)
-            our_penalty.pt = [top_left, bot_right] 
+            our_penalty.pt = [top_left, bot_right]
 
             # create their_penalty rect
             their_penalty = geo_msg.Rect()
             bot_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=self.field.length_m)
             top_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.length_m - self.field.penalty_short_dist_m)
-            their_penalty.pt = [bot_left, top_right] 
+            their_penalty.pt = [bot_left, top_right]
 
             # publish Rect shape to global_obstacles topic
             global_obstacles = geo_msg.ShapeSet()
@@ -146,7 +147,7 @@ class GameplayNode(Node):
             self.global_obstacles_pub.publish(global_obstacles)
         else:
             self.get_logger().warn("World state was none!")
-    
+
     def tick_override_actions(self, world_state) -> None:
         for i in range(0,NUM_ROBOTS):
             if self.override_actions[i] is not None:
