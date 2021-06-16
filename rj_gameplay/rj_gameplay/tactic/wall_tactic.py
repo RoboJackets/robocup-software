@@ -16,6 +16,7 @@ import stp.skill as skill
 import numpy as np
 # TODO: replace w/ global param server
 from stp.utils.constants import RobotConstants, BallConstants
+import stp.global_parameters as global_parameters
 
 class wall_cost(role.CostFn):
     """Cost function for role request.
@@ -32,7 +33,9 @@ class wall_cost(role.CostFn):
 
         if robot is None or self.wall_pt is None:
             return 0
-        return np.linalg.norm(robot.pose[0:2]-self.wall_pt)
+
+        # costs should be in seconds, not dist
+        return np.linalg.norm(robot.pose[0:2]-self.wall_pt) / global_parameters.soccer.robot.max_speed
 
 def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarray]:
     """Calculates num_wallers points to form a wall between the ball and goal.
