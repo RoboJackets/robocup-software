@@ -133,7 +133,7 @@ def generate_launch_description():
             global_param_server,
             Node(
                 package="rj_robocup",
-                executable="soccer",
+                executable="soccer_node",
                 output="screen",
                 arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
                 parameters=[param_config_filepath],
@@ -167,7 +167,7 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_robocup",
-                executable="planner_node",
+                executable="planning_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
