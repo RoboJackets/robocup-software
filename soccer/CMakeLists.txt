@@ -142,10 +142,6 @@ target_include_directories(soccer PUBLIC
 target_include_directories(soccer SYSTEM PUBLIC)
 ament_target_dependencies(soccer PUBLIC ${SOCCER_COMMON_AMENT_LIBS})
 
-# Set the directory so AUTOUIC know where to find .ui files
-set(UI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt)
-set_target_properties(soccer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
-
 # Soccer binary
 add_executable(soccer_node
         main.cpp
@@ -161,6 +157,11 @@ add_executable(soccer_node
         ui/style_sheet_manager.cpp
         ${SOCCER_UIS}
         ${SOCCER_RSRC})
+
+# Set the directory so AUTOUIC know where to find .ui files
+set(UI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt)
+set_target_properties(soccer_node PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+
 target_link_libraries(soccer_node PUBLIC
         soccer
         Qt5::Widgets

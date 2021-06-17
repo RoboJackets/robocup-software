@@ -5,7 +5,7 @@
 #include <QtWidgets>
 #include <string>
 
-#include "qt/ui_RobotStatusWidget.h"
+#include "ui_RobotStatusWidget.h"
 
 /**
  * @brief Shows the status of a single robot
