@@ -6,9 +6,9 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/network.hpp>
-#include <rj_protos/grSim_Commands.pb.h>
-#include <rj_protos/grSim_Packet.pb.h>
-#include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
+#include <rj_protos/ssl_simulation_control.pb.h>
+#include <rj_protos/ssl_simulation_robot_control.pb.h>
+#include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 
 #include "packet_convert.hpp"
 
@@ -18,28 +18,39 @@ using namespace boost::asio;
 
 namespace radio {
 
-static grSim_Packet convert_placement_to_proto(
+static SimulatorCommand convert_placement_to_proto(
     const rj_msgs::srv::SimPlacement::Request& placement) {
-    grSim_Packet packet;
+    SimulatorCommand packet;
+    auto* control = packet.mutable_control();
     if (!placement.ball.position.empty()) {
         const auto& position = placement.ball.position.at(0);
-        packet.mutable_replacement()->mutable_ball()->set_x(position.x);
-        packet.mutable_replacement()->mutable_ball()->set_y(position.y);
+        control->mutable_teleport_ball()->set_x(static_cast<float>(position.x));
+        control->mutable_teleport_ball()->set_y(static_cast<float>(position.y));
+        control->mutable_teleport_ball()->set_z(0);
+        control->mutable_teleport_ball()->set_vx(0);
+        control->mutable_teleport_ball()->set_vy(0);
+        control->mutable_teleport_ball()->set_vz(0);
+        control->mutable_teleport_ball()->set_teleport_safely(true);
     }
+
     if (!placement.ball.velocity.empty()) {
         const auto& velocity = placement.ball.velocity.at(0);
-        packet.mutable_replacement()->mutable_ball()->set_vx(velocity.x);
-        packet.mutable_replacement()->mutable_ball()->set_vy(velocity.y);
+        control->mutable_teleport_ball()->set_vx(velocity.x);
+        control->mutable_teleport_ball()->set_vy(velocity.y);
+        control->mutable_teleport_ball()->set_vz(0);
     }
 
     for (const auto& robot : placement.robots) {
-        auto* robot_proto = packet.mutable_replacement()->add_robots();
-        robot_proto->set_x(robot.pose.position.x);
-        robot_proto->set_y(robot.pose.position.y);
-        robot_proto->set_dir(robot.pose.heading);
-        robot_proto->set_id(robot.robot_id);
-        robot_proto->set_turnon(true);
-        robot_proto->set_yellowteam(!robot.is_blue_team);
+        auto* robot_proto = control->add_teleport_robot();
+        robot_proto->set_x(static_cast<float>(robot.pose.position.x));
+        robot_proto->set_y(static_cast<float>(robot.pose.position.y));
+        robot_proto->set_orientation(static_cast<float>(robot.pose.heading));
+        robot_proto->set_v_x(0);
+        robot_proto->set_v_y(0);
+        robot_proto->set_v_angular(0);
+        robot_proto->mutable_id()->set_id(robot.robot_id);
+        robot_proto->mutable_id()->set_team(robot.is_blue_team ? Team::BLUE : Team::YELLOW);
+        robot_proto->set_present(true);
     }
     return packet;
 }
@@ -49,7 +60,10 @@ SimRadio::SimRadio(bool blue_team)
       blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
-    sim_endpoint_ = ip::udp::endpoint(ip::udp::v4(), kSimCommandPort);
+    robot_control_endpoint_ =
+        ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
+    sim_control_endpoint_ =
+        ip::udp::endpoint(ip::udp::v4(), kSimCommandPort);
 
     buffer_.resize(1024);
     start_receive();
@@ -66,22 +80,18 @@ SimRadio::SimRadio(bool blue_team)
 
 void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                     const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
-    grSim_Packet sim_packet;
-    grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
+    RobotControl sim_packet;
 
-    // Send a grSim packet with a single robot. grSim can handle many robots, but our commands may
-    // come in at different times and it should be fine to just recalculate like this.
+    // Send a sim packet with a single robot. The simulator can handle many robots, but our commands
+    // may come in at different times and it should be fine to just recalculate like this.
     // TODO(Kyle): Verify that this is okay.
-    grSim_Robot_Command* sim_robot = sim_robot_commands->add_robot_commands();
-    ConvertTx::ros_to_grsim(manipulator, motion, robot_id, sim_robot);
-
-    sim_robot_commands->set_isteamyellow(!blue_team_);
-    sim_robot_commands->set_timestamp(RJ::timestamp());
+    RobotCommand* sim_robot = sim_packet.add_robot_commands();
+    ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot);
 
     std::string out;
     sim_packet.SerializeToString(&out);
 
-    socket_.send_to(buffer(out), sim_endpoint_);
+    socket_.send_to(buffer(out), robot_control_endpoint_);
 }
 
 void SimRadio::receive() { io_service_.poll(); }
@@ -101,15 +111,15 @@ void SimRadio::receive_packet(const boost::system::error_code& error, std::size_
 }
 
 void SimRadio::handle_receive(const std::string& data) {
-    Robots_Status packet;
+    RobotControlResponse packet;
 
     packet.ParseFromString(data);
 
-    for (size_t pkt_idx = 0; pkt_idx < packet.robots_status_size(); pkt_idx++) {
+    for (size_t pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
         rj_msgs::msg::RobotStatus status_ros;
         RobotStatus status;
-        const Robot_Status& grsim_status = packet.robots_status(pkt_idx);
-        ConvertRx::grsim_to_status(grsim_status, &status);
+        const RobotFeedback& sim_status = packet.feedback(pkt_idx);
+        ConvertRx::sim_to_status(sim_status, &status);
         ConvertRx::status_to_ros(status, &status_ros);
 
         publish(status_ros.robot_id, status_ros);
@@ -117,25 +127,21 @@ void SimRadio::handle_receive(const std::string& data) {
 }
 
 void SimRadio::stop_robots() {
-    grSim_Packet sim_packet;
-    grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
+    RobotControl sim_packet;
 
     for (int shell = 0; shell < kNumShells; shell++) {
-        grSim_Robot_Command* sim_robot = sim_robot_commands->add_robot_commands();
+        auto* sim_robot = sim_packet.add_robot_commands();
         sim_robot->set_id(shell);
-        sim_robot->set_veltangent(0);
-        sim_robot->set_velnormal(0);
-        sim_robot->set_velangular(0);
+        auto* local_velocity = sim_robot->mutable_move_command()->mutable_local_velocity();
+        local_velocity->set_forward(0);
+        local_velocity->set_left(0);
+        local_velocity->set_angular(0);
 
-        sim_robot->set_kickspeedx(0);
-        sim_robot->set_kickspeedz(0);
+        sim_robot->set_kick_speed(0);
+        sim_robot->set_kick_angle(0);
 
-        sim_robot->set_spinner(false);
-        sim_robot->set_wheelsspeed(false);
+        sim_robot->set_dribbler_speed(0);
     }
-
-    sim_robot_commands->set_isteamyellow(!blue_team_);
-    sim_robot_commands->set_timestamp(RJ::timestamp());
 
     std::string out;
     sim_packet.SerializeToString(&out);
@@ -160,12 +166,15 @@ void SimRadio::switch_team(bool blue_team) {
 
     // Let them throw exceptions
     socket_.bind(ip::udp::endpoint(ip::udp::v4(), status_port));
+
+    robot_control_endpoint_ =
+        ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
 }
 
-void SimRadio::send_sim_command(const grSim_Packet& cmd) {
+void SimRadio::send_sim_command(const SimulatorCommand& cmd) {
     std::string out;
     cmd.SerializeToString(&out);
-    size_t bytes = socket_.send_to(boost::asio::buffer(out), sim_endpoint_);
+    size_t bytes = socket_.send_to(boost::asio::buffer(out), sim_control_endpoint_);
     if (bytes == 0) {
         SPDLOG_ERROR("Sent 0 bytes.");
     }

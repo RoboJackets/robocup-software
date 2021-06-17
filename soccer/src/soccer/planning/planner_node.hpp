@@ -12,6 +12,7 @@
 #include "node.hpp"
 #include "planner/plan_request.hpp"
 #include "planner/planner.hpp"
+#include "planning_params.hpp"
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
@@ -55,6 +56,8 @@ public:
 private:
     PlanRequest make_request(const RobotIntent& intent);
     Trajectory plan_for_robot(const planning::PlanRequest& request);
+
+    [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
     std::vector<std::unique_ptr<Planner>> planners_;
