@@ -18,6 +18,7 @@ import numpy as np
 from stp.utils.constants import RobotConstants, BallConstants
 import stp.global_parameters as global_parameters
 
+MIN_WALL_RAD = None
 
 class wall_cost(role.CostFn):
     """Cost function for role request.
@@ -41,6 +42,7 @@ class wall_cost(role.CostFn):
 
 def find_wall_pts(num_wallers: int,
                   world_state: rc.WorldState) -> List[np.ndarray]:
+    global MIN_WALL_RAD
     """Calculates num_wallers points to form a wall between the ball and goal.
     :return list of wall_pts (as numpy arrays)
     """
@@ -55,14 +57,14 @@ def find_wall_pts(num_wallers: int,
     box_w = world_state.field.penalty_long_dist_m
     box_h = world_state.field.penalty_short_dist_m
     line_w = world_state.field.line_width_m
-    DIST_FROM_DEF = RobotConstants.RADIUS + line_w + np.hypot(box_w / 2, box_h)
+    MIN_WALL_RAD = RobotConstants.RADIUS + line_w + np.hypot(box_w / 2, box_h)
 
     # get direction vec
     dir_vec = (ball_pt - goal_pt) / np.linalg.norm(ball_pt - goal_pt)
     wall_vec = np.array([dir_vec[1], -dir_vec[0]])
 
     # find mid_pt
-    mid_pt = goal_pt + (dir_vec * DIST_FROM_DEF)
+    mid_pt = goal_pt + (dir_vec * MIN_WALL_RAD)
     wall_pts = [mid_pt]
 
     # set wall points in middle out pattern, given wall dir vector and WALL_SPACING constant
