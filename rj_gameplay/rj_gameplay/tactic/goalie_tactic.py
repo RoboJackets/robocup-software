@@ -90,7 +90,6 @@ class GoalieTactic(tactic.ITactic):
         if world_state and world_state.ball.visible:
             ball_to_goal_dist = np.linalg.norm(world_state.field.our_goal_loc - world_state.ball.pos)
             if ball_to_goal_dist < MIN_WALL_RAD:
-                print("INTERCEPT"*80)
                 # intercept when inside wall
 
                 # update intercept skill
