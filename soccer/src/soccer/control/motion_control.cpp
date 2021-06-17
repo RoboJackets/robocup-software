@@ -44,6 +44,8 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
           fmt::format("motion_control/{}", std::to_string(shell_id))) {
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
         topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
+    target_state_pub_ = node->create_publisher<RobotState::Msg>(
+        topics::desired_state_pub(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<planning::Trajectory::Msg>(
         planning::topics::trajectory_pub(shell_id), rclcpp::QoS(1),
@@ -163,6 +165,15 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         }
 
         drawer_.publish();
+    }
+
+    if (maybe_target) {
+        RobotState desired_state;
+        desired_state.pose = maybe_target->pose;
+        desired_state.velocity = velocity_target;
+        desired_state.timestamp = maybe_target->stamp;
+        desired_state.visible = true;
+        target_state_pub_->publish(rj_convert::convert_to_ros(desired_state));
     }
 }
 
