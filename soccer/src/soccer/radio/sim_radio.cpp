@@ -38,7 +38,6 @@ static SimulatorCommand convert_placement_to_proto(
         control->mutable_teleport_ball()->set_vx(velocity.x);
         control->mutable_teleport_ball()->set_vy(velocity.y);
         control->mutable_teleport_ball()->set_vz(0);
-        control->mutable_teleport_ball()->set_teleport_safely(true);
     }
 
     for (const auto& robot : placement.robots) {
