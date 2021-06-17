@@ -9,7 +9,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         Node(package="rj_robocup",
-             executable="rj_vision_filter",
+             executable="vision_filter_node",
              output="screen",
              parameters=[{
                  "publish_hz": publish_hz
