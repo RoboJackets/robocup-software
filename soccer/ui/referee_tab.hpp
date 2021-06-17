@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include "qt/ui_RefereeTab.h"
+#include "ui_RefereeTab.h"
 
 class RefereeTab : public QWidget {
     Q_OBJECT;

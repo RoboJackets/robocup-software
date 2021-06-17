@@ -17,7 +17,7 @@
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/grSim_Replacement.pb.h>
 #include <ui/style_sheet_manager.hpp>
-#include <qt/ui_MainWindow.h>
+#include <ui_MainWindow.h>
 
 #include "battery_profile.hpp"
 #include "radio/radio.hpp"

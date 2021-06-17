@@ -14,7 +14,7 @@
 #include "field_view.hpp"
 #include "processor.hpp"
 #include "rc-fshare/rtp.hpp"
-#include "qt/ui_MainWindow.h"
+#include "ui_MainWindow.h"
 
 class TestResultTab;
 class StripChart;
