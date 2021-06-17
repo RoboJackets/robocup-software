@@ -34,6 +34,7 @@ class wall_cost(role.CostFn):
         if robot is None or self.wall_pt is None:
             return 0
 
+        # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
         if not robot.visible:
             return 99999 # float('inf') threw ValueError
 
