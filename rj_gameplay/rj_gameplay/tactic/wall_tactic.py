@@ -120,10 +120,6 @@ class WallTactic(tactic.ITactic):
             for i in range(self.num_wallers)
         }
 
-        for se, rr in role_requests.items():
-            print(se.skill.robot)
-            # print(rr)
-
         return role_requests
 
     def tick(self,
