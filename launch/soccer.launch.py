@@ -24,7 +24,7 @@ def generate_launch_description():
 
     soccer = Node(
         package='rj_robocup',
-        executable='soccer',
+        executable='soccer_node',
         output='screen',
         arguments=[team_flag, sim_flag, ref_flag, '-defend', direction_flag],
         on_exit=Shutdown())
@@ -46,8 +46,8 @@ def generate_launch_description():
                    output='screen',
                    on_exit=Shutdown())
 
-    planner = Node(package='rj_robocup',
-                   executable='planner_node',
+    planning = Node(package='rj_robocup',
+                   executable='planning_node',
                    output='screen',
                    on_exit=Shutdown())
 
@@ -84,7 +84,7 @@ def generate_launch_description():
         soccer,
         radio,
         control,
-        planner,
+        planning,
         vision_receiver,
         vision_filter,
         ref_receiver,

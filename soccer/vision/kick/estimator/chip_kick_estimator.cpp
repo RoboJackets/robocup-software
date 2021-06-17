@@ -1,0 +1,1 @@
+#include "vision/kick/estimator/chip_kick_estimator.hpp"
