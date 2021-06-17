@@ -21,7 +21,7 @@ from stp.local_parameters import Param
 
 
 class goalie_cost(role.CostFn):
-    """Cost function for role request. Want only the goalie to be selected.
+    """Cost function for role request. Want only the designated goalie to be selected.
     """
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
