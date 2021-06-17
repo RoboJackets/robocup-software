@@ -22,9 +22,9 @@ A skill version of capture so that actions don't have to be called in tactics
 """
 class Capture(ICapture):
     
-    def __init__(self):
-        self.robot: rc.Robot = None
-        self.__name__ = 'Capture'
+    def __init__(self, robot: rc.Robot = None):
+        self.robot = robot
+        self.__name__ = 'Capture skill'
         self.capture = capture.Capture()
         self.capture_behavior = ActionBehavior('Capture', self.capture, self.robot)
         self.root = self.capture_behavior
