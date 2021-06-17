@@ -39,7 +39,9 @@ class Intercept(IIntercept):
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState):
         self.robot = robot
-        return self.root.tick_once(robot, world_state)
+        self.intercept.robot_id = self.robot.id
+        self.intercept.target_point = self.target_point
+        return self.root.tick_once(self.robot, world_state)
 
     def is_done(self, world_state) -> bool:
     	return self.intercept.is_done(world_state)
