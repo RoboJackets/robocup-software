@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import wall_tactic, nmark_tactic
+from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -15,8 +15,8 @@ class BasicDefense(play.IPlay):
     def __init__(self):
         self.tactics = [
             wall_tactic.WallTactic(3),
-            nmark_tactic.NMarkTactic(2)
-            # TODO: add goalie tactic here
+            nmark_tactic.NMarkTactic(2),
+            goalie_tactic.GoalieTactic()
         ]
 
         self.role_assigner = NaiveRoleAssignment()
