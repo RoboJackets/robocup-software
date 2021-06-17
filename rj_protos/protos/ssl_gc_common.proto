@@ -1,0 +1,27 @@
+syntax = "proto2";
+option go_package = "github.com/RoboCup-SSL/ssl-simulation-protocol/pkg/sim";
+
+// Team is either blue or yellow
+enum Team {
+    // team not set
+    UNKNOWN = 0;
+    // yellow team
+    YELLOW = 1;
+    // blue team
+    BLUE = 2;
+}
+
+// RobotId is the combination of a team and a robot id
+message RobotId {
+    // the robot number
+    optional uint32 id = 1;
+    // the team that the robot belongs to
+    optional Team team = 2;
+}
+
+// Division denotes the current division, which influences some rules
+enum Division {
+    DIV_UNKNOWN = 0;
+    DIV_A = 1;
+    DIV_B = 2;
+}

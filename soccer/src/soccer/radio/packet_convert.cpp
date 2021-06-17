@@ -13,6 +13,8 @@ using soccer::robot::PARAM_max_chip_speed;
 using soccer::robot::PARAM_max_kick_speed;
 using soccer::robot::PARAM_min_chip_speed;
 using soccer::robot::PARAM_min_kick_speed;
+using soccer::robot::PARAM_max_dribbler_speed;
+using soccer::robot::PARAM_chip_angle;
 
 static uint8_t kicker_speed_to_strength(double kick_speed) {
     return static_cast<uint8_t>(std::min(1.0, (kick_speed - PARAM_min_kick_speed) /
@@ -20,22 +22,10 @@ static uint8_t kicker_speed_to_strength(double kick_speed) {
                                 kMaxKick);
 }
 
-static double kicker_strength_to_speed(uint8_t kick_strength) {
-    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) *
-               (PARAM_max_kick_speed - PARAM_min_kick_speed) +
-           PARAM_min_kick_speed;
-}
-
 static uint8_t chipper_speed_to_strength(double kick_speed) {
     return static_cast<uint8_t>(std::min(1.0, (kick_speed - PARAM_min_chip_speed) /
                                                   (PARAM_max_chip_speed - PARAM_min_chip_speed)) *
                                 kMaxKick);
-}
-
-static double chipper_strength_to_speed(uint8_t kick_strength) {
-    return std::min(1.0, static_cast<double>(kick_strength) / kMaxKick) *
-               (PARAM_max_chip_speed - PARAM_min_chip_speed) +
-           PARAM_min_chip_speed;
 }
 
 namespace ConvertRx {
@@ -65,27 +55,25 @@ void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* stat
     status->fpga_healthy = rtp_message.fpgaStatus == 0u;
 }
 
-void grsim_to_status(const Robot_Status& grsim, RobotStatus* status) {
+void sim_to_status(const RobotFeedback& sim, RobotStatus* status) {
     if (status == nullptr) {
         return;
     }
 
-    status->shell_id = grsim.robot_id();
+    status->shell_id = sim.id();
     status->timestamp = RJ::now();
     status->version = RobotStatus::HardwareVersion::kSimulated;
     status->twist_estimate = std::nullopt;
     status->pose_estimate = std::nullopt;
 
     // Field view is dumb and ignores hardware version, so give it a fake
-    // battery voltage for gr_sim
+    // battery voltage for sim
     status->battery_voltage = 20.0;
 
     status->kicker_voltage = 0;
-    status->has_ball = grsim.infrared();
+    status->has_ball = sim.dribbler_ball_contact();
 
-    bool kicked = grsim.chip_kick() || grsim.flat_kick();
-    status->kicker =
-        kicked ? RobotStatus::KickerState::kCharging : RobotStatus::KickerState::kCharged;
+    status->kicker = RobotStatus::KickerState::kCharged;
     for (int i = 0; i < 5; i++) {
         status->motors_healthy[i] = true;
     }
@@ -251,38 +239,36 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     }
 }
 
-void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-              grSim_Robot_Command* grsim) {
-    if (grsim == nullptr) {
+void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+            RobotCommand* sim) {
+    if (sim == nullptr) {
         return;
     }
 
-    grsim->set_id(shell);
+    sim->set_id(shell);
 
     if (intent.trigger_mode == RobotIntent::TriggerMode::STAND_DOWN) {
-        grsim->set_kickspeedx(0);
-        grsim->set_kickspeedz(0);
+        sim->set_kick_speed(0);
+        sim->set_kick_angle(0);
     } else {
         if (intent.shoot_mode == RobotIntent::ShootMode::KICK) {
             // Flat kick
-            grsim->set_kickspeedx(intent.kick_speed);
-            grsim->set_kickspeedz(0);
+            sim->set_kick_speed(intent.kick_speed);
+            sim->set_kick_angle(0);
         } else {
             // Chip kick
-            constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
-
-            double speed = intent.kick_speed;
-            grsim->set_kickspeedx(static_cast<float>(std::cos(kChipAngle) * speed));
-            grsim->set_kickspeedz(static_cast<float>(std::sin(kChipAngle) * speed));
+            sim->set_kick_speed(intent.kick_speed);
+            // Chip angle is already in degrees
+            sim->set_kick_angle(static_cast<float>(PARAM_chip_angle));
         }
     }
 
-    grsim->set_veltangent(static_cast<float>(setpoint.yvelocity));
-    grsim->set_velnormal(-static_cast<float>(setpoint.xvelocity));
-    grsim->set_velangular(static_cast<float>(setpoint.avelocity));
+    auto* command = sim->mutable_move_command()->mutable_local_velocity();
+    command->set_forward(static_cast<float>(setpoint.yvelocity));
+    command->set_left(-static_cast<float>(setpoint.xvelocity));
+    command->set_angular(static_cast<float>(setpoint.avelocity));
 
-    grsim->set_spinner(intent.dribbler_speed > 0);
-    grsim->set_wheelsspeed(false);
+    sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * intent.dribbler_speed));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp) {
@@ -297,45 +283,48 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     control_message.bodyW =
         static_cast<int16_t>(motion.velocity_z_radps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     control_message.dribbler = manipulator.dribbler_speed;
-    control_message.kickStrength = manipulator.kick_strength;
+    if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
+        control_message.kickStrength = kicker_speed_to_strength(manipulator.kick_speed);
+    } else {
+        control_message.kickStrength = chipper_speed_to_strength(manipulator.kick_speed);
+    }
     control_message.shootMode = manipulator.shoot_mode;
     control_message.triggerMode = manipulator.trigger_mode;
     control_message.song = 0;
 }
 
-void ros_to_grsim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                   const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                  grSim_Robot_Command* grsim) {
-    if (grsim == nullptr) {
+                  RobotCommand* sim) {
+    if (sim == nullptr) {
         return;
     }
 
-    grsim->set_id(shell);
+    sim->set_id(shell);
 
     if (manipulator.trigger_mode == static_cast<uint8_t>(RobotIntent::TriggerMode::STAND_DOWN)) {
-        grsim->set_kickspeedx(0);
-        grsim->set_kickspeedz(0);
+        sim->set_kick_speed(0);
+        sim->set_kick_angle(0);
     } else {
         if (manipulator.shoot_mode == static_cast<uint8_t>(RobotIntent::ShootMode::KICK)) {
             // Flat kick
-            double speed = kicker_strength_to_speed(manipulator.kick_strength);
-            grsim->set_kickspeedx(static_cast<float>(speed));
-            grsim->set_kickspeedz(0);
+            float speed = manipulator.kick_speed;
+            sim->set_kick_speed(speed);
+            sim->set_kick_angle(0);
         } else {
             // Chip kick
-            double speed = chipper_strength_to_speed(manipulator.kick_strength);
-            constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
-            grsim->set_kickspeedx(static_cast<float>(std::cos(kChipAngle) * speed));
-            grsim->set_kickspeedz(static_cast<float>(std::sin(kChipAngle) * speed));
+            float speed = manipulator.kick_speed;
+            sim->set_kick_speed(speed);
+            sim->set_kick_angle(static_cast<float>(PARAM_chip_angle));
         }
     }
 
-    grsim->set_veltangent(static_cast<float>(motion.velocity_y_mps));
-    grsim->set_velnormal(-static_cast<float>(motion.velocity_x_mps));
-    grsim->set_velangular(static_cast<float>(motion.velocity_z_radps));
+    auto* command = sim->mutable_move_command()->mutable_local_velocity();
+    command->set_forward(static_cast<float>(motion.velocity_y_mps));
+    command->set_left(-static_cast<float>(motion.velocity_x_mps));
+    command->set_angular(static_cast<float>(motion.velocity_z_radps));
 
-    grsim->set_spinner(manipulator.dribbler_speed > 0);
-    grsim->set_wheelsspeed(false);
+    sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * manipulator.dribbler_speed));
 }
 
 }  // namespace ConvertTx
