@@ -24,7 +24,7 @@ class Kick(IKick):
         #for stub
 
     def tick(self, robot: rc.Robot, ctx: action.Ctx) -> None:
-        print('robot:', robot.id, 'kicking')
+        # print('robot:', robot.id, 'kicking')
         self.count += 1
 
     def done(self) -> bool:
