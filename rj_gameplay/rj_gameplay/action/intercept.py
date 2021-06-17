@@ -6,7 +6,7 @@ import stp.role as role
 import stp.action as action
 import stp.rc as rc
 import numpy as np
-from rj_msgs.msg import RobotIntent, InterceptMotionCommand
+from rj_msgs.msg import RobotIntent, InterceptMotionCommand, SettleMotionCommand
 from rj_geometry_msgs.msg import Point
 
 class Intercept(action.IAction):
@@ -19,10 +19,15 @@ class Intercept(action.IAction):
 
 
     def tick(self, intent: RobotIntent) -> None:
+        """
+        # TODO: use this when intercept is fixed
         intercept_command = InterceptMotionCommand()
         # TODO: numpy to Point conv
         intercept_command.target = Point(x=self.target_point[0], y=self.target_point[1])
         intent.motion_command.intercept_command = [intercept_command] 
+        """
+        settle_command = SettleMotionCommand()
+        intent.motion_command.settle_command = [settle_command] 
         intent.dribbler_speed = 1.0
         intent.is_active = True
 
