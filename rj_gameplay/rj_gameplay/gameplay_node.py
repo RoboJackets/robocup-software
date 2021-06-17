@@ -66,7 +66,7 @@ class GameplayNode(Node):
         local_parameters.register_parameters(self)
 
         # publish global obstacles
-        self.global_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, '/planning/global_obstacles', 10)
+        self.goal_zone_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, '/planning/goal_zone_obstacles', 10)
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
@@ -151,10 +151,10 @@ class GameplayNode(Node):
             top_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.length_m - self.field.penalty_short_dist_m)
             their_penalty.pt = [bot_left, top_right]
 
-            # publish Rect shape to global_obstacles topic
-            global_obstacles = geo_msg.ShapeSet()
-            global_obstacles.rectangles = [our_penalty, their_penalty]
-            self.global_obstacles_pub.publish(global_obstacles)
+            # publish Rect shape to goal_zone_obstacles topic
+            goal_zone_obstacles = geo_msg.ShapeSet()
+            goal_zone_obstacles.rectangles = [our_penalty, their_penalty]
+            self.goal_zone_obstacles_pub.publish(goal_zone_obstacles)
         else:
             self.get_logger().warn("World state was none!")
 

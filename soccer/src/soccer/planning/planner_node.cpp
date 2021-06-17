@@ -98,7 +98,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     return PlanRequest{start,
                        intent.motion_command,
                        constraints,
-                       global_obstacles_,
+                       obstacles,
                        intent.local_obstacles,
                        planned_trajectories,
                        static_cast<unsigned int>(robot_id_),
