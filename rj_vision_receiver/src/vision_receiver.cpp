@@ -172,7 +172,10 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
 
 rclcpp::Time VisionReceiver::to_ros_time(double time_since_epoch_s) {
     const auto seconds = static_cast<int32_t>(time_since_epoch_s);
-    const auto nanoseconds = static_cast<uint32_t>((time_since_epoch_s - seconds) * 10e9);
+    const auto nanoseconds = static_cast<uint32_t>((time_since_epoch_s - seconds) * 1e9);
+    if (time_since_epoch_s < 0) {
+        return rclcpp::Time{0, 0, RCL_ROS_TIME};
+    }
     return rclcpp::Time{seconds, nanoseconds, RCL_ROS_TIME};
 }
 
@@ -236,13 +239,13 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
         return;
     }
 
-    const SSL_FieldCicularArc* center = nullptr;
+    const SSL_FieldCircularArc* center = nullptr;
     float penalty_short_dist = 0;                                          // default value
     float penalty_long_dist = 0;                                           // default value
     float displacement = FieldDimensions::kDefaultDimensions.goal_flat();  // default displacment
 
     // Loop through field arcs looking for needed fields
-    for (const SSL_FieldCicularArc& arc : field_size.field_arcs()) {
+    for (const SSL_FieldCircularArc& arc : field_size.field_arcs()) {
         if (arc.name() == "CenterCircle") {
             // Assume center circle
             center = &arc;

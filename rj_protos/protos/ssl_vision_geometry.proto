@@ -1,0 +1,130 @@
+syntax = "proto2";
+option go_package = "github.com/RoboCup-SSL/ssl-simulation-protocol/pkg/sim";
+
+// A 2D float vector.
+message Vector2f {
+  required float x = 1;
+  required float y = 2;
+}
+
+// Represents a field marking as a line segment represented by a start point p1,
+// and end point p2, and a line thickness. The start and end points are along
+// the center of the line, so the thickness of the line extends by thickness / 2
+// on either side of the line.
+message SSL_FieldLineSegment {
+  // Name of this field marking.
+  required string name = 1;
+  // Start point of the line segment.
+  required Vector2f p1 = 2;
+  // End point of the line segment.
+  required Vector2f p2 = 3;
+  // Thickness of the line segment.
+  required float thickness = 4;
+  // The type of this shape
+  optional SSL_FieldShapeType type = 5;
+}
+
+// Represents a field marking as a circular arc segment represented by center point, a
+// start angle, an end angle, and an arc thickness.
+message SSL_FieldCircularArc {
+  // Name of this field marking.
+  required string name = 1;
+  // Center point of the circular arc.
+  required Vector2f center = 2;
+  // Radius of the arc.
+  required float radius = 3;
+  // Start angle in counter-clockwise order.
+  required float a1 = 4;
+  // End angle in counter-clockwise order.
+  required float a2 = 5;
+  // Thickness of the arc.
+  required float thickness = 6;
+  // The type of this shape
+  optional SSL_FieldShapeType type = 7;
+}
+
+message SSL_GeometryFieldSize {
+  required int32 field_length = 1;
+  required int32 field_width = 2;
+  required int32 goal_width = 3;
+  required int32 goal_depth = 4;
+  required int32 boundary_width = 5;
+  repeated SSL_FieldLineSegment field_lines = 6;
+  repeated SSL_FieldCircularArc field_arcs = 7;
+  optional int32 penalty_area_depth = 8;
+  optional int32 penalty_area_width = 9;
+}
+
+message SSL_GeometryCameraCalibration {
+  required uint32 camera_id     = 1;
+  required float focal_length = 2;
+  required float principal_point_x = 3;
+  required float principal_point_y = 4;
+  required float distortion = 5;
+  required float q0 = 6;
+  required float q1 = 7;
+  required float q2 = 8;
+  required float q3 = 9;
+  required float tx = 10;
+  required float ty = 11;
+  required float tz = 12;
+  optional float derived_camera_world_tx = 13;
+  optional float derived_camera_world_ty = 14;
+  optional float derived_camera_world_tz = 15;
+  optional uint32 pixel_image_width = 16;
+  optional uint32 pixel_image_height = 17;
+}
+
+// Two-Phase model for straight-kicked balls.
+// There are two phases with different accelerations during the ball kicks:
+// 1. Sliding
+// 2. Rolling
+// The full model is described in the TDP of ER-Force from 2016, which can be found here:
+// https://ssl.robocup.org/wp-content/uploads/2019/01/2016_ETDP_ER-Force.pdf
+message SSL_BallModelStraightTwoPhase {
+  // Ball sliding acceleration [m/s^2] (should be negative)
+  required double acc_slide = 1;
+  // Ball rolling acceleration [m/s^2] (should be negative)
+  required double acc_roll = 2;
+  // Fraction of the initial velocity where the ball starts to roll
+  required double k_switch = 3;
+}
+
+// Fixed-Loss model for chipped balls.
+// Uses fixed damping factors for xy and z direction per hop.
+message SSL_BallModelChipFixedLoss {
+  // Chip kick velocity damping factor in XY direction for the first hop
+  required double damping_xy_first_hop = 1;
+  // Chip kick velocity damping factor in XY direction for all following hops
+  required double damping_xy_other_hops = 2;
+  // Chip kick velocity damping factor in Z direction for all hops
+  required double damping_z = 3;
+}
+
+message SSL_GeometryModels {
+  optional SSL_BallModelStraightTwoPhase straight_two_phase = 1;
+  optional SSL_BallModelChipFixedLoss chip_fixed_loss = 2;
+}
+
+message SSL_GeometryData {
+  required SSL_GeometryFieldSize field = 1;
+  repeated SSL_GeometryCameraCalibration calib = 2;
+  optional SSL_GeometryModels models = 3;
+}
+
+enum SSL_FieldShapeType {
+  Undefined = 0;
+  CenterCircle = 1;
+  TopTouchLine = 2;
+  BottomTouchLine = 3;
+  LeftGoalLine = 4;
+  RightGoalLine = 5;
+  HalfwayLine = 6;
+  CenterLine = 7;
+  LeftPenaltyStretch = 8;
+  RightPenaltyStretch = 9;
+  LeftFieldLeftPenaltyStretch = 10;
+  LeftFieldRightPenaltyStretch = 11;
+  RightFieldLeftPenaltyStretch = 12;
+  RightFieldRightPenaltyStretch = 13;
+}

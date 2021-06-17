@@ -1,6 +1,6 @@
 #include "manual_control_node.hpp"
 
-#include "context.hpp"
+#include <rj_common/utils.hpp>
 
 namespace joystick {
 
@@ -116,11 +116,13 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
         trigger_mode = rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN;
     }
 
+    double kick_speed = lerp(soccer::robot::PARAM_min_kick_speed,
+                             soccer::robot::PARAM_max_kick_speed, command.kick_power);
     manipulator_setpoint_pubs_.at(robot_id)->publish(
         rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
             .shoot_mode(shoot_mode)
             .trigger_mode(trigger_mode)
-            .kick_strength(static_cast<int8_t>(command.kick_power * 255))
+            .kick_speed(kick_speed)
             .dribbler_speed(static_cast<float>(command.dribble_power)));
 }
 
