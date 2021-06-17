@@ -39,7 +39,7 @@ class GameplayNode(Node):
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
-
+        self.goalie_id_sub = self.create_subscription(msg.Goalie, '/referee/our_goalie', self.set_goalie_id, 10)
 
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
@@ -102,6 +102,12 @@ class GameplayNode(Node):
         if msg is not None:
             self.field = conv.field_msg_to_field(msg)
 
+    def set_goalie_id(self, msg: msg.Goalie) -> None:
+        """
+        Set goalie id based on goalie msg
+        """
+        if msg is not None and self.game_info is not None:
+            self.game_info.set_goalie_id(msg.goalie_id)
 
     def get_world_state(self) -> rc.WorldState:
         """

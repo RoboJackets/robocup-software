@@ -130,8 +130,7 @@ def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
     vel = np.array([dx,dy])
 
     visible = ball_msg.visible
-
-    ball = rc.Ball(pos,vel, visible)
+    ball = rc.Ball(pos, vel, visible)
 
     return ball
 
@@ -141,14 +140,11 @@ def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
     """
 
     period = game_state_msg.period
-
     state = game_state_msg.state
-
     restart = game_state_msg.restart
-
     our_restart = game_state_msg.our_restart
 
-    game_info = rc.GameInfo(period, state, restart, our_restart)
+    game_info = rc.GameInfo(period, state, restart, our_restart, None) # goalie_id set later
 
     return game_info
 
