@@ -57,6 +57,7 @@ class GameplayNode(Node):
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
         self.game_info: rc.GameInfo = None
+        self.goalie_id = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()]*NUM_ROBOTS*2
 
@@ -94,6 +95,8 @@ class GameplayNode(Node):
         """
         if msg is not None:
             self.game_info = conv.gamestate_to_gameinfo(msg)
+        if self.goalie_id is not None:
+            self.game_info.set_goalie_id(msg.goalie_id)
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
         """
@@ -107,6 +110,7 @@ class GameplayNode(Node):
         Set goalie id based on goalie msg
         """
         if msg is not None and self.game_info is not None:
+            self.goalie_id = msg.goalie_id
             self.game_info.set_goalie_id(msg.goalie_id)
 
     def get_world_state(self) -> rc.WorldState:
