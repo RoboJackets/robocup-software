@@ -44,11 +44,14 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
         gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
         [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT
-            auto plan_request = make_request(rj_convert::convert_from_ros(*intent));
-            auto trajectory = plan_for_robot(plan_request);
-            trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
-            robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
-                                     intent->priority);
+            if (robot_alive()) {
+                auto plan_request = make_request(rj_convert::convert_from_ros(*intent));
+                auto trajectory = plan_for_robot(plan_request);
+                trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+                robot_trajectories_->put(robot_id_,
+                                         std::make_shared<Trajectory>(std::move(trajectory)),
+                                         intent->priority);
+            }
         });
     world_state_sub_ = node_->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
@@ -148,6 +151,10 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
     debug_draw_.publish();
 
     return trajectory;
+}
+bool PlannerForRobot::robot_alive() const {
+    return latest_world_state_.our_robots.at(robot_id_).visible &&
+           RJ::now() < latest_world_state_.last_updated_time + RJ::Seconds(PARAM_timeout);
 }
 
 }  // namespace planning

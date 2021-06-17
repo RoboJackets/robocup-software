@@ -17,8 +17,7 @@ DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
       config_client_{this},
-      team_color_queue_{this, referee::topics::kTeamColorPub,
-                        rj_msgs::build<TeamColorMsg>().is_blue(true)},
+      team_color_queue_{this, referee::topics::kTeamColorPub},
       param_provider_{this, kVisionFilterParamModule} {
     // Create a timer that calls predict on all of the Kalman filters.
     const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
@@ -28,6 +27,10 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
+        if (!config_client_.connected()) {
+            return;
+        }
+
         const double current_team_angle = team_angle();
         const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
         auto frame = CameraFrame(*msg, current_world_to_team, current_team_angle);

@@ -6,6 +6,8 @@ namespace planning {
 
 constexpr auto kPlanningParamModule = "planning";
 
+DECLARE_FLOAT64(kPlanningParamModule, timeout);
+
 DECLARE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed);
 DECLARE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel);
 DECLARE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed);

@@ -52,7 +52,7 @@ void Radio::tick() {
             const auto manipulator = rj_msgs::build<ManipulatorSetpoint>()
                                          .shoot_mode(ManipulatorSetpoint::SHOOT_MODE_KICK)
                                          .trigger_mode(ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN)
-                                         .kick_strength(0)
+                                         .kick_speed(0)
                                          .dribbler_speed(0);
             last_updates_.at(i) = RJ::now();
             send(i, motion, manipulator);

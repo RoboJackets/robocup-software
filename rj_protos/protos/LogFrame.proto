@@ -3,7 +3,7 @@ package Packet;
 
 import "referee.proto";
 import "Point.proto";
-import "messages_robocup_ssl_wrapper.proto";
+import "ssl_vision_wrapper.proto";
 import "RadioTx.proto";
 import "RadioRx.proto";
 

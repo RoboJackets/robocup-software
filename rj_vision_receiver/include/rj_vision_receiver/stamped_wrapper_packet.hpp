@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
+#include <rj_protos/ssl_vision_wrapper.pb.h>
 
 #include <rclcpp/time.hpp>
 
