@@ -1,8 +1,6 @@
-"""Contains the stub for the move tactic. """
-
 from dataclasses import dataclass
 from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Callable
 
 import stp.action as action
 import stp.rc as rc
@@ -49,9 +47,10 @@ class Seek(tactic.ITactic):
     """
 
 
-    def __init__(self, target_point : np.ndarray):
+    def __init__(self, target_point:np.ndarray, seek_heuristic:Callable[[Tuple[float, float]], float], seeker_cost:role.CostFn):
         self.move = tactic.SkillEntry(move.Move(target_point = target_point))
-        self.cost = seek_cost(target_point)
+        self.cost = seeker_cost
+        self.seek_heuristic = seek_heuristic
         
     def compute_props(self):
         pass
@@ -83,7 +82,7 @@ class Seek(tactic.ITactic):
         # capture_result: tactic.RoleResults
         # capture_result = role_results[self.capture]
         # shoot_result = role_results[self.shoot]
-        self.move.skill.target_point = optimizer.find_seek_point(seek_heuristic, world_state)
+        self.move.skill.target_point = optimizer.find_seek_point(self.seek_heuristic, world_state)
         move_result = role_results[self.move]
 
         if move_result and move_result[0].is_filled():

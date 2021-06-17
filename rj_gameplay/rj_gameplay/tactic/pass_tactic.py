@@ -55,12 +55,12 @@ class Pass(tactic.ITactic):
     A passing tactic which captures then passes the ball
     """
 
-    def __init__(self, target_point:np.ndarray):
+    def __init__(self, target_point:np.ndarray, passer_cost:role.CostFn, receiver_cost:role.CostFn):
         self.target_point = target_point
         self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point, chip=False, kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
-        self.receiver_cost = Receiver_cost(target_point)
-        self.Passer_cost = Passer_cost()
+        self.receiver_cost = receiver_cost
+        self.Passer_cost = passer_cost
         
     def compute_props(self):
         pass
@@ -75,9 +75,10 @@ class Pass(tactic.ITactic):
         cost = float('inf')
         receive_robot = None
         for robot in world_state.our_robots:
-            if self.receiver_cost(robot, None, world_state) < cost:
-                cost = self.receiver_cost(robot, None, world_state)
-                receive_robot = robot        
+            curr_cost = self.receiver_cost(robot, None, world_state)
+            if curr_cost < cost:
+                cost = curr_cost
+                receive_robot = robot
         return receive_robot
 
     def get_requests(
