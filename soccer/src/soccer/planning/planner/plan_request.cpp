@@ -14,12 +14,14 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         const auto& robot = in.world_state->their_robots.at(shell);
         if (robot.visible) {
             out_static->add(
-                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius));
+                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius * 1.0));
         }
     }
 
     // Add our robots, either static or dynamic depending on whether they have
     // already been planned.
+    //
+    // 0.90 weight to make robots less hesitant to wall
     for (int shell = 0; shell < kNumShells; shell++) {
         const auto& robot = in.world_state->our_robots.at(shell);
         if (!robot.visible || shell == in.shell_id) {
@@ -28,11 +30,11 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
         if (out_dynamic != nullptr && in.planned_trajectories.at(shell) != nullptr) {
             // Dynamic obstacle
-            out_dynamic->emplace_back(kRobotRadius, in.planned_trajectories.at(shell));
+            out_dynamic->emplace_back(kRobotRadius * 0.90, in.planned_trajectories.at(shell));
         } else {
             // Static obstacle
             out_static->add(
-                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius));
+                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius * 0.90));
         }
     }
 
