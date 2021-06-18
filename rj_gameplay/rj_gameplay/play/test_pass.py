@@ -54,5 +54,5 @@ class PassPlay(play.IPlay):
 
         return (skill_dict, skills)
 
-    def is_done(self ,world_state):
+    def is_done(self, world_state: rc.WorldState):
         return self.pass_tactic.is_done(world_state)
