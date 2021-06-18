@@ -6,6 +6,8 @@
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
+#include <rj_msgs/msg/world_state.hpp>
+#include <rj_param_utils/param.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "game_state.hpp"
@@ -19,7 +21,12 @@ using GoalieMsg = rj_msgs::msg::Goalie;
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_msgs::msg::TeamInfo;
 
+using WorldStateMsg = rj_msgs::msg::WorldState;
+
 constexpr auto kRefereeParamModule = "referee";
+
+DECLARE_FLOAT64(kRefereeParamModule, kick_threshold);
+DECLARE_FLOAT64(kRefereeParamModule, kick_verify_time);
 
 /**
  * @brief Base class for both types of referee. Handles sending ROS messages to
@@ -97,24 +104,7 @@ protected:
 
     void set_goalie(uint8_t goalie_id);
 
-    // TODO(1556): Implement kick watcher
-    void capture_ready_point(const rj_geometry::Point& ball_position) {
-        capture_ready_point_ = ball_position;
-    }
-
-    void spin_kick_detector(const BallState& ball_position) {
-        if (!state_.in_ready_state()) {
-            capture_ready_point_ = std::nullopt;
-        }
-
-        if (capture_ready_point_.has_value()) {
-            constexpr double kMovedRadius = 0.1;
-            if (!capture_ready_point_->near_point(ball_position.position,
-                                                 kMovedRadius)) {
-                play();
-            }
-        }
-    }
+    void spin_kick_detector();
 
     /**
      * @brief Send any updated messages.
@@ -169,9 +159,15 @@ private:
     void update_team_color_from_names();
 
     // Kick detector information
-    std::optional<rj_geometry::Point> capture_ready_point_;
+    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+    BallState ball_state_;
 
-    params::LocalROS2ParamProvider param_provider_;
+    enum class KickDetectState { kStandBy, kCapturePosition, kWaitForKick, kVerifyKick };
+    RJ::Time kick_time_;
+    KickDetectState kick_detect_state_ = KickDetectState::kStandBy;
+
+    rj_geometry::Point capture_ready_point_;
+    ::params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace referee

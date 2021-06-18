@@ -23,14 +23,6 @@ namespace referee {
 using referee_module_enums::Command;
 using referee_module_enums::Stage;
 
-/// Distance in meters that the ball must travel for a kick to be detected
-static const float kKickThreshold = kBallRadius * 3;
-
-/// How many milliseconds the ball must be more than KickThreshold meters away
-/// from its position when the referee indicated Ready for us to detect the ball
-/// as having been kicked.
-static const int kKickVerifyTimeMs = 250;
-
 // Whether we cancel ball placement on a halt.
 // If we want ball placement to continue after
 // the ref halts/stops, make this false
@@ -117,8 +109,7 @@ void ExternalReferee::setup_referee_multicast() {
 
 void ExternalReferee::update() {
     io_service_.poll();
-    BallState state;
-    spin_kick_detector(state);
+    spin_kick_detector();
 }
 
 void ExternalReferee::handle_command(SSL_Referee::Command command) {
