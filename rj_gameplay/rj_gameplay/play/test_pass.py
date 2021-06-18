@@ -32,8 +32,6 @@ class PassPlay(play.IPlay):
         role_requests: play.RoleRequests = {}
         if not self.pass_tactic.is_done(world_state):
             role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
-        else:
-            pass
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
         flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)
