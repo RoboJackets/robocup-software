@@ -12,7 +12,6 @@ import stp.action as action
 from rj_gameplay.action import capture
 from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
-from typing import Optional
 
 class ICapture(skill.ISkill, ABC):
     ...
@@ -23,8 +22,8 @@ A skill version of capture so that actions don't have to be called in tactics
 """
 class Capture(ICapture):
     
-    def __init__(self, robot: Optional[rc.Robot]=None):
-        self.robot = robot
+    def __init__(self):
+        self.robot: rc.Robot = None
         self.__name__ = 'Capture'
         self.capture = capture.Capture()
         self.capture_behavior = ActionBehavior('Capture', self.capture, self.robot)

@@ -12,7 +12,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import line_up, test_pass
+from rj_gameplay.play import defensive_clear 
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16
@@ -25,7 +25,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, test_pass.PassPlay())
+        return (None, line_up.LineUp())
 
 class GameplayNode(Node):
     """
