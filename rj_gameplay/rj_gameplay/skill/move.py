@@ -33,20 +33,25 @@ class Move(IMove):
             face_point : Optional[np.ndarray] = None):
         self.robot = robot
         self.target_point = target_point
+        self.face_point = face_point
+        self.face_angle = face_angle
+
         if self.robot is not None:
             self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point)
         else:
             self.move = move.Move(self.robot, target_point, target_vel, face_angle, face_point)
+
         self.move_behavior = ActionBehavior('Move', self.move)
         self.root = self.move_behavior
         self.root.setup_with_descendants()
         self.__name__ = 'move skill'
 
-    def tick(self, robot: rc.Robot, world_state): #returns dict of robot and actions
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState): #returns dict of robot and actions
         self.robot = robot
+        self.move.target_point = self.target_point
+        self.move.face_point = self.face_point
         actions = self.root.tick_once(self.robot, world_state)
         return actions
-        # TODO: change so this properly returns the actions intent messages
 
     def is_done(self, world_state):
         return self.move.is_done(world_state)

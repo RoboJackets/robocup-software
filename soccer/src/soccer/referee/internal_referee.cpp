@@ -64,6 +64,7 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
                    msg) {  // NOLINT(performance-unnecessary-value-param)
             set_team_color(msg->request_blue_team);
             set_goalie(msg->request_goalie_id);
+            send();
         });
 }
 

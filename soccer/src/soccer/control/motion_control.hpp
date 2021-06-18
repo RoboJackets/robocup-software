@@ -93,6 +93,7 @@ private:
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
     rclcpp::Subscription<GameState::Msg>::SharedPtr game_state_sub_;
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
+    rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
 };
 
 }  // namespace control

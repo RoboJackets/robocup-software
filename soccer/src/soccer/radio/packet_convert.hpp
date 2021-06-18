@@ -9,8 +9,8 @@
 #include <rj_protos/RadioRx.pb.h>
 #include <rj_protos/RadioTx.pb.h>
 #include <rj_protos/Robot.pb.h>
-#include <rj_protos/grSim_Commands.pb.h>
-#include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
+#include <rj_protos/ssl_simulation_robot_control.pb.h>
+#include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 #include <robot_intent.hpp>
 
 #include "robot_status.hpp"
@@ -23,7 +23,7 @@
  *
  * For Rx (robot to soccer), this includes:
  *  - RTP. This is the packed format we use to send to and from real robots
- *  - grSim. This is a protobuf-based format used to communicate with grSim
+ *  - sim. This is a protobuf-based format used to communicate with sim
  *  - RobotStatus. This is the in-memory representation used in Context.
  *  - Packet::RadioRx. This is the representation used in the log frame.
  *
@@ -36,7 +36,7 @@ namespace ConvertRx {
 
 void rtp_to_status(const rtp::RobotStatusMessage& rtp, RobotStatus* status);
 
-void grsim_to_status(const Robot_Status& grsim, RobotStatus* status);
+void sim_to_status(const RobotFeedback& sim, RobotStatus* status);
 
 void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto);
 
@@ -57,12 +57,12 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
 void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
               int shell, Packet::Robot* proto);
 
-void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
-              int shell, grSim_Robot_Command* grsim);
+void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint,
+            int shell, RobotCommand* sim);
 
-void ros_to_grsim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                  grSim_Robot_Command* grsim);
+void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                const rj_msgs::msg::MotionSetpoint& motion, int shell,
+                RobotCommand* sim);
 
 }  // namespace ConvertTx
 

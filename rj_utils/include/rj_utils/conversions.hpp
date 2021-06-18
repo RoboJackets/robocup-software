@@ -1,11 +1,11 @@
 #pragma once
 
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
+#include <rj_protos/ssl_vision_wrapper.pb.h>
+#include <rj_protos/ssl_vision_wrapper.pb.h>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/detection_ball.hpp>
 #include <rj_msgs/msg/detection_robot.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
 using DetectionBallMsg = rj_msgs::msg::DetectionBall;

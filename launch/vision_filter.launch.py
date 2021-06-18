@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 
 from launch_ros.actions import Node
+from launch.actions import Shutdown
 
 
 def generate_launch_description():
@@ -12,5 +13,7 @@ def generate_launch_description():
              output="screen",
              parameters=[{
                  "publish_hz": publish_hz
-             }])
+             }],
+             on_exit=Shutdown(),
+        )
     ])
