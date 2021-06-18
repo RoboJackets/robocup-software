@@ -33,9 +33,8 @@ class StrikerTactic(tactic.ITactic):
 
 	def __init__(self):
 		self.capture = tactic.SkillEntry(capture.Capture()) 
-		#  <- receive skill is not published yet
+		#TODO: add receive skill 
 		self.cost = shoot_cost()
-		# self.capture = tactic.SkillEntry(capture.Capture())
 		self.shoot = tactic.SkillEntry(shoot.Shoot(chip = False, kick_speed = 40.))
 
 	def compute_props(self):

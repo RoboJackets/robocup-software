@@ -11,7 +11,6 @@ from rj_msgs.msg import RobotIntent, CollectMotionCommand
 class Capture(action.IAction):
     """
     Capture action
-    TODO: update with actions implementation
     """
 
     def __init__(self, robot_id: int = None):
@@ -23,7 +22,6 @@ class Capture(action.IAction):
         intent.motion_command.collect_command = [collect_command] 
         intent.dribbler_speed = 1.0
         intent.is_active = True
-
         return intent
 
     def is_done(self, world_state) -> bool:

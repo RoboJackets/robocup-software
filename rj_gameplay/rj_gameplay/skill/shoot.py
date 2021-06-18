@@ -21,7 +21,7 @@ class IShoot(skill.ISkill, ABC):
 """
 A shoot skill which aims at the goal and shoots
 """
-random_shoot = random.uniform(-0.5,0.5)
+random_shoot = np.random.uniform(-0.5,0.5)
 
 class Shoot(IShoot):
 
