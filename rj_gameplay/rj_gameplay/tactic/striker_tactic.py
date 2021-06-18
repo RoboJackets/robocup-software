@@ -12,7 +12,10 @@ class shoot_cost(role.CostFn):
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"], world_state: rc.WorldState) -> float:
 
     	#TODO: elaborate cost function:
-    	return 0
+    	if robot.id == 1:
+    		return 0
+    	else:
+    		return 999
 
     	# if -world_state.field.penalty_long_dist_m / 2 - 0.5 < robot.pose[0] < \
     	# 	world_state.field.penalty_long_dist_m / 2 + 0.5 and \
