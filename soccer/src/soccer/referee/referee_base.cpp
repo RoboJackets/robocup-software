@@ -15,7 +15,6 @@ RefereeBase::RefereeBase(const std::string& name)
     their_team_info_pub_ =
         create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoPub, keep_latest);
     game_state_pub_ = create_publisher<GameStateMsg>(referee::topics::kGameStatePub, keep_latest);
-
 }
 
 void RefereeBase::play() {
@@ -100,7 +99,6 @@ void RefereeBase::set_goalie(uint8_t goalie_id) {
 }
 
 void RefereeBase::send() {
-
     if (!has_any_info_) {
         return;
     }
@@ -110,9 +108,8 @@ void RefereeBase::send() {
         goalie_id_pub_->publish(goalie_msg);
         // publish the goalie_id on a timer, since transient_local QoS isn't working
         // TODO (#1675): fix transient_local OR publish all similar msgs on timer
-        pub_timer_ = this->create_wall_timer(std::chrono::seconds(1), [this] () {
-                goalie_id_pub_->publish(goalie_msg);
-            });
+        pub_timer_ = this->create_wall_timer(std::chrono::seconds(1),
+                                             [this]() { goalie_id_pub_->publish(goalie_msg); });
         goalie_valid_ = true;
     }
 
