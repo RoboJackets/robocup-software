@@ -25,10 +25,10 @@ class Striker(play.IPlay):
 	def tick(self, world_state: rc.WorldState, prev_results: role.assignment.FlatRoleResults, props)-> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
 		# Get role requests from all tactics and put them into a dictionary
 		role_requests: play.RoleRequests = {}
-		if not self.striker_tactic.is_done(world_state) and not self.assist_tactic.is_done(world_state):
+		if not self.striker_tactic.is_done(world_state) and not self.assist_tactic.receive.skill.is_done(world_state):
 			role_requests[self.assist_tactic] = (self.assist_tactic.get_requests(world_state, None))
 
-		elif not self.striker_tactic.is_done(world_state) and self.assist_tactic.is_done(world_state):
+		elif not self.striker_tactic.is_done(world_state) and self.assist_tactic.receive.skill.is_done(world_state):
 			role_requests[self.striker_tactic] = (self.striker_tactic.get_requests(world_state, None))
 
 		# Flatten requests and use role assigner on them
@@ -37,11 +37,11 @@ class Striker(play.IPlay):
 		role_results = play.unflatten_results(flat_results)
 
 		skill_dict = {}
-		if not self.striker_tactic.is_done(world_state) and not self.assist_tactic.is_done(world_state):
+		if not self.striker_tactic.is_done(world_state) and not self.assist_tactic.receive.skill.is_done(world_state):
 			skills = self.assist_tactic.tick(role_results[self.assist_tactic], world_state)
 			skill_dict.update(role_results[self.assist_tactic])
 			
-		elif not self.striker_tactic.is_done(world_state) and self.assist_tactic.is_done(world_state):
+		elif not self.striker_tactic.is_done(world_state) and (self.assist_tactic.receive.skill.is_done(world_state)):
 			skills = self.striker_tactic.tick(role_results[self.striker_tactic], world_state)
 			skill_dict.update(role_results[self.striker_tactic])
 		else:

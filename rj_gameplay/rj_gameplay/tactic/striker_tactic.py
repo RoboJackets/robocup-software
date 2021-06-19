@@ -84,14 +84,13 @@ class StrikerTactic(tactic.ITactic):
 		striker_request = role.RoleRequest(role.Priority.HIGH, True, self.capture_cost)
 		role_requests: tactic.RoleRequests = {}
 
-		striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
-
-		if striker:
-			role_requests[self.capture] = []
-			role_requests[self.shoot] = [striker_request]
-		else:
+		if self.capture.skill.capture.is_done(world_state):
 			role_requests[self.capture] = [striker_request]
 			role_requests[self.shoot] = []
+
+		else:
+			role_requests[self.capture] = []
+			role_requests[self.shoot] = [striker_request]
 
 		return role_requests
 
@@ -101,9 +100,10 @@ class StrikerTactic(tactic.ITactic):
 		"""
 		capture_result = role_results[self.capture]
 		shoot_result = role_results[self.shoot]
+
 		if capture_result and capture_result[0].is_filled():
 			return [self.capture]
-		if shoot_result and shoot_result[0].is_filled():
+		if capture_result and capture_result[0].is_filled() and shoot_result and shoot_result[0].is_filled():
 			self.shoot.skill.target_point = find_target_point(world_state)
 			return [self.shoot]
 		return []
