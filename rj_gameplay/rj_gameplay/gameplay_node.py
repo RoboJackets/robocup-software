@@ -12,7 +12,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import line_up, passing_tactic_play
+from rj_gameplay.play import basic_defense
 from typing import List, Optional, Tuple
 
 NUM_ROBOTS = 16

@@ -11,7 +11,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import move, intercept
+from rj_gameplay.skill import move, receive #, intercept
 import stp.skill as skill
 import numpy as np
 # TODO: replace w/ global param server
@@ -29,12 +29,13 @@ class goalie_cost(role.CostFn):
         if world_state.game_info is not None:
             print(world_state.game_info.our_restart)
             print(world_state.game_info.goalie_id)
-            if robot.id == world_state.game_info.goalie_id:
+            if robot.id == 0:
+            # if robot.id == world_state.game_info.goalie_id:
                 return -1.0
         return 999.0
 
 def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
-    """Finds point for goalie to best intercept a shot.
+    """Finds point for goalie to best be in to block a shot.
     :return numpy point
     """
     # TODO: param server any constant from stp/utils/constants.py (this includes BallConstants)
@@ -59,7 +60,7 @@ class GoalieTactic(tactic.ITactic):
         # create move SkillEntry
         self.move_se = tactic.SkillEntry(move.Move())
 
-        self.intercept_se = tactic.SkillEntry(intercept.Intercept())
+        self.receive_se = tactic.SkillEntry(receive.Receive())
 
         # TODO: rename cost_list to role_cost in other gameplay files
         self.role_cost = goalie_cost()
@@ -92,13 +93,10 @@ class GoalieTactic(tactic.ITactic):
         if world_state and world_state.ball.visible:
             ball_to_goal_dist = np.linalg.norm(world_state.field.our_goal_loc - world_state.ball.pos)
             if ball_to_goal_dist < MIN_WALL_RAD:
-                # intercept when inside wall
-
-                # update intercept skill
-                self.intercept_se.skill.target_point = world_state.ball.pos
+                # move to block when ball inside wall
 
                 # create RoleRequest for each SkillEntry
-                role_requests[self.intercept_se] = [role.RoleRequest(role.Priority.HIGH, False, self.role_cost)]
+                role_requests[self.receive_se] = [role.RoleRequest(role.Priority.HIGH, False, self.role_cost)]
             else:
                 # else, track ball normally
 
@@ -118,12 +116,14 @@ class GoalieTactic(tactic.ITactic):
 
         # create list of skills based on if RoleResult exists for SkillEntry
         skills = []
-        if role_results[self.move_se]:
-            if role_results[self.move_se][0]:
-                skills.append(self.move_se)
-        elif role_results[self.intercept_se]:
-            if role_results[self.intercept_se][0]:
-                skills.append(self.intercept_se)
+
+        move_result = role_results[self.move_se]
+        if move_result and move_result[0].is_filled():
+            skills.append(self.move_se)
+
+        receive_result = role_results[self.receive_se]
+        if receive_result and receive_result[0].is_filled():
+            skills.append(self.receive_se)
 
         return skills
 
