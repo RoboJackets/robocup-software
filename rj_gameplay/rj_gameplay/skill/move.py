@@ -24,7 +24,7 @@ class IMove(skill.ISkill, ABC):
 A skill version of move so that actions don't have to be called in tactics
 """
 class Move(IMove):
-    
+
     def __init__(self,
             robot : rc.Robot = None,
             target_point : np.ndarray = np.array([0.0,0.0]),

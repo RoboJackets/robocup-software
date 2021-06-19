@@ -3,6 +3,7 @@ import numpy as np
 from typing import Callable, Tuple, Optional, Any, Sequence
 import stp.rc as rc
 
+
 ## Function that optimizes cost function for pass seeking
 # uses scipy minimize using the BFGS method
 def find_seek_point(heuristic: Callable[[Tuple[float, float]], float],
@@ -16,8 +17,7 @@ def find_seek_point(heuristic: Callable[[Tuple[float, float]], float],
     else:
         options = None
     result = minimize(heuristic,
-                      initial_guess,
-                      (world_state),
+                      initial_guess, (world_state),
                       bounds=((-width / 2.00, width / 2.00), (0.00, length)),
                       tol=1e-3,
                       options=options)

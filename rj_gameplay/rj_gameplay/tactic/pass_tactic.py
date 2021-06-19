@@ -28,7 +28,7 @@ class ReceiverCost(role.CostFn):
         prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
-    
+
         if robot.id == 7:
             return 0.0
         return 1.0
@@ -55,13 +55,18 @@ class Pass(tactic.ITactic):
     A passing tactic which captures then passes the ball
     """
 
-    def __init__(self, target_point:np.ndarray, passer_cost:role.CostFn, receiver_cost:role.CostFn):
+    def __init__(self, target_point: np.ndarray, passer_cost: role.CostFn,
+                 receiver_cost: role.CostFn):
         self.target_point = target_point
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(robot=None,target_point=target_point, chip=False, kick_speed=4.0))
+        self.pivot_kick = tactic.SkillEntry(
+            pivot_kick.PivotKick(robot=None,
+                                 target_point=target_point,
+                                 chip=False,
+                                 kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
         self.receiver_cost = receiver_cost
         self.Passer_cost = passer_cost
-        
+
     def compute_props(self):
         pass
 
@@ -92,7 +97,8 @@ class Pass(tactic.ITactic):
         passer_request = role.RoleRequest(role.Priority.HIGH, True, self.Passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         if self.pivot_kick.skill.kick.is_done(world_state):
-            receive_request = role.RoleRequest(role.Priority.HIGH, True, self.receiver_cost)
+            receive_request = role.RoleRequest(role.Priority.HIGH, True,
+                                               self.receiver_cost)
             role_requests[self.receive] = [receive_request]
 
         return role_requests
@@ -112,7 +118,8 @@ class Pass(tactic.ITactic):
                 return [self.pivot_kick]
         elif pivot_result and pivot_result[0].is_filled():
             potential_receiver = self.find_potential_receiver(world_state)
-            self.pivot_kick.skill.target_point = np.array([potential_receiver.pose[0], potential_receiver.pose[1]])
+            self.pivot_kick.skill.target_point = np.array(
+                [potential_receiver.pose[0], potential_receiver.pose[1]])
             return [self.pivot_kick]
         return []
 
