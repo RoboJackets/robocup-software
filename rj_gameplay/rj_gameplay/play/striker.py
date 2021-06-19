@@ -1,19 +1,23 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import striker_tactic
+from rj_gameplay.tactic import striker_tactic, assist_tactic
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 
+random_shoot = np.random.uniform(-0.5,0.5)
+
 class Striker(play.IPlay):
 
 	def __init__(self):
-		self.target_point = np.array([0.,12.])
+		self.striker_loc: rc.Robot.pose[0:2] = None
+		self.target_point: np.ndarray = np.array([0., 12.])
 		self.role_assigner = NaiveRoleAssignment()
-		self.striker_tactic = striker_tactic.StrikerTactic(self.target_point, self.target_point)
+		self.assist_tactic = assist_tactic.AssistTactic(self.striker_loc)
+		self.striker_tactic = striker_tactic.StrikerTactic(self.target_point)
 
 	def compute_props(self, prev_props):
 		pass
@@ -22,7 +26,10 @@ class Striker(play.IPlay):
 	def tick(self, world_state: rc.WorldState, prev_results: role.assignment.FlatRoleResults, props)-> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
 		# Get role requests from all tactics and put them into a dictionary
 		role_requests: play.RoleRequests = {}
-		if not self.striker_tactic.is_done(world_state):
+		if not self.striker_tactic.is_done(world_state) and not self.assist_tactic.is_done(world_state):
+			role_requests[self.assist_tactic] = (self.assist_tactic.get_requests(world_state, None))
+
+		elif not self.striker_tactic.is_done(world_state) and self.assist_tactic.is_done(world_state):
 			role_requests[self.striker_tactic] = (self.striker_tactic.get_requests(world_state, None))
 
 		# Flatten requests and use role assigner on them
@@ -31,8 +38,12 @@ class Striker(play.IPlay):
 		role_results = play.unflatten_results(flat_results)
 
 		skill_dict = {}
-		if not self.striker_tactic.is_done(world_state):
-			skills = self.striker_tactic.tick(role_results[self.striker_tactic], world_state)
+		if not self.striker_tactic.is_done(world_state) and not self.assist_tactic.is_done(world_state):
+			skills = self.assist_tactic.tick(role_results[self.assist_tactic], world_state)
+			skill_dict.update(role_results[self.assist_tactic])
+			
+		elif not self.striker_tactic.is_done(world_state) and self.assist_tactic.is_done(world_state):
+			skills = self.striker_tactic.tick(role_results[self.striker_tactic])
 			skill_dict.update(role_results[self.striker_tactic])
 		else:
 			skills = []

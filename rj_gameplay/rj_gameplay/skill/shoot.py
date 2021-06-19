@@ -21,13 +21,12 @@ class IShoot(skill.ISkill, ABC):
 """
 A shoot skill which aims at the goal and shoots
 """
-random_shoot = np.random.uniform(-0.5,0.5)
+
 
 class Shoot(IShoot):
 
-    def __init__(self, chip: bool, kick_speed: float, target_point: np.array = np.array([random_shoot, 12.])) -> None:
+    def __init__(self, chip: bool, kick_speed: float, target_point: np.ndarray) -> None:
         self.robot: rc.Robot = None
-        self.ctx = None
         self.target_point = target_point
         self.__name__ = 'Shoot'
         self.root = Sequence("Sequence")
