@@ -21,7 +21,7 @@ def seek_heuristic(point: Tuple[float, float], world_state: Tuple[rc.WorldState]
     cost -= 7 * point[1]
     return cost
 
-class seek_cost(role.CostFn):
+class SeekCost(role.CostFn):
     """
     A cost function for how to choose a seeking robot
     TODO: Implement a better cost function

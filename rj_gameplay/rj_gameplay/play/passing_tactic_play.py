@@ -15,8 +15,8 @@ class PassPlay(play.IPlay):
 
     def __init__(self):
         self.target_point = np.array([1.0,1.0])
-        self.pass_tactic = pass_tactic.Pass(self.target_point, pass_tactic.Passer_cost(self.target_point), pass_tactic.Receiver_cost(self.target_point))
-        self.seek_tactic = pass_seek.Seek(self.target_point, pass_seek.seek_heuristic, pass_seek.seek_cost(self.target_point))
+        self.pass_tactic = pass_tactic.Pass(self.target_point, pass_tactic.PasserCost(self.target_point), pass_tactic.ReceiverCost(self.target_point))
+        self.seek_tactic = pass_seek.Seek(self.target_point, pass_seek.seek_heuristic, pass_seek.SeekCost(self.target_point))
         self.role_assigner = NaiveRoleAssignment()
 
 
@@ -31,11 +31,9 @@ class PassPlay(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        if not self.pass_tactic.is_done(world_state):
+        if not self.pass_tactic.pivot_kick.skill.pivot.is_done(world_state):
             role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
             role_requests[self.seek_tactic] = self.seek_tactic.get_requests(world_state, None)
-        else:
-            pass
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
         flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)

@@ -40,12 +40,13 @@ class Move(IMove):
             self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point)
         else:
             self.move = move.Move(self.robot, target_point, target_vel, face_angle, face_point)
+
         self.move_behavior = ActionBehavior('Move', self.move)
         self.root = self.move_behavior
         self.root.setup_with_descendants()
         self.__name__ = 'move skill'
 
-    def tick(self, robot: rc.Robot, world_state): #returns dict of robot and actions
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState): #returns dict of robot and actions
         self.robot = robot
         self.move.target_point = self.target_point
         self.move.target_vel = self.target_vel

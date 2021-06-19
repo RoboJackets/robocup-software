@@ -8,6 +8,8 @@ import stp.rc as rc
 import numpy as np
 from rj_msgs.msg import RobotIntent, SettleMotionCommand
 
+SETTLE_BALL_SPEED_THRESHOLD = 1.0
+
 class Receive(action.IAction):
     """
     Receive action
@@ -29,6 +31,6 @@ class Receive(action.IAction):
         if self.robot_id is None:
             return False
         #TODO: Use local params for this threshold
-        if world_state.our_robots[self.robot_id].has_ball_sense or np.linalg.norm(world_state.ball.vel) < 10**(-6):
+        if world_state.our_robots[self.robot_id].has_ball_sense or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD:
             return True
         return False

@@ -31,9 +31,9 @@ class Pivot(action.IFiniteAction):
 
     def is_done(self, world_state:rc.WorldState) -> bool:
         #TODO: Change this when we get action state feedback
-        angle_threshold = 0.1
+        angle_threshold = np.pi / 180 #One dgree
         #TODO: Make these local params
-        stopped_threshold = 1*10**(-5)
+        stopped_threshold = 0.5 * (np.pi / 180) #0.5 degrees a second
         if self.robot_id is None:
             return False
         robot = world_state.our_robots[self.robot_id]
