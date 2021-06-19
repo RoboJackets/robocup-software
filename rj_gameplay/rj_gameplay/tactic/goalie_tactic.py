@@ -24,21 +24,14 @@ MIN_WALL_RAD = 0
 GOALIE_PCT_TO_BALL = 0.15
 
 
-class goalie_cost(role.CostFn):
+class GoalieCost(role.CostFn):
     """Cost function for role request. Want only the designated goalie to be selected.
     """
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
 
         if world_state.game_info is not None:
-            # TODO: clear debug prints
-            # print(world_state.game_info.our_restart)
-            # print(world_state.game_info.goalie_id)
-
-            # this is a hacky way of doing goalie, until sub is fixed
-            # TODO: fix goalie_id sub in gameplay node
-            if robot.id == 0:
-                # if robot.id == world_state.game_info.goalie_id:
+            if robot.id == world_state.game_info.goalie_id:
                 return -1.0
         return 999.0
 
@@ -60,7 +53,6 @@ def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
     return mid_pt
 
 
-# TODO: replace with intercept
 def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
     pos = world_state.ball.pos
     vel = world_state.ball.vel
@@ -77,11 +69,10 @@ class GoalieTactic(tactic.ITactic):
         # create move SkillEntry
         self.move_se = tactic.SkillEntry(move.Move())
 
-        # TODO: replace w/ intercept
         self.receive_se = tactic.SkillEntry(receive.Receive())
 
         # TODO: rename cost_list to role_cost in other gameplay files
-        self.role_cost = goalie_cost()
+        self.role_cost = GoalieCost()
 
     def compute_props(self):
         pass
@@ -124,6 +115,7 @@ class GoalieTactic(tactic.ITactic):
                 ball_to_goal_time = ball_dist / ball_speed
                 if ball_speed > 0 and ball_to_goal_time < 2:
                     # if ball is moving and coming at goal, move laterally to block ball
+                    # TODO (#1676): replace this logic with a real intercept planner
                     self.move_se.skill.target_point = get_block_pt(
                         world_state, get_goalie_pt(world_state))
                     self.move_se.skill.face_point = world_state.ball.pos
@@ -156,7 +148,7 @@ class GoalieTactic(tactic.ITactic):
         if move_result and move_result[0].is_filled():
             skills.append(self.move_se)
         else:
-            # move first, then receive
+            # move skill takes priority
             receive_result = role_results[self.receive_se]
             if receive_result and receive_result[0].is_filled():
                 skills.append(self.receive_se)
