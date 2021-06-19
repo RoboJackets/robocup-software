@@ -26,7 +26,6 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         return (None, striker.Striker())
-
 class GameplayNode(Node):
     """
     A node which subscribes to the world_state,  game state, robot status, and field topics and converts the messages to python types.
