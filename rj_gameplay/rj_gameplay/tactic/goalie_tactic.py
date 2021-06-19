@@ -1,4 +1,4 @@
-"""Tactic to build a wall between mark pt (e.g. ball) and defense pt (e.g. goal)."""
+"""Tactic to produce goalie behavior, which tracks the ball, moves to block if a shot on goal is taken, and stays within the goalie box (generally)."""
 
 from dataclasses import dataclass
 from typing import List, Optional
