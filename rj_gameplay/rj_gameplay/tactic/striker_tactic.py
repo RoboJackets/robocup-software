@@ -6,11 +6,39 @@ import stp.role as role
 from rj_gameplay.skill import shoot, capture
 import stp.skill as skill
 import numpy as np
+from math import atan2
 
 
 
-# TODO: def find_target_point()
-random_shoot = np.random.uniform(-0.5,0.5)
+def find_target_point(world_state:rc.WorldState) -> np.ndarray:
+	goal_y = world_state.field.length_m
+	cost = 0
+	target_point = np.array([-0.5, goal_y])
+	try_points = [np.array([-0.5, goal_y]), np.array([-0.5, goal_y]),np.array([-0.5, goal_y])]
+
+	kicker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
+	if kicker:
+		kicker = kicker[0]
+	else:
+		return None
+
+	kicker_loc = kicker.pose[0:2]
+
+	for point in try_points:
+		angle = 3.14
+		v_kick_point = point - kicker_loc
+		for blocker in world_state.their_robots:
+			blocker_loc = blocker.pose[0:2]
+			v_kick_block = blocker_loc - kicker_loc
+			point_block_ang = atan2(np.linalg.det([v_kick_block, v_kick_point]), np.dot(v_kick_block, v_kick_point))
+			if point_block_ang < angle:
+				angle = point_block_ang
+		shoot_cost = -angle
+		if shoot_cost < cost:
+			target_point = point
+	return target_point
+
+
 
 class CaptureCost(role.CostFn):
     """
@@ -38,7 +66,7 @@ class StrikerTactic(tactic.ITactic):
 		self.target_point = target_point
 		self.capture = tactic.SkillEntry(capture.Capture()) 
 		self.capture_cost = CaptureCost()
-		self.shoot = tactic.SkillEntry(shoot.Shoot(chip = False, kick_speed = 40., target_point = np.array([random_shoot, 12.])))
+		self.shoot = tactic.SkillEntry(shoot.Shoot(chip = False, kick_speed = 40., target_point = target_point))
 
 	def compute_props(self):
 		pass
@@ -67,7 +95,7 @@ class StrikerTactic(tactic.ITactic):
 
 		return role_requests
 
-	def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+	def tick(self, role_results: tactic.RoleResults, world_state: rc.WorldState) -> List[tactic.SkillEntry]:
 		"""
 		:return: list of skills
 		"""
@@ -76,6 +104,7 @@ class StrikerTactic(tactic.ITactic):
 		if capture_result and capture_result[0].is_filled():
 			return [self.capture]
 		if shoot_result and shoot_result[0].is_filled():
+			self.shoot.skill.target_point = find_target_point(world_state)
 			return [self.shoot]
 		return []
 

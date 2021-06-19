@@ -8,7 +8,6 @@ import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 
-random_shoot = np.random.uniform(-0.5,0.5)
 
 class Striker(play.IPlay):
 
@@ -43,7 +42,7 @@ class Striker(play.IPlay):
 			skill_dict.update(role_results[self.assist_tactic])
 			
 		elif not self.striker_tactic.is_done(world_state) and self.assist_tactic.is_done(world_state):
-			skills = self.striker_tactic.tick(role_results[self.striker_tactic])
+			skills = self.striker_tactic.tick(role_results[self.striker_tactic], world_state)
 			skill_dict.update(role_results[self.striker_tactic])
 		else:
 			skills = []
