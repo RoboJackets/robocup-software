@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rj_msgs import msg
 from rj_geometry_msgs import msg as geo_msg
@@ -39,6 +40,7 @@ class GameplayNode(Node):
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
+
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
                                                       '/referee/our_goalie',
                                                       self.create_goalie_id,
@@ -99,13 +101,6 @@ class GameplayNode(Node):
         """
         if msg is not None:
             self.game_info = conv.gamestate_to_gameinfo(msg)
-            # self.game_info.set_goalie_id(4)
-        """
-        if self.goalie_id is not None:
-            print("set game info")
-            print(self.goalie_id)
-            self.game_info.set_goalie_id(self.goalie_id)
-        """
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
         """
@@ -118,8 +113,6 @@ class GameplayNode(Node):
         """
         Set game_info's goalie_id based on goalie msg
         """
-        print("msg")
-        print(msg)
         if msg is not None and self.game_info is not None:
             self.goalie_id = msg.goalie_id
             self.game_info.set_goalie_id(msg.goalie_id)
