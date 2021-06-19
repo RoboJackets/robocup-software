@@ -10,6 +10,8 @@ from typing import Optional
 from rj_msgs.msg import RobotIntent, EmptyMotionCommand
 from rj_geometry_msgs.msg import Point
 
+KICK_DOT_THRESHOLD = 0.5
+KICK_BALL_SPEED_THRESHOLD = 1.0
 
 class IKick(action.IAction, ABC):
     def done(self) -> bool:
@@ -43,6 +45,6 @@ class Kick(IKick):
         heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
         dot_product = np.dot(heading_vect, ball_vel_unit)
         #TODO: Make this threshold a local param
-        if dot_product > 0.1:
+        if dot_product > KICK_DOT_THRESHOLD and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD:
             return True
         return False

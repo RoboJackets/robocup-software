@@ -14,7 +14,7 @@ import stp.skill as skill
 import numpy as np
 
 
-class Receiver_cost(role.CostFn):
+class ReceiverCost(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
@@ -33,7 +33,7 @@ class Receiver_cost(role.CostFn):
             return 0.0
         return 1.0
 
-class Passer_cost(role.CostFn):
+class PasserCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     TODO: Implement a better cost function
@@ -61,8 +61,8 @@ class Pass(tactic.ITactic):
         self.target_point = target_point
         self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point, chip=False, kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
-        self.receiver_cost = Receiver_cost(target_point)
-        self.Passer_cost = Passer_cost()
+        self.receiver_cost = ReceiverCost(target_point)
+        self.Passer_cost = PasserCost()
         
     def compute_props(self):
         pass
@@ -98,7 +98,7 @@ class Pass(tactic.ITactic):
 
         if pivot_result and receive_result and pivot_result[0].is_filled() and receive_result[0].is_filled():
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
-            if self.pivot_kick.skill.pivot.is_done(world_state):
+            if self.pivot_kick.skill.kick.is_done(world_state):
                 return [self.pivot_kick, self.receive]
             else:
                 return [self.pivot_kick]

@@ -34,7 +34,7 @@ class Receive(IReceive):
             self.receive = receive.Receive(self.robot.id)
             self.capture = capture.Capture(self.robot.id)
         else:
-            self.receive = receive.Receive(self.robot)
+            self.receive = receive.Receive()
             self.capture = capture.Capture()
         self.receive_behavior = ActionBehavior('Receive', self.receive)
         self.capture_behavior = ActionBehavior('Capture', self.capture)
