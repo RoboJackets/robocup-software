@@ -24,7 +24,7 @@ class PivotKick(IPivotKick):
     A pivot kick skill
     """
 
-    def __init__(self, target_point: np.array, chip: bool, kick_speed: float, robot: rc.Robot=None) -> None:
+    def __init__(self, robot: rc.Robot, target_point: np.array, chip: bool, kick_speed: float) -> None:
         #TODO: Have something which automatically determines kick speed based on target point distance
         self.__name__ = 'pivot kick'
         self.robot = robot

@@ -57,7 +57,7 @@ class Pass(tactic.ITactic):
 
     def __init__(self, target_point:np.ndarray, passer_cost:role.CostFn, receiver_cost:role.CostFn):
         self.target_point = target_point
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = target_point, chip=False, kick_speed=4.0))
+        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(robot=None,target_point=target_point, chip=False, kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
         self.receiver_cost = receiver_cost
         self.Passer_cost = passer_cost
@@ -91,7 +91,7 @@ class Pass(tactic.ITactic):
 
         passer_request = role.RoleRequest(role.Priority.HIGH, True, self.Passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
-        if self.pivot_kick.skill.pivot.is_done(world_state):
+        if self.pivot_kick.skill.kick.is_done(world_state):
             receive_request = role.RoleRequest(role.Priority.HIGH, True, self.receiver_cost)
             role_requests[self.receive] = [receive_request]
 
