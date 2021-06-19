@@ -62,7 +62,8 @@ class StrikerTactic(tactic.ITactic):
 	A striker tactic which captures then shoots the ball
 	"""
 
-	def __init__(self, target_point: np.ndarray):
+	def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
+		self.cost = cost #unused
 		self.target_point = target_point
 		self.capture = tactic.SkillEntry(capture.Capture()) 
 		self.capture_cost = CaptureCost()
@@ -103,7 +104,7 @@ class StrikerTactic(tactic.ITactic):
 
 		if capture_result and capture_result[0].is_filled():
 			return [self.capture]
-		if capture_result and capture_result[0].is_filled() and shoot_result and shoot_result[0].is_filled():
+		if shoot_result and shoot_result[0].is_filled():
 			self.shoot.skill.target_point = find_target_point(world_state)
 			return [self.shoot]
 		return []

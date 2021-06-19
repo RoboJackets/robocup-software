@@ -12,7 +12,7 @@ import numpy as np
 class Striker(play.IPlay):
 
 	def __init__(self):
-		self.striker_loc: rc.Robot.pose[0:2] = None
+		self.striker_loc: np.ndarray = np.array([0., 12.])
 		self.target_point: np.ndarray = np.array([0., 12.])
 		self.role_assigner = NaiveRoleAssignment()
 		self.assist_tactic = assist_tactic.AssistTactic(self.striker_loc)
