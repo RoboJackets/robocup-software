@@ -26,7 +26,7 @@ class RobotStatus():
     def __init__(self, robot_id: RobotId = None,
                  has_ball_sense: bool = None, kicker_charged: bool = None,
                  kicker_healthy: bool = None, lethal_fault: bool = None):
-        
+
         self.robot_id = robot_id
         self.has_ball_sense = has_ball_sense
         self.kicker_charged = kicker_charged
@@ -144,7 +144,8 @@ def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
     restart = game_state_msg.restart
     our_restart = game_state_msg.our_restart
 
-    game_info = rc.GameInfo(period, state, restart, our_restart, None) # goalie_id set later
+    game_info = rc.GameInfo(period, state, restart, our_restart,
+                            None)  # goalie_id set later
 
     return game_info
 
@@ -251,4 +252,3 @@ def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: L
     world_state = rc.WorldState(our_robots, their_robots, partial_world_state.ball, game_info, field)
 
     return world_state
-    

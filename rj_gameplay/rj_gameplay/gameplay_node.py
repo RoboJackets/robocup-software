@@ -27,6 +27,7 @@ class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         return (None, basic_defense.BasicDefense())
 
+
 class GameplayNode(Node):
     """
     A node which subscribes to the world_state, game state, robot status, and field topics and converts the messages to python types.
@@ -38,7 +39,10 @@ class GameplayNode(Node):
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
-        self.goalie_id_sub = self.create_subscription(msg.Goalie, '/referee/our_goalie', self.create_goalie_id, 10)
+        self.goalie_id_sub = self.create_subscription(msg.Goalie,
+                                                      '/referee/our_goalie',
+                                                      self.create_goalie_id,
+                                                      10)
 
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
@@ -65,7 +69,8 @@ class GameplayNode(Node):
         local_parameters.register_parameters(self)
 
         # publish global obstacles
-        self.goal_zone_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, '/planning/goal_zone_obstacles', 10)
+        self.goal_zone_obstacles_pub = self.create_publisher(
+            geo_msg.ShapeSet, '/planning/goal_zone_obstacles', 10)
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)

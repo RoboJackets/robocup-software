@@ -20,6 +20,7 @@ import stp.global_parameters as global_parameters
 
 MIN_WALL_RAD = None
 
+
 class wall_cost(role.CostFn):
     """Cost function for role request.
     """

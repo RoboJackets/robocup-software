@@ -425,7 +425,9 @@ class Field:
 class GameInfo:
     """State of the soccer game"""
 
-    __slots__ = ["__period", "__state", "__restart", "__our_restart", "__goalie_id"]
+    __slots__ = [
+        "__period", "__state", "__restart", "__our_restart", "__goalie_id"
+    ]
 
     __period: GamePeriod
     __state: GameState
@@ -434,7 +436,7 @@ class GameInfo:
     __goalie_id: int
 
     def __init__(self, period: GamePeriod, state: GameState,
-            restart: GameRestart, our_restart: bool, goalie_id: int):
+                 restart: GameRestart, our_restart: bool, goalie_id: int):
         self.__period = period
         self.__state = state
         self.__restart = restart

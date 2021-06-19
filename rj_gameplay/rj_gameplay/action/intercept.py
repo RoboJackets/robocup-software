@@ -9,14 +9,13 @@ import numpy as np
 from rj_msgs.msg import RobotIntent, InterceptMotionCommand, SettleMotionCommand
 from rj_geometry_msgs.msg import Point
 
+
 class Intercept(action.IAction):
     """Intercept action
     """
-
     def __init__(self, robot_id: int = None, target_point: np.ndarray = None):
         self.robot_id = robot_id
         self.target_point = target_point
-
 
     def tick(self, intent: RobotIntent) -> None:
         """
@@ -27,7 +26,7 @@ class Intercept(action.IAction):
         intent.motion_command.intercept_command = [intercept_command] 
         """
         settle_command = SettleMotionCommand()
-        intent.motion_command.settle_command = [settle_command] 
+        intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0
         intent.is_active = True
 
