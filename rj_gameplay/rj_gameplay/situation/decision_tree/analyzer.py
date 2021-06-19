@@ -54,7 +54,7 @@ class HeuristicInformation:
         """
         ball_pos: np.ndarray = world_state.ball.pos
 
-        field_len: float = game_info.field.length_m
+        field_len: float = world_state.field.length_m
         midfield: float = field_len / 2
 
         if ball_pos[1] <= midfield:
@@ -99,28 +99,27 @@ class Analyzer(stp.situation.IAnalyzer):
     __slots__ = []
 
     def analyze_situation(
-        self, world_state: stp.rc.WorldState, game_info: stp.rc.GameInfo
-    ) -> stp.situation.ISituation:
+        self, world_state: stp.rc.WorldState) -> stp.situation.ISituation:
         """Returns the best situation for the current world state based on a hardcoded
         decision tree.
         :param world_state: The current state of the world.
         :param game_info: The information about the state of the game.
         :return: The best situation for the current world state.
         """
-
+        game_info = world_state.game_info
         heuristics = HeuristicInformation(world_state, game_info)
 
         if game_info.is_restart():
-            return self.__analyze_restart(world_state, game_info, heuristics)
+            return self.__analyze_restart(world_state, heuristics)
         else:
-            return self.__analyze_normal(world_state, game_info, heuristics)
+            return self.__analyze_normal(world_state, heuristics)
 
     @staticmethod
     def __analyze_restart(
         world_state: stp.rc.WorldState,
-        game_info: stp.rc.GameInfo,
         heuristics: HeuristicInformation,
     ) -> stp.situation.ISituation:
+        game_info = world_state.game_info
         if game_info.is_kickoff():
             if game_info.our_restart:
                 return dt.plays.Kickoff()
@@ -152,9 +151,9 @@ class Analyzer(stp.situation.IAnalyzer):
     @staticmethod
     def __analyze_normal(
         world_state: stp.rc.WorldState,
-        game_info: stp.rc.GameInfo,
         heuristics: HeuristicInformation,
     ) -> stp.situation.ISituation:
+        game_info = world_state.game_info
         if heuristics.field_loc == FieldLoc.DEFEND_SIDE:
             if heuristics.is_pileup:
                 return dt.plays.DefensivePileup()

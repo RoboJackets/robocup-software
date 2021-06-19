@@ -1,5 +1,7 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSDurabilityPolicy
+from rclpy.qos import QoSProfile
 
 from rj_msgs import msg
 from rj_geometry_msgs import msg as geo_msg
@@ -14,6 +16,8 @@ import numpy as np
 from rj_gameplay.action.move import Move
 from rj_gameplay.play import line_up, passing_tactic_play
 from typing import List, Optional, Tuple
+
+import stp.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
 
@@ -37,7 +41,10 @@ class GameplayNode(Node):
         super().__init__('gameplay_node')
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
-        self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
+        qos_profile = QoSProfile(
+            depth=1,
+            durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
+        self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, qos_profile)
 
 
         self.robot_state_subs = [None] * NUM_ROBOTS
@@ -92,8 +99,10 @@ class GameplayNode(Node):
         """
         Create game info object from Game State message
         """
+        print("MESSSGE HEREEEEEEEE:", msg)
         if msg is not None:
             self.game_info = conv.gamestate_to_gameinfo(msg)
+            print(self.game_info.is_restart())
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
         """
@@ -166,5 +175,6 @@ class GameplayNode(Node):
 
 def main():
     play_selector = TestPlaySelector()
+    # play_selector = basic_play_selector.BasicPlaySelector()
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)
