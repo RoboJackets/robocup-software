@@ -6,12 +6,14 @@ import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+import numpy as np
 
 class Striker(play.IPlay):
 
 	def __init__(self):
+		self.target_point = np.array([0.,12.])
 		self.role_assigner = NaiveRoleAssignment()
-		self.striker_tactic = striker_tactic.StrikerTactic()
+		self.striker_tactic = striker_tactic.StrikerTactic(self.target_point, self.target_point)
 
 	def compute_props(self, prev_props):
 		pass
@@ -20,18 +22,20 @@ class Striker(play.IPlay):
 	def tick(self, world_state: rc.WorldState, prev_results: role.assignment.FlatRoleResults, props)-> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
 		# Get role requests from all tactics and put them into a dictionary
 		role_requests: play.RoleRequests = {}
-
-		role_requests[self.striker_tactic] = (self.striker_tactic.get_requests(world_state, None))
+		if not self.striker_tactic.is_done(world_state):
+			role_requests[self.striker_tactic] = (self.striker_tactic.get_requests(world_state, None))
 
 		# Flatten requests and use role assigner on them
 		flat_requests = play.flatten_requests(role_requests)
 		flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)
 		role_results = play.unflatten_results(flat_results)
 
-		skills = self.striker_tactic.tick(role_results[self.striker_tactic])
 		skill_dict = {}
-
-		skill_dict.update(role_results[self.striker_tactic])
+		if not self.striker_tactic.is_done(world_state):
+			skills = self.striker_tactic.tick(role_results[self.striker_tactic], world_state)
+			skill_dict.update(role_results[self.striker_tactic])
+		else:
+			skills = []
 
 		return (skill_dict, skills)
 

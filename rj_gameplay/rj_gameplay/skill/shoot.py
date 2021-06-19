@@ -45,6 +45,7 @@ class Shoot(IShoot):
     def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:
         self.robot = robot
         self.pivot.pivot_point = world_state.ball.pos
+        self.pivot.target_point = self.target_point
         return self.root.tick_once(robot, world_state)
      
 
