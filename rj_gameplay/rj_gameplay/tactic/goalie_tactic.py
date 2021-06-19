@@ -19,6 +19,9 @@ from stp.utils.constants import RobotConstants, BallConstants
 import stp.global_parameters as global_parameters
 from stp.local_parameters import Param
 
+# TODO: param server this const
+MIN_WALL_RAD = 0
+GOALIE_PCT_TO_BALL = 0.15
 
 class goalie_cost(role.CostFn):
     """Cost function for role request. Want only the designated goalie to be selected.
@@ -27,8 +30,12 @@ class goalie_cost(role.CostFn):
                  world_state: rc.WorldState) -> float:
 
         if world_state.game_info is not None:
-            print(world_state.game_info.our_restart)
-            print(world_state.game_info.goalie_id)
+            # TODO: clear debug prints
+            # print(world_state.game_info.our_restart)
+            # print(world_state.game_info.goalie_id)
+
+            # this is a hacky way of doing goalie, until sub is fixed
+            # TODO: fix goalie_id sub in gameplay node
             if robot.id == 0:
             # if robot.id == world_state.game_info.goalie_id:
                 return -1.0
@@ -42,16 +49,20 @@ def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
     ball_pt = world_state.ball.pos
     goal_pt = world_state.field.our_goal_loc
 
-    # TODO: param server this const
-    PCT_TO_BALL = 0.10
-
-    # get direction vec to ball
     dir_vec = (ball_pt - goal_pt) / np.linalg.norm(ball_pt - goal_pt)
-    wall_vec = np.array([dir_vec[1], -dir_vec[0]])
-
-    # find and return pt
-    mid_pt = goal_pt + (dir_vec * PCT_TO_BALL * np.linalg.norm(ball_pt - goal_pt))
+    # get in-between ball and goal, staying behind wall
+    dist_from_goal = min(GOALIE_PCT_TO_BALL * np.linalg.norm(ball_pt - goal_pt), MIN_WALL_RAD - RobotConstants.RADIUS * 2.1)
+    mid_pt = goal_pt + (dir_vec * dist_from_goal)
     return mid_pt
+
+# TODO: replace with intercept
+def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
+    pos = world_state.ball.pos
+    vel = world_state.ball.vel
+
+    block_pt = np.array([(my_pos[1] - pos[1]) / vel[1] * vel[0] + pos[0], my_pos[1]])
+
+    return block_pt
 
 
 class GoalieTactic(tactic.ITactic):
@@ -60,6 +71,7 @@ class GoalieTactic(tactic.ITactic):
         # create move SkillEntry
         self.move_se = tactic.SkillEntry(move.Move())
 
+        # TODO: replace w/ intercept
         self.receive_se = tactic.SkillEntry(receive.Receive())
 
         # TODO: rename cost_list to role_cost in other gameplay files
@@ -76,11 +88,12 @@ class GoalieTactic(tactic.ITactic):
 
     def get_requests(self, world_state: rc.WorldState,
                      props) -> List[tactic.RoleRequests]:
+        global MIN_WALL_RAD
         """
         :return: A list of role requests for move skills needed
         """
 
-        # TODO: this const is copy-pasted from wall_tactic 
+        # TODO: this calculation is copy-pasted from wall_tactic 
         # put into common param file: https://www.geeksforgeeks.org/global-keyword-in-python/
 
         # dist is slightly greater than penalty box bounds
@@ -91,21 +104,25 @@ class GoalieTactic(tactic.ITactic):
 
         role_requests = {}
         if world_state and world_state.ball.visible:
-            ball_to_goal_dist = np.linalg.norm(world_state.field.our_goal_loc - world_state.ball.pos)
-            if ball_to_goal_dist < MIN_WALL_RAD:
-                # move to block when ball inside wall
+            ball_speed = np.linalg.norm(world_state.ball.vel)
+            ball_dist = np.linalg.norm(world_state.field.our_goal_loc - world_state.ball.pos)
 
-                # create RoleRequest for each SkillEntry
-                role_requests[self.receive_se] = [role.RoleRequest(role.Priority.HIGH, False, self.role_cost)]
+            if ball_speed < 1.0 and ball_dist < MIN_WALL_RAD - RobotConstants.RADIUS * 2.1:
+                # if ball is slow and inside goalie box, collect it
+                role_requests[self.receive_se] = [role.RoleRequest(role.Priority.HIGH, True, self.role_cost)]
             else:
-                # else, track ball normally
+                ball_to_goal_time = ball_dist / ball_speed
+                if ball_speed > 0 and ball_to_goal_time < 2:
+                    # if ball is moving and coming at goal, move laterally to block ball
+                    self.move_se.skill.target_point = get_block_pt(world_state, get_goalie_pt(world_state))
+                    self.move_se.skill.face_point = world_state.ball.pos
+                    role_requests[self.move_se] = [role.RoleRequest(role.Priority.HIGH, True, self.role_cost)]
+                else:
+                    # else, track ball normally
+                    self.move_se.skill.target_point = get_goalie_pt(world_state)
+                    self.move_se.skill.face_point = world_state.ball.pos
+                    role_requests[self.move_se] = [role.RoleRequest(role.Priority.HIGH, True, self.role_cost)]
 
-                # update move skill
-                self.move_se.skill.target_point = get_goalie_pt(world_state)
-                self.move_se.skill.face_point = world_state.ball.pos
-
-                # create RoleRequest for each SkillEntry
-                role_requests[self.move_se] = [role.RoleRequest(role.Priority.HIGH, False, self.role_cost)]
         return role_requests
 
     def tick(self,
@@ -120,10 +137,11 @@ class GoalieTactic(tactic.ITactic):
         move_result = role_results[self.move_se]
         if move_result and move_result[0].is_filled():
             skills.append(self.move_se)
-
-        receive_result = role_results[self.receive_se]
-        if receive_result and receive_result[0].is_filled():
-            skills.append(self.receive_se)
+        else:
+            # move first, then receive
+            receive_result = role_results[self.receive_se]
+            if receive_result and receive_result[0].is_filled():
+                skills.append(self.receive_se)
 
         return skills
 
@@ -131,4 +149,5 @@ class GoalieTactic(tactic.ITactic):
         """
         :return boolean indicating if tactic is done
         """
-        return self.move_se.skill.is_done(world_state)
+        # goalie tactic always active
+        return False
