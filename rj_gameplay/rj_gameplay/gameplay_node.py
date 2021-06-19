@@ -30,7 +30,7 @@ class TestPlaySelector(situation.IPlaySelector):
 
 class GameplayNode(Node):
     """
-    A node which subscribes to the world_state,  game state, robot status, and field topics and converts the messages to python types.
+    A node which subscribes to the world_state, game state, robot status, and field topics and converts the messages to python types.
     """
 
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
@@ -39,7 +39,7 @@ class GameplayNode(Node):
         self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
-        self.goalie_id_sub = self.create_subscription(msg.Goalie, '/referee/our_goalie', self.set_goalie_id, 10)
+        self.goalie_id_sub = self.create_subscription(msg.Goalie, '/referee/our_goalie', self.create_goalie_id, 10)
 
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
@@ -95,8 +95,13 @@ class GameplayNode(Node):
         """
         if msg is not None:
             self.game_info = conv.gamestate_to_gameinfo(msg)
+            # self.game_info.set_goalie_id(4)
+        """
         if self.goalie_id is not None:
+            print("set game info")
+            print(self.goalie_id)
             self.game_info.set_goalie_id(self.goalie_id)
+        """
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
         """
@@ -105,14 +110,15 @@ class GameplayNode(Node):
         if msg is not None:
             self.field = conv.field_msg_to_field(msg)
 
-    def set_goalie_id(self, msg: msg.Goalie) -> None:
+    def create_goalie_id(self, msg: msg.Goalie) -> None:
         """
-        Set goalie id based on goalie msg
+        Set game_info's goalie_id based on goalie msg
         """
-        if msg is not None:
+        print("msg")
+        print(msg)
+        if msg is not None and self.game_info is not None:
             self.goalie_id = msg.goalie_id
-            if self.game_info is not None:
-                self.game_info.set_goalie_id(self.goalie_id)
+            self.game_info.set_goalie_id(msg.goalie_id)
 
     def get_world_state(self) -> rc.WorldState:
         """

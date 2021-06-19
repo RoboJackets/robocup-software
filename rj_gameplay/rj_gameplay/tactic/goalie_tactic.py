@@ -27,6 +27,8 @@ class goalie_cost(role.CostFn):
                  world_state: rc.WorldState) -> float:
 
         if world_state.game_info is not None:
+            print(world_state.game_info.our_restart)
+            print(world_state.game_info.goalie_id)
             if robot.id == world_state.game_info.goalie_id:
                 return -1.0
         return 999.0
