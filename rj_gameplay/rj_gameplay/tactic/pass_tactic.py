@@ -65,7 +65,7 @@ class Pass(tactic.ITactic):
                                  kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
         self.receiver_cost = receiver_cost
-        self.Passer_cost = passer_cost
+        self.passer_cost = passer_cost
 
     def compute_props(self):
         pass
@@ -94,7 +94,7 @@ class Pass(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        passer_request = role.RoleRequest(role.Priority.HIGH, True, self.Passer_cost)
+        passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         if self.pivot_kick.skill.kick.is_done(world_state):
             receive_request = role.RoleRequest(role.Priority.HIGH, True,
