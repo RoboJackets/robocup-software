@@ -36,4 +36,4 @@ class Capture(ICapture):
         return self.root.tick_once(robot, world_state)
 
     def is_done(self, world_state) -> bool:
-    	return self.capture.is_done(world_state)
+        return self.capture.is_done(world_state)
