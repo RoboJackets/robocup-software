@@ -162,6 +162,11 @@ private:
     rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
     rclcpp::Publisher<GameStateMsg>::SharedPtr game_state_pub_;
 
+    // setup to publish goalie_msg on a timer, as it's only exposed on
+    // gameplay start/halts and transient_local QoS is failing us
+    GoalieMsg goalie_msg;
+    rclcpp::TimerBase::SharedPtr pub_timer_;
+
     /**
      * @brief Update the team color from the names currently available in the
      * blue and yellow team information.
