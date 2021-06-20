@@ -14,7 +14,7 @@ import stp.skill as skill
 from math import atan2
 import numpy as np
 
-
+#TODO: need to figure out better cost func
 def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
     cost = 0
     goal_loc = world_state.field.their_goal_loc
@@ -43,7 +43,7 @@ def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
             if np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_left, u_vec_kicker_opp) and \
                 np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_right, u_vec_kicker_opp):
                 cost += (world_state.field.length_m - opp_robot.pose[1]) / (
-                    world_state.field.length_m - kicker.pose[1]) * 8
+                    world_state.field.length_m - kicker.pose[1]) * 6
 
         return cost
 
@@ -173,7 +173,7 @@ class AssistTactic(tactic.ITactic):
         ball_loc = world_state.ball.pos[0:2]
         dist = np.linalg.norm(ball_loc - self.striker_loc)
         self.striker = self.find_striker(world_state)
-        return self.striker.has_ball_sense or dist < 0.2
+        return self.striker.has_ball_sense or (np.linalg.norm(world_state.ball.vel) < 0.2 and dist < 1)
         # try:
         #     dist = np.linalg.norm(ball_loc - self.striker_loc)
         # return self.receive.skill.is_done(world_state)  #or dist < 0.2
