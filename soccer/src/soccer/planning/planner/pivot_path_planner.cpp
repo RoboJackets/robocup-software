@@ -31,15 +31,19 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     double radius = pivot::PARAM_radius_multiplier * kRobotRadius;
     auto pivot_point = command.pivot_point;
+    auto pivot_target = command.pivot_target;
 
-    if (cached_pivot_point_.has_value() &&
+    // TODO(Kyle): These need real constants
+    if (cached_pivot_target_.has_value() &&
+        cached_pivot_target_.value().dist_to(pivot_target) < kRobotMouthWidth / 2 &&
+        cached_pivot_point_.has_value() &&
         cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2) {
-        pivot_point = cached_pivot_point_.value();
         return previous_;
     }
+
+    cached_pivot_target_ = pivot_target;
     cached_pivot_point_ = pivot_point;
 
-    auto pivot_target = command.pivot_target;
     auto final_position = pivot_point + (pivot_point - pivot_target).normalized(radius);
     std::vector<Point> points;
 
@@ -52,8 +56,8 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     double target_angle = pivot_point.angle_to(final_position);
     double angle_change = fix_angle_radians(target_angle - start_angle);
 
-    constexpr double kMaxInterpolationSize = 3 * M_PI / 180;
-    const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationSize);
+    constexpr double kMaxInterpolationRadians = 10 * M_PI / 180;
+    const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationRadians);
 
     points.push_back(start_instant.position());
     for (int i = 1; i <= interpolations; i++) {
@@ -67,25 +71,37 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     Trajectory path = profile_velocity(path_bezier, start_instant.linear_velocity().mag(), 0,
                                        linear_constraints, start_instant.stamp);
-    if (Twist::nearly_equals(path.last().velocity, Twist::zero())) {
-        path.hold_for(RJ::Seconds(3.0));
+    if (!Twist::nearly_equals(path.last().velocity, Twist::zero())) {
+        RobotInstant last;
+        last.position() = final_position;
+        last.velocity = Twist::zero();
+        last.stamp = path.end_time() + 100ms;
+        path.append_instant(last);
     }
+    path.hold_for(RJ::Seconds(3.0));
 
     AngleFunction function = [pivot_point, pivot_target](const LinearMotionInstant& instant,
                                                          double /*previous_angle*/,
                                                          Eigen::Vector2d* jacobian) -> double {
         Point position = instant.position;
-        auto angle_to_pivot = position.angle_to(pivot_point);
         auto angle_to_pivot_target = position.angle_to(pivot_target);
+        auto angle_to_pivot = position.angle_to(pivot_point);
 
+        Point target_point = pivot_point;
         if (abs(angle_to_pivot - angle_to_pivot_target) < degrees_to_radians(10)) {
-            return angle_to_pivot_target;
-        }
-        if (jacobian != nullptr) {
-            *jacobian = (position - pivot_point).rotate(M_PI / 2);
+            target_point = pivot_target;
         }
 
-        return angle_to_pivot;
+        auto angle_to_target = position.angle_to(target_point);
+
+        if (jacobian != nullptr) {
+            // The angle to the point changes with the dot product of the tangent vector to the circle with the robot's velocity, divided by the radius.
+            // Therefore, the rotated vector needs to be divided by the radius twice to get the jacobian.
+            *jacobian = (position - target_point).rotate(M_PI / 2);
+            *jacobian /= jacobian->squaredNorm();
+        }
+
+        return angle_to_target;
     };
 
     plan_angles(&path, start_instant, AngleFns::face_point(pivot_point), request.constraints.rot);

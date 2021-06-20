@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 
 from launch_ros.actions import Node
+from launch.actions import Shutdown
 
 
 def generate_launch_description():
@@ -17,5 +18,7 @@ def generate_launch_description():
              parameters=[{
                  "hz": hz,
                  "port": port
-             }])
+             }],
+             on_exit=Shutdown(),
+        )
     ])

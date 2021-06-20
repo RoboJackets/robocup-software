@@ -23,7 +23,8 @@ def generate_launch_description():
 
     grsim = Node(package='rj_robocup',
                  executable='grSim',
-                 arguments=[headless_flag])
+                 arguments=[headless_flag],
+                 on_exit=Shutdown())
 
     soccer_launch_path = str(launch_dir / "soccer.launch.py")
     soccer = IncludeLaunchDescription(

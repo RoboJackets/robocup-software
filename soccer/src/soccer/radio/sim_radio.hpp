@@ -5,9 +5,7 @@
 #include <boost/asio.hpp>
 
 #include <rj_msgs/srv/sim_placement.hpp>
-#include <rj_protos/grSim_Commands.pb.h>
-#include <rj_protos/grSim_Packet.pb.h>
-#include <rj_protos/grSim_Replacement.pb.h>
+#include <rj_protos/ssl_simulation_control.pb.h>
 
 #include "context.hpp"
 #include "radio.hpp"
@@ -35,11 +33,12 @@ private:
     void receive_packet(const boost::system::error_code& error, size_t num_bytes);
 
     // For ball and robot placement
-    void send_sim_command(const grSim_Packet& cmd);
+    void send_sim_command(const SimulatorCommand& cmd);
 
     boost::asio::io_service io_service_;
     boost::asio::ip::udp::socket socket_;
-    boost::asio::ip::udp::endpoint sim_endpoint_;
+    boost::asio::ip::udp::endpoint sim_control_endpoint_;
+    boost::asio::ip::udp::endpoint robot_control_endpoint_;
 
     std::vector<char> buffer_;
 

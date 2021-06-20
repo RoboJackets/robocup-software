@@ -2,12 +2,6 @@
 
 #include <gameplay/gameplay_module.hpp>
 #include <rj_common/network.hpp>
-#include <rj_protos/LogFrame.pb.h>
-#include <rj_protos/RadioRx.pb.h>
-#include <rj_protos/RadioTx.pb.h>
-#include <rj_protos/messages_robocup_ssl_detection.pb.h>
-#include <rj_protos/messages_robocup_ssl_geometry.pb.h>
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 
 #include "network_radio.hpp"
 #include "packet_convert.hpp"
