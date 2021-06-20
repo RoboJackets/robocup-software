@@ -53,4 +53,4 @@ class PivotKick(IPivotKick):
         return actions
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return self.pivot.is_done(world_state) and self.kick.is_done(world_state)
+        return self.kick.is_done(world_state)
