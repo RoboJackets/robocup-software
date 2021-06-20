@@ -14,7 +14,8 @@ import stp.skill as skill
 from math import atan2
 import numpy as np
 
-def find_striker_cost(robot:rc.Robot, world_state: rc.WorldState):
+
+def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
     cost = 0
     goal_loc = world_state.field.their_goal_loc
     kicker = world_state.our_robots[robot.id]
@@ -25,18 +26,24 @@ def find_striker_cost(robot:rc.Robot, world_state: rc.WorldState):
     if dist_to_goal > 4:
         return 9999
     else:
-        u_vec_kicker_left = (left_end - kicker.pose[0:2]) / np.linalg.norm(left_end - kicker.pose[0:2])
-        u_vec_kicker_right = (right_end - kicker.pose[0:2]) / np.linalg.norm(right_end - kicker.pose[0:2])
-        shoot_range = atan2(np.linalg.det([u_vec_kicker_left, u_vec_kicker_right]), np.dot(u_vec_kicker_left, u_vec_kicker_right))
+        u_vec_kicker_left = (left_end - kicker.pose[0:2]
+                             ) / np.linalg.norm(left_end - kicker.pose[0:2])
+        u_vec_kicker_right = (right_end - kicker.pose[0:2]
+                              ) / np.linalg.norm(right_end - kicker.pose[0:2])
+        shoot_range = atan2(
+            np.linalg.det([u_vec_kicker_left, u_vec_kicker_right]),
+            np.dot(u_vec_kicker_left, u_vec_kicker_right))
         #TODO find weight
         cost -= shoot_range
         for opp_robot in world_state.their_robots:
-            u_vec_kicker_opp = (opp_robot.pose[0:2] - kicker.pose[0:2]) / np.linalg.norm(opp_robot.pose[0:2] - kicker.pose[0:2])
+            u_vec_kicker_opp = (opp_robot.pose[0:2] - kicker.pose[0:2]
+                                ) / np.linalg.norm(opp_robot.pose[0:2] -
+                                                   kicker.pose[0:2])
 
             if np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_left, u_vec_kicker_opp) and \
                 np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_right, u_vec_kicker_opp):
-                cost += (world_state.field.length_m - opp_robot.pose[1]) / (world_state.field.length_m - kicker.pose[1]) * 8
-
+                cost += (world_state.field.length_m - opp_robot.pose[1]) / (
+                    world_state.field.length_m - kicker.pose[1]) * 8
 
         return cost
 
@@ -46,24 +53,22 @@ class StrikerCost(role.CostFn):
     A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
     """
-
     def __call__(
         self,
         robot: rc.Robot,
         prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
-    
+
         return find_striker_cost(robot, world_state)
 
-class CaptureCost(role.CostFn):
+
+class ReceiverCost(role.CostFn):
     """
     A cost function for capturing ball
     """
-    def __call__(self,
-                robot:rc.Robot,
-                prev_result:Optional["RoleResult"],
-                world_state:rc.WorldState) -> float:
+    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
+                 world_state: rc.WorldState) -> float:
         if robot.has_ball_sense:
             return 0
         else:
@@ -73,19 +78,20 @@ class CaptureCost(role.CostFn):
             return dist_to_ball
 
 
-
 class AssistTactic(tactic.ITactic):
     """
-    A passing tactic which captures then passes the ball
+    A passing tactic which receivers then passes the ball
     """
-
-    def __init__(self, striker_loc:np.ndarray):
+    def __init__(self, striker_loc: np.ndarray):
         self.striker_loc = striker_loc
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point = striker_loc, chip=False, kick_speed=4.0))
+        self.pivot_kick = tactic.SkillEntry(
+            pivot_kick.PivotKick(target_point=striker_loc,
+                                 chip=False,
+                                 kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
         self.striker_cost = StrikerCost()
-        self.capture_cost = CaptureCost()
-        
+        self.receiver_cost = ReceiverCost()
+
     def compute_props(self):
         pass
 
@@ -96,33 +102,37 @@ class AssistTactic(tactic.ITactic):
         pass
 
     def find_striker(self, world_state: rc.WorldState) -> rc.Robot:
-        cost_list = [find_striker_cost(robot, world_state) for robot in world_state.our_robots]
+        cost_list = [
+            find_striker_cost(robot, world_state)
+            for robot in world_state.our_robots
+        ]
         striker_id = cost_list.index(min(cost_list))
         return world_state.our_robots[striker_id]
 
-
-    def get_requests(
-        self, world_state:rc.WorldState, props) -> List[tactic.RoleRequests]:
+    def get_requests(self, world_state: rc.WorldState,
+                     props) -> List[tactic.RoleRequests]:
         """ Checks if we have the ball and returns the proper request
         :return: A list of size 2 of role requests
         """
 
         role_requests: tactic.RoleRequests = {}
 
-        pass_request = role.RoleRequest(role.Priority.HIGH, True, self.capture_cost)
-        receive_request = role.RoleRequest(role.Priority.HIGH, True, self.striker_cost)
+        pass_request = role.RoleRequest(role.Priority.HIGH, True,
+                                        self.receiver_cost)
+        receive_request = role.RoleRequest(role.Priority.HIGH, True,
+                                           self.striker_cost)
 
-        if self.pivot_kick.skill.kick.is_done(world_state):
+        if self.pivot_kick.skill.is_done(world_state):
             role_requests[self.pivot_kick] = []
             role_requests[self.receive] = [receive_request]
-        else: 
+        else:
             role_requests[self.pivot_kick] = [pass_request]
             role_requests[self.receive] = []
 
-
         return role_requests
 
-    def tick(self, role_results:tactic.RoleResults, world_state:rc.WorldState) -> List[tactic.SkillEntry]:
+    def tick(self, role_results: tactic.RoleResults,
+             world_state: rc.WorldState) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
         TODO: Come up with better timings for starting receive
@@ -131,14 +141,13 @@ class AssistTactic(tactic.ITactic):
         receive_result = role_results[self.receive]
 
         if pivot_result and pivot_result[0].is_filled():
-            self.pivot_kick.skill.target_point = self.find_striker(world_state).pose[0:2]
+            self.pivot_kick.skill.target_point = self.find_striker(
+                world_state).pose[0:2]
             self.striker_loc = self.find_striker(world_state).pose[0:2]
             return [self.pivot_kick]
         if receive_result and receive_result[0].is_filled():
             return [self.receive]
         return []
-
-
 
         # if pivot_result and receive_result and pivot_result[0].is_filled() and receive_result[0].is_filled():
         #     self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
@@ -151,12 +160,11 @@ class AssistTactic(tactic.ITactic):
         #     self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
         #     self.striker_loc = np.array(receive_result[0].role.robot.pose[0:2])
         #     return [self.pivot_kick]
-        
 
-    def is_done(self, world_state:rc.WorldState):
+    def is_done(self, world_state: rc.WorldState):
         # ball_loc = world_state.ball.pos[0:2]
         # try:
         #     dist = np.linalg.norm(ball_loc - self.striker_loc)
-        return self.receive.skill.is_done(world_state) #or dist < 0.2
+        return self.receive.skill.is_done(world_state)  #or dist < 0.2
         # except:
-            # return False
+        # return False
