@@ -15,14 +15,14 @@ class RestartPlay(play.IPlay):
 
     def __init__(self):
         # TODO: add wall/goalie?
-        self.target_point = np.array([0.0, 3.0])
+        self.target_point = np.array([1.0, 4.0])
 
         # TODO: simplify tactic with list (see basic_defense.py)
         self.pass_tactic = pass_tactic.Pass(
             self.target_point, pass_tactic.PasserCost(self.target_point),
-            pass_tactic.ReceiverCost(self.target_point))
+            pass_tactic.PassToOpenReceiver(self.target_point))
         self.seek_tactic = pass_seek.Seek(
-            self.target_point, pass_seek.seek_heuristic,
+            self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         self.nmark_tactic = nmark_tactic.NMarkTactic(3)
 
