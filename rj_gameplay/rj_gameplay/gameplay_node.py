@@ -85,12 +85,13 @@ class GameplayNode(Node):
 
         self.debug_text_pub = self.create_publisher(StringMsg,
                                                     '/gameplay/debug_text', 10)
+        self.play_selector = play_selector
         self.gameplay = coordinator.Coordinator(play_selector,
                                                 self.debug_callback)
 
     def debug_callback(self, play: stp.play.IPlay, skills):
         debug_text = ""
-        debug_text += f"{type(play).__name__}\n"
+        debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
         with np.printoptions(precision=3, suppress=True):
             for skill in skills:
                 debug_text += f"  {skill}\n"
