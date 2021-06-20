@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import pass_tactic, pass_seek, nmark_tactic
+from rj_gameplay.tactic import pass_tactic, pass_seek, nmark_tactic, goalie_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -14,10 +14,10 @@ class RestartPlay(play.IPlay):
     """
 
     def __init__(self):
-        # TODO: add wall/goalie?
         self.target_point = np.array([1.0, 4.0])
 
         # TODO: simplify tactic with list (see basic_defense.py)
+        self.goalie_tactic = goalie_tactic.GoalieTactic()
         self.pass_tactic = pass_tactic.Pass(
             self.target_point, pass_tactic.PasserCost(self.target_point),
             pass_tactic.PassToClosestReceiver(self.target_point))
@@ -44,6 +44,7 @@ class RestartPlay(play.IPlay):
             role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
             role_requests[self.seek_tactic] = self.seek_tactic.get_requests(world_state, None)
             role_requests[self.nmark_tactic] = self.nmark_tactic.get_requests(world_state, None)
+            role_requests[self.goalie_tactic] = self.goalie_tactic.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -57,9 +58,11 @@ class RestartPlay(play.IPlay):
             skills = self.pass_tactic.tick(role_results[self.pass_tactic], world_state)
             skills += self.seek_tactic.tick(role_results[self.seek_tactic], world_state)
             skills += self.nmark_tactic.tick(role_results[self.nmark_tactic])
+            skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
             skill_dict.update(role_results[self.pass_tactic])
             skill_dict.update(role_results[self.seek_tactic])
             skill_dict.update(role_results[self.nmark_tactic])
+            skill_dict.update(role_results[self.goalie_tactic])
 
         return (skill_dict, skills)
 
