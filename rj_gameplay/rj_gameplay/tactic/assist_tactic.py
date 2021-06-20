@@ -23,7 +23,7 @@ def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
     right_end = np.array([0.5, world_state.field.length_m])
     dist_to_goal = np.linalg.norm(goal_loc - kicker.pose[0:2])
 
-    if dist_to_goal > 4:
+    if dist_to_goal > 4: #long shoot threshold
         return 9999
     else:
         u_vec_kicker_left = (left_end - kicker.pose[0:2]
@@ -43,7 +43,8 @@ def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
             if np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_left, u_vec_kicker_opp) and \
                 np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_right, u_vec_kicker_opp):
                 cost += (world_state.field.length_m - opp_robot.pose[1]) / (
-                    world_state.field.length_m - kicker.pose[1]) * 6
+                    world_state.field.length_m - kicker.pose[1]) * 6 
+                #TODO: tweak this amplifier
 
         return cost
 
@@ -51,7 +52,6 @@ def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
 class StrikerCost(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
-    TODO: Implement a better cost function
     """
     def __call__(
         self,
@@ -123,8 +123,7 @@ class AssistTactic(tactic.ITactic):
                                         self.receiver_cost)
         receive_request = role.RoleRequest(role.Priority.HIGH, True,
                                            self.striker_cost)
-        # ball_loc = world_state.ball.pos[0:2]
-        # dist = np.linalg.norm(ball_loc - self.striker_loc)
+
         self.striker = self.find_striker(world_state)
 
         if not self.striker.has_ball_sense:
@@ -137,25 +136,11 @@ class AssistTactic(tactic.ITactic):
              world_state: rc.WorldState) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
-        TODO: Come up with better timings for starting receive
         """
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
-        # ball_loc = world_state.ball.pos[0:2]
-        # dist = np.linalg.norm(ball_loc - self.striker_loc)
-        # self.striker = self.find_striker(world_state)
-
-        # if pivot_result and pivot_result[0].is_filled() and dist >= 1:
-            # self.pivot_kick.skill.target_point = self.find_striker(
-            #     world_state).pose[0:2]
-        #     self.striker_loc = self.find_striker(world_state).pose[0:2]
-        #     return [self.pivot_kick]
-        # elif receive_result and receive_result[0].is_filled():
-        #     return [self.receive]
-        # return []
 
         if pivot_result and receive_result and pivot_result[0].is_filled() and receive_result[0].is_filled():
-            # self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             self.pivot_kick.skill.target_point = self.find_striker(world_state).pose[0:2]
             self.striker_loc = self.find_striker(world_state).pose[0:2]
             if self.pivot_kick.skill.kick.is_done(world_state):
@@ -163,7 +148,6 @@ class AssistTactic(tactic.ITactic):
             else:
                 return [self.pivot_kick]
         elif pivot_result and pivot_result[0].is_filled():
-            # self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             self.pivot_kick.skill.target_point = self.find_striker(world_state).pose[0:2]
             self.striker_loc = self.find_striker(world_state).pose[0:2]
             return [self.pivot_kick]
@@ -174,8 +158,3 @@ class AssistTactic(tactic.ITactic):
         dist = np.linalg.norm(ball_loc - self.striker_loc)
         self.striker = self.find_striker(world_state)
         return self.striker.has_ball_sense or (np.linalg.norm(world_state.ball.vel) < 0.2 and dist < 1)
-        # try:
-        #     dist = np.linalg.norm(ball_loc - self.striker_loc)
-        # return self.receive.skill.is_done(world_state)  #or dist < 0.2
-        # except:
-        # return False
