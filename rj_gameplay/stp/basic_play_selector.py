@@ -56,8 +56,6 @@ class BasicPlaySelector(situation.IPlaySelector):
             if plays_selection:
                 self.curr_play = plays_selection[0]
                 return (self.curr_situation, self.curr_play)
-            elif self.curr_situation is None:
-                return (self.curr_situation, plays.line_up.LineUp())
             else:
                 return (self.curr_situation, self.curr_play)
         else:
