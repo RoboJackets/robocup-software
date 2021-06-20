@@ -116,6 +116,7 @@ class Seek(tactic.ITactic):
             self.seek_heuristic, world_state)
         move_result = role_results[self.move]
 
+        print(self.move.skill.robot)
         if move_result and move_result[0].is_filled():
             return [self.move]
         return []
