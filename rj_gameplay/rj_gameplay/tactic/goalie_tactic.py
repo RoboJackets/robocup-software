@@ -69,7 +69,7 @@ class GoalieTactic(tactic.ITactic):
         # init skills
         self.move_se = tactic.SkillEntry(move.Move())
         self.receive_se = tactic.SkillEntry(receive.Receive())
-        self.pivot_kick_se = tactic.SkillEntry(pivot_kick.PivotKick(target_point = np.array([0.0, 6.0]), chip=True, kick_speed=4.0))
+        self.pivot_kick_se = tactic.SkillEntry(pivot_kick.PivotKick(target_point = np.array([0.0, 6.0]), chip=True, kick_speed=6.0))
 
         # TODO: rename cost_list to role_cost in other gameplay files
         self.role_cost = GoalieCost()
