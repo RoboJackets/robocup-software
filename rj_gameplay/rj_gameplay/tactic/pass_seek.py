@@ -14,6 +14,8 @@ from rj_gameplay.skill import shoot, capture, move
 import stp.skill as skill
 import numpy as np
 
+import stp.global_parameters as global_parameters
+
 
 def seek_heuristic(point: Tuple[float, float],
                    world_state: Tuple[rc.WorldState]) -> float:
@@ -21,6 +23,27 @@ def seek_heuristic(point: Tuple[float, float],
     for robot in world_state.their_robots:
         cost -= np.linalg.norm(np.array(point) - np.array(robot.pose[0:2]))
     cost -= 7 * point[1]
+    return cost
+
+def restart_seek(point: Tuple[float, float],
+                   world_state: Tuple[rc.WorldState]) -> float:
+    cost = 0
+    pt = np.array(point)
+    ball_pos = world_state.ball.pos
+    # hard constraint to be far from ball
+    if np.linalg.norm(pt - ball_pos) < 1:
+        return 999
+    # keep dist from other robots (more dist = lower cost)
+    for robot in world_state.their_robots:
+        cost -= np.linalg.norm(pt - robot.pose[0:2])
+    for robot in world_state.our_robots:
+        cost -= np.linalg.norm(pt - robot.pose[0:2])
+
+    # stay toward center
+    cost += 100 * np.abs(point[0])
+
+    # move upfield (more upfield = lower cost)
+    cost -= 100 * point[1]
     return cost
 
 
@@ -39,10 +62,13 @@ class SeekCost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        if robot.id == 7:
-            return 0.0
-        else:
-            return 1.0
+        if robot is None or self.target_point is None:
+            return 9999
+        # TODO (#1669)
+        if not robot.visible:
+            return 9999
+
+        return np.linalg.norm(robot.pose[0:2] - self.target_point) / global_parameters.soccer.robot.max_speed
 
 
 class Seek(tactic.ITactic):
