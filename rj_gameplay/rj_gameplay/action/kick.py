@@ -31,7 +31,7 @@ class Kick(IKick):
         new_intent = intent
         empty_command = EmptyMotionCommand()
         new_intent.motion_command.empty_command = [empty_command]
-        intent.kick_speed = self.kick_speed
+        new_intent.kick_speed = self.kick_speed
         new_intent.trigger_mode = 2
         new_intent.shoot_mode = self.chip
         new_intent.is_active = True
