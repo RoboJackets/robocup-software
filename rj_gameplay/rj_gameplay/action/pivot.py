@@ -25,6 +25,7 @@ class Pivot(action.IFiniteAction):
         pivot_command.pivot_point = Point(x=self.pivot_point[0], y=self.pivot_point[1])
         pivot_command.pivot_target = Point(x=self.target_point[0], y=self.target_point[1])
         new_intent.motion_command.pivot_command = [pivot_command]
+        new_intent.trigger_mode = new_intent.TRIGGER_MODE_STAND_DOWN
         new_intent.dribbler_speed = self.dribble_speed
         new_intent.is_active = True
         return new_intent

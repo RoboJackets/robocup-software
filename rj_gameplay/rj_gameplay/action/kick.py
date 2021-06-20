@@ -10,8 +10,8 @@ from typing import Optional
 from rj_msgs.msg import RobotIntent, EmptyMotionCommand
 from rj_geometry_msgs.msg import Point
 
-KICK_DOT_THRESHOLD = 0.5
-KICK_BALL_SPEED_THRESHOLD = 1.0
+KICK_DOT_THRESHOLD = 0.4
+KICK_BALL_SPEED_THRESHOLD = 0.9
 
 class IKick(action.IAction, ABC):
     def done(self) -> bool:

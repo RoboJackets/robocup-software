@@ -57,7 +57,10 @@ class PivotKick(IPivotKick):
         self.pivot.pivot_point = world_state.ball.pos
         self.pivot.target_point = self.target_point
         actions = self.root.tick_once(robot, world_state)
+        self.pivot.robot_id = self.robot.id
+        self.kick.robot_id = self.robot.id
+        self.capture.robot_id = self.robot.id
         return actions
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return self.kick.is_done(world_state)
+        return self.pivot.is_done(world_state) and self.kick.is_done(world_state)
