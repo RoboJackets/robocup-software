@@ -34,7 +34,7 @@ class PassingCost(role.costFn):
 
 			if kick_opp_dist <= kick_recip_dist:
 				v_kick_op = opp_robot_loc - kicker_loc
-				angle = np.degrees(atan2(np.linalg.det([v_kick_recip, v_kick_op]), np.dot(v_kick_recip, v_kick_op)))
+				angle = np.degrees(abs(atan2(np.linalg.det([v_kick_recip, v_kick_op]), np.dot(v_kick_recip, v_kick_op))))
 
 				if angle < angle_threshold:
 					pass_cost += 999
