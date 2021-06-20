@@ -10,46 +10,45 @@ from math import atan2
 
 
 def find_target_point(world_state: rc.WorldState) -> np.ndarray:
-    goal_y = world_state.field.length_m
-    cost = 0
-    target_point = np.array([-0.5, goal_y])
-    try_points = [
-        np.array([-0.5, goal_y]),
-        np.array([0, goal_y]),
-        np.array([0.5, goal_y])
-    ]
+	goal_y = world_state.field.length_m
+	cost = 0
+	try_points = [
+	    np.array([-0.5, goal_y]),
+	    np.array([0, goal_y]),
+	    np.array([0.5, goal_y])
+	]
 
-    kicker = [
-        robot for robot in world_state.our_robots if robot.has_ball_sense
-    ]
-    if kicker:
-        kicker = kicker[0]
-    else:
-        return None
+	kicker = [
+	    robot for robot in world_state.our_robots if robot.has_ball_sense
+	]
+	if kicker:
+	    kicker = kicker[0]
+	else:
+	    return None
 
-    kicker_loc = kicker.pose[0:2]
+	kicker_loc = kicker.pose[0:2]
 
-    for point in try_points:
-        angle = 3.14
-        v_kick_point = point - kicker_loc
-        for blocker in world_state.their_robots:
-            blocker_loc = blocker.pose[0:2]
-            v_kick_block = blocker_loc - kicker_loc
-            point_block_ang = atan2(
-                np.linalg.det([v_kick_block, v_kick_point]),
-                np.dot(v_kick_block, v_kick_point))
-            if point_block_ang < angle:
-                angle = point_block_ang
-        shoot_cost = -angle
-        if shoot_cost < cost:
-            target_point = point
-    return target_point
+	for point in try_points:
+	    angle = 3.14
+	    v_kick_point = point - kicker_loc
+	    for blocker in world_state.their_robots:
+	        blocker_loc = blocker.pose[0:2]
+	        v_kick_block = blocker_loc - kicker_loc
+	        point_block_ang = abs(atan2(
+	            np.linalg.det([v_kick_block, v_kick_point]),
+	            np.dot(v_kick_block, v_kick_point)))
+	        if point_block_ang < angle:
+	            angle = point_block_ang
+	    shoot_cost = -angle
+	    if shoot_cost < cost:
+	        cost = shoot_cost
+	        target_point = point
+	return target_point
 
 
 class CaptureCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
-    TODO: Implement a better cost function
     """
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:

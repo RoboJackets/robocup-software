@@ -86,7 +86,8 @@ class AssistTactic(tactic.ITactic):
         self.striker: rc.Robot = None
         # self.striker_loc = striker_loc
         self.pivot_kick = tactic.SkillEntry(
-            pivot_kick.PivotKick(target_point=striker_loc,
+            pivot_kick.PivotKick(robot = None,
+                                 target_point=striker_loc,
                                  chip=False,
                                  kick_speed=4.0))
         self.receive = tactic.SkillEntry(receive.Receive())
@@ -129,9 +130,6 @@ class AssistTactic(tactic.ITactic):
         if not self.striker.has_ball_sense:
             role_requests[self.pivot_kick] = [pass_request]
             role_requests[self.receive] = [receive_request]
-        # else:
-        #     role_requests[self.pivot_kick] = []
-        #     role_requests[self.receive] = [receive_request]
 
         return role_requests
 
@@ -159,7 +157,7 @@ class AssistTactic(tactic.ITactic):
         if pivot_result and receive_result and pivot_result[0].is_filled() and receive_result[0].is_filled():
             # self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             self.pivot_kick.skill.target_point = self.find_striker(world_state).pose[0:2]
-            # self.striker_loc = np.array(receive_result[0].role.robot.pose[0:2])
+            self.striker_loc = self.find_striker(world_state).pose[0:2]
             if self.pivot_kick.skill.kick.is_done(world_state):
                 return [self.pivot_kick, self.receive]
             else:
@@ -167,15 +165,15 @@ class AssistTactic(tactic.ITactic):
         elif pivot_result and pivot_result[0].is_filled():
             # self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             self.pivot_kick.skill.target_point = self.find_striker(world_state).pose[0:2]
-            # self.striker_loc = np.array(receive_result[0].role.robot.pose[0:2])
+            self.striker_loc = self.find_striker(world_state).pose[0:2]
             return [self.pivot_kick]
 
     def is_done(self, world_state: rc.WorldState):
-        # striker_loc = self.find_striker(world_state).pose[0:2]
-        # ball_loc = world_state.ball.pos[0:2]
-        # dist = np.linalg.norm(ball_loc - self.striker_loc)
+        self.striker_loc = self.find_striker(world_state).pose[0:2]
+        ball_loc = world_state.ball.pos[0:2]
+        dist = np.linalg.norm(ball_loc - self.striker_loc)
         self.striker = self.find_striker(world_state)
-        return self.striker.has_ball_sense #or dist < 0.2
+        return self.striker.has_ball_sense or dist < 0.2
         # try:
         #     dist = np.linalg.norm(ball_loc - self.striker_loc)
         # return self.receive.skill.is_done(world_state)  #or dist < 0.2
