@@ -167,6 +167,9 @@ private:
     GoalieMsg goalie_msg;
     rclcpp::TimerBase::SharedPtr pub_timer_;
 
+    GameStateMsg gamestate_msg;
+    rclcpp::TimerBase::SharedPtr gamestate_pub_timer_;
+
     /**
      * @brief Update the team color from the names currently available in the
      * blue and yellow team information.

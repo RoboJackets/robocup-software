@@ -116,8 +116,11 @@ void RefereeBase::send() {
     if (!state_valid_) {
         GameState::Msg msg;
         rj_convert::convert_to_ros(state_, &msg);
+        gamestate_msg = msg;
         game_state_pub_->publish(msg);
         state_valid_ = true;
+        gamestate_pub_timer_ = this->create_wall_timer(std::chrono::seconds(1),
+                                                      [this]() { game_state_pub_->publish(gamestate_msg); });
     }
 
     if (!team_info_valid_) {

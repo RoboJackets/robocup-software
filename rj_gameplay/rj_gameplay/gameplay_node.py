@@ -16,6 +16,8 @@ from rj_gameplay.action.move import Move
 from rj_gameplay.play import basic_defense
 from typing import List, Optional, Tuple
 
+import stp.basic_play_selector as basic_play_selector
+
 NUM_ROBOTS = 16
 
 class EmptyPlaySelector(situation.IPlaySelector):
@@ -179,6 +181,7 @@ class GameplayNode(Node):
         rclpy.shutdown()
 
 def main():
-    play_selector = TestPlaySelector()
+    # play_selector = TestPlaySelector()
+    play_selector = basic_play_selector.BasicPlaySelector()
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)
