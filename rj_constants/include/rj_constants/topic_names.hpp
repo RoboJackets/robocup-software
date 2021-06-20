@@ -53,6 +53,8 @@ static inline std::string robot_intent_pub(int robot_id) {
     return "gameplay/robot_intent/robot_" + std::to_string(robot_id);
 }
 
+constexpr auto kDebugTextPub = "gameplay/debug_text";
+
 }  // namespace gameplay::topics
 
 namespace planning::topics {

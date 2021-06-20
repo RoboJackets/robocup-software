@@ -9,12 +9,15 @@ import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.coordinator as coordinator
 import stp
+import stp.skill
+import stp.play
 import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
 from rj_gameplay.play import basic_defense
 from typing import List, Optional, Tuple
+from std_msgs.msg import String as StringMsg
 
 import stp.basic_play_selector as basic_play_selector
 
@@ -78,8 +81,19 @@ class GameplayNode(Node):
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
-        self.gameplay = coordinator.Coordinator(play_selector)
 
+        self.debug_text_pub = self.create_publisher(StringMsg,
+                                                    '/gameplay/debug_text', 10)
+        self.gameplay = coordinator.Coordinator(play_selector,
+                                                self.debug_callback)
+
+    def debug_callback(self, play: stp.play.IPlay, skills):
+        debug_text = ""
+        debug_text += f"{type(play).__name__}\n"
+        with np.printoptions(precision=3, suppress=True):
+            for skill in skills:
+                debug_text += f"  {skill}\n"
+        self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
         """

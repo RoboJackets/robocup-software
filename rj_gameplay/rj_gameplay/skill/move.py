@@ -57,3 +57,6 @@ class Move(IMove):
 
     def is_done(self, world_state):
         return self.move.is_done(world_state)
+
+    def __str__(self):
+        return f"Move(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
