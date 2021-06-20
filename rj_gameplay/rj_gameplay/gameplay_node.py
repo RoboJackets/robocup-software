@@ -37,9 +37,9 @@ class GameplayNode(Node):
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
         super().__init__('gameplay_node')
-        self.world_state_sub = self.create_subscription(msg.WorldState, '/vision_filter/world_state', self.create_partial_world_state, 10)
-        self.field_dimensions = self.create_subscription(msg.FieldDimensions, '/config/field_dimensions', self.create_field, 10)
-        self.game_info = self.create_subscription(msg.GameState, '/referee/game_state', self.create_game_info, 10)
+        self.world_state_sub = self.create_subscription(msg.WorldState, 'vision_filter/world_state', self.create_partial_world_state, 10)
+        self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions', self.create_field, 10)
+        self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
 
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
                                                       '/referee/our_goalie',
@@ -53,10 +53,11 @@ class GameplayNode(Node):
 
 
         for i in range(NUM_ROBOTS):
-            self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, '/radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
+            self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, 'radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
 
         for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, '/gameplay/robot_intent/robot_'+str(i), 10)
+            self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, 'gameplay/robot_intent/robot_'+str(i), 10)
+
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
@@ -67,12 +68,11 @@ class GameplayNode(Node):
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()]*NUM_ROBOTS*2
 
         self.global_parameter_client = GlobalParameterClient(
-            self, '/global_parameter_server')
+            self, 'global_parameter_server')
         local_parameters.register_parameters(self)
 
         # publish global obstacles
-        self.goal_zone_obstacles_pub = self.create_publisher(
-            geo_msg.ShapeSet, '/planning/goal_zone_obstacles', 10)
+        self.goal_zone_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/goal_zone_obstacles', 10)
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
