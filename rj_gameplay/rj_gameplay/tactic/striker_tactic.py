@@ -3,7 +3,7 @@ from typing import List, Optional
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
-from rj_gameplay.skill import shoot, receive
+from rj_gameplay.skill import shoot, capture
 import stp.skill as skill
 import numpy as np
 from math import atan2
@@ -15,8 +15,8 @@ def find_target_point(world_state: rc.WorldState) -> np.ndarray:
     target_point = np.array([-0.5, goal_y])
     try_points = [
         np.array([-0.5, goal_y]),
-        np.array([-0.5, goal_y]),
-        np.array([-0.5, goal_y])
+        np.array([0, goal_y]),
+        np.array([0.5, goal_y])
     ]
 
     kicker = [
@@ -46,7 +46,7 @@ def find_target_point(world_state: rc.WorldState) -> np.ndarray:
     return target_point
 
 
-class ReceiveCost(role.CostFn):
+class CaptureCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     TODO: Implement a better cost function
@@ -69,8 +69,8 @@ class StrikerTactic(tactic.ITactic):
     def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  #unused
         self.target_point = target_point
-        self.receive = tactic.SkillEntry(receive.Receive())
-        self.receive_cost = ReceiveCost()
+        self.capture = tactic.SkillEntry(capture.Capture())
+        self.capture_cost = CaptureCost()
         self.shoot = tactic.SkillEntry(
             shoot.Shoot(chip=False, kick_speed=40., target_point=target_point))
 
@@ -88,16 +88,19 @@ class StrikerTactic(tactic.ITactic):
                      props) -> List[tactic.RoleRequests]:
 
         striker_request = role.RoleRequest(role.Priority.HIGH, True,
-                                           self.receive_cost)
+                                           self.capture_cost)
         role_requests: tactic.RoleRequests = {}
 
-        if self.receive.skill.is_done(world_state):
-            role_requests[self.receive] = [striker_request]
-            role_requests[self.shoot] = []
+        striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
+
+        if striker:
+            role_requests[self.capture] = []
+            role_requests[self.shoot] = [striker_request]
+
 
         else:
-            role_requests[self.receive] = []
-            role_requests[self.shoot] = [striker_request]
+            role_requests[self.capture] = [striker_request]
+            role_requests[self.shoot] = []
 
         return role_requests
 
@@ -106,11 +109,11 @@ class StrikerTactic(tactic.ITactic):
         """
 		:return: list of skills
 		"""
-        receive_result = role_results[self.receive]
+        capture_result = role_results[self.capture]
         shoot_result = role_results[self.shoot]
 
-        if receive_result and receive_result[0].is_filled():
-            return [self.receive]
+        if capture_result and capture_result[0].is_filled():
+            return [self.capture]
         if shoot_result and shoot_result[0].is_filled():
             self.shoot.skill.target_point = find_target_point(world_state)
             return [self.shoot]
