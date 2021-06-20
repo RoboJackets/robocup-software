@@ -16,13 +16,13 @@ from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
 
-from rj_gameplay.play import basic122
+from rj_gameplay.play import basic122, line_up, passing_tactic_play, wall_ball, defensive_clear
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
 import stp.basic_play_selector as basic_play_selector
 
-NUM_ROBOTS = 16
+NUM_ROBOTS = 12
 
 class EmptyPlaySelector(situation.IPlaySelector):
     # an empty play selector, replace with actual one when created
@@ -196,7 +196,7 @@ class GameplayNode(Node):
         rclpy.shutdown()
 
 def main():
-    # play_selector = TestPlaySelector()
-    play_selector = basic_play_selector.BasicPlaySelector()
+    play_selector = TestPlaySelector()
+    # play_selector = basic_play_selector.BasicPlaySelector()
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)
