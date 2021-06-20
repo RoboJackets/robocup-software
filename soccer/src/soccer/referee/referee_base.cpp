@@ -110,6 +110,7 @@ void RefereeBase::send() {
         // TODO (#1675): fix transient_local OR publish all similar msgs on timer
         pub_timer_ = this->create_wall_timer(std::chrono::seconds(1),
                                              [this]() { goalie_id_pub_->publish(goalie_msg); });
+        goalie_valid_ = true;
     }
 
     if (!state_valid_) {

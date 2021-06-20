@@ -1,7 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSDurabilityPolicy
-from rclpy.qos import QoSProfile
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rj_msgs import msg
 from rj_geometry_msgs import msg as geo_msg
@@ -14,7 +13,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import line_up, passing_tactic_play
+from rj_gameplay.play import basic_defense
 from typing import List, Optional, Tuple
 
 import stp.basic_play_selector as basic_play_selector
@@ -29,11 +28,12 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, passing_tactic_play.PassPlay())
+        return (None, basic_defense.BasicDefense())
+
 
 class GameplayNode(Node):
     """
-    A node which subscribes to the world_state,  game state, robot status, and field topics and converts the messages to python types.
+    A node which subscribes to the world_state, game state, robot status, and field topics and converts the messages to python types.
     """
 
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
@@ -43,6 +43,10 @@ class GameplayNode(Node):
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
 
+        self.goalie_id_sub = self.create_subscription(msg.Goalie,
+                                                      '/referee/our_goalie',
+                                                      self.create_goalie_id,
+                                                      10)
 
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
@@ -61,6 +65,7 @@ class GameplayNode(Node):
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
         self.game_info: rc.GameInfo = None
+        self.goalie_id = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()]*NUM_ROBOTS*2
 
@@ -106,6 +111,13 @@ class GameplayNode(Node):
         if msg is not None:
             self.field = conv.field_msg_to_field(msg)
 
+    def create_goalie_id(self, msg: msg.Goalie) -> None:
+        """
+        Set game_info's goalie_id based on goalie msg
+        """
+        if msg is not None and self.game_info is not None:
+            self.goalie_id = msg.goalie_id
+            self.game_info.set_goalie_id(msg.goalie_id)
 
     def get_world_state(self) -> rc.WorldState:
         """

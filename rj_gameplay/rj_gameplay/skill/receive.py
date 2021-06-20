@@ -46,6 +46,8 @@ class Receive(IReceive):
     def tick(self, robot:rc.Robot, world_state:rc.WorldState): #returns dict of robot and actions
         self.robot = robot
         actions = self.root.tick_once(self.robot, world_state)
+        self.capture.robot_id = self.robot.id
+        self.receive.robot_id = self.robot.id
         return actions
 
     def is_done(self, world_state:rc.WorldState):
