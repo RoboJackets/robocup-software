@@ -425,19 +425,23 @@ class Field:
 class GameInfo:
     """State of the soccer game"""
 
-    __slots__ = ["__period", "__state", "__restart", "__our_restart"]
+    __slots__ = [
+        "__period", "__state", "__restart", "__our_restart", "__goalie_id"
+    ]
 
     __period: GamePeriod
     __state: GameState
     __restart: GameRestart
     __our_restart: bool
+    __goalie_id: int
 
     def __init__(self, period: GamePeriod, state: GameState,
-                 restart: GameRestart, our_restart: bool):
+                 restart: GameRestart, our_restart: bool, goalie_id: int):
         self.__period = period
         self.__state = state
         self.__restart = restart
         self.__our_restart = our_restart
+        self.__goalie_id = goalie_id
 
     @property
     def period(self) -> GamePeriod:
@@ -472,6 +476,18 @@ class GameInfo:
             return False  #Is returning this dangerous?
 
         return self.__our_restart
+
+    @property
+    def goalie_id(self) -> int:
+        """
+        :return: id (int) of our designated goalie
+        """
+        return self.__goalie_id
+
+    def set_goalie_id(self, goalie_id: int) -> None:
+        """Sets goalie id. (Created to maintain private data convention.)
+        """
+        self.__goalie_id = goalie_id
 
     def is_restart(self) -> bool:
         """

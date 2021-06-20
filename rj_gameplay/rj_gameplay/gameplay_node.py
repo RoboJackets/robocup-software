@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rj_msgs import msg
 from rj_geometry_msgs import msg as geo_msg
@@ -8,12 +9,17 @@ import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.coordinator as coordinator
 import stp
+import stp.skill
+import stp.play
 import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
 from rj_gameplay.play import line_up, restart
 from typing import List, Optional, Tuple
+from std_msgs.msg import String as StringMsg
+
+import stp.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
 
@@ -25,11 +31,12 @@ class EmptyPlaySelector(situation.IPlaySelector):
 
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        return (None, restart.RestartPlay())
+        return (None, basic_defense.BasicDefense())
+
 
 class GameplayNode(Node):
     """
-    A node which subscribes to the world_state,  game state, robot status, and field topics and converts the messages to python types.
+    A node which subscribes to the world_state, game state, robot status, and field topics and converts the messages to python types.
     """
 
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
@@ -39,6 +46,11 @@ class GameplayNode(Node):
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
 
+        keep_latest = QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
+        self.goalie_id_sub = self.create_subscription(msg.Goalie,
+                                                      'referee/our_goalie',
+                                                      self.create_goalie_id,
+                                                      keep_latest)
 
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
@@ -57,6 +69,7 @@ class GameplayNode(Node):
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
         self.game_info: rc.GameInfo = None
+        self.goalie_id = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()]*NUM_ROBOTS*2
 
@@ -69,8 +82,19 @@ class GameplayNode(Node):
 
         timer_period = 1/60 #seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
-        self.gameplay = coordinator.Coordinator(play_selector)
 
+        self.debug_text_pub = self.create_publisher(StringMsg,
+                                                    '/gameplay/debug_text', 10)
+        self.gameplay = coordinator.Coordinator(play_selector,
+                                                self.debug_callback)
+
+    def debug_callback(self, play: stp.play.IPlay, skills):
+        debug_text = ""
+        debug_text += f"{type(play).__name__}\n"
+        with np.printoptions(precision=3, suppress=True):
+            for skill in skills:
+                debug_text += f"  {skill}\n"
+        self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
         """
@@ -102,6 +126,13 @@ class GameplayNode(Node):
         if msg is not None:
             self.field = conv.field_msg_to_field(msg)
 
+    def create_goalie_id(self, msg: msg.Goalie) -> None:
+        """
+        Set game_info's goalie_id based on goalie msg
+        """
+        if msg is not None and self.game_info is not None:
+            self.goalie_id = msg.goalie_id
+            self.game_info.set_goalie_id(msg.goalie_id)
 
     def get_world_state(self) -> rc.WorldState:
         """
@@ -165,6 +196,7 @@ class GameplayNode(Node):
         rclpy.shutdown()
 
 def main():
-    play_selector = TestPlaySelector()
+    # play_selector = TestPlaySelector()
+    play_selector = basic_play_selector.BasicPlaySelector()
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)
