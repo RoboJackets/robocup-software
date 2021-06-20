@@ -124,11 +124,6 @@ class WallTactic(tactic.ITactic):
             self.move_list[i]: [role.RoleRequest(role.Priority.HIGH, False, self.cost_list[i])]
             for i in range(self.num_wallers)
         }
-
-        for se, rr in role_requests.items():
-            print(se.skill.robot)
-            # print(rr)
-
         return role_requests
 
     def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:

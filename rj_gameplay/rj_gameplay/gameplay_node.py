@@ -99,10 +99,8 @@ class GameplayNode(Node):
         """
         Create game info object from Game State message
         """
-        print("MESSSGE HEREEEEEEEE:", msg)
         if msg is not None:
             self.game_info = conv.gamestate_to_gameinfo(msg)
-            print(self.game_info.is_restart())
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
         """
@@ -174,7 +172,7 @@ class GameplayNode(Node):
         rclpy.shutdown()
 
 def main():
-    play_selector = TestPlaySelector()
-    # play_selector = basic_play_selector.BasicPlaySelector()
+    # play_selector = TestPlaySelector()
+    play_selector = basic_play_selector.BasicPlaySelector()
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)

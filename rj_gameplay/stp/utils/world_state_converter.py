@@ -140,11 +140,11 @@ def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
         :return: GameInfo class from rc.py
     """
 
-    period = game_state_msg.period
+    period = rc.GamePeriod(game_state_msg.period)
 
-    state = game_state_msg.state
+    state = rc.GameState(game_state_msg.state)
 
-    restart = game_state_msg.restart
+    restart = rc.GameRestart(game_state_msg.restart)
 
     our_restart = game_state_msg.our_restart
 

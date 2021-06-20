@@ -104,17 +104,22 @@ void RefereeBase::send() {
     }
 
     if (!goalie_valid_) {
-        GoalieMsg msg;
-        msg.goalie_id = blue_team_ ? blue_info_.goalie : yellow_info_.goalie;
-        goalie_id_pub_->publish(msg);
-        goalie_valid_ = true;
+        goalie_msg.goalie_id = blue_team_ ? blue_info_.goalie : yellow_info_.goalie;
+        goalie_id_pub_->publish(goalie_msg);
+        // publish the goalie_id on a timer, since transient_local QoS isn't working
+        // TODO (#1675): fix transient_local OR publish all similar msgs on timer
+        pub_timer_ = this->create_wall_timer(std::chrono::seconds(1),
+                                             [this]() { goalie_id_pub_->publish(goalie_msg); });
     }
 
     if (!state_valid_) {
         GameState::Msg msg;
         rj_convert::convert_to_ros(state_, &msg);
+        gamestate_msg = msg;
         game_state_pub_->publish(msg);
         state_valid_ = true;
+        gamestate_pub_timer_ = this->create_wall_timer(std::chrono::seconds(1),
+                                                      [this]() { game_state_pub_->publish(gamestate_msg); });
     }
 
     if (!team_info_valid_) {

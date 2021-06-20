@@ -10,6 +10,9 @@ import stp.situation
 
 import rj_gameplay.situation.decision_tree as dt
 
+POSSESS_MIN_DIST = 0.15
+MIN_PASS_SPEED = 0.9
+MIN_NEAR_BALL_DIST = 0.35
 
 class BallPos(Enum):
     """Enum for representing the possession of the ball."""
@@ -73,8 +76,28 @@ class HeuristicInformation:
         :param game_info:
         :return: The current BallPos.
         """
-
-        # TODO(1578): Re-implement all the logic here.
+        for our_bot in world_state.our_robots:
+            if our_bot.has_ball_sense or np.linalg.norm(np.array(world_state.ball.pos)-np.array(our_bot.pose[0:2])) < POSSESS_MIN_DIST:
+                return BallPos.OUR_BALL
+        for their_bot in world_state.their_robots:
+            if np.linalg.norm(np.array(world_state.ball.pos)-np.array(their_bot.pose[0:2])) < POSSESS_MIN_DIST:
+                return BallPos.THEIR_BALL
+        if np.linalg.norm(world_state.ball.vel) > MIN_PASS_SPEED:
+            for our_bot in world_state.our_robots:
+                ball_to_bot = np.array(world_state.ball.pos)-np.array(our_bot.pose[0:2])
+                ball_to_bot_unit = ball_to_bot / np.linalg.norm(ball_to_bot)
+                ball_dir = world_state.ball.vel / np.linalg.norm(world_state.ball.vel)
+                dot = abs(np.dot(ball_to_bot_unit, ball_dir))
+                if dot > 0.7:
+                    return BallPos.OUR_BALL
+            for their_bot in world_state.their_robots:
+                ball_to_bot = np.array(world_state.ball.pos)-np.array(their_bot.pose[0:2])
+                ball_to_bot_unit = ball_to_bot / np.linalg.norm(ball_to_bot)
+                ball_dir = world_state.ball.vel / np.linalg.norm(world_state.ball.vel)
+                dot = abs(np.dot(ball_to_bot_unit, ball_dir))
+                if dot > 0.7:
+                    return BallPos.THEIR_BALL
+        # TODO(1578): Re-implement actual previous logic here.
 
         return BallPos.FREE_BALL
 
@@ -87,7 +110,18 @@ class HeuristicInformation:
         :param game_info:
         :return: The current BallPos.
         """
+        # curr_ball_pos = self._
+        our_near_bots = 0
+        their_near_bots = 0
+        for their_bot in world_state.their_robots:
+            if np.linalg.norm(np.array(world_state.ball.pos)-np.array(their_bot.pose[0:2])) < MIN_NEAR_BALL_DIST:
+                their_near_bots += 1
+        for our_bot in world_state.our_robots:
+            if np.linalg.norm(np.array(world_state.ball.pos)-np.array(our_bot.pose[0:2])) < MIN_NEAR_BALL_DIST:
+                our_near_bots += 1
 
+        if our_near_bots > 0 and their_near_bots > 0 and our_near_bots + their_near_bots >= 3:
+            return True
         # TODO(1578): Re-implement all the logic here.
 
         return False
@@ -159,9 +193,9 @@ class Analyzer(stp.situation.IAnalyzer):
                 return dt.plays.DefensivePileup()
             elif heuristics.ball_pos == BallPos.FREE_BALL:
                 return dt.plays.DefensiveScramble()
-            elif heuristics.field_loc == BallPos.OUR_BALL:
+            elif heuristics.ball_pos == BallPos.OUR_BALL:
                 return dt.plays.Clear()
-            elif heuristics.field_loc == BallPos.THEIR_BALL:
+            elif heuristics.ball_pos == BallPos.THEIR_BALL:
                 return dt.plays.DefendGoal()
             else:
                 raise RuntimeError("Unknown situation")
@@ -171,9 +205,9 @@ class Analyzer(stp.situation.IAnalyzer):
                 return dt.plays.OffensivePileup()
             elif heuristics.ball_pos == BallPos.FREE_BALL:
                 return dt.plays.OffensiveScramble()
-            elif heuristics.field_loc == BallPos.OUR_BALL:
+            elif heuristics.ball_pos == BallPos.OUR_BALL:
                 return dt.plays.AttackGoal()
-            elif heuristics.field_loc == BallPos.THEIR_BALL:
+            elif heuristics.ball_pos == BallPos.THEIR_BALL:
                 return dt.plays.DefendClear()
             else:
                 raise RuntimeError("Unknown situation")
@@ -183,9 +217,9 @@ class Analyzer(stp.situation.IAnalyzer):
                 return dt.plays.MidfieldPileup()
             elif heuristics.ball_pos == BallPos.FREE_BALL:
                 return dt.plays.MidfieldScramble()
-            elif heuristics.field_loc == BallPos.OUR_BALL:
+            elif heuristics.ball_pos == BallPos.OUR_BALL:
                 return dt.plays.MidfieldClear()
-            elif heuristics.field_loc == BallPos.THEIR_BALL:
+            elif heuristics.ball_pos == BallPos.THEIR_BALL:
                 return dt.plays.MidfieldDefendClear()
             else:
                 raise RuntimeError("Unknown situation")
