@@ -55,3 +55,6 @@ class PivotKick(IPivotKick):
 
     def is_done(self, world_state: rc.WorldState) -> bool:
         return self.pivot.is_done(world_state) and self.kick.is_done(world_state)
+
+    def __str__(self):
+        return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
