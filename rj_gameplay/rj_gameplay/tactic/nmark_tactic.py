@@ -60,7 +60,7 @@ class NMarkTactic(tactic.ITactic):
         # create cost func for each robot
         self.cost_list = [
             marker_cost()
-            for _ in self.mark_list
+            for i in range(self.num_markers)
         ]
         
     def compute_props(self):
@@ -82,7 +82,8 @@ class NMarkTactic(tactic.ITactic):
         if world_state is not None and world_state.ball.visible:
             # assign n closest enemies to respective skill and role costFn
             closest_enemies = get_closest_enemies_to_ball(self.num_markers, world_state)
-            for i in range(self.num_markers):
+            # for i in range(self.num_markers):
+            for i in range(len(closest_enemies)):
                 self.mark_list[i].skill.target_robot = closest_enemies[i]
                 self.cost_list[i].enemy_to_mark = closest_enemies[i]
 
