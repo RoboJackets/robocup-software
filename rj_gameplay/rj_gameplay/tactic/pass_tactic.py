@@ -174,7 +174,7 @@ class Pass(tactic.ITactic):
                 return [self.pivot_kick]
         elif pivot_result and pivot_result[0].is_filled():
             potential_receiver = self.find_potential_receiver(world_state)
-            print(potential_receiver)
+            # print(potential_receiver)
             self.pivot_kick.skill.target_point = np.array(
                 [potential_receiver.pose[0], potential_receiver.pose[1]])
             return [self.pivot_kick]

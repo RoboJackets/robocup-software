@@ -31,6 +31,7 @@ class marker_cost(role.CostFn):
     """
     def __init__(self, enemy_to_mark: rc.Robot=None):
         self.enemy_to_mark = enemy_to_mark 
+        self.prev_result = None
 
     def __call__(
         self,
@@ -41,7 +42,16 @@ class marker_cost(role.CostFn):
 
         # TODO: prevent gameplay crashing w/out this check
         if robot is None or self.enemy_to_mark is None: 
-            return 0
+            return 9999
+
+        # TODO: this is actually using a local var, not the param given
+        # figure out how the param should be used
+        if self.prev_result is not None and self.prev_result.role is not None:
+            # print("PR"*80)
+            # print(self.prev_result)
+            if robot.id == self.prev_result.role.robot.id:
+                # return 0
+                pass
 
         return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2]) / global_parameters.soccer.robot.max_speed
 
@@ -106,6 +116,14 @@ class NMarkTactic(tactic.ITactic):
             for mark_skill_entry in self.mark_list
             if role_results[mark_skill_entry][0]
         ]
+
+        for mse in self.mark_list:
+            result = role_results[mse]
+            if result[0].is_filled():
+                index = self.mark_list.index(mse)
+                if index != -1:
+                    self.cost_list[index].prev_result = result[0]
+                    # print(result)
 
         return skills
 
