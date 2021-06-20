@@ -37,22 +37,24 @@ class Shoot(IShoot):
             self.pivot = pivot.Pivot(self.robot, np.array([0., 0.]), target_point, 1.0)
             self.kick = kick.Kick(self.robot, chip, kick_speed)
         self.pivot_behavior = ActionBehavior('Pivot', self.pivot, self.robot) 
+
         self.kick_behavior = ActionBehavior('Kick', self.kick, self.robot)
         self.root.add_children([self.pivot_behavior, self.kick_behavior])
         self.root.setup_with_descendants()
+
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:
         self.robot = robot
         self.pivot.pivot_point = world_state.ball.pos
         self.pivot.target_point = self.target_point
         return self.root.tick_once(robot, world_state)
-     
 
     #if Kick and Pivot is done, Shoot should be done.
     def is_done(self, world_state: rc.WorldState) -> bool:
-    	if self.pivot.is_done(world_state) and self.kick.is_done(world_state): 
-    		return True
-    	else:
-    		return False
+        if self.pivot.is_done(world_state) and self.kick.is_done(world_state):
+            return True
+        else:
+            return False
 
-    
+    def __str__(self):
+        return f"Shoot(robot={self.robot.id if self.robot is not None else '??'})"
