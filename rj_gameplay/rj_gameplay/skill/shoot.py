@@ -47,6 +47,8 @@ class Shoot(IShoot):
         self.robot = robot
         self.pivot.pivot_point = world_state.ball.pos
         self.pivot.target_point = self.target_point
+        self.kick.robot_id = self.robot.id
+        self.pivot.robot_id = self.robot.id
         return self.root.tick_once(robot, world_state)
 
     #if Kick and Pivot is done, Shoot should be done.
