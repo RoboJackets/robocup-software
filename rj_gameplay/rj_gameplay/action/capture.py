@@ -15,7 +15,7 @@ class Capture(action.IAction):
 
     def __init__(self, robot_id: int = None):
         self.robot_id = robot_id
-
+        self.ticks_done = 0
 
     def tick(self, intent) -> None:
         collect_command = CollectMotionCommand()
@@ -26,5 +26,7 @@ class Capture(action.IAction):
 
     def is_done(self, world_state) -> bool:
         if self.robot_id is not None and world_state.our_robots[self.robot_id].has_ball_sense:
-            return True
-        return False
+            self.ticks_done += 1
+        else:
+            self.ticks_done = 0
+        return self.ticks_done > 20

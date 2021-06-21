@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include <boost/stacktrace.hpp>
+
 #include <rj_geometry/pose.hpp>
 
 #include "instant.hpp"
@@ -13,7 +15,8 @@ using rj_geometry::Twist;
 
 Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
     if (a.empty() || b.empty()) {
-        throw std::invalid_argument("Cannot splice empty trajectories");
+        throw std::invalid_argument("Cannot splice empty trajectories\n" +
+                                    to_string(boost::stacktrace::stacktrace{}));
     }
 
     RobotInstant a_end = a.last();
@@ -24,7 +27,8 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
         !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6) ||
         a_end.stamp != b_begin.stamp) {
         throw std::invalid_argument(
-            "Cannot splice trajectories a and b, where a.last() != b.first()");
+            "Cannot splice trajectories a and b, where a.last() != b.first()\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     instants_ = std::move(a.instants_);
@@ -38,8 +42,8 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
 void Trajectory::append_instant(RobotInstant instant) {
     if (!empty() && instant.stamp <= end_time()) {
         throw std::invalid_argument(
-            "Cannot append instant at or before the "
-            "last instant in the trajectory");
+            "Cannot append instant at or before the last instant in the trajectory\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     instants_.push_back(instant);
@@ -96,7 +100,9 @@ std::optional<RobotInstant> Trajectory::evaluate(RJ::Time time) const {
 RobotInstant Trajectory::interpolated_instant(const RobotInstant& prev_entry,
                                               const RobotInstant& next_entry, RJ::Time time) {
     if (time < prev_entry.stamp || time > next_entry.stamp) {
-        throw std::invalid_argument("Interpolant time is not between prev_ and next_ timestamps");
+        throw std::invalid_argument(
+            "Interpolant time is not between prev_ and next_ timestamps\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     if (time == prev_entry.stamp) {
@@ -113,7 +119,9 @@ RobotInstant Trajectory::interpolated_instant(const RobotInstant& prev_entry,
     // s in [0, 1] is the interpolation factor.
     double s = elapsed / dt;
     if (s < 0 || s > 1) {
-        throw std::runtime_error("Interpolant `s` is out of bounds!");
+        throw std::invalid_argument(
+            "Interpolant `s` is out of bounds!\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     Pose pose_0 = prev_entry.pose;
@@ -146,13 +154,17 @@ RobotInstant Trajectory::interpolated_instant(const RobotInstant& prev_entry,
 
 Trajectory Trajectory::sub_trajectory(RJ::Time clip_start_time, RJ::Time clip_end_time) const {
     if (clip_start_time > clip_end_time) {
-        throw std::invalid_argument("End time must not come before start time");
+        throw std::invalid_argument(
+            "End time must not come before start time\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     Cursor cursor(*this, clip_start_time);
 
     if (!cursor.has_value()) {
-        throw std::invalid_argument("Sub-trajectory start time is outside of trajectory");
+        throw std::invalid_argument(
+            "Sub-trajectory start time is outside of trajectory\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     RJ::Time actual_end = std::min(clip_end_time, end_time());
@@ -229,11 +241,15 @@ bool Trajectory::nearly_equal(const Trajectory& a, const Trajectory& b, double t
 void Trajectory::hold_for(RJ::Seconds duration) {
     RobotInstant instant = last();
     if (duration <= RJ::Seconds(0)) {
-        throw std::invalid_argument("Hold duration must be positive");
+        throw std::invalid_argument(
+            "Hold duration must be positive\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     if (!Twist::nearly_equals(instant.velocity, Twist::zero())) {
-        throw std::runtime_error("Cannot hold nonzero velocity");
+        throw std::invalid_argument(
+            "Cannot hold nonzero velocity\n" +
+            to_string(boost::stacktrace::stacktrace{}));
     }
 
     instant.velocity = Twist::zero();

@@ -24,17 +24,26 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
 
+    for (int i = 0; i < kNumShells; i++) {
+        robot_status_subs_.at(i) = create_subscription<rj_msgs::msg::RobotStatus>(
+            radio::topics::robot_status_pub(i), 1,
+            [this, i](rj_msgs::msg::RobotStatus::SharedPtr msg) {
+                robots_with_ball_.at(i) = msg->has_ball_sense;
+            });
+    }
+
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
-        if (!config_client_.connected()) {
+        auto team_color = team_color_queue_.get();
+        if (!config_client_.connected() || team_color == nullptr) {
             return;
         }
 
         const double current_team_angle = team_angle();
         const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
         auto frame = CameraFrame(*msg, current_world_to_team, current_team_angle);
-        world_.update_single_camera(RJ::now(), frame);
+        world_.update_single_camera(RJ::now(), frame, robots_with_ball_, team_color->is_blue);
     };
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
         vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize), callback);
@@ -48,17 +57,18 @@ VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) co
         .last_update_time(rj_convert::convert_to_ros(world_.last_update_time()))
         .their_robots(build_robot_state_msgs(!us_blue))
         .our_robots(build_robot_state_msgs(us_blue))
-        .ball(build_ball_state_msg());
+        .ball(build_ball_state_msg(us_blue));
 }
 
-VisionFilter::BallStateMsg VisionFilter::build_ball_state_msg() const {
-    const WorldBall& wb = world_.get_world_ball();
+VisionFilter::BallStateMsg VisionFilter::build_ball_state_msg(bool blue_team) const {
+    WorldBall wb = world_.get_world_ball();
 
     BallStateMsg msg{};
     msg.stamp = rj_convert::convert_to_ros(wb.get_time());
     msg.position = rj_convert::convert_to_ros(wb.get_pos());
     msg.velocity = rj_convert::convert_to_ros(wb.get_vel());
     msg.visible = rj_convert::convert_to_ros(wb.get_is_valid());
+
     return msg;
 }
 

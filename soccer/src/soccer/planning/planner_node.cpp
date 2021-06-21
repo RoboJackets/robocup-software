@@ -14,7 +14,11 @@
 namespace planning {
 
 PlannerNode::PlannerNode()
-    : rclcpp::Node("planner"), shared_state_(this), param_provider_{this, kPlanningParamModule} {
+    : rclcpp::Node("planner", rclcpp::NodeOptions{}
+                                  .automatically_declare_parameters_from_overrides(true)
+                                  .allow_undeclared_parameters(true)),
+      shared_state_(this),
+      param_provider_{this, kPlanningParamModule} {
     robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         auto planner =

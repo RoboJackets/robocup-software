@@ -117,8 +117,6 @@ void ExternalReferee::setup_referee_multicast() {
 
 void ExternalReferee::update() {
     io_service_.poll();
-    BallState state;
-    spin_kick_detector(state);
 }
 
 void ExternalReferee::handle_command(SSL_Referee::Command command) {
