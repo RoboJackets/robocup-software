@@ -36,6 +36,7 @@ PLAY_DICT[situations.OffensiveKick] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.DefensiveKick] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.MidfieldKick] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.GoalieClear] = [defensive_clear.DefensiveClear]
+PLAY_DICT[situations.Stop] = [defend_restart.DefendRestart]
 
 class BasicPlaySelector(situation.IPlaySelector):
 

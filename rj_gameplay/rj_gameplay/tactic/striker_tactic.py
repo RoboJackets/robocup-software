@@ -9,7 +9,7 @@ import numpy as np
 from math import atan2
 
 OPPONENT_SPEED = 1.5
-KICK_SPEED = 7.0
+KICK_SPEED = 6.0
 EFF_BLOCK_WIDTH = 0.7
 
 
@@ -51,18 +51,24 @@ def kick_cost(point: np.array, kick_speed: float, kick_origin: np.array, world_s
 def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
     goal_y = world_state.field.length_m
     cost = 0
+
+    ball_pos = world_state.ball.pos
+
+    # Heuristic: limit where we kick if we're very wide
+    xmin = -0.45
+    xmax = 0.45
+    if abs(ball_pos[0]) > 1:
+        kick_extent = -1 / ball_pos[0]
+        if kick_extent < 0:
+            xmin = np.clip(kick_extent, a_min=xmin, a_max=0)
+        elif kick_extent > 0:
+            xmax = np.clip(kick_extent, a_min=0, a_max=xmax)
+
     try_points = [
         np.array([x, goal_y])
-        for x in np.arange(-0.45, 0.45, 0.05)
+        for x in np.arange(xmin, xmax, step=0.05)
     ]
 
-    kicker = [
-        robot for robot in world_state.our_robots if robot.has_ball_sense
-    ]
-    if kicker:
-        kicker = kicker[0]
-    else:
-        return None
 
     cost, point = min(
         [(kick_cost(point, kick_speed, world_state.ball.pos, world_state), point) for point in try_points],

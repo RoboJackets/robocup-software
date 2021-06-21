@@ -143,7 +143,9 @@ class Analyzer(stp.situation.IAnalyzer):
         game_info = world_state.game_info
         heuristics = HeuristicInformation(world_state, game_info)
 
-        if game_info.is_restart():
+        if game_info.state == stp.rc.GameState.STOP:
+            return dt.plays.Stop()
+        elif game_info.is_restart():
             return self.__analyze_restart(world_state, heuristics)
         else:
             return self.__analyze_normal(world_state, heuristics)
