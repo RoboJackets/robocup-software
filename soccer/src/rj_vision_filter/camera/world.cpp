@@ -74,7 +74,7 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
 
         // Ball sense hack
         std::vector<CameraBall> balls = frame.camera_balls;
-        if (balls.empty() && ball_sense_point && !blue_team.at(*ball_sense_robot).empty()) {
+        if (ball_sense_point && !blue_team.at(*ball_sense_robot).empty()) {
             balls.emplace_back(frame.t_capture, ball_sense_point.value());
         }
 
