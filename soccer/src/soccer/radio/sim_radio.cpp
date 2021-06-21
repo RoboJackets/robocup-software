@@ -60,10 +60,11 @@ SimRadio::SimRadio(bool blue_team)
       blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
+    auto address = boost::asio::ip::make_address("172.25.0.12").to_v4();
     robot_control_endpoint_ =
-        ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
+        ip::udp::endpoint(address, blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
     sim_control_endpoint_ =
-        ip::udp::endpoint(ip::udp::v4(), kSimCommandPort);
+        ip::udp::endpoint(address, kSimCommandPort);
 
     buffer_.resize(1024);
     start_receive();
@@ -167,8 +168,9 @@ void SimRadio::switch_team(bool blue_team) {
     // Let them throw exceptions
     socket_.bind(ip::udp::endpoint(ip::udp::v4(), status_port));
 
+    auto address = boost::asio::ip::make_address("172.25.0.12").to_v4();
     robot_control_endpoint_ =
-        ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
+        ip::udp::endpoint(address, blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
 }
 
 void SimRadio::send_sim_command(const SimulatorCommand& cmd) {

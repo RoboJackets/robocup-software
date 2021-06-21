@@ -14,7 +14,7 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
+DEFINE_INT64(kVisionReceiverParamModule, port, 10006, // kSimVisionPort,
              "The port used for the vision receiver.")
 
 namespace vision_receiver {
@@ -28,7 +28,7 @@ VisionReceiver::VisionReceiver()
       param_provider_(this, kVisionReceiverParamModule) {
     recv_buffer_.resize(65536);
 
-    set_port(PARAM_port);
+    set_port(10006);
 
     raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
@@ -76,15 +76,23 @@ void VisionReceiver::set_port(int port) {
     socket_.open(udp::v4());
     socket_.set_option(udp::socket::reuse_address(true));
 
+    // boost::asio::ip::multicast::outbound_interface iface(boost::asio::ip::address_v4::from_string("172.25.0.23"));
+    // socket_.set_option(iface);
+    // setsockopt(socket_.native_handle(), SOL_SOCKET, SO_BINDTODEVICE, "eth1", 5);
+
     // Set up multicast.
-    if (!multicast_add_native(socket_.native_handle(), kSharedVisionAddress.c_str())) {
-        EZ_ERROR("Multicast add failed");
-        return;
-    }
+    /// if (!multicast_add_native(socket_.native_handle(), kSharedVisionAddress.c_str())) {
+        /// EZ_ERROR("Multicast add failed");
+        /// return;
+    /// }
 
     // Bind the socket.
     boost::system::error_code bind_error;
-    socket_.bind(udp::endpoint(udp::v4(), port), bind_error);
+    socket_.bind(udp::endpoint(boost::asio::ip::make_address("224.5.23.2"), port), bind_error);
+
+    socket_.set_option(udp::socket::reuse_address(true));
+    socket_.set_option(boost::asio::ip::multicast::join_group(boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(), boost::asio::ip::address::from_string("172.25.0.23").to_v4()));
+
     if (static_cast<bool>(bind_error)) {
         EZ_ERROR_STREAM("Vision port bind failed with error: " << bind_error.message());
         return;
