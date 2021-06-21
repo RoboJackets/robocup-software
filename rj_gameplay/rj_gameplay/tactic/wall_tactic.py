@@ -30,12 +30,16 @@ class wall_cost(role.CostFn):
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
 
+        if world_state.game_info is not None:
+            if robot.id == world_state.game_info.goalie_id:
+                return 99
+
         if robot is None or self.wall_pt is None:
-            return 0
+            return 99
 
         # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
         if not robot.visible:
-            return 99999  # float('inf') threw ValueError
+            return 99  # float('inf') threw ValueError
 
         # costs should be in seconds, not dist
         return np.linalg.norm(robot.pose[0:2] - self.wall_pt
@@ -115,6 +119,10 @@ class WallTactic(tactic.ITactic):
             for i in range(self.num_wallers):
                 self.move_list[i].skill.target_point = wall_pts[i]
                 self.move_list[i].skill.face_point = world_state.ball.pos
+                robot = self.move_list[i].skill.robot
+                if robot is not None and world_state is not None and world_state.game_info:
+                    if robot.id == world_state.game_info.goalie_id:
+                        print("goalie walling")
                 self.cost_list[i].wall_pt = wall_pts[i]
 
         # create RoleRequest for each SkillEntry
