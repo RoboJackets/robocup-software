@@ -4,21 +4,21 @@ import stp.rc as rc
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 import rj_gameplay.play as plays
-from rj_gameplay.play import defensive_clear, wall_ball, line_up, passing_tactic_play, basic_scramble
+from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, restart
 from typing import Tuple, Dict
 
 #TODO: Put new plays into the dict properly
 #TODO: Create different dictionaries for different playbooks
 PLAY_DICT = {}
-PLAY_DICT[situations.Kickoff] = [line_up.LineUp]
+PLAY_DICT[situations.Kickoff] = [basic_scramble.Scramble]
 PLAY_DICT[situations.DefendRestartOffensive] = []
 PLAY_DICT[situations.DefendRestartMidfield] = []
 PLAY_DICT[situations.DefendRestartDefensive] = []
-PLAY_DICT[situations.Clear] = [passing_tactic_play.PassPlay]
+PLAY_DICT[situations.Clear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.DefendClear] = [defensive_clear.DefensiveClear]
-PLAY_DICT[situations.DefendGoal] = [wall_ball.WallBall]
+PLAY_DICT[situations.DefendGoal] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.MidfieldClear] = []
-PLAY_DICT[situations.AttackGoal] = [passing_tactic_play.PassPlay]
+PLAY_DICT[situations.AttackGoal] = [basic122.Basic122]
 PLAY_DICT[situations.OffensiveScramble] = [basic_scramble.Scramble]
 PLAY_DICT[situations.MidfieldScramble] = [basic_scramble.Scramble]
 PLAY_DICT[situations.DefensiveScramble] = [basic_scramble.Scramble]
@@ -35,7 +35,7 @@ PLAY_DICT[situations.DefendPenalty] = []
 PLAY_DICT[situations.OffensiveKick] = []
 PLAY_DICT[situations.DefensiveKick] = []
 PLAY_DICT[situations.MidfieldKick] = []
-PLAY_DICT[situations.GoalieClear] = []
+PLAY_DICT[situations.GoalieClear] = [defensive_clear.DefensiveClear]
 
 class BasicPlaySelector(situation.IPlaySelector):
 
@@ -46,7 +46,7 @@ class BasicPlaySelector(situation.IPlaySelector):
 
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         if world_state.game_info is None and self.curr_play is None:
-            return (self.curr_situation, plays.passing_tactic_play.PassPlay())
+            return (self.curr_situation, basic_defense.BasicDefense())
         if world_state.game_info is not None:
             plays_selection = []
             self.curr_situation = self.analyzer.analyze_situation(world_state)
