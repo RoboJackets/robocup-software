@@ -33,7 +33,7 @@ class Clear(tactic.ITactic):
 
     def __init__(self, target_point:np.ndarray):
         self.target_point = target_point
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(target_point=target_point, chip=True, kick_speed=6.0))
+        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point=target_point, chip=True, kick_speed=6.0))
         self.clearer_cost = ClearerCost()
         
     def compute_props(self):
@@ -66,7 +66,7 @@ class Clear(tactic.ITactic):
         clearer_result = role_results[self.pivot_kick]
         print(clearer_result)
         if clearer_result and clearer_result[0].is_filled():
-            return self.pivot_kick
+            return [self.pivot_kick]
         return []
 
     def is_done(self, world_state:rc.WorldState):

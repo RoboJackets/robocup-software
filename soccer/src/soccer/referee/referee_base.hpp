@@ -162,6 +162,11 @@ private:
     rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
     rclcpp::Publisher<GameStateMsg>::SharedPtr game_state_pub_;
 
+    rclcpp::TimerBase::SharedPtr pub_timer_;
+
+    GameStateMsg gamestate_msg;
+    rclcpp::TimerBase::SharedPtr gamestate_pub_timer_;
+
     /**
      * @brief Update the team color from the names currently available in the
      * blue and yellow team information.
