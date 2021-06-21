@@ -64,7 +64,8 @@ class Move(action.IFiniteAction):
         if self.is_def_restart:
             ball_circle = geo_msg.ShapeSet()
             ctr = geo_msg.Point(x=self.ball_pos[0], y=self.ball_pos[1])
-            rad = RobotConstants.RADIUS * 4
+            # rad = RobotConstants.RADIUS * 4
+            rad = 1.5 # m
             ball_circle.circles = [geo_msg.Circle(center=ctr, radius=rad)]
             intent.local_obstacles = ball_circle
 
