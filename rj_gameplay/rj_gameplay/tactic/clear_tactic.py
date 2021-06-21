@@ -22,7 +22,7 @@ class ClearerCost(role.CostFn):
                 prev_result:Optional["RoleResult"],
                 world_state:rc.WorldState) -> float:
         if not robot.visible:
-            return 99999
+            return 99
         else:
             return np.linalg.norm(world_state.ball.pos - np.array(robot.pose[0:2]))
 
@@ -64,7 +64,6 @@ class Clear(tactic.ITactic):
         TODO: Come up with better timings for starting receive
         """
         clearer_result = role_results[self.pivot_kick]
-        print(clearer_result)
         if clearer_result and clearer_result[0].is_filled():
             return [self.pivot_kick]
         return []
