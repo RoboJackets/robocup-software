@@ -61,7 +61,7 @@ class Move(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        move_request = role.RoleRequest(role.Priority.HIGH, True, self.cost)
+        move_request = role.RoleRequest(role.Priority.MEDIUM, True, self.cost)
         # has_ball = True
         # for robot in world_state.our_robots:
         #     if robot.has_ball_sense:
