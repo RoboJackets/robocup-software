@@ -69,7 +69,6 @@ def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
         for x in np.arange(xmin, xmax, step=0.05)
     ]
 
-
     cost, point = min(
         [(kick_cost(point, kick_speed, world_state.ball.pos, world_state), point) for point in try_points],
         key=lambda x: x[0])
