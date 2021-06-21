@@ -40,18 +40,23 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+
+        # TODO: make a better way to avoid assignment of goalie to other roles
+        if world_state.game_info is not None:
+            if robot.id == world_state.game_info.goalie_id:
+                return 99
+
         # TODO: prevent gameplay crashing w/out this check
         if robot is None or self.enemy_to_mark is None: 
-            return 9999
+            return 99
 
+        # TODO: use the convenience func in stp/role/ that has a stickiness for the last assignment
         # TODO: this is actually using a local var, not the param given
         # figure out how the param should be used
-        if self.prev_result is not None and self.prev_result.role is not None:
-            # print("PR"*80)
-            # print(self.prev_result)
-            if robot.id == self.prev_result.role.robot.id:
-                # return 0
-                pass
+        # if self.prev_result is not None and self.prev_result.role is not None:
+        #     if robot.id == self.prev_result.role.robot.id:
+        #         # return 0
+        #         pass
 
         return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2]) / global_parameters.soccer.robot.max_speed
 
@@ -123,7 +128,6 @@ class NMarkTactic(tactic.ITactic):
                 index = self.mark_list.index(mse)
                 if index != -1:
                     self.cost_list[index].prev_result = result[0]
-                    # print(result)
 
         return skills
 
