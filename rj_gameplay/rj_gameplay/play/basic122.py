@@ -49,6 +49,7 @@ class Basic122(play.IPlay):
 
         skills = self.striker_tactic.tick(role_results[self.striker_tactic], world_state) 
         skills += self.two_mark.tick(role_results[self.two_mark])
+        skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
 
 
         skill_dict = {}
