@@ -15,7 +15,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic_defense, basic_scramble
+from rj_gameplay.play import basic_defense, basic_scramble, basic122
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
@@ -32,8 +32,8 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
-        # return (None, basic_scramble.Scramble())
-        return (None, basic_defense.BasicDefense())
+        return (None, basic122.Basic122())
+
 
 class GameplayNode(Node):
     """
@@ -46,7 +46,6 @@ class GameplayNode(Node):
         self.world_state_sub = self.create_subscription(msg.WorldState, 'vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
-
         keep_latest = QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
                                                       'referee/our_goalie',
