@@ -50,6 +50,10 @@ class marker_cost(role.CostFn):
         if robot is None or self.enemy_to_mark is None: 
             return 99
 
+        # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
+        if not robot.visible:
+            return 99  # float('inf') threw ValueError
+
         # TODO: use the convenience func in stp/role/ that has a stickiness for the last assignment
         # TODO: this is actually using a local var, not the param given
         # figure out how the param should be used

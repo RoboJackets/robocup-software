@@ -119,9 +119,9 @@ class AssistTactic(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        pass_request = role.RoleRequest(role.Priority.HIGH, True,
+        pass_request = role.RoleRequest(role.Priority.MEDIUM, True,
                                         self.receiver_cost)
-        receive_request = role.RoleRequest(role.Priority.HIGH, True,
+        receive_request = role.RoleRequest(role.Priority.MEDIUM, True,
                                            self.striker_cost)
 
         if self.pivot_kick.skill.is_done(world_state):
