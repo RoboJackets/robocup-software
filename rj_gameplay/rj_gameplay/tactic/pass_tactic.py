@@ -45,10 +45,7 @@ class PasserCost(role.CostFn):
         if robot.has_ball_sense:
             return 0
         else:
-            if robot.id == 1:
-                return 0
-            else:
-                return 1
+            return np.linalg.norm(world_state.ball.pos - robot.pose[0:2])
 
 class Pass(tactic.ITactic):
     """
