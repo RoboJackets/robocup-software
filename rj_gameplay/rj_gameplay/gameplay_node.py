@@ -45,7 +45,6 @@ class GameplayNode(Node):
         self.world_state_sub = self.create_subscription(msg.WorldState, 'vision_filter/world_state', self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
-
         keep_latest = QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
                                                       'referee/our_goalie',
