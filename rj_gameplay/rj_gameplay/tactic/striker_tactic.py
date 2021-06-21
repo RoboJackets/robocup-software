@@ -32,8 +32,6 @@ def blocker_margin(kick_origin: np.array, kick_target: np.array, kick_speed: flo
     blocker_distance = np.clip(np.linalg.norm(blocker_intercept - blocker_position) - EFF_BLOCK_WIDTH, a_min=0.0,
                                a_max=np.inf)
 
-    print(f"Target {kick_target}, blocker {blocker.id} distance {blocker_distance}")
-
     blocker_time = np.abs(blocker_distance) / OPPONENT_SPEED
 
     # Doesn't include friction...oops?
