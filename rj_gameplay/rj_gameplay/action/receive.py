@@ -17,6 +17,7 @@ class Receive(action.IAction):
 
     def __init__(self, robot_id: int = None):
         self.robot_id = robot_id
+        self.has_ball_ticks = 0
 
 
     def tick(self, intent) -> None:
@@ -30,6 +31,11 @@ class Receive(action.IAction):
     def is_done(self, world_state) -> bool:
         if self.robot_id is None:
             return False
+        if world_state.our_robots[self.robot_id].has_ball_sense:
+            self.has_ball_ticks += 1
+        else:
+            self.has_ball_ticks = 0
+        #TODO: Can't get self.has_ball_ticks to work properly (always 0), and breaks without it
         #TODO: Use local params for this threshold
         if world_state.our_robots[self.robot_id].has_ball_sense or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD:
             return True
