@@ -18,8 +18,10 @@ import numpy as np
 
 MAX_DRIBBLER_SPEED = 1.0
 
+
 class IPivotKick(skill.ISkill, ABC):
     ...
+
 
 class PivotKick(IPivotKick):
     """
@@ -27,8 +29,8 @@ class PivotKick(IPivotKick):
     """
 
     def __init__(self, robot: rc.Robot, target_point: np.array, chip: bool,
-                 kick_speed: float) -> None:
-        #TODO: Have something which automatically determines kick speed based on target point distance
+                 kick_speed: float, threshold: float = 0.02) -> None:
+        # TODO: Have something which automatically determines kick speed based on target point distance
         self.__name__ = 'pivot kick'
         self.robot = robot
         self.chip = chip
@@ -37,10 +39,10 @@ class PivotKick(IPivotKick):
         self.target_point = target_point
 
         if robot is not None:
-            self.pivot = pivot.Pivot(robot.id ,robot.pose[0:2], target_point, MAX_DRIBBLER_SPEED)
+            self.pivot = pivot.Pivot(robot.id, robot.pose[0:2], target_point, MAX_DRIBBLER_SPEED, threshold)
             self.kick = kick.Kick(self.robot.id, self.chip, self.kick_speed)
         else:
-            self.pivot = pivot.Pivot(None, np.array([0.0,0.0]), target_point, MAX_DRIBBLER_SPEED)
+            self.pivot = pivot.Pivot(None, np.array([0.0, 0.0]), target_point, MAX_DRIBBLER_SPEED)
             self.kick = kick.Kick(None, self.chip, self.kick_speed)
 
         self.capture = capture.Capture()

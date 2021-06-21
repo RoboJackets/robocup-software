@@ -17,7 +17,7 @@ class PassPlay(play.IPlay):
         self.target_point = np.array([1.0,1.0])
         self.pass_tactic = pass_tactic.Pass(
             self.target_point, pass_tactic.PasserCost(self.target_point),
-            pass_tactic.ReceiverCost(self.target_point))
+            pass_tactic.PassToClosestReceiver(self.target_point))
         self.seek_tactic = pass_seek.Seek(
             self.target_point, pass_seek.seek_heuristic,
             pass_seek.SeekCost(self.target_point))

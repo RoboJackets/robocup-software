@@ -4,7 +4,7 @@ import stp.rc as rc
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 import rj_gameplay.play as plays
-from rj_gameplay.play import defensive_clear, wall_ball, line_up, passing_tactic_play, basic_scramble
+from rj_gameplay.play import defensive_clear, wall_ball, line_up, passing_tactic_play, basic_scramble, basic122
 from typing import Tuple, Dict
 
 #TODO: Put new plays into the dict properly
@@ -18,7 +18,7 @@ PLAY_DICT[situations.Clear] = [passing_tactic_play.PassPlay]
 PLAY_DICT[situations.DefendClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.DefendGoal] = [wall_ball.WallBall]
 PLAY_DICT[situations.MidfieldClear] = []
-PLAY_DICT[situations.AttackGoal] = [passing_tactic_play.PassPlay]
+PLAY_DICT[situations.AttackGoal] = [basic122.Basic122]
 PLAY_DICT[situations.OffensiveScramble] = [basic_scramble.Scramble]
 PLAY_DICT[situations.MidfieldScramble] = [basic_scramble.Scramble]
 PLAY_DICT[situations.DefensiveScramble] = [basic_scramble.Scramble]
