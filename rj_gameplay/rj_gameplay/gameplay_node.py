@@ -15,14 +15,13 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-
 from rj_gameplay.play import basic122, line_up, passing_tactic_play, wall_ball, defensive_clear
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
 import stp.basic_play_selector as basic_play_selector
 
-NUM_ROBOTS = 12
+NUM_ROBOTS = 16
 
 class EmptyPlaySelector(situation.IPlaySelector):
     # an empty play selector, replace with actual one when created
@@ -33,6 +32,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         return (None, basic122.Basic122())
+
 
 class GameplayNode(Node):
     """
@@ -85,12 +85,13 @@ class GameplayNode(Node):
 
         self.debug_text_pub = self.create_publisher(StringMsg,
                                                     '/gameplay/debug_text', 10)
+        self.play_selector = play_selector
         self.gameplay = coordinator.Coordinator(play_selector,
                                                 self.debug_callback)
 
     def debug_callback(self, play: stp.play.IPlay, skills):
         debug_text = ""
-        debug_text += f"{type(play).__name__}\n"
+        debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
         with np.printoptions(precision=3, suppress=True):
             for skill in skills:
                 debug_text += f"  {skill}\n"
