@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import clear_tactic, nmark_tactic, goalie_tactic
+from rj_gameplay.tactic import clear_tactic, nmark_tactic, goalie_tactic, striker_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -14,7 +14,9 @@ class DefensiveClear(play.IPlay):
     def __init__(self):
         self.goalie = goalie_tactic.GoalieTactic()
         self.two_mark = nmark_tactic.NMarkTactic(2)
-        self.clear = clear_tactic.Clear(np.array([0.0, 10.0]))
+        # TODO: chip pass to another robot
+        # self.clear = clear_tactic.Clear(np.array([0.0, 10.0]))
+        self.clear = striker_tactic.StrikerTactic(np.array([0., 12.]))
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):
@@ -30,7 +32,7 @@ class DefensiveClear(play.IPlay):
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         role_requests[self.two_mark] = (self.two_mark.get_requests(world_state, None))
-        role_requests[self.clear] = self.clear.get_requests(world_state, None)
+        # role_requests[self.clear] = self.clear.get_requests(world_state, None)
         role_requests[self.goalie] = self.goalie.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
