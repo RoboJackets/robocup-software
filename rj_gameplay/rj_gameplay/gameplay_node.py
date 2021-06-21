@@ -15,7 +15,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic122, line_up, passing_tactic_play, wall_ball, defensive_clear
+from rj_gameplay.play import basic_defense, basic_scramble, basic122
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 

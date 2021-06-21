@@ -31,6 +31,7 @@ class marker_cost(role.CostFn):
     """
     def __init__(self, enemy_to_mark: rc.Robot=None):
         self.enemy_to_mark = enemy_to_mark 
+        self.prev_result = None
 
     def __call__(
         self,
@@ -39,9 +40,23 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+
+        # TODO: make a better way to avoid assignment of goalie to other roles
+        if world_state.game_info is not None:
+            if robot.id == world_state.game_info.goalie_id:
+                return 99
+
         # TODO: prevent gameplay crashing w/out this check
         if robot is None or self.enemy_to_mark is None: 
-            return 0
+            return 99
+
+        # TODO: use the convenience func in stp/role/ that has a stickiness for the last assignment
+        # TODO: this is actually using a local var, not the param given
+        # figure out how the param should be used
+        # if self.prev_result is not None and self.prev_result.role is not None:
+        #     if robot.id == self.prev_result.role.robot.id:
+        #         # return 0
+        #         pass
 
         return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2]) / global_parameters.soccer.robot.max_speed
 
@@ -60,7 +75,7 @@ class NMarkTactic(tactic.ITactic):
         # create cost func for each robot
         self.cost_list = [
             marker_cost()
-            for _ in self.mark_list
+            for i in range(self.num_markers)
         ]
         
     def compute_props(self):
@@ -82,7 +97,8 @@ class NMarkTactic(tactic.ITactic):
         if world_state is not None and world_state.ball.visible:
             # assign n closest enemies to respective skill and role costFn
             closest_enemies = get_closest_enemies_to_ball(self.num_markers, world_state)
-            for i in range(self.num_markers):
+            # for i in range(self.num_markers):
+            for i in range(len(closest_enemies)):
                 self.mark_list[i].skill.target_robot = closest_enemies[i]
                 self.cost_list[i].enemy_to_mark = closest_enemies[i]
 
@@ -105,6 +121,13 @@ class NMarkTactic(tactic.ITactic):
             for mark_skill_entry in self.mark_list
             if role_results[mark_skill_entry][0]
         ]
+
+        for mse in self.mark_list:
+            result = role_results[mse]
+            if result[0].is_filled():
+                index = self.mark_list.index(mse)
+                if index != -1:
+                    self.cost_list[index].prev_result = result[0]
 
         return skills
 
