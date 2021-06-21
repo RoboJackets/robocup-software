@@ -84,7 +84,7 @@ class AssistTactic(tactic.ITactic):
     """
     def __init__(self, striker_loc: np.ndarray):
         self.striker: rc.Robot = None
-        # self.striker_loc = striker_loc
+        self.striker_loc = striker_loc
         self.pivot_kick = tactic.SkillEntry(
             pivot_kick.PivotKick(robot = None,
                                  target_point=striker_loc,
@@ -153,8 +153,14 @@ class AssistTactic(tactic.ITactic):
             return [self.pivot_kick]
 
     def is_done(self, world_state: rc.WorldState):
+        self.striker = self.find_striker(world_state)
         self.striker_loc = self.find_striker(world_state).pose[0:2]
         ball_loc = world_state.ball.pos[0:2]
         dist = np.linalg.norm(ball_loc - self.striker_loc)
-        self.striker = self.find_striker(world_state)
+        # for robot in world_state.our_robots:
+        #     if np.linalg.norm(ball_loc - robot.pose[0:2]) + 0.1 > dist:
+        #         closest = True
+        #     else:
+        #         closest = False
+        
         return self.striker.has_ball_sense or (np.linalg.norm(world_state.ball.vel) < 0.2 and dist < 1)

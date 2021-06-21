@@ -13,9 +13,9 @@ def find_target_point(world_state: rc.WorldState) -> np.ndarray:
 	goal_y = world_state.field.length_m
 	cost = 0
 	try_points = [
-	    np.array([-0.5, goal_y]),
+	    np.array([-0.45, goal_y]),
 	    np.array([0, goal_y]),
-	    np.array([0.5, goal_y])
+	    np.array([0.45, goal_y])
 	]
 
 	kicker = [
