@@ -62,7 +62,7 @@ def find_wall_pts(num_wallers: int,
     # dist is slightly greater than penalty box bounds
     box_w = world_state.field.penalty_long_dist_m
     box_h = world_state.field.penalty_short_dist_m
-    line_w = world_state.field.line_width_m
+    line_w = world_state.field.line_width_m * 2
     MIN_WALL_RAD = RobotConstants.RADIUS + line_w + np.hypot(box_w / 2, box_h)
 
     # get direction vec

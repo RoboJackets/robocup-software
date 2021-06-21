@@ -103,7 +103,7 @@ class StrikerTactic(tactic.ITactic):
         self.capture = tactic.SkillEntry(capture.Capture())
         self.capture_cost = CaptureCost()
         self.shoot = tactic.SkillEntry(
-            pivot_kick.PivotKick(robot=None, chip=False, kick_speed=40., target_point=target_point, threshold=0.05))
+            pivot_kick.PivotKick(robot=None, chip=False, kick_speed=KICK_SPEED, target_point=target_point, threshold=0.05))
 
     def compute_props(self):
         pass
@@ -124,7 +124,7 @@ class StrikerTactic(tactic.ITactic):
 
         if self.shoot.skill.is_done(world_state):
             self.shoot = tactic.SkillEntry(
-                shoot.Shoot(chip=False, kick_speed=8., target_point=self.target_point))
+                shoot.Shoot(chip=False, kick_speed=KICK_SPEED, target_point=self.target_point))
 
         striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
 

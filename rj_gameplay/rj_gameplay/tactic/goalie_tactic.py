@@ -122,7 +122,11 @@ class GoalieTactic(tactic.ITactic):
                         role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
                     ]
             else:
-                ball_to_goal_time = ball_dist / ball_speed
+                if ball_speed == 0:
+                    ball_to_goal_time = 100
+                else:
+                    ball_to_goal_time = ball_dist / ball_speed
+
                 if ball_speed > 0 and ball_to_goal_time < 2:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
