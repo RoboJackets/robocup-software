@@ -46,10 +46,11 @@ class GameplayNode(Node):
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions', self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
 
+        keep_latest = QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
-                                                      '/referee/our_goalie',
+                                                      'referee/our_goalie',
                                                       self.create_goalie_id,
-                                                      10)
+                                                      keep_latest)
 
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
@@ -84,12 +85,13 @@ class GameplayNode(Node):
 
         self.debug_text_pub = self.create_publisher(StringMsg,
                                                     '/gameplay/debug_text', 10)
+        self.play_selector = play_selector
         self.gameplay = coordinator.Coordinator(play_selector,
                                                 self.debug_callback)
 
     def debug_callback(self, play: stp.play.IPlay, skills):
         debug_text = ""
-        debug_text += f"{type(play).__name__}\n"
+        debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
         with np.printoptions(precision=3, suppress=True):
             for skill in skills:
                 debug_text += f"  {skill}\n"
