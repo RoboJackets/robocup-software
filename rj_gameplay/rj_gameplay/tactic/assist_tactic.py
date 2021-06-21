@@ -84,7 +84,7 @@ class AssistTactic(tactic.ITactic):
     """
     def __init__(self, striker_loc: np.ndarray):
         self.striker: rc.Robot = None
-        # self.striker_loc = striker_loc
+        self.striker_loc = striker_loc
         self.pivot_kick = tactic.SkillEntry(
             pivot_kick.PivotKick(robot = None,
                                  target_point=striker_loc,
