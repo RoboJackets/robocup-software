@@ -29,6 +29,7 @@ class Shoot(IShoot):
         self.robot: rc.Robot = None
         self.target_point = target_point
         self.__name__ = 'Shoot'
+
         self.root = Sequence("Sequence")
         if self.robot is not None:
             self.pivot = pivot.Pivot(self.robot.id, self.robot.pose[0:2], target_point, 1.0)
@@ -50,9 +51,10 @@ class Shoot(IShoot):
 
     #if Kick and Pivot is done, Shoot should be done.
     def is_done(self, world_state: rc.WorldState) -> bool:
-    	if self.pivot.is_done(world_state) and self.kick.is_done(world_state): 
-    		return True
-    	else:
-    		return False
+        if self.pivot.is_done(world_state) and self.kick.is_done(world_state):
+            return True
+        else:
+            return False
 
-    
+    def __str__(self):
+        return f"Shoot(robot={self.robot.id if self.robot is not None else '??'})"
