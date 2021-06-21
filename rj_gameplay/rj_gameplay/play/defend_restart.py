@@ -13,7 +13,8 @@ class DefendRestart(play.IPlay):
     def __init__(self):
         # TODO: add chipper tactic here
         self.goalie = goalie_tactic.GoalieTactic()
-        self.markers = nmark_tactic.NMarkTactic(5)
+        self.markers = nmark_tactic.NMarkTactic(3)
+        self.wall = wall_tactic.WallTactic(2)
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):
@@ -30,6 +31,7 @@ class DefendRestart(play.IPlay):
         role_requests: play.RoleRequests = {}
         role_requests[self.markers] = (self.markers.get_requests(world_state, None))
         role_requests[self.goalie] = self.goalie.get_requests(world_state, None)
+        role_requests[self.wall] = self.wall.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -40,9 +42,11 @@ class DefendRestart(play.IPlay):
 
         skills = self.markers.tick(role_results[self.markers])
         skills += self.goalie.tick(role_results[self.goalie])
+        skills += self.wall.tick(role_results[self.wall])
         skill_dict = {}
         skill_dict.update(role_results[self.markers])
         skill_dict.update(role_results[self.goalie])
+        skill_dict.update(role_results[self.wall])
 
         return (skill_dict, skills)
 
