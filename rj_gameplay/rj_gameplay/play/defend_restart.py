@@ -13,7 +13,7 @@ class DefendRestart(play.IPlay):
     def __init__(self):
         # TODO: add chipper tactic here
         self.goalie = goalie_tactic.GoalieTactic()
-        self.two_mark = nmark_tactic.NMarkTactic(5)
+        self.markers = nmark_tactic.NMarkTactic(5)
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):
@@ -28,8 +28,7 @@ class DefendRestart(play.IPlay):
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        # role_requests[self.striker_tactic] = self.striker_tactic.get_requests(world_state, None)
-        role_requests[self.two_mark] = (self.two_mark.get_requests(world_state, None))
+        role_requests[self.markers] = (self.markers.get_requests(world_state, None))
         role_requests[self.goalie] = self.goalie.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
@@ -39,15 +38,13 @@ class DefendRestart(play.IPlay):
 
         # Get list of all skills with assigned roles from tactics
 
-        # skills = self.striker_tactic.tick(role_results[self.striker_tactic]) + self.two_mark.tick(role_results[self.two_mark])
-        skills = self.two_mark.tick(role_results[self.two_mark])
+        skills = self.markers.tick(role_results[self.markers])
         skills += self.goalie.tick(role_results[self.goalie])
         skill_dict = {}
-        # skill_dict.update(role_results[self.striker_tactic])
-        skill_dict.update(role_results[self.two_mark])
+        skill_dict.update(role_results[self.markers])
         skill_dict.update(role_results[self.goalie])
 
         return (skill_dict, skills)
 
     def is_done(self, world_state):
-        return False
+        return self.markers.is_done(world_state)
