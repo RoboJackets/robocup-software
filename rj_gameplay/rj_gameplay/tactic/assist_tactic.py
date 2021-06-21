@@ -124,6 +124,12 @@ class AssistTactic(tactic.ITactic):
         receive_request = role.RoleRequest(role.Priority.HIGH, True,
                                            self.striker_cost)
 
+        if self.pivot_kick.skill.is_done(world_state):
+            self.pivot_kick = tactic.SkillEntry(pivot.PivotKick(robot = None,
+                                 target_point=self.striker_loc,
+                                 chip=False,
+                                 kick_speed=4.0))
+
         self.striker = self.find_striker(world_state)
 
         if not self.striker.has_ball_sense:
