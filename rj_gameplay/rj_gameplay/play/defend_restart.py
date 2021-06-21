@@ -13,7 +13,7 @@ class DefendRestart(play.IPlay):
     def __init__(self):
         # TODO: add chipper tactic here
         self.goalie = goalie_tactic.GoalieTactic()
-        self.markers = nmark_tactic.NMarkTactic(2, True)
+        self.markers = nmark_tactic.NMarkTactic(3, True)
         self.wall = wall_tactic.WallTactic(2)
         self.role_assigner = NaiveRoleAssignment()
 
