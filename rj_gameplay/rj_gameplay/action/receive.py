@@ -29,11 +29,12 @@ class Receive(action.IAction):
         return intent
 
     def is_done(self, world_state) -> bool:
-        if world_state.our_robots[self.robot_id].has_ball_sense:
-            self.has_ball_ticks += 1
-        print(self.has_ball_ticks)
         if self.robot_id is None:
             return False
+        if world_state.our_robots[self.robot_id].has_ball_sense:
+            self.has_ball_ticks += 1
+        else:
+            self.has_ball_ticks = 0
         #TODO: Use local params for this threshold
         if self.has_ball_ticks >= 15 or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD:
             return True

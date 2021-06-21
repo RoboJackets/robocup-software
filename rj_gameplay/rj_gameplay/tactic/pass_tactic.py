@@ -38,12 +38,17 @@ class PasserCost(role.CostFn):
     A cost function for how to choose a robot that will pass
     TODO: Implement a better cost function
     """
+    def __init__(self):
+        self.potential_receiver = None
+
     def __call__(self,
                 robot:rc.Robot,
                 prev_result:Optional["RoleResult"],
                 world_state:rc.WorldState) -> float:
         if robot.has_ball_sense:
             return 0
+        if self.potential_receiver is not None and self.potential_receiver.id == robot.id:
+            return 99999
         else:
             return np.linalg.norm(world_state.ball.pos - robot.pose[0:2])
 
@@ -97,6 +102,9 @@ class Pass(tactic.ITactic):
             receive_request = role.RoleRequest(role.Priority.HIGH, True,
                                                self.receiver_cost)
             role_requests[self.receive] = [receive_request]
+        else:
+            passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
+            role_requests[self.pivot_kick] = [passer_request]
 
         return role_requests
 
@@ -107,14 +115,13 @@ class Pass(tactic.ITactic):
         """
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
-        if pivot_result and receive_result and pivot_result[0].is_filled() and receive_result[0].is_filled():
+        if receive_result and receive_result[0].is_filled():
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
-            if self.pivot_kick.skill.kick.is_done(world_state):
-                return [self.pivot_kick, self.receive]
-            else:
-                return [self.pivot_kick]
+            self.passer_cost.potential_receiver = receive_result[0].role.robot
+            return [self.receive]
         elif pivot_result and pivot_result[0].is_filled():
             potential_receiver = self.find_potential_receiver(world_state)
+            self.passer_cost.potential_receiver = potential_receiver
             self.pivot_kick.skill.target_point = np.array(
                 [potential_receiver.pose[0], potential_receiver.pose[1]])
             return [self.pivot_kick]
