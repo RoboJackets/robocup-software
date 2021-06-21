@@ -32,11 +32,8 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
-        return (None, basic_scramble.Scramble())
-
-    def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        self.curr_situation = None
-        return (None, defensive_clear.DefensiveClear())
+        # return (None, basic_scramble.Scramble())
+        return (None, basic_defense.BasicDefense())
 
 class GameplayNode(Node):
     """
