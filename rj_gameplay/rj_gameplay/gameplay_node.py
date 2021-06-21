@@ -132,7 +132,6 @@ class GameplayNode(Node):
         """
         if msg is not None and self.game_info is not None:
             self.goalie_id = msg.goalie_id
-            self.game_info.set_goalie_id(msg.goalie_id)
 
     def get_world_state(self) -> rc.WorldState:
         """
@@ -140,7 +139,7 @@ class GameplayNode(Node):
         """
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) == len(self.partial_world_state.our_robots):
 
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
+            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field, self.goalie_id)
 
         return self.world_state
 
@@ -150,7 +149,7 @@ class GameplayNode(Node):
         """
 
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field)
+            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field, self.goalie_id)
         else:
             self.world_state = None
 

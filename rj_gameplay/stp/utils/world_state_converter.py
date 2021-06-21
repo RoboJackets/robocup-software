@@ -230,7 +230,7 @@ def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robo
 
 
 
-def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: List[RobotStatus], game_info: rc.GameInfo, field: rc.Field) -> rc.WorldState:
+def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: List[RobotStatus], game_info: rc.GameInfo, field: rc.Field, goalie_id: int) -> rc.WorldState:
     """
     A function which combines the partial world state, robot statuses, game info, and field to create a whole world state
         :return: a world state as a rc.WorldState object
@@ -252,6 +252,6 @@ def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: L
     if game_info is None:
         game_info = None
 
-    world_state = rc.WorldState(our_robots, their_robots, partial_world_state.ball, game_info, field)
+    world_state = rc.WorldState(our_robots, their_robots, partial_world_state.ball, game_info, field, goalie_id)
 
     return world_state

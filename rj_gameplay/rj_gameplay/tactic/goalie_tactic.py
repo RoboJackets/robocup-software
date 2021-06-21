@@ -24,17 +24,18 @@ MIN_WALL_RAD = 0
 GOALIE_PCT_TO_BALL = 0.15
 
 
-class GoalieCost(role.ConstraintFn):
-    """Cost function for role request. Want only the designated goalie to be selected.
-    """
-    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
-                 world_state: rc.WorldState) -> float:
-
+class GoalieCost(role.CostFn):
+    def __call__(
+            self,
+            robot: rc.Robot,
+            prev_result: Optional["RoleResult"],
+            world_state: rc.WorldState,
+    ) -> float:
         if world_state.game_info is not None:
-            if robot.id == world_state.game_info.goalie_id:
-                return True
+            if robot.id == world_state.goalie_id:
+                return 0.0
 
-        return False 
+        return 10000000
 
 
 def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:

@@ -530,7 +530,7 @@ class WorldState:
     """Current state of the world."""
 
     __slots__ = [
-        "__our_robots", "__their_robots", "__ball", "__game_info", "__field"
+        "__our_robots", "__their_robots", "__ball", "__game_info", "__field", "__goalie_id"
     ]
 
     __our_robots: List[Robot]
@@ -538,14 +538,16 @@ class WorldState:
     __ball: Ball
     __game_info: GameInfo
     __field: Field
+    __goalie_id: int
 
     def __init__(self, our_robots: List[Robot], their_robots: List[Robot],
-                 ball: Ball, game_info: GameInfo, field: Field):
+                 ball: Ball, game_info: GameInfo, field: Field, goalie_id: int):
         self.__our_robots = our_robots
         self.__their_robots = their_robots
         self.__ball = ball
         self.__game_info = game_info
         self.__field = field
+        self.__goalie_id = goalie_id
 
     @property
     def robots(self) -> List[Robot]:
@@ -588,6 +590,14 @@ class WorldState:
         :return: The Field object
         """
         return self.__field
+
+    @property
+    def goalie_id(self) -> int:
+        """
+        :return: The Field object
+        """
+        return self.__goalie_id
+
 
     #def get_visible_robots(self) -> List[Robot]:
     #    pass
