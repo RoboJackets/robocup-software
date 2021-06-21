@@ -25,6 +25,6 @@ class Capture(action.IAction):
         return intent
 
     def is_done(self, world_state) -> bool:
-        if not self.robot_id is None and world_state.our_robots[self.robot_id].has_ball_sense:
+        if self.robot_id is not None and world_state.our_robots[self.robot_id].has_ball_sense:
             return True
         return False

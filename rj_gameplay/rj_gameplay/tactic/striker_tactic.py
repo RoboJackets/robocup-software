@@ -113,7 +113,7 @@ class StrikerTactic(tactic.ITactic):
     def get_requests(self, world_state: rc.WorldState,
                      props) -> List[tactic.RoleRequests]:
 
-        striker_request = role.RoleRequest(role.Priority.HIGH, True,
+        striker_request = role.RoleRequest(role.Priority.MEDIUM, True,
                                            self.capture_cost)
         role_requests: tactic.RoleRequests = {}
 

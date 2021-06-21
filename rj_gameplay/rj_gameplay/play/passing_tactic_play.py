@@ -16,8 +16,8 @@ class PassPlay(play.IPlay):
     def __init__(self):
         self.target_point = np.array([1.0,1.0])
         self.pass_tactic = pass_tactic.Pass(
-            self.target_point, pass_tactic.PasserCost(self.target_point),
-            pass_tactic.PassToClosestReceiver(self.target_point))
+            self.target_point, pass_tactic.PasserCost(),
+            pass_tactic.PassToOpenReceiver(self.target_point))
         self.seek_tactic = pass_seek.Seek(
             self.target_point, pass_seek.seek_heuristic,
             pass_seek.SeekCost(self.target_point))
@@ -35,8 +35,8 @@ class PassPlay(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        if not self.pass_tactic.is_done(world_state):
-            role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
+        role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
+        if not self.pass_tactic.receive.skill.is_done(world_state):
             role_requests[self.seek_tactic] = self.seek_tactic.get_requests(
                 world_state, None)
         # Flatten requests and use role assigner on them
@@ -47,11 +47,12 @@ class PassPlay(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
-        if not self.pass_tactic.is_done(world_state):
-            skills = self.pass_tactic.tick(role_results[self.pass_tactic], world_state)
+        skills = self.pass_tactic.tick(role_results[self.pass_tactic], world_state)
+        skill_dict.update(role_results[self.pass_tactic])
+        if not self.pass_tactic.receive.skill.is_done(world_state):
+            
             skills += self.seek_tactic.tick(role_results[self.seek_tactic],
                                             world_state)
-            skill_dict.update(role_results[self.pass_tactic])
             skill_dict.update(role_results[self.seek_tactic])
 
         return (skill_dict, skills)

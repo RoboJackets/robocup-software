@@ -57,7 +57,7 @@ class Capture(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        capture_request = role.RoleRequest(role.Priority.HIGH, True, self.cost)
+        capture_request = role.RoleRequest(role.Priority.MEDIUM, True, self.cost)
         role_requests[self.capture] = [capture_request]
 
         return role_requests
