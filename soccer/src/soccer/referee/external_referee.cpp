@@ -128,6 +128,9 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             stop();
             break;
         case SSL_Referee::NORMAL_START:
+            if (our_restart()) {
+                play();
+            }
             break;
         case SSL_Referee::FORCE_START:
             play();

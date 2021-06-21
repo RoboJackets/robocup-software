@@ -63,6 +63,7 @@ def generate_launch_description():
                     executable='gameplay_node',
                     output='screen',
                     parameters=[config],
+                    emulate_tty=True,
                     on_exit=Shutdown())
 
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
@@ -70,7 +71,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(vision_receiver_launch_path))
 
     ref_receiver = Node(package='rj_robocup',
-                        executable='internal_referee_node',
+                        executable='external_referee_node',
                         output='screen',
                         parameters=[config],
                         on_exit=Shutdown())
