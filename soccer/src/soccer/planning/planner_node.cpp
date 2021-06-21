@@ -32,7 +32,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       shared_state_{shared_state},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
-          "planning"} {
+          fmt::format("planning_{}", robot_id)} {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
