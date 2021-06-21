@@ -30,10 +30,6 @@ class wall_cost(role.CostFn):
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
 
-        if world_state.game_info is not None:
-            if robot.id == world_state.game_info.goalie_id:
-                return 999999
-
         if robot is None or self.wall_pt is None:
             return 99
 
@@ -124,8 +120,6 @@ class WallTactic(tactic.ITactic):
                 self.move_list[i].skill.target_point = wall_pts[i]
                 self.move_list[i].skill.face_point = world_state.ball.pos
                 robot = self.move_list[i].skill.robot
-                if robot is not None and world_state is not None and world_state.game_info:
-                    if robot.id == world_state.game_info.goalie_id:
                 self.cost_list[i].wall_pt = wall_pts[i]
 
         # create RoleRequest for each SkillEntry
