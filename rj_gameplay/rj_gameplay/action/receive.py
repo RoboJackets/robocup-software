@@ -31,7 +31,6 @@ class Receive(action.IAction):
     def is_done(self, world_state) -> bool:
         if world_state.our_robots[self.robot_id].has_ball_sense:
             self.has_ball_ticks += 1
-        print(self.has_ball_ticks)
         if self.robot_id is None:
             return False
         #TODO: Use local params for this threshold
