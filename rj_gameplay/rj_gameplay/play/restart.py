@@ -18,7 +18,7 @@ class RestartPlay(play.IPlay):
 
         # TODO: simplify tactic with list (see basic_defense.py)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
-        self.clear_tactic = clear_tactic.Clear(np.array([0.0, 6.0]))
+        self.clear_tactic = clear_tactic.Clear(np.array([0.0, 7.0]))
         # TODO: make it pass
         """
         self.pass_tactic = pass_tactic.Pass(
