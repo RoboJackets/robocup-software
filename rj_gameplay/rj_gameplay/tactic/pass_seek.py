@@ -14,13 +14,43 @@ from rj_gameplay.skill import shoot, capture, move
 import stp.skill as skill
 import numpy as np
 
+import stp.global_parameters as global_parameters
+
 
 def seek_heuristic(point: Tuple[float, float],
                    world_state: Tuple[rc.WorldState]) -> float:
+    """
+    func to find a point to move to
+    """
     cost = 0
     for robot in world_state.their_robots:
         cost -= np.linalg.norm(np.array(point) - np.array(robot.pose[0:2]))
     cost -= 7 * point[1]
+    return cost
+
+def restart_seek(point: Tuple[float, float],
+                   world_state: Tuple[rc.WorldState]) -> float:
+    """
+    func to find a point to move to
+    robot "most open" @ point found by optimizer
+    """
+    cost = 0
+    pt = np.array(point)
+    ball_pos = world_state.ball.pos
+    # hard constraint to be far from ball
+    if np.linalg.norm(pt - ball_pos) < 1:
+        return 99
+    # keep dist from other robots (more dist = lower cost)
+    for robot in world_state.their_robots:
+        cost -= np.linalg.norm(pt - robot.pose[0:2])
+    for robot in world_state.our_robots:
+        cost -= np.linalg.norm(pt - robot.pose[0:2])
+
+    # stay toward center
+    cost += 10 * np.abs(point[0])
+
+    # move upfield (more upfield = lower cost)
+    cost -= 10 * point[1]
     return cost
 
 
@@ -39,15 +69,20 @@ class SeekCost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        if robot.id == 7:
-            return 0.0
-        else:
-            return 1.0
+        if robot is None or self.target_point is None:
+            return 99
+        # TODO (#1669)
+        if not robot.visible:
+            return 99
+
+        return np.linalg.norm(robot.pose[0:2] - self.target_point) / global_parameters.soccer.robot.max_speed
 
 
 class Seek(tactic.ITactic):
     """
-    A pass seeking tactic which tries to get open
+    A pass seeking tactic which tries to get open based on seek heuristic
+    Role chosen by SeekCost
+    # TODO: make naming less arbitrary
     """
     def __init__(self, target_point: np.ndarray,
                  seek_heuristic: Callable[[Tuple[float, float]],
@@ -73,7 +108,7 @@ class Seek(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        move_request = role.RoleRequest(role.Priority.LOW, False, self.cost)
+        move_request = role.RoleRequest(role.Priority.HIGH, False, self.cost)
         role_requests[self.move] = [move_request]
 
         return role_requests
@@ -83,9 +118,6 @@ class Seek(tactic.ITactic):
         """
         :return: A list of size 1 skill depending on which role is filled
         """
-        # capture_result: tactic.RoleResults
-        # capture_result = role_results[self.capture]
-        # shoot_result = role_results[self.shoot]
         self.move.skill.target_point = optimizer.find_seek_point(
             self.seek_heuristic, world_state)
         move_result = role_results[self.move]

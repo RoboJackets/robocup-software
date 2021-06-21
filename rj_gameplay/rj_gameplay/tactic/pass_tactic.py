@@ -13,14 +13,15 @@ from rj_gameplay.skill import pivot_kick, receive
 import stp.skill as skill
 import numpy as np
 
+import stp.global_parameters as global_parameters
 
-class ReceiverCost(role.CostFn):
+class PassToClosestReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
-    TODO: Implement a better cost function
     """
-    def __init__(self, target_point:Optional[np.ndarray] = None):
+    def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
         self.target_point = target_point
+        self.passer_robot = passer_robot
 
     def __call__(
         self,
@@ -29,17 +30,26 @@ class ReceiverCost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        if robot.id == 7:
-            return 0.0
-        return 1.0
+
+        if robot is None or self.target_point is None:
+            return 99
+        # TODO (#1669)
+        if not robot.visible:
+            return 99
+        if self.passer_robot is not None and robot.id == self.passer_robot.id:
+            # can't pass to yourself
+            return 99
+
+        # always pick closest receiver
+        raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
+        return raw_dist / global_parameters.soccer.robot.max_speed
+
 
 class PasserCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     TODO: Implement a better cost function
     """
-    def __init__(self):
-        self.potential_receiver = None
 
     def __call__(self,
                 robot:rc.Robot,
@@ -47,10 +57,46 @@ class PasserCost(role.CostFn):
                 world_state:rc.WorldState) -> float:
         if robot.has_ball_sense:
             return 0
-        if self.potential_receiver is not None and self.potential_receiver.id == robot.id:
-            return 99999
         else:
+            # closest to ball
             return np.linalg.norm(world_state.ball.pos - robot.pose[0:2])
+
+class PassToOpenReceiver(role.CostFn):
+    """
+    A cost function for how to choose a robot to pass to
+    TODO: Implement a better cost function
+    CURRENTLY NOT READY FOR USE
+    """
+    def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
+        self.target_point = target_point
+        self.passer_robot = passer_robot
+
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+
+        if robot is None or self.target_point is None:
+            return 99
+        # TODO (#1669)
+        if not robot.visible:
+            return 99
+        if self.passer_robot is not None and robot.id == self.passer_robot.id:
+            # can't pass to yourself
+            return 99
+
+        # TODO: pick "most open" pass
+        cost = 0 
+        for enemy in world_state.their_robots:
+            cost -= 10*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
+
+        # TODO: should be dist in sec
+        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
+        # cost = cost + raw_dist
+        return cost
 
 class Pass(tactic.ITactic):
     """
@@ -98,13 +144,15 @@ class Pass(tactic.ITactic):
 
         passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
-        if self.pivot_kick.skill.kick.is_done(world_state):
+        if self.pivot_kick.skill.is_done(world_state):
             receive_request = role.RoleRequest(role.Priority.HIGH, True,
                                                self.receiver_cost)
             role_requests[self.receive] = [receive_request]
         else:
             passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
             role_requests[self.pivot_kick] = [passer_request]
+
+        self.receiver_cost.passer_robot = self.pivot_kick.skill.robot 
 
         return role_requests
 
@@ -121,7 +169,6 @@ class Pass(tactic.ITactic):
             return [self.receive]
         elif pivot_result and pivot_result[0].is_filled():
             potential_receiver = self.find_potential_receiver(world_state)
-            self.passer_cost.potential_receiver = potential_receiver
             self.pivot_kick.skill.target_point = np.array(
                 [potential_receiver.pose[0], potential_receiver.pose[1]])
             return [self.pivot_kick]
