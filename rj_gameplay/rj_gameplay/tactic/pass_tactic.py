@@ -18,7 +18,6 @@ import stp.global_parameters as global_parameters
 class PassToClosestReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
-    TODO: Implement a better cost function
     """
     def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
         self.target_point = target_point
@@ -33,19 +32,17 @@ class PassToClosestReceiver(role.CostFn):
 
 
         if robot is None or self.target_point is None:
-            return 9999
+            return 99
         # TODO (#1669)
         if not robot.visible:
-            return 9999
+            return 99
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
-            return 9999
+            return 99
 
-        # always pick shortest pass
-        # TODO: should be dist in sec
+        # always pick closest receiver
         raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
-        return raw_dist
-
+        return raw_dist / global_parameters.soccer.robot.max_speed
 
 
 class PasserCost(role.CostFn):
@@ -67,6 +64,7 @@ class PassToOpenReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
+    CURRENTLY NOT READY FOR USE
     """
     def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
         self.target_point = target_point
@@ -81,18 +79,18 @@ class PassToOpenReceiver(role.CostFn):
 
 
         if robot is None or self.target_point is None:
-            return 9999
+            return 99
         # TODO (#1669)
         if not robot.visible:
-            return 9999
+            return 99
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
-            return 9999
+            return 99
 
         # TODO: pick "most open" pass
         cost = 0 
         for enemy in world_state.their_robots:
-            cost -= 100*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
+            cost -= 10*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
 
         # TODO: should be dist in sec
         # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
