@@ -94,7 +94,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
                                          obstacles_with_ball,
                                          dynamic_obstacles,
                                          plan_request.constraints,
-                                         AngleFns::face_point(command.target)};
+                                         AngleFns::face_angle(ball.position.angle_to(command.target))};
             path = Replanner::create_plan(params, prev_path_);
             path.set_debug_text("slow ball 1");
         } else {

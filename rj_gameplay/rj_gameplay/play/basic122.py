@@ -22,10 +22,10 @@ class Basic122(play.IPlay):
         # self.two_mark = nmark_tactic.NMarkTactic(2)
 
         left_pt = np.array([1.5, 7.5])
-        self.seek_left = pass_seek.Seek(left_pt, pass_seek.attack_seek_left, pass_seek.SeekCost(left_pt))
+        self.seek_left = pass_seek.Seek(left_pt, pass_seek.build_seek_function(left_pt), pass_seek.SeekCost(left_pt))
 
         right_pt = np.array([-1.5, 7.5])
-        self.seek_right = pass_seek.Seek(right_pt, pass_seek.attack_seek_right, pass_seek.SeekCost(right_pt))
+        self.seek_right = pass_seek.Seek(right_pt, pass_seek.build_seek_function(right_pt), pass_seek.SeekCost(right_pt))
 
         self.role_assigner = NaiveRoleAssignment()
 

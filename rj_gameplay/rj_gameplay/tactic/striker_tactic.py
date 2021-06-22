@@ -93,11 +93,16 @@ class CaptureCost(role.CostFn):
             goal_y = world_state.field.length_m
             goal_pos = np.array([0., goal_y])
             robot_to_ball = ball_pos - robot_pos
-            robot_to_ball /= np.linalg.norm(robot_to_ball) + 1e-6
+            # robot_to_ball /= np.linalg.norm(robot_to_ball) + 1e-6
             ball_to_goal = goal_pos - ball_pos
-            ball_to_goal /= np.linalg.norm(ball_to_goal) + 1e-6
+            # ball_to_goal /= np.linalg.norm(ball_to_goal) + 1e-6
 
-            return 3*dist_to_ball + 0 * np.dot(robot_to_ball, ball_to_goal)
+            switch_cost = 0.0
+            if prev_result is not None and prev_result.is_filled():
+                switch_cost += 1.0 * (prev_result.role.robot.id != robot.id)
+
+
+            return 10 * dist_to_ball + 0.5 * switch_cost
 
 
 class StrikerTactic(tactic.ITactic):

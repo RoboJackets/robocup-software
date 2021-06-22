@@ -15,7 +15,8 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic_defense, basic_scramble, passing_tactic_play, defend_restart, restart, kickoff_play, basic122
+from rj_gameplay.play import basic_defense, basic_scramble, passing_tactic_play, defend_restart, restart, kickoff_play, \
+    basic122
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
@@ -23,16 +24,19 @@ import stp.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
 
+
 class EmptyPlaySelector(situation.IPlaySelector):
     # an empty play selector, replace with actual one when created
 
     def select(self, world_state: rc.WorldState) -> None:
         return None
 
+
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
         return (None, basic122.Basic122())
+
 
 class GameplayNode(Node):
     """
@@ -42,8 +46,10 @@ class GameplayNode(Node):
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
         super().__init__('gameplay_node')
-        self.world_state_sub = self.create_subscription(msg.WorldState, 'vision_filter/world_state', self.create_partial_world_state, 10)
-        self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions', self.create_field, 10)
+        self.world_state_sub = self.create_subscription(msg.WorldState, 'vision_filter/world_state',
+                                                        self.create_partial_world_state, 10)
+        self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions',
+                                                         self.create_field, 10)
         self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
         keep_latest = QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
@@ -56,13 +62,13 @@ class GameplayNode(Node):
 
         self.override_actions = [None] * NUM_ROBOTS
 
+        for i in range(NUM_ROBOTS):
+            self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, 'radio/robot_status/robot_' + str(i),
+                                                                self.create_partial_robots, 10)
 
         for i in range(NUM_ROBOTS):
-            self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, 'radio/robot_status/robot_'+str(i), self.create_partial_robots, 10)
-
-        for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, 'gameplay/robot_intent/robot_'+str(i), 10)
-
+            self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i),
+                                                              10)
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
@@ -70,7 +76,7 @@ class GameplayNode(Node):
         self.game_info: rc.GameInfo = None
         self.goalie_id = None
         self.field: rc.Field = None
-        self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()]*NUM_ROBOTS*2
+        self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()] * NUM_ROBOTS * 2
 
         self.global_parameter_client = GlobalParameterClient(
             self, 'global_parameter_server')
@@ -79,7 +85,7 @@ class GameplayNode(Node):
         # publish global obstacles
         self.goal_zone_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/goal_zone_obstacles', 10)
 
-        timer_period = 1/60 #seconds
+        timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
 
         self.debug_text_pub = self.create_publisher(StringMsg,
@@ -137,9 +143,10 @@ class GameplayNode(Node):
         """
         returns: an updated world state
         """
-        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) == len(self.partial_world_state.our_robots):
-
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field, self.goalie_id)
+        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) == len(
+                self.partial_world_state.our_robots):
+            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info,
+                                                       self.field, self.goalie_id)
 
         return self.world_state
 
@@ -149,7 +156,8 @@ class GameplayNode(Node):
         """
 
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info, self.field, self.goalie_id)
+            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info,
+                                                       self.field, self.goalie_id)
         else:
             self.world_state = None
 
@@ -160,19 +168,22 @@ class GameplayNode(Node):
 
             # create our_penalty rect
             our_penalty = geo_msg.Rect()
-            top_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=0.0)
-            bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.penalty_short_dist_m)
+            top_left = geo_msg.Point(x=self.field.penalty_long_dist_m / 2 + self.field.line_width_m, y=0.0)
+            bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m / 2 - self.field.line_width_m,
+                                      y=self.field.penalty_short_dist_m)
             our_penalty.pt = [top_left, bot_right]
 
             # create their_penalty rect
             # add distance slack for stops (0.2 min)
             # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
-            DIST_FOR_STOP = 0.3 # > 0.2 m
+            add_stop_dist = self.game_info is None or self.game_info.state == rc.GameState.STOP or self.game_info.restart != rc.GameRestart.NONE
+            DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0  # > 0.2 m
 
             their_penalty = geo_msg.Rect()
-            left_x = self.field.penalty_long_dist_m/2 + self.field.line_width_m + DIST_FOR_STOP
+            left_x = self.field.penalty_long_dist_m / 2 + self.field.line_width_m + DIST_FOR_STOP
             bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
-            top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
+            top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (
+                    self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
             their_penalty.pt = [bot_left, top_right]
 
             # publish Rect shape to goal_zone_obstacles topic
@@ -183,7 +194,7 @@ class GameplayNode(Node):
             self.get_logger().warn("World state was none!")
 
     def tick_override_actions(self, world_state) -> None:
-        for i in range(0,NUM_ROBOTS):
+        for i in range(0, NUM_ROBOTS):
             if self.override_actions[i] is not None:
                 fresh_intent = msg.RobotIntent()
                 self.override_actions[i].tick(fresh_intent)
@@ -198,6 +209,7 @@ class GameplayNode(Node):
         """
         self.destroy_node()
         rclpy.shutdown()
+
 
 def main():
     # play_selector = TestPlaySelector()
