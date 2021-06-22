@@ -195,7 +195,7 @@ class GameplayNode(Node):
         rclpy.shutdown()
 
 def main():
-    # play_selector = TestPlaySelector()
-    play_selector = basic_play_selector.BasicPlaySelector()
+    play_selector = TestPlaySelector()
+    # play_selector = basic_play_selector.BasicPlaySelector()
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)
