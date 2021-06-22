@@ -22,6 +22,7 @@ class PassToClosestReceiver(role.CostFn):
     def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
         self.target_point = target_point
         self.passer_robot = passer_robot
+        self.chosen_receiver = None
 
     def __call__(
         self,
@@ -39,6 +40,8 @@ class PassToClosestReceiver(role.CostFn):
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
             return 99
+        if self.chosen_receiver is not None and self.chosen_receiver.id == robot.id:
+            return -99
 
         # always pick closest receiver
         raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
@@ -70,6 +73,7 @@ class PassToOpenReceiver(role.CostFn):
     def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
         self.target_point = target_point
         self.passer_robot = passer_robot
+        self.chosen_receiver = None
 
     def __call__(
         self,
@@ -87,6 +91,8 @@ class PassToOpenReceiver(role.CostFn):
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
             return 99
+        if self.chosen_receiver is not None and self.chosen_receiver.id == robot.id:
+            return -99
 
         # TODO: pick "most open" pass
         cost = 0 
@@ -164,6 +170,7 @@ class Pass(tactic.ITactic):
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
         if receive_result and receive_result[0].is_filled():
+            self.passer_cost.chosen_receiver = receive_result[0].role.robot
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             self.passer_cost.potential_receiver = receive_result[0].role.robot
             return [self.receive]
@@ -175,4 +182,5 @@ class Pass(tactic.ITactic):
         return []
 
     def is_done(self, world_state:rc.WorldState):
+        print(self.receive.skill.is_done(world_state))
         return self.receive.skill.is_done(world_state)

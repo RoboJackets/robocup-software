@@ -32,7 +32,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
-        return (None, restart.RestartPlay())
+        return (None, passing_tactic_play.PassPlay())
 
 class GameplayNode(Node):
     """
@@ -195,7 +195,7 @@ class GameplayNode(Node):
         rclpy.shutdown()
 
 def main():
-    # play_selector = TestPlaySelector()
-    play_selector = basic_play_selector.BasicPlaySelector()
+    play_selector = TestPlaySelector()
+    # play_selector = basic_play_selector.BasicPlaySelector()
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)

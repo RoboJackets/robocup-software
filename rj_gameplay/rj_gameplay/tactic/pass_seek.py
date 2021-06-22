@@ -61,6 +61,7 @@ class SeekCost(role.CostFn):
     """
     def __init__(self, target_point: np.ndarray):
         self.target_point = target_point
+        self.locked_bot = None
 
     def __call__(
         self,
@@ -74,7 +75,8 @@ class SeekCost(role.CostFn):
         # TODO (#1669)
         if not robot.visible:
             return 99
-
+        if self.locked_bot is not None and robot.id == self.locked_bot.id:
+            return -99
         return np.linalg.norm(robot.pose[0:2] - self.target_point) / global_parameters.soccer.robot.max_speed
 
 
@@ -123,6 +125,8 @@ class Seek(tactic.ITactic):
         move_result = role_results[self.move]
 
         if move_result and move_result[0].is_filled():
+            self.cost.locked_bot = move_result[0].role.robot
+            print(self.cost.locked_bot)
             return [self.move]
         return []
 
