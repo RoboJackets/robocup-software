@@ -502,13 +502,49 @@ void MainWindow::updateViews() {
     /**************************************************************************/
     /******************** Update referee information **************************/
     /**************************************************************************/
-    // TODO(Kyle): Get these values from the protobuf.
+    // Okay so these aren't right but who cares
     _ui.refStage->setText("");
-    _ui.refCommand->setText("");
-    //    _ui.refStage->setText(
-    //        referee_module_enums::stringFromStage(game_state.raw_stage).c_str());
-    //    _ui.refCommand->setText(
-    //        referee_module_enums::stringFromCommand(game_state.raw_command).c_str());
+    const auto restart_type = [&game_state] () {
+        switch (game_state.restart) {
+            case GameState::Restart::Direct:
+                return "DIRECT";
+            case GameState::Restart::Indirect:
+                return "INDIRECT";
+            case GameState::Restart::Kickoff:
+                return "KICKOFF";
+            case GameState::Restart::Penalty:
+                return "PENALTY";
+            case GameState::Restart::Placement:
+                return "PLACEMENT";
+            case GameState::Restart::None:
+            default:
+                return "";
+        }
+    }();
+    if (game_state.is_our_restart()) {
+        _ui.refCommand->setText(QString::fromStdString(fmt::format("OUR {}", restart_type)));
+    } else if (game_state.restart != GameState::Restart::None) {
+        _ui.refCommand->setText(QString::fromStdString(fmt::format("THEIR {}", restart_type)));
+    } else {
+        _ui.refCommand->setText("NO RESTART");
+    }
+    const auto &ref_state = [&game_state] () {
+        switch (game_state.state) {
+            case GameState::State::Halt:
+                return "HALT";
+            case GameState::State::Playing:
+                return "PLAY";
+            case GameState::State::Ready:
+                return "READY";
+            case GameState::State::Setup:
+                return "SETUP";
+            case GameState::State::Stop:
+                return "STOP";
+            default:
+                return "";
+        }
+    }();
+    _ui.refStage->setText(ref_state);
 
     // Convert time left from ms to s and display it to two decimal places
     int timeSeconds = static_cast<int>(game_state.stage_time_left.count());

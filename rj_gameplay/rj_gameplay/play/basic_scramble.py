@@ -59,4 +59,5 @@ class Scramble(play.IPlay):
         return (skill_dict, skills)
 
     def is_done(self, world_state):
+        print(f"Scramble is {self.capture.is_done(world_state)}")
         return self.capture.is_done(world_state)

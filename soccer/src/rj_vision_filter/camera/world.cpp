@@ -47,7 +47,7 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
             // Put the ball in this robot's mouth
             const auto& robot_position = our_robots.at(i).get_pos();
             const auto& robot_heading = our_robots.at(i).get_theta();
-            ball_sense_point = robot_position + rj_geometry::Point::direction(robot_heading) * kRobotMouthRadius;
+            ball_sense_point = robot_position + rj_geometry::Point::direction(robot_heading) * (kRobotMouthRadius + kBallRadius);
             ball_sense_robot = i;
             break;
         }

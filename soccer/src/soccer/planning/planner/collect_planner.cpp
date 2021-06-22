@@ -96,7 +96,7 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
     }
 
     // Check if we should transition to control from approach
-    process_state_transition(ball, start_instant);
+    process_state_transition(ball, start_instant, plan_request.ball_sense);
 
     switch (current_state_) {
         // Moves from the current location to the slow point of approach
@@ -134,7 +134,7 @@ void CollectPlanner::check_solution_validity(BallState ball, RobotInstant start)
     }
 }
 
-void CollectPlanner::process_state_transition(BallState ball, RobotInstant start_instant) {
+void CollectPlanner::process_state_transition(BallState ball, RobotInstant start_instant, bool has_ball) {
     // Do the transitions
     double dist = (start_instant.position() - ball.position).mag() - kRobotMouthRadius;
     double speed_diff = (start_instant.linear_velocity() - average_ball_vel_).mag() -
@@ -149,9 +149,10 @@ void CollectPlanner::process_state_transition(BallState ball, RobotInstant start
     // If we are close enough to the target point near the ball
     // and almost the same speed we want, start slowing down
     // TODO(#1518): Check for ball sense?
-    if (dist < collect::PARAM_dist_cutoff_to_control &&
-        speed_diff < collect::PARAM_vel_cutoff_to_control && current_state_ == FineApproach) {
+    if (has_ball) {
         current_state_ = Control;
+    } else if (current_state_ == Control) {
+        current_state_ = FineApproach;
     }
 
     if (current_state_ == Control && dist > collect::PARAM_dist_cutoff_to_control &&

@@ -17,7 +17,7 @@ class Basic122(play.IPlay):
 
     def __init__(self):
         self.target_point: np.ndarray = np.array([0., 12.])
-        self.striker_tactic = striker_tactic.StrikerTactic(target_point=self.target_point)
+        self.striker_tactic = striker_tactic.LineKickStrikerTactic(target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
         self.two_mark = nmark_tactic.NMarkTactic(2)
         self.role_assigner = NaiveRoleAssignment()

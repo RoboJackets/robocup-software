@@ -33,7 +33,7 @@ class Clear(tactic.ITactic):
 
     def __init__(self, target_point:np.ndarray):
         self.target_point = target_point
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point=target_point, chip=True, kick_speed=6.0))
+        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point=target_point, chip=False, kick_speed=5.0))
         self.clearer_cost = ClearerCost()
         
     def compute_props(self):

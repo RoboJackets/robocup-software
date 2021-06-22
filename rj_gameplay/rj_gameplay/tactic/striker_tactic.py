@@ -3,7 +3,7 @@ from typing import List, Optional
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
-from rj_gameplay.skill import shoot, capture, pivot_kick
+from rj_gameplay.skill import shoot, capture, pivot_kick, line_kick
 import stp.skill as skill
 import numpy as np
 from math import atan2
@@ -89,7 +89,15 @@ class CaptureCost(role.CostFn):
             robot_pos = robot.pose[0:2]
             ball_pos = world_state.ball.pos[0:2]
             dist_to_ball = np.linalg.norm(ball_pos - robot_pos)
-            return dist_to_ball
+
+            goal_y = world_state.field.length_m
+            goal_pos = np.array([0., goal_y])
+            robot_to_ball = ball_pos - robot_pos
+            robot_to_ball /= np.linalg.norm(robot_to_ball) + 1e-6
+            ball_to_goal = goal_pos - ball_pos
+            ball_to_goal /= np.linalg.norm(ball_to_goal) + 1e-6
+
+            return dist_to_ball + np.dot(robot_to_ball, ball_to_goal)
 
 
 class StrikerTactic(tactic.ITactic):
@@ -122,10 +130,6 @@ class StrikerTactic(tactic.ITactic):
                                            self.capture_cost)
         role_requests: tactic.RoleRequests = {}
 
-        if self.shoot.skill.is_done(world_state):
-            self.shoot = tactic.SkillEntry(
-                shoot.Shoot(chip=False, kick_speed=KICK_SPEED, target_point=self.target_point))
-
         striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
 
         if striker:
@@ -148,6 +152,56 @@ class StrikerTactic(tactic.ITactic):
 
         if capture_result and capture_result[0].is_filled():
             return [self.capture]
+        if shoot_result and shoot_result[0].is_filled():
+            self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
+            return [self.shoot]
+
+        return []
+
+    def is_done(self, world_state) -> bool:
+        return self.shoot.skill.is_done(world_state)
+
+class LineKickStrikerTactic(tactic.ITactic):
+    """
+	A striker tactic which receives then shoots the ball
+	"""
+
+    def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
+        self.cost = cost  # unused
+        self.target_point = target_point
+        self.shoot = tactic.SkillEntry(
+            line_kick.LineKickSkill(robot=None, target_point=target_point))
+        self.capture_cost = CaptureCost()
+
+    def compute_props(self):
+        pass
+
+    def create_request(self, **kwargs) -> role.RoleRequest:
+        """
+		Creates a sane default RoleRequest.
+		:return: A list of size 1 of a sane default RoleRequest.
+		"""
+        pass
+
+    def get_requests(self, world_state: rc.WorldState,
+                     props) -> List[tactic.RoleRequests]:
+
+        striker_request = role.RoleRequest(role.Priority.MEDIUM, True,
+                                           self.capture_cost)
+        role_requests: tactic.RoleRequests = {}
+
+        role_requests[self.shoot] = [striker_request]
+
+        return role_requests
+
+    def tick(self, role_results: tactic.RoleResults,
+             world_state: rc.WorldState) -> List[tactic.SkillEntry]:
+        """
+		:return: list of skills
+		"""
+
+        shoot_result = role_results[self.shoot]
+
         if shoot_result and shoot_result[0].is_filled():
             self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
             return [self.shoot]

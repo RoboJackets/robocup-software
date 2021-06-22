@@ -39,6 +39,8 @@ static const bool kCancelBallPlaceOnHalt = true;
 DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "
               "colors from referee");
+DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1",
+              "The interface for referee operation");
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
     set_team_name(PARAM_team_name);
@@ -112,7 +114,7 @@ void ExternalReferee::setup_referee_multicast() {
     // Join multicast group
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeAddress).to_v4();
-    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address, boost::asio::ip::address::from_string("172.25.0.23").to_v4()));
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address, boost::asio::ip::address::from_string(PARAM_interface).to_v4()));
 }
 
 void ExternalReferee::update() {
@@ -153,19 +155,19 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             break;
         case SSL_Referee::DIRECT_FREE_YELLOW:
             restart(GameState::Restart::Direct, false);
-            play();
+            setup();
             break;
         case SSL_Referee::DIRECT_FREE_BLUE:
             restart(GameState::Restart::Direct, true);
-            play();
+            setup();
             break;
         case SSL_Referee::INDIRECT_FREE_YELLOW:
             restart(GameState::Restart::Indirect, false);
-            play();
+            setup();
             break;
         case SSL_Referee::INDIRECT_FREE_BLUE:
             restart(GameState::Restart::Indirect, true);
-            play();
+            setup();
             break;
         case SSL_Referee::TIMEOUT_YELLOW:
         case SSL_Referee::TIMEOUT_BLUE:

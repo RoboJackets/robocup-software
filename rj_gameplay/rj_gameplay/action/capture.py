@@ -29,4 +29,4 @@ class Capture(action.IAction):
             self.ticks_done += 1
         else:
             self.ticks_done = 0
-        return self.ticks_done > 20
+        return self.ticks_done > 100

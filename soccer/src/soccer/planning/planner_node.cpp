@@ -61,6 +61,11 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                          intent->priority);
             }
         });
+    robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
+        radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
+        [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
+            had_break_beam_ = status->has_ball_sense;
+        });
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
@@ -103,7 +108,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        static_cast<unsigned int>(robot_id_),
                        world_state,
                        intent.priority,
-                       &debug_draw_};
+                       &debug_draw_,
+                       had_break_beam_};
 }
 
 Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request) {

@@ -19,6 +19,7 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
 
     game_state_sub_ = node_->create_subscription<GameStateMsg>(
         referee::topics::kGameStatePub, keep_latest, [this](GameStateMsg::UniquePtr msg) {
+            std::cout << "Got game state" << std::endl;
             rj_convert::convert_from_ros(*msg, &context_->game_state);
         });
 
