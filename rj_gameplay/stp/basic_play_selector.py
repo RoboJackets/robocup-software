@@ -4,13 +4,13 @@ import stp.rc as rc
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 import rj_gameplay.play as plays
-from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart
+from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart, kickoff_play
 from typing import Tuple, Dict
 
 #TODO: Put new plays into the dict properly
 #TODO: Create different dictionaries for different playbooks
 PLAY_DICT = {}
-PLAY_DICT[situations.Kickoff] = [basic_scramble.Scramble]
+PLAY_DICT[situations.Kickoff] = [kickoff_play.KickoffPlay]
 PLAY_DICT[situations.DefendRestartOffensive] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartMidfield] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartDefensive] = [defend_restart.DefendRestart]
