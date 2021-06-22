@@ -18,7 +18,10 @@ def generate_launch_description():
         Node(package="rj_robocup",
              executable="vision_receiver",
              output="screen",
-             parameters=[config],
+             parameters=[{
+                 "hz": hz,
+                 "port": port
+             }],
              on_exit=Shutdown(),
         )
     ])

@@ -13,7 +13,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     config = os.path.join(get_package_share_directory('rj_robocup'), 'config',
-                          'field_b.yaml')
+                          'sim.yaml')
     bringup_dir = Path(get_package_share_directory('rj_robocup'))
     launch_dir = bringup_dir / 'launch'
 
@@ -71,7 +71,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(vision_receiver_launch_path))
 
     ref_receiver = Node(package='rj_robocup',
-                        executable='external_referee_node',
+                        executable='internal_referee_node',
                         output='screen',
                         parameters=[config],
                         on_exit=Shutdown())

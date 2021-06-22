@@ -114,7 +114,7 @@ void ExternalReferee::setup_referee_multicast() {
     // Join multicast group
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeAddress).to_v4();
-    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address, boost::asio::ip::address::from_string("172.25.0.23").to_v4()));
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address, boost::asio::ip::address::from_string(PARAM_interface).to_v4()));
 }
 
 void ExternalReferee::update() {
