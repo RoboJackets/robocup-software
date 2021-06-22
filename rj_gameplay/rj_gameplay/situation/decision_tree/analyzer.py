@@ -160,7 +160,7 @@ class Analyzer(stp.situation.IAnalyzer):
             if game_info.our_restart:
                 return dt.plays.Kickoff()
             else:
-                return dt.plays.DefendRestartDefensive()
+                return dt.plays.DefendKickoff()
 
         elif game_info.is_penalty():
             return dt.plays.NoSituation()

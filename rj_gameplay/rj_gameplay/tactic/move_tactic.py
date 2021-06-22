@@ -39,8 +39,8 @@ class Move(tactic.ITactic):
     """
 
 
-    def __init__(self, target_point : np.ndarray):
-        self.move = tactic.SkillEntry(move.Move(target_point = target_point))
+    def __init__(self, target_point : np.ndarray, face_point: np.ndarray=None):
+        self.move = tactic.SkillEntry(move.Move(target_point = target_point, face_point = face_point))
         self.cost = move_cost(target_point)
         
     def compute_props(self):

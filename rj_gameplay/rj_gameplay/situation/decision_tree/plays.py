@@ -16,6 +16,12 @@ class Kickoff(stp.situation.ISituation):
     ...
 
 
+class DefendKickoff(stp.situation.ISituation):
+    """Kickoff defense."""
+
+    ...
+
+
 class DefendRestartOffensive(stp.situation.ISituation):
     """Defending our opponents restart on their side of the field."""
 

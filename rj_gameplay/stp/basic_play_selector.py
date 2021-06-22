@@ -11,6 +11,7 @@ from typing import Tuple, Dict
 #TODO: Create different dictionaries for different playbooks
 PLAY_DICT = {}
 PLAY_DICT[situations.Kickoff] = [kickoff_play.KickoffPlay]
+PLAY_DICT[situations.DefendKickoff] = [kickoff_play.DefendKickoffPlay]
 PLAY_DICT[situations.DefendRestartOffensive] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartMidfield] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartDefensive] = [defend_restart.DefendRestart]
