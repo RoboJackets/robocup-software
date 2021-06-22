@@ -4,7 +4,7 @@ import stp.rc as rc
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 import rj_gameplay.play as plays
-from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart, kickoff_play
+from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart, kickoff_play, penalty_defense
 from typing import Tuple, Dict
 
 #TODO: Put new plays into the dict properly
@@ -32,10 +32,10 @@ PLAY_DICT[situations.OffensivePileup] = [basic122.Basic122]
 PLAY_DICT[situations.MidfieldPileup] = [basic122.Basic122]
 PLAY_DICT[situations.DefensivePileup] = [basic122.Basic122]
 PLAY_DICT[situations.MidfieldDefendClear] = [defensive_clear.DefensiveClear]
-PLAY_DICT[situations.Shootout] = [basic_defense.BasicDefense]
-PLAY_DICT[situations.DefendShootout] = [basic_defense.BasicDefense]
-PLAY_DICT[situations.Penalty] = [basic_defense.BasicDefense]
-PLAY_DICT[situations.DefendPenalty] = [basic_defense.BasicDefense]
+PLAY_DICT[situations.Shootout] = [basic122.Basic122]
+PLAY_DICT[situations.DefendShootout] = [penalty_defense.Penalty]
+PLAY_DICT[situations.Penalty] = [basic122.Basic122]
+PLAY_DICT[situations.DefendPenalty] = [penalty_defense.Penalty]
 PLAY_DICT[situations.OffensiveKick] = [restart.RestartPlay]
 PLAY_DICT[situations.DefensiveKick] = [restart.RestartPlay]
 PLAY_DICT[situations.MidfieldKick] = [restart.RestartPlay]
