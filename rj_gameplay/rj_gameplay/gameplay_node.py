@@ -165,9 +165,14 @@ class GameplayNode(Node):
             our_penalty.pt = [top_left, bot_right]
 
             # create their_penalty rect
+            # add distance slack for stops (0.2 min)
+            # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
+            DIST_FOR_STOP = 0.3 # > 0.2 m
+
             their_penalty = geo_msg.Rect()
-            bot_left = geo_msg.Point(x=self.field.penalty_long_dist_m/2 + self.field.line_width_m, y=self.field.length_m)
-            top_right = geo_msg.Point(x=-self.field.penalty_long_dist_m/2 - self.field.line_width_m, y=self.field.length_m - self.field.penalty_short_dist_m)
+            left_x = self.field.penalty_long_dist_m/2 + self.field.line_width_m + DIST_FOR_STOP
+            bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
+            top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
             their_penalty.pt = [bot_left, top_right]
 
             # publish Rect shape to goal_zone_obstacles topic
