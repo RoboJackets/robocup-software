@@ -14,6 +14,7 @@ PLAY_DICT[situations.Kickoff] = [basic_scramble.Scramble]
 PLAY_DICT[situations.DefendRestartOffensive] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartMidfield] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartDefensive] = [defend_restart.DefendRestart]
+# TODO: can't chip kick at goal (change target point of def clear)
 PLAY_DICT[situations.Clear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.DefendClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.DefendGoal] = [basic_defense.BasicDefense]
@@ -36,6 +37,7 @@ PLAY_DICT[situations.OffensiveKick] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.DefensiveKick] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.MidfieldKick] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.GoalieClear] = [defensive_clear.DefensiveClear]
+# TODO: stop command max speed is 1 m/s, currently defend_restart moves too fast
 PLAY_DICT[situations.Stop] = [defend_restart.DefendRestart]
 
 class BasicPlaySelector(situation.IPlaySelector):
