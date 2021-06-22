@@ -13,7 +13,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     config = os.path.join(get_package_share_directory('rj_robocup'), 'config',
-                          'sim.yaml')
+                          'field_b.yaml')
     bringup_dir = Path(get_package_share_directory('rj_robocup'))
     launch_dir = bringup_dir / 'launch'
 

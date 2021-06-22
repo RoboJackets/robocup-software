@@ -4,13 +4,13 @@ import stp.rc as rc
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 import rj_gameplay.play as plays
-from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart
+from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart, kickoff_play
 from typing import Tuple, Dict
 
 #TODO: Put new plays into the dict properly
 #TODO: Create different dictionaries for different playbooks
 PLAY_DICT = {}
-PLAY_DICT[situations.Kickoff] = [basic_scramble.Scramble]
+PLAY_DICT[situations.Kickoff] = [kickoff_play.KickoffPlay]
 PLAY_DICT[situations.DefendRestartOffensive] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartMidfield] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartDefensive] = [defend_restart.DefendRestart]
@@ -21,7 +21,7 @@ PLAY_DICT[situations.MidfieldClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.AttackGoal] = [basic122.Basic122]
 PLAY_DICT[situations.OffensiveScramble] = [basic122.Basic122]
 PLAY_DICT[situations.MidfieldScramble] = [basic122.Basic122]
-PLAY_DICT[situations.DefensiveScramble] = [basic122.Basic122]
+PLAY_DICT[situations.DefensiveScramble] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.SaveBall] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.SaveShot] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.OffensivePileup] = [basic122.Basic122]
@@ -32,9 +32,9 @@ PLAY_DICT[situations.Shootout] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.DefendShootout] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.Penalty] = [basic_defense.BasicDefense]
 PLAY_DICT[situations.DefendPenalty] = [basic_defense.BasicDefense]
-PLAY_DICT[situations.OffensiveKick] = [basic_defense.BasicDefense]
-PLAY_DICT[situations.DefensiveKick] = [basic_defense.BasicDefense]
-PLAY_DICT[situations.MidfieldKick] = [basic_defense.BasicDefense]
+PLAY_DICT[situations.OffensiveKick] = [restart.RestartPlay]
+PLAY_DICT[situations.DefensiveKick] = [restart.RestartPlay]
+PLAY_DICT[situations.MidfieldKick] = [restart.RestartPlay]
 PLAY_DICT[situations.GoalieClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.Stop] = [defend_restart.DefendRestart]
 

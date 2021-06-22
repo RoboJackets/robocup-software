@@ -18,18 +18,20 @@ class LineKickAction(action.IFiniteAction):
     Activates kicker. Intended to be used after an aim/drive action in a skill.
     """
 
-    def __init__(self, robot_id: int, target: np.ndarray, priority: int = 0) -> None:
+    def __init__(self, robot_id: int, target: np.ndarray, priority: int = 0, chip: bool = False, kick_speed: float = 6.0) -> None:
         self.robot_id = robot_id
         self.priority = priority
 
         self.target = target
+        self.chip = chip
+        self.kick_speed = kick_speed
 
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
         line_kick_command = LineKickMotionCommand()
         line_kick_command.target = Point(x=self.target[0], y=self.target[1])
-        intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK
+        intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK if not self.chip else RobotIntent.SHOOT_MODE_CHIP
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
-        intent.kick_speed = 6.0
+        intent.kick_speed = self.kick_speed
 
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True

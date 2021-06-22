@@ -97,7 +97,7 @@ class CaptureCost(role.CostFn):
             ball_to_goal = goal_pos - ball_pos
             ball_to_goal /= np.linalg.norm(ball_to_goal) + 1e-6
 
-            return dist_to_ball + np.dot(robot_to_ball, ball_to_goal)
+            return dist_to_ball + 0 * np.dot(robot_to_ball, ball_to_goal)
 
 
 class StrikerTactic(tactic.ITactic):
@@ -170,7 +170,7 @@ class LineKickStrikerTactic(tactic.ITactic):
         self.cost = cost  # unused
         self.target_point = target_point
         self.shoot = tactic.SkillEntry(
-            line_kick.LineKickSkill(robot=None, target_point=target_point))
+            line_kick.LineKickSkill(robot=None, target_point=None))
         self.capture_cost = CaptureCost()
 
     def compute_props(self):

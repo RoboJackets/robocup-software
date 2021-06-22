@@ -6,7 +6,7 @@
 namespace referee {
 
 RefereeBase::RefereeBase(const std::string& name)
-    : rclcpp::Node(name), param_provider_(this, kRefereeParamModule) {
+    : Node{name, rclcpp::NodeOptions{}.automatically_declare_parameters_from_overrides(true).allow_undeclared_parameters(true)}, param_provider_(this, kRefereeParamModule) {
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorPub, keep_latest);

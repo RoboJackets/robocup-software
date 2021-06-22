@@ -14,16 +14,16 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
+DEFINE_INT64(kVisionReceiverParamModule, port, 10006,
              "The port used for the vision receiver.")
-DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "",
+DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "172.25.0.23",
               "The hardware interface to use.")
 
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver"},
+    : Node{"vision_receiver", rclcpp::NodeOptions{}.automatically_declare_parameters_from_overrides(true).allow_undeclared_parameters(true)},
       config_{this},
       port_{-1},
       socket_{io_context_},
@@ -80,10 +80,12 @@ void VisionReceiver::set_port(const std::string& interface, int port) {
 
     socket_.set_option(udp::socket::reuse_address(true));
     if (!interface.empty()) {
+	std::cout << "JOINING " << interface << std::endl;
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(),
             boost::asio::ip::address::from_string(interface).to_v4()));
     } else {
+	std::cout << "JOINING EMPTY" << std::endl;
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4()));
     }

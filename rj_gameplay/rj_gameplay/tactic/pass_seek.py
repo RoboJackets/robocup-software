@@ -53,6 +53,18 @@ def restart_seek(point: Tuple[float, float],
     cost -= 10 * point[1]
     return cost
 
+def attack_seek_left(point: Tuple[float, float],
+                   world_state: Tuple[rc.WorldState]) -> float:
+
+    left_pt = np.array([1.5, 7.5])
+    return np.linalg.norm(left_pt- point)
+
+def attack_seek_right(point: Tuple[float, float],
+                   world_state: Tuple[rc.WorldState]) -> float:
+
+    right_pt = np.array([-1.5, 7.5])
+    return np.linalg.norm(right_pt- point)
+
 
 class SeekCost(role.CostFn):
     """
