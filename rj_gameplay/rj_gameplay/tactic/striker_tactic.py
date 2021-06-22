@@ -80,11 +80,15 @@ class CaptureCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     """
+    def __init__(self):
+        self.chosen_striker = None
 
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
-        if robot.has_ball_sense:
+        if self.chosen_striker is not None and robot.id == self.chosen_striker.id:
             return 0
+        if robot.has_ball_sense:
+            return -99
         else:
             robot_pos = robot.pose[0:2]
             ball_pos = world_state.ball.pos[0:2]
@@ -203,6 +207,7 @@ class LineKickStrikerTactic(tactic.ITactic):
         shoot_result = role_results[self.shoot]
 
         if shoot_result and shoot_result[0].is_filled():
+            self.capture_cost.chosen_striker = shoot_result[0].role.robot
             self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
             return [self.shoot]
 

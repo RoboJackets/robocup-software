@@ -36,7 +36,7 @@ class PassPlay(play.IPlay):
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
-        if not self.pass_tactic.receive.skill.is_done(world_state):
+        if not self.pass_tactic.pivot_kick.skill.is_done(world_state):
             role_requests[self.seek_tactic] = self.seek_tactic.get_requests(
                 world_state, None)
         # Flatten requests and use role assigner on them
@@ -49,7 +49,7 @@ class PassPlay(play.IPlay):
         skills = []
         skills = self.pass_tactic.tick(role_results[self.pass_tactic], world_state)
         skill_dict.update(role_results[self.pass_tactic])
-        if not self.pass_tactic.receive.skill.is_done(world_state):
+        if not self.pass_tactic.pivot_kick.skill.is_done(world_state):
             
             skills += self.seek_tactic.tick(role_results[self.seek_tactic],
                                             world_state)
