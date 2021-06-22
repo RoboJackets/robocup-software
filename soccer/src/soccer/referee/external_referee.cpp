@@ -138,36 +138,36 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             play();
             break;
         case SSL_Referee::PREPARE_KICKOFF_YELLOW:
-            restart(GameState::Restart::Kickoff, false);
             setup();
+            restart(GameState::Restart::Kickoff, false);
             break;
         case SSL_Referee::PREPARE_KICKOFF_BLUE:
-            restart(GameState::Restart::Kickoff, true);
             setup();
+            restart(GameState::Restart::Kickoff, true);
             break;
         case SSL_Referee::PREPARE_PENALTY_YELLOW:
-            restart(GameState::Restart::Penalty, false);
             setup();
+            restart(GameState::Restart::Penalty, false);
             break;
         case SSL_Referee::PREPARE_PENALTY_BLUE:
-            restart(GameState::Restart::Penalty, true);
             setup();
+            restart(GameState::Restart::Penalty, true);
             break;
         case SSL_Referee::DIRECT_FREE_YELLOW:
-            restart(GameState::Restart::Direct, false);
             setup();
+            restart(GameState::Restart::Direct, false);
             break;
         case SSL_Referee::DIRECT_FREE_BLUE:
-            restart(GameState::Restart::Direct, true);
             setup();
+            restart(GameState::Restart::Direct, true);
             break;
         case SSL_Referee::INDIRECT_FREE_YELLOW:
-            restart(GameState::Restart::Indirect, false);
             setup();
+            restart(GameState::Restart::Indirect, false);
             break;
         case SSL_Referee::INDIRECT_FREE_BLUE:
-            restart(GameState::Restart::Indirect, true);
             setup();
+            restart(GameState::Restart::Indirect, true);
             break;
         case SSL_Referee::TIMEOUT_YELLOW:
         case SSL_Referee::TIMEOUT_BLUE:

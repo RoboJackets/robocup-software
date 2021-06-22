@@ -138,7 +138,6 @@ class Seek(tactic.ITactic):
 
         if move_result and move_result[0].is_filled():
             self.cost.locked_bot = move_result[0].role.robot
-            print(self.cost.locked_bot)
             return [self.move]
         return []
 

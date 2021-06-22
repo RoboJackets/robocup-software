@@ -11,7 +11,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import move, receive, pivot_kick  #, intercept
+from rj_gameplay.skill import move, receive, pivot_kick  # , intercept
 import stp.skill as skill
 import numpy as np
 # TODO: replace w/ global param server
@@ -71,7 +71,8 @@ class GoalieTactic(tactic.ITactic):
         # init skills
         self.move_se = tactic.SkillEntry(move.Move())
         self.receive_se = tactic.SkillEntry(receive.Receive())
-        self.pivot_kick_se = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point = np.array([0.0, 6.0]), chip=True, kick_speed=6.0))
+        self.pivot_kick_se = tactic.SkillEntry(
+            pivot_kick.PivotKick(None, target_point=np.array([0.0, 6.0]), chip=True, kick_speed=6.0, threshold=0.2))
 
         # TODO: rename cost_list to role_cost in other gameplay files
         self.role_cost = GoalieCost()
@@ -110,7 +111,7 @@ class GoalieTactic(tactic.ITactic):
 
             if ball_speed < 1.0 and ball_dist < MIN_WALL_RAD - RobotConstants.RADIUS * 2.1:
                 self.move_se = tactic.SkillEntry(move.Move())
-                if not self.receive_se.skill.is_done(world_state): 
+                if not self.receive_se.skill.is_done(world_state):
                     # if ball is slow and inside goalie box, collect it
                     role_requests[self.receive_se] = [
                         role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
@@ -147,7 +148,8 @@ class GoalieTactic(tactic.ITactic):
                                          self.role_cost)
                     ]
         if self.pivot_kick_se.skill.is_done(world_state):
-            self.pivot_kick_se = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point = np.array([0.0, 6.0]), chip=True, kick_speed=6.0))
+            self.pivot_kick_se = tactic.SkillEntry(
+                pivot_kick.PivotKick(None, target_point=np.array([0.0, 6.0]), chip=True, kick_speed=6.0))
 
         return role_requests
 

@@ -29,7 +29,8 @@ RefereeBase::RefereeBase(const std::string& name)
     world_state_sub_ = create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStatePub, 1, [this](WorldState::Msg::SharedPtr msg) {
             auto ball_state = rj_convert::convert_from_ros(msg->ball);
-            capture_ready_point(ball_state.position);
+            last_ball_position_ = ball_state.position;
+
             spin_kick_detector(ball_state);
             send();
         });
@@ -41,11 +42,13 @@ void RefereeBase::play() {
 }
 
 void RefereeBase::stop() {
+    saved_restart_valid_ = false;
     update_cache(state_.state, GameState::State::Stop, &state_valid_);
     update_cache(state_.restart, GameState::Restart::None, &state_valid_);
 }
 
 void RefereeBase::halt() {
+    saved_restart_valid_ = false;
     // The restart carries through halts, so there is no need to change the
     // restart state.
     update_cache(state_.state, GameState::State::Halt, &state_valid_);
@@ -54,17 +57,24 @@ void RefereeBase::halt() {
 void RefereeBase::setup() { update_cache(state_.state, GameState::State::Setup, &state_valid_); }
 
 void RefereeBase::ready() {
-    std::cout << "Back to ready" << std::endl;
     update_cache(state_.state, GameState::State::Ready, &state_valid_);
 }
 
 void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
-    update_cache(state_.restart, type, &state_valid_);
-    update_cache(blue_restart_, blue_restart, &state_valid_);
-    update_cache(state_.our_restart, blue_team_ == blue_restart_, &state_valid_);
-    if (state_.restart != GameState::Restart::Placement) {
-        state_.ball_placement_point = std::nullopt;
+    if (!(saved_restart_valid_ && saved_restart_type_ == type && saved_restart_team_blue_ == blue_restart)) {
+        // We have a new restart!
+        if (state_.restart != GameState::Restart::Placement) {
+            state_.ball_placement_point = std::nullopt;
+        }
+        update_cache(state_.restart, type, &state_valid_);
+        update_cache(blue_restart_, blue_restart, &state_valid_);
+        update_cache(state_.our_restart, blue_team_ == blue_restart_, &state_valid_);
+        std::cout << "New restart" << std::endl;
+        capture_ready_point(last_ball_position_);
     }
+    saved_restart_type_ = type;
+    saved_restart_team_blue_ = blue_restart;
+    saved_restart_valid_ = true;
 }
 
 void RefereeBase::ball_placement(rj_geometry::Point point, bool blue_placement) {

@@ -31,12 +31,12 @@ class Clear(tactic.ITactic):
     A passing tactic which captures then passes the ball
     """
 
-    def __init__(self, target_point:np.ndarray):
+    def __init__(self, target_point:np.ndarray, kick_speed=3.0, chip=False):
         self.target_point = target_point
         # self.kick = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point=target_point, chip=False, kick_speed=5.0))
-        self.kick = tactic.SkillEntry(line_kick.LineKickSkill(None, target_point=target_point, chip=False, kick_speed=5.0))
+        self.kick = tactic.SkillEntry(line_kick.LineKickSkill(None, target_point=target_point, chip=True, kick_speed=kick_speed))
         self.clearer_cost = ClearerCost()
-        
+
     def compute_props(self):
         pass
 

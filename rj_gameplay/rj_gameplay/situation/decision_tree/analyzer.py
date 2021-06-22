@@ -165,7 +165,26 @@ class Analyzer(stp.situation.IAnalyzer):
         elif game_info.is_penalty():
             return dt.plays.NoSituation()
 
-        elif game_info.is_direct() or game_info.is_indirect():
+        elif game_info.is_direct():
+            if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
+                if game_info.our_restart:
+                    return dt.plays.OffensiveKickDirect()
+                else:
+                    return dt.plays.DefendRestartOffensiveDirect()
+            elif heuristics.field_loc == FieldLoc.MIDFIELD:
+                if game_info.our_restart:
+                    return dt.plays.MidfieldKickDirect()
+                else:
+                    return dt.plays.DefendRestartMidfieldDirect()
+            elif heuristics.field_loc == FieldLoc.DEFEND_SIDE:
+                if game_info.our_restart:
+                    return dt.plays.DefensiveKickDirect()
+                else:
+                    return dt.plays.DefendRestartDefensiveDirect()
+            else:
+                raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
+
+        elif game_info.is_indirect():
             if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
                 if game_info.our_restart:
                     return dt.plays.OffensiveKick()
@@ -183,6 +202,7 @@ class Analyzer(stp.situation.IAnalyzer):
                     return dt.plays.DefendRestartDefensive()
             else:
                 raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
+
 
     @staticmethod
     def __analyze_normal(

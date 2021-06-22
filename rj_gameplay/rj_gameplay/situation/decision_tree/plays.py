@@ -34,6 +34,24 @@ class DefendRestartDefensive(stp.situation.ISituation):
     ...
 
 
+class DefendRestartOffensiveDirect(stp.situation.ISituation):
+    """Defending our direct opponents restart on their side of the field."""
+
+    ...
+
+
+class DefendRestartMidfieldDirect(stp.situation.ISituation):
+    """Plays for defending our opponents direct restart on their side of the field."""
+
+    ...
+
+
+class DefendRestartDefensiveDirect(stp.situation.ISituation):
+    """Plays for defending our opponents direct restart in the midfield."""
+
+    ...
+
+
 class Clear(stp.situation.ISituation):
     """Plays for clearing the ball from our side of the field (should include defensive
     caution)."""
@@ -145,19 +163,37 @@ class DefendPenalty(stp.situation.ISituation):
 
 
 class OffensiveKick(stp.situation.ISituation):
-    """Plays for direct and indirect kicks on their side."""
+    """Plays for indirect kicks on their side."""
 
     ...
 
 
 class DefensiveKick(stp.situation.ISituation):
-    """Plays for direct and indirect kicks on our side."""
+    """Plays for indirect kicks on our side."""
 
     ...
 
 
 class MidfieldKick(stp.situation.ISituation):
-    """Plays for direct and indirect kicks in the midfield."""
+    """Plays for indirect kicks in the midfield."""
+
+    ...
+
+
+class OffensiveKickDirect(stp.situation.ISituation):
+    """Plays for direct kicks on their side."""
+
+    ...
+
+
+class DefensiveKickDirect(stp.situation.ISituation):
+    """Plays for direct kicks on our side."""
+
+    ...
+
+
+class MidfieldKickDirect(stp.situation.ISituation):
+    """Plays for direct kicks in the midfield."""
 
     ...
 

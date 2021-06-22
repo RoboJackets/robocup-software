@@ -30,5 +30,4 @@ class Capture(action.IAction):
         else:
             self.ticks_done -= 5
         self.ticks_done = np.clip(self.ticks_done, a_min=0, a_max=200)
-        print(self.ticks_done)
         return self.ticks_done > 50
