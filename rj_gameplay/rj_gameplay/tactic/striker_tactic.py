@@ -170,7 +170,7 @@ class LineKickStrikerTactic(tactic.ITactic):
         self.cost = cost  # unused
         self.target_point = target_point
         self.shoot = tactic.SkillEntry(
-            line_kick.LineKickSkill(robot=None, target_point=target_point))
+            line_kick.LineKickSkill(robot=None, target_point=None))
         self.capture_cost = CaptureCost()
 
     def compute_props(self):

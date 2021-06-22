@@ -31,6 +31,7 @@ class LineKickSkill(ILineKickSkill):
 
         self.target_point = target_point
 
+        self.kick_speed = kick_speed
         if self.robot is not None:
             self.line_kick_action = line_kick.LineKickAction(self.robot.id, self.target_point, chip=chip, kick_speed=kick_speed)
         else:
@@ -42,8 +43,17 @@ class LineKickSkill(ILineKickSkill):
         self.root.setup_with_descendants()
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
-
         self.robot = robot
+
+        self.line_kick_action.target = self.target_point
+
+        ball_to_target = self.target_point - world_state.ball.pos
+        ball_to_target /= np.linalg.norm(ball_to_target)
+        robot_dir = np.array([np.cos(robot.pose[2]), np.sin(robot.pose[2])])
+
+        right_direction = np.dot(ball_to_target, robot_dir) > 0.9
+        self.line_kick_action.kick_speed = self.kick_speed if right_direction else 0.0
+
         actions = self.root.tick_once(self.robot, world_state)
         return actions
         # TODO: change so this properly returns the actions intent messages
