@@ -73,11 +73,15 @@ def build_seek_function(target):
         if world_state.ball.visible:
             goal_pos = np.array([0, world_state.field.length_m])
             ball_to_goal_vec = goal_pos - world_state.ball.pos
-            ball_to_goal_vec /= np.linalg.norm(ball_to_goal_vec)
+            ball_to_goal_dist = np.linalg.norm(ball_to_goal_vec)
+            ball_to_goal_vec /= ball_to_goal_dist
 
             ball_to_goal_perp = np.array([-ball_to_goal_vec[1], ball_to_goal_vec[0]])
             perp_dist = np.dot(ball_to_goal_perp, point - world_state.ball.pos)
-            avoid_ball_cost = np.exp(-perp_dist ** 2 * 30)
+
+            range_diff = np.linalg.norm(goal_pos - point) - ball_to_goal_dist
+            range_decay = np.exp(-range_diff) / (1.0 + np.exp(-range_diff))
+            avoid_ball_cost = np.exp(-perp_dist ** 2 * 30) * range_decay
 
         return np.linalg.norm(point - target) + avoid_ball_cost
 
