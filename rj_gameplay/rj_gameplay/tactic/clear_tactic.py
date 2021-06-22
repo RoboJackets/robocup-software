@@ -9,7 +9,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import pivot_kick, receive
+from rj_gameplay.skill import pivot_kick, receive, line_kick
 import stp.skill as skill
 import numpy as np
 
@@ -33,7 +33,8 @@ class Clear(tactic.ITactic):
 
     def __init__(self, target_point:np.ndarray):
         self.target_point = target_point
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point=target_point, chip=False, kick_speed=5.0))
+        # self.kick = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point=target_point, chip=False, kick_speed=5.0))
+        self.kick = tactic.SkillEntry(line_kick.LineKickSkill(None, target_point=target_point, chip=False, kick_speed=5.0))
         self.clearer_cost = ClearerCost()
         
     def compute_props(self):
@@ -54,7 +55,7 @@ class Clear(tactic.ITactic):
         role_requests: tactic.RoleRequests = {}
 
         clearer_request = role.RoleRequest(role.Priority.MEDIUM, True, self.clearer_cost)
-        role_requests[self.pivot_kick] = [clearer_request]
+        role_requests[self.kick] = [clearer_request]
 
         return role_requests
 
@@ -63,10 +64,10 @@ class Clear(tactic.ITactic):
         :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
         TODO: Come up with better timings for starting receive
         """
-        clearer_result = role_results[self.pivot_kick]
+        clearer_result = role_results[self.kick]
         if clearer_result and clearer_result[0].is_filled():
-            return [self.pivot_kick]
+            return [self.kick]
         return []
 
     def is_done(self, world_state:rc.WorldState):
-        return self.pivot_kick.skill.is_done(world_state)
+        return self.kick.skill.is_done(world_state)
