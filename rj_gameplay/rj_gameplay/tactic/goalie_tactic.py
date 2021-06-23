@@ -47,7 +47,7 @@ def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
     goal_pt = world_state.field.our_goal_loc
 
     dir_vec = (ball_pt - goal_pt) / np.linalg.norm(ball_pt - goal_pt)
-    # get in-between ball and goal, staying behind wall
+    # get in-between ball and goal, staying near baseline 
     dist_from_goal = min(
         GOALIE_PCT_TO_BALL * np.linalg.norm(ball_pt - goal_pt),
         1.0)
@@ -115,7 +115,7 @@ class GoalieTactic(tactic.ITactic):
             ball_pos = world_state.ball.pos
             ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos) 
 
-            if ball_speed < 0.5 and (abs(ball_pos[0]) < box_w + line_w + MAX_OOB and ball_pos[1] < box_h + line_w + MAX_OOB): 
+            if ball_speed < 0.5 and (abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB and ball_pos[1] < box_h + line_w + MAX_OOB): 
                 self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
                 if ball_speed < 1e-6:
                     # if ball is stopped and inside goalie box, collect it
