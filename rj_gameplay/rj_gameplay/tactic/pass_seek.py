@@ -55,13 +55,6 @@ def restart_seek(point: Tuple[float, float],
     return cost
 
 
-def attack_seek_left(point: Tuple[float, float],
-                     world_state: Tuple[rc.WorldState]) -> float:
-    left_pt = np.array([1.5, 7.5])
-    dist_to_ball = np.linalg.norm(point - world_state.ball.pos) if world_state.ball.visible else np.inf
-    return np.linalg.norm(left_pt - point + 0 * np.exp(-dist_to_ball ** 2))
-
-
 def build_seek_function(target):
     def seek_heuristic(point: Tuple[float, float],
                        world_state: Tuple[rc.WorldState]) -> float:

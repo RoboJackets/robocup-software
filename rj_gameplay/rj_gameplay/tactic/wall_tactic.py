@@ -32,20 +32,26 @@ class wall_cost(role.CostFn):
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
 
-        if robot is None or self.wall_pt is None:
+        if robot is None:
             return 9999
+
+        wall_pt = np.array([0., 0.]) if self.wall_pt is None else self.wall_pt
 
         # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
         if not robot.visible:
             return 9999  # float('inf') threw ValueError
 
         # TODO: fix goalie assignment issue the right way
-        if np.linalg.norm(robot.pose[0:2] - world_state.field.our_goal_loc) < MIN_WALL_RAD:
-            return 9999
+        # if np.linalg.norm(robot.pose[0:2] - world_state.field.our_goal_loc) < MIN_WALL_RAD:
+        #     return 9999
+
+        switch_cost = 0
+        if prev_result and prev_result.is_filled():
+            switch_cost = 1 * (prev_result.role.robot.id != robot.id)
 
         # costs should be in seconds, not dist
-        return self.scale * np.linalg.norm(robot.pose[0:2] - self.wall_pt
-                                           ) / global_parameters.soccer.robot.max_speed
+        return self.scale * np.linalg.norm(robot.pose[0:2] - wall_pt
+                                           ) / global_parameters.soccer.robot.max_speed + switch_cost
 
 
 def find_wall_pts(num_wallers: int,
