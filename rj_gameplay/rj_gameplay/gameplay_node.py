@@ -15,8 +15,7 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic_defense, basic_scramble, passing_tactic_play, defend_restart, restart, kickoff_play, \
-    basic122
+from rj_gameplay.play import basic_defense, basic_scramble, passing_tactic_play, defend_restart, restart, kickoff_play, basic122, penalty_defense
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
@@ -35,7 +34,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
-        return (None, basic122.Basic122())
+        return (None, penalty_defense.PenaltyDefense())
 
 
 class GameplayNode(Node):
