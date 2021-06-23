@@ -26,6 +26,7 @@ class IPivotKick(skill.ISkill, ABC):
 class PivotKick(IPivotKick):
     """
     A pivot kick skill
+    capture -> pivot -> kick
     """
 
     def __init__(self, robot: rc.Robot, target_point: np.array, chip: bool,
