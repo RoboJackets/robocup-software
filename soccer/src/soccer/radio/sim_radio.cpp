@@ -18,6 +18,9 @@ using namespace boost::asio;
 
 namespace radio {
 
+DEFINE_STRING(kRadioParamModule, interface, "127.0.0.1",
+                 "The interface for referee operation");
+
 static SimulatorCommand convert_placement_to_proto(
     const rj_msgs::srv::SimPlacement::Request& placement) {
     SimulatorCommand packet;
@@ -63,8 +66,7 @@ SimRadio::SimRadio(bool blue_team)
     auto address = boost::asio::ip::make_address("172.25.0.12").to_v4();
     robot_control_endpoint_ =
         ip::udp::endpoint(address, blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
-    sim_control_endpoint_ =
-        ip::udp::endpoint(address, kSimCommandPort);
+    sim_control_endpoint_ = ip::udp::endpoint(address, kSimCommandPort);
 
     buffer_.resize(1024);
     start_receive();

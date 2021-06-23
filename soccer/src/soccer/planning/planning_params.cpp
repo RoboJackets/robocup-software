@@ -25,7 +25,7 @@ DEFINE_NS_FLOAT64(
     kPlanningParamModule, replanner, partial_replan_lead_time, 0.1,
     "Portion of the path (seconds) that will not be changed in the case of a partial replan");
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, replanner, off_path_threshold, 0.5,
+    kPlanningParamModule, replanner, off_path_threshold, 0.1,
     "Position error threshold (m), a partial replan will be forced if we are not within this "
     "amount of the planned trajectory.");
 

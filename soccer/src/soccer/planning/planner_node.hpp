@@ -7,6 +7,7 @@
 #include <context.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/robot_status.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
@@ -149,7 +150,10 @@ private:
     TrajectoryCollection* robot_trajectories_;
     SharedStateInfo* shared_state_;
 
+    bool had_break_beam_ = false;
+
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
+    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_pub_;
 
     rj_drawing::RosDebugDrawer debug_draw_;

@@ -29,7 +29,7 @@ struct PlanRequest {
                 rj_geometry::ShapeSet virtual_obstacles,
                 std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, int8_t priority = 0,
-                rj_drawing::RosDebugDrawer* debug_drawer = nullptr)
+                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -39,7 +39,8 @@ struct PlanRequest {
           shell_id(shell_id),
           priority(priority),
           world_state(world_state),
-          debug_drawer(debug_drawer) {}
+          debug_drawer(debug_drawer),
+          ball_sense(ball_sense) {}
 
     /**
      * The robot's starting state.
@@ -96,6 +97,9 @@ struct PlanRequest {
      * should be performed.
      */
     rj_drawing::RosDebugDrawer* debug_drawer;
+
+    // Whether the robot has a ball
+    bool ball_sense = false;
 };
 
 /**

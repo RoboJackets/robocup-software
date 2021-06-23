@@ -36,7 +36,7 @@ private:
     // and won't intercept ball correctly anymore
     void check_solution_validity(BallState ball, RobotInstant start);
 
-    void process_state_transition(BallState ball, RobotInstant start_instant);
+    void process_state_transition(BallState ball, RobotInstant start_instant, bool has_ball);
 
     Trajectory coarse_approach(
         const PlanRequest& plan_request, RobotInstant start,

@@ -39,6 +39,8 @@ static const bool kCancelBallPlaceOnHalt = true;
 DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "
               "colors from referee");
+DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1",
+              "The interface for referee operation");
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
     set_team_name(PARAM_team_name);
@@ -136,36 +138,36 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             play();
             break;
         case SSL_Referee::PREPARE_KICKOFF_YELLOW:
-            restart(GameState::Restart::Kickoff, false);
             setup();
+            restart(GameState::Restart::Kickoff, false);
             break;
         case SSL_Referee::PREPARE_KICKOFF_BLUE:
-            restart(GameState::Restart::Kickoff, true);
             setup();
+            restart(GameState::Restart::Kickoff, true);
             break;
         case SSL_Referee::PREPARE_PENALTY_YELLOW:
-            restart(GameState::Restart::Penalty, false);
             setup();
+            restart(GameState::Restart::Penalty, false);
             break;
         case SSL_Referee::PREPARE_PENALTY_BLUE:
-            restart(GameState::Restart::Penalty, true);
             setup();
+            restart(GameState::Restart::Penalty, true);
             break;
         case SSL_Referee::DIRECT_FREE_YELLOW:
+            setup();
             restart(GameState::Restart::Direct, false);
-            play();
             break;
         case SSL_Referee::DIRECT_FREE_BLUE:
+            setup();
             restart(GameState::Restart::Direct, true);
-            play();
             break;
         case SSL_Referee::INDIRECT_FREE_YELLOW:
+            setup();
             restart(GameState::Restart::Indirect, false);
-            play();
             break;
         case SSL_Referee::INDIRECT_FREE_BLUE:
+            setup();
             restart(GameState::Restart::Indirect, true);
-            play();
             break;
         case SSL_Referee::TIMEOUT_YELLOW:
         case SSL_Referee::TIMEOUT_BLUE:

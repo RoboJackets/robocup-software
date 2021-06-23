@@ -28,8 +28,9 @@ def seek_heuristic(point: Tuple[float, float],
     cost -= 7 * point[1]
     return cost
 
+
 def restart_seek(point: Tuple[float, float],
-                   world_state: Tuple[rc.WorldState]) -> float:
+                 world_state: Tuple[rc.WorldState]) -> float:
     """
     func to find a point to move to
     robot "most open" @ point found by optimizer
@@ -54,19 +55,53 @@ def restart_seek(point: Tuple[float, float],
     return cost
 
 
+def attack_seek_left(point: Tuple[float, float],
+                     world_state: Tuple[rc.WorldState]) -> float:
+    left_pt = np.array([1.5, 7.5])
+    dist_to_ball = np.linalg.norm(point - world_state.ball.pos) if world_state.ball.visible else np.inf
+    return np.linalg.norm(left_pt - point + 0 * np.exp(-dist_to_ball ** 2))
+
+
+def build_seek_function(target):
+    def seek_heuristic(point: Tuple[float, float],
+                       world_state: Tuple[rc.WorldState]) -> float:
+        nonlocal target
+        target = np.array(target)
+        point = np.array(point)
+
+        avoid_ball_cost = 0
+        if world_state.ball.visible:
+            goal_pos = np.array([0, world_state.field.length_m])
+            ball_to_goal_vec = goal_pos - world_state.ball.pos
+            ball_to_goal_dist = np.linalg.norm(ball_to_goal_vec)
+            ball_to_goal_vec /= ball_to_goal_dist
+
+            ball_to_goal_perp = np.array([-ball_to_goal_vec[1], ball_to_goal_vec[0]])
+            perp_dist = np.dot(ball_to_goal_perp, point - world_state.ball.pos)
+
+            range_diff = np.linalg.norm(goal_pos - point) - ball_to_goal_dist
+            range_decay = np.exp(-range_diff) / (1.0 + np.exp(-range_diff))
+            avoid_ball_cost = np.exp(-perp_dist ** 2 * 30) * range_decay
+
+        return np.linalg.norm(point - target) + avoid_ball_cost
+
+    return seek_heuristic
+
+
 class SeekCost(role.CostFn):
     """
     A cost function for how to choose a seeking robot
     TODO: Implement a better cost function
     """
+
     def __init__(self, target_point: np.ndarray):
         self.target_point = target_point
 
     def __call__(
-        self,
-        robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
+            self,
+            robot: rc.Robot,
+            prev_result: Optional["RoleResult"],
+            world_state: rc.WorldState,
     ) -> float:
 
         if robot is None or self.target_point is None:
@@ -84,10 +119,12 @@ class Seek(tactic.ITactic):
     Role chosen by SeekCost
     # TODO: make naming less arbitrary
     """
+
     def __init__(self, target_point: np.ndarray,
                  seek_heuristic: Callable[[Tuple[float, float]],
                                           float], seeker_cost: role.CostFn):
-        self.move = tactic.SkillEntry(move.Move(target_point=target_point))
+        goal_pos = np.array([0, 9])
+        self.move = tactic.SkillEntry(move.Move(target_point=target_point, face_point=goal_pos))
         self.cost = seeker_cost
         self.seek_heuristic = seek_heuristic
 
@@ -108,7 +145,7 @@ class Seek(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        move_request = role.RoleRequest(role.Priority.HIGH, False, self.cost)
+        move_request = role.RoleRequest(role.Priority.LOW, False, self.cost)
         role_requests[self.move] = [move_request]
 
         return role_requests
@@ -118,11 +155,14 @@ class Seek(tactic.ITactic):
         """
         :return: A list of size 1 skill depending on which role is filled
         """
+        goal_pos = np.array([0, world_state.field.length_m])
+        self.move.skill.face_point = goal_pos
         self.move.skill.target_point = optimizer.find_seek_point(
             self.seek_heuristic, world_state)
         move_result = role_results[self.move]
 
         if move_result and move_result[0].is_filled():
+            self.cost.locked_bot = move_result[0].role.robot
             return [self.move]
         return []
 

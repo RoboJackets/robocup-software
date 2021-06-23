@@ -98,32 +98,32 @@ protected:
 
     void set_goalie(uint8_t goalie_id);
 
+    bool should_capture() const { return state_.in_ready_state() || state_.in_setup_state(); }
+
     void capture_ready_point(const rj_geometry::Point& ball_position) {
-        if (state_.in_ready_state() && !capture_ready_point_.has_value()) {
+        std::cout << "State: " << state_.state << std::endl;
+        if (should_capture()) {
             std::cout << "Capturing ball position" << std::endl;
             capture_ready_point_ = ball_position;
         }
     }
 
     void spin_kick_detector(const BallState& ball_position) {
-        if (!state_.in_ready_state() && capture_ready_point_.has_value()) {
+        if (!should_capture() && capture_ready_point_.has_value()) {
             capture_ready_point_ = std::nullopt;
             std::cout << "Clearing ball position" << std::endl;
         }
 
-        if (capture_ready_point_.has_value()) {
+        if (should_capture() && capture_ready_point_.has_value()) {
             std::cout << "Comparing ball position" << std::endl;
             constexpr double kMovedRadius = 0.1;
-            if (!capture_ready_point_->near_point(ball_position.position,
-                                                 kMovedRadius)) {
+            if (!capture_ready_point_->near_point(ball_position.position, kMovedRadius)) {
                 play();
             }
         }
     }
 
-    [[nodiscard]] bool our_restart() const {
-        return state_.our_restart;
-    }
+    [[nodiscard]] bool our_restart() const { return state_.our_restart; }
 
     /**
      * @brief Send any updated messages.
@@ -172,6 +172,8 @@ private:
     rclcpp::Publisher<GameStateMsg>::SharedPtr game_state_pub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
 
+    bool did_setup_end_ = false;
+
     rclcpp::TimerBase::SharedPtr pub_timer_;
 
     GameStateMsg gamestate_msg;
@@ -187,6 +189,11 @@ private:
     std::optional<rj_geometry::Point> capture_ready_point_;
 
     params::LocalROS2ParamProvider param_provider_;
+
+    bool saved_restart_valid_ = false;
+    bool saved_restart_team_blue_ = false;
+    GameState::Restart saved_restart_type_ = GameState::Restart::None;
+    rj_geometry::Point last_ball_position_;
 };
 
 }  // namespace referee
