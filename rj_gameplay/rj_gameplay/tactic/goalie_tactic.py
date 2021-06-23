@@ -137,7 +137,7 @@ class GoalieTactic(tactic.ITactic):
                 if ball_speed > 0 and ball_to_goal_time < 2:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
-                    goalie_pos = world_state.our_robots[world_state.goalie_id].pose[:2]
+                    goalie_pos = world_state.our_robots[world_state.goalie_id].pose[:2] if world_state.goalie_id is not None else np.array([0., 0.])
                     self.move_se.skill.target_point = get_block_pt(world_state, goalie_pos)
                     self.move_se.skill.face_point = world_state.ball.pos
                     role_requests[self.move_se] = [

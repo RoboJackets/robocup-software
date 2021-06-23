@@ -28,7 +28,7 @@ Radio::Radio()
             });
     }
 
-    tick_timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { tick(); });
+    tick_timer_ = create_wall_timer(std::chrono::milliseconds(5), [this]() { tick(); });
 }
 
 void Radio::publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {

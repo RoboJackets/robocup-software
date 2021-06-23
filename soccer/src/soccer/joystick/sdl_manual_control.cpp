@@ -41,7 +41,7 @@ ControllerCommand KeyboardController::get_command() const {
     }
 
     if (key_down(keystate, SDL_SCANCODE_LSHIFT)) {
-        command.rotation *= PARAM_max_damped_translation_speed;
+        command.rotation *= PARAM_max_damped_rotation_speed;
         command.translation *= PARAM_max_damped_translation_speed;
     } else {
         command.rotation *= PARAM_max_rotation_speed;
@@ -94,6 +94,7 @@ ControllerCommand GamepadController::get_command() const {
     command.rotation = -get_axis(SDL_CONTROLLER_AXIS_RIGHTX);
     command.kick = get_axis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > kTriggerCutoff;
     command.chip = get_button(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+    command.kick_power = kick_power_;
 
     if (command.kick || command.chip) {
         command.kick_power = kick_power_;

@@ -135,6 +135,8 @@ void CollectPlanner::check_solution_validity(BallState ball, RobotInstant start)
 }
 
 void CollectPlanner::process_state_transition(BallState ball, RobotInstant start_instant, bool has_ball) {
+    auto prev_state = current_state_;
+
     // Do the transitions
     double dist = (start_instant.position() - ball.position).mag() - kRobotMouthRadius;
     double speed_diff = (start_instant.linear_velocity() - average_ball_vel_).mag() -
@@ -146,23 +148,30 @@ void CollectPlanner::process_state_transition(BallState ball, RobotInstant start
         current_state_ = FineApproach;
     }
 
+    if (dist < collect::PARAM_dist_cutoff_to_control + kRobotMouthRadius && speed_diff < collect::PARAM_vel_cutoff_to_control) {
+        current_state_ = Control;
+    }
+
     // If we are close enough to the target point near the ball
     // and almost the same speed we want, start slowing down
     // TODO(#1518): Check for ball sense?
     if (has_ball) {
-        current_state_ = Control;
+        // current_state_ = Control;
     } else if (current_state_ == Control) {
-        current_state_ = FineApproach;
+        // current_state_ = FineApproach;
     }
 
-    if (current_state_ == Control && dist > collect::PARAM_dist_cutoff_to_control &&
+    if (current_state_ == Control && dist > collect::PARAM_dist_cutoff_to_control  + 0.1 &&
         start_instant.linear_velocity().mag() < 0.1) {
         current_state_ = FineApproach;
     }
 
-    if (current_state_ == FineApproach &&
-        dist > collect::PARAM_approach_dist_target + kRobotMouthRadius) {
+    if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius + 0.01) {
         current_state_ = CourseApproach;
+    }
+
+    if (prev_state != current_state_ ) {
+        previous_ = Trajectory{};
     }
 }
 

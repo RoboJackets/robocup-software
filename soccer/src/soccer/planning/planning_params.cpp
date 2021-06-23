@@ -76,7 +76,7 @@ DEFINE_NS_FLOAT64(
 // Control acceleration controls the touch to stop
 // Lower this if we decelerate too quickly for the dribbler to keep a back
 // spin on
-DEFINE_NS_FLOAT64(kPlanningParamModule, collect, control_accel_scale, 0.8,
+DEFINE_NS_FLOAT64(kPlanningParamModule, collect, control_accel_scale, 0.4,
                   "Control acceleration controls the touch to stop (unitless)");
 // How far away from the ball to target for the approach
 // This should be tuned so that the end of approach places the dribbler
