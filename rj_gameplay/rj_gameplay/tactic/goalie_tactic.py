@@ -76,6 +76,7 @@ class GoalieTactic(tactic.ITactic):
 
         # init skills
         self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
+        self.receive_se = tactic.SkillEntry(receive.Receive())
         self.pivot_kick_se = tactic.SkillEntry(
             pivot_kick.PivotKick(None, target_point=np.array([0.0, 6.0]), chip=True, kick_speed=6.0, threshold=0.2))
 
@@ -115,11 +116,18 @@ class GoalieTactic(tactic.ITactic):
             ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos) 
 
             if ball_speed < 0.5 and (abs(ball_pos[0]) < box_w + line_w + MAX_OOB and ball_pos[1] < box_h + line_w + MAX_OOB): 
-                # if ball is slow and inside goalie box, collect it, chip
-                self.pivot_kick_se.skill.target_point = np.array([0.0, 6.0])
-                role_requests[self.pivot_kick_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
-                ]
+                self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
+                if ball_speed < 1e-6:
+                    # if ball is stopped and inside goalie box, collect it
+                    role_requests[self.receive_se] = [
+                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
+                    ]
+                else:
+                    # if ball has been stopped already, chip toward center field
+                    self.pivot_kick_se.skill.target_point = np.array([0.0, 6.0])
+                    role_requests[self.pivot_kick_se] = [
+                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
+                    ]
             else:
                 if ball_speed == 0:
                     ball_to_goal_time = 100
@@ -161,11 +169,14 @@ class GoalieTactic(tactic.ITactic):
         skills = []
 
         move_result = role_results[self.move_se]
+        receive_result = role_results[self.receive_se]
         pivot_kick_result = role_results[self.pivot_kick_se]
 
         # move skill takes priority
         if move_result and move_result[0].is_filled():
             skills.append(self.move_se)
+        elif receive_result and receive_result[0].is_filled():
+            skills.append(self.receive_se)
         elif pivot_kick_result and pivot_kick_result[0].is_filled():
             skills.append(self.pivot_kick_se)
 
