@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
+from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic, move_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -14,7 +14,12 @@ class PenaltyDefense(play.IPlay):
     """
     def __init__(self):
         self.tactics = [
-            goalie_tactic.GoalieTactic()
+            goalie_tactic.GoalieTactic(),
+            move_tactic.Move((1.0, 9.0)),
+            move_tactic.Move((1.3, 9.0)),
+            move_tactic.Move((1.6, 9.0)),
+            move_tactic.Move((1.9, 9.0)),
+            move_tactic.Move((2.2, 9.0)),
         ]
 
         self.role_assigner = NaiveRoleAssignment()
