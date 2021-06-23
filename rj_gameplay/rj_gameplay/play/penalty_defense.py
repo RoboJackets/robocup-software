@@ -15,7 +15,7 @@ class PenaltyDefense(play.IPlay):
     def __init__(self):
         self.tactics = [
             goalie_tactic.GoalieTactic(),
-            move_tactic.Move((1.0, 9.0)),
+            move_tactic.Move((2.5, 9.0)),
             move_tactic.Move((1.3, 9.0)),
             move_tactic.Move((1.6, 9.0)),
             move_tactic.Move((1.9, 9.0)),
