@@ -23,28 +23,28 @@ def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
     right_end = np.array([0.5, world_state.field.length_m])
     dist_to_goal = np.linalg.norm(goal_loc - kicker.pose[0:2])
 
-    if dist_to_goal > 4: #long shoot threshold
-        return 9999
-    else:
-        u_vec_kicker_left = (left_end - kicker.pose[0:2]
-                             ) / np.linalg.norm(left_end - kicker.pose[0:2])
-        u_vec_kicker_right = (right_end - kicker.pose[0:2]
-                              ) / np.linalg.norm(right_end - kicker.pose[0:2])
-        shoot_range = atan2(
-            np.linalg.det([u_vec_kicker_left, u_vec_kicker_right]),
-            np.dot(u_vec_kicker_left, u_vec_kicker_right))
-        #TODO find weight
-        cost -= shoot_range
-        for opp_robot in world_state.their_robots:
-            u_vec_kicker_opp = (opp_robot.pose[0:2] - kicker.pose[0:2]
-                                ) / np.linalg.norm(opp_robot.pose[0:2] -
-                                                   kicker.pose[0:2])
+    # if dist_to_goal > 4: #long shoot threshold
+    #     return 9999
+    # else:
+    u_vec_kicker_left = (left_end - kicker.pose[0:2]
+                         ) / np.linalg.norm(left_end - kicker.pose[0:2])
+    u_vec_kicker_right = (right_end - kicker.pose[0:2]
+                          ) / np.linalg.norm(right_end - kicker.pose[0:2])
+    shoot_range = atan2(
+        np.linalg.det([u_vec_kicker_left, u_vec_kicker_right]),
+        np.dot(u_vec_kicker_left, u_vec_kicker_right))
+    #TODO find weight
+    cost -= shoot_range
+    for opp_robot in world_state.their_robots:
+        u_vec_kicker_opp = (opp_robot.pose[0:2] - kicker.pose[0:2]
+                            ) / np.linalg.norm(opp_robot.pose[0:2] -
+                                               kicker.pose[0:2])
 
-            if np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_left, u_vec_kicker_opp) and \
-                np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_right, u_vec_kicker_opp):
-                cost += (world_state.field.length_m - opp_robot.pose[1]) / (
-                    world_state.field.length_m - kicker.pose[1]) * 6 
-                #TODO: tweak this amplifier
+        if np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_left, u_vec_kicker_opp) and \
+            np.dot(u_vec_kicker_left, u_vec_kicker_right) < np.dot(u_vec_kicker_right, u_vec_kicker_opp):
+            cost += (world_state.field.length_m - opp_robot.pose[1]) / (
+                world_state.field.length_m - kicker.pose[1]) * 6 
+            #TODO: tweak this amplifier
 
         return cost
 

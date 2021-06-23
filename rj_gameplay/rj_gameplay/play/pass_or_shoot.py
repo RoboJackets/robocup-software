@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import striker_tactic, nmark_tactic, goalie_tactic, pass_seek, pass_tactic
+from rj_gameplay.tactic import striker_tactic, nmark_tactic, goalie_tactic, pass_seek, pass_tactic, assist_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -13,8 +13,9 @@ def shoot_cost(world_state: rc.WorldState) -> bool:
     for bot in world_state.our_robots:
         if bot.has_ball_sense:
             robot = bot
+    shoot_cost = assist_tactic.find_striker_cost(robot, world_state)
     for bot in world_state.our_robots:
-        if bot.id != robot.id and np.linalg.norm(bot.pose[0:2] - robot.pose[0:2]) < 2.0:
+        if bot.id != robot.id and assist_tactic.find_striker_cost(bot, world_state) < shoot_cost:
             return False
     return True
 
