@@ -25,7 +25,8 @@ class Move(action.IFiniteAction):
             target_vel : np.ndarray = np.array([0.0,0.0]),
             face_angle : Optional[float] = None,
             face_point : Optional[np.ndarray] = None,
-            priority : int = 0) -> None:
+            priority : int = 0,
+            ignore_ball: bool = False) -> None:
             
         self.robot_id = robot_id
         self.target_point = target_point
@@ -33,6 +34,7 @@ class Move(action.IFiniteAction):
         self.face_angle = face_angle
         self.face_point = face_point
         self.priority = priority
+        self.ignore_ball = ignore_ball
 
         # TODO: horrible hack for defending restarts
         self.is_def_restart = False
@@ -55,6 +57,8 @@ class Move(action.IFiniteAction):
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=self.target_point[0],y=self.target_point[1])
         path_command.target.velocity = Point(x=self.target_vel[0],y=self.target_vel[1])
+        path_command.ignore_ball = self.ignore_ball
+
         if(self.face_angle is not None):
             path_command.override_angle=[self.face_angle]
 

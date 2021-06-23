@@ -24,26 +24,28 @@ MIN_WALL_RAD = None
 class wall_cost(role.CostFn):
     """Cost function for role request.
     """
-    def __init__(self, wall_pt: np.ndarray = None):
+
+    def __init__(self, wall_pt: np.ndarray = None, scale: float = 1.0):
         self.wall_pt = wall_pt
+        self.scale = scale
 
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
 
         if robot is None or self.wall_pt is None:
-            return 99
+            return 9999
 
         # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
         if not robot.visible:
-            return 99  # float('inf') threw ValueError
+            return 9999  # float('inf') threw ValueError
 
         # TODO: fix goalie assignment issue the right way
         if np.linalg.norm(robot.pose[0:2] - world_state.field.our_goal_loc) < MIN_WALL_RAD:
-            return 99
+            return 9999
 
         # costs should be in seconds, not dist
-        return np.linalg.norm(robot.pose[0:2] - self.wall_pt
-                              ) / global_parameters.soccer.robot.max_speed
+        return self.scale * np.linalg.norm(robot.pose[0:2] - self.wall_pt
+                                           ) / global_parameters.soccer.robot.max_speed
 
 
 def find_wall_pts(num_wallers: int,
@@ -85,7 +87,7 @@ def find_wall_pts(num_wallers: int,
 
 
 class WallTactic(tactic.ITactic):
-    def __init__(self, num_wallers: int):
+    def __init__(self, num_wallers: int, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):
 
         self.num_wallers = num_wallers
 
@@ -95,7 +97,8 @@ class WallTactic(tactic.ITactic):
         ]
 
         # create empty cost_list (filled in get_requests)
-        self.cost_list = [wall_cost() for _ in range(self.num_wallers)]
+        self.cost_list = [wall_cost(scale=cost_scale) for _ in range(self.num_wallers)]
+        self.priority = priority
 
     def compute_props(self):
         pass
@@ -125,7 +128,7 @@ class WallTactic(tactic.ITactic):
         # create RoleRequest for each SkillEntry
         role_requests = {
             self.move_list[i]:
-            [role.RoleRequest(role.Priority.MEDIUM, False, self.cost_list[i])]
+                [role.RoleRequest(self.priority, False, self.cost_list[i])]
             for i in range(self.num_wallers)
         }
 

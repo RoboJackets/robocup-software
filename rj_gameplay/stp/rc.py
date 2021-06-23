@@ -2,7 +2,7 @@
 WorldState"""
 
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 import warnings
@@ -426,7 +426,7 @@ class GameInfo:
     """State of the soccer game"""
 
     __slots__ = [
-        "__period", "__state", "__restart", "__our_restart", "__goalie_id"
+        "__period", "__state", "__restart", "__our_restart", "__goalie_id", "__ball_placement",
     ]
 
     __period: GamePeriod
@@ -434,14 +434,16 @@ class GameInfo:
     __restart: GameRestart
     __our_restart: bool
     __goalie_id: int
+    __ball_placement: np.array
 
     def __init__(self, period: GamePeriod, state: GameState,
-                 restart: GameRestart, our_restart: bool, goalie_id: int):
+                 restart: GameRestart, our_restart: bool, goalie_id: int, ball_placement: np.array):
         self.__period = period
         self.__state = state
         self.__restart = restart
         self.__our_restart = our_restart
         self.__goalie_id = goalie_id
+        self.__ball_placement = ball_placement
 
     @property
     def period(self) -> GamePeriod:
@@ -524,6 +526,13 @@ class GameInfo:
         :return: True if the restart is free placement.
         """
         return self.restart == GameRestart.PLACEMENT
+
+    def ball_placement(self) -> Optional[np.ndarray]:
+        """
+        :return: True if the restart is free placement.
+        """
+        return self.__ball_placement if self.is_free_placement() else None
+
 
 
 class WorldState:

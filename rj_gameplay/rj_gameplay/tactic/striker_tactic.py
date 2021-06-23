@@ -45,7 +45,7 @@ def kick_cost(point: np.array, kick_speed: float, kick_origin: np.array, world_s
         blocker_margin(kick_origin, point, kick_speed, blocker)
         for blocker in world_state.their_robots
     ]
-    return -min(margins)
+    return -min(margins) + point[0] ** 2 * 0.01
 
 
 def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:

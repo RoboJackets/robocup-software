@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import striker_tactic, nmark_tactic, goalie_tactic, pass_seek
+from rj_gameplay.tactic import striker_tactic, nmark_tactic, goalie_tactic, pass_seek, wall_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -19,6 +19,7 @@ class Basic122(play.IPlay):
         self.target_point: np.ndarray = np.array([0., 9.])
         self.striker_tactic = striker_tactic.LineKickStrikerTactic(target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
+        self.wall_tactic = wall_tactic.WallTactic(2, role.Priority.LOW, cost_scale=0.1)
         # self.two_mark = nmark_tactic.NMarkTactic(2)
 
         left_pt = np.array([1.5, 7.5])
@@ -44,7 +45,8 @@ class Basic122(play.IPlay):
                                             # self.two_mark: self.two_mark.get_requests(world_state, None),
                                             self.seek_left: self.seek_left.get_requests(world_state, None),
                                             self.seek_right: self.seek_right.get_requests(world_state, None),
-                                            self.goalie_tactic: self.goalie_tactic.get_requests(world_state, None)}
+                                            self.goalie_tactic: self.goalie_tactic.get_requests(world_state, None),
+                                            self.wall_tactic: self.wall_tactic.get_requests(world_state, None)}
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -58,6 +60,7 @@ class Basic122(play.IPlay):
         skills += self.seek_left.tick(role_results[self.seek_left], world_state)
         skills += self.seek_right.tick(role_results[self.seek_right], world_state)
         skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
+        skills += self.wall_tactic.tick(role_results[self.wall_tactic])
 
         skill_dict = {}
         skill_dict.update(role_results[self.striker_tactic])
@@ -65,6 +68,7 @@ class Basic122(play.IPlay):
         skill_dict.update(role_results[self.seek_left])
         skill_dict.update(role_results[self.seek_right])
         skill_dict.update(role_results[self.goalie_tactic])
+        skill_dict.update(role_results[self.wall_tactic])
         return skill_dict, skills
 
     def is_done(self, world_state):

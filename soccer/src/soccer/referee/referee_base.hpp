@@ -12,6 +12,7 @@
 #include "game_state.hpp"
 #include "team_info.hpp"
 #include "world_state.hpp"
+#include "config_client/config_client.hpp"
 
 namespace referee {
 
@@ -98,7 +99,7 @@ protected:
 
     void set_goalie(uint8_t goalie_id);
 
-    bool should_capture() const { return state_.in_ready_state() || state_.in_setup_state(); }
+    bool should_capture() const { return (state_.in_ready_state() || state_.in_setup_state()) && !state_.placement(); }
 
     void capture_ready_point(const rj_geometry::Point& ball_position) {
         std::cout << "State: " << state_.state << std::endl;
@@ -194,6 +195,28 @@ private:
     bool saved_restart_team_blue_ = false;
     GameState::Restart saved_restart_type_ = GameState::Restart::None;
     rj_geometry::Point last_ball_position_;
+
+    config_client::ConfigClient config_client_;
+
+    /**
+     * @brief Returns the team angle
+     * @return The team angle.
+     */
+    [[nodiscard]] double team_angle() const {
+        const bool defend_plus_x = config_client_.game_settings().defend_plus_x;
+        return defend_plus_x ? -M_PI_2 : M_PI_2;
+    }
+
+    /**
+     * @brief Returns the transform from the world to the team.
+     * @return The transform from the world to the team frame.
+     */
+    [[nodiscard]] rj_geometry::TransformMatrix world_to_team() const {
+        rj_geometry::TransformMatrix world_to_team = rj_geometry::TransformMatrix::translate(
+            0, config_client_.field_dimensions().length / 2.0f);
+        world_to_team *= rj_geometry::TransformMatrix::rotate(static_cast<float>(team_angle()));
+        return world_to_team;
+    }
 };
 
 }  // namespace referee
