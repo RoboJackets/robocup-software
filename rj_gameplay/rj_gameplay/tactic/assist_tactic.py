@@ -26,6 +26,7 @@ def find_striker_cost(robot: rc.Robot, world_state: rc.WorldState):
     # if dist_to_goal > 4: #long shoot threshold
     #     return 9999
     # else:
+    cost += dist_to_goal
     u_vec_kicker_left = (left_end - kicker.pose[0:2]
                          ) / np.linalg.norm(left_end - kicker.pose[0:2])
     u_vec_kicker_right = (right_end - kicker.pose[0:2]
