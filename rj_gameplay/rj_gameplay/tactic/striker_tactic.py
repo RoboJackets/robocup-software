@@ -9,7 +9,7 @@ import numpy as np
 from math import atan2
 
 OPPONENT_SPEED = 1.5
-KICK_SPEED = 6.0
+KICK_SPEED = 4.5
 EFF_BLOCK_WIDTH = 0.7
 
 

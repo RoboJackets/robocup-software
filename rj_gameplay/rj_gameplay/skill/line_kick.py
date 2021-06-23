@@ -26,12 +26,13 @@ class LineKickSkill(ILineKickSkill):
     # def __init__(self, role: role.Role) -> None:
     # self.robot = role.robot
     # role-blind implementation
-    def __init__(self, robot: rc.Robot, target_point: np.array, chip: bool = False, kick_speed: float = 6.0) -> None:
+    def __init__(self, robot: rc.Robot, target_point: np.array, chip: bool = False, kick_speed: float = 5.5) -> None:
         self.robot = robot
 
         self.target_point = target_point
         self.chip = chip
         self.kick_speed = kick_speed
+        # self.kick_speed = 5.5
 
         if self.robot is not None:
             self.line_kick_action = line_kick.LineKickAction(self.robot.id, self.target_point, chip=chip, kick_speed=kick_speed)
