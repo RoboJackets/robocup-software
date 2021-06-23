@@ -203,6 +203,9 @@ class Analyzer(stp.situation.IAnalyzer):
             else:
                 raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
 
+        elif game_info.is_free_placement():
+            return dt.plays.Stop()
+
 
     @staticmethod
     def __analyze_normal(

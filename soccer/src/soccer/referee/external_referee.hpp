@@ -18,7 +18,6 @@
 #include "node.hpp"
 #include "referee_base.hpp"
 #include "team_info.hpp"
-#include "config_client/config_client.hpp"
 
 namespace referee {
 
@@ -49,7 +48,7 @@ private:
     rclcpp::TimerBase::SharedPtr network_timer_;
 
     // Process a new referee command
-    void handle_command(SSL_Referee::Command command);
+    void handle_command(SSL_Referee::Command command, rj_geometry::Point ball_placement_point);
     void handle_stage(SSL_Referee::Stage stage);
 
     // Arbitrary receive buffer size

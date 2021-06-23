@@ -148,7 +148,7 @@ def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
     our_restart = game_state_msg.our_restart
 
     game_info = rc.GameInfo(period, state, restart, our_restart,
-                            None)  # goalie_id set later
+                            None, np.array([game_state_msg.placement_point.x, game_state_msg.placement_point.y]))  # goalie_id set later
 
     return game_info
 

@@ -50,7 +50,7 @@ def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
     # get in-between ball and goal, staying behind wall
     dist_from_goal = min(
         GOALIE_PCT_TO_BALL * np.linalg.norm(ball_pt - goal_pt),
-        MIN_WALL_RAD - RobotConstants.RADIUS * 2.1)
+        1.0)
     mid_pt = goal_pt + (dir_vec * dist_from_goal)
     return mid_pt
 
@@ -59,8 +59,14 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
     pos = world_state.ball.pos
     vel = world_state.ball.vel
 
-    block_pt = np.array([(my_pos[1] - pos[1]) / vel[1] * vel[0] + pos[0],
-                         my_pos[1]])
+    tangent = vel / (np.linalg.norm(vel) + 1e-6)
+
+    # Find out where it would cross
+    time_to_cross = np.abs(pos[1] / vel[1]) if np.abs(vel[1]) > 1e-6 else 0
+    cross_x = np.clip(pos[0] + vel[0] * time_to_cross, a_min=-0.5, a_max=0.5)
+
+    block_pt = np.array([cross_x, 0]) - tangent * 0.1
+    block_pt = np.dot(tangent, my_pos - pos) * tangent + pos
 
     return block_pt
 
@@ -69,7 +75,7 @@ class GoalieTactic(tactic.ITactic):
     def __init__(self):
 
         # init skills
-        self.move_se = tactic.SkillEntry(move.Move())
+        self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
         self.receive_se = tactic.SkillEntry(receive.Receive())
         self.pivot_kick_se = tactic.SkillEntry(
             pivot_kick.PivotKick(None, target_point=np.array([0.0, 6.0]), chip=True, kick_speed=6.0, threshold=0.2))
@@ -109,8 +115,8 @@ class GoalieTactic(tactic.ITactic):
             ball_dist = np.linalg.norm(world_state.field.our_goal_loc -
                                        world_state.ball.pos)
 
-            if ball_speed < 1.0 and ball_dist < MIN_WALL_RAD - RobotConstants.RADIUS * 2.1:
-                self.move_se = tactic.SkillEntry(move.Move())
+            if ball_speed < 0.5 and ball_dist < MIN_WALL_RAD - RobotConstants.RADIUS * 2.1:
+                self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
                 if not self.receive_se.skill.is_done(world_state):
                     # if ball is slow and inside goalie box, collect it
                     role_requests[self.receive_se] = [
@@ -131,8 +137,8 @@ class GoalieTactic(tactic.ITactic):
                 if ball_speed > 0 and ball_to_goal_time < 2:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
-                    self.move_se.skill.target_point = get_block_pt(
-                        world_state, get_goalie_pt(world_state))
+                    goalie_pos = world_state.our_robots[world_state.goalie_id].pose[:2]
+                    self.move_se.skill.target_point = get_block_pt(world_state, goalie_pos)
                     self.move_se.skill.face_point = world_state.ball.pos
                     role_requests[self.move_se] = [
                         role.RoleRequest(role.Priority.HIGH, True,

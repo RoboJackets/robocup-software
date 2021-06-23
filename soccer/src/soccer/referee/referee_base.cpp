@@ -6,7 +6,11 @@
 namespace referee {
 
 RefereeBase::RefereeBase(const std::string& name)
-    : Node{name, rclcpp::NodeOptions{}.automatically_declare_parameters_from_overrides(true).allow_undeclared_parameters(true)}, param_provider_(this, kRefereeParamModule) {
+    : Node{name, rclcpp::NodeOptions{}
+                     .automatically_declare_parameters_from_overrides(true)
+                     .allow_undeclared_parameters(true)},
+      param_provider_(this, kRefereeParamModule),
+      config_client_{this} {
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorPub, keep_latest);
@@ -69,7 +73,6 @@ void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
         update_cache(state_.restart, type, &state_valid_);
         update_cache(blue_restart_, blue_restart, &state_valid_);
         update_cache(state_.our_restart, blue_team_ == blue_restart_, &state_valid_);
-        std::cout << "New restart" << std::endl;
         capture_ready_point(last_ball_position_);
     }
     saved_restart_type_ = type;
@@ -79,7 +82,7 @@ void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
 
 void RefereeBase::ball_placement(rj_geometry::Point point, bool blue_placement) {
     restart(GameState::Restart::Placement, blue_placement);
-    update_cache(state_.ball_placement_point, std::make_optional(point), &state_valid_);
+    update_cache(state_.ball_placement_point, std::make_optional(world_to_team() * point), &state_valid_);
 }
 
 void RefereeBase::set_period(GameState::Period period) {
@@ -148,7 +151,7 @@ void RefereeBase::send() {
         game_state_pub_->publish(msg);
         state_valid_ = true;
         gamestate_pub_timer_ = this->create_wall_timer(
-            std::chrono::seconds(1), [this]() { game_state_pub_->publish(gamestate_msg); });
+            std::chrono::milliseconds(100), [this]() { game_state_pub_->publish(gamestate_msg); });
     }
 
     if (!team_info_valid_) {

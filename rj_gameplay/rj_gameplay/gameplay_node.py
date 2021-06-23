@@ -77,6 +77,7 @@ class GameplayNode(Node):
         self.goalie_id = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()] * NUM_ROBOTS * 2
+        self.ball_placement = None
 
         self.global_parameter_client = GlobalParameterClient(
             self, 'global_parameter_server')
@@ -84,6 +85,7 @@ class GameplayNode(Node):
 
         # publish global obstacles
         self.goal_zone_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/goal_zone_obstacles', 10)
+        self.global_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/global_obstacles', 10)
 
         timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
@@ -124,6 +126,7 @@ class GameplayNode(Node):
         """
         if msg is not None:
             self.game_info = conv.gamestate_to_gameinfo(msg)
+            self.ball_placement = self.game_info.ball_placement()
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
         """
@@ -185,6 +188,17 @@ class GameplayNode(Node):
             top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (
                     self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
             their_penalty.pt = [bot_left, top_right]
+
+            global_obstacles = geo_msg.ShapeSet()
+            if self.ball_placement is not None:
+                for t in np.linspace(0.0, 1.0, 20):
+                    ball_point = self.world_state.ball.pos
+                    placement = self.ball_placement
+
+                    pt = ball_point * t + (1 - t) * placement
+                    global_obstacles.circles.append(geo_msg.Circle(center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8))
+                print(self.ball_placement)
+            self.global_obstacles_pub.publish(global_obstacles)
 
             # publish Rect shape to goal_zone_obstacles topic
             goal_zone_obstacles = geo_msg.ShapeSet()

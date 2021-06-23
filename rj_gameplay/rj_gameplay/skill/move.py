@@ -29,16 +29,19 @@ class Move(IMove):
             target_point : np.ndarray = np.array([0.0,0.0]),
             target_vel : np.ndarray = np.array([0.0,0.0]),
             face_angle : Optional[float] = None,
-            face_point : Optional[np.ndarray] = None):
+            face_point : Optional[np.ndarray] = None,
+            ignore_ball: bool = False):
         self.robot = robot
         self.target_point = target_point
         self.target_vel = target_vel
         self.face_point = face_point
         self.face_angle = face_angle
+        self.ignore_ball = ignore_ball
+
         if self.robot is not None:
-            self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point)
+            self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point, priority=0, ignore_ball=ignore_ball)
         else:
-            self.move = move.Move(self.robot, target_point, target_vel, face_angle, face_point)
+            self.move = move.Move(self.robot, target_point, target_vel, face_angle, face_point, priority=0, ignore_ball=ignore_ball)
 
         self.move_behavior = ActionBehavior('Move', self.move)
         self.root = self.move_behavior
@@ -59,4 +62,5 @@ class Move(IMove):
         return self.move.is_done(world_state)
 
     def __str__(self):
-        return f"Move(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
+        ignore_ball_str = ', ignoring ball' if self.ignore_ball else ''
+        return f"Move(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}{ignore_ball_str})"

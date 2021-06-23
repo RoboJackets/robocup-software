@@ -93,7 +93,7 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
     set_team_info(blue_info, yellow_info);
 
     // Update game state
-    handle_command(ref_packet.command());
+    handle_command(ref_packet.command(), rj_geometry::Point{ref_packet.designated_position().x() / 1000.0, ref_packet.designated_position().y() / 1000.0});
     handle_stage(ref_packet.stage());
     set_stage_time_left(std::chrono::duration_cast<RJ::Seconds>(
         std::chrono::microseconds(ref_packet.stage_time_left())));
@@ -121,7 +121,7 @@ void ExternalReferee::update() {
     io_service_.poll();
 }
 
-void ExternalReferee::handle_command(SSL_Referee::Command command) {
+void ExternalReferee::handle_command(SSL_Referee::Command command, rj_geometry::Point ball_placement_point) {
     switch (command) {
         case SSL_Referee::HALT:
             halt();
@@ -178,13 +178,13 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             break;
         case SSL_Referee::BALL_PLACEMENT_YELLOW:
             // TODO(#1559): ball placement point
-            ball_placement(rj_geometry::Point{}, false);
-            stop();
+            ball_placement(ball_placement_point, false);
+            restart(GameState::Restart::Placement, false);
             break;
         case SSL_Referee::BALL_PLACEMENT_BLUE:
             // TODO(#1559): ball placement point
-            ball_placement(rj_geometry::Point{}, true);
-            stop();
+            ball_placement(ball_placement_point, true);
+            restart(GameState::Restart::Placement, true);
             break;
     }
 }
