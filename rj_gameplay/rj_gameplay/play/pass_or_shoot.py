@@ -55,6 +55,13 @@ class PassOrShoot(play.IPlay):
 
         role_requests = {}
 
+        if self.striker_tactic.is_done(world_state):
+            self.striker_tactic = striker_tactic.StrikerTactic(target_point=self.target_point)
+        if self.pass_tactic.is_done(world_state):
+            self.pass_tactic = pass_tactic.Pass(
+                self.target_point, pass_tactic.PasserCost(),
+                pass_tactic.PassToOpenReceiver(self.target_point))
+
         if not self.striker_tactic.capture.skill.is_done(world_state) and self.shoot is None:
             role_requests: play.RoleRequests = {self.striker_tactic: self.striker_tactic.get_requests(world_state, None),
                                                 # self.two_mark: self.two_mark.get_requests(world_state, None),
@@ -108,7 +115,9 @@ class PassOrShoot(play.IPlay):
         skill_dict.update(role_results[self.seek_left])
         skill_dict.update(role_results[self.seek_right])
         skill_dict.update(role_results[self.goalie_tactic])
+
         return skill_dict, skills
 
     def is_done(self, world_state):
+        print(self.striker_tactic.is_done(world_state) or self.pass_tactic.is_done(world_state))
         return self.striker_tactic.is_done(world_state) or self.pass_tactic.is_done(world_state)
