@@ -478,6 +478,12 @@ class GameInfo:
 
         return self.__our_restart
 
+    def is_stopped(self) -> bool:
+        """
+        :return: True if play is stopped.
+        """
+        return self.state == GameState.STOP
+
     def is_ready(self) -> bool:
         """
         :return: True if the field is waiting on a team to kick the ball in a restart.

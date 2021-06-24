@@ -209,6 +209,10 @@ class LineKickStrikerTactic(tactic.ITactic):
 
         if shoot_result and shoot_result[0].is_filled():
             self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
+            if world_state is not None and world_state.game_info.is_penalty():
+                dist_to_goal = world_state.field.their_goal_loc[1] - world_state.ball.pos[1]
+                if dist_to_goal > 3.0:
+                    self.shoot.skill.kick_speed = 0.3
             return [self.shoot]
 
         return []

@@ -73,7 +73,7 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
 
 
 class GoalieTactic(tactic.ITactic):
-    def __init__(self, brick = False):
+    def __init__(self, brick=False):
         self.brick = brick
 
         # init skills
@@ -115,7 +115,7 @@ class GoalieTactic(tactic.ITactic):
         if world_state and world_state.ball.visible:
             ball_speed = np.linalg.norm(world_state.ball.vel)
             ball_pos = world_state.ball.pos
-            ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos) 
+            ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos)
 
             if self.brick:
                 self.move_se.skill.target_point = world_state.field.our_goal_loc
@@ -126,7 +126,8 @@ class GoalieTactic(tactic.ITactic):
                 ]
                 return role_requests
 
-            if ball_speed < 0.5 and (abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB and ball_pos[1] < box_h + line_w + MAX_OOB): 
+            if ball_speed < 0.5 and (abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB and ball_pos[
+                1] < box_h + line_w + MAX_OOB) and not world_state.game_info.is_stopped():
                 self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
                 if ball_speed < 1e-6:
                     # if ball is stopped and inside goalie box, collect it
@@ -148,7 +149,8 @@ class GoalieTactic(tactic.ITactic):
                 if ball_speed > 0 and ball_to_goal_time < 2:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
-                    goalie_pos = world_state.our_robots[world_state.goalie_id].pose[:2] if world_state.goalie_id is not None else np.array([0., 0.])
+                    goalie_pos = world_state.our_robots[world_state.goalie_id].pose[
+                                 :2] if world_state.goalie_id is not None else np.array([0., 0.])
                     self.move_se.skill.target_point = get_block_pt(world_state, goalie_pos)
                     self.move_se.skill.face_point = world_state.ball.pos
                     role_requests[self.move_se] = [

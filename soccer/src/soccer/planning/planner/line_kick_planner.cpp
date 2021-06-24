@@ -19,6 +19,11 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
 
     const auto& command = std::get<LineKickCommand>(plan_request.motion_command);
 
+    if (plan_request.virtual_obstacles.hit(plan_request.start.position())) {
+        prev_path_ = Trajectory{};
+        return prev_path_;
+    }
+
     if (target_kick_pos_.has_value() && command.target.dist_to(target_kick_pos_.value()) > 0.1) {
         prev_path_ = Trajectory{};
         target_kick_pos_ = std::nullopt;

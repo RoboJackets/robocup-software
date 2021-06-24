@@ -10,7 +10,7 @@ from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 
 
-class PrepPenaltyOffense(play.IPlay):
+class PreparePenaltyOffense(play.IPlay):
     """Move all robots to our half, but away from ball to prep for penalty kick
     """
 

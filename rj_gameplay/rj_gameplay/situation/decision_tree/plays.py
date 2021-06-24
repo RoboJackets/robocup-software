@@ -162,6 +162,12 @@ class Shootout(stp.situation.ISituation):
     ...
 
 
+class PrepareDefendShootout(stp.situation.ISituation):
+    """Plays for defending shootout shots."""
+
+    ...
+
+
 class DefendShootout(stp.situation.ISituation):
     """Plays for defending shootout shots."""
 
