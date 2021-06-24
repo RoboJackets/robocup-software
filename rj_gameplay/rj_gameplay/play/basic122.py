@@ -20,7 +20,7 @@ class Basic122(play.IPlay):
         self.striker_tactic = striker_tactic.LineKickStrikerTactic(target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
         self.wall_tactic = wall_tactic.WallTactic(2, role.Priority.LOW, cost_scale=0.1)
-        self.two_mark = nmark_tactic.NMarkTactic(2)
+        # self.two_mark = nmark_tactic.NMarkTactic(2)
 
         left_pt = np.array([1.5, 7.5])
         self.seek_left = pass_seek.Seek(left_pt, pass_seek.build_seek_function(left_pt), pass_seek.SeekCost(left_pt))
