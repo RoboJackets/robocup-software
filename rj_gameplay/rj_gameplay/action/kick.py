@@ -12,6 +12,7 @@ from rj_geometry_msgs.msg import Point
 
 KICK_DOT_THRESHOLD = 0.4
 KICK_BALL_SPEED_THRESHOLD = 0.9
+from rj_gameplay.MAX_KICK_SPEED import *
 
 class IKick(action.IAction, ABC):
     def done(self) -> bool:
@@ -31,7 +32,11 @@ class Kick(IKick):
         new_intent = intent
         empty_command = EmptyMotionCommand()
         new_intent.motion_command.empty_command = [empty_command]
-        new_intent.kick_speed = self.kick_speed
+        # limit "kick too fast" related fouls
+        if self.kick_speed <= MAX_KICK_SPEED:
+            new_intent.kick_speed = self.kick_speed
+        else:
+            new_intent.kick_speed = MAX_KICK_SPEED
         new_intent.trigger_mode = 2
         new_intent.shoot_mode = self.chip
         new_intent.is_active = True

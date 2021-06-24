@@ -12,6 +12,7 @@ from typing import Optional
 import math
 from rj_msgs import msg
 
+from rj_gameplay.MAX_KICK_SPEED import *
 
 class LineKickAction(action.IFiniteAction):
     """
@@ -31,7 +32,10 @@ class LineKickAction(action.IFiniteAction):
         line_kick_command.target = Point(x=self.target[0], y=self.target[1])
         intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK if not self.chip else RobotIntent.SHOOT_MODE_CHIP
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
-        intent.kick_speed = self.kick_speed
+        if self.kick_speed <= MAX_KICK_SPEED:
+            intent.kick_speed = self.kick_speed
+        else:
+            intent.kick_speed = MAX_KICK_SPEED
 
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True
