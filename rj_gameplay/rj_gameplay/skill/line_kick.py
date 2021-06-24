@@ -65,4 +65,4 @@ class LineKickSkill(ILineKickSkill):
         return self.line_kick_action.is_done(world_state)
 
     def __str__(self):
-        return f"LineKick(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}, chip={self.chip})"
+        return f"LineKick(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}, chip={self.chip}, kick_speed={self.kick_speed})"
