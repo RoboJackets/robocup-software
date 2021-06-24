@@ -213,7 +213,7 @@ class GameplayNode(Node):
             global_obstacles.rectangles = [our_goal, their_goal]
             if game_info is not None:
                 ball_point = self.world_state.ball.pos
-                if game_info.is_stopped() or (game_info.their_restart and game_info.is_indirect() or game_info.is_direct()):
+                if game_info.is_stopped() or game_info.their_restart and (game_info.is_indirect() or game_info.is_direct()):
                     global_obstacles.circles.append(
                         geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.6))
                 if game_info.is_kickoff() and game_info.their_restart:
