@@ -200,12 +200,28 @@ class GameplayNode(Node):
                     self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
             their_penalty.pt = [bot_left, top_right]
 
+            our_goal = geo_msg.Rect(pt=[
+                geo_msg.Point(x=-self.field.goal_width_m / 2, y=0.),
+                geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+            ])
+            their_goal = geo_msg.Rect(pt=[
+                geo_msg.Point(x=-self.field.goal_width_m / 2, y=self.field.length_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m+self.field.goal_depth_m),
+            ])
+
             global_obstacles = geo_msg.ShapeSet()
+            global_obstacles.rectangles = [our_goal, their_goal]
             if game_info is not None:
                 ball_point = self.world_state.ball.pos
-                if game_info.is_stopped():
+                if game_info.is_stopped() or (game_info.their_restart and game_info.is_indirect() or game_info.is_direct()):
                     global_obstacles.circles.append(
                         geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.6))
+                if game_info.is_kickoff() and game_info.their_restart:
+                    global_obstacles.circles.append(
+                        geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.3))
+                if game_info.is_kickoff() and game_info.is_setup() and game_info.our_restart:
+                    global_obstacles.circles.append(
+                        geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.1))
                 if game_info.is_free_placement():
                     for t in np.linspace(0.0, 1.0, 20):
                         placement = game_info.ball_placement()

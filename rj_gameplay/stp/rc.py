@@ -478,6 +478,19 @@ class GameInfo:
 
         return self.__our_restart
 
+    @property
+    def their_restart(self) -> bool:
+        """
+        :return: True if it is their restart
+        """
+        if (not self.is_restart()):
+            warnings.warn(
+                "Retrieved if it is our restart when it is not a restart at all",
+                RuntimeWarning)
+            return False  #Is returning this dangerous?
+
+        return not self.__our_restart
+
     def is_stopped(self) -> bool:
         """
         :return: True if play is stopped.

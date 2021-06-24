@@ -55,8 +55,8 @@ def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
     ball_pos = world_state.ball.pos
 
     # Heuristic: limit where we kick if we're very wide
-    xmin = -0.45
-    xmax = 0.45
+    xmin = -0.43
+    xmax = 0.43
     if abs(ball_pos[0]) > 1:
         kick_extent = -1 / ball_pos[0]
         if kick_extent < 0:
