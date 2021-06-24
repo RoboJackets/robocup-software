@@ -15,7 +15,8 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic_defense, basic_scramble, passing_tactic_play, defend_restart, restart, kickoff_play, basic122, penalty_defense
+from rj_gameplay.play import basic_defense, basic_scramble, passing_tactic_play, defend_restart, restart, kickoff_play, \
+    basic122, penalty_defense
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
@@ -49,7 +50,12 @@ class GameplayNode(Node):
                                                         self.create_partial_world_state, 10)
         self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions',
                                                          self.create_field, 10)
-        self.game_info = self.create_subscription(msg.GameState, 'referee/game_state', self.create_game_info, 10)
+
+        self.play_state = None
+        self.match_state = None
+        self.play_state_sub = self.create_subscription(msg.PlayState, 'referee/play_state', self.set_play_state, 10)
+        self.match_state_sub = self.create_subscription(msg.MatchState, 'referee/match_state', self.set_match_state, 10)
+
         keep_latest = QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
                                                       'referee/our_goalie',
@@ -72,7 +78,6 @@ class GameplayNode(Node):
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
-        self.game_info: rc.GameInfo = None
         self.goalie_id = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()] * NUM_ROBOTS * 2
@@ -94,6 +99,12 @@ class GameplayNode(Node):
         self.play_selector = play_selector
         self.gameplay = coordinator.Coordinator(play_selector,
                                                 self.debug_callback)
+
+    def set_play_state(self, play_state: msg.PlayState):
+        self.play_state = play_state
+
+    def set_match_state(self, match_state: msg.MatchState):
+        self.match_state = match_state
 
     def debug_callback(self, play: stp.play.IPlay, skills):
         debug_text = ""
@@ -119,13 +130,13 @@ class GameplayNode(Node):
             index = robot.robot_id
             self.robot_statuses[index] = robot
 
-    def create_game_info(self, msg: msg.GameState) -> None:
+    def build_game_info(self) -> Optional[rc.GameInfo]:
         """
         Create game info object from Game State message
         """
-        if msg is not None:
-            self.game_info = conv.gamestate_to_gameinfo(msg)
-            self.ball_placement = self.game_info.ball_placement()
+        if self.play_state is not None and self.match_state is not None:
+            return conv.build_game_info(self.play_state, self.match_state)
+        return None
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
         """
@@ -138,16 +149,15 @@ class GameplayNode(Node):
         """
         Set game_info's goalie_id based on goalie msg
         """
-        if msg is not None and self.game_info is not None:
-            self.goalie_id = msg.goalie_id
+        self.goalie_id = msg.goalie_id
 
     def get_world_state(self) -> rc.WorldState:
         """
         returns: an updated world state
         """
-        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) == len(
-                self.partial_world_state.our_robots):
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info,
+        if self.partial_world_state is not None and self.field is not None:
+            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses,
+                                                       self.build_game_info(),
                                                        self.field, self.goalie_id)
 
         return self.world_state
@@ -158,7 +168,8 @@ class GameplayNode(Node):
         """
 
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses, self.game_info,
+            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses,
+                                                       self.build_game_info(),
                                                        self.field, self.goalie_id)
         else:
             self.world_state = None
@@ -178,7 +189,8 @@ class GameplayNode(Node):
             # create their_penalty rect
             # add distance slack for stops (0.2 min)
             # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
-            add_stop_dist = self.game_info is None or self.game_info.state == rc.GameState.STOP or self.game_info.restart != rc.GameRestart.NONE
+            game_info = self.build_game_info()
+            add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or game_info.is_restart()
             DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0  # > 0.2 m
 
             their_penalty = geo_msg.Rect()

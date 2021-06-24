@@ -62,18 +62,18 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
             // convert this to an action. Should we do that now?
             bool is_joystick_controlled = false;
             MotionSetpoint setpoint;
-            run(state, trajectory_, game_state_, is_joystick_controlled, &setpoint);
+            run(state, trajectory_, play_state_, is_joystick_controlled, &setpoint);
             motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
         });
-    game_state_sub_ = node->create_subscription<GameState::Msg>(
-        referee::topics::kGameStatePub, rclcpp::QoS(1).transient_local(),
-        [this](GameState::Msg::SharedPtr game_state_msg) {  // NOLINT
-            game_state_ = rj_convert::convert_from_ros(*game_state_msg).state;
+    play_state_sub_ = node->create_subscription<PlayState::Msg>(
+        referee::topics::kPlayStatePub, rclcpp::QoS(1).transient_local(),
+        [this](PlayState::Msg::SharedPtr play_state_msg) {  // NOLINT
+            play_state_ = rj_convert::convert_from_ros(*play_state_msg).state();
         });
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
-                        const GameState::State& game_state, bool is_joystick_controlled,
+                        const PlayState::State& play_state, bool is_joystick_controlled,
                         MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
@@ -82,7 +82,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         return;
     }
 
-    if (!state.visible || trajectory.empty() || game_state == GameState::State::Halt) {
+    if (!state.visible || trajectory.empty() || play_state == PlayState::State::Halt) {
         stop(setpoint);
         return;
     }

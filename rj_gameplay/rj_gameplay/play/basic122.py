@@ -23,10 +23,10 @@ class Basic122(play.IPlay):
         # self.two_mark = nmark_tactic.NMarkTactic(2)
 
         left_pt = np.array([1.5, 7.5])
-        # self.seek_left = pass_seek.Seek(left_pt, pass_seek.build_seek_function(left_pt), pass_seek.SeekCost(left_pt))
+        self.seek_left = pass_seek.Seek(left_pt, pass_seek.build_seek_function(left_pt), pass_seek.SeekCost(left_pt))
 
         right_pt = np.array([-1.5, 7.5])
-        # self.seek_right = pass_seek.Seek(right_pt, pass_seek.build_seek_function(right_pt), pass_seek.SeekCost(right_pt))
+        self.seek_right = pass_seek.Seek(right_pt, pass_seek.build_seek_function(right_pt), pass_seek.SeekCost(right_pt))
 
         self.role_assigner = NaiveRoleAssignment()
 
@@ -43,8 +43,8 @@ class Basic122(play.IPlay):
 
         role_requests: play.RoleRequests = {self.striker_tactic: self.striker_tactic.get_requests(world_state, None),
                                             # self.two_mark: self.two_mark.get_requests(world_state, None),
-                                            # self.seek_left: self.seek_left.get_requests(world_state, None),
-                                            #self.seek_right: self.seek_right.get_requests(world_state, None),
+                                            self.seek_left: self.seek_left.get_requests(world_state, None),
+                                            self.seek_right: self.seek_right.get_requests(world_state, None),
                                             self.goalie_tactic: self.goalie_tactic.get_requests(world_state, None),
                                             self.wall_tactic: self.wall_tactic.get_requests(world_state, None)}
 
@@ -57,16 +57,16 @@ class Basic122(play.IPlay):
 
         skills = self.striker_tactic.tick(role_results[self.striker_tactic], world_state)
         # skills += self.two_mark.tick(role_results[self.two_mark])
-        # skills += self.seek_left.tick(role_results[self.seek_left], world_state)
-        #nskills += self.seek_right.tick(role_results[self.seek_right], world_state)
+        skills += self.seek_left.tick(role_results[self.seek_left], world_state)
+        skills += self.seek_right.tick(role_results[self.seek_right], world_state)
         skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
         skills += self.wall_tactic.tick(role_results[self.wall_tactic])
 
         skill_dict = {}
         skill_dict.update(role_results[self.striker_tactic])
         # skill_dict.update(role_results[self.two_mark])
-        # skill_dict.update(role_results[self.seek_left])
-        # skill_dict.update(role_results[self.seek_right])
+        skill_dict.update(role_results[self.seek_left])
+        skill_dict.update(role_results[self.seek_right])
         skill_dict.update(role_results[self.goalie_tactic])
         skill_dict.update(role_results[self.wall_tactic])
         return skill_dict, skills

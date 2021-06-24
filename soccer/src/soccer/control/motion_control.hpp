@@ -47,7 +47,7 @@ protected:
      * sets values in the robot's radio_tx packet.
      */
     void run(const RobotState& state, const planning::Trajectory& trajectory,
-             const GameState::State& game_state, bool is_joystick_controlled,
+             const PlayState::State& play_state, bool is_joystick_controlled,
              MotionSetpoint* setpoint);
 
 private:
@@ -85,13 +85,13 @@ private:
 
     rj_drawing::RosDebugDrawer drawer_;
 
-    GameState::State game_state_ = GameState::State::Halt;
+    PlayState::State play_state_ = PlayState::State::Halt;
 
     planning::Trajectory trajectory_;
 
     rclcpp::Subscription<planning::Trajectory::Msg>::SharedPtr trajectory_sub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<GameState::Msg>::SharedPtr game_state_sub_;
+    rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
     rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
 };

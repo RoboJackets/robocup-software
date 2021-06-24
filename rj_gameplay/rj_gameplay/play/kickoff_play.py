@@ -16,7 +16,7 @@ class kickoff_cost(role.CostFn):
         return 0.0
 
 
-class KickoffPlay(play.IPlay):
+class PrepareKickoffPlay(play.IPlay):
     """Hardcoded points to stand in for kickoff
     """
 

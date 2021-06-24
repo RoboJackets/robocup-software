@@ -10,6 +10,12 @@ class NoSituation(stp.situation.ISituation):
     ...
 
 
+class PrepareKickoff(stp.situation.ISituation):
+    """Setup for kickoff."""
+
+    ...
+
+
 class Kickoff(stp.situation.ISituation):
     """Kickoff."""
 
@@ -144,6 +150,12 @@ class MidfieldDefendClear(stp.situation.ISituation):
     ...
 
 
+class PrepareShootout(stp.situation.ISituation):
+    """Plays for making shootout shots."""
+
+    ...
+
+
 class Shootout(stp.situation.ISituation):
     """Plays for making shootout shots."""
 
@@ -156,8 +168,20 @@ class DefendShootout(stp.situation.ISituation):
     ...
 
 
+class PreparePenalty(stp.situation.ISituation):
+    """Set up for penalty shots."""
+
+    ...
+
+
 class Penalty(stp.situation.ISituation):
     """Plays for making penalty shots."""
+
+    ...
+
+
+class PrepareDefendPenalty(stp.situation.ISituation):
+    """Prepare to defend the penalty. Our goalie must be on the goal box line."""
 
     ...
 

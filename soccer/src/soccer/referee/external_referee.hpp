@@ -1,18 +1,20 @@
 #pragma once
 
-#include <rj_protos/LogFrame.pb.h>
-#include <rj_protos/referee.pb.h>
+#include <cstdint>
+#include <mutex>
+#include <thread>
+#include <vector>
+#include <optional>
 
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
-#include <cstdint>
-#include <mutex>
 #include <rclcpp/rclcpp.hpp>
+
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
-#include <thread>
-#include <vector>
+#include <rj_protos/LogFrame.pb.h>
+#include <rj_protos/referee.pb.h>
 
 #include "game_state.hpp"
 #include "node.hpp"
@@ -42,18 +44,19 @@ private:
      */
     void update();
 
-    static GameState::Period period_from_proto(SSL_Referee::Stage stage);
+    static MatchState::Period period_from_proto(SSL_Referee::Stage stage);
 
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_ref_pub_;
     rclcpp::TimerBase::SharedPtr network_timer_;
 
+    using Command = std::pair<SSL_Referee::Command, std::optional<rj_geometry::Point>>;
+
     // Process a new referee command
-    void handle_command(SSL_Referee::Command command, rj_geometry::Point ball_placement_point);
+    void handle_command(const Command& command);
     void handle_stage(SSL_Referee::Stage stage);
 
     // Arbitrary receive buffer size
-    static constexpr size_t kRecvBufferSize =
-        std::numeric_limits<uint16_t>::max() + 1;
+    static constexpr size_t kRecvBufferSize = std::numeric_limits<uint16_t>::max() + 1;
     std::array<char, kRecvBufferSize> recv_buffer_{};
 
     boost::asio::io_service io_service_;
@@ -62,8 +65,9 @@ private:
 
     void setup_referee_multicast();
     void start_receive();
-    void receive_packet(const boost::system::error_code& error,
-                       size_t num_bytes);
+    void receive_packet(const boost::system::error_code& error, size_t num_bytes);
+
+    std::optional<Command> last_command_;
 };
 
 void spin_external_referee();

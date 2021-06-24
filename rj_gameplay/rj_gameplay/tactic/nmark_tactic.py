@@ -43,7 +43,7 @@ class marker_cost(role.CostFn):
 
         # TODO: make a better way to avoid assignment of goalie to other roles
         if world_state.game_info is not None:
-            if robot.id == world_state.game_info.goalie_id:
+            if robot.id == world_state.goalie_id:
                 return 99
 
         # TODO: prevent gameplay crashing w/out this check

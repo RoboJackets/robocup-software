@@ -28,9 +28,9 @@ rosidl_generate_interfaces(
   msg/FieldDimensions.msg
   msg/FieldOrientation.msg
   msg/GameSettings.msg
-  msg/GameState.msg
   msg/Goalie.msg
   msg/ManipulatorSetpoint.msg
+  msg/MatchState.msg
   msg/MotionSetpoint.msg
 
   msg/LinearMotionInstant.msg
@@ -50,6 +50,7 @@ rosidl_generate_interfaces(
   msg/RobotPlacement.msg
   msg/RobotState.msg
   msg/RobotStatus.msg
+  msg/PlayState.msg
   msg/TeamColor.msg
   msg/TeamInfo.msg
   msg/Trajectory.msg

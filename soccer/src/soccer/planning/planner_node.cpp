@@ -73,7 +73,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto global_obstacles = shared_state_->global_obstacles();
     const auto goal_zone_obstacles = shared_state_->goal_zone_obstacles();
     const auto goalie_id = shared_state_->goalie_id();
-    const auto game_state = shared_state_->game_state();
+    const auto play_state = shared_state_->play_state();
     const bool is_goalie = goalie_id == robot_id_;
 
     const auto& robot = world_state->our_robots.at(robot_id_);
@@ -95,7 +95,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
 
     RobotConstraints constraints;
-    if (game_state.stopped()) {
+    if (play_state.is_stop()) {
         constraints.mot.max_speed = 0.8;
     }
 

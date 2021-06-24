@@ -158,12 +158,24 @@ class Analyzer(stp.situation.IAnalyzer):
         game_info = world_state.game_info
         if game_info.is_kickoff():
             if game_info.our_restart:
-                return dt.plays.Kickoff()
+                if game_info.is_setup():
+                    return dt.plays.PrepareKickoff()
+                elif game_info.is_ready():
+                    return dt.plays.Kickoff()
             else:
                 return dt.plays.DefendKickoff()
 
         elif game_info.is_penalty():
-            return dt.plays.NoSituation()
+            if game_info.our_restart:
+                if game_info.is_setup():
+                    return dt.plays.PreparePenalty()
+                else:
+                    return dt.plays.Penalty()
+            else:
+                if game_info.is_setup() or game_info.is_ready():
+                    return dt.plays.PrepareDefendPenalty()
+                else:
+                    return dt.plays.DefendPenalty()
 
         elif game_info.is_direct():
             if heuristics.field_loc == FieldLoc.ATTACK_SIDE:

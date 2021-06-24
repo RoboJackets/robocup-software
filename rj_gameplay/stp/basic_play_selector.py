@@ -10,7 +10,8 @@ from typing import Tuple, Dict
 #TODO: Put new plays into the dict properly
 #TODO: Create different dictionaries for different playbooks
 PLAY_DICT = {}
-PLAY_DICT[situations.Kickoff] = [kickoff_play.KickoffPlay]
+PLAY_DICT[situations.PrepareKickoff] = [kickoff_play.PrepareKickoffPlay]
+PLAY_DICT[situations.Kickoff] = [basic122.Basic122]
 PLAY_DICT[situations.DefendKickoff] = [kickoff_play.DefendKickoffPlay]
 PLAY_DICT[situations.DefendRestartOffensive] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartMidfield] = [defend_restart.DefendRestart]
@@ -33,9 +34,12 @@ PLAY_DICT[situations.MidfieldPileup] = [basic122.Basic122]
 PLAY_DICT[situations.DefensivePileup] = [basic122.Basic122]
 PLAY_DICT[situations.MidfieldDefendClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.Shootout] = [basic122.Basic122]
+PLAY_DICT[situations.PrepareShootout] = [basic122.Basic122]
 PLAY_DICT[situations.DefendShootout] = [penalty_defense.PenaltyDefense]
 PLAY_DICT[situations.Penalty] = [basic122.Basic122]
+PLAY_DICT[situations.PreparePenalty] = [basic122.Basic122]
 PLAY_DICT[situations.DefendPenalty] = [penalty_defense.PenaltyDefense]
+PLAY_DICT[situations.PrepareDefendPenalty] = [penalty_defense.PreparePenaltyDefense]
 PLAY_DICT[situations.OffensiveKick] = [restart.RestartPlay]
 PLAY_DICT[situations.DefensiveKick] = [restart.RestartPlay]
 PLAY_DICT[situations.MidfieldKick] = [restart.RestartPlay]

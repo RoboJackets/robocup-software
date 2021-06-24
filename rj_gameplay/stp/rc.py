@@ -239,6 +239,7 @@ class GameState(Enum):
     SETUP = 2  # Robots not on starting team msut stay 500mm away from ball.
     READY = 3  # A robot on the starting team may kick the ball.
     PLAYING = 4  # Normal play.
+    PENALTY_PLAYING = 5  # All robots except the striker and the goalie must stay on the opposite side of the field.
 
 
 class GameRestart(Enum):
@@ -423,26 +424,24 @@ class Field:
 
 
 class GameInfo:
-    """State of the soccer game"""
+    """State of the soccer game. Corresponds to a combination of the C++-side PlayState and MatchState"""
 
     __slots__ = [
-        "__period", "__state", "__restart", "__our_restart", "__goalie_id", "__ball_placement",
+        "__period", "__state", "__restart", "__our_restart", "__ball_placement",
     ]
 
     __period: GamePeriod
     __state: GameState
     __restart: GameRestart
     __our_restart: bool
-    __goalie_id: int
     __ball_placement: np.array
 
     def __init__(self, period: GamePeriod, state: GameState,
-                 restart: GameRestart, our_restart: bool, goalie_id: int, ball_placement: np.array):
+                 restart: GameRestart, our_restart: bool, ball_placement: np.array):
         self.__period = period
         self.__state = state
         self.__restart = restart
         self.__our_restart = our_restart
-        self.__goalie_id = goalie_id
         self.__ball_placement = ball_placement
 
     @property
@@ -479,17 +478,17 @@ class GameInfo:
 
         return self.__our_restart
 
-    @property
-    def goalie_id(self) -> int:
+    def is_ready(self) -> bool:
         """
-        :return: id (int) of our designated goalie
+        :return: True if the field is waiting on a team to kick the ball in a restart.
         """
-        return self.__goalie_id
+        return self.state == GameState.READY
 
-    def set_goalie_id(self, goalie_id: int) -> None:
-        """Sets goalie id. (Created to maintain private data convention.)
+    def is_setup(self) -> bool:
         """
-        self.__goalie_id = goalie_id
+        :return: True if the field is setting up for a penalty kick or kickoff.
+        """
+        return self.state == GameState.SETUP
 
     def is_restart(self) -> bool:
         """

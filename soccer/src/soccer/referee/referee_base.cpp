@@ -1,5 +1,6 @@
 #include "referee_base.hpp"
 
+#include <rj_common/transforms.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_constants/topic_names.hpp>
 
@@ -18,156 +19,82 @@ RefereeBase::RefereeBase(const std::string& name)
     our_team_info_pub_ = create_publisher<TeamInfoMsg>(referee::topics::kOurInfoPub, keep_latest);
     their_team_info_pub_ =
         create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoPub, keep_latest);
-    game_state_pub_ = create_publisher<GameStateMsg>(referee::topics::kGameStatePub, keep_latest);
+    play_state_pub_ = create_publisher<PlayState::Msg>(referee::topics::kPlayStatePub, keep_latest);
+    match_state_pub_ =
+        create_publisher<MatchState::Msg>(referee::topics::kMatchStatePub, keep_latest);
 
-    pub_timer_ = create_wall_timer(1s, [this]() {
-        GoalieMsg goalie_msg;
-        goalie_msg.goalie_id = blue_team_ ? blue_info_.goalie : yellow_info_.goalie;
-        goalie_id_pub_->publish(goalie_msg);
-        game_state_pub_->publish(rj_convert::convert_to_ros(state_));
-        TeamColorMsg team_color;
-        team_color.is_blue = blue_team_;
-        team_color_pub_->publish(team_color);
-    });
+    pub_timer_ = create_wall_timer(100ms, [this]() { send(); });
 
     world_state_sub_ = create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStatePub, 1, [this](WorldState::Msg::SharedPtr msg) {
             auto ball_state = rj_convert::convert_from_ros(msg->ball);
-            last_ball_position_ = ball_state.position;
-
-            spin_kick_detector(ball_state);
-            send();
+            if (spin_kick_detector(ball_state.position)) {
+                send();
+            }
         });
 }
 
-void RefereeBase::play() {
-    update_cache(state_.state, GameState::State::Playing, &state_valid_);
-    update_cache(state_.restart, GameState::Restart::None, &state_valid_);
-}
-
-void RefereeBase::stop() {
-    saved_restart_valid_ = false;
-    update_cache(state_.state, GameState::State::Stop, &state_valid_);
-    update_cache(state_.restart, GameState::Restart::None, &state_valid_);
-}
-
-void RefereeBase::halt() {
-    saved_restart_valid_ = false;
-    // The restart carries through halts, so there is no need to change the
-    // restart state.
-    update_cache(state_.state, GameState::State::Halt, &state_valid_);
-}
-
-void RefereeBase::setup() { update_cache(state_.state, GameState::State::Setup, &state_valid_); }
-
-void RefereeBase::ready() {
-    update_cache(state_.state, GameState::State::Ready, &state_valid_);
-}
-
-void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
-    if (!(saved_restart_valid_ && saved_restart_type_ == type && saved_restart_team_blue_ == blue_restart)) {
-        // We have a new restart!
-        if (state_.restart != GameState::Restart::Placement) {
-            state_.ball_placement_point = std::nullopt;
-        }
-        update_cache(state_.restart, type, &state_valid_);
-        update_cache(blue_restart_, blue_restart, &state_valid_);
-        update_cache(state_.our_restart, blue_team_ == blue_restart_, &state_valid_);
-        capture_ready_point(last_ball_position_);
-    }
-    saved_restart_type_ = type;
-    saved_restart_team_blue_ = blue_restart;
-    saved_restart_valid_ = true;
-}
-
-void RefereeBase::ball_placement(rj_geometry::Point point, bool blue_placement) {
-    restart(GameState::Restart::Placement, blue_placement);
-    update_cache(state_.ball_placement_point, std::make_optional(world_to_team() * point), &state_valid_);
-}
-
-void RefereeBase::set_period(GameState::Period period) {
-    update_cache(state_.period, period, &state_valid_);
-}
+void RefereeBase::set_period(MatchState::Period period) { match_state_.period = period; }
 
 void RefereeBase::set_stage_time_left(RJ::Seconds stage_time_left) {
-    update_cache(state_.stage_time_left, stage_time_left, &state_valid_);
+    match_state_.stage_time_left = stage_time_left;
 }
 
 void RefereeBase::set_team_name(const std::string& name) {
     our_name_ = name;
+
     update_team_color_from_names();
 }
 
 void RefereeBase::set_team_info(const TeamInfo& blue, const TeamInfo& yellow) {
-    update_cache(blue_info_, blue, &team_info_valid_);
-    update_cache(yellow_info_, yellow, &team_info_valid_);
-
-    update_team_color_from_names();
-
-    goalie_valid_ &=
-        blue_team_ ? blue.goalie == blue_info_.goalie : yellow.goalie == yellow_info_.goalie;
-}
-
-void RefereeBase::set_team_color(bool is_blue) {
     has_any_info_ = true;
 
-    bool valid = true;
-    update_cache(blue_team_, is_blue, &valid);
+    blue_info_ = blue;
+    yellow_info_ = yellow;
 
-    // All information except for game state needs to change.
-    // In game state the only field that would need to change is our_restart,
-    // which should be calculated from blue_restart anyway.
-    goalie_valid_ &= valid;
-    team_info_valid_ &= valid;
-    goalie_valid_ &= valid;
-
-    update_cache(state_.our_restart, blue_team_ == blue_restart_, &state_valid_);
+    update_team_color_from_names();
 }
 
-void RefereeBase::set_goalie(uint8_t goalie_id) {
-    bool valid = true;
-    update_cache(blue_team_ ? blue_info_.goalie : yellow_info_.goalie, static_cast<uint>(goalie_id),
-                 &valid);
-    team_info_valid_ &= valid;
-    goalie_valid_ &= valid;
+void RefereeBase::set_team_color(bool is_blue) { blue_team_ = is_blue; }
+
+void RefereeBase::override_goalie(uint8_t goalie_id) {
+    if (blue_team_) {
+        blue_info_.goalie = goalie_id;
+    } else {
+        yellow_info_.goalie = goalie_id;
+    }
+}
+
+static PlayState resolve_play_state(const PlayState& yellow_vision_centric_play_state,
+                                    bool blue_team, bool defend_plus_x,
+                                    const FieldDimensions& dimensions) {
+    return yellow_vision_centric_play_state.opposite_team(blue_team).with_transform(
+        rj_common::world_to_team(dimensions, defend_plus_x));
 }
 
 void RefereeBase::send() {
-    if (!has_any_info_) {
+    if (!has_any_info_ || !config_client_.connected()) {
         return;
     }
 
-    if (!goalie_valid_) {
-        GoalieMsg goalie_msg;
-        goalie_msg.goalie_id = blue_team_ ? blue_info_.goalie : yellow_info_.goalie;
-        goalie_id_pub_->publish(goalie_msg);
-        goalie_valid_ = true;
-    }
+    GoalieMsg goalie_msg;
+    goalie_msg.goalie_id = blue_team_ ? blue_info_.goalie : yellow_info_.goalie;
+    goalie_id_pub_->publish(goalie_msg);
 
-    if (!state_valid_) {
-        GameState::Msg msg;
-        rj_convert::convert_to_ros(state_, &msg);
-        gamestate_msg = msg;
-        game_state_pub_->publish(msg);
-        state_valid_ = true;
-        gamestate_pub_timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(100), [this]() { game_state_pub_->publish(gamestate_msg); });
-    }
+    const auto resolved_play_state = resolve_play_state(
+        yellow_play_state_, blue_team_, config_client_.game_settings().defend_plus_x,
+        rj_convert::convert_from_ros(config_client_.field_dimensions()));
+    play_state_pub_->publish(rj_convert::convert_to_ros(resolved_play_state));
+    match_state_pub_->publish(rj_convert::convert_to_ros(match_state_));
 
-    if (!team_info_valid_) {
-        auto our_msg = blue_team_ ? blue_info_ : yellow_info_;
-        auto their_msg = blue_team_ ? yellow_info_ : blue_info_;
-        our_team_info_pub_->publish(rj_convert::convert_to_ros(our_msg));
-        their_team_info_pub_->publish(rj_convert::convert_to_ros(their_msg));
-        team_info_valid_ = true;
-    }
+    auto our_info = blue_team_ ? blue_info_ : yellow_info_;
+    auto their_info = blue_team_ ? yellow_info_ : blue_info_;
+    our_team_info_pub_->publish(rj_convert::convert_to_ros(our_info));
+    their_team_info_pub_->publish(rj_convert::convert_to_ros(their_info));
 
-    if (!blue_team_valid_) {
-        TeamColorMsg team_color;
-        team_color.is_blue = blue_team_;
-        team_color_pub_->publish(team_color);
-        blue_team_valid_ = true;
-    }
+    TeamColorMsg team_color;
+    team_color.is_blue = blue_team_;
+    team_color_pub_->publish(team_color);
 }
 
 void RefereeBase::update_team_color_from_names() {

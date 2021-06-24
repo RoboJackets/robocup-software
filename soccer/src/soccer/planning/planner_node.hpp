@@ -46,11 +46,11 @@ private:
 class SharedStateInfo {
 public:
     SharedStateInfo(rclcpp::Node* node) {
-        game_state_sub_ = node->create_subscription<rj_msgs::msg::GameState>(
-            referee::topics::kGameStatePub, rclcpp::QoS(1),
-            [this](rj_msgs::msg::GameState::SharedPtr state) {  // NOLINT
+        play_state_sub_ = node->create_subscription<rj_msgs::msg::PlayState>(
+            referee::topics::kPlayStatePub, rclcpp::QoS(1),
+            [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
                 auto lock = std::lock_guard(mutex_);
-                last_game_state_ = rj_convert::convert_from_ros(*state);
+                last_play_state_ = rj_convert::convert_from_ros(*state);
             });
         game_settings_sub_ = node->create_subscription<rj_msgs::msg::GameSettings>(
             config_server::topics::kGameSettingsPub, rclcpp::QoS(1),
@@ -84,9 +84,9 @@ public:
             });
     }
 
-    [[nodiscard]] GameState game_state() const {
+    [[nodiscard]] PlayState play_state() const {
         auto lock = std::lock_guard(mutex_);
-        return last_game_state_;
+        return last_play_state_;
     }
     [[nodiscard]] GameSettings game_settings() const {
         auto lock = std::lock_guard(mutex_);
@@ -110,7 +110,7 @@ public:
     }
 
 private:
-    rclcpp::Subscription<rj_msgs::msg::GameState>::SharedPtr game_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_sub_;
@@ -118,7 +118,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
 
     mutable std::mutex mutex_;
-    GameState last_game_state_;
+    PlayState last_play_state_ = PlayState::halt();
     GameSettings last_game_settings_;
     int last_goalie_id_;
     rj_geometry::ShapeSet last_global_obstacles_;
