@@ -214,3 +214,8 @@ class Stop(stp.situation.ISituation):
     """Plays for dealing with the stop state."""
 
     ...
+
+class Corner(stp.situation.ISituation):
+    """Plays for corner kick"""
+
+    ...

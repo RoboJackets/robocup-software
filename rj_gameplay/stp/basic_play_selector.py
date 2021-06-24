@@ -4,7 +4,7 @@ import stp.rc as rc
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 import rj_gameplay.play as plays
-from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart, kickoff_play, penalty_defense
+from rj_gameplay.play import basic122, basic_defense, basic_scramble, defensive_clear, defend_restart, restart, kickoff_play, penalty_defense, corner
 from typing import Tuple, Dict
 
 #TODO: Put new plays into the dict properly
@@ -44,6 +44,7 @@ PLAY_DICT[situations.DefensiveKickDirect] = [restart.DirectRestartPlay]
 PLAY_DICT[situations.MidfieldKickDirect] = [restart.DirectRestartPlay]
 PLAY_DICT[situations.GoalieClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.Stop] = [defend_restart.DefendRestart]
+PLAY_DICT[situations.Corner] = [corner.Corner]
 
 class BasicPlaySelector(situation.IPlaySelector):
 
@@ -61,6 +62,8 @@ class BasicPlaySelector(situation.IPlaySelector):
             for sit, possible_plays in PLAY_DICT.items():
                 if isinstance(self.curr_situation, sit):
                     plays_selection = possible_plays
+            if isinstance(self.curr_play, corner.Corner) and not self.curr_play.is_done(world_state) and world_state.ball.pos[1] > 7.5:
+                return (self.curr_situation, self.curr_play)
             if plays_selection:
                 self.curr_play = plays_selection[0]()
                 return (self.curr_situation, self.curr_play)
