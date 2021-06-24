@@ -22,6 +22,7 @@ from stp.local_parameters import Param
 # TODO: param server this const
 MIN_WALL_RAD = 0
 GOALIE_PCT_TO_BALL = 0.15
+DIST_TO_FAST_KICK = 7
 
 
 class GoalieCost(role.CostFn):
@@ -72,7 +73,8 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
 
 
 class GoalieTactic(tactic.ITactic):
-    def __init__(self):
+    def __init__(self, brick = False):
+        self.brick = brick
 
         # init skills
         self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
@@ -114,6 +116,15 @@ class GoalieTactic(tactic.ITactic):
             ball_speed = np.linalg.norm(world_state.ball.vel)
             ball_pos = world_state.ball.pos
             ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos) 
+
+            if self.brick:
+                self.move_se.skill.target_point = world_state.field.our_goal_loc
+                self.move_se.skill.face_point = world_state.ball.pos
+                role_requests[self.move_se] = [
+                    role.RoleRequest(role.Priority.HIGH, True,
+                                     self.role_cost)
+                ]
+                return role_requests
 
             if ball_speed < 0.5 and (abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB and ball_pos[1] < box_h + line_w + MAX_OOB): 
                 self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
