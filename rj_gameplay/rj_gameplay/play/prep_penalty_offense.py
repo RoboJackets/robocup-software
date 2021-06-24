@@ -18,10 +18,10 @@ class PreparePenaltyOffense(play.IPlay):
         self.tactics = [
             goalie_tactic.GoalieTactic(True),
             move_tactic.Move((0.0, 1.2)),
-            move_tactic.Move((1.8, 0.0)),
-            move_tactic.Move((2.1, 0.0)),
-            move_tactic.Move((2.4, 0.0)),
-            move_tactic.Move((2.7, 0.0)),
+            move_tactic.Move((1.8, 0.0), priority=role.Priority.LOW),
+            move_tactic.Move((2.1, 0.0), priority=role.Priority.LOW),
+            move_tactic.Move((2.4, 0.0), priority=role.Priority.LOW),
+            move_tactic.Move((2.7, 0.0), priority=role.Priority.LOW),
         ]
         self.role_assigner = NaiveRoleAssignment()
 

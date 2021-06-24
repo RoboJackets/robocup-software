@@ -43,9 +43,10 @@ class Move(tactic.ITactic):
     A striker tactic which captures then shoots the ball
     """
 
-    def __init__(self, target_point: np.ndarray, face_point: np.ndarray = None, cost_scale: float = 1.0):
+    def __init__(self, target_point: np.ndarray, face_point: np.ndarray = None, cost_scale: float = 1.0, priority: role.Priority = role.Priority.MEDIUM):
         self.move = tactic.SkillEntry(move.Move(target_point=target_point, face_point=face_point))
         self.cost = move_cost(target_point, cost_scale=cost_scale)
+        self.priority = priority
 
     def compute_props(self):
         pass
@@ -65,7 +66,7 @@ class Move(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        move_request = role.RoleRequest(role.Priority.MEDIUM, True, self.cost)
+        move_request = role.RoleRequest(self.priority, True, self.cost)
         # has_ball = True
         # for robot in world_state.our_robots:
         #     if robot.has_ball_sense:
