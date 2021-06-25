@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import pass_tactic, pass_seek
+from rj_gameplay.tactic import pass_tactic, pass_seek, move_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -62,6 +62,15 @@ class TrianglePass(play.IPlay):
     """
 
     def __init__(self):
+        self.move_point_1 = np.array([0.0, 6.0])
+        self.move_point_2 = np.array([-1, 6.0 + np.sqrt(3)])
+        self.move_point_3 = np.array([1, 6.0 + np.sqrt(3)])
+        self.move_1 = move_tactic.Move(self.move_point_1, self.move_point_3)
+        self.move_1.cost = Passer1Cost()
+        self.move_2 = move_tactic.Move(self.move_point_2, self.move_point_1)
+        self.move_2.cost = Passer2Cost()
+        self.move_3 = move_tactic.Move(self.move_point_3, self.move_point_2)
+        self.move_3.cost = Passer3Cost()
         self.target_point = np.array([1.0,1.0])
         self.pass_tactic_1 = pass_tactic.Pass(
             self.target_point, Passer1Cost(),
@@ -89,10 +98,13 @@ class TrianglePass(play.IPlay):
         role_requests: play.RoleRequests = {}
         if self.state == 1:
             role_requests[self.pass_tactic_1] = self.pass_tactic_1.get_requests(world_state, None)
+            role_requests[self.move_3] = self.move_3.get_requests(world_state, None)
         elif self.state == 2:
             role_requests[self.pass_tactic_2] = self.pass_tactic_2.get_requests(world_state, None)
+            role_requests[self.move_1] = self.move_1.get_requests(world_state, None)
         elif self.state ==3:
             role_requests[self.pass_tactic_3] = self.pass_tactic_3.get_requests(world_state, None)
+            role_requests[self.move_2] = self.move_2.get_requests(world_state, None)
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
         flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)
@@ -103,12 +115,18 @@ class TrianglePass(play.IPlay):
         skills = []
         if self.state == 1:
             skills = self.pass_tactic_1.tick(role_results[self.pass_tactic_1], world_state)
+            skills += self.move_3.tick(role_results[self.move_3])
+            skill_dict.update(role_results[self.move_3])
             skill_dict.update(role_results[self.pass_tactic_1])
         elif self.state == 2:
             skills = self.pass_tactic_2.tick(role_results[self.pass_tactic_2], world_state)
+            skills += self.move_1.tick(role_results[self.move_1])
+            skill_dict.update(role_results[self.move_1])
             skill_dict.update(role_results[self.pass_tactic_2])
         elif self.state == 3:
             skills = self.pass_tactic_3.tick(role_results[self.pass_tactic_3], world_state)
+            skills += self.move_2.tick(role_results[self.move_2])
+            skill_dict.update(role_results[self.move_2])
             skill_dict.update(role_results[self.pass_tactic_3])
 
         if self.state == 1 and self.pass_tactic_1.is_done(world_state):
