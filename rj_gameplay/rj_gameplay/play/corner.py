@@ -24,6 +24,26 @@ class CaptureCost(role.CostFn):
             dist_to_ball = np.linalg.norm(ball_pos - robot_pos)
             return dist_to_ball 
 
+class StrikerCost(role.CostFn):
+    """
+    A cost function for how to choose a robot that will pass
+    """
+    def __init__(self, point: np.array):
+        self.point = point
+        self.chosen = None
+
+    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
+                 world_state: rc.WorldState) -> float:
+        if self.chosen is not None and self.chosen.id == robot.id:
+            return -99
+        if robot.has_ball_sense or np.linalg.norm(robot.pose[0:2]-world_state.ball.pos) < 0.1:
+            if self.chosen is None:
+                self.chosen = robot
+            return 0
+        else:
+            robot_pos = robot.pose[0:2]
+            dist_to_ball = np.linalg.norm(self.point - robot_pos)
+            return dist_to_ball 
 
 class Corner(play.IPlay):
 
@@ -32,9 +52,9 @@ class Corner(play.IPlay):
         self.goalie = goalie_tactic.GoalieTactic()
         # self.two_mark = nmark_tactic.NMarkTactic(2)
         self.move = move_tactic.Move([0.0, 8.5], face_point=[0.0, 12.0])
-        self.clear = clear_tactic.Clear(np.array([0.0, 10.0]), chip=True, kick_speed=0.75)
-        self.striker_tactic = striker_tactic.LineKickStrikerTactic(target_point=self.target_point)
-        self.striker_tactic.capture_cost = CaptureCost()
+        self.clear = clear_tactic.Clear(np.array([0.0, 10.0]), chip=True, kick_speed=1.0)
+        self.striker_tactic = striker_tactic.StrikerTactic(target_point=self.target_point)
+        self.striker_tactic.capture_cost = StrikerCost(np.array([0.0, 8.5]))
         self.role_assigner = NaiveRoleAssignment()
         self.shoot = False
 
@@ -56,7 +76,6 @@ class Corner(play.IPlay):
             role_requests[self.move] = self.move.get_requests(world_state, None)
         else:
             role_requests[self.striker_tactic] = self.striker_tactic.get_requests(world_state, None)
-            print("HEEEEERRRRRREEEEEEEEs")
 
         # role_requests[self.two_mark] = (self.two_mark.get_requests(world_state, None))
         role_requests[self.goalie] = self.goalie.get_requests(world_state, None)
@@ -76,7 +95,6 @@ class Corner(play.IPlay):
             skill_dict.update(role_results[self.clear])
             skill_dict.update(role_results[self.move])
         else:
-            print("BAAAAAADDDDDDDDDd")
             skills += self.striker_tactic.tick(role_results[self.striker_tactic], world_state)
             skill_dict.update(role_results[self.striker_tactic])
         

@@ -3,7 +3,7 @@ from typing import List, Optional
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
-from rj_gameplay.skill import shoot, capture, pivot_kick, line_kick
+from rj_gameplay.skill import shoot, capture, pivot_kick, line_kick, receive
 import stp.skill as skill
 import numpy as np
 from math import atan2
@@ -113,7 +113,7 @@ class StrikerTactic(tactic.ITactic):
     def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
-        self.capture = tactic.SkillEntry(capture.Capture())
+        self.capture = tactic.SkillEntry(receive.Receive())
         self.capture_cost = CaptureCost()
         self.shoot = tactic.SkillEntry(
             pivot_kick.PivotKick(robot=None, chip=False, kick_speed=KICK_SPEED, target_point=target_point, threshold=0.05))
@@ -135,9 +135,9 @@ class StrikerTactic(tactic.ITactic):
                                            self.capture_cost)
         role_requests: tactic.RoleRequests = {}
 
-        striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
+        # striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
 
-        if striker:
+        if self.capture.skill.is_done(world_state):
             role_requests[self.capture] = []
             role_requests[self.shoot] = [striker_request]
         else:

@@ -69,6 +69,4 @@ class Clear(tactic.ITactic):
         return []
 
     def is_done(self, world_state:rc.WorldState):
-        # if self.kick.skill.is_done(world_state):
-        #     print("WOWOWWWOWOWO")
         return self.kick.skill.is_done(world_state)
