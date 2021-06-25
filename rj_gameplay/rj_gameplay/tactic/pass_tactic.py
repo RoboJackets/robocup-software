@@ -116,10 +116,11 @@ class Pass(tactic.ITactic):
             pivot_kick.PivotKick(robot=None,
                                  target_point=target_point,
                                  chip=False,
-                                 kick_speed=4.0))
+                                 kick_speed=3.5))
         self.receive = tactic.SkillEntry(receive.Receive())
         self.receiver_cost = receiver_cost
         self.passer_cost = passer_cost
+        self.receive_robot = None
 
     def compute_props(self):
         pass
@@ -170,7 +171,8 @@ class Pass(tactic.ITactic):
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
         if receive_result and receive_result[0].is_filled():
-            self.passer_cost.chosen_receiver = receive_result[0].role.robot
+            self.receive_robot = receive_result[0].role.robot
+            self.receiver_cost.chosen_receiver = receive_result[0].role.robot
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             self.passer_cost.potential_receiver = receive_result[0].role.robot
             return [self.receive]
@@ -182,5 +184,4 @@ class Pass(tactic.ITactic):
         return []
 
     def is_done(self, world_state:rc.WorldState):
-        print(self.receive.skill.is_done(world_state))
-        return self.receive.skill.is_done(world_state)
+        return self.receive.skill.is_done(world_state) or (self.receive_robot is not None and np.linalg.norm(self.receive_robot.pose[0:2] - world_state.ball.pos) < 0.15)

@@ -8,7 +8,7 @@ import stp.rc as rc
 import numpy as np
 from rj_msgs.msg import RobotIntent, SettleMotionCommand
 
-SETTLE_BALL_SPEED_THRESHOLD = 1.0
+SETTLE_BALL_SPEED_THRESHOLD = 0.5
 
 class Receive(action.IAction):
     """

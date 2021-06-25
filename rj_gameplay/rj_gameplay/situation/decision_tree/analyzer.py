@@ -166,8 +166,6 @@ class Analyzer(stp.situation.IAnalyzer):
             return dt.plays.NoSituation()
 
         elif game_info.is_direct():
-            if world_state.ball.pos[1] > 10.5:
-                return dt.plays.Corner()
             if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
                 if game_info.our_restart:
                     return dt.plays.OffensiveKickDirect()
@@ -187,8 +185,6 @@ class Analyzer(stp.situation.IAnalyzer):
                 raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
 
         elif game_info.is_indirect():
-            if world_state.ball.pos[1] > 10.5:
-                return dt.plays.Corner()
             if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
                 if game_info.our_restart:
                     return dt.plays.OffensiveKick()
