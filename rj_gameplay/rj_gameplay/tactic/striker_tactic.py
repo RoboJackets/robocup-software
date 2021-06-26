@@ -211,14 +211,20 @@ class LineKickStrikerTactic(tactic.ITactic):
         shoot_result = role_results[self.shoot]
 
         if shoot_result and shoot_result[0].is_filled():
-            self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
             shooter_vel = shoot_result[0].role.robot.twist[:2]
+            self.shoot.skill.target_point = find_target_point(world_state, 
+                    kick_speed=max(0.0, 6.5 - np.linalg.norm(shooter_vel)))
+
             if world_state is not None and world_state.game_info.is_penalty():
                 dist_to_goal = world_state.field.their_goal_loc[1] - world_state.ball.pos[1]
                 if dist_to_goal > 4.0:
-                    self.shoot.skill.kick_speed = max(0.0, 2.0 - np.linalg.norm(shooter_vel))
+                    self.shoot.skill.kick_speed = max(0.0, 1.0 - np.linalg.norm(shooter_vel))
                 elif dist_to_goal > 3.5:
-                    self.shoot.skill.kick_speed = max(0.0, 1.5 - np.linalg.norm(shooter_vel))
+                    self.shoot.skill.kick_speed = max(0.0, 0.5 - np.linalg.norm(shooter_vel))
+                else:
+                    # TUNE THE 6.5 IF KICK TOO FAST
+                    self.shoot.skill.kick_speed = max(0.0, 6.5 - np.linalg.norm(shooter_vel))
+            # print(self.shoot.skill.kick_speed)
             return [self.shoot]
 
         return []
