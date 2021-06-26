@@ -26,7 +26,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
         // TODO(#1464): When the assignment delay is fixed, remove this horrible
         // hack by using Twist::Zero() instead of start_instant.velocity * 0.8
         Trajectory result{
-            {RobotInstant{start_instant.pose, start_instant.velocity * 0.8, start_instant.stamp}}};
+            {RobotInstant{start_instant.pose, start_instant.velocity * 0.0, start_instant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
         result.set_debug_text("[SLOW " + std::to_string(plan_request.motion_command.index()) +
@@ -49,7 +49,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     previous_target_ = unblocked;
 
     result.stamp(RJ::now());
-    return std::move(result);
+    return result;
 }
 
 Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optional<Point> prev_goal,

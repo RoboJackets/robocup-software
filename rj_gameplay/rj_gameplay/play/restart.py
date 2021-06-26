@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import pass_tactic, pass_seek, nmark_tactic, goalie_tactic, clear_tactic
+from rj_gameplay.tactic import pass_tactic, pass_seek, nmark_tactic, goalie_tactic, clear_tactic, wall_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -28,7 +28,13 @@ class RestartPlay(play.IPlay):
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.nmark_tactic = nmark_tactic.NMarkTactic(4)
+        self.wall_tactic = wall_tactic.WallTactic(2, role.Priority.LOW, cost_scale=0.1)
+
+        left_pt = np.array([1.5, 7.5])
+        self.seek_left = pass_seek.Seek(left_pt, pass_seek.build_seek_function(left_pt), pass_seek.SeekCost(left_pt))
+
+        right_pt = np.array([-1.5, 7.5])
+        self.seek_right = pass_seek.Seek(right_pt, pass_seek.build_seek_function(right_pt), pass_seek.SeekCost(right_pt))
 
         self.role_assigner = NaiveRoleAssignment()
 
@@ -47,8 +53,10 @@ class RestartPlay(play.IPlay):
         # role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
         # role_requests[self.seek_tactic] = self.seek_tactic.get_requests(world_state, None)
         role_requests[self.clear_tactic] = self.clear_tactic.get_requests(world_state, None)
-        role_requests[self.nmark_tactic] = self.nmark_tactic.get_requests(world_state, None)
+        role_requests[self.wall_tactic] = self.wall_tactic.get_requests(world_state, None)
         role_requests[self.goalie_tactic] = self.goalie_tactic.get_requests(world_state, None)
+        role_requests[self.seek_left] = self.seek_left.get_requests(world_state, None)
+        role_requests[self.seek_right] = self.seek_right.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -59,15 +67,15 @@ class RestartPlay(play.IPlay):
         skill_dict = {}
         skills = []
         skills = self.clear_tactic.tick(role_results[self.clear_tactic], world_state)
-        # skills = self.pass_tactic.tick(role_results[self.pass_tactic], world_state)
-        # skills += self.seek_tactic.tick(role_results[self.seek_tactic], world_state)
-        skills += self.nmark_tactic.tick(role_results[self.nmark_tactic])
         skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
+        skills += self.wall_tactic.tick(role_results[self.wall_tactic])
+        skills += self.seek_left.tick(role_results[self.seek_left], world_state)
+        skills += self.seek_right.tick(role_results[self.seek_right], world_state)
         skill_dict.update(role_results[self.clear_tactic])
-        # skill_dict.update(role_results[self.pass_tactic])
-        # skill_dict.update(role_results[self.seek_tactic])
-        skill_dict.update(role_results[self.nmark_tactic])
         skill_dict.update(role_results[self.goalie_tactic])
+        skill_dict.update(role_results[self.wall_tactic])
+        skill_dict.update(role_results[self.seek_left])
+        skill_dict.update(role_results[self.seek_right])
 
         return (skill_dict, skills)
 
@@ -93,7 +101,14 @@ class DirectRestartPlay(play.IPlay):
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.nmark_tactic = nmark_tactic.NMarkTactic(4)
+        self.wall_tactic = wall_tactic.WallTactic(2, role.Priority.LOW, cost_scale=0.1)
+
+        left_pt = np.array([1.5, 7.5])
+        self.seek_left = pass_seek.Seek(left_pt, pass_seek.build_seek_function(left_pt), pass_seek.SeekCost(left_pt))
+
+        right_pt = np.array([-1.5, 7.5])
+        self.seek_right = pass_seek.Seek(right_pt, pass_seek.build_seek_function(right_pt), pass_seek.SeekCost(right_pt))
+
 
         self.role_assigner = NaiveRoleAssignment()
 
@@ -112,8 +127,10 @@ class DirectRestartPlay(play.IPlay):
         # role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
         # role_requests[self.seek_tactic] = self.seek_tactic.get_requests(world_state, None)
         role_requests[self.clear_tactic] = self.clear_tactic.get_requests(world_state, None)
-        role_requests[self.nmark_tactic] = self.nmark_tactic.get_requests(world_state, None)
+        role_requests[self.wall_tactic] = self.wall_tactic.get_requests(world_state, None)
         role_requests[self.goalie_tactic] = self.goalie_tactic.get_requests(world_state, None)
+        role_requests[self.seek_left] = self.seek_left.get_requests(world_state, None)
+        role_requests[self.seek_right] = self.seek_right.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -124,15 +141,15 @@ class DirectRestartPlay(play.IPlay):
         skill_dict = {}
         skills = []
         skills = self.clear_tactic.tick(role_results[self.clear_tactic], world_state)
-        # skills = self.pass_tactic.tick(role_results[self.pass_tactic], world_state)
-        # skills += self.seek_tactic.tick(role_results[self.seek_tactic], world_state)
-        skills += self.nmark_tactic.tick(role_results[self.nmark_tactic])
         skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
+        skills += self.wall_tactic.tick(role_results[self.wall_tactic])
+        skills += self.seek_left.tick(role_results[self.seek_left], world_state)
+        skills += self.seek_right.tick(role_results[self.seek_right], world_state)
         skill_dict.update(role_results[self.clear_tactic])
-        # skill_dict.update(role_results[self.pass_tactic])
-        # skill_dict.update(role_results[self.seek_tactic])
-        skill_dict.update(role_results[self.nmark_tactic])
         skill_dict.update(role_results[self.goalie_tactic])
+        skill_dict.update(role_results[self.wall_tactic])
+        skill_dict.update(role_results[self.seek_left])
+        skill_dict.update(role_results[self.seek_right])
 
         return (skill_dict, skills)
 

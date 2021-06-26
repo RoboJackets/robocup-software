@@ -64,9 +64,11 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
 
     # Find out where it would cross
     time_to_cross = np.abs(pos[1] / vel[1]) if np.abs(vel[1]) > 1e-6 else 0
-    cross_x = np.clip(pos[0] + vel[0] * time_to_cross, a_min=-0.5, a_max=0.5)
+    cross_x = pos[0] + vel[0] * time_to_cross
+    cross_position = np.array([np.clip(cross_x, a_min=-0.6, a_max=0.6), 0.0])
 
-    block_pt = np.array([cross_x, 0]) - tangent * 0.1
+    tangent = cross_position - pos
+    tangent /= np.linalg.norm(tangent)
     block_pt = np.dot(tangent, my_pos - pos) * tangent + pos
 
     return block_pt
@@ -116,6 +118,8 @@ class GoalieTactic(tactic.ITactic):
             ball_speed = np.linalg.norm(world_state.ball.vel)
             ball_pos = world_state.ball.pos
             ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos)
+            goal_pos = world_state.field.our_goal_loc
+            towards_goal = goal_pos - ball_pos
 
             if self.brick:
                 self.move_se.skill.target_point = world_state.field.our_goal_loc
@@ -141,12 +145,7 @@ class GoalieTactic(tactic.ITactic):
                         role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
                     ]
             else:
-                if ball_speed == 0:
-                    ball_to_goal_time = 100
-                else:
-                    ball_to_goal_time = ball_dist / ball_speed
-
-                if ball_speed > 0 and ball_to_goal_time < 2:
+                if ball_speed > 0 and np.dot(towards_goal, world_state.ball.vel) > 0.3:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
                     goalie_pos = world_state.our_robots[world_state.goalie_id].pose[

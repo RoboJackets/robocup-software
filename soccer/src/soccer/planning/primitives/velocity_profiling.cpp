@@ -1,7 +1,7 @@
 #include "velocity_profiling.hpp"
 
-#include "trapezoidal_motion.hpp"
 #include "planning/instant.hpp"
+#include "trapezoidal_motion.hpp"
 
 namespace planning {
 
@@ -49,7 +49,8 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
     // curvature near the endpoints.
     // TODO(#1539): Switch to Hermite splines and minimize
     //  sum-squared-acceleration instead of solving for Bezier curves.
-    // double max_centripetal_acceleration = constraints.max_acceleration;
+    double max_centripetal_acceleration = constraints.max_acceleration;
+    bool limit_curvature = true;
 
     // Velocity pass: fill points and calculate maximum velocity given curvature
     // at each point.
@@ -57,17 +58,20 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         double s = n / static_cast<double>(num_segments);
         path.evaluate(s, &points[n], &derivs1[n], &curvature[n]);
 
+        // it's okay not to limit it at this step because we'll be limiting it at other steps anyway
+        if (derivs1[n].mag() < 1e-3) {
+            curvature[n] = 0;
+        }
+
         if (curvature[n] < 0.0 || !std::isfinite(curvature[n])) {
             throw std::runtime_error("Invalid curvature");
         }
 
         // TODO(#1539): Re-enable curvature limiting
         // Centripetal acceleration: a = v^2 / r => v = sqrt(ra)
-        // if (limit_curvature && curvature[n] != 0.0) {
-        //     speed[n] = std::min(
-        //         speed[n],
-        //         std::sqrt(max_centripetal_acceleration / curvature[n]));
-        // }
+        if (limit_curvature && curvature[n] >= 1e-6) {
+            speed[n] = std::min(speed[n], std::sqrt(max_centripetal_acceleration / curvature[n]));
+        }
     }
 
     // Acceleration pass: calculate maximum velocity at each point based on
@@ -76,22 +80,19 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         double max_tangential_acceleration = constraints.max_acceleration;
 
         // TODO(#1539): Re-enable curvature limiting
-        // if (limit_curvature) {
-        //     double centripetal_acceleartion =
-        //         speed[n] * speed[n] * curvature[n];
-        //     double squared_max_tangential_acceleration =
-        //         std::pow(constraints.max_acceleration, 2) -
-        //         std::pow(centripetal_acceleartion, 2);
+        if (limit_curvature) {
+            double centripetal_acceleartion = speed[n] * speed[n] * curvature[n];
+            double squared_max_tangential_acceleration =
+                std::pow(constraints.max_acceleration, 2) - std::pow(centripetal_acceleartion, 2);
 
-        //     // This can occur when our initial speed is fast enough that we
-        //     // will slip no matter what.
-        //     if (squared_max_tangential_acceleration <= 0) {
-        //         squared_max_tangential_acceleration = 0;
-        //     }
+            // This can occur when our initial speed is fast enough that we
+            // will slip no matter what.
+            if (squared_max_tangential_acceleration <= 0) {
+                squared_max_tangential_acceleration = 0;
+            }
 
-        //     max_tangential_acceleration =
-        //         std::sqrt(squared_max_tangential_acceleration);
-        // }
+            max_tangential_acceleration = std::sqrt(squared_max_tangential_acceleration);
+        }
 
         if (!std::isfinite(max_tangential_acceleration)) {
             throw std::runtime_error("Invalid maximum tangential acceleration");
@@ -108,22 +109,19 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         double max_tangential_acceleration = constraints.max_acceleration;
 
         // TODO(#1539): Re-enable curvature limiting
-        // if (limit_curvature) {
-        //     double centripetal_acceleration =
-        //         speed[n] * speed[n] * curvature[n];
-        //     double squared_max_tangential_acceleration =
-        //         std::pow(constraints.max_acceleration, 2) -
-        //         std::pow(centripetal_acceleration, 2);
+        if (limit_curvature) {
+            double centripetal_acceleration = speed[n] * speed[n] * curvature[n];
+            double squared_max_tangential_acceleration =
+                std::pow(constraints.max_acceleration, 2) - std::pow(centripetal_acceleration, 2);
 
-        //     // This can occur when our initial speed is fast enough that we
-        //     // will slip no matter what.
-        //     if (squared_max_tangential_acceleration <= 0) {
-        //         squared_max_tangential_acceleration = 0;
-        //     }
+            // This can occur when our initial speed is fast enough that we
+            // will slip no matter what.
+            if (squared_max_tangential_acceleration <= 0) {
+                squared_max_tangential_acceleration = 0;
+            }
 
-        //     double max_tangential_acceleration =
-        //         std::sqrt(squared_max_tangential_acceleration);
-        // }
+            double max_tangential_acceleration = std::sqrt(squared_max_tangential_acceleration);
+        }
 
         if (!std::isfinite(max_tangential_acceleration)) {
             throw std::runtime_error("Invalid max tangential acceleration");

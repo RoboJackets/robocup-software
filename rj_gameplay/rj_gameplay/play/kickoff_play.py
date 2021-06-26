@@ -84,7 +84,12 @@ class DefendKickoffPlay(play.IPlay):
             (0.8, 4.25),
             (-0.8, 4.25),
         ]
-        self.tactics = [move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5)) for pt in self.points]
+        self.priorities = [
+            role.Priority.LOW,
+            role.Priority.MEDIUM,
+            role.Priority.LOW,
+        ]
+        self.tactics = [move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5), priority=priority) for pt, priority in zip(self.points, self.priorities)]
         self.tactics.append(goalie_tactic.GoalieTactic())
         self.tactics.append(wall_tactic.WallTactic(2))
 

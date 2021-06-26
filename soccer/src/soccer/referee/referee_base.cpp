@@ -47,15 +47,16 @@ void RefereeBase::set_team_name(const std::string& name) {
 }
 
 void RefereeBase::set_team_info(const TeamInfo& blue, const TeamInfo& yellow) {
-    has_any_info_ = true;
-
     blue_info_ = blue;
     yellow_info_ = yellow;
 
     update_team_color_from_names();
 }
 
-void RefereeBase::set_team_color(bool is_blue) { blue_team_ = is_blue; }
+void RefereeBase::set_team_color(bool is_blue) {
+    has_any_info_ = true;
+    blue_team_ = is_blue;
+}
 
 void RefereeBase::override_goalie(uint8_t goalie_id) {
     if (blue_team_) {

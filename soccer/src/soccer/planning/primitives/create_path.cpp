@@ -19,7 +19,7 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
         points.push_back(pt);
     }
     points.push_back(goal.position);
-    BezierPath bezier(points, start.velocity, goal.velocity * 10, motion_constraints);
+    BezierPath bezier(points, start.velocity, 10 * goal.velocity, motion_constraints);
     Trajectory path = profile_velocity(bezier, start.velocity.mag(), goal.velocity.mag(),
                                        motion_constraints, start_time);
     return path;

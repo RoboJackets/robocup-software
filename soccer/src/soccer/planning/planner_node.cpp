@@ -152,8 +152,8 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
                        [](const auto& instant) { return instant.position(); });
         debug_draw_.draw_path(path);
     }
-    debug_draw_.draw_shapes(shared_state_->goal_zone_obstacles(), QColor(255, 0, 0, 10));
-    debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(0, 0, 255, 10));
+    debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(255, 0, 0, 30));
+    debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
 
     debug_draw_.publish();
 

@@ -190,7 +190,8 @@ class GameplayNode(Node):
             # add distance slack for stops (0.2 min)
             # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
             game_info = self.build_game_info()
-            add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or game_info.is_restart()
+            add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or (
+                        game_info.is_restart() and not game_info.is_penalty())
             DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0  # > 0.2 m
 
             their_penalty = geo_msg.Rect()
@@ -200,20 +201,44 @@ class GameplayNode(Node):
                     self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
             their_penalty.pt = [bot_left, top_right]
 
-            our_goal = geo_msg.Rect(pt=[
-                geo_msg.Point(x=-self.field.goal_width_m / 2, y=0.),
-                geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
-            ])
-            their_goal = geo_msg.Rect(pt=[
-                geo_msg.Point(x=-self.field.goal_width_m / 2, y=self.field.length_m),
-                geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m+self.field.goal_depth_m),
-            ])
+            physical_goal_board_width = 0.1
+            our_goal = [
+                geo_msg.Rect(pt=[
+                    geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+                    geo_msg.Point(x=-self.field.goal_width_m / 2,
+                                  y=-self.field.goal_depth_m - physical_goal_board_width),
+                ]),
+                geo_msg.Rect(pt=[
+                    geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+                    geo_msg.Point(x=self.field.goal_width_m / 2 + physical_goal_board_width, y=0.),
+                ]),
+                geo_msg.Rect(pt=[
+                    geo_msg.Point(x=-self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+                    geo_msg.Point(x=-self.field.goal_width_m / 2 - physical_goal_board_width, y=0.),
+                ]),
+            ]
+            their_goal = [
+                geo_msg.Rect(pt=[
+                    geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
+                    geo_msg.Point(x=-self.field.goal_width_m / 2,
+                                  y=self.field.length_m + self.field.goal_depth_m + physical_goal_board_width),
+                ]),
+                geo_msg.Rect(pt=[
+                    geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
+                    geo_msg.Point(x=self.field.goal_width_m / 2 + physical_goal_board_width, y=self.field.length_m),
+                ]),
+                geo_msg.Rect(pt=[
+                    geo_msg.Point(x=-self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
+                    geo_msg.Point(x=-self.field.goal_width_m / 2 - physical_goal_board_width, y=self.field.length_m),
+                ]),
+            ]
 
             global_obstacles = geo_msg.ShapeSet()
-            global_obstacles.rectangles = [our_goal, their_goal]
+            global_obstacles.rectangles = our_goal + their_goal
             if game_info is not None:
                 ball_point = self.world_state.ball.pos
-                if game_info.is_stopped() or game_info.their_restart and (game_info.is_indirect() or game_info.is_direct()):
+                if game_info.is_stopped() or game_info.their_restart and (
+                        game_info.is_indirect() or game_info.is_direct()):
                     global_obstacles.circles.append(
                         geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.6))
                 if game_info.is_kickoff() and game_info.their_restart:

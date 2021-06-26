@@ -45,7 +45,7 @@ def kick_cost(point: np.array, kick_speed: float, kick_origin: np.array, world_s
         blocker_margin(kick_origin, point, kick_speed, blocker)
         for blocker in world_state.their_robots
     ]
-    return -min(margins) + point[0] ** 2 * 0.01
+    return -min(margins)
 
 
 def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
@@ -88,14 +88,17 @@ class CaptureCost(role.CostFn):
         else:
             robot_pos = robot.pose[0:2]
             ball_pos = world_state.ball.pos[0:2]
-            dist_to_ball = np.linalg.norm(ball_pos - robot_pos)
 
             goal_y = world_state.field.length_m
             goal_pos = np.array([0., goal_y])
             robot_to_ball = ball_pos - robot_pos
             # robot_to_ball /= np.linalg.norm(robot_to_ball) + 1e-6
             ball_to_goal = goal_pos - ball_pos
-            # ball_to_goal /= np.linalg.norm(ball_to_goal) + 1e-6
+            ball_to_goal /= np.linalg.norm(ball_to_goal) + 1e-6
+
+            LINE_KICK_APPROACH_DISTANCE = 0.2
+            target_pos = ball_pos - ball_to_goal * LINE_KICK_APPROACH_DISTANCE
+            dist_to_ball = np.linalg.norm(target_pos - robot_pos)
 
             switch_cost = 0.0
             if prev_result is not None and prev_result.is_filled():
@@ -209,10 +212,13 @@ class LineKickStrikerTactic(tactic.ITactic):
 
         if shoot_result and shoot_result[0].is_filled():
             self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
+            shooter_vel = shoot_result[0].role.robot.twist[:2]
             if world_state is not None and world_state.game_info.is_penalty():
                 dist_to_goal = world_state.field.their_goal_loc[1] - world_state.ball.pos[1]
-                if dist_to_goal > 3.0:
-                    self.shoot.skill.kick_speed = 0.3
+                if dist_to_goal > 4.0:
+                    self.shoot.skill.kick_speed = max(0.0, 2.0 - np.linalg.norm(shooter_vel))
+                elif dist_to_goal > 3.5:
+                    self.shoot.skill.kick_speed = max(0.0, 1.5 - np.linalg.norm(shooter_vel))
             return [self.shoot]
 
         return []
