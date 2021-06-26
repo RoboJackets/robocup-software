@@ -231,3 +231,53 @@ class LineKickStrikerTactic(tactic.ITactic):
 
     def is_done(self, world_state) -> bool:
         return self.shoot.skill.is_done(world_state)
+
+
+class LineKick(tactic.ITactic):
+    """
+    A striker tactic which receives then shoots the ball
+    """
+
+    def __init__(self, target_point: np.ndarray, kick_speed: float, cost: role.CostFn = None):
+        self.cost = cost  # unused
+        self.target_point = target_point
+        self.shoot = tactic.SkillEntry(
+            line_kick.LineKickSkill(robot=None, target_point=self.target_point, kick_speed=kick_speed))
+        self.capture_cost = CaptureCost()
+
+    def compute_props(self):
+        pass
+
+    def create_request(self, **kwargs) -> role.RoleRequest:
+        """
+        Creates a sane default RoleRequest.
+        :return: A list of size 1 of a sane default RoleRequest.
+        """
+        pass
+
+    def get_requests(self, world_state: rc.WorldState,
+                     props) -> List[tactic.RoleRequests]:
+
+        striker_request = role.RoleRequest(role.Priority.MEDIUM, True,
+                                           self.capture_cost)
+        role_requests: tactic.RoleRequests = {}
+
+        role_requests[self.shoot] = [striker_request]
+
+        return role_requests
+
+    def tick(self, role_results: tactic.RoleResults,
+             world_state: rc.WorldState) -> List[tactic.SkillEntry]:
+        """
+        :return: list of skills
+        """
+
+        shoot_result = role_results[self.shoot]
+
+        if shoot_result and shoot_result[0].is_filled():
+            return [self.shoot]
+
+        return []
+
+    def is_done(self, world_state) -> bool:
+        return self.shoot.skill.is_done(world_state)
