@@ -34,7 +34,6 @@ jobs:
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           DIFFBRANCH=$GITHUB_REF make checktidy-lines
-          clang-tidy -p build/ $(git ls-files | grep "\\.cpp$")
           echo "::remove-matcher owner=clang-tidy::"
         if: always()
 
@@ -43,7 +42,7 @@ jobs:
           echo "::add-matcher::clang-format.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          clang-format --dry-run $(git ls-files | grep "\\.cpp$")
+          DIFFBRANCH=$GITHUB_REF make checkstyle-lines
           echo "::remove-matcher owner=clang-format::"
         if: always()
 
@@ -52,7 +51,7 @@ jobs:
           echo "::add-matcher::mypy.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          mypy python/
+          mypy rj_gameplay/
           echo "::remove-matcher owner=mypy::"
         if: always()
 
@@ -61,7 +60,7 @@ jobs:
           echo "::add-matcher::pylint.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          pylint python/
+          pylint rj_gameplay/
           echo "::remove-matcher owner=pylint-error::"
           echo "::remove-matcher owner=pylint-warning::"
         if: always()
