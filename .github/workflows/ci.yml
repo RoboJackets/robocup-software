@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "::add-matcher::clang.json"
           source /opt/ros/foxy/setup.bash
-          source install/setup.bash"
+          source install/setup.bash
           make perf
           echo "::remove-matcher owner=clang::"
         if: always()
@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "::add-matcher::clang-tidy.json"
           source /opt/ros/foxy/setup.bash
-          source install/setup.bash"
+          source install/setup.bash
           DIFFBRANCH=$GITHUB_REF make checktidy-lines
           clang-tidy -p build/ $(git ls-files | grep "\\.cpp$")
           echo "::remove-matcher owner=clang-tidy::"
@@ -42,7 +42,7 @@ jobs:
         run:
           echo "::add-matcher::clang-format.json"
           source /opt/ros/foxy/setup.bash
-          source install/setup.bash"
+          source install/setup.bash
           clang-format --dry-run $(git ls-files | grep "\\.cpp$")
           echo "::remove-matcher owner=clang-format::"
         if: always()
@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "::add-matcher::mypy.json"
           source /opt/ros/foxy/setup.bash
-          source install/setup.bash"
+          source install/setup.bash
           mypy python/
           echo "::remove-matcher owner=mypy::"
         if: always()
@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "::add-matcher::pylint.json"
           source /opt/ros/foxy/setup.bash
-          source install/setup.bash"
+          source install/setup.bash
           pylint python/
           echo "::remove-matcher owner=pylint-error::"
           echo "::remove-matcher owner=pylint-warning::"
