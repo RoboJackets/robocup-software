@@ -1,0 +1,56 @@
+name: ros2-jobs
+
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: robojackets/robocup-software:foxy
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install some dependencies
+        run: "sudo ./util/ubuntu-setup --yes && source /opt/ros/foxy/setup.bash && source install/setup.bash"
+
+      - name: Build
+        run: |
+          echo "::add-matcher::clang.json"
+          make perf
+          echo "::remove-matcher owner=clang::"
+        if: always()
+
+      - name: Run clang-tidy
+        run: |
+          echo "::add-matcher::clang-tidy.json"
+          DIFFBRANCH=$GITHUB_REF make checktidy-lines
+          clang-tidy -p build/ $(git ls-files | grep "\\.cpp$")
+          echo "::remove-matcher owner=clang-tidy::"
+        if: always()
+
+      - name: Run clang-format
+        run:
+          echo "::add-matcher::clang-format.json"
+          clang-format --dry-run $(git ls-files | grep "\\.cpp$")
+          echo "::remove-matcher owner=clang-format::"
+        if: always()
+
+      - name: Run mypy
+        run: |
+          echo "::add-matcher::mypy.json"
+          mypy python/
+          echo "::remove-matcher owner=mypy::"
+        if: always()
+
+      - name: Run pylint
+        run: |
+          echo "::add-matcher::pylint.json" pylint python/
+          echo "::remove-matcher owner=pylint-error::"
+          echo "::remove-matcher owner=pylint-warning::"
+        if: always()
