@@ -1,0 +1,19 @@
+CMakeLists.txt:1: Extra spaces between 'cmake_minimum_required' and its () [whitespace/extra]
+{
+    "problemMatcher": [
+        {
+            "owner": "cmake",
+            "pattern": [
+                {
+                    "regexp": "^(.+):(\\d+): (.+) \\[(.+)\\]",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "message": 5,
+                    "code": 6,
+                    "severity": 4
+                }
+            ]
+        }
+    ]
+}
