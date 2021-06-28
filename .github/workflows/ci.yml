@@ -96,7 +96,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get -y install clang-format python3-pip
-          sudo python3 -m pip install flake8 flake8-diff
+          sudo pip3 flake8 flake8-diff
 
       - name: Run clang-format
         run: |
@@ -110,18 +110,3 @@ jobs:
           PATH=~/.local/bin:/usr/local/bin flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} ${{ github.head_ref }}
           echo "::remove-matcher owner=flake8-error::"
           echo "::remove-matcher owner=flake8-warning::"
-
-      - name: Start SSH via Ngrok
-        if: ${{ failure() }}
-        run: curl -sL https://gist.githubusercontent.com/retyui/7115bb6acf151351a143ec8f96a7c561/raw/7099b9db76729dc5761da72aa8525f632d8875c9/debug-github-actions.sh | bash
-        env:
-          # After sign up on the https://ngrok.com/
-          # You can find this token here: https://dashboard.ngrok.com/get-started/setup
-          NGROK_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
-
-          # This password you will use when authorizing via SSH
-          USER_PASS: ${{ secrets.NGROK_SSH_USER_PASS }}
-
-      - name: Don't kill instance
-        if: ${{ failure() }}
-        run: sleep 10m # Prevent to killing instance after failure
