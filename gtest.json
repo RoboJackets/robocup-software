@@ -4,14 +4,13 @@
             "owner": "clang",
             "pattern": [
                 {
-                    "regexp": "^(.+):(\\d+):\\sFailure",
+                    "regexp": "^(.+):(\\d+):\\sFailure$",
                     "file": 1,
                     "line": 2
                 },
                 {
                     "regexp": "^([a-zA-Z].+)$",
-                    "message": 1,
-                    "loop": false
+                    "message": 1
                 }
             ]
         }
