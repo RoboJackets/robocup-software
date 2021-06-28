@@ -26,14 +26,12 @@ jobs:
           source install/setup.bash
           make all
           echo "::remove-matcher owner=clang::"
-        if: always()
 
-      - name: Run clang-format
+      - name: Test
         run: |
-          echo "::add-matcher::clang-format.json"
-          make checkstyle-lines
-          echo "::remove-matcher owner=clang-format::"
-        if: always()
+          echo "::add-matcher::gtest.json"
+          ./install/lib/rj_robocup/test-soccer
+          echo "::remove-matcher owner=gtest::"
 
       - name: Run clang-tidy
         run: |
@@ -44,21 +42,68 @@ jobs:
           echo "::remove-matcher owner=clang-tidy::"
         if: always()
 
+  mypy:
+    runs-on: ubuntu-latest
+    container:
+      image: robojackets/robocup-software:foxy
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: sudo python3 -m pip install mypy
+
       - name: Run mypy
         run: |
+          sudo python3 -m pip install mypy
           echo "::add-matcher::mypy.json"
-          source /opt/ros/foxy/setup.bash
-          source install/setup.bash
-          mypy --ignore-missing-imports rj_gameplay/
+          mypy rj_gameplay
           echo "::remove-matcher owner=mypy::"
-        if: always()
+
+  pylint:
+    runs-on: ubuntu-latest
+    container:
+      image: robojackets/robocup-software:foxy
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: sudo python3 -m pip install pylint
 
       - name: Run pylint
         run: |
-          echo "::add-matcher::pylint.json"
-          source /opt/ros/foxy/setup.bash
-          source install/setup.bash
+          sudo python3 -m pip install mypy
+          echo "::add-matcher::mypy.json"
           pylint rj_gameplay/rj_gameplay rj_gameplay/stp
-          echo "::remove-matcher owner=pylint-error::"
-          echo "::remove-matcher owner=pylint-warning::"
-        if: always()
+          echo "::remove-matcher owner=mypy::"
+
+  style:
+    runs-on: ubuntu-latest
+    container:
+      image: robojackets/robocup-software:foxy
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get -y install clang-format python3-pip
+          sudo python3 -m pip install flake8
+
+      - name: Run clang-format
+        run: |
+          echo "::add-matcher::clang-format.json"
+          make checkstyle-lines
+          echo "::remove-matcher owner=clang-format::"
+
+      - name: Run flake8
+        run: |
+          echo "::add-matcher::flake8.json"
+          make checkstyle-lines
+          echo "::remove-matcher owner=flake8::"

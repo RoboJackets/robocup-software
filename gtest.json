@@ -1,0 +1,19 @@
+{
+    "problemMatcher": [
+        {
+            "owner": "clang",
+            "pattern": [
+                {
+                    "regexp": "^(.+):(\\d+):\\sFailure",
+                    "file": 1,
+                    "line": 2
+                },
+                {
+                    "regexp": ".+:.+",
+                    "message": 5,
+                    "loop": true
+                }
+            ]
+        }
+    ]
+}
