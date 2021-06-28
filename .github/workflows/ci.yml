@@ -30,6 +30,8 @@ jobs:
       - name: Test
         run: |
           echo "::add-matcher::gtest.json"
+          source /opt/ros/foxy/setup.bash
+          source install/setup.bash
           ./install/lib/rj_robocup/test-soccer
           echo "::remove-matcher owner=gtest::"
 
