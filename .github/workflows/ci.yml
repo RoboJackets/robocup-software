@@ -76,9 +76,9 @@ jobs:
       - name: Run pylint
         run: |
           sudo python3 -m pip install mypy
-          echo "::add-matcher::mypy.json"
+          echo "::add-matcher::pylint.json"
           pylint rj_gameplay/rj_gameplay rj_gameplay/stp
-          echo "::remove-matcher owner=mypy::"
+          echo "::remove-matcher owner=pylint::"
 
   style:
     runs-on: ubuntu-latest
