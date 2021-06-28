@@ -83,7 +83,7 @@ jobs:
   style:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:focal
+      image: ros:foxy
     defaults:
       run:
         shell: bash
@@ -95,8 +95,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update && apt-get -y install clang-format python3-pip sudo git
-          python3 -m pip install flake8-diff flake8
+          apt-get update && apt-get -y install clang-format sudo git python3-pip
+          sudo pip3 install --upgrade flake8-diff flake8 pip
+          echo HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIi
+          pip3 show -f flake8
 
       - name: Run clang-format
         run: |
