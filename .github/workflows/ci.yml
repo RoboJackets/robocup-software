@@ -83,7 +83,7 @@ jobs:
   style:
     runs-on: ubuntu-latest
     container:
-      image: ros:foxy
+      image: ubuntu:focal
     defaults:
       run:
         shell: bash
