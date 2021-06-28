@@ -9,8 +9,8 @@
                     "line": 2
                 },
                 {
-                    "regexp": ".+:.+",
-                    "message": 5,
+                    "regexp": "(.+:.+)",
+                    "message": 1,
                     "loop": true
                 }
             ]

@@ -59,7 +59,7 @@ jobs:
         run: |
           sudo python3 -m pip install mypy
           echo "::add-matcher::mypy.json"
-          mypy rj_gameplay
+          mypy --ignore-missing-imports rj_gameplay
           echo "::remove-matcher owner=mypy::"
 
   pylint:
