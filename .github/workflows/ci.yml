@@ -96,7 +96,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get -y install clang-format python3-pip
-          sudo pip3 flake8 flake8-diff
+          sudo pip3 install flake8 flake8-diff
 
       - name: Run clang-format
         run: |
