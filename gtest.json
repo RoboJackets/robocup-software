@@ -9,9 +9,9 @@
                     "line": 2
                 },
                 {
-                    "regexp": "(.+:.+)",
+                    "regexp": "^([a-zA-Z].+)$",
                     "message": 1,
-                    "loop": true
+                    "loop": false
                 }
             ]
         }
