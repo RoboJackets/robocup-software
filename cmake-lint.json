@@ -1,4 +1,3 @@
-CMakeLists.txt:1: Extra spaces between 'cmake_minimum_required' and its () [whitespace/extra]
 {
     "problemMatcher": [
         {
