@@ -107,6 +107,7 @@ jobs:
       - name: Run flake8
         run: |
           echo "::add-matcher::flake8.json"
+          pip show -f flake8
           PATH=~/.local/bin:/usr/local/bin flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} ${{ github.head_ref }}
           echo "::remove-matcher owner=flake8-error::"
           echo "::remove-matcher owner=flake8-warning::"
