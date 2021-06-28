@@ -83,7 +83,7 @@ jobs:
   style:
     runs-on: ubuntu-latest
     container:
-      image: robojackets/robocup-software:foxy
+      image: ros:foxy
     defaults:
       run:
         shell: bash
