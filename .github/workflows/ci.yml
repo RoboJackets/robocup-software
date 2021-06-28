@@ -19,6 +19,13 @@ jobs:
       - name: Install some dependencies
         run: "sudo ./util/ubuntu-setup --yes"
 
+      - name: Run clang-format
+        run:
+          echo "::add-matcher::clang-format.json"
+          make checkstyle-lines
+          echo "::remove-matcher owner=clang-format::"
+        if: always()
+
       - name: Build
         run: |
           echo "::add-matcher::clang.json"
@@ -35,15 +42,6 @@ jobs:
           source install/setup.bash
           DIFFBRANCH=$GITHUB_REF make checktidy-lines
           echo "::remove-matcher owner=clang-tidy::"
-        if: always()
-
-      - name: Run clang-format
-        run:
-          echo "::add-matcher::clang-format.json"
-          source /opt/ros/foxy/setup.bash
-          source install/setup.bash
-          make checkstyle-lines
-          echo "::remove-matcher owner=clang-format::"
         if: always()
 
       - name: Run mypy
