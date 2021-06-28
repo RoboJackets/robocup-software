@@ -19,13 +19,6 @@ jobs:
       - name: Install some dependencies
         run: "sudo ./util/ubuntu-setup --yes"
 
-      - name: Run clang-format
-        run:
-          echo "::add-matcher::clang-format.json"
-          make checkstyle-lines
-          echo "::remove-matcher owner=clang-format::"
-        if: always()
-
       - name: Build
         run: |
           echo "::add-matcher::clang.json"
@@ -33,6 +26,13 @@ jobs:
           source install/setup.bash
           make all
           echo "::remove-matcher owner=clang::"
+        if: always()
+
+      - name: Run clang-format
+        run: |
+          echo "::add-matcher::clang-format.json"
+          make checkstyle-lines
+          echo "::remove-matcher owner=clang-format::"
         if: always()
 
       - name: Run clang-tidy
