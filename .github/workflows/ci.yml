@@ -101,11 +101,11 @@ jobs:
       - name: Run clang-format
         run: |
           echo "::add-matcher::clang-format.json"
-          make checkstyle-lines
+          git diff -U0 --no-color ${{ github.base_ref }} | python3 util/clang-format-diff.py -binary clang-format -p1
           echo "::remove-matcher owner=clang-format::"
 
       - name: Run flake8
         run: |
           echo "::add-matcher::flake8.json"
-          make checkstyle-lines
+          flake8-diff --vcs git ${{ github.base_ref }} ${{ github.head_ref }}
           echo "::remove-matcher owner=flake8::"
