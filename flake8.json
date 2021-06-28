@@ -5,15 +5,12 @@
             "severity": "error",
             "pattern": [
                 {
-                    "regexp": "Found violations: (.+)",
-                    "file": 1
-                },
-                {
-                    "regexp": "^\\s*([EF]\\d{3}) @ (\\d+):(\\d+)\\s-\\s(.+)$",
+                    "regexp": "^(.+):(\\d+):(\\d+): \\s*([EF]\\d{3})$",
+                    "file": 1,
                     "line": 2,
                     "column": 3,
-                    "message": 4,
-                    "code": 1,
+                    "code": 4,
+                    "message": 5,
                     "loop": true
                 }
             ]
@@ -23,15 +20,12 @@
             "severity": "warning",
             "pattern": [
                 {
-                    "regexp": "Found violations: (.+)",
-                    "file": 1
-                },
-                {
-                    "regexp": "^\\s*([CRW]\\d{3}) @ (\\d+):(\\d+)\\s-\\s(.+)$",
+                    "regexp": "^(.+):(\\d+):(\\d+): \\s*([CRW]\\d{3})$",
+                    "file": 1,
                     "line": 2,
                     "column": 3,
-                    "message": 4,
-                    "code": 1,
+                    "code": 4,
+                    "message": 5,
                     "loop": true
                 }
             ]
