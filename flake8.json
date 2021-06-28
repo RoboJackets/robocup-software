@@ -7,15 +7,9 @@
                 {
                     "regexp": "Found violations: (.+)",
                     "file": 1
-                }
-            ]
-        },
-        {
-            "owner": "flake8-warning",
-            "severity": "warning",
-            "pattern": [
+                },
                 {
-                    "regexp": "^\\s*([CRW]\\d{3}) @ (\\d+):(\\d+)\\s-\\s(.+)$",
+                    "regexp": "^\\s*([EF]\\d{3}) @ (\\d+):(\\d+)\\s-\\s(.+)$",
                     "line": 2,
                     "column": 3,
                     "message": 4,
@@ -28,6 +22,10 @@
             "owner": "flake8-warning",
             "severity": "warning",
             "pattern": [
+                {
+                    "regexp": "Found violations: (.+)",
+                    "file": 1
+                },
                 {
                     "regexp": "^\\s*([CRW]\\d{3}) @ (\\d+):(\\d+)\\s-\\s(.+)$",
                     "line": 2,

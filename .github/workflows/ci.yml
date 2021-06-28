@@ -108,4 +108,5 @@ jobs:
         run: |
           echo "::add-matcher::flake8.json"
           flake8-diff --vcs git ${{ github.base_ref }} ${{ github.head_ref }}
-          echo "::remove-matcher owner=flake8::"
+          echo "::remove-matcher owner=flake8-error::"
+          echo "::remove-matcher owner=flake8-warning::"
