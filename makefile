@@ -102,7 +102,7 @@ test-python: perf
 pylint:
 	pylint -j8 --reports=n rj_gameplay/rj_gameplay rj_gameplay/stp
 mypy:
-	mypy rj_gameplay
+	mypy --ignore-missing-imports rj_gameplay
 
 COV_BUILD_DIR=build/coverage
 coverage:

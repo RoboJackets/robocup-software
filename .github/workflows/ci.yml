@@ -24,7 +24,7 @@ jobs:
           echo "::add-matcher::clang.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          make perf
+          make all
           echo "::remove-matcher owner=clang::"
         if: always()
 
@@ -42,7 +42,7 @@ jobs:
           echo "::add-matcher::clang-format.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          DIFFBRANCH=$GITHUB_REF make checkstyle-lines
+          make checkstyle-lines
           echo "::remove-matcher owner=clang-format::"
         if: always()
 
@@ -51,7 +51,7 @@ jobs:
           echo "::add-matcher::mypy.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          mypy rj_gameplay/
+          mypy --ignore-missing-imports rj_gameplay/
           echo "::remove-matcher owner=mypy::"
         if: always()
 
@@ -60,7 +60,7 @@ jobs:
           echo "::add-matcher::pylint.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          pylint rj_gameplay/
+          pylint rj_gameplay/rj_gameplay rj_gameplay/stp
           echo "::remove-matcher owner=pylint-error::"
           echo "::remove-matcher owner=pylint-warning::"
         if: always()
