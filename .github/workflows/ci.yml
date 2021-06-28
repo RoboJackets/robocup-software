@@ -97,8 +97,6 @@ jobs:
         run: |
           apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
-          echo HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIi
-          pip3 show -f flake8
 
       - name: Run clang-format
         run: |
