@@ -5,7 +5,7 @@
             "severity": "error",
             "pattern": [
                 {
-                    "regexp": "^((.+):(\\d+):\\sFailure)$",
+                    "regexp": "^\\.\\.\\/((.+):(\\d+):\\sFailure)$",
                     "file": 2,
                     "line": 3,
                     "message": 1
