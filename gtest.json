@@ -2,14 +2,12 @@
     "problemMatcher": [
         {
             "owner": "clang",
+            "severity": "error",
             "pattern": [
                 {
-                    "regexp": "^(.+):(\\d+):\\sFailure$",
-                    "file": 1,
-                    "line": 2
-                },
-                {
-                    "regexp": "^([a-zA-Z].+)$",
+                    "regexp": "^((.+):(\\d+):\\sFailure)$",
+                    "file": 2,
+                    "line": 3,
                     "message": 1
                 }
             ]
