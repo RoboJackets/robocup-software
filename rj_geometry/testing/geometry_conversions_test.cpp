@@ -48,6 +48,4 @@ TEST(ROSConvertGeometry, rect_convert) {
     rect.pt[1] = rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(1).y(2);
     test_lossless_convert_ros_value(rect);
     test_lossless_convert_cpp_value(rj_geometry::Rect(make_rj_point(), make_rj_point() * 2));
-    EXPECT_GT(3, 5);
-    FAIL();
 }

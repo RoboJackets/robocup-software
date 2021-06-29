@@ -39,7 +39,4 @@ TEST(BallState, QueryFar) {
     // high (2e-3). Diagnose this and make sure it isn't a bug.
     EXPECT_NEAR(state.query_stop_time().count(), t.count(), 2e-3);
     EXPECT_TRUE(actual.near_point(state.predict_in(t).position, 1e-6));
-
-    EXPECT_GT(3, 5);
-    FAIL();
 }
