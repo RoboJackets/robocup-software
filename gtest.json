@@ -7,8 +7,7 @@
                 {
                     "regexp": "^\\.\\.\\/((.+):(\\d+):\\sFailure)$",
                     "file": 2,
-                    "line": 3,
-                    "message": 1
+                    "line": 3
                 },
                 {
                     "regexp": "^([A-Za-z].+)$",
