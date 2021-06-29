@@ -1,13 +1,17 @@
 {
     "problemMatcher": [
         {
-            "owner": "clang",
+            "owner": "gtest",
             "severity": "error",
             "pattern": [
                 {
                     "regexp": "^\\.\\.\\/((.+):(\\d+):\\sFailure)$",
                     "file": 2,
                     "line": 3,
+                    "message": 1
+                },
+                {
+                    "regexp": "^([A-Za-z].+)$",
                     "message": 1
                 }
             ]
