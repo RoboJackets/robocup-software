@@ -40,6 +40,11 @@ def main():
         action='store_true',
         default=False,
         help='apply edits to files instead of displaying a diff')
+    parser.add_argument(
+        '-dry_run',
+        action='store_true',
+        default=False,
+        help='don\t edit files, just output errors')
     parser.add_argument('-p',
                         metavar='NUM',
                         default=0,
@@ -109,6 +114,8 @@ def main():
         command = [args.binary, filename]
         if args.i:
             command.append('-i')
+        if args.dry_run:
+            command.append('--dry-run')
         if args.sort_includes:
             command.append('-sort-includes')
         command.extend(lines)
@@ -123,7 +130,7 @@ def main():
         if p.returncode != 0:
             sys.exit(p.returncode)
 
-        if not args.i:
+        if not args.i and not args.dry_run:
             with open(filename) as f:
                 code = f.readlines()
             formatted_code = StringIO(stdout).readlines()
