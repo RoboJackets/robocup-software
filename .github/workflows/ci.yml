@@ -21,7 +21,7 @@ jobs:
 
       - name: Build
         run: |
-          echo "::add-matcher::clang.json"
+          echo "::add-matcher::ci/clang.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           make all
@@ -29,7 +29,7 @@ jobs:
 
       - name: Test
         run: |
-          echo "::add-matcher::gtest.json"
+          echo "::add-matcher::ci/gtest.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           ./install/lib/rj_robocup/test-soccer
@@ -37,7 +37,7 @@ jobs:
 
       - name: Run clang-tidy
         run: |
-          echo "::add-matcher::clang-tidy.json"
+          echo "::add-matcher::ci/clang-tidy.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           DIFFBASE=${{ github.base_ref }} make checktidy-lines
@@ -72,7 +72,7 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          echo "::add-matcher::mypy.json"
+          echo "::add-matcher::ci/mypy.json"
           mypy --ignore-missing-imports rj_gameplay/rj_gameplay rj_gameplay/stp
           echo "::remove-matcher owner=mypy::"
 
@@ -103,9 +103,10 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          echo "::add-matcher::pylint.json"
+          echo "::add-matcher::ci/pylint.json"
           pylint rj_gameplay/rj_gameplay rj_gameplay/stp
-          echo "::remove-matcher owner=pylint::"
+          echo "::remove-matcher owner=pylint-warning::"
+          echo "::remove-matcher owner=pylint-error::"
 
   style:
     runs-on: ubuntu-latest
@@ -132,13 +133,13 @@ jobs:
 
       - name: Run clang-format
         run: |
-          echo "::add-matcher::clang-format.json"
+          echo "::add-matcher::ci/clang-format.json"
           git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
           echo "::remove-matcher owner=clang-format::"
 
       - name: Run flake8
         run: |
-          echo "::add-matcher::flake8.json"
+          echo "::add-matcher::ci/flake8.json"
           find /usr/ | grep flake8
           flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }}
           echo "::remove-matcher owner=flake8-error::"
