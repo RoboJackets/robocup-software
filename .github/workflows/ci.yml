@@ -65,7 +65,7 @@ jobs:
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           export CMAKE_PREFIX_PATH=/opt/ros/foxy
-          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja rj_msgs rj_geometry_msgs rj_drawing_msgs)
 
 
       - name: Run mypy
@@ -97,7 +97,7 @@ jobs:
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           export CMAKE_PREFIX_PATH=/opt/ros/foxy
-          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja rj_msgs rj_geometry_msgs rj_drawing_msgs)
 
       - name: Run pylint
         run: |
