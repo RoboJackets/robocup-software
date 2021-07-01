@@ -19,6 +19,11 @@ jobs:
       - name: Install some dependencies
         run: "sudo ./util/ubuntu-setup --yes"
 
+      - name: Make ${{ github.base_ref }} branch exist
+        run: |
+          git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
+          git checkout -
+
       - name: Build
         run: |
           echo "::add-matcher::ci/clang.json"
