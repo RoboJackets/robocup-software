@@ -40,7 +40,7 @@ jobs:
           echo "::add-matcher::clang-tidy.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          DIFFBRANCH=$GITHUB_REF make checktidy-lines
+          DIFFBASE=${{ github.base_ref }} make checktidy-lines
           echo "::remove-matcher owner=clang-tidy::"
         if: always()
 

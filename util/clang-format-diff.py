@@ -115,7 +115,7 @@ def main():
         if args.i:
             command.append('-i')
         if args.dry_run:
-            command.append('--dry-run')
+            command.extend(['--dry-run', '-Werror'])
         if args.sort_includes:
             command.append('-sort-includes')
         command.extend(lines)
