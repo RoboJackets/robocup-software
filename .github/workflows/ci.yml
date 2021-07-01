@@ -48,6 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: robojackets/robocup-software:foxy
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -73,6 +76,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: robojackets/robocup-software:foxy
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
