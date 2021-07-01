@@ -55,9 +55,16 @@ jobs:
       - name: Install dependencies
         run: sudo python3 -m pip install mypy
 
+      - name: Generate files
+        run: |
+          source /opt/ros/foxy/setup.bash
+          source install/setup.bash
+          (mkdir build-debug && cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install --target -DBUILD_TESTS=ON .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+
       - name: Run mypy
         run: |
-          sudo python3 -m pip install mypy
+          source /opt/ros/foxy/setup.bash
+          source install/setup.bash
           echo "::add-matcher::mypy.json"
           mypy --ignore-missing-imports rj_gameplay/rj_gameplay rj_gameplay/stp
           echo "::remove-matcher owner=mypy::"
@@ -73,9 +80,16 @@ jobs:
       - name: Install dependencies
         run: sudo python3 -m pip install pylint
 
+      - name: Generate files
+        run: |
+          source /opt/ros/foxy/setup.bash
+          source install/setup.bash
+          (mkdir build-debug && cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install --target -DBUILD_TESTS=ON .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+
       - name: Run pylint
         run: |
-          sudo python3 -m pip install mypy
+          source /opt/ros/foxy/setup.bash
+          source install/setup.bash
           echo "::add-matcher::pylint.json"
           pylint rj_gameplay/rj_gameplay rj_gameplay/stp
           echo "::remove-matcher owner=pylint::"
