@@ -62,7 +62,7 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          (mkdir build-debug && cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install --target -DBUILD_TESTS=ON .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
 
       - name: Run mypy
         run: |
@@ -90,7 +90,7 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          (mkdir build-debug && cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install --target -DBUILD_TESTS=ON .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
 
       - name: Run pylint
         run: |
