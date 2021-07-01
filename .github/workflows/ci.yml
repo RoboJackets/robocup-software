@@ -56,13 +56,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo python3 -m pip install mypy
+        run: |
+          sudo python3 -m pip install pylint
+          sudo ./util/ubuntu-setup --yes
 
       - name: Generate files
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+
 
       - name: Run mypy
         run: |
@@ -84,7 +87,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo python3 -m pip install pylint
+        run: |
+          sudo python3 -m pip install pylint
+          sudo ./util/ubuntu-setup --yes
 
       - name: Generate files
         run: |
