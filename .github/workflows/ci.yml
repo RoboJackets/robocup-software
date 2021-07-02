@@ -19,9 +19,14 @@ jobs:
       - name: Install some dependencies
         run: "sudo ./util/ubuntu-setup --yes"
 
+      - name: Make ${{ github.base_ref }} branch exist
+        run: |
+          git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
+          git checkout -
+
       - name: Build
         run: |
-          echo "::add-matcher::clang.json"
+          echo "::add-matcher::ci/clang.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           make all
@@ -29,7 +34,7 @@ jobs:
 
       - name: Test
         run: |
-          echo "::add-matcher::gtest.json"
+          echo "::add-matcher::ci/gtest.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           ./install/lib/rj_robocup/test-soccer
@@ -37,7 +42,7 @@ jobs:
 
       - name: Run clang-tidy
         run: |
-          echo "::add-matcher::clang-tidy.json"
+          echo "::add-matcher::ci/clang-tidy.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           DIFFBASE=${{ github.base_ref }} make checktidy-lines
@@ -56,19 +61,23 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo python3 -m pip install mypy
+        run: |
+          sudo python3 -m pip install pylint
+          sudo ./util/ubuntu-setup --yes
 
       - name: Generate files
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          (mkdir build-debug && cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install --target -DBUILD_TESTS=ON .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+          export CMAKE_PREFIX_PATH=/opt/ros/foxy
+          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja rj_msgs rj_geometry_msgs rj_drawing_msgs)
+
 
       - name: Run mypy
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          echo "::add-matcher::mypy.json"
+          echo "::add-matcher::ci/mypy.json"
           mypy --ignore-missing-imports rj_gameplay/rj_gameplay rj_gameplay/stp
           echo "::remove-matcher owner=mypy::"
 
@@ -84,21 +93,25 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo python3 -m pip install pylint
+        run: |
+          sudo python3 -m pip install pylint
+          sudo ./util/ubuntu-setup --yes
 
       - name: Generate files
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          (mkdir build-debug && cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install -DCMAKE_INSTALL_PREFIX=$(shell pwd)/install --target -DBUILD_TESTS=ON .. && ninja install rj_msgs rj_geometry_msgs rj_drawing_msgs)
+          export CMAKE_PREFIX_PATH=/opt/ros/foxy
+          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja rj_msgs rj_geometry_msgs rj_drawing_msgs)
 
       - name: Run pylint
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
-          echo "::add-matcher::pylint.json"
+          echo "::add-matcher::ci/pylint.json"
           pylint rj_gameplay/rj_gameplay rj_gameplay/stp
-          echo "::remove-matcher owner=pylint::"
+          echo "::remove-matcher owner=pylint-warning::"
+          echo "::remove-matcher owner=pylint-error::"
 
   style:
     runs-on: ubuntu-latest
@@ -125,13 +138,13 @@ jobs:
 
       - name: Run clang-format
         run: |
-          echo "::add-matcher::clang-format.json"
+          echo "::add-matcher::ci/clang-format.json"
           git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
           echo "::remove-matcher owner=clang-format::"
 
       - name: Run flake8
         run: |
-          echo "::add-matcher::flake8.json"
+          echo "::add-matcher::ci/flake8.json"
           find /usr/ | grep flake8
           flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }}
           echo "::remove-matcher owner=flake8-error::"
