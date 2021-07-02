@@ -143,6 +143,7 @@ jobs:
           echo "::remove-matcher owner=clang-format::"
 
       - name: Run flake8
+        if: always()
         run: |
           echo "::add-matcher::ci/flake8.json"
           find /usr/ | grep flake8
