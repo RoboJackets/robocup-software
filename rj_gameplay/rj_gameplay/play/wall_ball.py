@@ -9,11 +9,11 @@ import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 
+
 class WallBall(play.IPlay):
     """
     Test play for the wall tactic. Directs robots to form a wall between the ball and goal.
     """
-
     def __init__(self):
         # defaults to walling between ball pos and goal pos
         self.wall_tactic = wall_tactic.WallTactic(3)
