@@ -2,7 +2,7 @@
 WorldState"""
 
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 import warnings
@@ -239,6 +239,7 @@ class GameState(Enum):
     SETUP = 2  # Robots not on starting team msut stay 500mm away from ball.
     READY = 3  # A robot on the starting team may kick the ball.
     PLAYING = 4  # Normal play.
+    PENALTY_PLAYING = 5  # All robots except the striker and the goalie must stay on the opposite side of the field.
 
 
 class GameRestart(Enum):
@@ -423,21 +424,25 @@ class Field:
 
 
 class GameInfo:
-    """State of the soccer game"""
+    """State of the soccer game. Corresponds to a combination of the C++-side PlayState and MatchState"""
 
-    __slots__ = ["__period", "__state", "__restart", "__our_restart"]
+    __slots__ = [
+        "__period", "__state", "__restart", "__our_restart", "__ball_placement",
+    ]
 
     __period: GamePeriod
     __state: GameState
     __restart: GameRestart
     __our_restart: bool
+    __ball_placement: np.array
 
     def __init__(self, period: GamePeriod, state: GameState,
-                 restart: GameRestart, our_restart: bool):
+                 restart: GameRestart, our_restart: bool, ball_placement: np.array):
         self.__period = period
         self.__state = state
         self.__restart = restart
         self.__our_restart = our_restart
+        self.__ball_placement = ball_placement
 
     @property
     def period(self) -> GamePeriod:
@@ -472,6 +477,37 @@ class GameInfo:
             return False  #Is returning this dangerous?
 
         return self.__our_restart
+
+    @property
+    def their_restart(self) -> bool:
+        """
+        :return: True if it is their restart
+        """
+        if (not self.is_restart()):
+            warnings.warn(
+                "Retrieved if it is our restart when it is not a restart at all",
+                RuntimeWarning)
+            return False  #Is returning this dangerous?
+
+        return not self.__our_restart
+
+    def is_stopped(self) -> bool:
+        """
+        :return: True if play is stopped.
+        """
+        return self.state == GameState.STOP
+
+    def is_ready(self) -> bool:
+        """
+        :return: True if the field is waiting on a team to kick the ball in a restart.
+        """
+        return self.state == GameState.READY
+
+    def is_setup(self) -> bool:
+        """
+        :return: True if the field is setting up for a penalty kick or kickoff.
+        """
+        return self.state == GameState.SETUP
 
     def is_restart(self) -> bool:
         """
@@ -509,12 +545,19 @@ class GameInfo:
         """
         return self.restart == GameRestart.PLACEMENT
 
+    def ball_placement(self) -> Optional[np.ndarray]:
+        """
+        :return: True if the restart is free placement.
+        """
+        return self.__ball_placement if self.is_free_placement() else None
+
+
 
 class WorldState:
     """Current state of the world."""
 
     __slots__ = [
-        "__our_robots", "__their_robots", "__ball", "__game_info", "__field"
+        "__our_robots", "__their_robots", "__ball", "__game_info", "__field", "__goalie_id"
     ]
 
     __our_robots: List[Robot]
@@ -522,14 +565,16 @@ class WorldState:
     __ball: Ball
     __game_info: GameInfo
     __field: Field
+    __goalie_id: int
 
     def __init__(self, our_robots: List[Robot], their_robots: List[Robot],
-                 ball: Ball, game_info: GameInfo, field: Field):
+                 ball: Ball, game_info: GameInfo, field: Field, goalie_id: int):
         self.__our_robots = our_robots
         self.__their_robots = their_robots
         self.__ball = ball
         self.__game_info = game_info
         self.__field = field
+        self.__goalie_id = goalie_id
 
     @property
     def robots(self) -> List[Robot]:
@@ -572,6 +617,14 @@ class WorldState:
         :return: The Field object
         """
         return self.__field
+
+    @property
+    def goalie_id(self) -> int:
+        """
+        :return: The Field object
+        """
+        return self.__goalie_id
+
 
     #def get_visible_robots(self) -> List[Robot]:
     #    pass

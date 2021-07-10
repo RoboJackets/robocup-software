@@ -22,6 +22,11 @@ AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executo
                 ConvertRx::ros_to_status(*status, &context_->robot_status.at(i));
             }));
     }
+
+    gameplay_debug_text_sub_ = node_->create_subscription<std_msgs::msg::String>(
+        gameplay::topics::kDebugTextPub, 1, [this](std_msgs::msg::String::SharedPtr message) {
+            context_->behavior_tree = message->data;
+        });
 }
 
 void AutonomyInterface::run() {}

@@ -43,7 +43,9 @@ struct Context {
     rj_geometry::ShapeSet global_obstacles;
     rj_geometry::ShapeSet goal_zone_obstacles;
 
-    GameState game_state;
+    PlayState play_state = PlayState::halt();
+    MatchState match_state;
+
     TeamInfo our_info;
     TeamInfo their_info;
     bool blue_team = true;

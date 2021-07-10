@@ -37,9 +37,7 @@ ament_target_dependencies(rj_convert INTERFACE rclcpp)
 
 # Add a test runner target "test_rj_convert" to run all tests in this directory
 if(BUILD_TESTING)
-  target_link_libraries(test_rj_convert PRIVATE rj_convert)
-  target_link_libraries(test_rj_convert PRIVATE ${GTEST_LIBRARIES})
-  add_dependencies(test_rj_convert googletest)
+  target_link_libraries(test_rj_convert PRIVATE rj_convert gtest gtest_main)
 endif()
 
 # ======================================================================

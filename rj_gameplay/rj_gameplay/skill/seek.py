@@ -26,3 +26,6 @@ class Seek(ISeek):
     def tick(self, world_state: rc.WorldState, robot: rc.Robot) -> None:
         # TODO: change so this properly returns the actions intent messages
         pass
+
+    def __str__(self):
+        return f"Seek(robot={self.robot.id if self.robot is not None else '??'})"

@@ -56,7 +56,7 @@ if(BUILD_TESTING)
 
   add_library(geometry2d_testing STATIC)
   add_subdirectory(testing)
-  target_link_libraries(geometry2d_testing PUBLIC geometry2d)
+  target_link_libraries(geometry2d_testing PUBLIC geometry2d gtest)
 endif()
 
 # ======================================================================

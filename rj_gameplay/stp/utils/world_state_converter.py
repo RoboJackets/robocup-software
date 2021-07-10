@@ -6,6 +6,7 @@ from typing import List
 
 RobotId = int
 
+
 class RobotStatus():
     """
     A class to contain the information from the robot status messsage
@@ -26,12 +27,12 @@ class RobotStatus():
     def __init__(self, robot_id: RobotId = None,
                  has_ball_sense: bool = None, kicker_charged: bool = None,
                  kicker_healthy: bool = None, lethal_fault: bool = None):
-        
         self.robot_id = robot_id
         self.has_ball_sense = has_ball_sense
         self.kicker_charged = kicker_charged
         self.kicker_healthy = kicker_healthy
         self.lethal_fault = lethal_fault
+
 
 class RobotState():
     """
@@ -50,11 +51,11 @@ class RobotState():
 
     def __init__(self, robot_id: RobotId, pose: np.ndarray,
                  twist: np.ndarray, visible: bool):
-
         self.id = robot_id
         self.pose = pose
         self.twist = twist
         self.visible = visible
+
 
 class PartialWorldState():
     """
@@ -71,10 +72,10 @@ class PartialWorldState():
 
     def __init__(self, our_robots: List[rc.Robot], their_robots: List[rc.Robot],
                  ball: rc.Ball):
-
         self.our_robots = our_robots
         self.their_robots = their_robots
         self.ball = ball
+
 
 def robotstate_to_partial_robot(robot_msg: msg.RobotState, index: int) -> RobotState:
     """
@@ -85,18 +86,19 @@ def robotstate_to_partial_robot(robot_msg: msg.RobotState, index: int) -> RobotS
     x = robot_msg.pose.position.x
     y = robot_msg.pose.position.y
     theta = robot_msg.pose.heading
-    pose = np.array([x,y,theta])
+    pose = np.array([x, y, theta])
 
     dx = robot_msg.velocity.linear.x
     dy = robot_msg.velocity.linear.y
     dtheta = robot_msg.velocity.angular
-    twist = np.array([dx,dy,dtheta])
+    twist = np.array([dx, dy, dtheta])
 
     is_visible = robot_msg.visible
 
     robot = RobotState(robot_id, pose, twist, is_visible)
 
     return robot
+
 
 def robotstatus_to_partial_robot(robot_msg: msg.RobotStatus) -> RobotStatus:
     """
@@ -123,34 +125,37 @@ def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
     """
     x = ball_msg.position.x
     y = ball_msg.position.y
-    pos = np.array([x,y])
+    pos = np.array([x, y])
 
     dx = ball_msg.velocity.x
     dy = ball_msg.velocity.y
-    vel = np.array([dx,dy])
+    vel = np.array([dx, dy])
 
     visible = ball_msg.visible
-
-    ball = rc.Ball(pos,vel, visible)
+    ball = rc.Ball(pos, vel, visible)
 
     return ball
 
-def gamestate_to_gameinfo(game_state_msg: msg.GameState) -> rc.GameInfo:
+
+def build_game_info(play_state_msg: msg.PlayState, match_state_msg: msg.MatchState) -> rc.GameInfo:
     """
         :return: GameInfo class from rc.py
     """
 
-    period = game_state_msg.period
+    period = rc.GamePeriod(match_state_msg.period)
 
-    state = game_state_msg.state
+    state = rc.GameState(play_state_msg.state)
 
-    restart = game_state_msg.restart
+    restart = rc.GameRestart(play_state_msg.restart)
 
-    our_restart = game_state_msg.our_restart
+    our_restart = play_state_msg.our_restart
 
-    game_info = rc.GameInfo(period, state, restart, our_restart)
+    game_info = rc.GameInfo(period, state, restart, our_restart,
+                            np.array(
+                                [play_state_msg.placement_point.x, play_state_msg.placement_point.y]))
 
     return game_info
+
 
 def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
     """
@@ -173,9 +178,11 @@ def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
     floor_width = field_msg.floor_width
 
     field = rc.Field(length, width, border, line_width, goal_width, goal_depth, goal_height,
-        penalty_short_dist, penalty_long_dist, center_radius, center_diameter, goal_flat, floor_length, floor_width)
+                     penalty_short_dist, penalty_long_dist, center_radius, center_diameter, goal_flat, floor_length,
+                     floor_width)
 
     return field
+
 
 def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
     """
@@ -198,6 +205,7 @@ def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
     world_state = PartialWorldState(our_robots, their_robots, ball)
 
     return world_state
+
 
 def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robot:
     """
@@ -224,13 +232,13 @@ def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robo
     is_visible = robot_state.visible
 
     robot = rc.Robot(robot_id, is_ours, pose, twist, is_visible, ball_sense, kicker_charged,
-        kicker_healthy, lethal_fault)
+                     kicker_healthy, lethal_fault)
 
     return robot
 
 
-
-def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: List[RobotStatus], game_info: rc.GameInfo, field: rc.Field) -> rc.WorldState:
+def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: List[RobotStatus],
+                       game_info: rc.GameInfo, field: rc.Field, goalie_id: int) -> rc.WorldState:
     """
     A function which combines the partial world state, robot statuses, game info, and field to create a whole world state
         :return: a world state as a rc.WorldState object
@@ -252,7 +260,6 @@ def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: L
     if game_info is None:
         game_info = None
 
-    world_state = rc.WorldState(our_robots, their_robots, partial_world_state.ball, game_info, field)
+    world_state = rc.WorldState(our_robots, their_robots, partial_world_state.ball, game_info, field, goalie_id)
 
     return world_state
-    

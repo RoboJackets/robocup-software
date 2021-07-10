@@ -41,7 +41,7 @@ ControllerCommand KeyboardController::get_command() const {
     }
 
     if (key_down(keystate, SDL_SCANCODE_LSHIFT)) {
-        command.rotation *= PARAM_max_damped_translation_speed;
+        command.rotation *= PARAM_max_damped_rotation_speed;
         command.translation *= PARAM_max_damped_translation_speed;
     } else {
         command.rotation *= PARAM_max_rotation_speed;

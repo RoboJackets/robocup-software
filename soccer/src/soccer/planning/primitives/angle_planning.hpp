@@ -1,6 +1,7 @@
 #pragma once
 
 #include <rj_common/utils.hpp>
+#include <rj_constants/constants.hpp>
 
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
@@ -34,6 +35,10 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
                       Eigen::Vector2d* jacobian) {
     rj_geometry::Point vel = instant.velocity;
 
+    if (vel.mag() < kRobotRadius) {
+        return previous_angle;
+    }
+
     double delta_forward = fix_angle_radians(vel.angle() - previous_angle);
     double delta_reverse = fix_angle_radians(M_PI + vel.angle() - previous_angle);
 
@@ -57,8 +62,12 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
  * field.
  */
 inline AngleFunction face_point(const rj_geometry::Point point) {
-    return [=](const LinearMotionInstant& instant, double /*previous_angle*/,
+    return [=](const LinearMotionInstant& instant, double previous_angle,
                Eigen::Vector2d* jacobian) -> double {
+        if ((instant.position - point).mag() < kRobotRadius) {
+            return previous_angle;
+        }
+
         if (jacobian != nullptr) {
             rj_geometry::Point displacement = point - instant.position;
             double distance_sq = displacement.magsq();

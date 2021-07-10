@@ -4,7 +4,7 @@
 
 namespace ros2_temp {
 
-constexpr size_t kDebugDrawQueueSize = 10;
+constexpr size_t kDebugDrawQueueSize = 50;
 
 DebugDrawInterface::DebugDrawInterface(Context* context, rclcpp::Executor* executor)
     : context_(context) {

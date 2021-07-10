@@ -5,6 +5,7 @@ set(RJ_COMMON_SRCS
     field_dimensions.cpp
     multicast.cpp
     referee_enums.cpp
+    transforms.cpp
     qt_utils.cpp)
 
 # ======================================================================

@@ -49,3 +49,6 @@ class Dribble(IDribble):
 
     def is_done(self, world_state):
         return self.move.is_done(world_state)
+
+    def __str__(self):
+        return f"Dribble(robot={self.robot.id if self.robot is not None else '??'})"

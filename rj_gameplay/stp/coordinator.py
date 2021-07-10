@@ -1,13 +1,15 @@
 """This module contains the implementation of the coordinator."""
-from typing import Any, Dict, Optional, Type, List
+from typing import Any, Dict, Optional, Type, List, Callable
 
 import stp.play
 import stp.rc as rc
 import stp.role.assignment as assignment
 import stp.situation
+import stp.skill
 from rj_msgs import msg
 
 NUM_ROBOTS = 16
+
 
 class Coordinator:
     """The coordinator is responsible for using SituationAnalyzer to select the best
@@ -21,6 +23,7 @@ class Coordinator:
         "_prev_play",
         "_prev_role_results",
         "_props",
+        "_debug_callback",
     ]
 
     _play_selector: stp.situation.IPlaySelector
@@ -31,12 +34,17 @@ class Coordinator:
 
     # TODO(1585): Properly handle type annotations for props instead of using Any.
 
-    def __init__(self, play_selector: stp.situation.IPlaySelector):
+    def __init__(
+        self,
+        play_selector: stp.situation.IPlaySelector,
+        debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]],
+                                 None] = None):
         self._play_selector = play_selector
         self._props = {}
         self._prev_situation = None
         self._prev_play = None
         self._prev_role_results = {}
+        self._debug_callback = debug_callback
 
     def tick(self, world_state: rc.WorldState) -> List[msg.RobotIntent]:
         """Performs 1 ticks of the STP system:
@@ -54,7 +62,7 @@ class Coordinator:
         # Update the props.
         cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
 
-        if type(cur_play) == type(self._prev_play) and not self._prev_play.is_done(world_state):
+        if isinstance(cur_play, type(self._prev_play)) and not self._prev_play.is_done(world_state):
             cur_play = self._prev_play
             # This should be checked here or in the play selector, so we can restart a play easily
 
@@ -62,7 +70,8 @@ class Coordinator:
         new_role_results, skills = cur_play.tick(
             world_state, self._prev_role_results, cur_play_props
         )
-    
+        self._debug_callback(cur_play, [entry.skill for entry in skills])
+
         # Get the list of actions from the skills
         actions = {}
         for skill in skills:

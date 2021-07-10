@@ -27,7 +27,8 @@ constexpr auto kDebugDrawPub = "viz/debug_draw";
 }  // namespace viz::topics
 
 namespace referee::topics {
-constexpr auto kGameStatePub = "referee/game_state";
+constexpr auto kPlayStatePub = "referee/play_state";
+constexpr auto kMatchStatePub = "referee/match_state";
 constexpr auto kOurInfoPub = "referee/our_info";
 constexpr auto kTheirInfoPub = "referee/their_info";
 constexpr auto kRefereeRawPub = "referee/raw_protobuf";
@@ -35,7 +36,6 @@ constexpr auto kGoaliePub = "referee/our_goalie";
 constexpr auto kTeamColorPub = "referee/team_color";
 
 constexpr auto kQuickCommandsSrv = "referee/quick_commands";
-constexpr auto kQuickRestartSrv = "referee/quick_restart";
 }  // namespace referee::topics
 
 namespace vision_receiver::topics {
@@ -52,6 +52,8 @@ namespace gameplay::topics {
 static inline std::string robot_intent_pub(int robot_id) {
     return "gameplay/robot_intent/robot_" + std::to_string(robot_id);
 }
+
+constexpr auto kDebugTextPub = "gameplay/debug_text";
 
 }  // namespace gameplay::topics
 
