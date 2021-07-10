@@ -229,7 +229,7 @@ public:
     @return the magnitude of the point
     */
     [[nodiscard]] double mag() const {
-        return sqrtf(static_cast<float>(x() * x() + y() * y()));
+        return std::sqrt(magsq());
     }
 
     /**
