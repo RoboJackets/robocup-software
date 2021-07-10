@@ -51,6 +51,7 @@ using AngleOverride =
 struct PathTargetCommand {
     LinearMotionInstant goal;
     AngleOverride angle_override = TargetFaceTangent{};
+    bool ignore_ball = false;
 };
 
 /**
@@ -120,6 +121,8 @@ struct RosConverter<planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionC
             result.override_angle.push_back(face_angle);
         }
 
+        result.ignore_ball = from.ignore_ball;
+
         return result;
     }
 
@@ -134,6 +137,7 @@ struct RosConverter<planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionC
         } else {
             result.angle_override = planning::TargetFaceTangent{};
         }
+        result.ignore_ball = from.ignore_ball;
         return result;
     }
 };

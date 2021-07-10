@@ -27,7 +27,8 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
-        if (!config_client_.connected()) {
+        auto team_color = team_color_queue_.get();
+        if (!config_client_.connected() || team_color == nullptr) {
             return;
         }
 

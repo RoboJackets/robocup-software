@@ -19,32 +19,37 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     rj_geometry::ShapeSet obstacles;
     fill_obstacles(plan_request, &obstacles, nullptr, false, nullptr);
 
-    if (!obstacles.hit(start_instant.position()) ||
-        std::holds_alternative<EmptyCommand>(plan_request.motion_command)) {
+    if (!obstacles.hit(start_instant.position())) {
         // Keep moving, but slow down the current velocity. This allows us to
         // keep continuity when we have short disruptions in planners (i.e.
         // single frame delay).
         // TODO(#1464): When the assignment delay is fixed, remove this horrible
         // hack by using Twist::Zero() instead of start_instant.velocity * 0.8
         Trajectory result{
-            {RobotInstant{start_instant.pose, start_instant.velocity * 0.8, start_instant.stamp}}};
+            {RobotInstant{start_instant.pose, start_instant.velocity * 0.0, start_instant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
-        result.set_debug_text("[ESCAPE " + std::to_string(plan_request.motion_command.index()) +
+        result.set_debug_text("[SLOW " + std::to_string(plan_request.motion_command.index()) +
                               "]");
         return result;
     }
 
+    Point unblocked =
+        find_non_blocked_goal(start_instant.position(), previous_target_, obstacles, 300);
+
     std::optional<Point> opt_prev_pt;
-    const Point unblocked =
-        find_non_blocked_goal(start_instant.position(), opt_prev_pt, obstacles, 300);
 
     LinearMotionInstant goal{unblocked, Point()};
     auto result = CreatePath::simple(start_instant.linear_motion(), goal, motion_constraints,
                                      start_instant.stamp);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
+    result.set_debug_text("[ESCAPE " + std::to_string(plan_request.motion_command.index()) +
+                          "]");
+
+    previous_target_ = unblocked;
+
     result.stamp(RJ::now());
-    return std::move(result);
+    return result;
 }
 
 Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optional<Point> prev_goal,

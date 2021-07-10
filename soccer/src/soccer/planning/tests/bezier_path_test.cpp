@@ -22,7 +22,7 @@ static void check_bezier_low_curvature(const planning::BezierPath& path) {
 
 static void check_bezier_smooth(const planning::BezierPath& path) {
     // Expected error decreases with high N
-    constexpr int kN = 15000;
+    constexpr int kN = 1500;
     constexpr double kEpsilon = 1e-2;
 
     Point previous_position;
@@ -38,15 +38,18 @@ static void check_bezier_smooth(const planning::BezierPath& path) {
         double curvature = 0;
         path.evaluate(s, &position, &tangent, &curvature);
 
-        EXPECT_LE((0.5 * (previous_velocity + tangent) * ds).dist_to(position - previous_position),
-                  kEpsilon);
+        EXPECT_LE(
+            (0.5 * (previous_velocity + tangent)).dist_to((position - previous_position) / ds),
+            kEpsilon);
 
         double curvature_expected =
             (tangent.normalized() - previous_velocity.normalized()).mag() / ds / tangent.mag();
 
-        // Make sure that the approximate curvature is consistent with the
-        // calculated exact value.
-        EXPECT_NEAR(curvature, std::abs(curvature_expected), kEpsilon);
+        if (tangent.mag() > 1e-3 && previous_velocity.mag() > 1e-3) {
+            // Make sure that the approximate curvature is consistent with the
+            // calculated exact value.
+            EXPECT_NEAR(curvature, std::abs(curvature_expected), kEpsilon) << " at s = " << s;
+        }
 
         previous_position = position;
         previous_velocity = tangent;

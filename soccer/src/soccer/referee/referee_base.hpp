@@ -6,15 +6,16 @@
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
+#include "config_client/config_client.hpp"
 #include "game_state.hpp"
 #include "team_info.hpp"
 #include "world_state.hpp"
 
 namespace referee {
 
-using GameStateMsg = rj_msgs::msg::GameState;
 using GoalieMsg = rj_msgs::msg::Goalie;
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_msgs::msg::TeamInfo;
@@ -44,44 +45,31 @@ protected:
     RefereeBase(const std::string& name);
 
     /**
-     * @brief Change to the "playing" state, representing normal gameplay.
+     * Handle a state transition. This should be called whenever we get a new command including
+     * state, restart, or ball placement.
+     *
+     * !! This should _not_ be called repeatedly for the same command !!
+     *
+     * This is always the play state for the YELLOW team (i.e. yellow restarts correspond to OURS)
      */
-    void play();
+    void set_play_state(const PlayState& state) {
+        // Some commands (basically anything that puts us into Setup, like direct/indirect kicks and
+        // normal starts, need us to know where the ball started when the state was entered.
+        if (state.wait_for_kick()) {
+            // We only change the placement point if the command has changed.
+            // Edge case: change the placement point if we didn't already have one (like it
+            // disappeared from vision when we first got the command).
+            if (yellow_play_state_ != state || !kick_watcher_capture_position_.has_value()) {
+                kick_watcher_capture_position_ = last_ball_position_;
+            }
+        } else {
+            kick_watcher_capture_position_ = std::nullopt;
+        }
 
-    /**
-     * @brief Move to the "stop" state.
-     */
-    void stop();
+        yellow_play_state_ = state;
+    }
 
-    /**
-     * @brief Move to the "halt" state, where all robots are forced to stop.
-     */
-    void halt();
-
-    /**
-     * @brief Move to the "setup" state to prepare for a restart.
-     */
-    void setup();
-
-    /**
-     * @brief Move to the "ready" state, for while a restart is occuring.
-     */
-    void ready();
-
-    /**
-     * @brief Do a restart. This does not change the "state", only the current
-     * restart.
-     */
-    void restart(GameState::Restart type, bool blue_restart);
-
-    /**
-     * @brief Do ball placement. This is currently unimplemented.
-     * @param point The goal point for placement.
-     * @param blue_placement Who is placing the ball.
-     */
-    void ball_placement(rj_geometry::Point point, bool blue_placement);
-
-    void set_period(GameState::Period period);
+    void set_period(MatchState::Period period);
     void set_stage_time_left(RJ::Seconds stage_time_left);
     void set_team_name(const std::string& name);
 
@@ -95,31 +83,39 @@ protected:
     void set_team_info(const TeamInfo& blue, const TeamInfo& yellow);
     void set_team_color(bool is_blue);
 
-    void set_goalie(uint8_t goalie_id);
+    /**
+     * @brief Set the goalie ID for our team. We will always defer to the referee if we have
+     * information from ref packets.
+     */
+    void override_goalie(uint8_t goalie_id);
 
-    // TODO(1556): Implement kick watcher
-    void capture_ready_point(const rj_geometry::Point& ball_position) {
-        capture_ready_point_ = ball_position;
-    }
+    /**
+     * @brief Spin the kick detector and update the ball position.
+     * @details Triggered every vision frame.
+     * @returns True if there was a state transition
+     */
+    bool spin_kick_detector(const std::optional<rj_geometry::Point>& ball_position) {
+        // We need this for capturing points.
+        last_ball_position_ = ball_position;
 
-    void spin_kick_detector(const BallState& ball_position) {
-        if (!state_.in_ready_state()) {
-            capture_ready_point_ = std::nullopt;
-        }
-
-        if (capture_ready_point_.has_value()) {
+        // Run the kick watcher if we need to (only when we're waiting for a kick to proceed).
+        if (yellow_play_state_.wait_for_kick() && kick_watcher_capture_position_ && ball_position) {
             constexpr double kMovedRadius = 0.1;
-            if (!capture_ready_point_->near_point(ball_position.position,
-                                                 kMovedRadius)) {
-                play();
+            if (!kick_watcher_capture_position_->near_point(*ball_position, kMovedRadius)) {
+                set_play_state(yellow_play_state_.advanced_from_kick());
+                return true;
             }
         }
+
+        return false;
     }
 
     /**
-     * @brief Send any updated messages.
+     * @brief Send out all valid messages.
      */
     void send();
+
+    PlayState yellow_play_state() const { return yellow_play_state_; }
 
 private:
     std::string our_name_;
@@ -132,22 +128,23 @@ private:
      */
     TeamInfo blue_info_;
     TeamInfo yellow_info_;
-    bool team_info_valid_ = false;
 
-    /**
-     * @brief Current game state.
-     */
-    GameState state_;
-    bool blue_restart_ = false;
-    bool state_valid_ = false;
+    /// @brief Current state of the match. Includes period and time remaining.
+    MatchState match_state_{};
 
-    bool goalie_valid_ = false;
+    /// @brief Current state of play. Includes information about whether we should be actively
+    /// playing as well as restart/placement information from the yellow team's perspective.
+    /// @details This is always for the yellow team to prevent confusion when changing team colors.
+    /// It is resolved to the correct team when it is published.
+    PlayState yellow_play_state_ = PlayState::halt();
+
+    /// @brief Point captured when entering Setup by the kick detector.
+    std::optional<rj_geometry::Point> kick_watcher_capture_position_ = std::nullopt;
 
     /**
      * @brief Our current team color.
      */
     bool blue_team_ = false;
-    bool blue_team_valid_ = false;
 
     /**
      * @brief Whether we at least have an accurate blue_team value.
@@ -156,22 +153,30 @@ private:
      */
     bool has_any_info_ = false;
 
-    rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
-    rclcpp::Publisher<GoalieMsg>::SharedPtr goalie_id_pub_;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr our_team_info_pub_;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
-    rclcpp::Publisher<GameStateMsg>::SharedPtr game_state_pub_;
-
     /**
      * @brief Update the team color from the names currently available in the
      * blue and yellow team information.
      */
     void update_team_color_from_names();
 
-    // Kick detector information
-    std::optional<rj_geometry::Point> capture_ready_point_;
+    /**
+     * @brief The latest ball position from vision, updated continuously.
+     * @details Should be nullopt whenever we lose the ball on vision.
+     */
+    std::optional<rj_geometry::Point> last_ball_position_;
 
     params::LocalROS2ParamProvider param_provider_;
+
+    config_client::ConfigClient config_client_;
+
+    rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
+    rclcpp::Publisher<GoalieMsg>::SharedPtr goalie_id_pub_;
+    rclcpp::Publisher<TeamInfoMsg>::SharedPtr our_team_info_pub_;
+    rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
+    rclcpp::Publisher<PlayState::Msg>::SharedPtr play_state_pub_;
+    rclcpp::Publisher<MatchState::Msg>::SharedPtr match_state_pub_;
+    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+    rclcpp::TimerBase::SharedPtr pub_timer_;
 };
 
 }  // namespace referee

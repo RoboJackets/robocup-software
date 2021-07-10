@@ -39,7 +39,7 @@ public:
 
     VisionReceiver();
 
-    void set_port(int port);
+    void set_port(const std::string& interface, int port);
 
 private:
     void start_receive();

@@ -16,17 +16,16 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     rj_geometry::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, true, &ball_trajectory);
+    auto command = std::get<PathTargetCommand>(request.motion_command);
+    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball, &ball_trajectory);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
     if (static_obstacles.hit(request.start.position())) {
-        SPDLOG_INFO("Hit static obstacle");
         reset();
         return Trajectory();
     }
 
-    auto command = std::get<PathTargetCommand>(request.motion_command);
     LinearMotionInstant goal_instant = command.goal;
     Point goal_point = goal_instant.position;
 
