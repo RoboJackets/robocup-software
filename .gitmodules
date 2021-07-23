@@ -19,3 +19,6 @@
 [submodule "external/sdlcontrollerdb"]
 	path = external/sdlcontrollerdb
 	url = https://github.com/kylestach/SDL_GameControllerDB
+[submodule "external/erSim"]
+	path = external/erSim
+	url = https://github.com/robotics-erlangen/framework.git
