@@ -14,6 +14,7 @@ import stp.skill as skill
 import numpy as np
 
 
+
 class ReceiverCost(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
@@ -33,6 +34,14 @@ class ReceiverCost(role.CostFn):
             return 0.0
         return 1.0
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        return 9999
+
 class PasserCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
@@ -49,6 +58,14 @@ class PasserCost(role.CostFn):
                 return 0
             else:
                 return 1
+
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        return 999999
 
 
 

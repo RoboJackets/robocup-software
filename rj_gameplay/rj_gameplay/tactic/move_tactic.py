@@ -33,6 +33,14 @@ class move_cost(role.CostFn):
     
         return (robot.pose[0] - self.target_point[0])**2 + (robot.pose[1] - self.target_point[1])**2
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        return 9999
+
 class Move(tactic.ITactic):
     """
     A striker tactic which captures then shoots the ball

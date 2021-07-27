@@ -30,6 +30,14 @@ class striker_cost(role.CostFn):
 
         return robot.pose[0] - world_state.ball.pos[0]
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        return 9999
+
 class Striker(tactic.ITactic):
     """
     A striker tactic which captures then shoots the ball

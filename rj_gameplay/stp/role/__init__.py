@@ -58,6 +58,18 @@ class CostFn(Protocol):
         """
         ...
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState) -> float:
+        """Given the previous role assigment and current world state,
+        returns the cost of not assigning any robot/
+        :param prev_result: The previous role assignment result.
+        :param world_state: The current world state.
+        :return: cost of not assigning
+        """
+        ...
+
 
 class ConstraintFn(Protocol):
     """Protocol for ConstraintFn."""

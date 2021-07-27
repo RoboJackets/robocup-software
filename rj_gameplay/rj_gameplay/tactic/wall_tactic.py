@@ -41,6 +41,14 @@ class wall_cost(role.CostFn):
         # costs should be in seconds, not dist
         return np.linalg.norm(robot.pose[0:2]-self.wall_pt) / global_parameters.soccer.robot.max_speed
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        return 9999
+
 def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarray]:
     """Calculates num_wallers points to form a wall between the ball and goal.
     :return list of wall_pts (as numpy arrays)

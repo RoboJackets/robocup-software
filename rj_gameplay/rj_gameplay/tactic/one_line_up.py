@@ -33,6 +33,14 @@ class one_lineup_cost(role.CostFn):
         # return robot.id
         return 0
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        return 9999
+
 class one_lineup_constraint(role.ConstraintFn):
     """Protocol for ConstraintFn. """
 
