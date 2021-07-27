@@ -1,6 +1,7 @@
 """Module that contains NaiveRoleAssignment. """
 
 from math import isfinite
+import sys
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -14,7 +15,7 @@ SortedRequests = List[assignment.FlatRoleRequests]
 
 # Define some big constant for "hard constraints".
 # TODO: Make a local param
-INVALID_COST = 9999
+INVALID_COST = sys.maxsize
 
 
 class NaiveRoleAssignment(assignment.IRoleAssignment):

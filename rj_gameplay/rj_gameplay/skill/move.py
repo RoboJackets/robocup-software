@@ -24,7 +24,6 @@ class IMove(skill.ISkill, ABC):
 A skill version of move so that actions don't have to be called in tactics
 """
 class Move(IMove):
-    
     def __init__(self,
             robot : rc.Robot = None,
             target_point : np.ndarray = np.array([0.0,0.0]),
@@ -33,9 +32,9 @@ class Move(IMove):
             face_point : Optional[np.ndarray] = None):
         self.robot = robot
         self.target_point = target_point
+        self.target_vel = target_vel
         self.face_point = face_point
         self.face_angle = face_angle
-
         if self.robot is not None:
             self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point)
         else:
@@ -46,12 +45,18 @@ class Move(IMove):
         self.root.setup_with_descendants()
         self.__name__ = 'move skill'
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState): #returns dict of robot and actions
+    def tick(self, robot: rc.Robot,
+             world_state: rc.WorldState):  #returns dict of robot and actions
         self.robot = robot
         self.move.target_point = self.target_point
+        self.move.target_vel = self.target_vel
+        self.move.face_angle = self.face_angle
         self.move.face_point = self.face_point
         actions = self.root.tick_once(self.robot, world_state)
         return actions
 
     def is_done(self, world_state):
         return self.move.is_done(world_state)
+
+    def __str__(self):
+        return f"Move(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"

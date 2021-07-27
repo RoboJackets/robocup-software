@@ -13,22 +13,30 @@
 
 namespace planning {
 
-PlannerNode::PlannerNode() : rclcpp::Node("planner"), param_provider_{this, kPlanningParamModule} {
+PlannerNode::PlannerNode()
+    : rclcpp::Node("planner", rclcpp::NodeOptions{}
+                                  .automatically_declare_parameters_from_overrides(true)
+                                  .allow_undeclared_parameters(true)),
+      shared_state_(this),
+      param_provider_{this, kPlanningParamModule} {
     robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
-        auto planner = std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_);
+        auto planner =
+            std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
         robots_planners_.emplace_back(std::move(planner));
     }
 }
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
-                                 TrajectoryCollection* robot_trajectories)
+                                 TrajectoryCollection* robot_trajectories,
+                                 SharedStateInfo* shared_state)
     : node_{node},
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
+      shared_state_{shared_state},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
-          "planning"} {
+          fmt::format("planning_{}", robot_id)} {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
@@ -53,35 +61,22 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                          intent->priority);
             }
         });
-    world_state_sub_ = node_->create_subscription<WorldState::Msg>(
-        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
-        [this](WorldState::Msg::SharedPtr world_state) {  // NOLINT
-            auto robots = world_state->our_robots;
-            latest_world_state_ = rj_convert::convert_from_ros(*world_state);
-        });
-    global_obstacles_sub_ = node_->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
-        planning::topics::kGlobalObstaclesPub, rclcpp::QoS(1).transient_local(),
-        [this](rj_geometry::ShapeSet::Msg::SharedPtr global_obstacles) {  // NOLINT
-            global_obstacles_ = rj_convert::convert_from_ros(*global_obstacles);
-        });
-    goal_zone_obstacles_sub_ = node_->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
-        planning::topics::kGoalZoneObstacles, rclcpp::QoS(1).transient_local(),
-        [this](rj_geometry::ShapeSet::Msg::SharedPtr goal_zone_obstacles) {  // NOLINT
-            goal_zone_obstacles_ = rj_convert::convert_from_ros(*goal_zone_obstacles);
-        });
-    goalie_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
-        planning::topics::kGoalZoneObstacles, rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::Goalie::SharedPtr goalie) {  // NOLINT
-            is_goalie_ = (robot_id_ == goalie->goalie_id);
-        });
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
-    const auto& robot = latest_world_state_.our_robots.at(robot_id_);
-    const auto& start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
-    rj_geometry::ShapeSet obstacles = global_obstacles_;
-    if (!is_goalie_) {
-        obstacles.add(goal_zone_obstacles_);
+    const auto* world_state = shared_state_->world_state();
+    const auto global_obstacles = shared_state_->global_obstacles();
+    const auto goal_zone_obstacles = shared_state_->goal_zone_obstacles();
+    const auto goalie_id = shared_state_->goalie_id();
+    const auto game_state = shared_state_->game_state();
+    const bool is_goalie = goalie_id == robot_id_;
+
+    const auto& robot = world_state->our_robots.at(robot_id_);
+    const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
+    rj_geometry::ShapeSet real_obstacles = global_obstacles;
+    rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
+    if (!is_goalie) {
+        virtual_obstacles.add(goal_zone_obstacles);
     }
 
     const auto robot_trajectories_hold = robot_trajectories_->get();
@@ -95,14 +90,18 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
 
     RobotConstraints constraints;
+    if (game_state.stopped()) {
+        constraints.mot.max_speed = 0.8;
+    }
+
     return PlanRequest{start,
                        intent.motion_command,
                        constraints,
-                       global_obstacles_,
-                       intent.local_obstacles,
+                       std::move(real_obstacles),
+                       std::move(virtual_obstacles),
                        planned_trajectories,
                        static_cast<unsigned int>(robot_id_),
-                       &latest_world_state_,
+                       world_state,
                        intent.priority,
                        &debug_draw_};
 }
@@ -153,8 +152,8 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
     return trajectory;
 }
 bool PlannerForRobot::robot_alive() const {
-    return latest_world_state_.our_robots.at(robot_id_).visible &&
-           RJ::now() < latest_world_state_.last_updated_time + RJ::Seconds(PARAM_timeout);
+    return shared_state_->world_state()->our_robots.at(robot_id_).visible &&
+           RJ::now() < shared_state_->world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
 }
 
 }  // namespace planning

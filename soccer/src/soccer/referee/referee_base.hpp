@@ -6,6 +6,7 @@
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "game_state.hpp"
@@ -97,23 +98,31 @@ protected:
 
     void set_goalie(uint8_t goalie_id);
 
-    // TODO(1556): Implement kick watcher
     void capture_ready_point(const rj_geometry::Point& ball_position) {
-        capture_ready_point_ = ball_position;
+        if (state_.in_ready_state() && !capture_ready_point_.has_value()) {
+            std::cout << "Capturing ball position" << std::endl;
+            capture_ready_point_ = ball_position;
+        }
     }
 
     void spin_kick_detector(const BallState& ball_position) {
-        if (!state_.in_ready_state()) {
+        if (!state_.in_ready_state() && capture_ready_point_.has_value()) {
             capture_ready_point_ = std::nullopt;
+            std::cout << "Clearing ball position" << std::endl;
         }
 
         if (capture_ready_point_.has_value()) {
+            std::cout << "Comparing ball position" << std::endl;
             constexpr double kMovedRadius = 0.1;
             if (!capture_ready_point_->near_point(ball_position.position,
                                                  kMovedRadius)) {
                 play();
             }
         }
+    }
+
+    [[nodiscard]] bool our_restart() const {
+        return state_.our_restart;
     }
 
     /**
@@ -161,6 +170,12 @@ private:
     rclcpp::Publisher<TeamInfoMsg>::SharedPtr our_team_info_pub_;
     rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
     rclcpp::Publisher<GameStateMsg>::SharedPtr game_state_pub_;
+    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+
+    rclcpp::TimerBase::SharedPtr pub_timer_;
+
+    GameStateMsg gamestate_msg;
+    rclcpp::TimerBase::SharedPtr gamestate_pub_timer_;
 
     /**
      * @brief Update the team color from the names currently available in the

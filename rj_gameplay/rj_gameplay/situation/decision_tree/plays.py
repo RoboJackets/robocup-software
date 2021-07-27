@@ -166,3 +166,9 @@ class GoalieClear(stp.situation.ISituation):
     """Plays for clearing the ball when our goalie possesses the ball."""
 
     ...
+
+
+class Stop(stp.situation.ISituation):
+    """Plays for dealing with the stop state."""
+
+    ...

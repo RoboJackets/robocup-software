@@ -110,15 +110,13 @@ void ExternalReferee::setup_referee_multicast() {
         throw std::runtime_error("Failed to bind to shared referee port");
     }
     // Join multicast group
-    const boost::asio::ip::address multicast_address =
-        boost::asio::ip::address::from_string(kRefereeAddress);
-    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
+    const boost::asio::ip::address_v4 multicast_address =
+        boost::asio::ip::address::from_string(kRefereeAddress).to_v4();
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address, boost::asio::ip::address::from_string("172.25.0.23").to_v4()));
 }
 
 void ExternalReferee::update() {
     io_service_.poll();
-    BallState state;
-    spin_kick_detector(state);
 }
 
 void ExternalReferee::handle_command(SSL_Referee::Command command) {
@@ -130,6 +128,9 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             stop();
             break;
         case SSL_Referee::NORMAL_START:
+            if (our_restart()) {
+                play();
+            }
             break;
         case SSL_Referee::FORCE_START:
             play();

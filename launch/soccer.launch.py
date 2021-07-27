@@ -1,4 +1,5 @@
 import os
+from ament_index_python.packages import get_package_share_directory
 from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -11,6 +12,8 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
+    config = os.path.join(get_package_share_directory('rj_robocup'), 'config',
+                          'sim.yaml')
     bringup_dir = Path(get_package_share_directory('rj_robocup'))
     launch_dir = bringup_dir / 'launch'
 
@@ -27,6 +30,7 @@ def generate_launch_description():
         executable='soccer',
         output='screen',
         arguments=[team_flag, sim_flag, ref_flag, '-defend', direction_flag],
+        parameters=[config],
         on_exit=Shutdown())
 
     config_server = Node(
@@ -34,26 +38,32 @@ def generate_launch_description():
         executable='config_server',
         output='screen',
         arguments=[team_flag, sim_flag, ref_flag, '-defend', direction_flag],
+        parameters=[config],
         on_exit=Shutdown())
 
     radio = Node(package='rj_robocup',
                  executable='sim_radio_node',
                  output='screen',
+                 parameters=[config],
                  on_exit=Shutdown())
 
     control = Node(package='rj_robocup',
                    executable='control_node',
                    output='screen',
+                   parameters=[config],
                    on_exit=Shutdown())
 
     planner = Node(package='rj_robocup',
                    executable='planner_node',
                    output='screen',
+                   parameters=[config],
                    on_exit=Shutdown())
 
     gameplay = Node(package='rj_robocup',
                     executable='gameplay_node',
                     output='screen',
+                    parameters=[config],
+                    emulate_tty=True,
                     on_exit=Shutdown())
 
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
@@ -61,8 +71,9 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(vision_receiver_launch_path))
 
     ref_receiver = Node(package='rj_robocup',
-                        executable='internal_referee_node',
+                        executable='external_referee_node',
                         output='screen',
+                        parameters=[config],
                         on_exit=Shutdown())
 
     vision_filter_launch_path = str(launch_dir / "vision_filter.launch.py")

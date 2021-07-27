@@ -7,8 +7,11 @@
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
     rclcpp::executors::SingleThreadedExecutor executor{};
-
-    const auto node = std::make_shared<vision_filter::VisionFilter>(rclcpp::NodeOptions{});
+    auto options = rclcpp::NodeOptions{}
+                       .allow_undeclared_parameters(true)
+                       .automatically_declare_parameters_from_overrides(true);
+    const auto node = std::make_shared<vision_filter::VisionFilter>(options);
+    auto params = node->list_parameters({}, 0);
     start_global_param_provider(node.get(), kGlobalParamServerNode);
     executor.add_node(node);
 

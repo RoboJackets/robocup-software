@@ -139,6 +139,7 @@ export LANG=en_US.UTF-8
 sudo apt-get update && sudo apt-get install -y curl gnupg2 lsb-release
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+sudo apt-get update
 
 # Install eloquent for 18.04, foxy for 20.04
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then

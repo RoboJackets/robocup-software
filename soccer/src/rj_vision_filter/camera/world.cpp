@@ -20,17 +20,38 @@ World::World()
       robots_yellow_(kNumShells, WorldRobot()),
       robots_blue_(kNumShells, WorldRobot()) {}
 
-void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame) {
-    update_with_camera_frame(calc_time, {frame}, false);
+void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame,
+                                 const std::array<bool, kNumShells>& robots_with_ball,
+                                 bool blue_team) {
+    update_with_camera_frame(calc_time, {frame}, false, robots_with_ball, blue_team);
 }
 
 void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
-                                     bool update_all) {
+                                     bool update_all,
+                                     const std::array<bool, kNumShells>& robots_with_ball,
+                                     bool blue_team) {
     calc_ball_bounce();
 
     std::vector<bool> camera_updated(PARAM_max_num_cameras, false);
 
     // TODO: Take only the newest frame if 2 come in for the same camera
+
+    const auto& our_robots = blue_team ? get_robots_blue() : get_robots_yellow();
+    const auto& their_robots = (!blue_team) ? get_robots_blue() : get_robots_yellow();
+
+    // TODO: Horrible hack for ball occlusion
+    std::optional<rj_geometry::Point> ball_sense_point;
+    std::optional<int> ball_sense_robot;
+    for (int i = 0; i < kNumShells; i++) {
+        if (robots_with_ball.at(i) && our_robots.at(i).get_is_valid()) {
+            // Put the ball in this robot's mouth
+            const auto& robot_position = our_robots.at(i).get_pos();
+            const auto& robot_heading = our_robots.at(i).get_theta();
+            ball_sense_point = robot_position + rj_geometry::Point::direction(robot_heading) * kRobotMouthRadius;
+            ball_sense_robot = i;
+            break;
+        }
+    }
 
     for (const CameraFrame& frame : new_frames) {
         // Make sure camera from frame is created, if not, make it
@@ -51,9 +72,15 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
             blue_team.at(robot.get_robot_id()).push_back(robot);
         }
 
+        // Ball sense hack
+        std::vector<CameraBall> balls = frame.camera_balls;
+        if (ball_sense_point && !blue_team.at(*ball_sense_robot).empty()) {
+            balls.emplace_back(frame.t_capture, ball_sense_point.value());
+        }
+
         cameras_.at(frame.camera_id)
-            .update_with_frame(calc_time, frame.camera_balls, yellow_team, blue_team, ball_,
-                               robots_yellow_, robots_blue_);
+            .update_with_frame(calc_time, balls, yellow_team, blue_team, ball_, robots_yellow_,
+                               robots_blue_);
 
         camera_updated.at(frame.camera_id) = true;
 

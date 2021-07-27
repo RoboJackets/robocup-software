@@ -33,12 +33,23 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.pivot_target;
 
-    // TODO(Kyle): These need real constants
-    if (cached_pivot_target_.has_value() &&
-        cached_pivot_target_.value().dist_to(pivot_target) < kRobotMouthWidth / 2 &&
+    const bool pivot_target_unchanged =
+        cached_pivot_target_.has_value() &&
+        cached_pivot_target_.value().dist_to(pivot_target) < kRobotMouthWidth / 2;
+    bool pivot_point_unchanged =
         cached_pivot_point_.has_value() &&
-        cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2) {
+        cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2;
+
+    // TODO(Kyle): These need real constants
+    if (pivot_target_unchanged && pivot_point_unchanged) {
         return previous_;
+    }
+
+    if (pivot_point_unchanged) {
+        pivot_point = *cached_pivot_point_;
+    }
+    if (pivot_target_unchanged) {
+        pivot_target = *cached_pivot_target_;
     }
 
     cached_pivot_target_ = pivot_target;
@@ -79,30 +90,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
         path.append_instant(last);
     }
     path.hold_for(RJ::Seconds(3.0));
-
-    AngleFunction function = [pivot_point, pivot_target](const LinearMotionInstant& instant,
-                                                         double /*previous_angle*/,
-                                                         Eigen::Vector2d* jacobian) -> double {
-        Point position = instant.position;
-        auto angle_to_pivot_target = position.angle_to(pivot_target);
-        auto angle_to_pivot = position.angle_to(pivot_point);
-
-        Point target_point = pivot_point;
-        if (abs(angle_to_pivot - angle_to_pivot_target) < degrees_to_radians(10)) {
-            target_point = pivot_target;
-        }
-
-        auto angle_to_target = position.angle_to(target_point);
-
-        if (jacobian != nullptr) {
-            // The angle to the point changes with the dot product of the tangent vector to the circle with the robot's velocity, divided by the radius.
-            // Therefore, the rotated vector needs to be divided by the radius twice to get the jacobian.
-            *jacobian = (position - target_point).rotate(M_PI / 2);
-            *jacobian /= jacobian->squaredNorm();
-        }
-
-        return angle_to_target;
-    };
 
     plan_angles(&path, start_instant, AngleFns::face_point(pivot_point), request.constraints.rot);
     path.stamp(RJ::now());

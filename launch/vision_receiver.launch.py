@@ -5,7 +5,7 @@ from launch.actions import Shutdown
 
 
 def generate_launch_description():
-    sim_vision_port = 10020
+    sim_vision_port = 10006
     shared_vision_port_single_primary = 10002
 
     hz = 120.0

@@ -19,7 +19,7 @@ from stp.utils.constants import RobotConstants
 from rj_geometry_msgs.msg import Point, Segment
 
 def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
-    # workaround for non-working CostBehavior: 
+    # workaround for non-working CostBehavior:
     # initialize move action, update target point every tick (target point being opponent robot pos)
 
     # TODO: use mark_heuristic & CostBehavior to handle marking
@@ -40,7 +40,7 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
 
     # if ball inside robot radius of mark_pos, can't mark normally
     if np.linalg.norm(mark_pos - ball_pos) < RobotConstants.RADIUS:
-        # instead, get in front of opp robot holding ball 
+        # instead, get in front of opp robot holding ball
         mark_pos += mark_dir * 2 * RobotConstants.RADIUS
 
     return mark_pos
@@ -53,7 +53,7 @@ A skill which marks a given opponent robot according to some heuristic cost func
 """
 class Mark(IMark):
 
-    def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None) -> None:
+    def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None, def_restart: bool=False) -> None:
 
         self.__name__ = 'Mark Skill'
         self.robot = robot
@@ -68,6 +68,9 @@ class Mark(IMark):
         self.root = self.mark_behavior
         self.root.setup_with_descendants()
 
+        # TODO: horrible hack for defending restarts
+        self.is_def_restart = def_restart 
+
     def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
         self.robot = robot
 
@@ -78,13 +81,20 @@ class Mark(IMark):
             else:
                 mark_point = get_mark_point(self.target_robot.id, world_state)
 
-            if mark_point is None: 
+            if mark_point is None:
                 return []
             self.move.target_point = mark_point
-            self.move.face_point = world_state.ball.pos 
+            self.move.face_point = world_state.ball.pos
+
+            # TODO: horrible hack for defending restarts
+            if self.is_def_restart:
+                self.move.is_def_restart = True
 
         actions = self.root.tick_once(robot, world_state)
         return actions
 
     def is_done(self, world_state):
         return self.move.is_done(world_state)
+
+    def __str__(self):
+        return f"Mark(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_robot.id if self.target_robot is not None else '??'})"

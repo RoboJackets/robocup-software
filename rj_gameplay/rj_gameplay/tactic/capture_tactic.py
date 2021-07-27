@@ -1,5 +1,3 @@
-"""Contains the stub for the move tactic. """
-
 from dataclasses import dataclass
 from typing import List, Optional
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
@@ -16,13 +14,11 @@ import stp.skill as skill
 import numpy as np
 
 
-class move_cost(role.CostFn):
+class CaptureCost(role.CostFn):
     """
     A cost function for how to choose a striker
     TODO: Implement a better cost function
     """
-    def __init__(self, target_point : np.ndarray):
-        self.target_point = target_point
 
     def __call__(
         self,
@@ -31,25 +27,17 @@ class move_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
     
-        return (robot.pose[0] - self.target_point[0])**2 + (robot.pose[1] - self.target_point[1])**2
+        return np.linalg.norm(world_state.ball.pos - robot.pose[0:2])
 
-    def unassigned_cost_fn(
-        self,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
-    ) -> float:
-
-        return 9999
-
-class Move(tactic.ITactic):
+class Capture(tactic.ITactic):
     """
     A striker tactic which captures then shoots the ball
     """
 
 
-    def __init__(self, target_point : np.ndarray):
-        self.move = tactic.SkillEntry(move.Move(target_point = target_point))
-        self.cost = move_cost(target_point)
+    def __init__(self):
+        self.capture = tactic.SkillEntry(capture.Capture())
+        self.cost = CaptureCost()
         
     def compute_props(self):
         pass
@@ -69,19 +57,8 @@ class Move(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        move_request = role.RoleRequest(role.Priority.MEDIUM, True, self.cost)
-        # has_ball = True
-        # for robot in world_state.our_robots:
-        #     if robot.has_ball_sense:
-        #         has_ball = True
-        # if has_ball:
-        #     role_requests[self.shoot] = [striker_request]
-        #     role_requests[self.capture] = []
-        # else:
-        #     role_requests[self.capture] = [striker_request]
-        #     role_requests[self.shoot] = []
-        # role_requests
-        role_requests[self.move] = [move_request]
+        capture_request = role.RoleRequest(role.Priority.MEDIUM, True, self.cost)
+        role_requests[self.capture] = [capture_request]
 
         return role_requests
 
@@ -92,11 +69,11 @@ class Move(tactic.ITactic):
         # capture_result: tactic.RoleResults
         # capture_result = role_results[self.capture]
         # shoot_result = role_results[self.shoot]
-        move_result = role_results[self.move]
+        capture_result = role_results[self.capture]
 
-        if move_result and move_result[0].is_filled():
-            return [self.move]
+        if capture_result and capture_result[0].is_filled():
+            return [self.capture]
         return []
 
     def is_done(self, world_state):
-        return self.move.skill.is_done(world_state)
+        return self.capture.skill.is_done(world_state)
