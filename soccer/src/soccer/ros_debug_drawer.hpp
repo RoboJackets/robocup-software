@@ -40,7 +40,8 @@ public:
                 color_from_qt(color)));
     }
 
-    void draw_rect(const rj_geometry::Rect& rect, const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
+    void draw_rect(const rj_geometry::Rect& rect,
+                   const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         shapes.rectangles.push_back(rj_convert::convert_to_ros(rect));
         frame_.shapes.push_back(

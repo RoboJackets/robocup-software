@@ -25,7 +25,7 @@ class RjSequence(py_trees.composites.Sequence):
         self.world_state = world_state
         if self.current_child is None:
             self.current_child = self.children[0]
-            self.curr_index = 0 # start sequence
+            self.curr_index = 0  # start sequence
         elif self.current_child.action.is_done(world_state):
             if self.curr_index < len(self.children):
                 self.current_child = self.children[self.curr_index]
@@ -33,7 +33,7 @@ class RjSequence(py_trees.composites.Sequence):
             else:
                 # restart sequence
                 self.current_child = self.children[0]
-                self.curr_index = 0 # start sequence
+                self.curr_index = 0  # start sequence
 
         actions = self.current_child.tick_once(robot, world_state)
         return actions

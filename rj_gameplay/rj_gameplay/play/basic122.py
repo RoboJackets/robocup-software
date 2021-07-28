@@ -17,15 +17,22 @@ class Basic122(play.IPlay):
 
     def __init__(self):
         self.target_point: np.ndarray = np.array([0., 9.])
-        self.striker_tactic = striker_tactic.LineKickStrikerTactic(target_point=self.target_point)
+        self.striker_tactic = striker_tactic.LineKickStrikerTactic(
+            target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
-        self.wall_tactic = wall_tactic.WallTactic(2, role.Priority.LOW, cost_scale=0.1)
+        self.wall_tactic = wall_tactic.WallTactic(2,
+                                                  role.Priority.LOW,
+                                                  cost_scale=0.1)
 
         left_pt = np.array([1.5, 7.5])
-        self.seek_left = pass_seek.Seek(left_pt, pass_seek.build_seek_function(left_pt), pass_seek.SeekCost(left_pt))
+        self.seek_left = pass_seek.Seek(left_pt,
+                                        pass_seek.build_seek_function(left_pt),
+                                        pass_seek.SeekCost(left_pt))
 
         right_pt = np.array([-1.5, 7.5])
-        self.seek_right = pass_seek.Seek(right_pt, pass_seek.build_seek_function(right_pt), pass_seek.SeekCost(right_pt))
+        self.seek_right = pass_seek.Seek(
+            right_pt, pass_seek.build_seek_function(right_pt),
+            pass_seek.SeekCost(right_pt))
 
         self.role_assigner = NaiveRoleAssignment()
 
@@ -33,30 +40,43 @@ class Basic122(play.IPlay):
         pass
 
     def tick(
-            self,
-            world_state: rc.WorldState,
-            prev_results: role.assignment.FlatRoleResults,
-            props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+        self,
+        world_state: rc.WorldState,
+        prev_results: role.assignment.FlatRoleResults,
+        props,
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+               List[tactic.SkillEntry]]:
         # Get role requests from all tactics and put them into a dictionary
 
-        role_requests: play.RoleRequests = {self.striker_tactic: self.striker_tactic.get_requests(world_state, None),
-                                            # self.two_mark: self.two_mark.get_requests(world_state, None),
-                                            self.seek_left: self.seek_left.get_requests(world_state, None),
-                                            self.seek_right: self.seek_right.get_requests(world_state, None),
-                                            self.goalie_tactic: self.goalie_tactic.get_requests(world_state, None),
-                                            self.wall_tactic: self.wall_tactic.get_requests(world_state, None)}
+        role_requests: play.RoleRequests = {
+            self.striker_tactic:
+            self.striker_tactic.get_requests(world_state, None),
+            # self.two_mark: self.two_mark.get_requests(world_state, None),
+            self.seek_left:
+            self.seek_left.get_requests(world_state, None),
+            self.seek_right:
+            self.seek_right.get_requests(world_state, None),
+            self.goalie_tactic:
+            self.goalie_tactic.get_requests(world_state, None),
+            self.wall_tactic:
+            self.wall_tactic.get_requests(world_state, None)
+        }
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)
+        flat_results = self.role_assigner.assign_roles(flat_requests,
+                                                       world_state,
+                                                       prev_results)
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all skills with assigned roles from tactics
 
-        skills = self.striker_tactic.tick(role_results[self.striker_tactic], world_state)
-        skills += self.seek_left.tick(role_results[self.seek_left], world_state)
-        skills += self.seek_right.tick(role_results[self.seek_right], world_state)
+        skills = self.striker_tactic.tick(role_results[self.striker_tactic],
+                                          world_state)
+        skills += self.seek_left.tick(role_results[self.seek_left],
+                                      world_state)
+        skills += self.seek_right.tick(role_results[self.seek_right],
+                                       world_state)
         skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
         skills += self.wall_tactic.tick(role_results[self.wall_tactic])
 

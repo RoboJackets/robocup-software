@@ -14,8 +14,10 @@ from rj_gameplay.action import move, line_kick
 from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 
+
 class ILineKickSkill(skill.ISkill, ABC):
     ...
+
 
 class LineKickSkill(ILineKickSkill):
     """
@@ -26,7 +28,11 @@ class LineKickSkill(ILineKickSkill):
     # def __init__(self, role: role.Role) -> None:
     # self.robot = role.robot
     # role-blind implementation
-    def __init__(self, robot: rc.Robot, target_point: np.array, chip: bool = False, kick_speed: float = 5.5) -> None:
+    def __init__(self,
+                 robot: rc.Robot,
+                 target_point: np.array,
+                 chip: bool = False,
+                 kick_speed: float = 5.5) -> None:
         self.robot = robot
 
         self.target_point = target_point
@@ -35,12 +41,18 @@ class LineKickSkill(ILineKickSkill):
         # self.kick_speed = 5.5
 
         if self.robot is not None:
-            self.line_kick_action = line_kick.LineKickAction(self.robot.id, self.target_point, chip=chip, kick_speed=kick_speed)
+            self.line_kick_action = line_kick.LineKickAction(
+                self.robot.id,
+                self.target_point,
+                chip=chip,
+                kick_speed=kick_speed)
         else:
-            self.line_kick_action = line_kick.LineKickAction(None, self.target_point, chip=chip, kick_speed=kick_speed)
+            self.line_kick_action = line_kick.LineKickAction(
+                None, self.target_point, chip=chip, kick_speed=kick_speed)
 
         # put into a tree
-        self.line_kick_action_behavior = ActionBehavior('LineKick', self.line_kick_action)
+        self.line_kick_action_behavior = ActionBehavior(
+            'LineKick', self.line_kick_action)
         self.root = self.line_kick_action_behavior
         self.root.setup_with_descendants()
 

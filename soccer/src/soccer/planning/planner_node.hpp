@@ -128,7 +128,8 @@ private:
 
 class PlannerForRobot {
 public:
-    PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories, SharedStateInfo* shared_state);
+    PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories,
+                    SharedStateInfo* shared_state);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;

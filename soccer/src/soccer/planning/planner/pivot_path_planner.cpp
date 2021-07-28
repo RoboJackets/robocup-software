@@ -33,7 +33,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.pivot_target;
 
-
     // TODO(Kyle): These need real constants
     const bool pivot_target_unchanged =
         cached_pivot_target_.has_value() &&

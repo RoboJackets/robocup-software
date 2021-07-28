@@ -6,7 +6,10 @@ DEFINE_FLOAT64(kRadioParamModule, timeout, 0.25,
                "Timeout after which radio will assume a robot is disconnected. Seconds.");
 
 Radio::Radio()
-    : Node{"radio", rclcpp::NodeOptions{}.automatically_declare_parameters_from_overrides(true).allow_undeclared_parameters(true)}, param_provider_(this, kRadioParamModule) {
+    : Node{"radio", rclcpp::NodeOptions{}
+                        .automatically_declare_parameters_from_overrides(true)
+                        .allow_undeclared_parameters(true)},
+      param_provider_(this, kRadioParamModule) {
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorPub, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT

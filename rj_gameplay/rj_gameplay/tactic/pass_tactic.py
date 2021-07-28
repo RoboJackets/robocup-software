@@ -15,11 +15,14 @@ import numpy as np
 
 import stp.global_parameters as global_parameters
 
+
 class PassToClosestReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     """
-    def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
+    def __init__(self,
+                 target_point: Optional[np.ndarray] = None,
+                 passer_robot: rc.Robot = None):
         self.target_point = target_point
         self.passer_robot = passer_robot
         self.chosen_receiver = None
@@ -30,7 +33,6 @@ class PassToClosestReceiver(role.CostFn):
         prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
-
 
         if robot is None or self.target_point is None:
             return 99
@@ -44,7 +46,7 @@ class PassToClosestReceiver(role.CostFn):
             return -99
 
         # always pick closest receiver
-        raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
+        raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point)
         return raw_dist / global_parameters.soccer.robot.max_speed
 
 
@@ -53,7 +55,6 @@ class PasserCost(role.CostFn):
     A cost function for how to choose a robot that will pass
     TODO: Implement a better cost function
     """
-
     def __call__(self,
                 robot:rc.Robot,
                 prev_result:Optional["RoleResult"],
@@ -64,13 +65,16 @@ class PasserCost(role.CostFn):
             # closest to ball
             return np.linalg.norm(world_state.ball.pos - robot.pose[0:2])
 
+
 class PassToOpenReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
     CURRENTLY NOT READY FOR USE
     """
-    def __init__(self, target_point:Optional[np.ndarray] = None, passer_robot: rc.Robot = None):
+    def __init__(self,
+                 target_point: Optional[np.ndarray] = None,
+                 passer_robot: rc.Robot = None):
         self.target_point = target_point
         self.passer_robot = passer_robot
         self.chosen_receiver = None
@@ -81,7 +85,6 @@ class PassToOpenReceiver(role.CostFn):
         prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
-
 
         if robot is None or self.target_point is None:
             return 99
@@ -95,14 +98,15 @@ class PassToOpenReceiver(role.CostFn):
             return -99
 
         # TODO: pick "most open" pass
-        cost = 0 
+        cost = 0
         for enemy in world_state.their_robots:
-            cost -= 10*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
+            cost -= 10 * np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
 
         # TODO: should be dist in sec
-        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
+        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point)
         # cost = cost + raw_dist
         return cost
+
 
 class Pass(tactic.ITactic):
     """
@@ -148,17 +152,19 @@ class Pass(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        passer_request = role.RoleRequest(role.Priority.MEDIUM, True, self.passer_cost)
+        passer_request = role.RoleRequest(role.Priority.MEDIUM, True,
+                                          self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         if self.pivot_kick.skill.is_done(world_state):
             receive_request = role.RoleRequest(role.Priority.MEDIUM, True,
                                                self.receiver_cost)
             role_requests[self.receive] = [receive_request]
         else:
-            passer_request = role.RoleRequest(role.Priority.HIGH, True, self.passer_cost)
+            passer_request = role.RoleRequest(role.Priority.HIGH, True,
+                                              self.passer_cost)
             role_requests[self.pivot_kick] = [passer_request]
 
-        self.receiver_cost.passer_robot = self.pivot_kick.skill.robot 
+        self.receiver_cost.passer_robot = self.pivot_kick.skill.robot
 
         return role_requests
 

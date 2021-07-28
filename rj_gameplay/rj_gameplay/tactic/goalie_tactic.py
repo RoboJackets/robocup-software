@@ -27,10 +27,10 @@ DIST_TO_FAST_KICK = 7
 
 class GoalieCost(role.CostFn):
     def __call__(
-            self,
-            robot: rc.Robot,
-            prev_result: Optional["RoleResult"],
-            world_state: rc.WorldState,
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
     ) -> float:
         if world_state.game_info is not None:
             if robot.id == world_state.goalie_id:
@@ -50,8 +50,7 @@ def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
     dir_vec = (ball_pt - goal_pt) / np.linalg.norm(ball_pt - goal_pt)
     # get in-between ball and goal, staying behind wall
     dist_from_goal = min(
-        GOALIE_PCT_TO_BALL * np.linalg.norm(ball_pt - goal_pt),
-        1.0)
+        GOALIE_PCT_TO_BALL * np.linalg.norm(ball_pt - goal_pt), 1.0)
     mid_pt = goal_pt + (dir_vec * dist_from_goal)
     return mid_pt
 
@@ -82,7 +81,10 @@ class GoalieTactic(tactic.ITactic):
         self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
         self.receive_se = tactic.SkillEntry(receive.Receive())
         self.pivot_kick_se = tactic.SkillEntry(
-            line_kick.LineKickSkill(None, target_point=np.array([0.0, 6.0]), chip=True, kick_speed=5.5))
+            line_kick.LineKickSkill(None,
+                                    target_point=np.array([0.0, 6.0]),
+                                    chip=True,
+                                    kick_speed=5.5))
 
         # TODO: rename cost_list to role_cost in other gameplay files
         self.role_cost = GoalieCost()
@@ -102,6 +104,76 @@ class GoalieTactic(tactic.ITactic):
         """
         :return: A list of role requests for move skills needed
         """
+        def utility_functions():
+            """Compares utility functions of all actions.
+            :return: The best action based on the utility functions.
+            """
+            def track_utility() -> float:
+                """
+                :return: the utility of track action
+                """
+                if ball_speed == 0:
+                    ball_to_goal_time = 100
+                else:
+                    ball_to_goal_time = ball_dist / ball_speed
+                return ball_to_goal_time / 100
+
+            def receive_utility() -> float:
+                """
+                :return: the utility of receive action
+                """
+                # this probably makes sense to stay hard coded like this
+                if ball_speed < 1e-6 and (
+                        abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
+                        and ball_pos[1] < box_h + line_w + MAX_OOB
+                ) and not world_state.game_info.is_stopped():
+                    return 1
+                else:
+                    return 0
+
+            def block_utility() -> float:
+                """Increases as ball to goal time approaches 0.
+                :return: the utility of block action
+                """
+                if ball_speed > 0 and np.dot(towards_goal,
+                                             world_state.ball.vel) > 0.3:
+                    # if ball is moving and coming at goal, move laterally to block ball
+                    ball_to_goal_time = ball_dist / ball_speed
+                else:
+                    ball_to_goal_time = 100
+                return 1 - (ball_to_goal_time / 100)
+
+            def clear_utility() -> float:
+                """
+                :return: the utility of clear action
+                """
+                # should clear if no open pass available
+                # how do I check that?
+                return 0
+
+            def pass_utility() -> float:
+                """
+                :return: the utility of clear action
+                """
+                # should pass if open pass available
+                return 0
+
+            if world_state:
+                # if tied earlier index will be selected
+                utility_values = np.array([
+                    pass_utility(),
+                    clear_utility(),
+                    track_utility(),
+                    receive_utility(),
+                    block_utility()
+                ])
+                utilities = np.array([
+                    pass_utility, clear_utility, track_utility,
+                    receive_utility, block_utility
+                ])
+                return utilities[np.argmax(utility_values)]
+            else:
+                return None
 
         # TODO: this calculation is copy-pasted from wall_tactic
         # put into common param file: https://www.geeksforgeeks.org/global-keyword-in-python/
@@ -117,7 +189,8 @@ class GoalieTactic(tactic.ITactic):
         if world_state and world_state.ball.visible:
             ball_speed = np.linalg.norm(world_state.ball.vel)
             ball_pos = world_state.ball.pos
-            ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos)
+            ball_dist = np.linalg.norm(world_state.field.our_goal_loc -
+                                       ball_pos)
             goal_pos = world_state.field.our_goal_loc
             towards_goal = goal_pos - ball_pos
 
@@ -125,32 +198,41 @@ class GoalieTactic(tactic.ITactic):
                 self.move_se.skill.target_point = world_state.field.our_goal_loc
                 self.move_se.skill.face_point = world_state.ball.pos
                 role_requests[self.move_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True,
-                                     self.role_cost)
+                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
                 ]
                 return role_requests
 
-            if ball_speed < 0.5 and (abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB and ball_pos[
-                1] < box_h + line_w + MAX_OOB) and not world_state.game_info.is_stopped():
+            if ball_speed < 0.5 and (
+                    abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
+                    and ball_pos[1] < box_h + line_w + MAX_OOB
+            ) and not world_state.game_info.is_stopped():
                 self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
                 if ball_speed < 1e-6:
                     # if ball is stopped and inside goalie box, collect it
                     role_requests[self.receive_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
+                        role.RoleRequest(role.Priority.HIGH, True,
+                                         self.role_cost)
                     ]
                 else:
                     # if ball has been stopped already, chip toward center field
-                    self.pivot_kick_se.skill.target_point = np.array([0.0, 6.0])
+                    self.pivot_kick_se.skill.target_point = np.array(
+                        [0.0, 6.0])
                     role_requests[self.pivot_kick_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
+                        role.RoleRequest(role.Priority.HIGH, True,
+                                         self.role_cost)
                     ]
             else:
-                if ball_speed > 0 and np.dot(towards_goal, world_state.ball.vel) > 0.3:
+                if ball_speed > 0 and np.dot(towards_goal,
+                                             world_state.ball.vel) > 0.3:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
-                    goalie_pos = world_state.our_robots[world_state.goalie_id].pose[
-                                 :2] if world_state.goalie_id is not None else np.array([0., 0.])
-                    self.move_se.skill.target_point = get_block_pt(world_state, goalie_pos)
+                    goalie_pos = world_state.our_robots[
+                        world_state.
+                        goalie_id].pose[:
+                                        2] if world_state.goalie_id is not None else np.array(
+                                            [0., 0.])
+                    self.move_se.skill.target_point = get_block_pt(
+                        world_state, goalie_pos)
                     self.move_se.skill.face_point = world_state.ball.pos
                     role_requests[self.move_se] = [
                         role.RoleRequest(role.Priority.HIGH, True,
@@ -167,7 +249,10 @@ class GoalieTactic(tactic.ITactic):
                     ]
         if self.pivot_kick_se.skill.is_done(world_state):
             self.pivot_kick_se = tactic.SkillEntry(
-                line_kick.LineKickSkill(None, target_point=np.array([0.0, 6.0]), chip=True, kick_speed=5.5))
+                line_kick.LineKickSkill(None,
+                                        target_point=np.array([0.0, 6.0]),
+                                        chip=True,
+                                        kick_speed=5.5))
 
         return role_requests
 

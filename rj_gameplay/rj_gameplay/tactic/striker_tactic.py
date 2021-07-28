@@ -13,7 +13,8 @@ KICK_SPEED = 4.5
 EFF_BLOCK_WIDTH = 0.7
 
 
-def blocker_margin(kick_origin: np.array, kick_target: np.array, kick_speed: float, blocker: rc.Robot):
+def blocker_margin(kick_origin: np.array, kick_target: np.array,
+                   kick_speed: float, blocker: rc.Robot):
     if not blocker.visible:
         return np.inf
 
@@ -25,12 +26,16 @@ def blocker_margin(kick_origin: np.array, kick_target: np.array, kick_speed: flo
     blocker_position = blocker.pose[0:2]
 
     # Calculate blocker intercept
-    blocker_intercept_dist_along_kick = np.dot(blocker_position - kick_origin, kick_vector)
-    blocker_intercept_dist_along_kick = np.clip(blocker_intercept_dist_along_kick, a_min=0, a_max=kick_dist)
+    blocker_intercept_dist_along_kick = np.dot(blocker_position - kick_origin,
+                                               kick_vector)
+    blocker_intercept_dist_along_kick = np.clip(
+        blocker_intercept_dist_along_kick, a_min=0, a_max=kick_dist)
     blocker_intercept = kick_origin + kick_vector * blocker_intercept_dist_along_kick
 
-    blocker_distance = np.clip(np.linalg.norm(blocker_intercept - blocker_position) - EFF_BLOCK_WIDTH, a_min=0.0,
-                               a_max=np.inf)
+    blocker_distance = np.clip(
+        np.linalg.norm(blocker_intercept - blocker_position) - EFF_BLOCK_WIDTH,
+        a_min=0.0,
+        a_max=np.inf)
 
     blocker_time = np.abs(blocker_distance) / OPPONENT_SPEED
 
@@ -40,7 +45,8 @@ def blocker_margin(kick_origin: np.array, kick_target: np.array, kick_speed: flo
     return blocker_time - ball_time
 
 
-def kick_cost(point: np.array, kick_speed: float, kick_origin: np.array, world_state: rc.WorldState):
+def kick_cost(point: np.array, kick_speed: float, kick_origin: np.array,
+              world_state: rc.WorldState):
     margins = [
         blocker_margin(kick_origin, point, kick_speed, blocker)
         for blocker in world_state.their_robots
@@ -65,13 +71,13 @@ def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
             xmax = np.clip(kick_extent, a_min=0, a_max=xmax)
 
     try_points = [
-        np.array([x, goal_y])
-        for x in np.arange(xmin, xmax, step=0.05)
+        np.array([x, goal_y]) for x in np.arange(xmin, xmax, step=0.05)
     ]
 
-    cost, point = min(
-        [(kick_cost(point, kick_speed, world_state.ball.pos, world_state), point) for point in try_points],
-        key=lambda x: x[0])
+    cost, point = min([(kick_cost(point, kick_speed, world_state.ball.pos,
+                                  world_state), point)
+                       for point in try_points],
+                      key=lambda x: x[0])
 
     return point
 
@@ -80,7 +86,6 @@ class CaptureCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     """
-
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
         if robot.has_ball_sense:
@@ -104,7 +109,6 @@ class CaptureCost(role.CostFn):
             if prev_result is not None and prev_result.is_filled():
                 switch_cost += 1.0 * (prev_result.role.robot.id != robot.id)
 
-
             return 10 * dist_to_ball + 0.5 * switch_cost
 
 
@@ -112,14 +116,17 @@ class StrikerTactic(tactic.ITactic):
     """
 	A striker tactic which receives then shoots the ball
 	"""
-
     def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
         self.capture = tactic.SkillEntry(capture.Capture())
         self.capture_cost = CaptureCost()
         self.shoot = tactic.SkillEntry(
-            pivot_kick.PivotKick(robot=None, chip=False, kick_speed=KICK_SPEED, target_point=target_point, threshold=0.05))
+            pivot_kick.PivotKick(robot=None,
+                                 chip=False,
+                                 kick_speed=KICK_SPEED,
+                                 target_point=target_point,
+                                 threshold=0.05))
 
     def compute_props(self):
         pass
@@ -138,7 +145,9 @@ class StrikerTactic(tactic.ITactic):
                                            self.capture_cost)
         role_requests: tactic.RoleRequests = {}
 
-        striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
+        striker = [
+            robot for robot in world_state.our_robots if robot.has_ball_sense
+        ]
 
         if striker:
             role_requests[self.capture] = []
@@ -161,7 +170,8 @@ class StrikerTactic(tactic.ITactic):
         if capture_result and capture_result[0].is_filled():
             return [self.capture]
         if shoot_result and shoot_result[0].is_filled():
-            self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
+            self.shoot.skill.target_point = find_target_point(
+                world_state, kick_speed=KICK_SPEED)
             return [self.shoot]
 
         return []
@@ -169,11 +179,11 @@ class StrikerTactic(tactic.ITactic):
     def is_done(self, world_state) -> bool:
         return self.shoot.skill.is_done(world_state)
 
+
 class LineKickStrikerTactic(tactic.ITactic):
     """
 	A striker tactic which receives then shoots the ball
 	"""
-
     def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
@@ -211,14 +221,18 @@ class LineKickStrikerTactic(tactic.ITactic):
         shoot_result = role_results[self.shoot]
 
         if shoot_result and shoot_result[0].is_filled():
-            self.shoot.skill.target_point = find_target_point(world_state, kick_speed=KICK_SPEED)
+            self.shoot.skill.target_point = find_target_point(
+                world_state, kick_speed=KICK_SPEED)
             shooter_vel = shoot_result[0].role.robot.twist[:2]
             if world_state is not None and world_state.game_info.is_penalty():
-                dist_to_goal = world_state.field.their_goal_loc[1] - world_state.ball.pos[1]
+                dist_to_goal = world_state.field.their_goal_loc[
+                    1] - world_state.ball.pos[1]
                 if dist_to_goal > 4.0:
-                    self.shoot.skill.kick_speed = max(0.0, 2.0 - np.linalg.norm(shooter_vel))
+                    self.shoot.skill.kick_speed = max(
+                        0.0, 2.0 - np.linalg.norm(shooter_vel))
                 elif dist_to_goal > 3.5:
-                    self.shoot.skill.kick_speed = max(0.0, 1.5 - np.linalg.norm(shooter_vel))
+                    self.shoot.skill.kick_speed = max(
+                        0.0, 1.5 - np.linalg.norm(shooter_vel))
             return [self.shoot]
 
         return []

@@ -14,12 +14,17 @@ from rj_msgs import msg
 
 from rj_gameplay.MAX_KICK_SPEED import *
 
+
 class LineKickAction(action.IFiniteAction):
     """
     Activates kicker. Intended to be used after an aim/drive action in a skill.
     """
-
-    def __init__(self, robot_id: int, target: np.ndarray, priority: int = 0, chip: bool = False, kick_speed: float = 6.0) -> None:
+    def __init__(self,
+                 robot_id: int,
+                 target: np.ndarray,
+                 priority: int = 0,
+                 chip: bool = False,
+                 kick_speed: float = 6.0) -> None:
         self.robot_id = robot_id
         self.priority = priority
 

@@ -13,7 +13,6 @@ import numpy as np
 class PenaltyOffense(play.IPlay):
     """Move all robots to our half, but away from ball to prep for penalty kick
     """
-
     def __init__(self):
         self.tactics = [
             goalie_tactic.GoalieTactic(True),
@@ -29,11 +28,12 @@ class PenaltyOffense(play.IPlay):
         pass
 
     def tick(
-            self,
-            world_state: rc.WorldState,
-            prev_results: role.assignment.FlatRoleResults,
-            props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+        self,
+        world_state: rc.WorldState,
+        prev_results: role.assignment.FlatRoleResults,
+        props,
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+               List[tactic.SkillEntry]]:
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {
             tactic: tactic.get_requests(world_state, None)
@@ -49,7 +49,7 @@ class PenaltyOffense(play.IPlay):
         skills = []
         tac_index = 0
         for tactic in self.tactics:
-            if tac_index == 1: # TODO BAD HACK
+            if tac_index == 1:  # TODO BAD HACK
                 skills += tactic.tick(role_results[tactic], world_state)
             else:
                 skills += tactic.tick(role_results[tactic])
