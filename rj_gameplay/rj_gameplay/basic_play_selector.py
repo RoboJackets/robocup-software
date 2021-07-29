@@ -51,6 +51,10 @@ PLAY_DICT[situations.GoalieClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.Stop] = [defend_restart.DefendRestart]
 
 class BasicPlaySelector(situation.IPlaySelector):
+    """Play selector that returns a play based on the situation from analyzer.
+
+    Currently configured to take in only one play per situation. Situation to play mapping is determined in PLAY_DICT constant above. (This means using this class requires importing the whole file, rather than just the class.)
+    """
 
     def __init__(self):
         self.analyzer = analyzer.Analyzer()
