@@ -41,7 +41,7 @@ struct Context {
     bool joystick_valid = false;
 
     rj_geometry::ShapeSet global_obstacles;
-    rj_geometry::ShapeSet defense_area_obstacles;
+    rj_geometry::ShapeSet def_area_obstacles;
 
     PlayState play_state = PlayState::halt();
     MatchState match_state;
