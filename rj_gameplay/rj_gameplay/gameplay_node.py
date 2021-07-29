@@ -97,7 +97,7 @@ class GameplayNode(Node):
         self.debug_text_pub = self.create_publisher(StringMsg,
                                                     '/gameplay/debug_text', 10)
         self.play_selector = play_selector
-        self.gameplay = coordinator.Coordinator(play_selector,
+        self.coordinator = coordinator.Coordinator(play_selector,
                                                 self.debug_callback)
 
     def set_play_state(self, play_state: msg.PlayState):
@@ -175,9 +175,11 @@ class GameplayNode(Node):
             self.world_state = None
 
         if self.world_state is not None:
-            intents = self.gameplay.tick(self.world_state)
+            intents = self.coordinator.tick(self.world_state)
             for i in range(NUM_ROBOTS):
                 self.robot_intent_pubs[i].publish(intents[i])
+
+            # TODO: separate these geometry calculations
 
             # create our_penalty rect
             our_penalty = geo_msg.Rect()
