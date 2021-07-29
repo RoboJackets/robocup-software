@@ -15,24 +15,21 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic_defense, basic_scramble, passing_tactic_play, defend_restart, restart, kickoff_play, \
+from rj_gameplay.play import basic_defense, passing_tactic_play, defend_restart, restart, kickoff_play, \
     basic122, penalty_defense
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
-import stp.basic_play_selector as basic_play_selector
+import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
 
 
-class EmptyPlaySelector(situation.IPlaySelector):
-    # an empty play selector, replace with actual one when created
-
-    def select(self, world_state: rc.WorldState) -> None:
-        return None
-
-
 class TestPlaySelector(situation.IPlaySelector):
+    """Convenience class for testing individual plays in gameplay without having to go through the play selection system.
+
+    Import a new play, then change the select() method's return below to force gameplay to always use the selected type.
+    """
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
         return (None, penalty_defense.PenaltyDefense())
