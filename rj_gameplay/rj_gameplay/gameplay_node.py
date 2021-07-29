@@ -84,8 +84,8 @@ class GameplayNode(Node):
             self, 'global_parameter_server')
         local_parameters.register_parameters(self)
 
-        # publish global obstacles
-        self.goal_zone_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/goal_zone_obstacles', 10)
+        # publish penalty_box_obstacles, global obstacles
+        self.penalty_box_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/penalty_box_obstacles', 10)
         self.global_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/global_obstacles', 10)
 
         timer_period = 1 / 60  # seconds
@@ -178,28 +178,7 @@ class GameplayNode(Node):
 
             # TODO: separate these geometry calculations
 
-            # create our_penalty rect
-            our_penalty = geo_msg.Rect()
-            top_left = geo_msg.Point(x=self.field.penalty_long_dist_m / 2 + self.field.line_width_m, y=0.0)
-            bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m / 2 - self.field.line_width_m,
-                                      y=self.field.penalty_short_dist_m)
-            our_penalty.pt = [top_left, bot_right]
-
-            # create their_penalty rect
-            # add distance slack for stops (0.2 min)
-            # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
-            game_info = self.build_game_info()
-            add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or (
-                        game_info.is_restart() and not game_info.is_penalty())
-            DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0  # > 0.2 m
-
-            their_penalty = geo_msg.Rect()
-            left_x = self.field.penalty_long_dist_m / 2 + self.field.line_width_m + DIST_FOR_STOP
-            bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
-            top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (
-                    self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
-            their_penalty.pt = [bot_left, top_right]
-
+            # add Rects that form physical walls of goal 
             physical_goal_board_width = 0.1
             our_goal = [
                 geo_msg.Rect(pt=[
@@ -255,12 +234,37 @@ class GameplayNode(Node):
                             geo_msg.Circle(center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8))
             self.global_obstacles_pub.publish(global_obstacles)
 
-            # publish Rect shape to goal_zone_obstacles topic
-            goal_zone_obstacles = geo_msg.ShapeSet()
-            goal_zone_obstacles.rectangles = [our_penalty, their_penalty]
-            self.goal_zone_obstacles_pub.publish(goal_zone_obstacles)
         else:
             self.get_logger().warn("World state was none!")
+
+    def publish_goal_zone_obs(self, field) -> None:
+        # create Rect for our penalty box
+        our_penalty = geo_msg.Rect()
+        top_left = geo_msg.Point(x=self.field.penalty_long_dist_m / 2 + self.field.line_width_m, y=0.0)
+        bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m / 2 - self.field.line_width_m,
+                                  y=self.field.penalty_short_dist_m)
+        our_penalty.pt = [top_left, bot_right]
+
+        game_info = self.build_game_info()
+        add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or (
+                    game_info.is_restart() and not game_info.is_penalty())
+
+        # slack for distance (m) in Stop situations
+        # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
+        DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0
+
+        # create Rect for their penalty box
+        their_penalty = geo_msg.Rect()
+        left_x = self.field.penalty_long_dist_m / 2 + self.field.line_width_m + DIST_FOR_STOP
+        bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
+        top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (
+                self.field.penalty_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
+        their_penalty.pt = [bot_left, top_right]
+
+        # publish Rect shape to penalty_box_obstacles topic
+        penalty_box_obstacles = geo_msg.ShapeSet()
+        penalty_box_obstacles.rectangles = [our_penalty, their_penalty]
+        self.penalty_box_obstacles_pub.publish(penalty_box_obstacles)
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
