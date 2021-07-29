@@ -84,8 +84,8 @@ class GameplayNode(Node):
             self, 'global_parameter_server')
         local_parameters.register_parameters(self)
 
-        # publish penalty_box_obstacles, global obstacles
-        self.penalty_box_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/penalty_box_obstacles', 10)
+        # publish def_area_obstacles, global obstacles
+        self.def_area_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/def_area_obstacles', 10)
         self.global_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/global_obstacles', 10)
 
         timer_period = 1 / 60  # seconds
