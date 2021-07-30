@@ -60,7 +60,7 @@ constexpr auto kDebugTextPub = "gameplay/debug_text";
 namespace planning::topics {
 
 constexpr auto kGlobalObstaclesPub = "planning/global_obstacles";
-constexpr auto kGoalZoneObstacles = "planning/goal_zone_obstacles";
+constexpr auto kDefAreaObstaclesPub = "planning/def_area_obstacles";
 
 static inline std::string trajectory_pub(int robot_id) {
     return "planning/trajectory/robot_" + std::to_string(robot_id);

@@ -71,7 +71,7 @@ public:
                 last_global_obstacles_ = rj_convert::convert_from_ros(*global_obstacles);
             });
         def_area_obstacles_sub_ = node->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
-            planning::topics::kGoalZoneObstacles, rclcpp::QoS(1),
+            planning::topics::kDefAreaObstaclesPub, rclcpp::QoS(1),
             [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr def_area_obstacles) {  // NOLINT
                 auto lock = std::lock_guard(mutex_);
                 last_def_area_obstacles_ = rj_convert::convert_from_ros(*def_area_obstacles);
