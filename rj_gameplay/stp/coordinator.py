@@ -17,7 +17,6 @@ class Coordinator:
     all of the resulting skills."""
 
     __slots__ = [
-        "_play_registry",
         "_play_selector",
         "_prev_situation",
         "_prev_play",

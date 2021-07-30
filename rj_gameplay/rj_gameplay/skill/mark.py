@@ -83,10 +83,6 @@ class Mark(IMark):
             self.move.target_point = mark_point
             self.move.face_point = world_state.ball.pos
 
-            # TODO: horrible hack for defending restarts
-            if self.is_def_restart:
-                self.move.is_def_restart = True
-
         actions = self.root.tick_once(robot, world_state)
         return actions
 
