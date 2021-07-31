@@ -104,61 +104,64 @@ class GoalieTactic(tactic.ITactic):
         """
         :return: A list of role requests for move skills needed
         """
+
+        def track_utility() -> float:
+            """
+            :return: the utility of track action
+            """
+            if ball_speed == 0:
+                ball_to_goal_time = 100
+            else:
+                ball_to_goal_time = ball_dist / ball_speed
+            return ball_to_goal_time / 100
+
+        def receive_utility() -> float:
+            """
+            :return: the utility of receive action
+            """
+            # this probably makes sense to stay hard coded like this
+            # but maybe there is a better option?
+            if ball_speed < .5 and (
+                abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
+                and ball_pos[1] < box_h + line_w + MAX_OOB
+            ) and not world_state.game_info.is_stopped():
+                return 1
+            else:
+                return 0
+
+        def block_utility() -> float:
+            """Increases as ball to goal time approaches 0.
+            :return: the utility of block action
+            """
+            if ball_speed > 0 and np.dot(towards_goal,
+                                         world_state.ball.vel) > 0.3:
+                # if ball is moving and coming at goal, move laterally to block ball
+                ball_to_goal_time = ball_dist / ball_speed
+            else:
+                ball_to_goal_time = 100
+            return 1 - (ball_to_goal_time / 100)
+
+        def clear_utility() -> float:
+            """
+            :return: the utility of clear action
+            """
+            # should clear if no open pass available
+            # how do I check that?
+            return 0
+
+        def pass_utility() -> float:
+            """
+            :return: the utility of clear action
+            """
+            # should pass if open pass available
+            # same problem as clear
+            return 0
+
         def utility_functions():
             """Compares utility functions of all actions.
             :return: The best action based on the utility functions.
             """
-            def track_utility() -> float:
-                """
-                :return: the utility of track action
-                """
-                if ball_speed == 0:
-                    ball_to_goal_time = 100
-                else:
-                    ball_to_goal_time = ball_dist / ball_speed
-                return ball_to_goal_time / 100
-
-            def receive_utility() -> float:
-                """
-                :return: the utility of receive action
-                """
-                # this probably makes sense to stay hard coded like this
-                if ball_speed < 1e-6 and (
-                        abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
-                        and ball_pos[1] < box_h + line_w + MAX_OOB
-                ) and not world_state.game_info.is_stopped():
-                    return 1
-                else:
-                    return 0
-
-            def block_utility() -> float:
-                """Increases as ball to goal time approaches 0.
-                :return: the utility of block action
-                """
-                if ball_speed > 0 and np.dot(towards_goal,
-                                             world_state.ball.vel) > 0.3:
-                    # if ball is moving and coming at goal, move laterally to block ball
-                    ball_to_goal_time = ball_dist / ball_speed
-                else:
-                    ball_to_goal_time = 100
-                return 1 - (ball_to_goal_time / 100)
-
-            def clear_utility() -> float:
-                """
-                :return: the utility of clear action
-                """
-                # should clear if no open pass available
-                # how do I check that?
-                return 0
-
-            def pass_utility() -> float:
-                """
-                :return: the utility of clear action
-                """
-                # should pass if open pass available
-                return 0
-
-            if world_state:
+            if world_state and world_state.ball.visible:
                 # if tied earlier index will be selected
                 utility_values = np.array([
                     pass_utility(),
@@ -167,6 +170,7 @@ class GoalieTactic(tactic.ITactic):
                     receive_utility(),
                     block_utility()
                 ])
+
                 utilities = np.array([
                     pass_utility, clear_utility, track_utility,
                     receive_utility, block_utility
@@ -176,6 +180,7 @@ class GoalieTactic(tactic.ITactic):
                 return None
 
         # TODO: this calculation is copy-pasted from wall_tactic
+        # variables
         # put into common param file: https://www.geeksforgeeks.org/global-keyword-in-python/
 
         # dist is slightly greater than penalty box bounds
@@ -185,15 +190,19 @@ class GoalieTactic(tactic.ITactic):
         # max out of box to cap for goalie
         MAX_OOB = RobotConstants.RADIUS
 
-        role_requests = {}
-        if world_state and world_state.ball.visible:
-            ball_speed = np.linalg.norm(world_state.ball.vel)
-            ball_pos = world_state.ball.pos
-            ball_dist = np.linalg.norm(world_state.field.our_goal_loc -
-                                       ball_pos)
-            goal_pos = world_state.field.our_goal_loc
-            towards_goal = goal_pos - ball_pos
+        ball_speed = np.linalg.norm(world_state.ball.vel)
+        ball_pos = world_state.ball.pos
+        ball_dist = np.linalg.norm(world_state.field.our_goal_loc -
+                                   ball_pos)
+        goal_pos = world_state.field.our_goal_loc
+        towards_goal = goal_pos - ball_pos
 
+        role_requests = {}
+        best_utility = utility_functions()
+
+        if best_utility is not None:
+
+            # what is this?
             if self.brick:
                 self.move_se.skill.target_point = world_state.field.our_goal_loc
                 self.move_se.skill.face_point = world_state.ball.pos
@@ -202,18 +211,16 @@ class GoalieTactic(tactic.ITactic):
                 ]
                 return role_requests
 
-            if ball_speed < 0.5 and (
-                    abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
-                    and ball_pos[1] < box_h + line_w + MAX_OOB
-            ) and not world_state.game_info.is_stopped():
+            if best_utility is (receive_utility or clear_utility):
                 self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
-                if ball_speed < 1e-6:
+                if best_utility is receive_utility:
                     # if ball is stopped and inside goalie box, collect it
                     role_requests[self.receive_se] = [
                         role.RoleRequest(role.Priority.HIGH, True,
                                          self.role_cost)
                     ]
                 else:
+                    # clear
                     # if ball has been stopped already, chip toward center field
                     self.pivot_kick_se.skill.target_point = np.array(
                         [0.0, 6.0])
@@ -222,8 +229,7 @@ class GoalieTactic(tactic.ITactic):
                                          self.role_cost)
                     ]
             else:
-                if ball_speed > 0 and np.dot(towards_goal,
-                                             world_state.ball.vel) > 0.3:
+                if best_utility is block_utility:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
                     goalie_pos = world_state.our_robots[
@@ -238,8 +244,8 @@ class GoalieTactic(tactic.ITactic):
                         role.RoleRequest(role.Priority.HIGH, True,
                                          self.role_cost)
                     ]
-                else:
-                    # else, track ball normally
+                elif best_utility is track_utility:
+                    # track ball normally
                     self.move_se.skill.target_point = get_goalie_pt(
                         world_state)
                     self.move_se.skill.face_point = world_state.ball.pos
@@ -247,6 +253,11 @@ class GoalieTactic(tactic.ITactic):
                         role.RoleRequest(role.Priority.HIGH, True,
                                          self.role_cost)
                     ]
+                elif best_utility is pass_utility:
+                    # TODO : under current system, should assign pass tactic here
+                    pass
+
+        # what is this? and should I keep it?
         if self.pivot_kick_se.skill.is_done(world_state):
             self.pivot_kick_se = tactic.SkillEntry(
                 line_kick.LineKickSkill(None,
