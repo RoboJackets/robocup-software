@@ -66,8 +66,7 @@ void DebugDrawer::draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs, con
         std::dynamic_pointer_cast<rj_geometry::Polygon>(obs);
     std::shared_ptr<rj_geometry::CompositeShape> comp_obs =
         std::dynamic_pointer_cast<rj_geometry::CompositeShape>(obs);
-    std::shared_ptr<rj_geometry::Rect> rect_obs =
-        std::dynamic_pointer_cast<rj_geometry::Rect>(obs);
+    std::shared_ptr<rj_geometry::Rect> rect_obs = std::dynamic_pointer_cast<rj_geometry::Rect>(obs);
     if (circ_obs)
         draw_circle(circ_obs->center, circ_obs->radius(), color, layer);
     else if (poly_obs)
@@ -77,8 +76,7 @@ void DebugDrawer::draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs, con
             rj_geometry::Point{rect_obs->minx(), rect_obs->miny()},
             rj_geometry::Point{rect_obs->maxx(), rect_obs->miny()},
             rj_geometry::Point{rect_obs->maxx(), rect_obs->maxy()},
-            rj_geometry::Point{rect_obs->minx(), rect_obs->maxy()}
-        };
+            rj_geometry::Point{rect_obs->minx(), rect_obs->maxy()}};
         draw_polygon(points.data(), points.size(), color, layer);
     } else if (comp_obs) {
         for (const std::shared_ptr<rj_geometry::Shape>& obs : comp_obs->subshapes())

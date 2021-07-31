@@ -24,7 +24,6 @@ MIN_WALL_RAD = None
 class wall_cost(role.CostFn):
     """Cost function for role request.
     """
-
     def __init__(self, wall_pt: np.ndarray = None, scale: float = 1.0):
         self.wall_pt = wall_pt
         self.scale = scale
@@ -50,8 +49,9 @@ class wall_cost(role.CostFn):
             switch_cost = 1 * (prev_result.role.robot.id != robot.id)
 
         # costs should be in seconds, not dist
-        return self.scale * np.linalg.norm(robot.pose[0:2] - wall_pt
-                                           ) / global_parameters.soccer.robot.max_speed + switch_cost
+        return self.scale * np.linalg.norm(
+            robot.pose[0:2] -
+            wall_pt) / global_parameters.soccer.robot.max_speed + switch_cost
 
 
 def find_wall_pts(num_wallers: int,
@@ -93,7 +93,10 @@ def find_wall_pts(num_wallers: int,
 
 
 class WallTactic(tactic.ITactic):
-    def __init__(self, num_wallers: int, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):
+    def __init__(self,
+                 num_wallers: int,
+                 priority=role.Priority.MEDIUM,
+                 cost_scale: float = 1.0):
 
         self.num_wallers = num_wallers
 
@@ -103,7 +106,9 @@ class WallTactic(tactic.ITactic):
         ]
 
         # create empty cost_list (filled in get_requests)
-        self.cost_list = [wall_cost(scale=cost_scale) for _ in range(self.num_wallers)]
+        self.cost_list = [
+            wall_cost(scale=cost_scale) for _ in range(self.num_wallers)
+        ]
         self.priority = priority
 
     def compute_props(self):
@@ -134,7 +139,7 @@ class WallTactic(tactic.ITactic):
         # create RoleRequest for each SkillEntry
         role_requests = {
             self.move_list[i]:
-                [role.RoleRequest(self.priority, False, self.cost_list[i])]
+            [role.RoleRequest(self.priority, False, self.cost_list[i])]
             for i in range(self.num_wallers)
         }
 

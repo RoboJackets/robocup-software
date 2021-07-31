@@ -30,7 +30,7 @@ class marker_cost(role.CostFn):
     """Pick mark robots based on dist to the ball point
     """
     def __init__(self, enemy_to_mark: rc.Robot=None):
-        self.enemy_to_mark = enemy_to_mark 
+        self.enemy_to_mark = enemy_to_mark
 
     def __call__(
         self,
@@ -46,7 +46,7 @@ class marker_cost(role.CostFn):
                 return 99
 
         # TODO: prevent gameplay crashing w/out this check
-        if robot is None or self.enemy_to_mark is None: 
+        if robot is None or self.enemy_to_mark is None:
             return 99
 
         # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
@@ -76,11 +76,8 @@ class NMarkTactic(tactic.ITactic):
         ]
 
         # create cost func for each robot
-        self.cost_list = [
-            marker_cost()
-            for _ in range(self.num_markers)
-        ]
-        
+        self.cost_list = [marker_cost() for _ in range(self.num_markers)]
+
     def compute_props(self):
         pass
 

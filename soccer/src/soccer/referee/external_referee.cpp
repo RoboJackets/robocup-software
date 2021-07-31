@@ -39,8 +39,7 @@ static const bool kCancelBallPlaceOnHalt = true;
 DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "
               "colors from referee");
-DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1",
-              "The interface for referee operation");
+DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1", "The interface for referee operation");
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
     set_team_name(PARAM_team_name);

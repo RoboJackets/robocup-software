@@ -14,6 +14,7 @@ KICK_DOT_THRESHOLD = 0.4
 KICK_BALL_SPEED_THRESHOLD = 0.9
 from rj_gameplay.MAX_KICK_SPEED import *
 
+
 class IKick(action.IAction, ABC):
     def done(self) -> bool:
         pass

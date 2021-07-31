@@ -1116,13 +1116,9 @@ void MainWindow::send_quick_command(const PlayState& state) {
     queued_command_ = std::nullopt;
 }
 
-void MainWindow::on_fastHalt_clicked() {
-    send_quick_command(PlayState::halt());
-}
+void MainWindow::on_fastHalt_clicked() { send_quick_command(PlayState::halt()); }
 
-void MainWindow::on_fastStop_clicked() {
-    send_quick_command(PlayState::stop());
-}
+void MainWindow::on_fastStop_clicked() { send_quick_command(PlayState::stop()); }
 
 void MainWindow::on_fastReady_clicked() {
     if (queued_command_) {
@@ -1130,9 +1126,7 @@ void MainWindow::on_fastReady_clicked() {
     }
 }
 
-void MainWindow::on_fastForceStart_clicked() {
-    send_quick_command(PlayState::playing());
-}
+void MainWindow::on_fastForceStart_clicked() { send_quick_command(PlayState::playing()); }
 
 void MainWindow::on_fastKickoffBlue_clicked() {
     send_quick_command(PlayState::setup_kickoff(context_->blue_team));

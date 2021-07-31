@@ -96,12 +96,13 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
                 reuse_path_count_ = 0;
             }
 
-            Replanner::PlanParams params{start_instant,
-                                         target,
-                                         obstacles_with_ball,
-                                         dynamic_obstacles,
-                                         plan_request.constraints,
-                                         AngleFns::face_angle(ball.position.angle_to(command.target))};
+            Replanner::PlanParams params{
+                start_instant,
+                target,
+                obstacles_with_ball,
+                dynamic_obstacles,
+                plan_request.constraints,
+                AngleFns::face_angle(ball.position.angle_to(command.target))};
             path = Replanner::create_plan(params, prev_path_);
             path.set_debug_text("slow ball 1");
         } else {

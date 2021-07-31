@@ -61,7 +61,8 @@ class Coordinator:
         # Update the props.
         cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
 
-        if isinstance(cur_play, type(self._prev_play)) and not self._prev_play.is_done(world_state):
+        if isinstance(cur_play, type(
+                self._prev_play)) and not self._prev_play.is_done(world_state):
             cur_play = self._prev_play
             # This should be checked here or in the play selector, so we can restart a play easily
 

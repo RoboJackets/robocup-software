@@ -137,7 +137,8 @@ def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
     return ball
 
 
-def build_game_info(play_state_msg: msg.PlayState, match_state_msg: msg.MatchState) -> rc.GameInfo:
+def build_game_info(play_state_msg: msg.PlayState,
+                    match_state_msg: msg.MatchState) -> rc.GameInfo:
     """
         :return: GameInfo class from rc.py
     """
@@ -150,9 +151,11 @@ def build_game_info(play_state_msg: msg.PlayState, match_state_msg: msg.MatchSta
 
     our_restart = play_state_msg.our_restart
 
-    game_info = rc.GameInfo(period, state, restart, our_restart,
-                            np.array(
-                                [play_state_msg.placement_point.x, play_state_msg.placement_point.y]))
+    game_info = rc.GameInfo(
+        period, state, restart, our_restart,
+        np.array([
+            play_state_msg.placement_point.x, play_state_msg.placement_point.y
+        ]))
 
     return game_info
 
@@ -177,8 +180,9 @@ def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
     floor_length = field_msg.floor_length
     floor_width = field_msg.floor_width
 
-    field = rc.Field(length, width, border, line_width, goal_width, goal_depth, goal_height,
-                     penalty_short_dist, penalty_long_dist, center_radius, center_diameter, goal_flat, floor_length,
+    field = rc.Field(length, width, border, line_width, goal_width, goal_depth,
+                     goal_height, penalty_short_dist, penalty_long_dist,
+                     center_radius, center_diameter, goal_flat, floor_length,
                      floor_width)
 
     return field
@@ -231,14 +235,16 @@ def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robo
     twist = robot_state.twist
     is_visible = robot_state.visible
 
-    robot = rc.Robot(robot_id, is_ours, pose, twist, is_visible, ball_sense, kicker_charged,
-                     kicker_healthy, lethal_fault)
+    robot = rc.Robot(robot_id, is_ours, pose, twist, is_visible, ball_sense,
+                     kicker_charged, kicker_healthy, lethal_fault)
 
     return robot
 
 
-def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: List[RobotStatus],
-                       game_info: rc.GameInfo, field: rc.Field, goalie_id: int) -> rc.WorldState:
+def worldstate_creator(partial_world_state: PartialWorldState,
+                       robot_statuses: List[RobotStatus],
+                       game_info: rc.GameInfo, field: rc.Field,
+                       goalie_id: int) -> rc.WorldState:
     """
     A function which combines the partial world state, robot statuses, game info, and field to create a whole world state
         :return: a world state as a rc.WorldState object
@@ -260,6 +266,8 @@ def worldstate_creator(partial_world_state: PartialWorldState, robot_statuses: L
     if game_info is None:
         game_info = None
 
-    world_state = rc.WorldState(our_robots, their_robots, partial_world_state.ball, game_info, field, goalie_id)
+    world_state = rc.WorldState(our_robots, their_robots,
+                                partial_world_state.ball, game_info, field,
+                                goalie_id)
 
     return world_state

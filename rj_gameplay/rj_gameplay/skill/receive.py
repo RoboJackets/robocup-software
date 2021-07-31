@@ -25,7 +25,6 @@ class IReceive(skill.ISkill, ABC):
 A skill version of receive so that actions don't have to be called in tactics
 """
 class Receive(IReceive):
-
     def __init__(self,
             robot:rc.Robot = None):
 

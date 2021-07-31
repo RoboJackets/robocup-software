@@ -23,7 +23,9 @@ namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver", rclcpp::NodeOptions{}.automatically_declare_parameters_from_overrides(true).allow_undeclared_parameters(true)},
+    : Node{"vision_receiver", rclcpp::NodeOptions{}
+                                  .automatically_declare_parameters_from_overrides(true)
+                                  .allow_undeclared_parameters(true)},
       config_{this},
       port_{-1},
       socket_{io_context_},
