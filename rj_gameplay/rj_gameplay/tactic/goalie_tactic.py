@@ -202,7 +202,7 @@ class GoalieTactic(tactic.ITactic):
 
         if best_utility is not None:
 
-            # what is this?
+            # TODO (1724) remove this from the code
             if self.brick:
                 self.move_se.skill.target_point = world_state.field.our_goal_loc
                 self.move_se.skill.face_point = world_state.ball.pos
