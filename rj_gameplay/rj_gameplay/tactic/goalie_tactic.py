@@ -157,7 +157,7 @@ class GoalieTactic(tactic.ITactic):
             # same problem as clear
             return 0
 
-        def utility_functions():
+        def get_best_action():
             """Compares utility functions of all actions.
             :return: The best action based on the utility functions.
             """
@@ -198,9 +198,9 @@ class GoalieTactic(tactic.ITactic):
         towards_goal = goal_pos - ball_pos
 
         role_requests = {}
-        best_utility = utility_functions()
+        best_action = get_best_action()
 
-        if best_utility is not None:
+        if best_action is not None:
 
             # TODO (1724) remove this from the code
             if self.brick:
@@ -211,9 +211,9 @@ class GoalieTactic(tactic.ITactic):
                 ]
                 return role_requests
 
-            if best_utility is (receive_utility or clear_utility):
+            if best_action is (receive_utility or clear_utility):
                 self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
-                if best_utility is receive_utility:
+                if best_action is receive_utility:
                     # if ball is stopped and inside goalie box, collect it
                     role_requests[self.receive_se] = [
                         role.RoleRequest(role.Priority.HIGH, True,
@@ -229,7 +229,7 @@ class GoalieTactic(tactic.ITactic):
                                          self.role_cost)
                     ]
             else:
-                if best_utility is block_utility:
+                if best_action is block_utility:
                     # if ball is moving and coming at goal, move laterally to block ball
                     # TODO (#1676): replace this logic with a real intercept planner
                     goalie_pos = world_state.our_robots[
@@ -244,7 +244,7 @@ class GoalieTactic(tactic.ITactic):
                         role.RoleRequest(role.Priority.HIGH, True,
                                          self.role_cost)
                     ]
-                elif best_utility is track_utility:
+                elif best_action is track_utility:
                     # track ball normally
                     self.move_se.skill.target_point = get_goalie_pt(
                         world_state)
@@ -253,7 +253,7 @@ class GoalieTactic(tactic.ITactic):
                         role.RoleRequest(role.Priority.HIGH, True,
                                          self.role_cost)
                     ]
-                elif best_utility is pass_utility:
+                elif best_action is pass_utility:
                     # TODO : under current system, should assign pass tactic here
                     pass
 
