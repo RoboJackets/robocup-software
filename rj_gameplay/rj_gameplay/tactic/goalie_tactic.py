@@ -211,53 +211,55 @@ class GoalieTactic(tactic.ITactic):
                 ]
                 return role_requests
 
-            if best_action is (receive_utility or clear_utility):
-                self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
-                if best_action is receive_utility:
-                    # if ball is stopped and inside goalie box, collect it
-                    role_requests[self.receive_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
-                                         self.role_cost)
-                    ]
-                else:
-                    # clear
-                    # if ball has been stopped already, chip toward center field
-                    self.pivot_kick_se.skill.target_point = np.array(
-                        [0.0, 6.0])
-                    role_requests[self.pivot_kick_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
-                                         self.role_cost)
-                    ]
-            else:
-                if best_action is block_utility:
-                    # if ball is moving and coming at goal, move laterally to block ball
-                    # TODO (#1676): replace this logic with a real intercept planner
-                    goalie_pos = world_state.our_robots[
-                        world_state.
-                        goalie_id].pose[:
-                                        2] if world_state.goalie_id is not None else np.array(
-                                            [0., 0.])
-                    self.move_se.skill.target_point = get_block_pt(
-                        world_state, goalie_pos)
-                    self.move_se.skill.face_point = world_state.ball.pos
-                    role_requests[self.move_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
-                                         self.role_cost)
-                    ]
-                elif best_action is track_utility:
-                    # track ball normally
-                    self.move_se.skill.target_point = get_goalie_pt(
-                        world_state)
-                    self.move_se.skill.face_point = world_state.ball.pos
-                    role_requests[self.move_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
-                                         self.role_cost)
-                    ]
-                elif best_action is pass_utility:
-                    # TODO : under current system, should assign pass tactic here
-                    pass
+            if best_action is receive_utility:
+                # if ball is stopped and inside goalie box, collect it
+                self.move_se = tactic.SkillEntry(
+                    move.Move(ignore_ball=True))
+                role_requests[self.receive_se] = [
+                    role.RoleRequest(role.Priority.HIGH, True,
+                                     self.role_cost)
+                ]
+            elif best_action is clear_utility:
+                # clear
+                # if ball has been stopped already, chip toward center field
+                self.move_se = tactic.SkillEntry(
+                    move.Move(ignore_ball=True))
+                self.pivot_kick_se.skill.target_point = np.array(
+                    [0.0, 6.0])
+                role_requests[self.pivot_kick_se] = [
+                    role.RoleRequest(role.Priority.HIGH, True,
+                                     self.role_cost)
+                ]
 
-        # what is this? and should I keep it?
+            elif best_action is block_utility:
+                # if ball is moving and coming at goal, move laterally to block ball
+                # TODO (#1676): replace this logic with a real intercept planner
+                goalie_pos = world_state.our_robots[
+                    world_state.
+                    goalie_id].pose[:
+                                    2] if world_state.goalie_id is not None else np.array(
+                                        [0., 0.])
+                self.move_se.skill.target_point = get_block_pt(
+                    world_state, goalie_pos)
+                self.move_se.skill.face_point = world_state.ball.pos
+                role_requests[self.move_se] = [
+                    role.RoleRequest(role.Priority.HIGH, True,
+                                     self.role_cost)
+                ]
+            elif best_action is track_utility:
+                # track ball normally
+                self.move_se.skill.target_point = get_goalie_pt(
+                    world_state)
+                self.move_se.skill.face_point = world_state.ball.pos
+                role_requests[self.move_se] = [
+                    role.RoleRequest(role.Priority.HIGH, True,
+                                     self.role_cost)
+                ]
+            elif best_action is pass_utility:
+                # TODO : under current system, should assign pass tactic here
+                pass
+
+        # reminder : remove during testing
         if self.pivot_kick_se.skill.is_done(world_state):
             self.pivot_kick_se = tactic.SkillEntry(
                 line_kick.LineKickSkill(None,
