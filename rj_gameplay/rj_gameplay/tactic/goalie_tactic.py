@@ -104,7 +104,6 @@ class GoalieTactic(tactic.ITactic):
         """
         :return: A list of role requests for move skills needed
         """
-
         def track_utility() -> float:
             """
             :return: the utility of track action
@@ -122,8 +121,8 @@ class GoalieTactic(tactic.ITactic):
             # this probably makes sense to stay hard coded like this
             # but maybe there is a better option?
             if ball_speed < .5 and (
-                abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
-                and ball_pos[1] < box_h + line_w + MAX_OOB
+                    abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
+                    and ball_pos[1] < box_h + line_w + MAX_OOB
             ) and not world_state.game_info.is_stopped():
                 return 1
             else:
@@ -192,8 +191,7 @@ class GoalieTactic(tactic.ITactic):
 
         ball_speed = np.linalg.norm(world_state.ball.vel)
         ball_pos = world_state.ball.pos
-        ball_dist = np.linalg.norm(world_state.field.our_goal_loc -
-                                   ball_pos)
+        ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos)
         goal_pos = world_state.field.our_goal_loc
         towards_goal = goal_pos - ball_pos
 
@@ -213,22 +211,17 @@ class GoalieTactic(tactic.ITactic):
 
             if best_action is receive_utility:
                 # if ball is stopped and inside goalie box, collect it
-                self.move_se = tactic.SkillEntry(
-                    move.Move(ignore_ball=True))
+                self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
                 role_requests[self.receive_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True,
-                                     self.role_cost)
+                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
                 ]
             elif best_action is clear_utility:
                 # clear
                 # if ball has been stopped already, chip toward center field
-                self.move_se = tactic.SkillEntry(
-                    move.Move(ignore_ball=True))
-                self.pivot_kick_se.skill.target_point = np.array(
-                    [0.0, 6.0])
+                self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
+                self.pivot_kick_se.skill.target_point = np.array([0.0, 6.0])
                 role_requests[self.pivot_kick_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True,
-                                     self.role_cost)
+                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
                 ]
 
             elif best_action is block_utility:
@@ -243,17 +236,14 @@ class GoalieTactic(tactic.ITactic):
                     world_state, goalie_pos)
                 self.move_se.skill.face_point = world_state.ball.pos
                 role_requests[self.move_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True,
-                                     self.role_cost)
+                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
                 ]
             elif best_action is track_utility:
                 # track ball normally
-                self.move_se.skill.target_point = get_goalie_pt(
-                    world_state)
+                self.move_se.skill.target_point = get_goalie_pt(world_state)
                 self.move_se.skill.face_point = world_state.ball.pos
                 role_requests[self.move_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True,
-                                     self.role_cost)
+                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
                 ]
             elif best_action is pass_utility:
                 # TODO : under current system, should assign pass tactic here
