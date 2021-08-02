@@ -147,7 +147,7 @@ class GoalieTactic(tactic.ITactic):
             """
             # should clear if no open pass available
             # how do I check that?
-            return 0
+            return 1
 
         def pass_utility() -> float:
             """
