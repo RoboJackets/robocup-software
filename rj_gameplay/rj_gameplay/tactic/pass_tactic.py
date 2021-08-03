@@ -51,6 +51,7 @@ class PassToClosestReceiver(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+        #TODO: Implement real unassigned cost function
         return 9999
 
 class PasserCost(role.CostFn):
@@ -111,6 +112,7 @@ class PassToOpenReceiver(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+        #TODO: Implement real unassigned cost function
         return 999999
 
 class Pass(tactic.ITactic):

@@ -51,6 +51,7 @@ class wall_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+        #TODO: Implement real unassigned cost function
         return 9999
 
 def find_wall_pts(num_wallers: int,

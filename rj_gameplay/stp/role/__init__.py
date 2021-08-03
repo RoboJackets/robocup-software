@@ -60,7 +60,7 @@ class CostFn(Protocol):
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_results: Optional["RoleResults"],
         world_state: rc.WorldState) -> float:
         """Given the previous role assigment and current world state,
         returns the cost of not assigning any robot.

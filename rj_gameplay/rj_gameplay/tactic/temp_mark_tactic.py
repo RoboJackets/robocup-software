@@ -39,6 +39,7 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+        #TODO: Implement real unassigned cost function
         return 9999
 
 def marker_heuristic(point: np.array):

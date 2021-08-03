@@ -100,7 +100,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                 robot_costs[robot_idx, request_idx] = cost
 
             # Get cost of not assigning a robot to the request
-            unassigned_cost: float = request.cost_fn.unassigned_cost_fn(prev_result, world_state)
+            unassigned_cost: float = request.cost_fn.unassigned_cost_fn(prev_results, world_state)
 
             # Throw an exception if the returned cost is not finite.
             if not isfinite(unassigned_cost):
@@ -168,11 +168,12 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
             # If the row index is not the unassigned row, fill the request
             if robot_idx < unassigned_idx:
-                robot: stp.rc.Robot = free_robots[robot_idx]
-                role_id = keys_list[request_idx]
-                flat_results[role_id].assign(robot, cost)
+                if robot_costs[robot_idx , request_idx] < robot_costs[unassigned_idx, request_idx]:
+                    robot: stp.rc.Robot = free_robots[robot_idx]
+                    role_id = keys_list[request_idx]
+                    flat_results[role_id].assign(robot, cost)
 
-        # If unassigned index chosen, remove it from the list of row indices, which will be removed from free robots
+        # If unassigned index chosen, remove it from the list of row indices to prevent removinf unassigned index from free_robots
         if unassigned_idx in robot_ind:
             robot_ind = robot_ind[robot_ind != unassigned_idx]
 
