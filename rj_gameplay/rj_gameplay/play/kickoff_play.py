@@ -19,20 +19,21 @@ class kickoff_cost(role.CostFn):
 class PrepareKickoffPlay(play.IPlay):
     """Hardcoded points to stand in for kickoff
     """
-
     def __init__(self):
         self.points = [
-                (0.0, 4.25),
-                (0.6, 4.25),
-                (-0.6, 4.25),
-            ]
-        self.tactics = [move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5)) for pt in self.points]
+            (0.0, 4.25),
+            (0.6, 4.25),
+            (-0.6, 4.25),
+        ]
+        self.tactics = [
+            move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5))
+            for pt in self.points
+        ]
         self.tactics.append(goalie_tactic.GoalieTactic())
         self.tactics.append(wall_tactic.WallTactic(2))
 
         # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
         self.role_assigner = NaiveRoleAssignment()
-
 
     def compute_props(self, prev_props):
         pass
@@ -42,7 +43,8 @@ class PrepareKickoffPlay(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+               List[tactic.SkillEntry]]:
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {
@@ -68,16 +70,16 @@ class PrepareKickoffPlay(play.IPlay):
         for tactic in self.tactics:
             skill_dict.update(role_results[tactic])
 
-        return (skill_dict ,skills)
+        return (skill_dict, skills)
 
-    def is_done(self ,world_state):
+    def is_done(self, world_state):
         # last tactic done (HACK)
         return self.tactics[-1].is_done(world_state)
+
 
 class DefendKickoffPlay(play.IPlay):
     """Hardcoded points to stand in for kickoff
     """
-
     def __init__(self):
         self.points = [
             (0.0, 3.9),
@@ -89,23 +91,28 @@ class DefendKickoffPlay(play.IPlay):
             role.Priority.MEDIUM,
             role.Priority.LOW,
         ]
-        self.tactics = [move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5), priority=priority) for pt, priority in zip(self.points, self.priorities)]
+        self.tactics = [
+            move_tactic.Move(target_point=np.array(pt),
+                             face_point=(0.0, 4.5),
+                             priority=priority)
+            for pt, priority in zip(self.points, self.priorities)
+        ]
         self.tactics.append(goalie_tactic.GoalieTactic())
         self.tactics.append(wall_tactic.WallTactic(2))
 
         # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
         self.role_assigner = NaiveRoleAssignment()
 
-
     def compute_props(self, prev_props):
         pass
 
     def tick(
-            self,
-            world_state: rc.WorldState,
-            prev_results: role.assignment.FlatRoleResults,
-            props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+        self,
+        world_state: rc.WorldState,
+        prev_results: role.assignment.FlatRoleResults,
+        props,
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+               List[tactic.SkillEntry]]:
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {
@@ -131,8 +138,8 @@ class DefendKickoffPlay(play.IPlay):
         for tactic in self.tactics:
             skill_dict.update(role_results[tactic])
 
-        return (skill_dict ,skills)
+        return (skill_dict, skills)
 
-    def is_done(self ,world_state):
+    def is_done(self, world_state):
         # last tactic done (HACK)
         return self.tactics[-1].is_done(world_state)

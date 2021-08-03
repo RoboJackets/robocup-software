@@ -25,12 +25,12 @@ A skill version of move so that actions don't have to be called in tactics
 """
 class Move(IMove):
     def __init__(self,
-            robot : rc.Robot = None,
-            target_point : np.ndarray = np.array([0.0,0.0]),
-            target_vel : np.ndarray = np.array([0.0,0.0]),
-            face_angle : Optional[float] = None,
-            face_point : Optional[np.ndarray] = None,
-            ignore_ball: bool = False):
+                 robot: rc.Robot = None,
+                 target_point: np.ndarray = np.array([0.0, 0.0]),
+                 target_vel: np.ndarray = np.array([0.0, 0.0]),
+                 face_angle: Optional[float] = None,
+                 face_point: Optional[np.ndarray] = None,
+                 ignore_ball: bool = False):
         self.robot = robot
         self.target_point = target_point
         self.target_vel = target_vel
@@ -39,9 +39,21 @@ class Move(IMove):
         self.ignore_ball = ignore_ball
 
         if self.robot is not None:
-            self.move = move.Move(self.robot.id, target_point, target_vel, face_angle, face_point, priority=0, ignore_ball=ignore_ball)
+            self.move = move.Move(self.robot.id,
+                                  target_point,
+                                  target_vel,
+                                  face_angle,
+                                  face_point,
+                                  priority=0,
+                                  ignore_ball=ignore_ball)
         else:
-            self.move = move.Move(self.robot, target_point, target_vel, face_angle, face_point, priority=0, ignore_ball=ignore_ball)
+            self.move = move.Move(self.robot,
+                                  target_point,
+                                  target_vel,
+                                  face_angle,
+                                  face_point,
+                                  priority=0,
+                                  ignore_ball=ignore_ball)
 
         self.move_behavior = ActionBehavior('Move', self.move)
         self.root = self.move_behavior

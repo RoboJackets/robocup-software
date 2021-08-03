@@ -170,7 +170,8 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
     target_vel.linear().clamp(PARAM_max_velocity);
-    target_vel.angular() = std::clamp(target_vel.angular(), -PARAM_max_angular_velocity, PARAM_max_angular_velocity);
+    target_vel.angular() =
+        std::clamp(target_vel.angular(), -PARAM_max_angular_velocity, PARAM_max_angular_velocity);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {

@@ -44,9 +44,8 @@ static void check_bezier_smooth(const planning::BezierPath& path) {
         double h = 1e-6;
         path.evaluate(s + h, &position_next, &tangent_next, &curvature_next);
 
-        EXPECT_LE(
-            (0.5 * (tangent + tangent_next)).dist_to((position_next - position) / h),
-            kEpsilon);
+        EXPECT_LE((0.5 * (tangent + tangent_next)).dist_to((position_next - position) / h),
+                  kEpsilon);
 
         double curvature_expected = tangent_next.angle_between(tangent) / h / tangent.mag();
 

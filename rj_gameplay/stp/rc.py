@@ -427,7 +427,11 @@ class GameInfo:
     """State of the soccer game. Corresponds to a combination of the C++-side PlayState and MatchState"""
 
     __slots__ = [
-        "__period", "__state", "__restart", "__our_restart", "__ball_placement",
+        "__period",
+        "__state",
+        "__restart",
+        "__our_restart",
+        "__ball_placement",
     ]
 
     __period: GamePeriod
@@ -437,7 +441,8 @@ class GameInfo:
     __ball_placement: np.array
 
     def __init__(self, period: GamePeriod, state: GameState,
-                 restart: GameRestart, our_restart: bool, ball_placement: np.array):
+                 restart: GameRestart, our_restart: bool,
+                 ball_placement: np.array):
         self.__period = period
         self.__state = state
         self.__restart = restart
@@ -552,12 +557,12 @@ class GameInfo:
         return self.__ball_placement if self.is_free_placement() else None
 
 
-
 class WorldState:
     """Current state of the world."""
 
     __slots__ = [
-        "__our_robots", "__their_robots", "__ball", "__game_info", "__field", "__goalie_id"
+        "__our_robots", "__their_robots", "__ball", "__game_info", "__field",
+        "__goalie_id"
     ]
 
     __our_robots: List[Robot]
@@ -568,7 +573,8 @@ class WorldState:
     __goalie_id: int
 
     def __init__(self, our_robots: List[Robot], their_robots: List[Robot],
-                 ball: Ball, game_info: GameInfo, field: Field, goalie_id: int):
+                 ball: Ball, game_info: GameInfo, field: Field,
+                 goalie_id: int):
         self.__our_robots = our_robots
         self.__their_robots = their_robots
         self.__ball = ball

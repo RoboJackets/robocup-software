@@ -30,10 +30,10 @@ class PreparePenaltyDefense(play.IPlay):
         pass
 
     def tick(
-            self,
-            world_state: rc.WorldState,
-            prev_results: role.assignment.FlatRoleResults,
-            props,
+        self,
+        world_state: rc.WorldState,
+        prev_results: role.assignment.FlatRoleResults,
+        props,
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
 

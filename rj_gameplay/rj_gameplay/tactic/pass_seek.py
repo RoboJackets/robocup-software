@@ -69,12 +69,13 @@ def build_seek_function(target):
             ball_to_goal_dist = np.linalg.norm(ball_to_goal_vec)
             ball_to_goal_vec /= ball_to_goal_dist
 
-            ball_to_goal_perp = np.array([-ball_to_goal_vec[1], ball_to_goal_vec[0]])
+            ball_to_goal_perp = np.array(
+                [-ball_to_goal_vec[1], ball_to_goal_vec[0]])
             perp_dist = np.dot(ball_to_goal_perp, point - world_state.ball.pos)
 
             range_diff = np.linalg.norm(goal_pos - point) - ball_to_goal_dist
             range_decay = np.exp(-range_diff) / (1.0 + np.exp(-range_diff))
-            avoid_ball_cost = np.exp(-perp_dist ** 2 * 30) * range_decay
+            avoid_ball_cost = np.exp(-perp_dist**2 * 30) * range_decay
 
         return np.linalg.norm(point - target) + avoid_ball_cost
 
@@ -86,15 +87,14 @@ class SeekCost(role.CostFn):
     A cost function for how to choose a seeking robot
     TODO: Implement a better cost function
     """
-
     def __init__(self, target_point: np.ndarray):
         self.target_point = target_point
 
     def __call__(
-            self,
-            robot: rc.Robot,
-            prev_result: Optional["RoleResult"],
-            world_state: rc.WorldState,
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
     ) -> float:
 
         if robot is None or self.target_point is None:
@@ -103,7 +103,8 @@ class SeekCost(role.CostFn):
         if not robot.visible:
             return 99
 
-        return np.linalg.norm(robot.pose[0:2] - self.target_point) / global_parameters.soccer.robot.max_speed
+        return np.linalg.norm(robot.pose[0:2] - self.target_point
+                              ) / global_parameters.soccer.robot.max_speed
 
 
 class Seek(tactic.ITactic):
@@ -112,12 +113,12 @@ class Seek(tactic.ITactic):
     Role chosen by SeekCost
     # TODO: make naming less arbitrary
     """
-
     def __init__(self, target_point: np.ndarray,
                  seek_heuristic: Callable[[Tuple[float, float]],
                                           float], seeker_cost: role.CostFn):
         goal_pos = np.array([0, 9])
-        self.move = tactic.SkillEntry(move.Move(target_point=target_point, face_point=goal_pos))
+        self.move = tactic.SkillEntry(
+            move.Move(target_point=target_point, face_point=goal_pos))
         self.cost = seeker_cost
         self.seek_heuristic = seek_heuristic
 

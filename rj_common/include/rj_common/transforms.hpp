@@ -13,6 +13,7 @@ namespace rj_common {
  * of the field) by this matrix yields a point in team coordinates (origin at our goal).
  * @param defend_plus_x Whether our (defended) goal has positive x-coordinate in the vision frame
  */
-[[nodiscard]] rj_geometry::TransformMatrix world_to_team(const FieldDimensions& dimensions, bool defend_plus_x);
+[[nodiscard]] rj_geometry::TransformMatrix world_to_team(const FieldDimensions& dimensions,
+                                                         bool defend_plus_x);
 
 }  // namespace rj_common

@@ -43,17 +43,23 @@ class GameplayNode(Node):
     def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
         super().__init__('gameplay_node')
-        self.world_state_sub = self.create_subscription(msg.WorldState, 'vision_filter/world_state',
-                                                        self.create_partial_world_state, 10)
-        self.field_dimensions = self.create_subscription(msg.FieldDimensions, 'config/field_dimensions',
-                                                         self.create_field, 10)
+        self.world_state_sub = self.create_subscription(
+            msg.WorldState, 'vision_filter/world_state',
+            self.create_partial_world_state, 10)
+        self.field_dimensions = self.create_subscription(
+            msg.FieldDimensions, 'config/field_dimensions', self.create_field,
+            10)
 
         self.play_state = None
         self.match_state = None
-        self.play_state_sub = self.create_subscription(msg.PlayState, 'referee/play_state', self.set_play_state, 10)
-        self.match_state_sub = self.create_subscription(msg.MatchState, 'referee/match_state', self.set_match_state, 10)
+        self.play_state_sub = self.create_subscription(msg.PlayState,
+                                                       'referee/play_state',
+                                                       self.set_play_state, 10)
+        self.match_state_sub = self.create_subscription(
+            msg.MatchState, 'referee/match_state', self.set_match_state, 10)
 
-        keep_latest = QoSProfile(depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
+        keep_latest = QoSProfile(
+            depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
         self.goalie_id_sub = self.create_subscription(msg.Goalie,
                                                       'referee/our_goalie',
                                                       self.create_goalie_id,
@@ -65,19 +71,21 @@ class GameplayNode(Node):
         self.override_actions = [None] * NUM_ROBOTS
 
         for i in range(NUM_ROBOTS):
-            self.robot_state_subs[i] = self.create_subscription(msg.RobotStatus, 'radio/robot_status/robot_' + str(i),
-                                                                self.create_partial_robots, 10)
+            self.robot_state_subs[i] = self.create_subscription(
+                msg.RobotStatus, 'radio/robot_status/robot_' + str(i),
+                self.create_partial_robots, 10)
 
         for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i),
-                                                              10)
+            self.robot_intent_pubs[i] = self.create_publisher(
+                msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
         self.goalie_id = None
         self.field: rc.Field = None
-        self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()] * NUM_ROBOTS * 2
+        self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()
+                                                       ] * NUM_ROBOTS * 2
         self.ball_placement = None
 
         self.global_parameter_client = GlobalParameterClient(
@@ -85,8 +93,10 @@ class GameplayNode(Node):
         local_parameters.register_parameters(self)
 
         # publish def_area_obstacles, global obstacles
-        self.def_area_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/def_area_obstacles', 10)
-        self.global_obstacles_pub = self.create_publisher(geo_msg.ShapeSet, 'planning/global_obstacles', 10)
+        self.def_area_obstacles_pub = self.create_publisher(
+          geo_msg.ShapeSet, 'planning/def_area_obstacles', 10)
+        self.global_obstacles_pub = self.create_publisher(
+          geo_msg.ShapeSet, 'planning/global_obstacles', 10)
 
         timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
@@ -95,7 +105,7 @@ class GameplayNode(Node):
                                                     '/gameplay/debug_text', 10)
         self.play_selector = play_selector
         self.coordinator = coordinator.Coordinator(play_selector,
-                                                self.debug_callback)
+                                                   self.debug_callback)
 
     def set_play_state(self, play_state: msg.PlayState):
         self.play_state = play_state
@@ -153,9 +163,9 @@ class GameplayNode(Node):
         returns: an updated world state
         """
         if self.partial_world_state is not None and self.field is not None:
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses,
-                                                       self.build_game_info(),
-                                                       self.field, self.goalie_id)
+            self.world_state = conv.worldstate_creator(
+                self.partial_world_state, self.robot_statuses,
+                self.build_game_info(), self.field, self.goalie_id)
 
         return self.world_state
 
@@ -165,9 +175,9 @@ class GameplayNode(Node):
         """
 
         if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
-            self.world_state = conv.worldstate_creator(self.partial_world_state, self.robot_statuses,
-                                                       self.build_game_info(),
-                                                       self.field, self.goalie_id)
+            self.world_state = conv.worldstate_creator(
+                self.partial_world_state, self.robot_statuses,
+                self.build_game_info(), self.field, self.goalie_id)
         else:
             self.world_state = None
 
@@ -186,6 +196,7 @@ class GameplayNode(Node):
             global_obstacles = geo_msg.ShapeSet()
             self.add_goals_to_global_obs(global_obstacles, game_info)
             self.add_ball_to_global_obs(global_obstacles, game_info)
+
             self.global_obstacles_pub.publish(global_obstacles)
 
         else:

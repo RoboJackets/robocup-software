@@ -2,9 +2,9 @@
 
 #include <cstdint>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <vector>
-#include <optional>
 
 #include <boost/asio.hpp>
 #include <boost/config.hpp>

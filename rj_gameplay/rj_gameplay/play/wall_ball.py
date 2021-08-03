@@ -46,4 +46,3 @@ class WallBall(play.IPlay):
 
     def is_done(self ,world_state):
         return self.wall_tactic.is_done(world_state)
-

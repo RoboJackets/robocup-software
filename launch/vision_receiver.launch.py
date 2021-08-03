@@ -8,17 +8,19 @@ from launch.actions import Shutdown
 
 def generate_launch_description():
     sim_vision_port = 10020
-    config = os.path.join(get_package_share_directory('rj_robocup'), 'config', 'sim.yaml')
+    config = os.path.join(get_package_share_directory('rj_robocup'), 'config',
+                          'sim.yaml')
     shared_vision_port_single_primary = 10002
 
     hz = 120.0
     port = sim_vision_port
 
     return LaunchDescription([
-        Node(package="rj_robocup",
-             executable="vision_receiver",
-             output="screen",
-             parameters=[config],
-             on_exit=Shutdown(),
+        Node(
+            package="rj_robocup",
+            executable="vision_receiver",
+            output="screen",
+            parameters=[config],
+            on_exit=Shutdown(),
         )
     ])
