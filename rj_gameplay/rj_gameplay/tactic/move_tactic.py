@@ -86,7 +86,8 @@ class Move(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(self, world_state: rc.WorldState,
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 skill depending on which role is filled
         """

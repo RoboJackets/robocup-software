@@ -145,7 +145,7 @@ class WallTactic(tactic.ITactic):
 
         return role_requests
 
-    def tick(self,
+    def tick(self, world_state: rc.WorldState,
              role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: A list of skills depending on which roles are filled
