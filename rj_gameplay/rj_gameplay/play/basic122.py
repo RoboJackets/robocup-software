@@ -71,14 +71,16 @@ class Basic122(play.IPlay):
 
         # Get list of all skills with assigned roles from tactics
 
-        skills = self.striker_tactic.tick(role_results[self.striker_tactic],
-                                          world_state)
-        skills += self.seek_left.tick(role_results[self.seek_left],
-                                      world_state)
-        skills += self.seek_right.tick(role_results[self.seek_right],
-                                       world_state)
-        skills += self.goalie_tactic.tick(role_results[self.goalie_tactic])
-        skills += self.wall_tactic.tick(role_results[self.wall_tactic])
+        skills = self.striker_tactic.tick(world_state,
+                                          role_results[self.striker_tactic])
+        skills += self.seek_left.tick(world_state,
+                                      role_results[self.seek_left])
+        skills += self.seek_right.tick(world_state,
+                                       role_results[self.seek_right])
+        skills += self.goalie_tactic.tick(world_state,
+                                          role_results[self.goalie_tactic])
+        skills += self.wall_tactic.tick(world_state,
+                                        role_results[self.wall_tactic])
 
         skill_dict = {}
         skill_dict.update(role_results[self.striker_tactic])

@@ -46,10 +46,12 @@ class LineUp(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         if self.move_right.is_done(world_state):
-            skills = self.move_left.tick(role_results[self.move_left])
+            skills = self.move_left.tick(world_state,
+                                         role_results[self.move_left])
             skill_dict.update(role_results[self.move_left])
         else:
-            skills = self.move_right.tick(role_results[self.move_right])
+            skills = self.move_right.tick(world_state,
+                                          role_results[self.move_right])
             skill_dict.update(role_results[self.move_right])
         # skills = self.move_right.tick(role_results[self.move_right]) + self.move_left.tick(role_results[self.move_left])
         # skill_dict = {}

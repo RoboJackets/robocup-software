@@ -50,9 +50,9 @@ class PenaltyOffense(play.IPlay):
         tac_index = 0
         for tactic in self.tactics:
             if tac_index == 1:  # TODO BAD HACK
-                skills += tactic.tick(role_results[tactic], world_state)
+                skills += tactic.tick(world_state, role_results[tactic])
             else:
-                skills += tactic.tick(role_results[tactic])
+                skills += tactic.tick(world_state, role_results[tactic])
             tac_index += 1
         # Get all role assignments
         # SkillEntry to (list of?) RoleResult
