@@ -101,7 +101,8 @@
 
 /vision_receiver:
   ros__parameters:
-    port: 10020
+    port: 10060 # 10020 comp setup 
+    hz: 120.0
     use_sim_time: false
 
 /vision_filter:
