@@ -1,9 +1,9 @@
 add_subdirectory(robocup-fshare)
 add_subdirectory(rrt)
 add_subdirectory(grSim)
+add_subdirectory(erSim)
 
 #======================================================================
 # Packaging
 #======================================================================
-install(TARGETS grSim
-    DESTINATION lib/${CMAKE_PROJECT_NAME})
+install(TARGETS simulator-cli DESTINATION lib/${CMAKE_PROJECT_NAME})
