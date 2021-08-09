@@ -108,9 +108,9 @@ class GoalieTactic(tactic.ITactic):
         # TODO: this calculation is copy-pasted from wall_tactic
         # put into common param file: https://www.geeksforgeeks.org/global-keyword-in-python/
 
-        # dist is slightly greater than penalty box bounds
-        box_w = world_state.field.penalty_long_dist_m
-        box_h = world_state.field.penalty_short_dist_m
+        # dist is slightly greater than def_area box bounds
+        box_w = world_state.field.def_area_long_dist_m
+        box_h = world_state.field.def_area_short_dist_m
         line_w = world_state.field.line_width_m
         # max out of box to cap for goalie
         MAX_OOB = RobotConstants.RADIUS

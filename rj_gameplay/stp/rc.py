@@ -259,7 +259,7 @@ class Field:
     __slots__ = [
         "__length_m", "__width_m", "__border_m", "__line_width_m",
         "__goal_width_m", "__goal_depth_m", "__goal_height_m",
-        "__penalty_short_dist_m", "__penalty_long_dist_m", "__center_radius_m",
+        "__def_area_short_dist_m", "__def_area_long_dist_m", "__center_radius_m",
         "__center_diameter_m", "__goal_flat_m", "__floor_length_m",
         "__floor_width_m"
     ]
@@ -271,8 +271,8 @@ class Field:
     __goal_width_m: float
     __goal_depth_m: float
     __goal_height_m: float
-    __penalty_short_dist_m: float
-    __penalty_long_dist_m: float
+    __def_area_short_dist_m: float
+    __def_area_long_dist_m: float
     __center_radius_m: float
     __center_diameter_m: float
     __goal_flat_m: float
@@ -281,8 +281,8 @@ class Field:
 
     def __init__(self, length_m: float, width_m: float, border_m: float,
                  line_width_m: float, goal_width_m: float, goal_depth_m: float,
-                 goal_height_m: float, penalty_short_dist_m: float,
-                 penalty_long_dist_m: float, center_radius_m: float,
+                 goal_height_m: float, def_area_short_dist_m: float,
+                 def_area_long_dist_m: float, center_radius_m: float,
                  center_diameter_m: float, goal_flat_m: float,
                  floor_length_m: float, floor_width_m: float):
         self.__length_m = length_m
@@ -292,8 +292,8 @@ class Field:
         self.__goal_width_m = goal_width_m
         self.__goal_depth_m = goal_depth_m
         self.__goal_height_m = goal_height_m
-        self.__penalty_short_dist_m = penalty_short_dist_m
-        self.__penalty_long_dist_m = penalty_long_dist_m
+        self.__def_area_short_dist_m = def_area_short_dist_m
+        self.__def_area_long_dist_m = def_area_long_dist_m
         self.__center_radius_m = center_radius_m
         self.__center_diameter_m = center_diameter_m
         self.__goal_flat_m = goal_flat_m
@@ -360,18 +360,18 @@ class Field:
         return self.__center_radius_m
 
     @property
-    def penalty_long_dist_m(self) -> float:
+    def def_area_long_dist_m(self) -> float:
         """
         :return: double check on this one
         """
-        return self.__penalty_long_dist_m
+        return self.__def_area_long_dist_m
 
     @property
-    def penalty_short_dist_m(self) -> float:
+    def def_area_short_dist_m(self) -> float:
         """
         :return: double check on this one
         """
-        return self.__penalty_short_dist_m
+        return self.__def_area_short_dist_m
 
     @property
     def border_m(self) -> float:

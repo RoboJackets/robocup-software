@@ -71,7 +71,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto* world_state = shared_state_->world_state();
     const auto global_obstacles = shared_state_->global_obstacles();
-    const auto goal_zone_obstacles = shared_state_->goal_zone_obstacles();
+    const auto def_area_obstacles = shared_state_->def_area_obstacles();
     const auto goalie_id = shared_state_->goalie_id();
     const auto play_state = shared_state_->play_state();
     const bool is_goalie = goalie_id == robot_id_;
@@ -81,7 +81,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     rj_geometry::ShapeSet real_obstacles = global_obstacles;
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
     if (!is_goalie) {
-        virtual_obstacles.add(goal_zone_obstacles);
+        virtual_obstacles.add(def_area_obstacles);
     }
 
     const auto robot_trajectories_hold = robot_trajectories_->get();

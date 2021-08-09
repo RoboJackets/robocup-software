@@ -92,11 +92,11 @@ class GameplayNode(Node):
             self, 'global_parameter_server')
         local_parameters.register_parameters(self)
 
-        # publish global obstacles
-        self.goal_zone_obstacles_pub = self.create_publisher(
-            geo_msg.ShapeSet, 'planning/goal_zone_obstacles', 10)
+        # publish def_area_obstacles, global obstacles
+        self.def_area_obstacles_pub = self.create_publisher(
+          geo_msg.ShapeSet, 'planning/def_area_obstacles', 10)
         self.global_obstacles_pub = self.create_publisher(
-            geo_msg.ShapeSet, 'planning/global_obstacles', 10)
+          geo_msg.ShapeSet, 'planning/global_obstacles', 10)
 
         timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
@@ -186,126 +186,109 @@ class GameplayNode(Node):
             for i in range(NUM_ROBOTS):
                 self.robot_intent_pubs[i].publish(intents[i])
 
-            # TODO: separate these geometry calculations
-
-            # create our_penalty rect
-            our_penalty = geo_msg.Rect()
-            top_left = geo_msg.Point(x=self.field.penalty_long_dist_m / 2 +
-                                     self.field.line_width_m,
-                                     y=0.0)
-            bot_right = geo_msg.Point(x=-self.field.penalty_long_dist_m / 2 -
-                                      self.field.line_width_m,
-                                      y=self.field.penalty_short_dist_m)
-            our_penalty.pt = [top_left, bot_right]
-
-            # create their_penalty rect
-            # add distance slack for stops (0.2 min)
-            # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
+            field = self.world_state.field
             game_info = self.build_game_info()
-            add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or (
-                game_info.is_restart() and not game_info.is_penalty())
-            DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0  # > 0.2 m
 
-            their_penalty = geo_msg.Rect()
-            left_x = self.field.penalty_long_dist_m / 2 + self.field.line_width_m + DIST_FOR_STOP
-            bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
-            top_right = geo_msg.Point(
-                x=-left_x,
-                y=self.field.length_m -
-                (self.field.penalty_short_dist_m + self.field.line_width_m +
-                 DIST_FOR_STOP))
-            their_penalty.pt = [bot_left, top_right]
-
-            physical_goal_board_width = 0.1
-            our_goal = [
-                geo_msg.Rect(pt=[
-                    geo_msg.Point(x=self.field.goal_width_m / 2,
-                                  y=-self.field.goal_depth_m),
-                    geo_msg.Point(x=-self.field.goal_width_m / 2,
-                                  y=-self.field.goal_depth_m -
-                                  physical_goal_board_width),
-                ]),
-                geo_msg.Rect(pt=[
-                    geo_msg.Point(x=self.field.goal_width_m / 2,
-                                  y=-self.field.goal_depth_m),
-                    geo_msg.Point(x=self.field.goal_width_m / 2 +
-                                  physical_goal_board_width,
-                                  y=0.),
-                ]),
-                geo_msg.Rect(pt=[
-                    geo_msg.Point(x=-self.field.goal_width_m / 2,
-                                  y=-self.field.goal_depth_m),
-                    geo_msg.Point(x=-self.field.goal_width_m / 2 -
-                                  physical_goal_board_width,
-                                  y=0.),
-                ]),
-            ]
-            their_goal = [
-                geo_msg.Rect(pt=[
-                    geo_msg.Point(x=self.field.goal_width_m / 2,
-                                  y=self.field.length_m +
-                                  self.field.goal_depth_m),
-                    geo_msg.Point(x=-self.field.goal_width_m / 2,
-                                  y=self.field.length_m +
-                                  self.field.goal_depth_m +
-                                  physical_goal_board_width),
-                ]),
-                geo_msg.Rect(pt=[
-                    geo_msg.Point(x=self.field.goal_width_m / 2,
-                                  y=self.field.length_m +
-                                  self.field.goal_depth_m),
-                    geo_msg.Point(x=self.field.goal_width_m / 2 +
-                                  physical_goal_board_width,
-                                  y=self.field.length_m),
-                ]),
-                geo_msg.Rect(pt=[
-                    geo_msg.Point(x=-self.field.goal_width_m / 2,
-                                  y=self.field.length_m +
-                                  self.field.goal_depth_m),
-                    geo_msg.Point(x=-self.field.goal_width_m / 2 -
-                                  physical_goal_board_width,
-                                  y=self.field.length_m),
-                ]),
-            ]
+            def_area_obstacles = geo_msg.ShapeSet()
+            self.add_def_areas_to_obs(def_area_obstacles, game_info)
+            self.def_area_obstacles_pub.publish(def_area_obstacles)
 
             global_obstacles = geo_msg.ShapeSet()
-            global_obstacles.rectangles = our_goal + their_goal
-            if game_info is not None:
-                ball_point = self.world_state.ball.pos
-                if game_info.is_stopped() or game_info.their_restart and (
-                        game_info.is_indirect() or game_info.is_direct()):
-                    global_obstacles.circles.append(
-                        geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
-                                                            y=ball_point[1]),
-                                       radius=0.6))
-                if game_info.is_kickoff() and game_info.their_restart:
-                    global_obstacles.circles.append(
-                        geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
-                                                            y=ball_point[1]),
-                                       radius=0.3))
-                if game_info.is_kickoff() and game_info.is_setup(
-                ) and game_info.our_restart:
-                    global_obstacles.circles.append(
-                        geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
-                                                            y=ball_point[1]),
-                                       radius=0.1))
-                if game_info.is_free_placement():
-                    for t in np.linspace(0.0, 1.0, 20):
-                        placement = game_info.ball_placement()
+            self.add_goals_to_global_obs(global_obstacles, game_info)
+            self.add_ball_to_global_obs(global_obstacles, game_info)
 
-                        pt = ball_point * t + (1 - t) * placement
-                        global_obstacles.circles.append(
-                            geo_msg.Circle(center=geo_msg.Point(x=pt[0],
-                                                                y=pt[1]),
-                                           radius=0.8))
             self.global_obstacles_pub.publish(global_obstacles)
 
-            # publish Rect shape to goal_zone_obstacles topic
-            goal_zone_obstacles = geo_msg.ShapeSet()
-            goal_zone_obstacles.rectangles = [our_penalty, their_penalty]
-            self.goal_zone_obstacles_pub.publish(goal_zone_obstacles)
         else:
             self.get_logger().warn("World state was none!")
+
+    def add_def_areas_to_obs(self, def_area_obstacles, game_info) -> None:
+        """Creates and publishes rectangles for the defense area in front of both goals.
+
+        The defense area, per the rules, is the box in front of each goal where only that team's goalie can be in and touch the ball. (Formerly referred to as "goal_zone_obstacles".)
+        """
+
+        # create Rect for our def_area box
+        our_def_area = geo_msg.Rect()
+        top_left = geo_msg.Point(x=self.field.def_area_long_dist_m / 2 + self.field.line_width_m, y=0.0)
+        bot_right = geo_msg.Point(x=-self.field.def_area_long_dist_m / 2 - self.field.line_width_m,
+                                  y=self.field.def_area_short_dist_m)
+        our_def_area.pt = [top_left, bot_right]
+
+        # slack for distance (m) in Stop situations
+        # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
+        add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or (
+                    game_info.is_restart() and not game_info.is_penalty())
+        DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0
+
+        # create Rect for their def_area box
+        their_def_area = geo_msg.Rect()
+        left_x = self.field.def_area_long_dist_m / 2 + self.field.line_width_m + DIST_FOR_STOP
+        bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
+        top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (
+                self.field.def_area_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
+        their_def_area.pt = [bot_left, top_right]
+
+        # publish Rect shape to def_area_obstacles topic
+        def_area_obstacles.rectangles = [our_def_area, their_def_area]
+
+    def add_goals_to_global_obs(self, global_obstacles, game_info):
+        """Adds the physical walls that form each goal to global_obstacles."""
+        physical_goal_board_width = 0.1
+        our_goal = [
+            geo_msg.Rect(pt=[
+                geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+                geo_msg.Point(x=-self.field.goal_width_m / 2,
+                              y=-self.field.goal_depth_m - physical_goal_board_width),
+            ]),
+            geo_msg.Rect(pt=[
+                geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2 + physical_goal_board_width, y=0.),
+            ]),
+            geo_msg.Rect(pt=[
+                geo_msg.Point(x=-self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+                geo_msg.Point(x=-self.field.goal_width_m / 2 - physical_goal_board_width, y=0.),
+            ]),
+        ]
+        their_goal = [
+            geo_msg.Rect(pt=[
+                geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
+                geo_msg.Point(x=-self.field.goal_width_m / 2,
+                              y=self.field.length_m + self.field.goal_depth_m + physical_goal_board_width),
+            ]),
+            geo_msg.Rect(pt=[
+                geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2 + physical_goal_board_width, y=self.field.length_m),
+            ]),
+            geo_msg.Rect(pt=[
+                geo_msg.Point(x=-self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
+                geo_msg.Point(x=-self.field.goal_width_m / 2 - physical_goal_board_width, y=self.field.length_m),
+            ]),
+        ]
+
+        global_obstacles.rectangles = our_goal + their_goal
+
+    def add_ball_to_global_obs(self, global_obstacles, game_info):
+        """Adds circular no-fly zone around ball during stops or restarts, to comply with rulebook."""
+        if game_info is not None:
+            ball_point = self.world_state.ball.pos
+            if game_info.is_stopped() or game_info.their_restart and (
+                    game_info.is_indirect() or game_info.is_direct()):
+                global_obstacles.circles.append(
+                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.6))
+            if game_info.is_kickoff() and game_info.their_restart:
+                global_obstacles.circles.append(
+                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.3))
+            if game_info.is_kickoff() and game_info.is_setup() and game_info.our_restart:
+                global_obstacles.circles.append(
+                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.1))
+            if game_info.is_free_placement():
+                for t in np.linspace(0.0, 1.0, 20):
+                    placement = game_info.ball_placement()
+
+                    pt = ball_point * t + (1 - t) * placement
+                    global_obstacles.circles.append(
+                        geo_msg.Circle(center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8))
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
