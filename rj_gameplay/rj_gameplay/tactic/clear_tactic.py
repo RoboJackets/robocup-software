@@ -63,8 +63,11 @@ class Clear(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults,
-             world_state: rc.WorldState) -> List[tactic.SkillEntry]:
+    def tick(
+        self,
+        world_state: rc.WorldState,
+        role_results: tactic.RoleResults,
+    ) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
         TODO: Come up with better timings for starting receive

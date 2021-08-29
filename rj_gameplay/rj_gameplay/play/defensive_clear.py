@@ -43,9 +43,9 @@ class DefensiveClear(play.IPlay):
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all skills with assigned roles from tactics
-        skills = self.two_mark.tick(role_results[self.two_mark])
-        skills += self.clear.tick(role_results[self.clear], world_state)
-        skills += self.goalie.tick(role_results[self.goalie])
+        skills = self.two_mark.tick(world_state, role_results[self.two_mark])
+        skills += self.clear.tick(world_state, role_results[self.clear])
+        skills += self.goalie.tick(world_state, role_results[self.goalie])
         skill_dict = {}
         skill_dict.update(role_results[self.two_mark])
         skill_dict.update(role_results[self.clear])

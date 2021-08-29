@@ -47,14 +47,14 @@ class Striker(play.IPlay):
         skill_dict = {}
         if not self.striker_tactic.is_done(
                 world_state) and not self.assist_tactic.is_done(world_state):
-            skills = self.assist_tactic.tick(role_results[self.assist_tactic],
-                                             world_state)
+            skills = self.assist_tactic.tick(world_state,
+                                             role_results[self.assist_tactic])
             skill_dict.update(role_results[self.assist_tactic])
 
         elif not self.striker_tactic.is_done(
                 world_state) and self.assist_tactic.is_done(world_state):
             skills = self.striker_tactic.tick(
-                role_results[self.striker_tactic], world_state)
+                world_state, role_results[self.striker_tactic])
             skill_dict.update(role_results[self.striker_tactic])
         else:
             skills = []

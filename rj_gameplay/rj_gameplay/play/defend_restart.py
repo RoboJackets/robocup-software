@@ -45,9 +45,9 @@ class DefendRestart(play.IPlay):
 
         # Get list of all skills with assigned roles from tactics
 
-        skills = self.markers.tick(role_results[self.markers])
-        skills += self.goalie.tick(role_results[self.goalie])
-        skills += self.wall.tick(role_results[self.wall])
+        skills = self.markers.tick(world_state, role_results[self.markers])
+        skills += self.goalie.tick(world_state, role_results[self.goalie])
+        skills += self.wall.tick(world_state, role_results[self.wall])
         skill_dict = {}
         skill_dict.update(role_results[self.markers])
         skill_dict.update(role_results[self.goalie])

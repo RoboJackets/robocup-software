@@ -48,7 +48,7 @@ class PreparePenaltyOffense(play.IPlay):
         # Get list of all SkillEntries from all tactics
         skills = []
         for tactic in self.tactics:
-            skills += tactic.tick(role_results[tactic])
+            skills += tactic.tick(world_state, role_results[tactic])
         # Get all role assignments
         # SkillEntry to (list of?) RoleResult
         skill_dict = {}

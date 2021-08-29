@@ -158,8 +158,11 @@ class StrikerTactic(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults,
-             world_state: rc.WorldState) -> List[tactic.SkillEntry]:
+    def tick(
+        self,
+        world_state: rc.WorldState,
+        role_results: tactic.RoleResults,
+    ) -> List[tactic.SkillEntry]:
         """
 		:return: list of skills
 		"""
@@ -212,8 +215,8 @@ class LineKickStrikerTactic(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults,
-             world_state: rc.WorldState) -> List[tactic.SkillEntry]:
+    def tick(self, world_state: rc.WorldState,
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
 		:return: list of skills
 		"""
