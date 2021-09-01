@@ -113,7 +113,7 @@ class PassToOpenReceiver(role.CostFn):
     ) -> float:
 
         #TODO: Implement real unassigned cost function
-        return 999999
+        return 9999
 
 class Pass(tactic.ITactic):
     """
