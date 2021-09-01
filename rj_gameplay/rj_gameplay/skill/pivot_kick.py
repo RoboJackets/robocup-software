@@ -16,10 +16,7 @@ import numpy as np
 
 MAX_DRIBBLER_SPEED = 1.0
 
-class IPivotKick(skill.ISkill, ABC):
-    ...
-
-class PivotKick(IPivotKick):
+class PivotKick(skill.ISkill): # add ABC if fails
     """
     A pivot kick skill
     """

@@ -13,12 +13,7 @@ from rj_geometry_msgs.msg import Point
 KICK_DOT_THRESHOLD = 0.5
 KICK_BALL_SPEED_THRESHOLD = 1.0
 
-class IKick(action.IAction, ABC):
-    def done(self) -> bool:
-        pass
-
-
-class Kick(IKick):
+class Kick(action.IAction): #add ABC if needed 
     """
     Kick action
     """

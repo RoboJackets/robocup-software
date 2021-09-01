@@ -16,14 +16,10 @@ from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 from rj_msgs import msg
 
-class IMove(skill.ISkill, ABC):
-    ...
-
-
 """
 A skill version of move so that actions don't have to be called in tactics
 """
-class Move(IMove):
+class Move(skill.ISkill): #add ABC if fails
     
     def __init__(self,
             robot : rc.Robot = None,

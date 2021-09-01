@@ -38,7 +38,6 @@ class Move(tactic.ITactic):
     A striker tactic which captures then shoots the ball
     """
 
-
     def __init__(self, target_point : np.ndarray):
         self.move = tactic.SkillEntry(move.Move(target_point = target_point))
         self.cost = move_cost(target_point)

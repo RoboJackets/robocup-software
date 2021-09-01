@@ -11,10 +11,7 @@ import stp.rc as rc
 import numpy as np
 from typing import Callable
 
-class ISeek(skill.ISkill, ABC):
-    ...
-
-class Seek(ISeek):
+class Seek(skill.ISkill):
     """
     A seeker skill based off of some heuristic
     """

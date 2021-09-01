@@ -9,8 +9,6 @@ import stp.rc as rc
 from rj_msgs.msg import RobotIntent, PivotMotionCommand
 from rj_geometry_msgs.msg import Point
 
-
-
 class Pivot(action.IFiniteAction):
 
     def __init__(self, robot_id:int, pivot_point:np.ndarray, target_point:np.ndarray, dribble_speed:float, priority:int=1):

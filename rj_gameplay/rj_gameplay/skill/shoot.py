@@ -14,13 +14,10 @@ from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 import stp.skill.sequence as sequence
 
-class IShoot(skill.ISkill, ABC):
-    ...
-
 """
 A shoot skill which aims at the goal and shoots
 """
-class Shoot(IShoot):
+class Shoot(skill.ISkill):
 
     def __init__(self) -> None:
         self.robot: rc.Robot = None

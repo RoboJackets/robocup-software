@@ -2,7 +2,6 @@
 
 import stp.skill as skill
 
-
 class Stub(skill.ISkill):
     """Stub skill that does nothing."""
 

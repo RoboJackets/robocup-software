@@ -45,13 +45,10 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
 
     return mark_pos
 
-class IMark(skill.ISkill, ABC):
-    ...
-
 """
 A skill which marks a given opponent robot according to some heuristic cost function
 """
-class Mark(IMark):
+class Mark(skill.ISkill): #add ABC if fails
 
     def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None) -> None:
 
