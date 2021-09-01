@@ -14,7 +14,6 @@ from stp.role import RoleResult
 SortedRequests = List[assignment.FlatRoleRequests]
 
 # Define some big constant for "hard constraints".
-# TODO: Make a local param
 INVALID_COST = sys.maxsize
 
 
@@ -173,7 +172,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                     role_id = keys_list[request_idx]
                     flat_results[role_id].assign(robot, cost)
 
-        # If unassigned index chosen, remove it from the list of row indices to prevent removinf unassigned index from free_robots
+        # If unassigned index chosen, remove it from the list of row indices to prevent removing unassigned index from free_robots
         if unassigned_idx in robot_ind:
             robot_ind = robot_ind[robot_ind != unassigned_idx]
 

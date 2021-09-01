@@ -381,7 +381,7 @@ def test_assign_prioritized_roles() -> None:
     cost_b = cost.distance_to_pt(np.array([1, 1]), math.sqrt(8), switch_cost)
     cost_c = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
 
-    # Create CosFns
+    # Create CostFns
     cost_fn_a = TestCostFn(cost_a)
     cost_fn_b = TestCostFn(cost_b)
     cost_fn_c = TestCostFn(cost_c)
