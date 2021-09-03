@@ -59,7 +59,9 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                 robot_trajectories_->put(robot_id_,
                                          std::make_shared<Trajectory>(std::move(trajectory)),
                                          intent->priority);
-            }
+            } else {
+		SPDLOG_WARN("Robot {} not alive", robot_id_);
+	    }
         });
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
         radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
@@ -160,8 +162,8 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
     return trajectory;
 }
 bool PlannerForRobot::robot_alive() const {
-    return shared_state_->world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < shared_state_->world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+    return shared_state_->world_state()->our_robots.at(robot_id_).visible;// &&
+           // RJ::now() < latest_world_state_.last_updated_time + RJ::Seconds(PARAM_timeout);
 }
 
 }  // namespace planning

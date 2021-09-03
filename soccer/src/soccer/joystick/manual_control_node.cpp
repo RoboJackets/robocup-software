@@ -55,7 +55,7 @@ ManualControlNode::ManualControlNode()
             control::topics::manipulator_setpoint_pub(i), 10));
     }
 
-    timer_ = create_wall_timer(std::chrono::milliseconds(10), [this]() {
+    timer_ = create_wall_timer(std::chrono::milliseconds(20), [this]() {
         for (const auto& provider : providers_) {
             provider->update();
         }

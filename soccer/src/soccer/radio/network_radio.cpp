@@ -30,6 +30,10 @@ void NetworkRadio::start_receive() {
 
 void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                         const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
+    // if (i++ % 2 == 0) {
+    //     return;
+    // }
+
     // Build the control packet for this robot.
     std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];

@@ -30,7 +30,7 @@ VisionReceiver::VisionReceiver()
       param_provider_(this, kVisionReceiverParamModule) {
     recv_buffer_.resize(65536);
 
-    set_port(PARAM_vision_interface, PARAM_port);
+    set_port("", 10006);
 
     raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);

@@ -4,13 +4,13 @@ namespace planning {
 
 DEFINE_FLOAT64(kPlanningParamModule, timeout, 0.1, "Timeout for vision data to reach planning (s)");
 
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 3.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 2.0,
                   "Maximum translational speed for planning (m/s)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 3.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 2.0,
                   "Maximum translational acceleration for planning (m/s^2)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 10.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 4.0,
                   "Maximum rotational speed for planning (rad/s)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel, 10.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel, 4.0,
                   "Maximum rotational acceleration for planning (rad/s^2)");
 
 DEFINE_NS_FLOAT64(
@@ -25,7 +25,7 @@ DEFINE_NS_FLOAT64(
     kPlanningParamModule, replanner, partial_replan_lead_time, 0.1,
     "Portion of the path (seconds) that will not be changed in the case of a partial replan");
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, replanner, off_path_threshold, 0.1,
+    kPlanningParamModule, replanner, off_path_threshold, 0.3,
     "Position error threshold (m), a partial replan will be forced if we are not within this "
     "amount of the planned trajectory.");
 

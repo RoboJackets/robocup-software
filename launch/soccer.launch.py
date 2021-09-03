@@ -42,7 +42,7 @@ def generate_launch_description():
         on_exit=Shutdown())
 
     radio = Node(package='rj_robocup',
-                 executable='sim_radio_node',
+                 executable='network_radio_node',
                  output='screen',
                  parameters=[config],
                  on_exit=Shutdown())
@@ -85,9 +85,9 @@ def generate_launch_description():
             str(launch_dir / 'global_param_server.launch.py')))
 
     return LaunchDescription([
-        DeclareLaunchArgument('team_flag', default_value=''),
+        DeclareLaunchArgument('team_flag', default_value='-b'),
         DeclareLaunchArgument('sim_flag', default_value=''),
-        DeclareLaunchArgument('ref_flag', default_value=''),
+        DeclareLaunchArgument('ref_flag', default_value='-noref'),
         DeclareLaunchArgument('direction_flag', default_value='plus'),
         stdout_linebuf_envvar,
         config_server,
@@ -99,5 +99,5 @@ def generate_launch_description():
         vision_receiver,
         vision_filter,
         ref_receiver,
-        gameplay,
+        # gameplay,
     ])

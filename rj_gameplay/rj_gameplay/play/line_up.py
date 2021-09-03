@@ -32,12 +32,14 @@ class LineUp(play.IPlay):
         prev_results: role.assignment.FlatRoleResults,
         props,
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         if self.move_right.is_done(world_state):
             role_requests[self.move_left] = self.move_left.get_requests(world_state, None)
         else:
             role_requests[self.move_right] = self.move_right.get_requests(world_state, None)
+
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
         flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)

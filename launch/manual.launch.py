@@ -38,7 +38,7 @@ def generate_launch_description():
         on_exit=Shutdown())
 
     radio = Node(package='rj_robocup',
-                 executable='sim_radio_node',
+                 executable='network_radio_node',
                  output='screen',
                  on_exit=Shutdown())
 
@@ -77,5 +77,5 @@ def generate_launch_description():
         vision_receiver,
         vision_filter,
         ref_receiver,
-        grsim,
+        # grsim,
     ])

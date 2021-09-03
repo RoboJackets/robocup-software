@@ -98,6 +98,8 @@ ControllerCommand GamepadController::get_command() const {
 
     if (command.kick || command.chip) {
         command.kick_power = kick_power_;
+    } else {
+	command.kick_power = 0;
     }
 
     command.dribble_power = dribble_power_;
