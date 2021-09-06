@@ -184,8 +184,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     _quick_commands_srv =
         _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
-    _quick_restart_srv =
-        _node->create_client<rj_msgs::srv::QuickRestart>(referee::topics::kQuickRestartSrv);
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
     _executor.add_node(_node);
@@ -312,51 +310,19 @@ void MainWindow::updateViews() {
     }
 #endif
 
-    GameState game_state;
+    PlayState play_state = PlayState::halt();
+    MatchState match_state;
     TeamInfo our_info;
     TeamInfo their_info;
     bool blue_team = false;
     {
         std::lock_guard<std::mutex> lock(*context__mutex);
-        game_state = context_->game_state;
+        play_state = context_->play_state;
+        match_state = context_->match_state;
         blue_team = context_->blue_team;
         our_info = context_->our_info;
         their_info = context_->their_info;
     }
-
-    // TODO(Kyle): Fix multiple manual
-#if 0
-    if (_processor->multipleManual() && manual < 0) {
-        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
-                                     false);
-    } else {
-        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
-                                     true);
-    }
-
-    if (manual >= 0) {
-        int index = 0;
-        std::vector<int> manualIds = _processor->getJoystickRobotIds();
-        auto info = std::find(manualIds.begin(), manualIds.end(), manual);
-        if (info != manualIds.end()) {
-            index = info - manualIds.begin();
-        }
-
-        auto valList = _processor->getJoystickControlValues();
-        if (valList.size() > index) {
-            JoystickControlValues vals = valList[index];
-            _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
-            _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
-            _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
-            _ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
-            _ui.joystickDibblerPowerLabel->setText(
-                tr("%1").arg(vals.dribblerPower));
-            _ui.joystickKickCheckBox->setChecked(vals.kick);
-            _ui.joystickChipCheckBox->setChecked(vals.chip);
-            _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
-        }
-    }
-#endif
 
     // Time since last update
     RJ::Time now = RJ::now();
@@ -502,16 +468,12 @@ void MainWindow::updateViews() {
     /**************************************************************************/
     /******************** Update referee information **************************/
     /**************************************************************************/
-    // TODO(Kyle): Get these values from the protobuf.
+    // TODO(Kyle): Get period
     _ui.refStage->setText("");
-    _ui.refCommand->setText("");
-    //    _ui.refStage->setText(
-    //        referee_module_enums::stringFromStage(game_state.raw_stage).c_str());
-    //    _ui.refCommand->setText(
-    //        referee_module_enums::stringFromCommand(game_state.raw_command).c_str());
+    _ui.refCommand->setText(QString::fromStdString(play_state.get_human_readout()));
 
     // Convert time left from ms to s and display it to two decimal places
-    int timeSeconds = static_cast<int>(game_state.stage_time_left.count());
+    int timeSeconds = static_cast<int>(match_state.stage_time_left.count());
     int timeMinutes = timeSeconds / 60;
     timeSeconds = timeSeconds % 60;
     _ui.refTimeLeft->setText(
@@ -1147,57 +1109,49 @@ void MainWindow::setUseRefChecked(bool /* use_ref */) {
     _ui.actionUse_Field_Oriented_Controls->setChecked(false);
 }
 
-void MainWindow::send_quick_command(int command) {
+void MainWindow::send_quick_command(const PlayState& state) {
     auto request = std::make_shared<rj_msgs::srv::QuickCommands::Request>();
-    request->state = command;
+    request->command = rj_convert::convert_to_ros(state);
     _quick_commands_srv->async_send_request(request);
+    queued_command_ = std::nullopt;
 }
 
-void MainWindow::send_quick_restart(int restart, bool blue_team) {
-    auto request = std::make_shared<rj_msgs::srv::QuickRestart::Request>();
-    request->restart = restart;
-    request->blue_team = blue_team;
-    _quick_restart_srv->async_send_request(request);
-}
+void MainWindow::on_fastHalt_clicked() { send_quick_command(PlayState::halt()); }
 
-void MainWindow::on_fastHalt_clicked() {
-    send_quick_command(rj_msgs::srv::QuickCommands::Request::COMMAND_HALT);
-}
-
-void MainWindow::on_fastStop_clicked() {
-    send_quick_command(rj_msgs::srv::QuickCommands::Request::COMMAND_STOP);
-}
+void MainWindow::on_fastStop_clicked() { send_quick_command(PlayState::stop()); }
 
 void MainWindow::on_fastReady_clicked() {
-    send_quick_command(rj_msgs::srv::QuickCommands::Request::COMMAND_READY);
+    if (queued_command_) {
+        send_quick_command(*queued_command_);
+    }
 }
 
-void MainWindow::on_fastForceStart_clicked() {
-    send_quick_command(rj_msgs::srv::QuickCommands::Request::COMMAND_PLAY);
-}
+void MainWindow::on_fastForceStart_clicked() { send_quick_command(PlayState::playing()); }
 
 void MainWindow::on_fastKickoffBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF, true);
+    send_quick_command(PlayState::setup_kickoff(context_->blue_team));
+    queued_command_ = PlayState::ready_kickoff(context_->blue_team);
 }
 
 void MainWindow::on_fastKickoffYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF, false);
+    send_quick_command(PlayState::setup_kickoff(!context_->blue_team));
+    queued_command_ = PlayState::ready_kickoff(context_->blue_team);
 }
 
 void MainWindow::on_fastDirectBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT, true);
+    send_quick_command(PlayState::ready_direct(context_->blue_team));
 }
 
 void MainWindow::on_fastDirectYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT, false);
+    send_quick_command(PlayState::ready_direct(!context_->blue_team));
 }
 
 void MainWindow::on_fastIndirectBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT, true);
+    send_quick_command(PlayState::ready_indirect(context_->blue_team));
 }
 
 void MainWindow::on_fastIndirectYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT, false);
+    send_quick_command(PlayState::ready_indirect(!context_->blue_team));
 }
 
 bool MainWindow::live() { return !_playbackRate; }

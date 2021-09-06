@@ -2,12 +2,12 @@
 
 #include <vector>
 
-#include "rrt_util.hpp"
 #include "planning/instant.hpp"
-#include "planning/trajectory_utils.hpp"
 #include "planning/planner/planner.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
+#include "planning/trajectory_utils.hpp"
+#include "rrt_util.hpp"
 
 using namespace rj_geometry;
 
@@ -33,7 +33,11 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
                         pre_trajectory.end_time(), params.static_obstacles,
                         params.dynamic_obstacles, bias_waypoints);
 
-    if (post_trajectory.empty()) {
+    // If we couldn't profile such that velocity at the end of the partial replan period is valid,
+    // do a full replan.
+    if (post_trajectory.empty() ||
+        !Pose::nearly_equals(pre_trajectory.last().pose, post_trajectory.first().pose) ||
+        !Twist::nearly_equals(pre_trajectory.last().velocity, post_trajectory.first().velocity)) {
         return full_replan(params);
     }
 

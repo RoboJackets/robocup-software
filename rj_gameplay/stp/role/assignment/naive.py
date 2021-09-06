@@ -1,6 +1,7 @@
 """Module that contains NaiveRoleAssignment. """
 
 from math import isfinite
+import sys
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -13,7 +14,7 @@ from stp.role import RoleResult
 SortedRequests = List[assignment.FlatRoleRequests]
 
 # Define some big constant for "hard constraints".
-INVALID_COST = 1000
+INVALID_COST = sys.maxsize
 
 
 class NaiveRoleAssignment(assignment.IRoleAssignment):
@@ -72,6 +73,11 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                 # and continue.
                 if not request.constraint_fn(robot, prev_result, world_state):
                     robot_costs[robot_idx, request_idx] = INVALID_COST
+                    continue
+
+                # TODO(1715): Make this cost infinite
+                if not robot.visible:
+                    robot_costs[robot_idx, request_idx] = 1e9
                     continue
 
                 # Otherwise, record the cost.

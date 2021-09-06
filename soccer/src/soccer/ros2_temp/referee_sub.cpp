@@ -17,9 +17,14 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
 
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
-    game_state_sub_ = node_->create_subscription<GameStateMsg>(
-        referee::topics::kGameStatePub, keep_latest, [this](GameStateMsg::UniquePtr msg) {
-            rj_convert::convert_from_ros(*msg, &context_->game_state);
+    play_state_sub_ = node_->create_subscription<PlayState::Msg>(
+        referee::topics::kPlayStatePub, keep_latest, [this](PlayState::Msg::UniquePtr msg) {
+            rj_convert::convert_from_ros(*msg, &context_->play_state);
+        });
+
+    match_state_sub_ = node_->create_subscription<MatchStateMsg>(
+        referee::topics::kMatchStatePub, keep_latest, [this](MatchStateMsg::UniquePtr msg) {
+            rj_convert::convert_from_ros(*msg, &context_->match_state);
         });
 
     team_color_sub_ = node_->create_subscription<TeamColorMsg>(

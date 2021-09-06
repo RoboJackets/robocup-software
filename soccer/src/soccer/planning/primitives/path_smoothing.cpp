@@ -205,9 +205,19 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
     double tb = t;
     double te = 1 - t;
     using std::pow;
-    Point pos = pow(te, 3) * p0 + 3 * te * te * tb * p1 + 3 * te * tb * tb * p2 + pow(tb, 3) * p3;
+    // p(t) = p0 (-t^3 + 3t^2 - 3t + 1) + 3 p1 (t^3 - 2t^2 + t) + 3 p2 (-t^3 + t^2) + p3 t^3
+    // p'(t) = p0 (-3t^2 + 6t - 3) + 3 p1 (3t^2 - 4t + 1) + 3 p2 (-3t^2 + 2t) + 3 p3 (3 t^2)
+    // p''(t) = p0 (-6t + 6) + 3 p1 (6t - 4) + 3 p2 (-6t + 2) + 6 p3 t
 
-    Point d1 = 3 * pow(te, 2) * (p1 - p0) + 6 * te * tb * (p2 - p1) + 3 * tb * tb * (p3 - p2);
+    double t3 = t * t * t;
+    double t2 = t * t;
+    Point pos = p0 * (-t3 + 3 * t2 - 3 * t + 1) + 3 * p1 * (t3 - 2 * t2 + t) + 3 * p2 * (-t3 + t2) +
+                p3 * t3;
+    Point d1_dt = p0 * (-3 * t2 + 6 * t - 3) + 3 * p1 * (3 * t2 - 4 * t + 1) +
+                  3 * p2 * (-3 * t2 + 2 * t) + p3 * (3 * t2);
+    Point d2_dt = p0 * (-6 * t + 6) + 3 * p1 * (6 * t - 4) + 3 * p2 * (-6 * t + 2) + 6 * p3 * t;
+    Point d1 = d1_dt * num_curves;
+    Point d2 = d2_dt * num_curves * num_curves;
 
     if (position != nullptr) {
         *position = pos;
@@ -218,8 +228,6 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
     }
 
     if (curvature != nullptr) {
-        Point d2 = (6 * te * (p2 - 2 * p1 + p0) + 6 * tb * (p3 - 2 * p2 + p1)) * num_curves;
-
         // https://en.wikipedia.org/wiki/Curvature#Local_expressions
         // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2) = |v x a|/|v|^3
         *curvature = std::abs(d1.cross(d2)) / std::pow(d1.mag(), 3.0);

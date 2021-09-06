@@ -10,8 +10,10 @@ from typing import Optional
 from rj_msgs.msg import RobotIntent, EmptyMotionCommand
 from rj_geometry_msgs.msg import Point
 
-KICK_DOT_THRESHOLD = 0.5
-KICK_BALL_SPEED_THRESHOLD = 1.0
+KICK_DOT_THRESHOLD = 0.4
+KICK_BALL_SPEED_THRESHOLD = 0.9
+from rj_gameplay.MAX_KICK_SPEED import *
+
 
 class Kick(action.IAction): #add ABC if needed 
     """
@@ -26,7 +28,11 @@ class Kick(action.IAction): #add ABC if needed
         new_intent = intent
         empty_command = EmptyMotionCommand()
         new_intent.motion_command.empty_command = [empty_command]
-        intent.kick_speed = self.kick_speed
+        # limit "kick too fast" related fouls
+        if self.kick_speed <= MAX_KICK_SPEED:
+            new_intent.kick_speed = self.kick_speed
+        else:
+            new_intent.kick_speed = MAX_KICK_SPEED
         new_intent.trigger_mode = 2
         new_intent.shoot_mode = self.chip
         new_intent.is_active = True

@@ -9,11 +9,11 @@ import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 
+
 class WallBall(play.IPlay):
     """
     Test play for the wall tactic. Directs robots to form a wall between the ball and goal.
     """
-
     def __init__(self):
         # defaults to walling between ball pos and goal pos
         self.wall_tactic = wall_tactic.WallTactic(3)
@@ -39,11 +39,11 @@ class WallBall(play.IPlay):
 
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
-        skills = self.wall_tactic.tick(role_results[self.wall_tactic])
+        skills = self.wall_tactic.tick(world_state,
+                                       role_results[self.wall_tactic])
         skill_dict.update(role_results[self.wall_tactic])
 
         return (skill_dict, skills)
 
-    def is_done(self ,world_state):
+    def is_done(self, world_state):
         return self.wall_tactic.is_done(world_state)
-

@@ -15,23 +15,25 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 1.5,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.5,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 3.5,
                "Maximum velocity limit (motion control) (m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 4.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 15.0,
+               "Maximum angular velocity limit (motion control) (rad/s)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 6.0,
                "Kp for rotation ((rad/s)/rad)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
                "Ki for rotation ((rad/s)/(rad*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 3.0,
                "Kd for rotation ((rad/s)/(rad/s))");
 DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
              "Windup limit for rotation (unknown units)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 2.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 6.0,
                "Kp for translation ((m/s)/m)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
                "Ki for translation ((m/s)/(m*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 3.0,
                "Kd for translation ((m/s)/(m/s))");
 DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
              "Windup limit for translation (unknown units)");
@@ -62,18 +64,18 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
             // convert this to an action. Should we do that now?
             bool is_joystick_controlled = false;
             MotionSetpoint setpoint;
-            run(state, trajectory_, game_state_, is_joystick_controlled, &setpoint);
+            run(state, trajectory_, play_state_, is_joystick_controlled, &setpoint);
             motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
         });
-    game_state_sub_ = node->create_subscription<GameState::Msg>(
-        referee::topics::kGameStatePub, rclcpp::QoS(1).transient_local(),
-        [this](GameState::Msg::SharedPtr game_state_msg) {  // NOLINT
-            game_state_ = rj_convert::convert_from_ros(*game_state_msg).state;
+    play_state_sub_ = node->create_subscription<PlayState::Msg>(
+        referee::topics::kPlayStatePub, rclcpp::QoS(1).transient_local(),
+        [this](PlayState::Msg::SharedPtr play_state_msg) {  // NOLINT
+            play_state_ = rj_convert::convert_from_ros(*play_state_msg).state();
         });
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
-                        const GameState::State& game_state, bool is_joystick_controlled,
+                        const PlayState::State& play_state, bool is_joystick_controlled,
                         MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
@@ -82,7 +84,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         return;
     }
 
-    if (!state.visible || trajectory.empty() || game_state == GameState::State::Halt) {
+    if (!state.visible || trajectory.empty() || play_state == PlayState::State::Halt) {
         stop(setpoint);
         return;
     }
@@ -132,18 +134,6 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
 
-    // Use default constraints. Planning should be in charge of enforcing
-    // constraints on the trajectory, here we just follow it.
-    // TODO(#1500): Use this robot's constraints here.
-    planning::RobotConstraints constraints;
-
-    if (result_body.linear().mag() > constraints.mot.max_speed) {
-        result_body.linear() *= constraints.mot.max_speed / result_body.linear().mag();
-    }
-
-    result_body.angular() =
-        std::clamp(result_body.angular(), -constraints.rot.max_speed, constraints.rot.max_speed);
-
     set_velocity(setpoint, result_body);
 
     {
@@ -151,9 +141,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         using rj_geometry::Circle;
         using rj_geometry::Segment;
         if (at_end) {
-            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), Qt::red);
+            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), QColor(255, 0, 0, 0));
         } else if (maybe_target) {
-            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), Qt::green);
+            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), QColor(0, 255, 0, 0));
         }
 
         // Line for velocity when we have a target
@@ -180,6 +170,8 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
     target_vel.linear().clamp(PARAM_max_velocity);
+    target_vel.angular() =
+        std::clamp(target_vel.angular(), -PARAM_max_angular_velocity, PARAM_max_angular_velocity);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
