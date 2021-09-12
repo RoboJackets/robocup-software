@@ -122,6 +122,9 @@ add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
 
+# Hack: force building simulator-cli
+add_dependencies(soccer simulator-cli)
+
 if(BUILD_TESTING)
   add_executable(test-soccer)
 endif()
@@ -321,6 +324,7 @@ install(
         network_radio_node
         manual_control_node
         global_param_server_node
+        simulator-cli
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

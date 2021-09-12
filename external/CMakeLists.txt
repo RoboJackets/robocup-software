@@ -1,7 +1,7 @@
 add_subdirectory(robocup-fshare)
 add_subdirectory(rrt)
 add_subdirectory(grSim)
-add_subdirectory(erSim)
+add_subdirectory(erSim EXCLUDE_FROM_ALL)
 
 #======================================================================
 # Packaging

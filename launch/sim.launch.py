@@ -3,7 +3,7 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, Shutdown, DeclareLaunchArgument
+from launch.actions import ExecuteProcess,   IncludeLaunchDescription, SetEnvironmentVariable, Shutdown, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -25,10 +25,11 @@ def generate_launch_description():
     #              executable='grSim',
     #              arguments=[headless_flag],
     #              on_exit=Shutdown())
-    ersim = Node(package='rj_robocup',
-                 executable='simulator-cli',
-                 arguments=[headless_flag],
-                 on_exit=Shutdown())
+
+    ersim = ExecuteProcess(
+        cmd=['install/lib/rj_robocup/simulator-cli'],#, '--geometry','2020B', '--realism', 'None'],
+        on_exit=Shutdown())
+    
 
     soccer_launch_path = str(launch_dir / "soccer.launch.py")
     soccer = IncludeLaunchDescription(
