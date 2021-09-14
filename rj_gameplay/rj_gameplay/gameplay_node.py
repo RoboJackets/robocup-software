@@ -35,7 +35,7 @@ class EmptyPlaySelector(situation.IPlaySelector):
 class TestPlaySelector(situation.IPlaySelector):
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
-        return (None, line_up.LineUp())
+        return (None, basic_defense.BasicDefense())
 
 
 class GameplayNode(Node):

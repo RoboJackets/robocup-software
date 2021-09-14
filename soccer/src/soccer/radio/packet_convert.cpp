@@ -289,6 +289,7 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
         control_message.kickStrength = chipper_speed_to_strength(manipulator.kick_speed);
     }
     control_message.shootMode = manipulator.shoot_mode;
+    std::cout << "Shoot mode is: " << control_message.shootMode << std::endl;
     control_message.triggerMode = manipulator.trigger_mode;
     control_message.song = 0;
 }

@@ -99,5 +99,5 @@ def generate_launch_description():
         vision_receiver,
         vision_filter,
         ref_receiver,
-        # gameplay,
+        gameplay,
     ])
