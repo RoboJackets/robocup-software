@@ -9,33 +9,37 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import pivot_kick, receive
+from rj_gameplay.skill import pivot_kick, receive, line_kick
 import stp.skill as skill
 import numpy as np
+
 
 class ClearerCost(role.CostFn):
     """
     A cost function for how to choose a robot that will clears
     """
-    def __call__(self,
-                robot:rc.Robot,
-                prev_result:Optional["RoleResult"],
-                world_state:rc.WorldState) -> float:
+    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
+                 world_state: rc.WorldState) -> float:
         if not robot.visible:
             return 99
         else:
-            return np.linalg.norm(world_state.ball.pos - np.array(robot.pose[0:2]))
+            return np.linalg.norm(world_state.ball.pos -
+                                  np.array(robot.pose[0:2]))
+
 
 class Clear(tactic.ITactic):
     """
     A passing tactic which captures then passes the ball
     """
-
-    def __init__(self, target_point:np.ndarray):
+    def __init__(self, target_point: np.ndarray, kick_speed=3.0, chip=False):
         self.target_point = target_point
-        self.pivot_kick = tactic.SkillEntry(pivot_kick.PivotKick(None, target_point=target_point, chip=True, kick_speed=6.0))
+        self.kick = tactic.SkillEntry(
+            line_kick.LineKickSkill(None,
+                                    target_point=target_point,
+                                    chip=chip,
+                                    kick_speed=kick_speed))
         self.clearer_cost = ClearerCost()
-        
+
     def compute_props(self):
         pass
 
@@ -45,28 +49,33 @@ class Clear(tactic.ITactic):
         """
         pass
 
-    def get_requests(
-        self, world_state:rc.WorldState, props) -> List[tactic.RoleRequests]:
+    def get_requests(self, world_state: rc.WorldState,
+                     props) -> List[tactic.RoleRequests]:
         """ Checks if we have the ball and returns the proper request
         :return: A list of size 2 of role requests
         """
 
         role_requests: tactic.RoleRequests = {}
 
-        clearer_request = role.RoleRequest(role.Priority.MEDIUM, True, self.clearer_cost)
-        role_requests[self.pivot_kick] = [clearer_request]
+        clearer_request = role.RoleRequest(role.Priority.MEDIUM, True,
+                                           self.clearer_cost)
+        role_requests[self.kick] = [clearer_request]
 
         return role_requests
 
-    def tick(self, role_results:tactic.RoleResults, world_state:rc.WorldState) -> List[tactic.SkillEntry]:
+    def tick(
+        self,
+        world_state: rc.WorldState,
+        role_results: tactic.RoleResults,
+    ) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
         TODO: Come up with better timings for starting receive
         """
-        clearer_result = role_results[self.pivot_kick]
+        clearer_result = role_results[self.kick]
         if clearer_result and clearer_result[0].is_filled():
-            return [self.pivot_kick]
+            return [self.kick]
         return []
 
-    def is_done(self, world_state:rc.WorldState):
-        return self.pivot_kick.skill.is_done(world_state)
+    def is_done(self, world_state: rc.WorldState):
+        return self.kick.skill.is_done(world_state)

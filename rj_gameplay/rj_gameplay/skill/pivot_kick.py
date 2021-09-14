@@ -8,8 +8,6 @@ import time
 
 import stp.skill as skill
 import stp.role as role
-# import rj_gameplay.action as action
-# TODO: figure out why the above import crashed sim
 from rj_gameplay.action import pivot, kick, capture
 from stp.skill.action_behavior import ActionBehavior, RobotActions
 from stp.skill.rj_sequence import RjSequence as Sequence
@@ -26,10 +24,15 @@ class IPivotKick(skill.ISkill, ABC):
 class PivotKick(IPivotKick):
     """
     A pivot kick skill
+    capture -> pivot -> kick
     """
 
-    def __init__(self, robot: rc.Robot, target_point: np.array, chip: bool,
-                 kick_speed: float, threshold: float = 0.02) -> None:
+    def __init__(self,
+                 robot: rc.Robot,
+                 target_point: np.array,
+                 chip: bool,
+                 kick_speed: float,
+                 threshold: float = 0.02) -> None:
         # TODO: Have something which automatically determines kick speed based on target point distance
         self.__name__ = 'pivot kick'
         self.robot = robot
@@ -39,10 +42,12 @@ class PivotKick(IPivotKick):
         self.target_point = target_point
 
         if robot is not None:
-            self.pivot = pivot.Pivot(robot.id, robot.pose[0:2], target_point, MAX_DRIBBLER_SPEED, threshold)
+            self.pivot = pivot.Pivot(robot.id, robot.pose[0:2], target_point,
+                                     MAX_DRIBBLER_SPEED, threshold)
             self.kick = kick.Kick(self.robot.id, self.chip, self.kick_speed)
         else:
-            self.pivot = pivot.Pivot(None, np.array([0.0, 0.0]), target_point, MAX_DRIBBLER_SPEED)
+            self.pivot = pivot.Pivot(None, np.array([0.0, 0.0]), target_point,
+                                     MAX_DRIBBLER_SPEED)
             self.kick = kick.Kick(None, self.chip, self.kick_speed)
 
         self.capture = capture.Capture()
@@ -63,7 +68,8 @@ class PivotKick(IPivotKick):
         return actions
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return self.pivot.is_done(world_state) and self.kick.is_done(world_state)
+        return self.pivot.is_done(world_state) and self.kick.is_done(
+            world_state)
 
     def __str__(self):
         return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"

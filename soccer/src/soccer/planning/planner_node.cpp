@@ -61,14 +61,19 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                          intent->priority);
             }
         });
+    robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
+        radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
+        [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
+            had_break_beam_ = status->has_ball_sense;
+        });
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto* world_state = shared_state_->world_state();
     const auto global_obstacles = shared_state_->global_obstacles();
-    const auto goal_zone_obstacles = shared_state_->goal_zone_obstacles();
+    const auto def_area_obstacles = shared_state_->def_area_obstacles();
     const auto goalie_id = shared_state_->goalie_id();
-    const auto game_state = shared_state_->game_state();
+    const auto play_state = shared_state_->play_state();
     const bool is_goalie = goalie_id == robot_id_;
 
     const auto& robot = world_state->our_robots.at(robot_id_);
@@ -76,7 +81,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     rj_geometry::ShapeSet real_obstacles = global_obstacles;
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
     if (!is_goalie) {
-        virtual_obstacles.add(goal_zone_obstacles);
+        virtual_obstacles.add(def_area_obstacles);
     }
 
     const auto robot_trajectories_hold = robot_trajectories_->get();
@@ -89,8 +94,9 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         }
     }
 
+    // TODO(Kyle): Send constraints from gameplay
     RobotConstraints constraints;
-    if (game_state.stopped()) {
+    if (play_state.is_stop()) {
         constraints.mot.max_speed = 0.8;
     }
 
@@ -103,7 +109,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        static_cast<unsigned int>(robot_id_),
                        world_state,
                        intent.priority,
-                       &debug_draw_};
+                       &debug_draw_,
+                       had_break_beam_};
 }
 
 Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request) {
@@ -146,6 +153,8 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
                        [](const auto& instant) { return instant.position(); });
         debug_draw_.draw_path(path);
     }
+    debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(255, 0, 0, 30));
+    debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
 
     debug_draw_.publish();
 

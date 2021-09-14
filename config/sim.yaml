@@ -29,7 +29,7 @@
         chip_angle: 40.0
         max_acceleration: 2.0
         max_chip_speed: 4.0
-        max_dribbler_speed: 1000.0
+        max_dribbler_speed: 2000.0
         max_kick_speed: 7.0
         max_speed: 2.0
         min_chip_speed: 0.5
@@ -49,14 +49,14 @@
       approach_accel_scale: 0.7
       approach_dist_target: 0.04
       ball_speed_approach_direction_cutoff: 0.1
-      control_accel_scale: 0.8
+      control_accel_scale: 0.5
       dist_cutoff_to_approach: 1.0
       dist_cutoff_to_control: 0.0285
-      stop_dist_scale: 1.0
+      stop_dist_scale: 0.5
       target_point_lowpass_gain: 0.8
-      touch_delta_speed: 0.15
+      touch_delta_speed: 0.05
       vel_cutoff_to_control: 0.3
-      velocity_control_scale: 1.0
+      velocity_control_scale: 0.5
     constraints:
       max_rotational_accel: 3.0
       max_rotational_speed: 3.0
@@ -101,7 +101,8 @@
 
 /vision_receiver:
   ros__parameters:
-    port: 10020
+    port: 10060 # 10020 comp setup 
+    hz: 120.0
     use_sim_time: false
 
 /vision_filter:
@@ -109,7 +110,7 @@
     ball:
       init_covariance: 100.0
       observation_noise: 2.0
-      process_noise: 0.05
+      process_noise: 0.1
     camera:
       max_num_kalman_balls: 10
       max_num_kalman_robots: 10
@@ -117,9 +118,9 @@
       use_mhkf: true
     filter:
       health:
-        dec: 2
+        dec: 1
         inc: 2
-        init: 0
+        init: 2
         max: 20
         min: 1
     kalman_ball:
@@ -143,9 +144,9 @@
     publish_hz: 120.0
     robot:
       init_covariance: 100.0
-      observation_noise: 2000.0
+      observation_noise: 2.0
       orientation_scale: 1.0
-      process_noise: 0.00002
+      process_noise: 0.5
     use_sim_time: false
     vision_filter:
       bounce:

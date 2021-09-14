@@ -28,7 +28,7 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        # TODO: make it not just robot 7 that marks 
+        # TODO: make it not just robot 7 that marks
         if robot.id == 7:
             return 0.0
         return 1.0
@@ -56,7 +56,7 @@ class TestMarkTactic(tactic.ITactic):
         for i in range(self.num_markers):
             self.markers_list.append(tactic.SkillEntry(mark.Mark(None, None)))
         self.cost = marker_cost()
-        
+
     def compute_props(self):
         pass
 
@@ -81,7 +81,8 @@ class TestMarkTactic(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(self, world_state: rc.WorldState,
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers
         """

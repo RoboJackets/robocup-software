@@ -1,20 +1,23 @@
 #pragma once
 
+#include <mutex>
+#include <optional>
+
 #include <QMainWindow>
 #include <QTime>
 #include <QTimer>
 #include <QtGui/QStandardItemModel>
-#include <mutex>
-#include <optional>
 #include <rclcpp/rclcpp.hpp>
+
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
 
 #include "field_view.hpp"
 #include "processor.hpp"
-#include "rc-fshare/rtp.hpp"
 #include "ui_MainWindow.h"
+
+#include "rc-fshare/rtp.hpp"
 
 class TestResultTab;
 class StripChart;
@@ -33,8 +36,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT;
 
 public:
-    MainWindow(Processor* processor, bool has_external_ref,
-               QWidget* parent = nullptr);
+    MainWindow(Processor* processor, bool has_external_ref, QWidget* parent = nullptr);
 
     void initialize();
 
@@ -48,16 +50,14 @@ public:
 
     void setLive() {
         if (!live()) {
-            _ui.logTree->setStyleSheet(
-                QString("QTreeWidget{%1}").arg(NonLiveStyle));
+            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
             _playbackRate = std::nullopt;
         }
     }
 
     void setPlayBackRate(double playbackRate) {
         if (live()) {
-            _ui.logTree->setStyleSheet(
-                QString("QTreeWidget{%1}").arg(LiveStyle));
+            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
         }
         _playbackRate = playbackRate;
     }
@@ -186,12 +186,12 @@ private:
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
     // again from the Logger.
-    std::vector<std::shared_ptr<Packet::LogFrame> > _history{};
+    std::vector<std::shared_ptr<Packet::LogFrame>> _history{};
 
     // Longer log history, copied from Logger.
     // This is used specificially via StripChart and ProtobufTree
     // To export a larger amount of data.
-    std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory{};
+    std::vector<std::shared_ptr<Packet::LogFrame>> _longHistory{};
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};
@@ -233,15 +233,23 @@ private:
     Context* context_;
 
     // ROS Compatibility stuff
-    void send_quick_command(int command);
-    void send_quick_restart(int restart, bool blue_team);
+    void send_quick_command(const PlayState& state);
 
     rclcpp::Node::SharedPtr _node;
     rclcpp::Client<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
-    rclcpp::Client<rj_msgs::srv::QuickRestart>::SharedPtr _quick_restart_srv;
     rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedPtr _set_game_settings;
     rclcpp::executors::SingleThreadedExecutor _executor;
     std::thread _executor_thread;
+
+    /**
+     * Queued command from fast restarts. When the last command was halt/stop/force start/ready,
+     * this is nullopt. When the last command was a kickoff setup, this is the kickoff command (a
+     * ready command will be sent next).
+     *
+     * Technically if we change our team color between setting queued_command_ and actually sending
+     * it, the restart will be for the wrong team, but this really never matters.
+     */
+    std::optional<PlayState> queued_command_;
 
     rj_msgs::msg::GameSettings _game_settings;
     bool _game_settings_valid = false;

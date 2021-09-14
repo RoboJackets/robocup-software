@@ -49,3 +49,16 @@ TEST(ROSConvertGeometry, rect_convert) {
     test_lossless_convert_ros_value(rect);
     test_lossless_convert_cpp_value(rj_geometry::Rect(make_rj_point(), make_rj_point() * 2));
 }
+
+TEST(ROSConvertGeometry, shape_set_convert) {
+    rj_geometry_msgs::msg::Rect rect;
+    rect.pt[0] = rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(0).y(1);
+    rect.pt[1] = rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(1).y(2);
+    rj_geometry_msgs::msg::Circle circle;
+    circle.center = rj_convert::convert_to_ros(rj_geometry::Point(1.0, 1.0));
+    circle.radius = 0.5;
+
+    rj_geometry_msgs::msg::ShapeSet shapes;
+    shapes.circles.emplace_back(circle);
+    test_lossless_convert_ros_value(shapes);
+}

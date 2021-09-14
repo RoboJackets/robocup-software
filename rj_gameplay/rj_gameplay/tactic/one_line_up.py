@@ -72,7 +72,7 @@ class OneLineUp(tactic.ITactic):
         self.robot_id = robot_id
         self.constraint = one_lineup_constraint(self.robot_id)
         self.world_state = None
-        
+
     def compute_props(self):
         pass
 
@@ -110,7 +110,8 @@ class OneLineUp(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(self, world_state: rc.WorldState,
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 skill depending on which role is filled
         """

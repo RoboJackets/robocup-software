@@ -57,9 +57,7 @@ ament_target_dependencies(
 
 # Add a test runner target "test_rj_common" to run all tests in this directory
 if(BUILD_TESTING)
-  target_link_libraries(test_rj_common PRIVATE rj_common)
-  target_link_libraries(test_rj_common PRIVATE ${GTEST_LIBRARIES})
-  add_dependencies(test_rj_common googletest)
+  target_link_libraries(test_rj_common PRIVATE rj_common gtest gtest_main)
 endif()
 
 # ======================================================================

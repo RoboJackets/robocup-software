@@ -25,14 +25,14 @@ public:
     }
 
     void draw_shapes(const rj_geometry::ShapeSet& shapes,
-                     const QColor& color = QColor::fromRgb(0, 0, 0)) {
+                     const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         frame_.shapes.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>()
                                     .shapes(rj_convert::convert_to_ros(shapes))
                                     .color(color_from_qt(color)));
     }
 
     void draw_circle(const rj_geometry::Circle& circle,
-                     const QColor& color = QColor::fromRgb(0, 0, 0)) {
+                     const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         shapes.circles.push_back(rj_convert::convert_to_ros(circle));
         frame_.shapes.push_back(
@@ -40,7 +40,8 @@ public:
                 color_from_qt(color)));
     }
 
-    void draw_rect(const rj_geometry::Rect& rect, const QColor& color = QColor::fromRgb(0, 0, 0)) {
+    void draw_rect(const rj_geometry::Rect& rect,
+                   const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         shapes.rectangles.push_back(rj_convert::convert_to_ros(rect));
         frame_.shapes.push_back(
@@ -49,7 +50,7 @@ public:
     }
 
     void draw_polygon(const rj_geometry::Polygon& polygon,
-                      const QColor& color = QColor::fromRgb(0, 0, 0)) {
+                      const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         shapes.polygons.push_back(rj_convert::convert_to_ros(polygon));
         frame_.shapes.push_back(

@@ -5,7 +5,11 @@ namespace radio {
 DEFINE_FLOAT64(kRadioParamModule, timeout, 0.25,
                "Timeout after which radio will assume a robot is disconnected. Seconds.");
 
-Radio::Radio() : rclcpp::Node("radio"), param_provider_(this, kRadioParamModule) {
+Radio::Radio()
+    : Node{"radio", rclcpp::NodeOptions{}
+                        .automatically_declare_parameters_from_overrides(true)
+                        .allow_undeclared_parameters(true)},
+      param_provider_(this, kRadioParamModule) {
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorPub, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
@@ -27,7 +31,7 @@ Radio::Radio() : rclcpp::Node("radio"), param_provider_(this, kRadioParamModule)
             });
     }
 
-    tick_timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { tick(); });
+    tick_timer_ = create_wall_timer(std::chrono::milliseconds(16), [this]() { tick(); });
 }
 
 void Radio::publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {

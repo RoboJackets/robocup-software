@@ -84,6 +84,11 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                     robot_costs[robot_idx, request_idx] = INVALID_COST
                     continue
 
+                # TODO(1715): Make this cost infinite
+                if not robot.visible:
+                    robot_costs[robot_idx, request_idx] = 1e9
+                    continue
+
                 # Otherwise, record the cost.
                 cost: float = request.cost_fn(robot, prev_result, world_state)
 

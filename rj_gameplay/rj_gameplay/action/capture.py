@@ -19,14 +19,16 @@ class Capture(action.IAction):
 
     def tick(self, intent) -> None:
         collect_command = CollectMotionCommand()
-        intent.motion_command.collect_command = [collect_command] 
+        intent.motion_command.collect_command = [collect_command]
         intent.dribbler_speed = 1.0
         intent.is_active = True
         return intent
 
     def is_done(self, world_state) -> bool:
-        if self.robot_id is not None and world_state.our_robots[self.robot_id].has_ball_sense:
+        if self.robot_id is not None and world_state.our_robots[
+                self.robot_id].has_ball_sense:
             self.ticks_done += 1
         else:
-            self.ticks_done = 0
-        return self.ticks_done > 20
+            self.ticks_done -= 5
+        self.ticks_done = np.clip(self.ticks_done, a_min=0, a_max=200)
+        return self.ticks_done > 50

@@ -15,6 +15,7 @@ from stp.skill.rj_sequence import RjSequence as Sequence
 import stp.rc as rc
 import numpy as np
 
+
 class IShoot(skill.ISkill, ABC):
     ...
 
@@ -25,25 +26,28 @@ A shoot skill which aims at the goal and shoots
 
 class Shoot(IShoot):
 
-    def __init__(self, chip: bool, kick_speed: float, target_point: np.ndarray) -> None:
+    def __init__(self, chip: bool, kick_speed: float,
+                 target_point: np.ndarray) -> None:
         self.robot: rc.Robot = None
         self.target_point = target_point
         self.__name__ = 'Shoot'
         self.root = Sequence("Sequence")
         if self.robot is not None:
-            self.pivot = pivot.Pivot(self.robot.id, self.robot.pose[0:2], target_point, 1.0)
+            self.pivot = pivot.Pivot(self.robot.id, self.robot.pose[0:2],
+                                     target_point, 1.0)
             self.kick = kick.Kick(self.robot.id, chip, kick_speed)
         else:
-            self.pivot = pivot.Pivot(self.robot, np.array([0., 0.]), target_point, 1.0)
+            self.pivot = pivot.Pivot(self.robot, np.array([0., 0.]),
+                                     target_point, 1.0)
             self.kick = kick.Kick(self.robot, chip, kick_speed)
-        self.pivot_behavior = ActionBehavior('Pivot', self.pivot, self.robot) 
+        self.pivot_behavior = ActionBehavior('Pivot', self.pivot, self.robot)
 
         self.kick_behavior = ActionBehavior('Kick', self.kick, self.robot)
         self.root.add_children([self.pivot_behavior, self.kick_behavior])
         self.root.setup_with_descendants()
 
-
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:
+    def tick(self, robot: rc.Robot,
+             world_state: rc.WorldState) -> RobotActions:
         self.robot = robot
         self.pivot.pivot_point = world_state.ball.pos
         self.pivot.target_point = self.target_point

@@ -119,7 +119,7 @@ void Processor::run() {
         ////////////////
         // Outputs
 
-        if (context_.game_state.halt()) {
+        if (context_.play_state.is_halt()) {
             stop_robots();
         }
 
