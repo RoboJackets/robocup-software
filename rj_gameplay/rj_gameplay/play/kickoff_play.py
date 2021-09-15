@@ -8,6 +8,8 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
+from rj_gameplay.calculations import calculations
+
 
 
 class kickoff_cost(role.CostFn):
@@ -30,7 +32,10 @@ class PrepareKickoffPlay(play.IPlay):
             for pt in self.points
         ]
         self.tactics.append(goalie_tactic.GoalieTactic())
-        self.tactics.append(wall_tactic.WallTactic(2))
+        self.tactics.append(wall_tactic.WallTactic())
+        self.tactics.append(wall_tactic.WallTactic())
+
+        self.num_wallers = 2
 
         # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
         self.role_assigner = NaiveRoleAssignment()
@@ -46,11 +51,21 @@ class PrepareKickoffPlay(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
 
+        # pre-calculate wall points and store in numpy array
+        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+
         # Get role requests from all tactics and put them into a dictionary
-        role_requests: play.RoleRequests = {
-            tactic: tactic.get_requests(world_state, None)
-            for tactic in self.tactics
-        }
+
+        role_requests: play.RoleRequests = {}
+        i = 0
+        for tactic in self.tactics:
+            if type(tactic) == type(wall_tactic.WallTactic()):
+                # TODO : change to choose closest one
+                role_requests[tactic] = tactic.get_requests(world_state,
+                                                            wall_pts[i], None)
+                i += 1
+            else:
+                role_requests[tactic] = tactic.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -98,7 +113,10 @@ class DefendKickoffPlay(play.IPlay):
             for pt, priority in zip(self.points, self.priorities)
         ]
         self.tactics.append(goalie_tactic.GoalieTactic())
-        self.tactics.append(wall_tactic.WallTactic(2))
+        self.tactics.append(wall_tactic.WallTactic())
+        self.tactics.append(wall_tactic.WallTactic())
+
+        self.num_wallers = 2
 
         # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
         self.role_assigner = NaiveRoleAssignment()
@@ -114,11 +132,21 @@ class DefendKickoffPlay(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
 
+        # pre-calculate wall points and store in numpy array
+        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+
         # Get role requests from all tactics and put them into a dictionary
-        role_requests: play.RoleRequests = {
-            tactic: tactic.get_requests(world_state, None)
-            for tactic in self.tactics
-        }
+
+        role_requests: play.RoleRequests = {}
+        i = 0
+        for tactic in self.tactics:
+            if type(tactic) == type(wall_tactic.WallTactic()):
+                # TODO : change to choose closest one
+                role_requests[tactic] = tactic.get_requests(world_state,
+                                                            wall_pts[i], None)
+                i += 1
+            else:
+                role_requests[tactic] = tactic.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)

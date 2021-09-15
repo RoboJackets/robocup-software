@@ -8,6 +8,7 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
+from rj_gameplay.calculations import calculations
 
 
 class RestartPlay(play.IPlay):
@@ -30,9 +31,12 @@ class RestartPlay(play.IPlay):
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.wall_tactic = wall_tactic.WallTactic(2,
+        self.wall_tactic_1 = wall_tactic.WallTactic(
                                                   role.Priority.LOW,
                                                   cost_scale=0.1)
+        self.wall_tactic_2 = wall_tactic.WallTactic(
+                                                role.Priority.LOW,
+                                                cost_scale=0.1)
 
         left_pt = np.array([1.5, 7.5])
         self.seek_left = pass_seek.Seek(left_pt,
@@ -46,6 +50,9 @@ class RestartPlay(play.IPlay):
 
         self.role_assigner = NaiveRoleAssignment()
 
+        # might need to change to for-loop
+        self.num_wallers = 2
+
     def compute_props(self, prev_props):
         pass
 
@@ -56,14 +63,20 @@ class RestartPlay(play.IPlay):
         props,
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
+
+        # pre-calculate wall points and store in numpy array
+        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         # role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
         # role_requests[self.seek_tactic] = self.seek_tactic.get_requests(world_state, None)
         role_requests[self.clear_tactic] = self.clear_tactic.get_requests(
             world_state, None)
-        role_requests[self.wall_tactic] = self.wall_tactic.get_requests(
-            world_state, None)
+        role_requests[self.wall_tactic_1] = self.wall_tactic_1.get_requests(
+            world_state, wall_pts[0], None)
+        role_requests[self.wall_tactic_2] = self.wall_tactic_2.get_requests(
+            world_state, wall_pts[1], None)
         role_requests[self.goalie_tactic] = self.goalie_tactic.get_requests(
             world_state, None)
         role_requests[self.seek_left] = self.seek_left.get_requests(
@@ -85,15 +98,18 @@ class RestartPlay(play.IPlay):
                                         role_results[self.clear_tactic])
         skills += self.goalie_tactic.tick(world_state,
                                           role_results[self.goalie_tactic])
-        skills += self.wall_tactic.tick(world_state,
-                                        role_results[self.wall_tactic])
+        skills += self.wall_tactic_1.tick(world_state,
+                                        role_results[self.wall_tactic_1])
+        skills += self.wall_tactic_2.tick(world_state,
+                                          role_results[self.wall_tactic_2])
         skills += self.seek_left.tick(world_state,
                                       role_results[self.seek_left])
         skills += self.seek_right.tick(world_state,
                                        role_results[self.seek_right])
         skill_dict.update(role_results[self.clear_tactic])
         skill_dict.update(role_results[self.goalie_tactic])
-        skill_dict.update(role_results[self.wall_tactic])
+        skill_dict.update(role_results[self.wall_tactic_1])
+        skill_dict.update(role_results[self.wall_tactic_2])
         skill_dict.update(role_results[self.seek_left])
         skill_dict.update(role_results[self.seek_right])
 
@@ -123,9 +139,15 @@ class DirectRestartPlay(play.IPlay):
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.wall_tactic = wall_tactic.WallTactic(2,
-                                                  role.Priority.LOW,
-                                                  cost_scale=0.1)
+        self.wall_tactic_1 = wall_tactic.WallTactic(
+            role.Priority.LOW,
+            cost_scale=0.1)
+        self.wall_tactic_2 = wall_tactic.WallTactic(
+            role.Priority.LOW,
+            cost_scale=0.1)
+
+        # might need to change to for-loop
+        self.num_wallers = 2
 
         left_pt = np.array([1.5, 7.5])
         self.seek_left = pass_seek.Seek(left_pt,
@@ -149,14 +171,21 @@ class DirectRestartPlay(play.IPlay):
         props,
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
+
+        # pre-calculate wall points and store in numpy array
+        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+
+
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         # role_requests[self.pass_tactic] = self.pass_tactic.get_requests(world_state, None)
         # role_requests[self.seek_tactic] = self.seek_tactic.get_requests(world_state, None)
         role_requests[self.clear_tactic] = self.clear_tactic.get_requests(
             world_state, None)
-        role_requests[self.wall_tactic] = self.wall_tactic.get_requests(
-            world_state, None)
+        role_requests[self.wall_tactic_1] = self.wall_tactic_1.get_requests(
+            world_state, wall_pts[0], None)
+        role_requests[self.wall_tactic_2] = self.wall_tactic_2.get_requests(
+            world_state, wall_pts[1], None)
         role_requests[self.goalie_tactic] = self.goalie_tactic.get_requests(
             world_state, None)
         role_requests[self.seek_left] = self.seek_left.get_requests(
@@ -178,15 +207,18 @@ class DirectRestartPlay(play.IPlay):
                                         role_results[self.clear_tactic])
         skills += self.goalie_tactic.tick(world_state,
                                           role_results[self.goalie_tactic])
-        skills += self.wall_tactic.tick(world_state,
-                                        role_results[self.wall_tactic])
+        skills += self.wall_tactic_1.tick(world_state,
+                                        role_results[self.wall_tactic_1])
+        skills += self.wall_tactic_2.tick(world_state,
+                                          role_results[self.wall_tactic_2])
         skills += self.seek_left.tick(world_state,
                                       role_results[self.seek_left])
         skills += self.seek_right.tick(world_state,
                                        role_results[self.seek_right])
         skill_dict.update(role_results[self.clear_tactic])
         skill_dict.update(role_results[self.goalie_tactic])
-        skill_dict.update(role_results[self.wall_tactic])
+        skill_dict.update(role_results[self.wall_tactic_1])
+        skill_dict.update(role_results[self.wall_tactic_2])
         skill_dict.update(role_results[self.seek_left])
         skill_dict.update(role_results[self.seek_right])
 
