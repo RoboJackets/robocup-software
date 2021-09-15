@@ -2,11 +2,11 @@ import stp.play as play
 import stp.tactic as tactic
 
 from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
-import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, List, Tuple, Type
+from rj_gameplay.calculations import calculations
 
 
 class BasicDefense(play.IPlay):
@@ -14,10 +14,15 @@ class BasicDefense(play.IPlay):
     """
     def __init__(self):
         self.tactics = [
-            wall_tactic.WallTactic(3),
+            wall_tactic.WallTactic(),
+            wall_tactic.WallTactic(),
+            wall_tactic.WallTactic(),
             nmark_tactic.NMarkTactic(2),
             goalie_tactic.GoalieTactic()
         ]
+
+        # might need to change to for-loop
+        self.num_wallers = 3
 
         self.role_assigner = NaiveRoleAssignment()
 
@@ -32,11 +37,24 @@ class BasicDefense(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
 
+        # pre-calculate wall points and store in numpy array
+        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+
         # Get role requests from all tactics and put them into a dictionary
-        role_requests: play.RoleRequests = {
+        role_requests: play.RoleRequests = {}
+        i = 0
+        for tactic in self.tactics:
+            if type(tactic) == type(wall_tactic.WallTactic()):
+                role_requests[tactic] = tactic.get_requests(world_state, wall_pts[i], None)
+                i += 1
+            else:
+                role_requests[tactic] = tactic.get_requests(world_state, None)
+
+
+        """role_requests: play.RoleRequests = {
             tactic: tactic.get_requests(world_state, None)
             for tactic in self.tactics
-        }
+        }"""
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
