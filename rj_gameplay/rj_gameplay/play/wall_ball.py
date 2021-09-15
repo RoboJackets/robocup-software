@@ -27,19 +27,14 @@ class WallBall(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-               List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        role_requests[self.wall_tactic] = self.wall_tactic.get_requests(
-            world_state, None)
+        role_requests[self.wall_tactic] = self.wall_tactic.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests,
-                                                       world_state,
-                                                       prev_results)
-        role_results = play.unflatten_results(flat_results)
+        flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)
 
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}

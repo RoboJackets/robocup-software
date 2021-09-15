@@ -1,5 +1,6 @@
 import stp.play as play
 import stp.tactic as tactic
+
 from rj_gameplay.tactic import nmark_tactic, goalie_tactic, wall_tactic
 import stp.skill as skill
 import stp.role as role

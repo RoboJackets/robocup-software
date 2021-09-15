@@ -75,14 +75,12 @@ class marker_cost(role.CostFn):
 class NMarkTactic(tactic.ITactic):
     """Marks the n closest enemies to ball with the closest robots on our team to said enemies.
     """
-    def __init__(self, n: int, def_restart: bool=False):
+    def __init__(self, n: int):
         self.num_markers = n
-        # TODO: horrible hack for defending restarts
-        self.is_def_restart = def_restart 
 
         # create empty mark SkillEntry for each robot
         self.mark_list = [
-            tactic.SkillEntry(mark.Mark(def_restart = self.is_def_restart))
+            tactic.SkillEntry(mark.Mark())
             for i in range(self.num_markers)
         ]
 
@@ -132,13 +130,6 @@ class NMarkTactic(tactic.ITactic):
             for mark_skill_entry in self.mark_list
             if role_results[mark_skill_entry][0]
         ]
-
-        for mse in self.mark_list:
-            result = role_results[mse]
-            if result[0].is_filled():
-                index = self.mark_list.index(mse)
-                if index != -1:
-                    self.cost_list[index].prev_result = result[0]
 
         return skills
 

@@ -28,9 +28,7 @@ public:
      * @note Call this OR update_without_camera_frame ONCE an iteration
      */
     void update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
-                                  bool update_all,
-                                  const std::array<bool, kNumShells>& robots_with_ball,
-                                  bool blue_team);
+                                  bool update_all);
 
     /**
      * Updates all the child cameras given a set of new camera frames
@@ -40,8 +38,7 @@ public:
      *
      * @note Call this once per camera per iteration
      */
-    void update_single_camera(RJ::Time calc_time, const CameraFrame& frame,
-                              const std::array<bool, kNumShells>& robots_with_ball, bool blue_team);
+    void update_single_camera(RJ::Time calc_time, const CameraFrame& frame);
 
     /**
      * Updates all the child cameras when there are no new camera frames

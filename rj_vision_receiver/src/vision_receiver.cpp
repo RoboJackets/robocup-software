@@ -14,7 +14,7 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, 10006, // kSimVisionPort,
+DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
              "The port used for the vision receiver.")
 DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "",
               "The hardware interface to use.")
@@ -92,11 +92,7 @@ void VisionReceiver::set_port(const std::string& interface, int port) {
 
     // Bind the socket.
     boost::system::error_code bind_error;
-    socket_.bind(udp::endpoint(boost::asio::ip::make_address("224.5.23.2"), port), bind_error);
-
-    socket_.set_option(udp::socket::reuse_address(true));
-    socket_.set_option(boost::asio::ip::multicast::join_group(boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(), boost::asio::ip::address::from_string("172.25.0.23").to_v4()));
-
+    socket_.bind(udp::endpoint(udp::v4(), port), bind_error);
     if (static_cast<bool>(bind_error)) {
         EZ_ERROR_STREAM("Vision port bind failed with error: " << bind_error.message());
         return;

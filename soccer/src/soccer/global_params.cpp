@@ -6,7 +6,7 @@ DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::physics, ball_decay_constant, 0.18
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_speed, 2.0, "Maximum robot speed, m/s.")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_acceleration, 2.0,
                   "Maximum robot acceleration, m/s^2")
-DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_dribbler_speed, 1000.0, "Maximum robot dribbler speed, revolutions per minute")
+DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_dribbler_speed, 2000.0, "Maximum robot dribbler speed, revolutions per minute")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, min_kick_speed, 1.0,
                   "Minimum kick speed extrapolated to speed at kick power 0, m/s")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_kick_speed, 7.0,

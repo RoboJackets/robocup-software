@@ -118,14 +118,6 @@ void ExternalReferee::setup_referee_multicast() {
     // Join multicast group
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeAddress).to_v4();
-<<<<<<< HEAD
-    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address, boost::asio::ip::address::from_string("172.25.0.23").to_v4()));
-}
-
-void ExternalReferee::update() {
-    io_service_.poll();
-}
-=======
     asio_socket_.set_option(boost::asio::ip::multicast::join_group(
         multicast_address, boost::asio::ip::address_v4::any()));
 }
@@ -138,7 +130,6 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
     if (command == last_command_) {
         return;
     }
->>>>>>> 19154d927b2b8fa91e7749eb7539d8edf2f284b0
 
     // We keep track of yellow's play state by default, so yellow has ours=true.
     constexpr auto YELLOW = true;
@@ -158,13 +149,7 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
             set_play_state(PlayState::stop());
             break;
         case SSL_Referee::NORMAL_START:
-<<<<<<< HEAD
-            if (our_restart()) {
-                play();
-            }
-=======
             set_play_state(yellow_play_state().advanced_from_normal_start());
->>>>>>> 19154d927b2b8fa91e7749eb7539d8edf2f284b0
             break;
         case SSL_Referee::FORCE_START:
             set_play_state(PlayState::playing());

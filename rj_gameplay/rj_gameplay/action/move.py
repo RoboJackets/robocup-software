@@ -15,6 +15,7 @@ from rj_msgs import msg
 from rj_geometry_msgs import msg as geo_msg
 from stp.utils.constants import RobotConstants
 
+
 class Move(action.IFiniteAction):
     """
     Move Action
@@ -37,9 +38,6 @@ class Move(action.IFiniteAction):
         self.ignore_ball = ignore_ball
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        if world_state is not None:
-            self.ball_pos = world_state.ball.pos
-
         threshold = 0.3
         if self.robot_id is None or world_state is None:
             return False

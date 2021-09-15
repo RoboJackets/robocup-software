@@ -111,10 +111,6 @@ protected:
         return false;
     }
 
-    [[nodiscard]] bool our_restart() const {
-        return state_.our_restart;
-    }
-
     /**
      * @brief Send out all valid messages.
      */
