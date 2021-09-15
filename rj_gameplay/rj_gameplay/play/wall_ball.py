@@ -35,7 +35,8 @@ class WallBall(play.IPlay):
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
         flat_results = self.role_assigner.assign_roles(flat_requests, world_state, prev_results)
-
+        role_results = play.unflatten_results(flat_results)
+        
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = self.wall_tactic.tick(world_state,
