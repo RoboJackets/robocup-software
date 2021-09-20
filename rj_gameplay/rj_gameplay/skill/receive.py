@@ -11,7 +11,7 @@ from typing import Optional
 import stp.skill as skill
 import stp.role as role
 # import stp.action as action
-# from rj_gameplay.action import receive, capture
+from rj_gameplay.action import receive, capture
 from rj_msgs.msg import RobotIntent, SettleMotionCommand
 from stp.skill.action_behavior import ActionBehavior
 from stp.skill.rj_sequence import RjSequence as Sequence
@@ -48,7 +48,7 @@ class Receive(skill.Iskill):
         self.root.setup_with_descendants()
         self.__name__ = 'receive skill'
 
-    def tick(self, robot:rc.Robot, world_state:rc.WorldState): #returns dict of robot and actions
+    def tick(self, robot:rc.Robot, world_state:rc.WorldState, intent): #returns dict of robot and actions
         settle_command = SettleMotionCommand()
         intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0

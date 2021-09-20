@@ -13,7 +13,8 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
     """
     A behaviour for behviour trees which ticks its action when ticked
     """
-    def __init__(self, name:str, action:action.IAction, robot:rc.Robot=None, ctx=None) -> None:
+    def __init__(self, name:str, action:action.Iaction, robot:rc.Robot=None, ctx=None) -> None:
+        # self.action = action
         self.action = action
         self.ctx = ctx
         self.robot = robot
