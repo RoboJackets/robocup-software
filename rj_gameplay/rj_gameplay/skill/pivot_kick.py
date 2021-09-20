@@ -63,12 +63,7 @@ class PivotKick(skill.ISkill): # add ABC if fails
         return actions
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-<<<<<<< HEAD
         return self.pivot.is_done(world_state) and self.kick.is_done(world_state)
-=======
-        return self.pivot.is_done(world_state) and self.kick.is_done(
-            world_state)
 
     def __str__(self):
         return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
->>>>>>> 19154d927b2b8fa91e7749eb7539d8edf2f284b0

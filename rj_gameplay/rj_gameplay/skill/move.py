@@ -19,12 +19,7 @@ from rj_msgs import msg
 """
 A skill version of move so that actions don't have to be called in tactics
 """
-<<<<<<< HEAD
-class Move(skill.ISkill): #add ABC if fails
-    
-=======
-class Move(IMove):
->>>>>>> 19154d927b2b8fa91e7749eb7539d8edf2f284b0
+class Move(skill.ISkill):
     def __init__(self,
                  robot: rc.Robot = None,
                  target_point: np.ndarray = np.array([0.0, 0.0]),
