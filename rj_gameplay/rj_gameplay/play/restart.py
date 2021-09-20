@@ -48,7 +48,7 @@ class RestartPlay(play.IPlay):
 
         self.role_assigner = NaiveRoleAssignment()
 
-        # might need to change to for-loop
+        # number of wallers for finding wall_pts
         self.num_wallers = 2
 
     def compute_props(self, prev_props):

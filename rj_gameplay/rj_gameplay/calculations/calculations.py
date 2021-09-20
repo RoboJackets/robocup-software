@@ -1,4 +1,4 @@
-"""Holds calculation to find wall points."""
+"""Holds functions used by many gameplay files."""
 
 from dataclasses import dataclass
 from typing import List, Optional

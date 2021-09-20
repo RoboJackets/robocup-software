@@ -26,7 +26,7 @@ class Basic122(play.IPlay):
         self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW,
                                                     cost_scale=0.1)
 
-        # assuming number of wallers is fixed since this is a 1-2-2 play.
+        # number of wallers for finding wall_pts
         self.num_wallers = 2
 
         left_pt = np.array([1.5, 7.5])
