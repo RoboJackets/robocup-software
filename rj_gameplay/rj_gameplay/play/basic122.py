@@ -21,9 +21,10 @@ class Basic122(play.IPlay):
         self.striker_tactic = striker_tactic.LineKickStrikerTactic(
             target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
-        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
+        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW,
+                                                    cost_scale=0.1)
         self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW,
-                                                  cost_scale=0.1)
+                                                    cost_scale=0.1)
 
         # assuming number of wallers is fixed since this is a 1-2-2 play.
         self.num_wallers = 2
@@ -89,7 +90,7 @@ class Basic122(play.IPlay):
         skills += self.goalie_tactic.tick(world_state,
                                           role_results[self.goalie_tactic])
         skills += self.wall_tactic_1.tick(world_state,
-                                        role_results[self.wall_tactic_1])
+                                          role_results[self.wall_tactic_1])
         skills += self.wall_tactic_2.tick(world_state,
                                           role_results[self.wall_tactic_2])
 

@@ -74,8 +74,8 @@ class WallTactic(tactic.ITactic):
         """
         pass
 
-    def get_requests(self, world_state: rc.WorldState,
-                     wall_pt, props) -> List[tactic.RoleRequests]:
+    def get_requests(self, world_state: rc.WorldState, wall_pt,
+                     props) -> List[tactic.RoleRequests]:
         """
         :return: A list of role requests for move skills needed
         """

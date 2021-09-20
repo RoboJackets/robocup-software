@@ -46,12 +46,11 @@ class BasicDefense(play.IPlay):
         for tactic in self.tactics:
             if type(tactic) == type(wall_tactic.WallTactic()):
                 # TODO : change to choose closest one
-                role_requests[tactic] = tactic.get_requests(world_state, wall_pts[i], None)
+                role_requests[tactic] = tactic.get_requests(
+                    world_state, wall_pts[i], None)
                 i += 1
             else:
                 role_requests[tactic] = tactic.get_requests(world_state, None)
-
-
         """role_requests: play.RoleRequests = {
             tactic: tactic.get_requests(world_state, None)
             for tactic in self.tactics

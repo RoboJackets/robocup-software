@@ -42,9 +42,10 @@ class DefendRestart(play.IPlay):
             world_state, None))
         role_requests[self.goalie] = self.goalie.get_requests(
             world_state, None)
-        role_requests[self.wall_1] = self.wall_1.get_requests(world_state, wall_pts[0], None)
-        role_requests[self.wall_2] = self.wall_2.get_requests(world_state,
-                                                              wall_pts[1], None)
+        role_requests[self.wall_1] = self.wall_1.get_requests(
+            world_state, wall_pts[0], None)
+        role_requests[self.wall_2] = self.wall_2.get_requests(
+            world_state, wall_pts[1], None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)

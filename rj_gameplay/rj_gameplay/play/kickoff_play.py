@@ -11,7 +11,6 @@ import numpy as np
 from rj_gameplay.calculations import calculations
 
 
-
 class kickoff_cost(role.CostFn):
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
@@ -61,8 +60,8 @@ class PrepareKickoffPlay(play.IPlay):
         for tactic in self.tactics:
             if type(tactic) == type(wall_tactic.WallTactic()):
                 # TODO : change to choose closest one
-                role_requests[tactic] = tactic.get_requests(world_state,
-                                                            wall_pts[i], None)
+                role_requests[tactic] = tactic.get_requests(
+                    world_state, wall_pts[i], None)
                 i += 1
             else:
                 role_requests[tactic] = tactic.get_requests(world_state, None)
@@ -142,8 +141,8 @@ class DefendKickoffPlay(play.IPlay):
         for tactic in self.tactics:
             if type(tactic) == type(wall_tactic.WallTactic()):
                 # TODO : change to choose closest one
-                role_requests[tactic] = tactic.get_requests(world_state,
-                                                            wall_pts[i], None)
+                role_requests[tactic] = tactic.get_requests(
+                    world_state, wall_pts[i], None)
                 i += 1
             else:
                 role_requests[tactic] = tactic.get_requests(world_state, None)
