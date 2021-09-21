@@ -8,7 +8,7 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
-from rj_gameplay.calculations import calculations
+from rj_gameplay.calculations import wall_calculations
 
 
 class RestartPlay(play.IPlay):
@@ -63,7 +63,8 @@ class RestartPlay(play.IPlay):
                List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
+                                                   world_state)
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}

@@ -58,11 +58,9 @@ class WallTactic(tactic.ITactic):
     def __init__(self, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):
 
         # create move SkillEntry for every robot
-        # TODO: change to variable from list
-        self.move_list = [tactic.SkillEntry(move.Move())]
-
-        # create empty cost_list (filled in get_requests)
-        self.cost_list = [wall_cost(scale=cost_scale)]
+        self.move_var = tactic.SkillEntry(move.Move())
+        # create empty cost_var (filled in get_requests)
+        self.cost_var = wall_cost(scale=cost_scale)
         self.priority = priority
 
     def compute_props(self):
@@ -85,15 +83,16 @@ class WallTactic(tactic.ITactic):
 
             # assign move skill params and cost funcs to each waller
             # loops through the array and assigns each robot a wall point
-            self.move_list[0].skill.target_point = wall_pt
-            self.move_list[0].skill.face_point = world_state.ball.pos
-            robot = self.move_list[0].skill.robot
-            self.cost_list[0].wall_pt = wall_pt
+            self.move_var.skill.target_point = wall_pt
+            self.move_var.skill.face_point = world_state.ball.pos
+            robot = self.move_var.skill.robot
+            self.cost_var.wall_pt = wall_pt
 
         # create RoleRequest for each SkillEntry
         role_requests = {
-            self.move_list[0]:
-            [role.RoleRequest(self.priority, False, self.cost_list[0])]
+            self.move_var:
+            [role.RoleRequest(self.priority, False, self.cost_var)]
+            for _ in range(1)
         }
 
         return role_requests
@@ -105,10 +104,7 @@ class WallTactic(tactic.ITactic):
         """
 
         # create list of skills based on if RoleResult exists for SkillEntry
-        skills = [
-            move_skill_entry for move_skill_entry in self.move_list
-            if role_results[move_skill_entry][0]
-        ]
+        skills = [self.move_var if role_results[self.move_var] else None]
 
         return skills
 
@@ -116,7 +112,7 @@ class WallTactic(tactic.ITactic):
         """
         :return boolean indicating if tactic is done
         """
-        for move_skill in self.move_list:
+        for move_skill in self.move_var:
             if not move_skill.skill.is_done(world_state):
                 return False
         return True

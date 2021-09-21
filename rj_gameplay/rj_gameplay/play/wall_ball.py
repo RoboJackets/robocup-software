@@ -8,7 +8,7 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
-from rj_gameplay.calculations import calculations
+from rj_gameplay.calculations import wall_calculations
 
 
 class WallBall(play.IPlay):
@@ -36,13 +36,17 @@ class WallBall(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
+                                                   world_state)
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        role_requests[self.wall_tactic_1] = self.wall_tactic_1.get_requests(world_state, wall_pts[0], None)
-        role_requests[self.wall_tactic_2] = self.wall_tactic_2.get_requests(world_state, wall_pts[1], None)
-        role_requests[self.wall_tactic_3] = self.wall_tactic_3.get_requests(world_state, wall_pts[2], None)
+        role_requests[self.wall_tactic_1] = self.wall_tactic_1.get_requests(
+            world_state, wall_pts[0], None)
+        role_requests[self.wall_tactic_2] = self.wall_tactic_2.get_requests(
+            world_state, wall_pts[1], None)
+        role_requests[self.wall_tactic_3] = self.wall_tactic_3.get_requests(
+            world_state, wall_pts[2], None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -53,19 +57,21 @@ class WallBall(play.IPlay):
         skill_dict = {}
         skills = []
         skills += self.wall_tactic_1.tick(world_state,
-                                       role_results[self.wall_tactic_1])
+                                          role_results[self.wall_tactic_1])
         skill_dict.update(role_results[self.wall_tactic_1])
 
         skills += self.wall_tactic_2.tick(world_state,
-                                       role_results[self.wall_tactic_2])
+                                          role_results[self.wall_tactic_2])
         skill_dict.update(role_results[self.wall_tactic_2])
 
         skills += self.wall_tactic_3.tick(world_state,
-                                       role_results[self.wall_tactic_3])
+                                          role_results[self.wall_tactic_3])
         skill_dict.update(role_results[self.wall_tactic_3])
 
         return (skill_dict, skills)
 
     def is_done(self, world_state):
         # need to check this
-        return self.wall_tactic_1.is_done(world_state) and self.wall_tactic_2.is_done(world_state) and self.wall_tactic_3.is_done(world_state)
+        return self.wall_tactic_1.is_done(
+            world_state) and self.wall_tactic_2.is_done(
+                world_state) and self.wall_tactic_3.is_done(world_state)

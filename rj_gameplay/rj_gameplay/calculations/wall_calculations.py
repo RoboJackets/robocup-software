@@ -1,4 +1,4 @@
-"""Holds functions used by many gameplay files."""
+"""Holds functions used by plays that use the wall tactic."""
 
 from dataclasses import dataclass
 from typing import List, Optional
