@@ -102,8 +102,9 @@ class NMarkTactic(tactic.ITactic):
                 self.cost_list[i].enemy_to_mark = closest_enemies[i]
 
         # create RoleRequest for each SkillEntry
+        # TODO change priority float to something useful
         role_requests = {
-            self.mark_list[i]: [role.RoleRequest(role.Priority.LOW, False, self.cost_list[i])]
+            self.mark_list[i]: [role.RoleRequest(3.0, False, self.cost_list[i])]
             for i in range(self.num_markers)
         }
 

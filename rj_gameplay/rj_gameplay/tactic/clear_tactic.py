@@ -57,7 +57,8 @@ class Clear(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        clearer_request = role.RoleRequest(role.Priority.MEDIUM, True,
+        # TODO change priority float to something useful
+        clearer_request = role.RoleRequest(2.0, True,
                                            self.clearer_cost)
         role_requests[self.kick] = [clearer_request]
 

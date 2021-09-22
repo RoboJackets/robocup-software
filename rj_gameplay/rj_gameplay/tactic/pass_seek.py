@@ -139,7 +139,8 @@ class Seek(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        move_request = role.RoleRequest(role.Priority.LOW, False, self.cost)
+        # TODO change priority float to something useful
+        move_request = role.RoleRequest(3.0, False, self.cost)
         role_requests[self.move] = [move_request]
 
         return role_requests

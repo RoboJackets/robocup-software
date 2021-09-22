@@ -82,7 +82,8 @@ class OneLineUp(tactic.ITactic):
         self.world_state = world_state
         role_requests: tactic.RoleRequests = {}
 
-        move_request = role.RoleRequest(role.Priority.HIGH, True, self.cost, self.constraint)
+        # TODO change priority float to something useful
+        move_request = role.RoleRequest(1.0, True, self.cost, self.constraint)
         # has_ball = True
         # for robot in world_state.our_robots:
         #     if robot.has_ball_sense:

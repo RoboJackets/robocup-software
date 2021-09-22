@@ -127,8 +127,10 @@ class GoalieTactic(tactic.ITactic):
             if self.brick:
                 self.move_se.skill.target_point = world_state.field.our_goal_loc
                 self.move_se.skill.face_point = world_state.ball.pos
+
+                # TODO change priority float to something useful
                 role_requests[self.move_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
+                    role.RoleRequest(1.0, True, self.role_cost)
                 ]
                 return role_requests
 
@@ -139,16 +141,20 @@ class GoalieTactic(tactic.ITactic):
                 self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
                 if ball_speed < 1e-6:
                     # if ball is stopped and inside goalie box, collect it
+
+                    # TODO change priority float to something useful
                     role_requests[self.receive_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
+                        role.RoleRequest(1.0, True,
                                          self.role_cost)
                     ]
                 else:
                     # if ball has been stopped already, chip toward center field
                     self.pivot_kick_se.skill.target_point = np.array(
                         [0.0, 6.0])
+
+                    # TODO change priority float to something useful
                     role_requests[self.pivot_kick_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
+                        role.RoleRequest(1.0, True,
                                          self.role_cost)
                     ]
             else:
@@ -164,8 +170,10 @@ class GoalieTactic(tactic.ITactic):
                     self.move_se.skill.target_point = get_block_pt(
                         world_state, goalie_pos)
                     self.move_se.skill.face_point = world_state.ball.pos
+
+                    # TODO change priority float to something useful
                     role_requests[self.move_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
+                        role.RoleRequest(1.0, True,
                                          self.role_cost)
                     ]
                 else:
@@ -173,8 +181,10 @@ class GoalieTactic(tactic.ITactic):
                     self.move_se.skill.target_point = get_goalie_pt(
                         world_state)
                     self.move_se.skill.face_point = world_state.ball.pos
+
+                    # TODO change priority float to something useful
                     role_requests[self.move_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True,
+                        role.RoleRequest(1.0, True,
                                          self.role_cost)
                     ]
         if self.pivot_kick_se.skill.is_done(world_state):

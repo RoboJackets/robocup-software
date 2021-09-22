@@ -95,7 +95,8 @@ def find_wall_pts(num_wallers: int,
 class WallTactic(tactic.ITactic):
     def __init__(self,
                  num_wallers: int,
-                 priority=role.Priority.MEDIUM,
+                 # TODO change priority float to something useful
+                 priority=2.0,
                  cost_scale: float = 1.0):
 
         self.num_wallers = num_wallers

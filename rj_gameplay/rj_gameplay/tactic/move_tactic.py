@@ -47,7 +47,8 @@ class Move(tactic.ITactic):
                  target_point: np.ndarray,
                  face_point: np.ndarray = None,
                  cost_scale: float = 1.0,
-                 priority: role.Priority = role.Priority.MEDIUM):
+                 # TODO change priority float to something useful
+                 priority: role.Priority = 2.0):
         self.move = tactic.SkillEntry(
             move.Move(target_point=target_point, face_point=face_point))
         self.cost = move_cost(target_point, cost_scale=cost_scale)

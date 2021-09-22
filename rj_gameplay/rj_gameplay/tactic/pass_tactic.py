@@ -152,15 +152,18 @@ class Pass(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        passer_request = role.RoleRequest(role.Priority.MEDIUM, True,
+        # TODO change priority float to something useful
+        passer_request = role.RoleRequest(2.0, True,
                                           self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         if self.pivot_kick.skill.is_done(world_state):
-            receive_request = role.RoleRequest(role.Priority.MEDIUM, True,
+            # TODO change priority float to something useful
+            receive_request = role.RoleRequest(2.0, True,
                                                self.receiver_cost)
             role_requests[self.receive] = [receive_request]
         else:
-            passer_request = role.RoleRequest(role.Priority.HIGH, True,
+            # TODO change priority float to something useful
+            passer_request = role.RoleRequest(1.0, True,
                                               self.passer_cost)
             role_requests[self.pivot_kick] = [passer_request]
 

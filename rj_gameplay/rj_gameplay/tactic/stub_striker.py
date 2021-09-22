@@ -58,7 +58,8 @@ class Striker(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        striker_request = role.RoleRequest(role.Priority.HIGH, True, self.cost)
+        # TODO change priority float to something useful
+        striker_request = role.RoleRequest(1.0, True, self.cost)
         has_ball = True
         for robot in world_state.our_robots:
             if robot.has_ball_sense:

@@ -32,12 +32,12 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         role_id: assignment.RoleId
         request: role.RoleRequest
 
-        sorted_requests: SortedRequests = [
-            {} for _ in range(role.Priority.NUM_PRIORITIES)
-        ]
+        sorted_request_dict: SortedRequests = {}
 
         for role_id, request in requests.items():
-            sorted_requests[int(request.priority)][role_id] = request
+            sorted_request_dict[int(request.priority)][role_id] = request
+
+        sorted_requests = sorted_request_dict.values().sort(key=sorted_request_dict.keys())
 
         return sorted_requests
 
@@ -181,7 +181,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         flat_results: assignment.FlatRoleResults = {}
 
         # Iterate over requests from HIGH to LOW.
-        for requests_dict in reversed(sorted_requests):
+        for requests_dict in sorted_requests:
             # Actually perform the assignment using the Hungarian algorithm.
             (
                 prioritized_results,

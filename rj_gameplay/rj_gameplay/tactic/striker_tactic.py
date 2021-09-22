@@ -141,7 +141,8 @@ class StrikerTactic(tactic.ITactic):
     def get_requests(self, world_state: rc.WorldState,
                      props) -> List[tactic.RoleRequests]:
 
-        striker_request = role.RoleRequest(role.Priority.MEDIUM, True,
+        # TODO change priority float to something useful
+        striker_request = role.RoleRequest(2.0, True,
                                            self.capture_cost)
         role_requests: tactic.RoleRequests = {}
 
@@ -207,7 +208,8 @@ class LineKickStrikerTactic(tactic.ITactic):
     def get_requests(self, world_state: rc.WorldState,
                      props) -> List[tactic.RoleRequests]:
 
-        striker_request = role.RoleRequest(role.Priority.MEDIUM, True,
+        # TODO change priority float to something useful
+        striker_request = role.RoleRequest(2.0, True,
                                            self.capture_cost)
         role_requests: tactic.RoleRequests = {}
 

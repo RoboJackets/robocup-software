@@ -31,15 +31,6 @@ class Role:
         return self.__str__()
 
 
-class Priority(IntEnum):
-    """An enum to represent priority of the role assignment."""
-
-    LOW = 0
-    MEDIUM = 1
-    HIGH = 2
-    NUM_PRIORITIES = 3
-
-
 class CostFn(Protocol):
     """Protocol for CostFn."""
 
@@ -89,6 +80,7 @@ def unconstrained_constraint_fn(
     """
     return True
 
+Priority = float
 
 class RoleRequest:
     """Role Request."""

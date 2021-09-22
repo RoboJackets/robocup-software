@@ -68,7 +68,8 @@ class TestMarkTactic(tactic.ITactic):
         role_requests = {}
 
         for i in range(self.num_markers):
-            role_requests[self.markers_list[i]] = [role.RoleRequest(role.Priority.LOW, False, self.cost)]
+            # TODO change priority float to something useful
+            role_requests[self.markers_list[i]] = [role.RoleRequest(3.0, False, self.cost)]
 
         return role_requests
 
