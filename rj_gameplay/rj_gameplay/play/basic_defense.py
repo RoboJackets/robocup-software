@@ -21,7 +21,6 @@ class BasicDefense(play.IPlay):
             goalie_tactic.GoalieTactic()
         ]
 
-        # might need to change to for-loop
         self.num_wallers = 3
 
         self.role_assigner = NaiveRoleAssignment()

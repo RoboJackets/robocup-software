@@ -22,7 +22,6 @@ class WallBall(play.IPlay):
         self.wall_tactic_3 = wall_tactic.WallTactic()
         self.role_assigner = NaiveRoleAssignment()
 
-        # might need to change to for-loop
         self.num_wallers = 3
 
     def compute_props(self, prev_props):

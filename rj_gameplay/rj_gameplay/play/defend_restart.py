@@ -19,7 +19,6 @@ class DefendRestart(play.IPlay):
         self.wall_2 = wall_tactic.WallTactic()
         self.role_assigner = NaiveRoleAssignment()
 
-        # might need to change to for-loop
         self.num_wallers = 2
 
     def compute_props(self, prev_props):
