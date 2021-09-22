@@ -53,6 +53,14 @@ class wall_cost(role.CostFn):
             robot.pose[0:2] -
             wall_pt) / global_parameters.soccer.robot.max_speed + switch_cost
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class WallTactic(tactic.ITactic):
     def __init__(self, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):

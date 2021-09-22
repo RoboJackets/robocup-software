@@ -49,12 +49,22 @@ class PassToClosestReceiver(role.CostFn):
         raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point)
         return raw_dist / global_parameters.soccer.robot.max_speed
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 class PasserCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     TODO: Implement a better cost function
     """
+
     def __call__(self,
                 robot:rc.Robot,
                 prev_result:Optional["RoleResult"],
@@ -64,6 +74,15 @@ class PasserCost(role.CostFn):
         else:
             # closest to ball
             return np.linalg.norm(world_state.ball.pos - robot.pose[0:2])
+
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
 class PassToOpenReceiver(role.CostFn):
@@ -107,6 +126,33 @@ class PassToOpenReceiver(role.CostFn):
         # cost = cost + raw_dist
         return cost
 
+        if robot is None or self.target_point is None:
+            return 99
+        # TODO (#1669)
+        if not robot.visible:
+            return 99
+        if self.passer_robot is not None and robot.id == self.passer_robot.id:
+            # can't pass to yourself
+            return 99
+
+        # TODO: pick "most open" pass
+        cost = 0 
+        for enemy in world_state.their_robots:
+            cost -= 10*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
+
+        # TODO: should be dist in sec
+        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
+        # cost = cost + raw_dist
+        return cost
+
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class Pass(tactic.ITactic):
     """
