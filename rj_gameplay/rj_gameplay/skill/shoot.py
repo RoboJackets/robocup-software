@@ -16,16 +16,11 @@ import stp.rc as rc
 import numpy as np
 
 
-class IShoot(skill.ISkill, ABC):
-    ...
-
 """
 A shoot skill which aims at the goal and shoots
 """
 
-
-class Shoot(IShoot):
-
+class Shoot(skill.ISkill):
     def __init__(self, chip: bool, kick_speed: float,
                  target_point: np.ndarray) -> None:
         self.robot: rc.Robot = None
