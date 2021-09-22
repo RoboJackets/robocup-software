@@ -9,13 +9,7 @@ from rj_msgs.msg import RobotIntent
 from typing import Optional
 from rj_msgs import msg
 
-
-class IActivateDribbler(action.IAction, ABC):
-
-    def is_done(self) -> bool:
-        pass
-
-class ActivateDribbler(IActivateDribbler):
+class ActivateDribbler(action.IAction): #add ABC if this fails
     """
     Activate dribbler action
     """
