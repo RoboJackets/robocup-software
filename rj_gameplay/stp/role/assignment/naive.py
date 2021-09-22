@@ -93,7 +93,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                 cost: float = request.cost_fn(robot, prev_result, world_state)
 
                 # Throw an exception if the returned cost is not finite, 
-                # so unassigned roles can be given infinite cost to be never be assigend
+                # so unassigned roles can be given infinite cost to be never be assigned
                 if not isfinite(cost):
                     raise ValueError(
                         "Got a non-finite cost ({}) for request {} and robot {}".format(
