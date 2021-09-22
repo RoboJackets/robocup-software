@@ -107,7 +107,6 @@ class WallTactic(tactic.ITactic):
         """
         :return boolean indicating if tactic is done
         """
-        for move_skill in self.move_var:
-            if not move_skill.skill.is_done(world_state):
-                return False
+        if not self.move_var.skill.is_done(world_state):
+            return False
         return True
