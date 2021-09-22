@@ -7,15 +7,19 @@ import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from rj_gameplay.calculations import wall_calculations
 
 
 class DefendRestart(play.IPlay):
     def __init__(self):
         # TODO: add chipper tactic here
         self.goalie = goalie_tactic.GoalieTactic()
-        self.markers = nmark_tactic.NMarkTactic(3, True)
-        self.wall = wall_tactic.WallTactic(2)
+        self.markers = nmark_tactic.NMarkTactic(3)
+        self.wall_1 = wall_tactic.WallTactic()
+        self.wall_2 = wall_tactic.WallTactic()
         self.role_assigner = NaiveRoleAssignment()
+
+        self.num_wallers = 2
 
     def compute_props(self, prev_props):
         pass
@@ -28,13 +32,20 @@ class DefendRestart(play.IPlay):
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
 
+        # pre-calculate wall points and store in numpy array
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
+                                                   world_state)
+
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         role_requests[self.markers] = (self.markers.get_requests(
             world_state, None))
         role_requests[self.goalie] = self.goalie.get_requests(
             world_state, None)
-        role_requests[self.wall] = self.wall.get_requests(world_state, None)
+        role_requests[self.wall_1] = self.wall_1.get_requests(
+            world_state, wall_pts[0], None)
+        role_requests[self.wall_2] = self.wall_2.get_requests(
+            world_state, wall_pts[1], None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -47,11 +58,13 @@ class DefendRestart(play.IPlay):
 
         skills = self.markers.tick(world_state, role_results[self.markers])
         skills += self.goalie.tick(world_state, role_results[self.goalie])
-        skills += self.wall.tick(world_state, role_results[self.wall])
+        skills += self.wall_1.tick(world_state, role_results[self.wall_1])
+        skills += self.wall_2.tick(world_state, role_results[self.wall_2])
         skill_dict = {}
         skill_dict.update(role_results[self.markers])
         skill_dict.update(role_results[self.goalie])
-        skill_dict.update(role_results[self.wall])
+        skill_dict.update(role_results[self.wall_1])
+        skill_dict.update(role_results[self.wall_2])
 
         return (skill_dict, skills)
 
