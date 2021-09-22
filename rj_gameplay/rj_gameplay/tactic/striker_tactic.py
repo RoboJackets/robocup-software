@@ -111,6 +111,15 @@ class CaptureCost(role.CostFn):
 
             return 10 * dist_to_ball + 0.5 * switch_cost
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return 9999
+
 
 class StrikerTactic(tactic.ITactic):
     """

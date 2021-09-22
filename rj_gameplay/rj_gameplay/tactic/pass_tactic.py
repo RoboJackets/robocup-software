@@ -49,6 +49,15 @@ class PassToClosestReceiver(role.CostFn):
         raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point)
         return raw_dist / global_parameters.soccer.robot.max_speed
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return 9999
+
 
 class PasserCost(role.CostFn):
     """
@@ -65,6 +74,15 @@ class PasserCost(role.CostFn):
         else:
             # closest to ball
             return np.linalg.norm(world_state.ball.pos - robot.pose[0:2])
+
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return 9999
 
 
 class PassToOpenReceiver(role.CostFn):

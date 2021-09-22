@@ -38,6 +38,15 @@ class GoalieCost(role.CostFn):
 
         return 10000000
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return 9999
+
 
 def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
     """Finds point for goalie to best be in to block a shot.
