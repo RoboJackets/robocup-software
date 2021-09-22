@@ -56,7 +56,7 @@ class PassToClosestReceiver(role.CostFn):
     ) -> float:
 
         #TODO: Implement real unassigned cost function
-        return 9999
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
 class PasserCost(role.CostFn):
@@ -82,7 +82,7 @@ class PasserCost(role.CostFn):
     ) -> float:
 
         #TODO: Implement real unassigned cost function
-        return 9999
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
 class PassToOpenReceiver(role.CostFn):
@@ -152,7 +152,7 @@ class PassToOpenReceiver(role.CostFn):
     ) -> float:
 
         #TODO: Implement real unassigned cost function
-        return 9999
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class Pass(tactic.ITactic):
     """

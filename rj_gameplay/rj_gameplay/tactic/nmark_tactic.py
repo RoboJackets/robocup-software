@@ -70,7 +70,7 @@ class marker_cost(role.CostFn):
     ) -> float:
 
         #TODO: Implement real unassigned cost function
-        return 9999
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class NMarkTactic(tactic.ITactic):
     """Marks the n closest enemies to ball with the closest robots on our team to said enemies.

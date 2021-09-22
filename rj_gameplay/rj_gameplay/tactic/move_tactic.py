@@ -44,7 +44,7 @@ class move_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        return 9999
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class Move(tactic.ITactic):
     """

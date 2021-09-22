@@ -113,7 +113,7 @@ class SeekCost(role.CostFn):
     ) -> float:
 
         #TODO: Implement real unassigned cost function
-        return 9999
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
 class Seek(tactic.ITactic):

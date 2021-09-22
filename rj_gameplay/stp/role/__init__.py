@@ -5,6 +5,7 @@ from typing import Optional, Protocol
 
 import stp.rc as rc
 
+BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
 
 class Role:
     """This represents a role, ie. an Optional[rc.Robot]."""
