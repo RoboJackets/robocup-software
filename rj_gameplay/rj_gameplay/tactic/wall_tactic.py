@@ -78,11 +78,6 @@ class WallTactic(tactic.ITactic):
         :return: A list of role requests for move skills needed
         """
         if world_state and world_state.ball.visible:
-            # wall_pts = find_wall_pts(self.num_wallers, world_state)
-            # set the wall point?
-
-            # assign move skill params and cost funcs to each waller
-            # loops through the array and assigns each robot a wall point
             self.move_var.skill.target_point = wall_pt
             self.move_var.skill.face_point = world_state.ball.pos
             robot = self.move_var.skill.robot
