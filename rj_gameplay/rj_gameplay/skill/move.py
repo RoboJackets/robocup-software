@@ -46,7 +46,10 @@ class Move(IMove):
 
         self.__name__ = 'Move'
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):  #returns dict of robot and actions
+    def tick(self, 
+             robot: rc.Robot, 
+             world_state: rc.WorldState, 
+             intent: RobotIntent):
         self.robot = robot
         self.move.target_point = self.target_point
         self.move.target_vel = self.target_vel

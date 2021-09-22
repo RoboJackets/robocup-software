@@ -21,12 +21,11 @@ class ICapture(skill.ISkill, ABC):
 A skill version of capture so that actions don't have to be called in tactics
 """
 class Capture(ICapture):
-    def __init__(self, robot: Optional[rc.Robot]=None):
-        self.__name__ = 'Capture'
+    def __init__(self, robot: rc.Robot=None):
         self.robot = robot
         self.ticks_done = 0
 
-
+        self.__name__ = 'capture skill'
 
     def tick(self, robot: rc.Robot, intent: RobotIntent):
         self.robot = robot

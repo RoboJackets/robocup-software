@@ -1,0 +1,59 @@
+from abc import ABC, abstractmethod
+
+import rj_gameplay.eval as eval
+import argparse
+import py_trees
+import sys
+import time
+
+import stp.skill as skill
+from rj_msgs.msg import RobotIntent, EmptyMotionCommand
+import numpy as np
+
+KICK_DOT_THRESHOLD = 0.4
+KICK_BALL_SPEED_THRESHOLD = 0.9
+
+class Kick(IKick):
+
+    def __init__(self,
+                 robot: rc.Robot,
+                 chip: bool,
+                 kick_speed: float,
+                 threshold: float = 0.02) -> None:
+        
+        self.__name__ = 'kick skill'
+        self.robot = robot
+        self.chip = chip
+        self.kick_speed = kick_speed
+
+
+    def tick(self, 
+             robot: rc.Robot, 
+             world_state: rc.WorldState, 
+             intent: RobotIntent):
+        self.robot = robot
+
+        empty_command = EmptyMotionCommand()
+        intent.motion_command.empty_command = [empty_command]
+        # TODO: Have something which automatically determines kick speed based on target point distance
+        if self.kick_speed <= MAX_KICK_SPEED:
+            intent.kick_speed = self.kick_speed
+        else:
+            intent.kick_speed = MAX_KICK_SPEED
+        intent.trigger_mode = 2
+        intent.shoot_mode = self.chip
+        intent.is_active = True
+        return {self.robot.id: intent}
+
+
+    def is_done(self, world_state: rc.WorldState) -> bool:
+        if self.robot is None:
+            return False
+        ball_vel_unit = world_state.ball.vel / np.linalg.norm(world_state.ball.vel)
+        heading_angle = world_state.our_robots[self.robot.id].pose[2]
+        heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
+        dot_product = np.dot(heading_vect, ball_vel_unit)
+        #TODO: Make this threshold a local param
+        if dot_product > KICK_DOT_THRESHOLD and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD:
+            return True
+        return False
