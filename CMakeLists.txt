@@ -75,7 +75,6 @@ set(CMAKE_CXX_FLAGS_DEBUG
 
 # Google test
 enable_testing()
-include(SetupGTest)
 
 # ======================================================================
 # CCache

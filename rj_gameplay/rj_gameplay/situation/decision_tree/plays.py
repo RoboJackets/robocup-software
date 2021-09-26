@@ -10,8 +10,20 @@ class NoSituation(stp.situation.ISituation):
     ...
 
 
+class PrepareKickoff(stp.situation.ISituation):
+    """Setup for kickoff."""
+
+    ...
+
+
 class Kickoff(stp.situation.ISituation):
     """Kickoff."""
+
+    ...
+
+
+class DefendKickoff(stp.situation.ISituation):
+    """Kickoff defense."""
 
     ...
 
@@ -30,6 +42,24 @@ class DefendRestartMidfield(stp.situation.ISituation):
 
 class DefendRestartDefensive(stp.situation.ISituation):
     """Plays for defending our opponents restart in the midfield."""
+
+    ...
+
+
+class DefendRestartOffensiveDirect(stp.situation.ISituation):
+    """Defending our direct opponents restart on their side of the field."""
+
+    ...
+
+
+class DefendRestartMidfieldDirect(stp.situation.ISituation):
+    """Plays for defending our opponents direct restart on their side of the field."""
+
+    ...
+
+
+class DefendRestartDefensiveDirect(stp.situation.ISituation):
+    """Plays for defending our opponents direct restart in the midfield."""
 
     ...
 
@@ -120,8 +150,20 @@ class MidfieldDefendClear(stp.situation.ISituation):
     ...
 
 
+class PrepareShootout(stp.situation.ISituation):
+    """Plays for making shootout shots."""
+
+    ...
+
+
 class Shootout(stp.situation.ISituation):
     """Plays for making shootout shots."""
+
+    ...
+
+
+class PrepareDefendShootout(stp.situation.ISituation):
+    """Plays for defending shootout shots."""
 
     ...
 
@@ -132,8 +174,20 @@ class DefendShootout(stp.situation.ISituation):
     ...
 
 
+class PreparePenalty(stp.situation.ISituation):
+    """Set up for penalty shots."""
+
+    ...
+
+
 class Penalty(stp.situation.ISituation):
     """Plays for making penalty shots."""
+
+    ...
+
+
+class PrepareDefendPenalty(stp.situation.ISituation):
+    """Prepare to defend the penalty. Our goalie must be on the goal box line."""
 
     ...
 
@@ -145,24 +199,48 @@ class DefendPenalty(stp.situation.ISituation):
 
 
 class OffensiveKick(stp.situation.ISituation):
-    """Plays for direct and indirect kicks on their side."""
+    """Plays for indirect kicks on their side."""
 
     ...
 
 
 class DefensiveKick(stp.situation.ISituation):
-    """Plays for direct and indirect kicks on our side."""
+    """Plays for indirect kicks on our side."""
 
     ...
 
 
 class MidfieldKick(stp.situation.ISituation):
-    """Plays for direct and indirect kicks in the midfield."""
+    """Plays for indirect kicks in the midfield."""
+
+    ...
+
+
+class OffensiveKickDirect(stp.situation.ISituation):
+    """Plays for direct kicks on their side."""
+
+    ...
+
+
+class DefensiveKickDirect(stp.situation.ISituation):
+    """Plays for direct kicks on our side."""
+
+    ...
+
+
+class MidfieldKickDirect(stp.situation.ISituation):
+    """Plays for direct kicks in the midfield."""
 
     ...
 
 
 class GoalieClear(stp.situation.ISituation):
     """Plays for clearing the ball when our goalie possesses the ball."""
+
+    ...
+
+
+class Stop(stp.situation.ISituation):
+    """Plays for dealing with the stop state."""
 
     ...

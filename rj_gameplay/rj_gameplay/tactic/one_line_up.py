@@ -33,6 +33,15 @@ class one_lineup_cost(role.CostFn):
         # return robot.id
         return 0
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 class one_lineup_constraint(role.ConstraintFn):
     """Protocol for ConstraintFn. """
 
@@ -63,7 +72,7 @@ class OneLineUp(tactic.ITactic):
         self.robot_id = robot_id
         self.constraint = one_lineup_constraint(self.robot_id)
         self.world_state = None
-        
+
     def compute_props(self):
         pass
 
@@ -101,7 +110,8 @@ class OneLineUp(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(self, world_state: rc.WorldState,
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 skill depending on which role is filled
         """

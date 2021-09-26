@@ -28,7 +28,7 @@ inline T apply_low_pass_filter(const T& old_value, const T& new_value, double ga
 
 template <typename T>
 inline T lerp(const T& a, const T& b, double factor) {
-    return factor * a + (1 - factor) * b;
+    return (1 - factor) * a + factor * b;
 }
 
 template <typename T, typename S>

@@ -14,15 +14,11 @@ from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 from typing import Optional
 
-class ICapture(skill.ISkill, ABC):
-    ...
-
-
 """
 A skill version of capture so that actions don't have to be called in tactics
 """
-class Capture(ICapture):
-    
+
+class Capture(skill.ISkill): #add ABC if something fails
     def __init__(self, robot: Optional[rc.Robot]=None):
         self.robot = robot
         self.__name__ = 'Capture'
@@ -36,4 +32,7 @@ class Capture(ICapture):
         return self.root.tick_once(robot, world_state)
 
     def is_done(self, world_state) -> bool:
-    	return self.capture.is_done(world_state)
+        return self.capture.is_done(world_state)
+
+    def __str__(self):
+        return f"Capture(robot={self.robot.id if self.robot is not None else '??'})"

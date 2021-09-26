@@ -16,14 +16,11 @@ from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 from rj_msgs import msg
 
-class IDribble(skill.ISkill, ABC):
-    ...
-
 
 """
 A simple skill wrapper version of dribble so that actions don't have to be called in tactics
 """
-class Dribble(IDribble):
+class Dribble(skill.ISkill):
 
     def __init__(self,
             robot : rc.Robot = None,
@@ -49,3 +46,6 @@ class Dribble(IDribble):
 
     def is_done(self, world_state):
         return self.move.is_done(world_state)
+
+    def __str__(self):
+        return f"Dribble(robot={self.robot.id if self.robot is not None else '??'})"

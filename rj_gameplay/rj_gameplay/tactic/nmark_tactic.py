@@ -30,7 +30,7 @@ class marker_cost(role.CostFn):
     """Pick mark robots based on dist to the ball point
     """
     def __init__(self, enemy_to_mark: rc.Robot=None):
-        self.enemy_to_mark = enemy_to_mark 
+        self.enemy_to_mark = enemy_to_mark
 
     def __call__(
         self,
@@ -39,11 +39,38 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
+
+        # TODO: make a better way to avoid assignment of goalie to other roles
+        if world_state.game_info is not None:
+            if robot.id == world_state.goalie_id:
+                return 99
+
         # TODO: prevent gameplay crashing w/out this check
-        if robot is None or self.enemy_to_mark is None: 
-            return 0
+        if robot is None or self.enemy_to_mark is None:
+            return 99
+
+        # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
+        if not robot.visible:
+            return 99  # float('inf') threw ValueError
+
+        # TODO: use the convenience func in stp/role/ that has a stickiness for the last assignment
+        # TODO: this is actually using a local var, not the param given
+        # figure out how the param should be used
+        # if prev_result is not None and prev_result.role is not None:
+        #     if robot.id == self.prev_result.role.robot.id:
+        #         # return 0
+        #         pass
 
         return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2]) / global_parameters.soccer.robot.max_speed
+
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class NMarkTactic(tactic.ITactic):
     """Marks the n closest enemies to ball with the closest robots on our team to said enemies.
@@ -58,11 +85,8 @@ class NMarkTactic(tactic.ITactic):
         ]
 
         # create cost func for each robot
-        self.cost_list = [
-            marker_cost()
-            for _ in self.mark_list
-        ]
-        
+        self.cost_list = [marker_cost() for _ in range(self.num_markers)]
+
     def compute_props(self):
         pass
 
@@ -82,7 +106,7 @@ class NMarkTactic(tactic.ITactic):
         if world_state is not None and world_state.ball.visible:
             # assign n closest enemies to respective skill and role costFn
             closest_enemies = get_closest_enemies_to_ball(self.num_markers, world_state)
-            for i in range(self.num_markers):
+            for i in range(len(closest_enemies)):
                 self.mark_list[i].skill.target_robot = closest_enemies[i]
                 self.cost_list[i].enemy_to_mark = closest_enemies[i]
 
@@ -94,7 +118,8 @@ class NMarkTactic(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(self, world_state: rc.WorldState,
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers
         """

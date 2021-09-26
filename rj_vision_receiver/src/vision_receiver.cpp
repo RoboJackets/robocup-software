@@ -16,19 +16,22 @@ constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
 DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
              "The port used for the vision receiver.")
+DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "", "The hardware interface to use.")
 
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver"},
+    : Node{"vision_receiver", rclcpp::NodeOptions{}
+                                  .automatically_declare_parameters_from_overrides(true)
+                                  .allow_undeclared_parameters(true)},
       config_{this},
       port_{-1},
       socket_{io_context_},
       param_provider_(this, kVisionReceiverParamModule) {
     recv_buffer_.resize(65536);
 
-    set_port(PARAM_port);
+    set_port(PARAM_vision_interface, PARAM_port);
 
     raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
@@ -62,7 +65,7 @@ void VisionReceiver::publish_thread() {
     }
 }
 
-void VisionReceiver::set_port(int port) {
+void VisionReceiver::set_port(const std::string& interface, int port) {
     // If the socket is already open, close it to cancel any pending
     // operations before we reopen it on a new port.
     if (socket_.is_open()) {
@@ -76,10 +79,14 @@ void VisionReceiver::set_port(int port) {
     socket_.open(udp::v4());
     socket_.set_option(udp::socket::reuse_address(true));
 
-    // Set up multicast.
-    if (!multicast_add_native(socket_.native_handle(), kSharedVisionAddress.c_str())) {
-        EZ_ERROR("Multicast add failed");
-        return;
+    socket_.set_option(udp::socket::reuse_address(true));
+    if (!interface.empty()) {
+        socket_.set_option(boost::asio::ip::multicast::join_group(
+            boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(),
+            boost::asio::ip::address::from_string(interface).to_v4()));
+    } else {
+        socket_.set_option(boost::asio::ip::multicast::join_group(
+            boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4()));
     }
 
     // Bind the socket.

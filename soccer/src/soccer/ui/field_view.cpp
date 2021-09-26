@@ -326,7 +326,13 @@ void FieldView::drawTeamSpace(QPainter& p) {
     // Debug circles
     for (const DebugCircle& c : frame->debug_circles()) {
         if (c.layer() < 0 || layerVisible(c.layer())) {
-            tempPen.setColor(c.color());
+            QColor fill_color(c.color());
+            fill_color.setAlpha(0);
+            p.setBrush(fill_color);
+
+            QColor color(c.color());
+            color.setAlpha(255);
+            tempPen.setColor(color);
             p.setPen(tempPen);
             p.drawEllipse(qpointf(c.center()), c.radius(), c.radius());
         }
@@ -356,6 +362,31 @@ void FieldView::drawTeamSpace(QPainter& p) {
         }
     }
 
+    // Debug polygons
+    p.setPen(Qt::NoPen);
+    for (const DebugPath& polygon : frame->debug_polygons()) {
+        if (polygon.layer() < 0 || layerVisible(polygon.layer())) {
+            if (polygon.points_size() < 3) {
+                fprintf(stderr, "Ignoring DebugPolygon with %d points\n", polygon.points_size());
+                continue;
+            }
+
+            QColor color = qcolor(polygon.color());
+            p.setBrush(color);
+
+            color.setAlpha(255);
+            tempPen.setColor(color);
+            p.setPen(tempPen);
+
+            std::vector<QPointF> pts;
+            for (int i = 0; i < polygon.points_size(); ++i) {
+                pts.push_back(qpointf(polygon.points(i)));
+            }
+            p.drawConvexPolygon(pts.data(), pts.size());
+        }
+    }
+    p.setBrush(Qt::NoBrush);
+
     // Debug text
     for (const DebugText& text : frame->debug_texts()) {
         if (text.layer() < 0 || layerVisible(text.layer())) {
@@ -364,27 +395,6 @@ void FieldView::drawTeamSpace(QPainter& p) {
             drawText(p, qpointf(text.pos()), QString::fromStdString(text.text()), text.center());
         }
     }
-
-    // Debug polygons
-    p.setPen(Qt::NoPen);
-    for (const DebugPath& path : frame->debug_polygons()) {
-        if (path.layer() < 0 || layerVisible(path.layer())) {
-            if (path.points_size() < 3) {
-                fprintf(stderr, "Ignoring DebugPolygon with %d points\n", path.points_size());
-                continue;
-            }
-
-            QColor color = qcolor(path.color());
-            color.setAlpha(64);
-            p.setBrush(color);
-            std::vector<QPointF> pts;
-            for (int i = 0; i < path.points_size(); ++i) {
-                pts.push_back(qpointf(path.points(i)));
-            }
-            p.drawConvexPolygon(pts.data(), pts.size());
-        }
-    }
-    p.setBrush(Qt::NoBrush);
 
     // maps robots to their comet trails, so we can draw a path of where each
     // robot has been over the past X frames the pair used as a key is of the

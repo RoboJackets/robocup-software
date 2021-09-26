@@ -14,42 +14,46 @@ static void check_bezier_low_curvature(const planning::BezierPath& path) {
     for (int i = 0; i <= kN; i++) {
         double s = i * ds;
         double curvature = 0;
-        path.evaluate(s, nullptr, nullptr, &curvature);
+        Point tangent;
+        path.evaluate(s, nullptr, &tangent, &curvature);
 
-        EXPECT_LE(std::abs(curvature), 100);
+        if (tangent.mag() > 1e-3) {
+            EXPECT_LE(std::abs(curvature), 100);
+        }
     }
 }
 
 static void check_bezier_smooth(const planning::BezierPath& path) {
     // Expected error decreases with high N
-    constexpr int kN = 15000;
+    constexpr int kN = 100;
     constexpr double kEpsilon = 1e-2;
-
-    Point previous_position;
-    Point previous_velocity;
-    path.evaluate(0, &previous_position, &previous_velocity, nullptr);
 
     double ds = 1.0 / static_cast<double>(kN);
 
-    for (int i = 1; i <= kN; i++) {
+    for (int i = 0; i < kN; i++) {
         double s = i * ds;
+
         Point position;
         Point tangent;
         double curvature = 0;
         path.evaluate(s, &position, &tangent, &curvature);
 
-        EXPECT_LE((0.5 * (previous_velocity + tangent) * ds).dist_to(position - previous_position),
+        Point position_next;
+        Point tangent_next;
+        double curvature_next = 0;
+        double h = 1e-6;
+        path.evaluate(s + h, &position_next, &tangent_next, &curvature_next);
+
+        EXPECT_LE((0.5 * (tangent + tangent_next)).dist_to((position_next - position) / h),
                   kEpsilon);
 
-        double curvature_expected =
-            (tangent.normalized() - previous_velocity.normalized()).mag() / ds / tangent.mag();
+        double curvature_expected = tangent_next.angle_between(tangent) / h / tangent.mag();
 
-        // Make sure that the approximate curvature is consistent with the
-        // calculated exact value.
-        EXPECT_NEAR(curvature, std::abs(curvature_expected), kEpsilon);
-
-        previous_position = position;
-        previous_velocity = tangent;
+        if (tangent.mag() > 1e-3 && tangent_next.mag() > 1e-3) {
+            // Make sure that the approximate curvature is consistent with the
+            // calculated exact value.
+            EXPECT_NEAR(curvature, std::abs(curvature_expected), kEpsilon) << " at s = " << s;
+        }
     }
 }
 
@@ -79,14 +83,14 @@ TEST(BezierPath, multiple_points_path_smooth_and_consistent) {
 //  the endpoints' positions and velocities (so sub of squared acceleration
 //  is a quadratic in the velocities (decision variables))
 
-TEST(BezierPath, DISABLED_zero_velocity_endpoints_straight_smooth_and_consistent) {
+TEST(BezierPath, zero_velocity_endpoints_straight_smooth_and_consistent) {
     planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{2, 0}};
     planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
     check_bezier_smooth(path);
 }
 
-TEST(BezierPath, DISABLED_zero_endpoints_curved_smooth_and_consistent) {
+TEST(BezierPath, zero_endpoints_curved_smooth_and_consistent) {
     planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{1, 1}, Point{2, 0}};
     planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0), constraints);
@@ -94,7 +98,7 @@ TEST(BezierPath, DISABLED_zero_endpoints_curved_smooth_and_consistent) {
     check_bezier_low_curvature(path);
 }
 
-TEST(BezierPath, DISABLED_nonzero_start_zero_end_curved_smooth_and_consistent) {
+TEST(BezierPath, nonzero_start_zero_end_curved_smooth_and_consistent) {
     planning::MotionConstraints constraints;
     std::vector<Point> points{Point{0, 0}, Point{2, 2}};
     planning::BezierPath path(std::move(points), Point(1, 0), Point(0, 0), constraints);

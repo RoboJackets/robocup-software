@@ -297,8 +297,7 @@ if(BUILD_TESTING)
     target_link_libraries(test-soccer PRIVATE ${test_lib})
   endforeach()
 
-  target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
-  add_dependencies(test-soccer googletest)
+  target_link_libraries(test-soccer PRIVATE gtest gtest_main)
 endif()
 
 # ======================================================================

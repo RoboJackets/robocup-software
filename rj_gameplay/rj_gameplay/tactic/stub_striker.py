@@ -30,6 +30,15 @@ class striker_cost(role.CostFn):
 
         return robot.pose[0] - world_state.ball.pos[0]
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 class Striker(tactic.ITactic):
     """
     A striker tactic which captures then shoots the ball
@@ -39,7 +48,7 @@ class Striker(tactic.ITactic):
         self.capture = tactic.SkillEntry(skills.capture.Capture())
         self.shoot = tactic.SkillEntry(skills.shoot.Shoot())
         self.cost = striker_cost()
-        
+
     def compute_props(self):
         pass
 
@@ -73,7 +82,8 @@ class Striker(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(self, world_state: rc.WorldState,
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 skill depending on which role is filled
         """
