@@ -45,15 +45,12 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
 
     return mark_pos
 
-class IMark(skill.ISkill, ABC):
-    ...
-
 """
 A skill which marks a given opponent robot according to some heuristic cost function
 """
-class Mark(IMark):
+class Mark(skill.ISkill): #add ABC if fails
 
-    def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None, def_restart: bool=False) -> None:
+    def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None) -> None:
 
         self.__name__ = 'Mark Skill'
         self.robot = robot
@@ -67,9 +64,6 @@ class Mark(IMark):
         self.mark_behavior = ActionBehavior('Mark', self.move)
         self.root = self.mark_behavior
         self.root.setup_with_descendants()
-
-        # TODO: horrible hack for defending restarts
-        self.is_def_restart = def_restart 
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
         self.robot = robot
@@ -85,10 +79,6 @@ class Mark(IMark):
                 return []
             self.move.target_point = mark_point
             self.move.face_point = world_state.ball.pos
-
-            # TODO: horrible hack for defending restarts
-            if self.is_def_restart:
-                self.move.is_def_restart = True
 
         actions = self.root.tick_once(robot, world_state)
         return actions

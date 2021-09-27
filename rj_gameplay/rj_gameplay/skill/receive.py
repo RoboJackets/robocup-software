@@ -17,15 +17,11 @@ from stp.skill.rj_sequence import RjSequence as Sequence
 import stp.rc as rc
 from rj_msgs import msg
 
-class IReceive(skill.ISkill, ABC):
-    ...
-
-
 """
 A skill version of receive so that actions don't have to be called in tactics
 """
-class Receive(IReceive):
 
+class Receive(skill.ISkill):
     def __init__(self,
             robot:rc.Robot = None):
 
@@ -54,4 +50,4 @@ class Receive(IReceive):
         return self.capture.is_done(world_state)
 
     def __str__(self):
-        return f"Receive(robot={self.robot.id if self.robot is not None else '??'})"
+        return f"Receive(robot={self.robot.id if self.robot is not None else '??'}, ticks={self.capture.ticks_done})"

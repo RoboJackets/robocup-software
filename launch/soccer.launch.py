@@ -1,5 +1,4 @@
 import os
-from ament_index_python.packages import get_package_share_directory
 from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -71,7 +70,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(vision_receiver_launch_path))
 
     ref_receiver = Node(package='rj_robocup',
-                        executable='external_referee_node',
+                        executable='internal_referee_node',
                         output='screen',
                         parameters=[config],
                         on_exit=Shutdown())

@@ -153,16 +153,6 @@ void CollectPlanner::process_state_transition(BallState ball, RobotInstant start
         speed_diff < collect::PARAM_vel_cutoff_to_control && current_state_ == FineApproach) {
         current_state_ = Control;
     }
-
-    if (current_state_ == Control && dist > collect::PARAM_dist_cutoff_to_control &&
-        start_instant.linear_velocity().mag() < 0.1) {
-        current_state_ = FineApproach;
-    }
-
-    if (current_state_ == FineApproach &&
-        dist > collect::PARAM_approach_dist_target + kRobotMouthRadius) {
-        current_state_ = CourseApproach;
-    }
 }
 
 Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, RobotInstant start,

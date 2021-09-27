@@ -68,7 +68,8 @@ TEST(Trajectory, Interpolation) {
     EXPECT_FALSE(trajectory.check_seconds(-500ms));
     EXPECT_FALSE(trajectory.check_seconds(2500ms));
 
-    EXPECT_EQ(trajectory.duration(), RJ::Seconds(end_instant.stamp - start_instant.stamp));
+    EXPECT_FLOAT_EQ(trajectory.duration().count(),
+                    RJ::Seconds(end_instant.stamp - start_instant.stamp).count());
 }
 
 TEST(Trajectory, TrajectoryCursor) {

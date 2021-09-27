@@ -9,11 +9,15 @@ import stp.rc as rc
 from rj_msgs.msg import RobotIntent, PivotMotionCommand
 from rj_geometry_msgs.msg import Point
 
-
 class Pivot(action.IFiniteAction):
 
-    def __init__(self, robot_id: int, pivot_point: np.ndarray, target_point: np.ndarray, dribble_speed: float,
-                 threshold: float = 0.02, priority: int = 1):
+    def __init__(self,
+                 robot_id: int,
+                 pivot_point: np.ndarray,
+                 target_point: np.ndarray,
+                 dribble_speed: float,
+                 threshold: float = 0.02,
+                 priority: int = 1):
         self.robot_id = robot_id
         self.pivot_point = pivot_point
         self.target_point = target_point
@@ -35,12 +39,13 @@ class Pivot(action.IFiniteAction):
         # TODO: Change this when we get action state feedback
         angle_threshold = self.threshold
         # TODO: Make these local params
-        stopped_threshold = 5 * self.threshold # We don't _really_ care about this when we're kicking, if not for latency
+        stopped_threshold = 5 * self.threshold  # We don't _really_ care about this when we're kicking, if not for latency
         if self.robot_id is None:
             return False
         robot = world_state.our_robots[self.robot_id]
         robot_pos_to_target = self.target_point - robot.pose[0:2]
-        robot_to_target_unit = robot_pos_to_target / np.linalg.norm(robot_pos_to_target)
+        robot_to_target_unit = robot_pos_to_target / np.linalg.norm(
+            robot_pos_to_target)
         heading_vect = np.array([np.cos(robot.pose[2]), np.sin(robot.pose[2])])
         dot_product = np.dot(heading_vect, robot_to_target_unit)
         angle = np.arccos(dot_product)

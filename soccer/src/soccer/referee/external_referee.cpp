@@ -39,6 +39,7 @@ static const bool kCancelBallPlaceOnHalt = true;
 DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "
               "colors from referee");
+DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1", "The interface for referee operation");
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
     set_team_name(PARAM_team_name);
@@ -91,7 +92,12 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
     set_team_info(blue_info, yellow_info);
 
     // Update game state
-    handle_command(ref_packet.command());
+    std::optional<rj_geometry::Point> designated_position;
+    if (ref_packet.has_designated_position()) {
+        designated_position = rj_geometry::Point(ref_packet.designated_position().x() / 1000.0,
+                                                 ref_packet.designated_position().y() / 1000.0);
+    }
+    handle_command({ref_packet.command(), designated_position});
     handle_stage(ref_packet.stage());
     set_stage_time_left(std::chrono::duration_cast<RJ::Seconds>(
         std::chrono::microseconds(ref_packet.stage_time_left())));
@@ -112,108 +118,111 @@ void ExternalReferee::setup_referee_multicast() {
     // Join multicast group
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeAddress).to_v4();
-    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address, boost::asio::ip::address::from_string("172.25.0.23").to_v4()));
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(
+        multicast_address, boost::asio::ip::address_v4::any()));
 }
 
-void ExternalReferee::update() {
-    io_service_.poll();
-}
+void ExternalReferee::update() { io_service_.poll(); }
 
-void ExternalReferee::handle_command(SSL_Referee::Command command) {
-    switch (command) {
+void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
+    const auto& [command_enum, maybe_placement_point] = command;
+
+    if (command == last_command_) {
+        return;
+    }
+
+    // We keep track of yellow's play state by default, so yellow has ours=true.
+    constexpr auto YELLOW = true;
+    constexpr auto BLUE = false;
+
+    if (!maybe_placement_point.has_value()) {
+        SPDLOG_WARN("Placement point not set but placement command given!");
+    }
+
+    const auto placement_point = maybe_placement_point.value_or(rj_geometry::Point());
+
+    switch (command_enum) {
         case SSL_Referee::HALT:
-            halt();
+            set_play_state(PlayState::halt());
             break;
         case SSL_Referee::STOP:
-            stop();
+            set_play_state(PlayState::stop());
             break;
         case SSL_Referee::NORMAL_START:
-            if (our_restart()) {
-                play();
-            }
+            set_play_state(yellow_play_state().advanced_from_normal_start());
             break;
         case SSL_Referee::FORCE_START:
-            play();
+            set_play_state(PlayState::playing());
             break;
         case SSL_Referee::PREPARE_KICKOFF_YELLOW:
-            restart(GameState::Restart::Kickoff, false);
-            setup();
+            set_play_state(PlayState::setup_kickoff(YELLOW));
             break;
         case SSL_Referee::PREPARE_KICKOFF_BLUE:
-            restart(GameState::Restart::Kickoff, true);
-            setup();
+            set_play_state(PlayState::setup_kickoff(BLUE));
             break;
         case SSL_Referee::PREPARE_PENALTY_YELLOW:
-            restart(GameState::Restart::Penalty, false);
-            setup();
+            set_play_state(PlayState::setup_penalty(YELLOW));
             break;
         case SSL_Referee::PREPARE_PENALTY_BLUE:
-            restart(GameState::Restart::Penalty, true);
-            setup();
+            set_play_state(PlayState::setup_penalty(BLUE));
             break;
         case SSL_Referee::DIRECT_FREE_YELLOW:
-            restart(GameState::Restart::Direct, false);
-            play();
+            set_play_state(PlayState::ready_direct(YELLOW));
             break;
         case SSL_Referee::DIRECT_FREE_BLUE:
-            restart(GameState::Restart::Direct, true);
-            play();
+            set_play_state(PlayState::ready_direct(BLUE));
             break;
         case SSL_Referee::INDIRECT_FREE_YELLOW:
-            restart(GameState::Restart::Indirect, false);
-            play();
+            set_play_state(PlayState::ready_indirect(YELLOW));
             break;
         case SSL_Referee::INDIRECT_FREE_BLUE:
-            restart(GameState::Restart::Indirect, true);
-            play();
+            set_play_state(PlayState::ready_indirect(BLUE));
             break;
         case SSL_Referee::TIMEOUT_YELLOW:
         case SSL_Referee::TIMEOUT_BLUE:
-            halt();
+            set_play_state(PlayState::halt());
             break;
         case SSL_Referee::GOAL_YELLOW:
         case SSL_Referee::GOAL_BLUE:
             break;
         case SSL_Referee::BALL_PLACEMENT_YELLOW:
-            // TODO(#1559): ball placement point
-            ball_placement(rj_geometry::Point{}, false);
-            stop();
+            set_play_state(PlayState::ball_placement(YELLOW, placement_point));
             break;
         case SSL_Referee::BALL_PLACEMENT_BLUE:
-            // TODO(#1559): ball placement point
-            ball_placement(rj_geometry::Point{}, true);
-            stop();
+            set_play_state(PlayState::ball_placement(BLUE, placement_point));
             break;
     }
+
+    last_command_ = command;
 }
 
-GameState::Period ExternalReferee::period_from_proto(SSL_Referee::Stage stage) {
+MatchState::Period ExternalReferee::period_from_proto(SSL_Referee::Stage stage) {
     switch (stage) {
         case SSL_Referee::NORMAL_FIRST_HALF_PRE:
         case SSL_Referee::NORMAL_FIRST_HALF:
-            return GameState::FirstHalf;
+            return MatchState::FirstHalf;
         case SSL_Referee::NORMAL_HALF_TIME:
-            return GameState::Halftime;
+            return MatchState::Halftime;
         case SSL_Referee::NORMAL_SECOND_HALF_PRE:
         case SSL_Referee::NORMAL_SECOND_HALF:
-            return GameState::SecondHalf;
+            return MatchState::SecondHalf;
         case SSL_Referee::EXTRA_TIME_BREAK:
-            return GameState::FirstHalf;
+            return MatchState::FirstHalf;
         case SSL_Referee::EXTRA_FIRST_HALF_PRE:
         case SSL_Referee::EXTRA_FIRST_HALF:
-            return GameState::Overtime1;
+            return MatchState::Overtime1;
         case SSL_Referee::EXTRA_HALF_TIME:
-            return GameState::Halftime;
+            return MatchState::Halftime;
         case SSL_Referee::EXTRA_SECOND_HALF_PRE:
         case SSL_Referee::EXTRA_SECOND_HALF:
-            return GameState::Overtime2;
+            return MatchState::Overtime2;
         case SSL_Referee::PENALTY_SHOOTOUT_BREAK:
         case SSL_Referee::PENALTY_SHOOTOUT:
-            return GameState::PenaltyShootout;
+            return MatchState::PenaltyShootout;
         case SSL_Referee::POST_GAME:
-            return GameState::Overtime2;
+            return MatchState::Overtime2;
         default:
-            return GameState::FirstHalf;
+            return MatchState::FirstHalf;
     }
 }
 

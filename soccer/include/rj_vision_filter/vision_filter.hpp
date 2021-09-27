@@ -11,11 +11,9 @@
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_msgs/msg/robot_status.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
-#include <rj_constants/constants.hpp>
 
 #include "rj_vision_filter/camera/camera_frame.hpp"
 #include "rj_vision_filter/camera/world.hpp"
@@ -52,7 +50,7 @@ private:
      * @return The BallStateMsg corresponding to the current VisionFilter
      * state.
      */
-    BallStateMsg build_ball_state_msg(bool blue_team) const;
+    BallStateMsg build_ball_state_msg() const;
 
     /**
      * @brief Creates a vector of RobotStateMsgs from the robot Kalman filters.
@@ -111,9 +109,6 @@ private:
 
     rclcpp::Subscription<DetectionFrameMsg>::SharedPtr detection_frame_sub_;
 
-    std::array<rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr, kNumShells> robot_status_subs_;
-    std::array<bool, kNumShells> robots_with_ball_ = {false};
-
     /**
      * @brief Publisher for WorldStateMsg.
      */
@@ -121,5 +116,4 @@ private:
 
     ::params::LocalROS2ParamProvider param_provider_;
 };
-
 }  // namespace vision_filter
