@@ -27,7 +27,7 @@ class Capture(ICapture):
 
         self.__name__ = 'capture skill'
 
-    def tick(self, robot: rc.Robot, intent: RobotIntent):
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command]
