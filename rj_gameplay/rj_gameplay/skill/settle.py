@@ -14,15 +14,15 @@ from typing import Optional
 
 SETTLE_BALL_SPEED_THRESHOLD = 1.0
 
-class Settle(skill.Iskill):
+class Settle(skill.ISkill):
 
-	"""
-	Robot settles the ball as a receiver
-	"""
+    """
+    Robot settles the ball as a receiver
+    """
 
-	#TODO: add move functionality so that robot can move to the direction of the ball going.
+    #TODO: add move functionality so that robot can move to the direction of the ball going.
 
-	def __init__(self, robot: rc.Robot = None):
+    def __init__(self, robot: rc.Robot = None):
         self.robot = robot
         
         self.__name__ = 'settle skill'
@@ -32,7 +32,7 @@ class Settle(skill.Iskill):
              robot: rc.Robot, 
              world_state: rc.WorldState, 
              intent: RobotIntent):
-    	self.robot = robot
+        self.robot = robot
         settle_command = SettleMotionCommand()
         intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0

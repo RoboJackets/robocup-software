@@ -12,6 +12,7 @@ from rj_gameplay.skill import kick, pivot, capture
 from rj_msgs.msg import RobotIntent
 import stp.rc as rc
 import numpy as np
+from rj_gameplay.MAX_KICK_SPEED import *
 
 
 
@@ -26,22 +27,41 @@ class PivotKick(IPivotKick):
     capture -> pivot -> kick
     """
 
-    def __init__(self, robot: rc.Robot) -> None:
-        # TODO: Have something which automatically determines kick speed based on target point distance
+    # TODO: Have something which automatically determines kick speed based on target point distance
+    def __init__(self,
+                 robot: rc.Robot=None,
+                 pivot_point: np.ndarray=None,
+                 target_point: np.ndarray=None,
+                 dribble_speed: float = 1,
+                 chip: bool=False,
+                 kick_speed: float=MAX_KICK_SPEED,
+                 threshold: float = 0.02,
+                 priority: int = 1) -> None:
+        
         self.__name__ = 'pivot kick'
         self.robot = robot
+        self.pivot_point = pivot_point
+        self.target_point = target_point
+        self.dribble_speed = dribble_speed
+        self.chip = chip
+        self.kick_speed = kick_speed
+        self.threshold = threshold
+
+        self.kick = kick.Kick(robot, chip, kick_speed, threshold)
+        self.pivot = pivot.Pivot(robot, pivot_point, target_point, dribble_speed, threshold, priority)
+        self.capture = capture.Capture(robot)
 
 
     def tick(self, 
              robot: rc.Robot, 
              world_state: rc.WorldState, 
              intent: RobotIntent):
-        if kick.is_done(world_state):
-            return capture.tick(robot, world_state, intent)
-        elif pivot.is_done(world_state:
-            return kick.tick(robot, world_state, intent)
+        if self.kick.is_done(world_state):
+            return self.capture.tick(robot, world_state, intent)
+        elif self.pivot.is_done(world_state):
+            return self.kick.tick(robot, world_state, intent)
         else: 
-            return pivot.tick(robot, world_state, intent)
+            return self.pivot.tick(robot, world_state, intent)
 
     def is_done(self, world_state: rc.WorldState) -> bool:
         return self.capture.is_done

@@ -13,15 +13,15 @@ import stp.rc as rc
 import numpy as np
 
 
-class Pivot(IPivot):
+class Pivot():
     """
     Pivot skill that robot aims at the receiver or the goal
     """
 
     def __init__(self,
                  robot: rc.Robot=None,
-                 pivot_point: np.ndarray,
-                 target_point: np.ndarray,
+                 pivot_point: np.ndarray=None,
+                 target_point: np.ndarray=None,
                  dribble_speed: float = 1,
                  threshold: float = 0.02,
                  priority: int = 1):
@@ -51,7 +51,7 @@ class Pivot(IPivot):
 
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-    	if self.robot is None:
+        if self.robot is None:
             return False
         angle_threshold = self.threshold
         stopped_threshold = 5 * self.threshold  # We don't _really_ care about this when we're kicking, if not for latency

@@ -23,25 +23,27 @@ from rj_msgs import msg
 A skill version of receive so that actions don't have to be called in tactics
 """
 
-class Receive(skill.Iskill):
+class Receive(skill.ISkill):
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
         
         self.__name__ = 'receive skill'
+        self.settle = settle.Settle(robot)
+        self.capture = capture.Capture(robot)
 
     def tick(self, 
              robot: rc.Robot, 
              world_state: rc.WorldState, 
              intent: RobotIntent):
-        if settle.is_done(world_state):
-            return capture.tick(robot, world_state)
+        if self.settle.is_done(world_state):
+            return self.capture.tick(robot, world_state)
         else:
-            return settle.tick(robot, world_state)
+            return self.settle.tick(robot, world_state)
 
 
     def is_done(self, world_state:rc.WorldState) -> bool:
             
-        return capture.is_done(world_state)
+        return self.capture.is_done(world_state)
 
 
     def __str__(self):

@@ -77,7 +77,7 @@ class Coordinator:
         intents_dic = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
-            intents_dic.update(skill.tick(robot, world_state, intents[robot.id]))
+            intents_dic.update(skill.skill.tick(robot, world_state, intents[robot.id]))
         
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):

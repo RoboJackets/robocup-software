@@ -13,7 +13,7 @@ import stp.action as action
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import RobotIntent, LineKickMotionCommand
 import stp.rc as rc
-
+from rj_gameplay.MAX_KICK_SPEED import *
 
 class ILineKickSkill(skill.ISkill, ABC):
     ...
@@ -57,7 +57,7 @@ class LineKickSkill(ILineKickSkill):
             self.kick_speed = 0.0
             
         line_kick_command = LineKickMotionCommand()
-        line_kick_command.target = Point(x=self.target[0], y=self.target[1])
+        line_kick_command.target = Point(x=self.target_point[0], y=self.target_point[1])
         intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK if not self.chip else RobotIntent.SHOOT_MODE_CHIP
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
         if self.kick_speed <= MAX_KICK_SPEED:

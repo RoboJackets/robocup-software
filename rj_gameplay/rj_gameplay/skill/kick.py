@@ -7,13 +7,16 @@ import sys
 import time
 
 import stp.skill as skill
+import stp.rc as rc
 from rj_msgs.msg import RobotIntent, EmptyMotionCommand
 import numpy as np
+from rj_gameplay.MAX_KICK_SPEED import *
 
 KICK_DOT_THRESHOLD = 0.4
 KICK_BALL_SPEED_THRESHOLD = 0.9
 
-class Kick(IKick):
+
+class Kick():
 
     def __init__(self,
                  robot: rc.Robot,
@@ -35,7 +38,6 @@ class Kick(IKick):
 
         empty_command = EmptyMotionCommand()
         intent.motion_command.empty_command = [empty_command]
-        # TODO: Have something which automatically determines kick speed based on target point distance
         if self.kick_speed <= MAX_KICK_SPEED:
             intent.kick_speed = self.kick_speed
         else:

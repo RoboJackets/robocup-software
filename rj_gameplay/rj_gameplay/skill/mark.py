@@ -7,6 +7,7 @@ import py_trees
 import sys
 import time
 import numpy as np
+import math
 
 import stp.skill as skill
 import stp.role as role
@@ -50,14 +51,26 @@ class IMark(skill.ISkill, ABC):
 """
 A skill which marks a given opponent robot according to some heuristic cost function
 """
+
+#TODO: delete mark skill -> change to tactic
 class Mark(IMark):
 
-    def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None, face_point: Optional[np.ndarray]) -> None:
+    def __init__(self,
+                 robot: rc.Robot = None,
+                 target_robot: rc.Robot = None,
+                 face_point: np.ndarray = None,
+                 face_angle: Optional[float] = None,
+                 target_vel: np.ndarray = np.array([0.0, 0.0]),
+                 ignore_ball: bool = False) -> None:
 
         self.__name__ = 'Mark'
         self.robot = robot
         self.target_robot = target_robot
+        self.target_vel = target_vel
         self.face_point = face_point
+        self.face_angle = face_angle
+        self.ignore_ball = ignore_ball
+
 
         
 

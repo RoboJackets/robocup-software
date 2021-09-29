@@ -30,8 +30,8 @@ class Move(IMove):
                  robot: Optional[rc.Robot]=None,
                  target_point: np.ndarray = np.array([0.0, 0.0]),
                  target_vel: np.ndarray = np.array([0.0, 0.0]),
-                 face_angle: Optional[float] = None,
-                 face_point: Optional[np.ndarray] = None,
+                 face_angle: float = None,
+                 face_point: np.ndarray = None,
                  ignore_ball: bool = False,
                  priority: int = 0):
 
@@ -42,7 +42,6 @@ class Move(IMove):
         self.face_angle = face_angle
         self.ignore_ball = ignore_ball
         self.priority = priority
-        self.robot_id = robot.id if robot is not None else None
 
         self.__name__ = 'Move'
 
@@ -51,10 +50,6 @@ class Move(IMove):
              world_state: rc.WorldState, 
              intent: RobotIntent):
         self.robot = robot
-        self.move.target_point = self.target_point
-        self.move.target_vel = self.target_vel
-        self.move.face_angle = self.face_angle
-        self.move.face_point = self.face_point
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=self.target_point[0],
                                              y=self.target_point[1])
