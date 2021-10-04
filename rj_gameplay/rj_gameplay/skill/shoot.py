@@ -16,12 +16,10 @@ import stp.rc as rc
 import numpy as np
 
 
-class IShoot(skill.ISkill, ABC):
-    ...
-
 """
 A shoot skill which aims at the goal and shoots
 """
+
 
 #Since the functionality is the same as pivot_kick, we no longer need shoot skill
 
@@ -44,7 +42,6 @@ A shoot skill which aims at the goal and shoots
 #                                      target_point, 1.0)
 #             self.kick = kick.Kick(self.robot, chip, kick_speed)
 #         self.pivot_behavior = ActionBehavior('Pivot', self.pivot, self.robot)
-
 #         self.kick_behavior = ActionBehavior('Kick', self.kick, self.robot)
 #         self.root.add_children([self.pivot_behavior, self.kick_behavior])
 #         self.root.setup_with_descendants()

@@ -33,6 +33,15 @@ class marker_cost(role.CostFn):
             return 0.0
         return 1.0
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 def marker_heuristic(point: np.array):
     # TODO: use with CostBehavior
     return -1

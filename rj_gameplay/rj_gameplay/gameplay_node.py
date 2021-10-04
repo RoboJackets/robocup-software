@@ -16,7 +16,7 @@ from stp.global_parameters import GlobalParameterClient
 import numpy as np
 from rj_gameplay.action.move import Move
 from rj_gameplay.play import basic_defense, passing_tactic_play, defend_restart, restart, kickoff_play, \
-    basic122, penalty_defense
+    basic122, penalty_defense, wall_ball
 from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
@@ -94,9 +94,9 @@ class GameplayNode(Node):
 
         # publish def_area_obstacles, global obstacles
         self.def_area_obstacles_pub = self.create_publisher(
-          geo_msg.ShapeSet, 'planning/def_area_obstacles', 10)
+            geo_msg.ShapeSet, 'planning/def_area_obstacles', 10)
         self.global_obstacles_pub = self.create_publisher(
-          geo_msg.ShapeSet, 'planning/global_obstacles', 10)
+            geo_msg.ShapeSet, 'planning/global_obstacles', 10)
 
         timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
@@ -210,23 +210,28 @@ class GameplayNode(Node):
 
         # create Rect for our def_area box
         our_def_area = geo_msg.Rect()
-        top_left = geo_msg.Point(x=self.field.def_area_long_dist_m / 2 + self.field.line_width_m, y=0.0)
-        bot_right = geo_msg.Point(x=-self.field.def_area_long_dist_m / 2 - self.field.line_width_m,
+        top_left = geo_msg.Point(x=self.field.def_area_long_dist_m / 2 +
+                                 self.field.line_width_m,
+                                 y=0.0)
+        bot_right = geo_msg.Point(x=-self.field.def_area_long_dist_m / 2 -
+                                  self.field.line_width_m,
                                   y=self.field.def_area_short_dist_m)
         our_def_area.pt = [top_left, bot_right]
 
         # slack for distance (m) in Stop situations
         # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
         add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or (
-                    game_info.is_restart() and not game_info.is_penalty())
+            game_info.is_restart() and not game_info.is_penalty())
         DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0
 
         # create Rect for their def_area box
         their_def_area = geo_msg.Rect()
         left_x = self.field.def_area_long_dist_m / 2 + self.field.line_width_m + DIST_FOR_STOP
         bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
-        top_right = geo_msg.Point(x=-left_x, y=self.field.length_m - (
-                self.field.def_area_short_dist_m + self.field.line_width_m + DIST_FOR_STOP))
+        top_right = geo_msg.Point(x=-left_x,
+                                  y=self.field.length_m -
+                                  (self.field.def_area_short_dist_m +
+                                   self.field.line_width_m + DIST_FOR_STOP))
         their_def_area.pt = [bot_left, top_right]
 
         # publish Rect shape to def_area_obstacles topic
@@ -237,32 +242,48 @@ class GameplayNode(Node):
         physical_goal_board_width = 0.1
         our_goal = [
             geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2,
+                              y=-self.field.goal_depth_m),
                 geo_msg.Point(x=-self.field.goal_width_m / 2,
-                              y=-self.field.goal_depth_m - physical_goal_board_width),
+                              y=-self.field.goal_depth_m -
+                              physical_goal_board_width),
             ]),
             geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
-                geo_msg.Point(x=self.field.goal_width_m / 2 + physical_goal_board_width, y=0.),
+                geo_msg.Point(x=self.field.goal_width_m / 2,
+                              y=-self.field.goal_depth_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2 +
+                              physical_goal_board_width,
+                              y=0.),
             ]),
             geo_msg.Rect(pt=[
-                geo_msg.Point(x=-self.field.goal_width_m / 2, y=-self.field.goal_depth_m),
-                geo_msg.Point(x=-self.field.goal_width_m / 2 - physical_goal_board_width, y=0.),
+                geo_msg.Point(x=-self.field.goal_width_m / 2,
+                              y=-self.field.goal_depth_m),
+                geo_msg.Point(x=-self.field.goal_width_m / 2 -
+                              physical_goal_board_width,
+                              y=0.),
             ]),
         ]
         their_goal = [
             geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2,
+                              y=self.field.length_m + self.field.goal_depth_m),
                 geo_msg.Point(x=-self.field.goal_width_m / 2,
-                              y=self.field.length_m + self.field.goal_depth_m + physical_goal_board_width),
+                              y=self.field.length_m + self.field.goal_depth_m +
+                              physical_goal_board_width),
             ]),
             geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
-                geo_msg.Point(x=self.field.goal_width_m / 2 + physical_goal_board_width, y=self.field.length_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2,
+                              y=self.field.length_m + self.field.goal_depth_m),
+                geo_msg.Point(x=self.field.goal_width_m / 2 +
+                              physical_goal_board_width,
+                              y=self.field.length_m),
             ]),
             geo_msg.Rect(pt=[
-                geo_msg.Point(x=-self.field.goal_width_m / 2, y=self.field.length_m + self.field.goal_depth_m),
-                geo_msg.Point(x=-self.field.goal_width_m / 2 - physical_goal_board_width, y=self.field.length_m),
+                geo_msg.Point(x=-self.field.goal_width_m / 2,
+                              y=self.field.length_m + self.field.goal_depth_m),
+                geo_msg.Point(x=-self.field.goal_width_m / 2 -
+                              physical_goal_board_width,
+                              y=self.field.length_m),
             ]),
         ]
 
@@ -275,20 +296,28 @@ class GameplayNode(Node):
             if game_info.is_stopped() or game_info.their_restart and (
                     game_info.is_indirect() or game_info.is_direct()):
                 global_obstacles.circles.append(
-                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.6))
+                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
+                                                        y=ball_point[1]),
+                                   radius=0.6))
             if game_info.is_kickoff() and game_info.their_restart:
                 global_obstacles.circles.append(
-                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.3))
-            if game_info.is_kickoff() and game_info.is_setup() and game_info.our_restart:
+                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
+                                                        y=ball_point[1]),
+                                   radius=0.3))
+            if game_info.is_kickoff() and game_info.is_setup(
+            ) and game_info.our_restart:
                 global_obstacles.circles.append(
-                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0], y=ball_point[1]), radius=0.1))
+                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
+                                                        y=ball_point[1]),
+                                   radius=0.1))
             if game_info.is_free_placement():
                 for t in np.linspace(0.0, 1.0, 20):
                     placement = game_info.ball_placement()
 
                     pt = ball_point * t + (1 - t) * placement
                     global_obstacles.circles.append(
-                        geo_msg.Circle(center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8))
+                        geo_msg.Circle(center=geo_msg.Point(x=pt[0], y=pt[1]),
+                                       radius=0.8))
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
@@ -309,6 +338,11 @@ class GameplayNode(Node):
 
 
 def main():
+    # uncomment this line to use the test play selector
+    # play_selector = TestPlaySelector()
+
+    # comment out this line when using the test play selector
     play_selector = basic_play_selector.BasicPlaySelector()
+
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)

@@ -16,12 +16,7 @@ from rj_gameplay.MAX_KICK_SPEED import *
 
 
 
-
-class IPivotKick(skill.ISkill, ABC):
-    ...
-
-
-class PivotKick(IPivotKick):
+class PivotKick(skill.ISkill): # add ABC if fails
     """
     A pivot kick skill
     capture -> pivot -> kick

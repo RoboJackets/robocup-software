@@ -14,9 +14,7 @@ from rj_gameplay.skill import settle, capture
 from rj_msgs.msg import RobotIntent, SettleMotionCommand
 import stp.rc as rc
 from rj_msgs import msg
-
-# class IReceive(skill.ISkill, ABC):
-    
+ 
 
 
 """

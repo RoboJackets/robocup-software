@@ -26,6 +26,15 @@ class ClearerCost(role.CostFn):
             return np.linalg.norm(world_state.ball.pos -
                                   np.array(robot.pose[0:2]))
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 class Clear(tactic.ITactic):
     """

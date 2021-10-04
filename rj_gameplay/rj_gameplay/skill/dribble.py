@@ -14,14 +14,11 @@ import stp.action as action
 import stp.rc as rc
 from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 
-class IDribble(skill.ISkill, ABC):
-    ...
-
 
 """
 A simple skill wrapper version of dribble so that actions don't have to be called in tactics
 """
-class Dribble(IDribble):
+class Dribble(skill.ISkill):
 
     def __init__(self,
             robot : rc.Robot = None,

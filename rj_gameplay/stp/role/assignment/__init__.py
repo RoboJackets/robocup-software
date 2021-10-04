@@ -12,7 +12,6 @@ RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry, int]
 FlatRoleRequests = Dict[RoleId, role.RoleRequest]
 FlatRoleResults = Dict[RoleId, role.RoleResult]
 
-
 class IRoleAssignment(ABC):
     """Interface for role assignment implementations."""
 

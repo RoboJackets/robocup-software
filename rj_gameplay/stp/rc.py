@@ -259,9 +259,9 @@ class Field:
     __slots__ = [
         "__length_m", "__width_m", "__border_m", "__line_width_m",
         "__goal_width_m", "__goal_depth_m", "__goal_height_m",
-        "__def_area_short_dist_m", "__def_area_long_dist_m", "__center_radius_m",
-        "__center_diameter_m", "__goal_flat_m", "__floor_length_m",
-        "__floor_width_m"
+        "__def_area_short_dist_m", "__def_area_long_dist_m",
+        "__center_radius_m", "__center_diameter_m", "__goal_flat_m",
+        "__floor_length_m", "__floor_width_m"
     ]
 
     __length_m: float
