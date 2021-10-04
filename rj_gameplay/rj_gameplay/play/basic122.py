@@ -20,8 +20,10 @@ class Basic122(play.IPlay):
         self.striker_tactic = striker_tactic.LineKickStrikerTactic(
             target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
+
+        # TODO change priority float to something useful
         self.wall_tactic = wall_tactic.WallTactic(2,
-                                                  role.Priority.LOW,
+                                                  3.0,
                                                   cost_scale=0.1)
 
         left_pt = np.array([1.5, 7.5])

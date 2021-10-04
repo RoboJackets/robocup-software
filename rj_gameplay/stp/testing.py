@@ -69,8 +69,8 @@ def generate_divB_field():
                   goal_width_m=1.0,
                   goal_depth_m=0.18,
                   goal_height_m=0.16,
-                  penalty_short_dist_m=float('nan'),
-                  penalty_long_dist_m=float('nan'),
+                  def_area_short_dist_m=float('nan'),
+                  def_area_long_dist_m=float('nan'),
                   center_radius_m=0.5,
                   center_diameter_m=1.0,
                   goal_flat_m=float('nan'),
@@ -90,7 +90,7 @@ def generate_our_field():
 
 def generate_test_playing_gameinfo():
     info = GameInfo(GamePeriod.FIRST_HALF, GameState.PLAYING, GameRestart.NONE,
-                    False)
+                    False, [0, 0])
     return info
 
 

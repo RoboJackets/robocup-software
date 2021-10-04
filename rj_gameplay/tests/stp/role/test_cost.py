@@ -12,7 +12,8 @@ def test_constant() -> None:
 
     robot1 = testing.generate_test_robot(robot_id=1)
     robot2 = testing.generate_test_robot(robot_id=2)
-    stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
+    # TODO change priority float to something useful
+    stub_request = role.RoleRequest(1.0, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
     world_state = testing.generate_test_worldstate(our_robots=[robot1, robot2])
 
@@ -42,7 +43,8 @@ def test_distance_to_pt() -> None:
                                          pose=np.array([2.0, 3.0, 0]),
                                          twist=np.array([0, 0, 0]))
 
-    stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
+    # TODO change priority float to something useful
+    stub_request = role.RoleRequest(1.0, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
     world_state = testing.generate_test_worldstate(our_robots=[robot1, robot2])
 
