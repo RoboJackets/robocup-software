@@ -74,15 +74,15 @@ class Coordinator:
 
         # Get the list of actions from the skills
         intents = [msg.RobotIntent() for i in range(NUM_ROBOTS)]
-        intents_dic = {}
+        intents_dict = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
-            intents_dic.update(skill.skill.tick(robot, world_state, intents[robot.id]))
+            intents_dict.update(skill.skill.tick(robot, world_state, intents[robot.id]))
         
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):
-            if i in intents_dic.keys():
-                intents[i] = intents_dic[i]
+            if i in intents_dict.keys():
+                intents[i] = intents_dict[i]
             else:
                 intents[i].motion_command.empty_command = [msg.EmptyMotionCommand()]
 

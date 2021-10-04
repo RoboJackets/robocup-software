@@ -20,7 +20,7 @@ class Settle(skill.ISkill):
     Robot settles the ball as a receiver
     """
 
-    #TODO: add move functionality so that robot can move to the direction of the ball going.
+    #TODO: add move functionality so that robot can move to where the ball is going.
 
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot

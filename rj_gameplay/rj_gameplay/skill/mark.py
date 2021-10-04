@@ -49,6 +49,7 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
 A skill which marks a given opponent robot according to some heuristic cost function
 """
 
+
 #TODO: delete mark skill -> change to tactic
 class Mark(IMark):
 

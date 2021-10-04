@@ -10,7 +10,6 @@ import stp.skill as skill
 import stp.rc as rc
 from rj_msgs.msg import RobotIntent, EmptyMotionCommand
 import numpy as np
-from rj_gameplay.MAX_KICK_SPEED import *
 
 KICK_DOT_THRESHOLD = 0.4
 KICK_BALL_SPEED_THRESHOLD = 0.9
@@ -38,10 +37,7 @@ class Kick():
 
         empty_command = EmptyMotionCommand()
         intent.motion_command.empty_command = [empty_command]
-        if self.kick_speed <= MAX_KICK_SPEED:
-            intent.kick_speed = self.kick_speed
-        else:
-            intent.kick_speed = MAX_KICK_SPEED
+        intent.kick_speed = self.kick_speed
         intent.trigger_mode = 2
         intent.shoot_mode = self.chip
         intent.is_active = True
