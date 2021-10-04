@@ -16,14 +16,8 @@ from typing import Optional
 """
 A skill version of capture so that actions don't have to be called in tactics
 """
-<<<<<<< HEAD
-class Capture(ICapture):
-    def __init__(self, robot: rc.Robot=None):
-=======
-
 class Capture(skill.ISkill): #add ABC if something fails
     def __init__(self, robot: Optional[rc.Robot]=None):
->>>>>>> 9de7814c8ab6d153425cb58fcf7bbb3ed56a6215
         self.robot = robot
         self.ticks_done = 0
 

@@ -51,7 +51,7 @@ A skill which marks a given opponent robot according to some heuristic cost func
 
 
 #TODO: delete mark skill -> change to tactic
-class Mark(IMark):
+class Mark(skill.ISkill):
 
     def __init__(self,
                  robot: rc.Robot = None,
