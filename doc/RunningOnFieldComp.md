@@ -4,33 +4,9 @@ This guide assumes you know basic terminal usage (how to cd, run commands,
 etc).  Otherwise, everything is explicitly laid out. Note: when the
 instructions say "new terminal", a new tab will also do.
 
-## Branch
+## Switch Branches
 
 In a new terminal, run the following line: `git checkout ros2`
-
-## Launching Soccer
-
-In a new terminal, run the following lines one-by-one: 
-
-``` 
-source /opt/ros/foxy/setup.bash 
-make perf 
-source install/setup.bash 
-ros2 launch rj_robocup soccer.launch.py 
-```
-
-This should open soccer, good for testing radio connection. If you want to run
-gameplay, you have to start autoref and vision (keep scrolling).
-
-## Open Ref
-
-In a new terminal:
-1. `cd ~/ssl-game-controller`
-2. `./ssl-game-controller_v2.12.7_linux_amd64` (Just hit tab after typing ssl)
-3. Click open link on the line that states `UI is available at http://...`
-4. Make sure at least one team is named RoboJackets. If not, click the top left
-   gear, click pen next to one of the names and find RoboJackets in the
-   dropdown.
 
 ## Manual Control
 
@@ -70,6 +46,30 @@ Keep focus on the black window (as in, you should click on that window if you
 can't see it). 
 
 WASD to move the robot, QE to pivot, K to kick and C to chip.
+
+## Launching Soccer
+
+In a new terminal, run the following lines one-by-one: 
+
+``` 
+source /opt/ros/foxy/setup.bash 
+make perf 
+source install/setup.bash 
+ros2 launch rj_robocup soccer.launch.py 
+```
+
+This should open soccer, good for testing radio connection. If you want to run
+gameplay, you have to start autoref and vision (keep scrolling).
+
+## Open Ref
+
+In a new terminal:
+1. `cd ~/ssl-game-controller`
+2. `./ssl-game-controller_v2.12.7_linux_amd64` (Just hit tab after typing ssl)
+3. Click open link on the line that states `UI is available at http://...`
+4. Make sure at least one team is named RoboJackets. If not, click the top left
+   gear, click pen next to one of the names and find RoboJackets in the
+   dropdown.
 
 ## Starting Vision
 
