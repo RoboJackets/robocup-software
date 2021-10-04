@@ -6,7 +6,7 @@ instructions say "new terminal", a new tab will also do.
 
 ## Switch Branches
 
-In a new terminal, run the following line: `git checkout ros2`
+In a new terminal, run `cd ~/robocup-software`, then run `git checkout ros2`.
 
 ## Manual Control
 
