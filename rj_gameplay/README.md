@@ -5,15 +5,15 @@ decision-making. Main folders:
 
 `stp/`         
 
-Infrastructure, or stable code, for gameplay
+* Infrastructure, or stable code, for gameplay
 
 `rj_gameplay/` 
 
-Implementation, or frequently changing code, of gameplay 
+* Implementation, or frequently changing code, of gameplay 
 
 `tests/stp`    
 
-Unit tests for stp/ 
+* Unit tests for stp/ 
 
 ## STP Framework
 
@@ -23,59 +23,60 @@ proposed by CMDragons:
 
 Skill (`rj_gameplay/skill/`) 
 
-Atomic robot behavior which consists of a behavior tree and calls a ROS action.
-Examples:
+* Atomic robot behavior which consists of a behavior tree and calls a ROS
+  action.  Examples:
 * Move 
 * Kick
 
 Tactic (`rj_gameplay/tactic/`)
 
-Handles complex single robot behavior. Think of as one role in a play.
-Examples:
+* Handles complex single robot behavior. Think of as one role in a play.
+  Examples:
 * Goalie
 * Receiver
 * Waller 
 
 Play (`rj_gameplay/play/`)
 
-Handles multi-robot behavior. Gets potential roles from a list of >=6 tactics,
-then assigns them as it sees fit. Examples:
+* Handles multi-robot behavior. Gets potential roles from a list of >=6
+  tactics, then assigns them as it sees fit. Examples:
 * Basic Defense
 
 ## File detail
 
 `rj_gameplay/gameplay_node.py` 
 
-ROS node that links gameplay to the C++ side of our codebase. Gets world\_state
-and status of all robots, and sends motion commands to ROS. (This second
-function will be replaced by ROS Actions soon.)
+* ROS node that links gameplay to the C++ side of our codebase. Gets
+  world\_state and status of all robots, and sends motion commands to ROS.
+  (This second function will be replaced by ROS Actions soon.)
 
 `stp/coordinator.py`           
 
-Uses SituationAnalyzer to select the best play to run, calling tick() on the
-play to get the list of skills, then ticking all of the resulting skills.
+* Uses SituationAnalyzer to select the best play to run, calling tick() on the
+  play to get the list of skills, then ticking all of the resulting skills.
 
 `stp/basic_play_selector.py`   
 
-One-to-one mapping of the situation from SituationAnalyzer to a play to run.
-Simple Python dict at the top of this file achieves that. (We would like to add
-multiple play options per situation, in a cost function manner of course.)
+* One-to-one mapping of the situation from SituationAnalyzer to a play to run.
+  Simple Python dict at the top of this file achieves that. (We would like to
+  add multiple play options per situation, in a cost function manner of
+  course.)
 
 `stp/global_parameters.py`     
 
-Client for the C++-side global parameter server. Allows us to share constants
-between C++ nodes and gameplay. After creating this class, global parameters
-will be available as globals in the global\_parameters module.
+* Client for the C++-side global parameter server. Allows us to share constants
+  between C++ nodes and gameplay. After creating this class, global parameters
+  will be available as globals in the global\_parameters module.
 
 `stp/local_parameters.py`      
 
-Python-side params exist here. Allows sharing constants between different
-gameplay files. Both param files unused as of right now.
+* Python-side params exist here. Allows sharing constants between different
+  gameplay files. Both param files unused as of right now.
 
 `stp/rc.py`                    
 
-Common data structures (e.g. Robot, Ball, WorldState).
+* Common data structures (e.g. Robot, Ball, WorldState).
 
 `stp/testing.py`               
 
-Testing data structures in `rc.py`.
+* Testing data structures in `rc.py`.
