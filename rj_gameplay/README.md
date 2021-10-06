@@ -3,7 +3,7 @@
 This is the Python library that controls gameplay, or high-level
 decision-making. 
 
-## Main folders: 
+## Main Folders
 
 **Infrastructure - `stp/`**
 
