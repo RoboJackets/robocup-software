@@ -25,22 +25,22 @@ Skill (`rj_gameplay/skill/`)
 
 * Atomic robot behavior which consists of a behavior tree and calls a ROS
   action.  Examples:
-* Move 
-* Kick
+    - Move 
+    - Kick
 
 Tactic (`rj_gameplay/tactic/`)
 
 * Handles complex single robot behavior. Think of as one role in a play.
   Examples:
-* Goalie
-* Receiver
-* Waller 
+    - Goalie
+    - Receiver
+    - Waller 
 
 Play (`rj_gameplay/play/`)
 
 * Handles multi-robot behavior. Gets potential roles from a list of >=6
   tactics, then assigns them as it sees fit. Examples:
-* Basic Defense
+    - Basic Defense
 
 ## File detail
 
