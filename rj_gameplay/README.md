@@ -23,17 +23,17 @@ Our gameplay library adapts the [STP
 framework](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.61.1972&rep=rep1&type=pdf)
 proposed by CMDragons.
 
-**Skill - `rj_gameplay/skill/**
+**Skill - `rj_gameplay/skill/`**
 
 Atomic robot behavior which consists of a behavior tree and calls a ROS action.
 (Examples: Move, Kick)
 
-**Tactic - `rj_gameplay/tactic/**
+**Tactic - `rj_gameplay/tactic/`**
 
 Handles complex single robot behavior. Think of as one role in a play.
 (Examples: Goalie Receiver Waller)
 
-**Play - `rj_gameplay/play/**
+**Play - `rj_gameplay/play/`**
 
 Handles multi-robot behavior. Gets potential roles from a list of >=6 tactics,
 then assigns them as it sees fit. (Examples: Basic Defense)
