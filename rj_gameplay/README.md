@@ -5,17 +5,17 @@ decision-making.
 
 Main folders: 
 
-1. `stp/`         
+`stp/`         
 
-Infrastructure, or stable code, for gameplay
+* Infrastructure, or stable code, for gameplay
 
-2. `rj_gameplay/` 
+`rj_gameplay/` 
 
-Implementation, or frequently changing code, of gameplay 
+* Implementation, or frequently changing code, of gameplay 
 
-3. `tests/stp`    
+`tests/stp`    
 
-Unit tests for stp/ 
+* Unit tests for stp/ 
 
 ## STP Framework
 
