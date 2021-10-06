@@ -20,6 +20,7 @@ find_package(builtin_interfaces REQUIRED)
 rosidl_generate_interfaces(
   rj_msgs
   # Messages
+  action/Activatedribbler.action
   msg/BallState.msg
   msg/BallPlacement.msg
   msg/DetectionBall.msg
@@ -67,7 +68,6 @@ rosidl_generate_interfaces(
   std_msgs
   builtin_interfaces
   rj_geometry_msgs)
-
 # ======================================================================
 # ROS2 packaging
 # ======================================================================
