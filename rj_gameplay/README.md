@@ -3,19 +3,19 @@
 This is the Python library that controls gameplay, or high-level
 decision-making. 
 
-Main folders: 
+## Main folders: 
 
 **Infrastructure - `stp/`**
 
-Stable code for gameplay
+Stable code for gameplay.
 
 **Implementation - `rj_gameplay/`**
 
-Frequently changing code of gameplay 
+Frequently changing code of gameplay .
 
 **Tests - `tests/stp`**
 
-Unit tests for stp/ 
+Unit tests for stp/.
 
 ## STP Framework
 
@@ -26,23 +26,17 @@ proposed by CMDragons:
 **Skill - `rj_gameplay/skill/**
 
 Atomic robot behavior which consists of a behavior tree and calls a ROS action.
-Examples:
-    - Move 
-    - Kick
+(Examples: Move, Kick)
 
 **Tactic - `rj_gameplay/tactic/**
 
 Handles complex single robot behavior. Think of as one role in a play.
-Examples:
-    - Goalie
-    - Receiver
-    - Waller 
+(Examples: Goalie Receiver Waller)
 
 **Play - `rj_gameplay/play/**
 
 Handles multi-robot behavior. Gets potential roles from a list of >=6 tactics,
-then assigns them as it sees fit. Examples:
-    - Basic Defense
+then assigns them as it sees fit. (Examples: Basic Defense)
 
 ## Important Files
 
