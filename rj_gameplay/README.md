@@ -21,7 +21,7 @@ Unit tests for stp/.
 
 Our gameplay library adapts the [STP
 framework](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.61.1972&rep=rep1&type=pdf)
-proposed by CMDragons: 
+proposed by CMDragons.
 
 **Skill - `rj_gameplay/skill/**
 
