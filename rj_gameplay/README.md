@@ -1,12 +1,19 @@
 # rj\_gameplay - Gameplay for RJ RoboCup SSL 
 
-Main folders: 
+This is the Python library that controls gameplay, or high-level
+decision-making. Main folders: 
 
-`stp/`         - infrastructure for RC gameplay
+`stp/`         
 
-`rj_gameplay/` - implementation of RC gameplay 
+Infrastructure, or stable code, for gameplay
 
-`tests/stp`    - unit tests for stp/ 
+`rj_gameplay/` 
+
+Implementation, or frequently changing code, of gameplay 
+
+`tests/stp`    
+
+Unit tests for stp/ 
 
 ## STP Framework
 
@@ -14,39 +21,61 @@ Our gameplay library adapts the [STP
 framework](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.61.1972&rep=rep1&type=pdf)
 proposed by CMDragons: 
 
-Skill  - atomic robot behavior, behavior tree + Python wrapper for ROS 
-action (e.g. Move, Kick) 
+Skill (`rj_gameplay/skill/`) 
 
-Tactic - one single role in a play, which handles complex single robot 
-behavior (e.g. Goalie, Receiver, Waller) 
+Atomic robot behavior which consists of a behavior tree and calls a ROS action.
+Examples:
+* Move 
+* Kick
 
-Play   - multi-robot behavior, gets potential roles from a list of at 
-least 6 tactics and assigns them as it sees fit (e.g. Basic Defense) 
+Tactic (`rj_gameplay/tactic/`)
+
+Handles complex single robot behavior. Think of as one role in a play.
+Examples:
+* Goalie
+* Receiver
+* Waller 
+
+Play (`rj_gameplay/play/`)
+
+Handles multi-robot behavior. Gets potential roles from a list of >=6 tactics,
+then assigns them as it sees fit. Examples:
+* Basic Defense
 
 ## File detail
 
-`rj_gameplay/gameplay_node.py` - ROS node that links gameplay to the
-C++ side of our codebase. Gets world\_state and status of all robots, sends
-motion commands to ROS. (This second function will be replaced by Action
-Server once we have it.)
+`rj_gameplay/gameplay_node.py` 
 
-`stp/coordinator.py`           - The coordinator is responsible for using
-SituationAnalyzer to select the best play to run, calling tick() on the
+ROS node that links gameplay to the C++ side of our codebase. Gets world\_state
+and status of all robots, and sends motion commands to ROS. (This second
+function will be replaced by ROS Actions soon.)
+
+`stp/coordinator.py`           
+
+Uses SituationAnalyzer to select the best play to run, calling tick() on the
 play to get the list of skills, then ticking all of the resulting skills.
 
-`stp/basic_play_selector.py`   - One-to-one mapping of the situation from
-SituationAnalyzer to a play to run. (Simple Python dict at the top of this
-file achieves that.)
+`stp/basic_play_selector.py`   
 
-`stp/global_parameters.py`     - A client for the C++-side global
-parameter server. Allows us to share constants between C++ nodes and
-gameplay. After creating this class, global parameters will be available
-as globals in the global\_parameters module.
+One-to-one mapping of the situation from SituationAnalyzer to a play to run.
+Simple Python dict at the top of this file achieves that. (We would like to add
+multiple play options per situation, in a cost function manner of course.)
 
-`stp/local_parameters.py`      - Python-side params exist here. Allows
-sharing constants between different gameplay files.
+`stp/global_parameters.py`     
 
-`stp/rc.py`                    - Data structures for RoboCup (e.g. Robot,
-Ball, WorldState)
+Client for the C++-side global parameter server. Allows us to share constants
+between C++ nodes and gameplay. After creating this class, global parameters
+will be available as globals in the global\_parameters module.
 
-`stp/testing.py`               - Testing `rc.py`'s data structures.
+`stp/local_parameters.py`      
+
+Python-side params exist here. Allows sharing constants between different
+gameplay files. Both param files unused as of right now.
+
+`stp/rc.py`                    
+
+Common data structures (e.g. Robot, Ball, WorldState).
+
+`stp/testing.py`               
+
+Testing data structures in `rc.py`.
