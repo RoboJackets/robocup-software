@@ -5,15 +5,15 @@ decision-making.
 
 Main folders: 
 
-`stp/`         
+Infrastructure - `stp/`         
 
-* Infrastructure, or stable code, for gameplay
+* Stable code for gameplay
 
-`rj_gameplay/` 
+Implementation - `rj_gameplay/` 
 
-* Implementation, or frequently changing code, of gameplay 
+* Frequently changing code of gameplay 
 
-`tests/stp`    
+Tests - `tests/stp`    
 
 * Unit tests for stp/ 
 
