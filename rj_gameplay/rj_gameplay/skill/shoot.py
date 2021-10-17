@@ -20,42 +20,49 @@ import numpy as np
 A shoot skill which aims at the goal and shoots
 """
 
-class Shoot(skill.ISkill):
-    def __init__(self, chip: bool, kick_speed: float,
-                 target_point: np.ndarray) -> None:
-        self.robot: rc.Robot = None
-        self.target_point = target_point
-        self.__name__ = 'Shoot'
-        self.root = Sequence("Sequence")
-        if self.robot is not None:
-            self.pivot = pivot.Pivot(self.robot.id, self.robot.pose[0:2],
-                                     target_point, 1.0)
-            self.kick = kick.Kick(self.robot.id, chip, kick_speed)
-        else:
-            self.pivot = pivot.Pivot(self.robot, np.array([0., 0.]),
-                                     target_point, 1.0)
-            self.kick = kick.Kick(self.robot, chip, kick_speed)
-        self.pivot_behavior = ActionBehavior('Pivot', self.pivot, self.robot)
 
-        self.kick_behavior = ActionBehavior('Kick', self.kick, self.robot)
-        self.root.add_children([self.pivot_behavior, self.kick_behavior])
-        self.root.setup_with_descendants()
+#Since the functionality is the same as pivot_kick, we no longer need shoot skill
 
-    def tick(self, robot: rc.Robot,
-             world_state: rc.WorldState) -> RobotActions:
-        self.robot = robot
-        self.pivot.pivot_point = world_state.ball.pos
-        self.pivot.target_point = self.target_point
-        self.kick.robot_id = self.robot.id
-        self.pivot.robot_id = self.robot.id
-        return self.root.tick_once(robot, world_state)
+# class Shoot(IShoot):
 
-    #if Kick and Pivot is done, Shoot should be done.
-    def is_done(self, world_state: rc.WorldState) -> bool:
-        if self.pivot.is_done(world_state) and self.kick.is_done(world_state):
-            return True
-        else:
-            return False
+#     def __init__(self, 
+#                  chip: bool, 
+#                  kick_speed: float,
+#                  target_point: np.ndarray) -> None:
+#         self.robot: rc.Robot = None
+#         self.target_point = target_point
+#         self.__name__ = 'Shoot'
+#         self.root = Sequence("Sequence")
+#         if self.robot is not None:
+#             self.pivot = pivot.Pivot(self.robot.id, self.robot.pose[0:2],
+#                                      target_point, 1.0)
+#             self.kick = kick.Kick(self.robot.id, chip, kick_speed)
+#         else:
+#             self.pivot = pivot.Pivot(self.robot, np.array([0., 0.]),
+#                                      target_point, 1.0)
+#             self.kick = kick.Kick(self.robot, chip, kick_speed)
+#         self.pivot_behavior = ActionBehavior('Pivot', self.pivot, self.robot)
+#         self.kick_behavior = ActionBehavior('Kick', self.kick, self.robot)
+#         self.root.add_children([self.pivot_behavior, self.kick_behavior])
+#         self.root.setup_with_descendants()
 
-    def __str__(self):
-        return f"Shoot(robot={self.robot.id if self.robot is not None else '??'})"
+#     def tick(self, 
+#              robot: rc.Robot, 
+#              world_state: rc.WorldState, 
+#              intent: RobotIntent):
+#         self.robot = robot
+#         self.pivot.pivot_point = world_state.ball.pos
+#         self.pivot.target_point = self.target_point
+#         self.kick.robot_id = self.robot.id
+#         self.pivot.robot_id = self.robot.id
+#         return self.root.tick_once(robot, world_state)
+
+#     #if Kick and Pivot is done, Shoot should be done.
+#     def is_done(self, world_state: rc.WorldState) -> bool:
+#         if self.pivot.is_done(world_state) and self.kick.is_done(world_state):
+#             return True
+#         else:
+#             return False
+
+#     def __str__(self):
+#         return f"Shoot(robot={self.robot.id if self.robot is not None else '??'})"
