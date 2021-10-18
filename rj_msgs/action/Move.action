@@ -1,0 +1,8 @@
+# Goal 
+PathTargetMotionCommand path_target_motion_command
+---
+#Result
+bool is_done
+---
+#Feedback
+Trajectory trajectory

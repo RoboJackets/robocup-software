@@ -63,10 +63,14 @@ rosidl_generate_interfaces(
   srv/SetGameSettings.srv
   srv/SimPlacement.srv
   srv/SetManual.srv
+  # Actions
+  action/Move.action
   DEPENDENCIES
   std_msgs
   builtin_interfaces
-  rj_geometry_msgs)
+  rj_geometry_msgs
+  )  
+
 
 # ======================================================================
 # ROS2 packaging

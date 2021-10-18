@@ -12,6 +12,8 @@ find_package(
   COMPONENTS Core Network Widgets
   REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(rj_msgs REQUIRED)
 
 # ======================================================================
