@@ -43,10 +43,10 @@ class wall_cost(role.CostFn):
         # TODO: fix goalie assignment issue the right way
         # if np.linalg.norm(robot.pose[0:2] - world_state.field.our_goal_loc) < MIN_WALL_RAD:
         #     return 9999
-
+        print(prev_result)
         switch_cost = 0
         if prev_result and prev_result.is_filled():
-            switch_cost = 1 * (prev_result.role.robot.id != robot.id)
+            switch_cost = 100 * (prev_result.role.robot.id != robot.id)
 
         # costs should be in seconds, not dist
         return self.scale * np.linalg.norm(
@@ -61,6 +61,15 @@ class wall_cost(role.CostFn):
 
         #TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
+    # def switch_cost_fn(
+    #     self,
+    #     prev_result: Optional["RoleResult"],
+    #     world_state: rc.WorldState,
+    #     sticky_weight: float
+    # ) -> float:
+
+    #     return 
 
 class WallTactic(tactic.ITactic):
     def __init__(self, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):

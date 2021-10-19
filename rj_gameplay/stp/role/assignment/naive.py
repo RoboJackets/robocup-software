@@ -22,6 +22,9 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     Algorithm (from scipy.optimize) on HIGH, then MEDIUM, then LOW priority in that
     order."""
 
+    def __init__(self): 
+        self.prev_assignments = None
+
     @staticmethod
     def get_sorted_requests(requests: assignment.FlatRoleRequests) -> SortedRequests:
         """Returns a list of FlatRoleRequests sorted in ascending priority order.
@@ -187,8 +190,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
         return flat_results, free_robots
 
-    @staticmethod
     def assign_roles(
+        self,
         flat_requests: assignment.FlatRoleRequests,
         world_state: stp.rc.WorldState,
         prev_results: assignment.FlatRoleResults,
@@ -221,10 +224,11 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                 prioritized_results,
                 free_robots,
             ) = NaiveRoleAssignment.assign_prioritized_roles(
-                requests_dict, world_state, free_robots, prev_results
+                requests_dict, world_state, free_robots, self.prev_assignments
             )
 
             # Add the prioritized_results to flat_results.
             flat_results.update(prioritized_results)
+        self.prev_assignments = flat_results
 
         return flat_results

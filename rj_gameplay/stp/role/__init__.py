@@ -71,6 +71,19 @@ class CostFn(Protocol):
         """
         ...
 
+    # def switch_cost_fn(
+    #     self,
+    #     prev_results: Optional["RoleResult"],
+    #     world_state: rc.WorldState,
+    #     sticky_weight) -> float:
+    #     """Given the preevious role assignment and current world state,
+    #     returns the cost of switch the role.
+    #     :param prev_result: The previous role assignment result.
+    #     :param world_state: The current world state.
+    #     :sticky_weight: 
+    #     :return: cost of switching the role already assigned
+
+    #     """
 
 class ConstraintFn(Protocol):
     """Protocol for ConstraintFn."""
