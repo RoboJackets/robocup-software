@@ -68,6 +68,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/referee_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
+    server/move_action_server.cpp
         )
 
 set(SOCCER_TEST_SRC
