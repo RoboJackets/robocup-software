@@ -65,6 +65,7 @@ rosidl_generate_interfaces(
   srv/SetManual.srv
   # Actions
   action/Move.action
+
   DEPENDENCIES
   std_msgs
   builtin_interfaces

@@ -55,6 +55,8 @@ ament_target_dependencies(
   rj_common
   PUBLIC
   rclcpp
+  rclcpp_action
+  rclcpp_components
   rj_msgs)
 
 # Add a test runner target "test_rj_common" to run all tests in this directory
