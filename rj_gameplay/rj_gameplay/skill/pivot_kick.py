@@ -8,13 +8,13 @@ import time
 
 import stp.skill as skill
 import stp.role as role
-from rj_gameplay.action import pivot, kick, capture
-from stp.skill.action_behavior import ActionBehavior, RobotActions
-from stp.skill.rj_sequence import RjSequence as Sequence
+from rj_gameplay.skill import kick, pivot, capture
+from rj_msgs.msg import RobotIntent
 import stp.rc as rc
 import numpy as np
+from rj_gameplay.MAX_KICK_SPEED import *
 
-MAX_DRIBBLER_SPEED = 1.0
+
 
 class PivotKick(skill.ISkill): # add ABC if fails
     """
@@ -22,48 +22,44 @@ class PivotKick(skill.ISkill): # add ABC if fails
     capture -> pivot -> kick
     """
 
+    # TODO: Have something which automatically determines kick speed based on target point distance
     def __init__(self,
-                 robot: rc.Robot,
-                 target_point: np.array,
-                 chip: bool,
-                 kick_speed: float,
-                 threshold: float = 0.02) -> None:
-        # TODO: Have something which automatically determines kick speed based on target point distance
+                 robot: rc.Robot=None,
+                 pivot_point: np.ndarray=None,
+                 target_point: np.ndarray=None,
+                 dribble_speed: float = 1,
+                 chip: bool=False,
+                 kick_speed: float=MAX_KICK_SPEED,
+                 threshold: float = 0.02,
+                 priority: int = 1) -> None:
+        
         self.__name__ = 'pivot kick'
         self.robot = robot
+        self.pivot_point = pivot_point
+        self.target_point = target_point
+        self.dribble_speed = dribble_speed
         self.chip = chip
         self.kick_speed = kick_speed
-        self.root = Sequence("Sequence")
-        self.target_point = target_point
+        self.threshold = threshold
 
-        if robot is not None:
-            self.pivot = pivot.Pivot(robot.id, robot.pose[0:2], target_point,
-                                     MAX_DRIBBLER_SPEED, threshold)
-            self.kick = kick.Kick(self.robot.id, self.chip, self.kick_speed)
-        else:
-            self.pivot = pivot.Pivot(None, np.array([0.0, 0.0]), target_point,
-                                     MAX_DRIBBLER_SPEED)
-            self.kick = kick.Kick(None, self.chip, self.kick_speed)
+        self.kick = kick.Kick(robot, chip, kick_speed, threshold)
+        self.pivot = pivot.Pivot(robot, pivot_point, target_point, dribble_speed, threshold, priority)
+        self.capture = capture.Capture(robot)
 
-        self.capture = capture.Capture()
-        self.capture_behavior = ActionBehavior('Capture', self.capture)
-        self.pivot_behavior = ActionBehavior('Pivot', self.pivot)
-        self.kick_behavior = ActionBehavior('Kick', self.kick)
-        self.root.add_children([self.capture_behavior, self.pivot_behavior, self.kick_behavior])
-        self.root.setup_with_descendants()
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:
-        self.robot = robot
-        self.pivot.robot_id = robot.id
-        self.kick.robot_id = robot.id
-
-        self.pivot.pivot_point = world_state.ball.pos
-        self.pivot.target_point = self.target_point
-        actions = self.root.tick_once(robot, world_state)
-        return actions
+    def tick(self, 
+             robot: rc.Robot, 
+             world_state: rc.WorldState, 
+             intent: RobotIntent):
+        if self.kick.is_done(world_state):
+            return self.capture.tick(robot, world_state, intent)
+        elif self.pivot.is_done(world_state):
+            return self.kick.tick(robot, world_state, intent)
+        else: 
+            return self.pivot.tick(robot, world_state, intent)
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return self.pivot.is_done(world_state) and self.kick.is_done(world_state)
+        return self.capture.is_done
 
     def __str__(self):
         return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
