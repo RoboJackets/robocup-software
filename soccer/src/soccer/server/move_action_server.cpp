@@ -5,6 +5,11 @@
 #include "rj_robocup/action/move.hpp"
 #include <rj_common/utils.hpp>
 
+# ros2 action includes
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
+
 namespace server {
 	class MoveActionServer : public rclcpp::Node {
 		using Move = rj_robocup::action::Move;
