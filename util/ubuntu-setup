@@ -161,7 +161,7 @@ PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 apt-get install $ARGS $PACKAGES
 
 # install python3 requirements
-pip3 install --upgrade pip
+python3 -m pip install pip==20.2.4
 pip3 install -r $BASE/util/requirements3.txt
 
 echo "-- Installing grSim default configuration"
