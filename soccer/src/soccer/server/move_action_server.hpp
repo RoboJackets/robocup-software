@@ -18,6 +18,8 @@ namespace server {
         public:
             MoveActionServer();
         private:
+            using Move = rj_msgs::action::Move;
+            using GoalHandleMove = rclcpp_action::ServerGoalHandle<Move>;
             rclcpp_action::Server<Move>::SharedPtr action_server_;
             rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const Move::Goal> goal);
             rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleMove> goal_handle);
