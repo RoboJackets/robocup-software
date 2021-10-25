@@ -55,6 +55,10 @@ class WallBall(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
+        for r in role_requests.keys():
+            skills += r.tick(world_state, role_results[r])
+            skill_dict.update(role_results[r])
+        '''
         skills += self.wall_tactic_1.tick(world_state,
                                           role_results[self.wall_tactic_1])
         skill_dict.update(role_results[self.wall_tactic_1])
@@ -66,7 +70,7 @@ class WallBall(play.IPlay):
         skills += self.wall_tactic_3.tick(world_state,
                                           role_results[self.wall_tactic_3])
         skill_dict.update(role_results[self.wall_tactic_3])
-
+        '''
         return (skill_dict, skills)
 
     def is_done(self, world_state):

@@ -81,6 +81,15 @@ class Basic122(play.IPlay):
 
         # Get list of all skills with assigned roles from tactics
 
+        skills = []
+        skill_dict = {}
+
+        for s in role_requests.keys():
+            skills += s.tick(world_state, role_results[s])
+            skil_dict.update(role_results[s])
+
+        ''' keeping this for now in case it doesn't work
+        
         skills = self.striker_tactic.tick(world_state,
                                           role_results[self.striker_tactic])
         skills += self.seek_left.tick(world_state,
@@ -101,6 +110,7 @@ class Basic122(play.IPlay):
         skill_dict.update(role_results[self.goalie_tactic])
         skill_dict.update(role_results[self.wall_tactic_1])
         skill_dict.update(role_results[self.wall_tactic_2])
+        '''
         return skill_dict, skills
 
     def is_done(self, world_state):

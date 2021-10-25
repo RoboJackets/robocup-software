@@ -56,6 +56,14 @@ class DefendRestart(play.IPlay):
 
         # Get list of all skills with assigned roles from tactics
 
+        skills = []
+        skill_dict = {}
+
+        for x in role_requests.keys():
+            skills += x.tick(world_state, role_results[x])
+            skill_dict.update(role_results[x])
+
+        '''
         skills = self.markers.tick(world_state, role_results[self.markers])
         skills += self.goalie.tick(world_state, role_results[self.goalie])
         skills += self.wall_1.tick(world_state, role_results[self.wall_1])
@@ -65,6 +73,7 @@ class DefendRestart(play.IPlay):
         skill_dict.update(role_results[self.goalie])
         skill_dict.update(role_results[self.wall_1])
         skill_dict.update(role_results[self.wall_2])
+        '''
 
         return (skill_dict, skills)
 

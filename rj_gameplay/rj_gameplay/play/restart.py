@@ -93,6 +93,12 @@ class RestartPlay(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
+
+        for t in role_requests.keys():
+            skills += t.tick(world_state, role_results[t])
+            skill_dict.update(role_results[t])
+
+        '''
         skills = self.clear_tactic.tick(world_state,
                                         role_results[self.clear_tactic])
         skills += self.goalie_tactic.tick(world_state,
@@ -111,6 +117,7 @@ class RestartPlay(play.IPlay):
         skill_dict.update(role_results[self.wall_tactic_2])
         skill_dict.update(role_results[self.seek_left])
         skill_dict.update(role_results[self.seek_right])
+        '''
 
         return (skill_dict, skills)
 
@@ -199,6 +206,10 @@ class DirectRestartPlay(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
+        for r in role_requests.keys():
+            skills += r.tick(world_state, role_results[r])
+            skill_dict.update(role_results[r])
+        '''
         skills = self.clear_tactic.tick(world_state,
                                         role_results[self.clear_tactic])
         skills += self.goalie_tactic.tick(world_state,
@@ -211,12 +222,14 @@ class DirectRestartPlay(play.IPlay):
                                       role_results[self.seek_left])
         skills += self.seek_right.tick(world_state,
                                        role_results[self.seek_right])
+        
         skill_dict.update(role_results[self.clear_tactic])
         skill_dict.update(role_results[self.goalie_tactic])
         skill_dict.update(role_results[self.wall_tactic_1])
         skill_dict.update(role_results[self.wall_tactic_2])
         skill_dict.update(role_results[self.seek_left])
         skill_dict.update(role_results[self.seek_right])
+        '''
 
         return (skill_dict, skills)
 

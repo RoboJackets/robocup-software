@@ -26,13 +26,22 @@ class PrepareKickoffPlay(play.IPlay):
             (0.6, 4.25),
             (-0.6, 4.25),
         ]
+        ''
         self.tactics = [
             move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5))
             for pt in self.points
         ]
+
+        tac = [goalie_tactic.GoalieTactic(), wall_tactic.WallTactic(), wall_tactic.WallTactic()]
+        
+        for t in tac:
+            self.tactics.append(t)
+
+        '''
         self.tactics.append(goalie_tactic.GoalieTactic())
         self.tactics.append(wall_tactic.WallTactic())
         self.tactics.append(wall_tactic.WallTactic())
+        '''
 
         self.num_wallers = 2
 
@@ -112,10 +121,12 @@ class DefendKickoffPlay(play.IPlay):
                              priority=priority)
             for pt, priority in zip(self.points, self.priorities)
         ]
-        self.tactics.append(goalie_tactic.GoalieTactic())
-        self.tactics.append(wall_tactic.WallTactic())
-        self.tactics.append(wall_tactic.WallTactic())
 
+        tac = [goalie_tactic.GoalieTactic(), wall_tactic.WallTactic(), wall_tactic.WallTactic()]
+        
+        for t in tac:
+            self.tactics.append(t)
+            
         self.num_wallers = 2
 
         # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
