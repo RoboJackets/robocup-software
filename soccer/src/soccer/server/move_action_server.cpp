@@ -1,18 +1,7 @@
-#include <functional>
-#include <memory>
-#include <thread>
-
-// ros2 action includes
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_action/rclcpp_action.hpp>
-#include <rclcpp_components/register_node_macro.hpp>
-
-// rj includes
-#include <rj_common/utils.hpp>
-#include <rj_msgs/action/move.hpp>
+#include "move_action_server.hpp"
 
 namespace server {
-class MoveActionServer : public rclcpp::Node {
+    MoveActionServer::MoveActionServer() : rclcpp::Node {
     using Move = rj_msgs::action::Move;
     using GoalHandleMove = rclcpp_action::ServerGoalHandle<Move>;
 
