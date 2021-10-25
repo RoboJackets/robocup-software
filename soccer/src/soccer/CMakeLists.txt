@@ -113,6 +113,8 @@ set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
+set(MOVE_ACTION_SERVER_NODE_SRC server/move_action_server.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -152,6 +154,9 @@ target_sources(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_SRC})
 
 # ---- global_param_server_node ----
 target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_SRC})
+
+# ---- move_action_server_node ----
+target_sources(move_action_server_node PRIVATE ${MOVE_ACTION_SERVER_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
