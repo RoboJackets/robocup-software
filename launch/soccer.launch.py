@@ -65,6 +65,12 @@ def generate_launch_description():
                     emulate_tty=True,
                     on_exit=Shutdown())
 
+    move_action_server = Node(package='rj_robocup',
+                              executable='move_action_server',
+                              output='screen',
+                              parameters=[config],
+                              on_exit=Shutdown())
+
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
     vision_receiver = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(vision_receiver_launch_path))

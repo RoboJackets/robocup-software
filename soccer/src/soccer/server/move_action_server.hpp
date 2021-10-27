@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOVE_ACTION_SERVER_H
+#define MOVE_ACTION_SERVER_H
 
 #include <functional>
 #include <memory>
@@ -14,17 +15,20 @@
 #include <rj_msgs/action/move.hpp>
 
 namespace server {
-    class MoveActionServer : public rclcpp::Node {
-        public:
-            MoveActionServer();
-        private:
-            using Move = rj_msgs::action::Move;
-            using GoalHandleMove = rclcpp_action::ServerGoalHandle<Move>;
-            rclcpp_action::Server<Move>::SharedPtr action_server_;
-            rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const Move::Goal> goal);
-            rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleMove> goal_handle);
-            void handle_accepted(const std::shared_ptr<GoalHandleMove> goal_handle);
-            void execute(const std::shared_ptr<GoalHandleMove> goal_handle);
+class MoveActionServer : public rclcpp::Node {
+public:
+    using Move = rj_msgs::action::Move;
+    using GoalHandleMove = rclcpp_action::ServerGoalHandle<Move>;
 
-    }
-} // namespace server
+    MoveActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
+
+private:
+    rclcpp_action::Server<Move>::SharedPtr action_server_;
+    rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
+                                            std::shared_ptr<const Move::Goal> goal);
+    rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleMove> goal_handle);
+    void handle_accepted(const std::shared_ptr<GoalHandleMove> goal_handle);
+    void execute(const std::shared_ptr<GoalHandleMove> goal_handle);
+};
+}  // namespace server
+#endif
