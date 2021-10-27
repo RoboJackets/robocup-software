@@ -101,6 +101,7 @@ def generate_launch_description():
         radio,
         control,
         planner,
+        move_action_server,
         vision_receiver,
         vision_filter,
         ref_receiver,
