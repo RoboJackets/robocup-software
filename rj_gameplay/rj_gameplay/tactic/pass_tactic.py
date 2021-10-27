@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import List, Optional
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
-import stp.action as action
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
@@ -106,44 +105,27 @@ class PassToOpenReceiver(role.CostFn):
     ) -> float:
 
         if robot is None or self.target_point is None:
-            return 99
+            return 1e9
         # TODO (#1669)
         if not robot.visible:
-            return 99
+            return 1e9
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
-            return 99
-        if self.chosen_receiver is not None and self.chosen_receiver.id == robot.id:
-            return -99
+            return 1e9
+        # if self.chosen_receiver is not None and self.chosen_receiver.id == robot.id:
+        #     return -1e9
 
         # TODO: pick "most open" pass
-        cost = 0
-        for enemy in world_state.their_robots:
-            cost -= 10 * np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
-
-        # TODO: should be dist in sec
-        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point)
-        # cost = cost + raw_dist
-        return cost
-
-        if robot is None or self.target_point is None:
-            return 99
-        # TODO (#1669)
-        if not robot.visible:
-            return 99
-        if self.passer_robot is not None and robot.id == self.passer_robot.id:
-            # can't pass to yourself
-            return 99
-
-        # TODO: pick "most open" pass
-        cost = 0 
-        for enemy in world_state.their_robots:
-            cost -= 10*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
-
-        # TODO: should be dist in sec
-        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
-        # cost = cost + raw_dist
-        return cost
+        if self.passer_robot is not None and robot.id != self.passer_robot.id:
+            pass_dist = np.linalg.norm(passer_robot.pose[0:2] -
+                                       robot.pose[0:2])
+            goal_to_receiver = np.linalg.norm(robot.pose[0:2] -
+                                              rc.Field.their_goal_loc)
+            cost = 0
+            for enemy in world_state.their_robots:
+                cost -= 10 * np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
+        else:
+            return 1e9
 
     def unassigned_cost_fn(
         self,
@@ -153,6 +135,76 @@ class PassToOpenReceiver(role.CostFn):
 
         #TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
+
+class PassToBestReceiver(role.CostFn):
+    """
+    A cost function for how to choose a robot to pass to
+
+    """
+    def __init__(self,
+                 target_point: Optional[np.ndarray] = None,
+                 passer_robot: rc.Robot = None):
+        self.target_point = target_point
+        self.passer_robot = passer_robot
+        # self.chosen_receiver = None
+
+    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
+                 world_state: rc.WorldState) -> float:
+        if world_state is not None:
+            self.passer_robot = [robot for robot in world_state.our_robots if robot.has_ball_sense]
+        if robot is None or self.target_point is None:
+            return 1e9
+        if not robot.visible:
+            return 1e9
+        if self.passer_robot is not None and robot.id == self.passer_robot.id:
+            # can't pass to yourself
+            return 1e9
+        print(self.passer_robot)
+        angle_threshold = 5
+        dist_threshold = 3
+        backpass_punish_weight = 1
+
+        if self.passer_robot is not None and robot.id != self.passer_robot.id:
+            pass_dist = np.linalg.norm(passer_robot.pose[0:2] -
+                                       robot.pose[0:2])
+
+            cost = 0
+            goal_to_receiver = np.linalg.norm(robot.pose[0:2] -
+                                              rc.Field.their_goal_loc)
+            goal_to_passer = np.linalg.norm(passer_robot.pose[0:2] -
+                                            rc.Field.their_goal_loc)
+            cost += (goal_to_passer -
+                     goal_to_receiver) * backpass_punish_weight
+            for enemy in world_state.their_robots:
+                passer_to_enemy = np.linalg.norm(enemy.pose[0:2] -
+                                                 passer_robot.pose[0:2])
+                if passer_to_enemy <= pass_dist:
+                    vec_to_passer = robot.pose[0:2] - passer_robot.pose[0:2]
+                    vec_to_enemy = enemy.pose[0:2] - passer_robot.pose[0:2]
+                    angle = np.degrees(
+                        abs(
+                            atan2(np.linalg.det([vec_to_passer, vec_to_enemy]),
+                                  np.dot(vec_to_passer, vec_to_enemy))))
+                    if angle < angle_threshold:
+                        return 1e9
+                enemy_to_receiver = np.linalg.norm(robot.pose[0:2] -
+                                                   enemy.pose[0:2])
+                if enemy_to_receiver < dist_threshold:
+                    cost += (dist_threshold - enemy_to_receiver)**2
+            return cost
+        else:
+            return 1e9
+
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 class Pass(tactic.ITactic):
     """
@@ -181,13 +233,15 @@ class Pass(tactic.ITactic):
         pass
 
     def find_potential_receiver(self, world_state: rc.WorldState) -> rc.Robot:
-        cost = float('inf')
+        cost = 1e9
         receive_robot = None
         for robot in world_state.our_robots:
             curr_cost = self.receiver_cost(robot, None, world_state)
             if curr_cost < cost:
                 cost = curr_cost
+                print(f'cost: {cost}')
                 receive_robot = robot
+                self.tar
         return receive_robot
 
     def get_requests(
@@ -223,15 +277,16 @@ class Pass(tactic.ITactic):
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
         if receive_result and receive_result[0].is_filled():
-            self.passer_cost.chosen_receiver = receive_result[0].role.robot
+            self.receiver_cost.chosen_receiver = receive_result[0].role.robot
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
-            self.passer_cost.potential_receiver = receive_result[0].role.robot
+            self.receiver_cost.potential_receiver = receive_result[0].role.robot
             return [self.receive]
         elif pivot_result and pivot_result[0].is_filled():
             potential_receiver = self.find_potential_receiver(world_state)
-            self.pivot_kick.skill.target_point = np.array(
-                [potential_receiver.pose[0], potential_receiver.pose[1]])
-            return [self.pivot_kick]
+            if potential_receiver is not None:
+                self.pivot_kick.skill.target_point = np.array(
+                    [potential_receiver.pose[0], potential_receiver.pose[1]])
+                return [self.pivot_kick]
         return []
 
     def is_done(self, world_state:rc.WorldState):

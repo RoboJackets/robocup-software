@@ -5,7 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
-from rj_msgs.msg import RobotIntent
+from rj_msgs.msg import RobotIntent, CollectMotionCommand
 
 import stp.skill as skill
 import stp.role as role

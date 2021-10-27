@@ -11,6 +11,7 @@ import stp.skill as skill
 import stp.role as role
 import stp.rc as rc
 from typing import Optional
+import numpy as np
 
 SETTLE_BALL_SPEED_THRESHOLD = 1.0
 
@@ -24,13 +25,11 @@ class Settle(skill.ISkill):
 
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
-        
+
         self.__name__ = 'settle skill'
 
 
-    def tick(self, 
-             robot: rc.Robot, 
-             world_state: rc.WorldState, 
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState,
              intent: RobotIntent):
         self.robot = robot
         settle_command = SettleMotionCommand()
