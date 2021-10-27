@@ -68,7 +68,8 @@ class wall_cost(role.CostFn):
     #     sticky_weight: float
     # ) -> float:
 
-    #     return 
+    #     return
+
 
 class WallTactic(tactic.ITactic):
     def __init__(self, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):

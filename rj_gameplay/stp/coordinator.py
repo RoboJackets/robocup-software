@@ -78,8 +78,9 @@ class Coordinator:
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
             if robot is not None:
-                intents_dict.update(skill.skill.tick(robot, world_state, intents[robot.id]))
-        
+                intents_dict.update(
+                    skill.skill.tick(robot, world_state, intents[robot.id]))
+
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):
             if i in intents_dict.keys():

@@ -22,7 +22,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     Algorithm (from scipy.optimize) on HIGH, then MEDIUM, then LOW priority in that
     order."""
 
-    def __init__(self): 
+    def __init__(self):
         self.prev_assignments = None
 
     @staticmethod
@@ -82,7 +82,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
                 # Get the previous result for this role_id, if available.
                 if prev_results is not None:
-                    prev_result: Optional[RoleResult] = prev_results.get(role_id, None)
+                    prev_result: Optional[RoleResult] = prev_results.get(
+                        role_id, None)
                 else:
                     prev_result = None
                 # If the constraints are not satisfied, set the cost to INVALID_COST
@@ -94,7 +95,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                 # Otherwise, record the cost.
                 cost: float = request.cost_fn(robot, prev_result, world_state)
 
-                # Throw an exception if the returned cost is not finite, 
+                # Throw an exception if the returned cost is not finite,
                 # so unassigned roles can be given infinite cost to be never be assigned
                 if not isfinite(cost):
                     raise ValueError(
@@ -111,11 +112,11 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
             # Throw an exception if the returned cost is not finite.
             if not isfinite(unassigned_cost):
-                    raise ValueError(
-                        "Got a non-finite cost ({}) for request {} and unassinged robot".format(
-                            cost, request, robot
-                        )
+                raise ValueError(
+                    "Got a non-finite cost ({}) for request {} and unassinged robot".format(
+                        cost, request, robot
                     )
+                )
 
             # Add unassigned cost to last row of robot_costs
             robot_costs[unassigned_idx, request_idx] = unassigned_cost
@@ -220,12 +221,13 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         if world_state is not None:
             for requests_dict in reversed(sorted_requests):
                 # Actually perform the assignment using the Hungarian algorithm.
-                
-                (   prioritized_results,
+
+                (
+                    prioritized_results,
                     free_robots,
                 ) = NaiveRoleAssignment.assign_prioritized_roles(
-                    requests_dict, world_state, free_robots, self.prev_assignments
-                )
+                    requests_dict, world_state, free_robots,
+                    self.prev_assignments)
 
                 # Add the prioritized_results to flat_results.
                 flat_results.update(prioritized_results)
