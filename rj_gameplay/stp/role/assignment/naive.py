@@ -32,12 +32,16 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         role_id: assignment.RoleId
         request: role.RoleRequest
 
-        sorted_request_dict: SortedRequests = {}
-
+        request_dict = {}
         for role_id, request in requests.items():
-            sorted_request_dict[int(request.priority)][role_id] = request
+            key = int(request.priority)
+            if key not in request_dict:
+                request_dict[key] = {}
+            request_dict[key][role_id] = request
 
-        sorted_requests = sorted_request_dict.values().sort(key=sorted_request_dict.keys())
+        sorted_requests: SortedRequests = []
+        for i in sorted(request_dict.keys()):
+            sorted_requests.append(request_dict[i])
 
         return sorted_requests
 
