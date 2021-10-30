@@ -9,9 +9,12 @@ import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
 
+from rj_gameplay.skill import move
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import move
+
+from rj_msgs.msg import PathTargetMotionCommand
+
 import stp.skill as skill
 import numpy as np
 # TODO: replace w/ global param server
@@ -70,6 +73,14 @@ class WallTactic(tactic.ITactic):
         # create empty cost_var (filled in get_requests)
         self.cost_var = wall_cost(scale=cost_scale)
         self.priority = priority
+
+
+        """
+        self.move_action_client = MoveActionClient()
+        # consider whether this ever needs to be returned to the tactic level
+        path_command = self.move_action_client.generate_path_command([0.0, 4.0], [0.0, 0.0])
+        self.move_action_client.send_goal(path_command)
+        """
 
     def compute_props(self):
         pass
