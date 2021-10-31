@@ -6,6 +6,9 @@ from rclpy.node import Node
 
 from rj_msgs.action import Move
 
+from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
+from rj_geometry_msgs.msg import Point
+
 """
 send_goal() -> send goal to server -> response -> goal_response_callback() ->
 future result -> get_result_callback()
@@ -14,6 +17,25 @@ class MoveActionClient(Node):
     def __init__(self):
         super().__init__('move_action_client')
         self._action_client = ActionClient(self, Move, 'move')
+
+    # TODO: move this logic to the skill
+    def generate_path_command(target_pos, target_vel, ignore_ball=False, face_angle=None, face_point=None):
+        path_command = PathTargetMotionCommand()
+        path_command.target.position = Point(x=target_pos[0],
+                                             y=target_pos[1])
+        path_command.target.velocity = Point(x=target_vel[0],
+                                             y=target_vel[1])
+        path_command.ignore_ball = ignore_ball
+
+        if (face_angle is not None):
+            path_command.override_angle = [face_angle]
+
+        if (face_point is not None):
+            path_command.override_face_point = [
+                Point(x=face_point[0], y=face_point[1])
+            ]
+
+        return path_command
 
     def send_goal(self, PathTargetMotionCommand):
         goal_msg = Move.Goal()
@@ -36,7 +58,7 @@ class MoveActionClient(Node):
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
 
-    def get_result_callback(self, ...):
+    def get_result_callback(self, future):
         result = future.result().result
         self.get_logger().info('Result:', result)
         # rclpy.shutdown()
@@ -48,8 +70,10 @@ class MoveActionClient(Node):
 def main(args=None):
     rclpy.init(args=args)
     action_client = MoveActionClient()
-    # action_client.send_goal()
     rclpy.spin(action_client)
+
+    # tactics send goals
+    # action_client.send_goal()
 
 if __name__ == '__main__':
     main()
