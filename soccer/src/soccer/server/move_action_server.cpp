@@ -1,4 +1,5 @@
 #include "move_action_server.hpp"
+#include <rj_msgs/msg/trajectory.hpp>
 
 namespace server {
 using Move = rj_msgs::action::Move;
@@ -33,11 +34,19 @@ void MoveActionServer ::handle_accepted(const std::shared_ptr<GoalHandleMove> go
     std::thread{std::bind(&MoveActionServer::execute, this, _1), goal_handle}.detach();
 }
 
+// TODO: handle_cancel (see web example)
+
 void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handle) {
     std::cout << "executing" << std::endl;
     const auto goal = goal_handle->get_goal();
 
+    // TODO: get feedback from planner node
     auto feedback = std::make_shared<Move::Feedback>();
+    // auto traj = feedback->trajectory; 
+    // traj = rj_msgs::msg::Trajectory;
+    // goal_handle->publish_feedback(feedback);
+    // RCLCPP_INFO(this->get_logger(), "published feedback");
+
     auto result = std::make_shared<Move::Result>();
 
     result->is_done = true;

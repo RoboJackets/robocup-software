@@ -14,13 +14,17 @@ import stp.play
 import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
-from rj_gameplay.action.move import Move
+
 from rj_gameplay.play import basic_defense, passing_tactic_play, defend_restart, restart, kickoff_play, \
     basic122, penalty_defense, wall_ball
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict, Type, Any
 from std_msgs.msg import String as StringMsg
 
 import rj_gameplay.basic_play_selector as basic_play_selector
+
+from rj_gameplay.action import move_action_client
+
+from rj_gameplay.action.move import Move
 
 NUM_ROBOTS = 16
 
@@ -79,6 +83,18 @@ class GameplayNode(Node):
             self.robot_intent_pubs[i] = self.create_publisher(
                 msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
 
+        # TODO: spin other action clients too
+        self.move_action_clients = [
+            move_action_client.MoveActionClient(i) for i in range(NUM_ROBOTS)
+        ]
+
+        # action client dictionary mapping actions to list of action clients
+        self.action_client_dict: Dict[Type[stp.action.IAction], List[Any]] = \
+            {Move: self.move_action_clients}
+
+        # for ac in self.move_action_clients:
+        #    rclpy.spin(ac)
+
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
@@ -105,6 +121,7 @@ class GameplayNode(Node):
                                                     '/gameplay/debug_text', 10)
         self.play_selector = play_selector
         self.coordinator = coordinator.Coordinator(play_selector,
+                                                   self.action_client_dict,
                                                    self.debug_callback)
 
     def set_play_state(self, play_state: msg.PlayState):
@@ -333,6 +350,9 @@ class GameplayNode(Node):
         """
         destroys node
         """
+        # TODO: destroy action clients?
+        # self.action_client.shutdown()
+
         self.destroy_node()
         rclpy.shutdown()
 

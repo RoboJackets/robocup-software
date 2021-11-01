@@ -74,7 +74,6 @@ class WallTactic(tactic.ITactic):
         self.cost_var = wall_cost(scale=cost_scale)
         self.priority = priority
 
-
         """
         self.move_action_client = MoveActionClient()
         # consider whether this ever needs to be returned to the tactic level

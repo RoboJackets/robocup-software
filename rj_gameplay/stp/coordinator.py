@@ -8,6 +8,8 @@ import stp.situation
 import stp.skill
 from rj_msgs import msg
 
+from rj_gameplay.action.move import Move
+
 NUM_ROBOTS = 16
 
 
@@ -23,6 +25,7 @@ class Coordinator:
         "_prev_role_results",
         "_props",
         "_debug_callback",
+        "_action_client_dict",
     ]
 
     _play_selector: stp.situation.IPlaySelector
@@ -30,12 +33,14 @@ class Coordinator:
     _prev_play: Optional[stp.play.IPlay]
     _prev_role_results: assignment.FlatRoleResults
     _props: Dict[Type[stp.play.IPlay], Any]
+    _action_client_dict: Dict[Type[stp.action.IAction], List[Any]]
 
     # TODO(1585): Properly handle type annotations for props instead of using Any.
 
     def __init__(
         self,
         play_selector: stp.situation.IPlaySelector,
+        action_client_dict: Dict[Type[stp.action.IAction], List[Any]],
         debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]],
                                  None] = None):
         self._play_selector = play_selector
@@ -44,6 +49,7 @@ class Coordinator:
         self._prev_play = None
         self._prev_role_results = {}
         self._debug_callback = debug_callback
+        self._action_client_dict = action_client_dict
 
     def tick(self, world_state: rc.WorldState) -> List[msg.RobotIntent]:
         """Performs 1 ticks of the STP system:
@@ -59,10 +65,11 @@ class Coordinator:
         cur_play_type: Type[stp.play.IPlay] = type(cur_play)
 
         # Update the props.
-        cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
+        cur_play_props = cur_play.compute_props(
+            self._props.get(cur_play_type, None))
 
         if isinstance(cur_play, type(
-                self._prev_play)) and not self._prev_play.is_done(world_state):
+            self._prev_play)) and not self._prev_play.is_done(world_state):
             cur_play = self._prev_play
             # This should be checked here or in the play selector, so we can restart a play easily
 
@@ -74,17 +81,25 @@ class Coordinator:
 
         # Get the list of actions from the skills
         intents = [msg.RobotIntent() for i in range(NUM_ROBOTS)]
+
+        move_action_clients = self._action_client_dict.get(Move)
+
+        # TODO: type
+        mc = move_action_clients[0].generate_path_command([0.0,0.0], [0.0,0.0])
+        move_action_clients[0].send_goal(mc)
         intents_dict = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
-            intents_dict.update(skill.skill.tick(robot, world_state, intents[robot.id]))
-        
+            intents_dict.update(
+                skill.skill.tick(robot, world_state, intents[robot.id]))
+
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):
             if i in intents_dict.keys():
                 intents[i] = intents_dict[i]
             else:
-                intents[i].motion_command.empty_command = [msg.EmptyMotionCommand()]
+                intents[i].motion_command.empty_command = [
+                    msg.EmptyMotionCommand()]
 
         # Update _prev_*.
         self._prev_situation = cur_situation

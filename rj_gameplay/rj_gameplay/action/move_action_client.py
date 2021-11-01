@@ -9,22 +9,20 @@ from rj_msgs.action import Move
 from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 from rj_geometry_msgs.msg import Point
 
-"""
-send_goal() -> send goal to server -> response -> goal_response_callback() ->
-future result -> get_result_callback()
-"""
+
 class MoveActionClient(Node):
-    def __init__(self):
-        super().__init__('move_action_client')
+    def __init__(self, robot_id):
+        super().__init__('move_action_client_{}'.format(robot_id))
         self._action_client = ActionClient(self, Move, 'move')
 
-    # TODO: move this logic to the skill
-    def generate_path_command(target_pos, target_vel, ignore_ball=False, face_angle=None, face_point=None):
+    def generate_path_command(self, target_pos,
+                              target_vel,
+                              ignore_ball=False,
+                              face_angle=None,
+                              face_point=None):
         path_command = PathTargetMotionCommand()
-        path_command.target.position = Point(x=target_pos[0],
-                                             y=target_pos[1])
-        path_command.target.velocity = Point(x=target_vel[0],
-                                             y=target_vel[1])
+        path_command.target.position = Point(x=target_pos[0], y=target_pos[1])
+        path_command.target.velocity = Point(x=target_vel[0], y=target_vel[1])
         path_command.ignore_ball = ignore_ball
 
         if (face_angle is not None):
@@ -37,17 +35,19 @@ class MoveActionClient(Node):
 
         return path_command
 
-    def send_goal(self, PathTargetMotionCommand):
+    def send_goal(self, ptms):
         goal_msg = Move.Goal()
-        goal_msg.PathTargetMotionCommand = PathTargetMotionCommand
+        goal_msg.path_target_motion_command = ptms 
 
         self._action_client.wait_for_server()
 
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+        self._send_goal_future = self._action_client.send_goal_async(
+            goal_msg, feedback_callback=self.feedback_callback)
 
         self._send_goal_future.add_done_callback(self.goal_response_callback)
 
-    def goal_response_callback(self, future): 
+    def goal_response_callback(self, future):
+        print("?"*80)
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.get_logger().info('Goal not accepted by server.')
@@ -63,17 +63,6 @@ class MoveActionClient(Node):
         self.get_logger().info('Result:', result)
         # rclpy.shutdown()
 
-    def feedback_callback(self, feedback_msg): 
+    def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.get_logger().info('Got feedback:', feedback)
-
-def main(args=None):
-    rclpy.init(args=args)
-    action_client = MoveActionClient()
-    rclpy.spin(action_client)
-
-    # tactics send goals
-    # action_client.send_goal()
-
-if __name__ == '__main__':
-    main()
