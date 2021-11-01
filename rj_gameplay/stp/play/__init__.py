@@ -22,7 +22,7 @@ TacticT = TypeVar("TacticT", bound=tactic.ITactic)
 class TacticEntry(tkdict.TypedKey[TacticT]):
     """An entry in the TacticEnum for a play."""
 
-    __slots__ = ["_idx", "skill"]
+    __slots__ = ["_idx", "_tactic"]
 
     _tactic: Optional[TacticT]
     _idx: Optional[int]

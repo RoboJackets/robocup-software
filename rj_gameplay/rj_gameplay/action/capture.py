@@ -17,7 +17,7 @@ class Capture(action.IAction):
         self.robot_id = robot_id
         self.ticks_done = 0
 
-    def tick(self, intent) -> None:
+    def tick(self, intent: RobotIntent) -> RobotIntent:
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command]
         intent.dribbler_speed = 1.0

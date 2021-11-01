@@ -7,14 +7,14 @@ import py_trees
 import sys
 import time
 import numpy as np
+import math
 
 import stp.skill as skill
 import stp.role as role
 import stp.action as action
-from rj_gameplay.action import move
-from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
 from stp.utils.constants import RobotConstants
+from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 
 from rj_geometry_msgs.msg import Point, Segment
 
@@ -48,43 +48,72 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
 """
 A skill which marks a given opponent robot according to some heuristic cost function
 """
-class Mark(skill.ISkill): #add ABC if fails
 
-    def __init__(self, robot: rc.Robot = None, target_robot: rc.Robot = None) -> None:
 
-        self.__name__ = 'Mark Skill'
+#TODO: delete mark skill -> change to tactic
+class Mark(skill.ISkill):
+
+    def __init__(self,
+                 robot: rc.Robot = None,
+                 target_robot: rc.Robot = None,
+                 face_point: np.ndarray = None,
+                 face_angle: Optional[float] = None,
+                 target_vel: np.ndarray = np.array([0.0, 0.0]),
+                 ignore_ball: bool = False) -> None:
+
+        self.__name__ = 'Mark'
         self.robot = robot
         self.target_robot = target_robot
+        self.target_vel = target_vel
+        self.face_point = face_point
+        self.face_angle = face_angle
+        self.ignore_ball = ignore_ball
 
-        if self.robot is not None:
-            self.move = move.Move(self.robot.id, np.array([0.0, 0.0]), np.array([0.0, 0.0]), None, None)
-        else:
-            self.move = move.Move(None, np.array([0.0, 0.0]), np.array([0.0, 0.0]), None, None)
 
-        self.mark_behavior = ActionBehavior('Mark', self.move)
-        self.root = self.mark_behavior
-        self.root.setup_with_descendants()
+        
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState) -> None:
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
-
-        # update target point every tick to match movement of ball & target robot
         if world_state and world_state.ball.visible:
             if self.target_robot is None:
                 mark_point = get_mark_point(1, world_state)
             else:
                 mark_point = get_mark_point(self.target_robot.id, world_state)
+        self.target_point = mark_point
+        self.face_point = world_state.ball.pos
 
-            if mark_point is None:
-                return []
-            self.move.target_point = mark_point
-            self.move.face_point = world_state.ball.pos
+        path_command = PathTargetMotionCommand()
+        path_command.target.position = Point(x=self.target_point[0],
+                                             y=self.target_point[1])
+        path_command.target.velocity = Point(x=self.target_vel[0],
+                                             y=self.target_vel[1])
+        path_command.ignore_ball = self.ignore_ball
 
-        actions = self.root.tick_once(robot, world_state)
-        return actions
+        if (self.face_angle is not None):
+            path_command.override_angle = [self.face_angle]
+
+        if (self.face_point is not None):
+            path_command.override_face_point = [
+                Point(x=self.face_point[0], y=self.face_point[1])
+            ]
+
+        intent.motion_command.path_target_command = [path_command]
+        intent.is_active = True
+        return {self.robot.id : intent}
+        # update target point every tick to match movement of ball & target robot
+        
 
     def is_done(self, world_state):
-        return self.move.is_done(world_state)
+        threshold = 0.3
+        if self.robot.id is None or world_state is None:
+            return False
+        elif (math.sqrt((world_state.our_robots[self.robot.id].pose[0] -
+                         self.target_point[0])**2 +
+                        (world_state.our_robots[self.robot.id].pose[1] -
+                         self.target_point[1])**2) < threshold):
+            return True
+        else:
+            return False
 
     def __str__(self):
         return f"Mark(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_robot.id if self.target_robot is not None else '??'})"

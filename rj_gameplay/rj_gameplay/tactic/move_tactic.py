@@ -38,6 +38,14 @@ class move_cost(role.CostFn):
                 2) / MAX_ROBOT_VELOCITY * self.cost_scale
 
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 class Move(tactic.ITactic):
     """
     A striker tactic which captures then shoots the ball

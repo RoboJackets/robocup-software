@@ -1,0 +1,19 @@
+{
+    "problemMatcher": [
+        {
+            "owner": "gtest",
+            "severity": "error",
+            "pattern": [
+                {
+                    "regexp": "^\\.\\.\\/((.+):(\\d+):\\sFailure)$",
+                    "file": 2,
+                    "line": 3
+                },
+                {
+                    "regexp": "^([A-Za-z].+)$",
+                    "message": 1
+                }
+            ]
+        }
+    ]
+}

@@ -63,6 +63,15 @@ class marker_cost(role.CostFn):
 
         return np.linalg.norm(robot.pose[0:2]-self.enemy_to_mark.pose[0:2]) / global_parameters.soccer.robot.max_speed
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 class NMarkTactic(tactic.ITactic):
     """Marks the n closest enemies to ball with the closest robots on our team to said enemies.
     """

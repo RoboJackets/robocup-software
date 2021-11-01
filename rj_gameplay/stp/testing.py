@@ -91,18 +91,19 @@ def generate_our_field():
 def generate_test_playing_gameinfo():
     info = GameInfo(GamePeriod.FIRST_HALF, GameState.PLAYING, GameRestart.NONE,
                     False, [0, 0])
-    return info
+  return info
 
 
 def generate_test_worldstate(our_robots=[],
                              their_robots=[],
                              ball=generate_test_ball(),
                              game_info=generate_test_playing_gameinfo(),
-                             field=generate_divB_field()):
+                             field=generate_divB_field(),
+                             goalie_id=0):
     """
     generates a test worldstate
     """
     our_bots = our_robots
     their_bots = their_robots
-    world = WorldState(our_bots, their_bots, ball, game_info, field)
+    world = WorldState(our_bots, their_bots, ball, game_info, field, goalie_id)
     return world

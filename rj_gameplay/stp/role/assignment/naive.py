@@ -62,14 +62,23 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         role requests.
         """
 
-        # Cost matrix size (n_free_robots, n_requests)
-        robot_costs: np.ndarray = np.zeros((len(free_robots), len(flat_requests)))
+        # Cost matrix size (n_free_robots + 1, n_requests), extra row for unassigned cost
+        robot_costs: np.ndarray = np.zeros((len(free_robots) + 1, len(flat_requests)))
+
+        # Row index for unassigned cost of role request
+        unassigned_idx: float = len(free_robots)
 
         # Iterate over each role request.
         request: role.RoleRequest
         for request_idx, (role_id, request) in enumerate(flat_requests.items()):
             # For each role request, iterate over robots.
             for robot_idx, robot in enumerate(free_robots):
+
+                # If the robot is not visible then do not consider its cost
+                if not robot.visible:
+                    robot_costs[robot_idx, request_idx] = 1e9
+                    continue
+
                 # Get the previous result for this role_id, if available.
                 prev_result: Optional[RoleResult] = prev_results.get(role_id, None)
 
@@ -80,14 +89,15 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                     continue
 
                 # TODO(1715): Make this cost infinite
-                if not robot.visible:
-                    robot_costs[robot_idx, request_idx] = 1e9
-                    continue
+                # if not robot.visible:
+                #     robot_costs[robot_idx, request_idx] = 1e9
+                #     continue
 
                 # Otherwise, record the cost.
                 cost: float = request.cost_fn(robot, prev_result, world_state)
 
-                # Throw an exception if the returned cost is not finite.
+                # Throw an exception if the returned cost is not finite, 
+                # so unassigned roles can be given infinite cost to be never be assigned
                 if not isfinite(cost):
                     raise ValueError(
                         "Got a non-finite cost ({}) for request {} and robot {}".format(
@@ -98,7 +108,23 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
                 # Add to robot_costs.
                 robot_costs[robot_idx, request_idx] = cost
 
+            # Get cost of not assigning a robot to the request
+            unassigned_cost: float = request.cost_fn.unassigned_cost_fn(prev_results, world_state)
+
+            # Throw an exception if the returned cost is not finite.
+            if not isfinite(unassigned_cost):
+                    raise ValueError(
+                        "Got a non-finite cost ({}) for request {} and unassinged robot".format(
+                            cost, request, robot
+                        )
+                    )
+
+            # Add unassigned cost to last row of robot_costs
+            robot_costs[unassigned_idx, request_idx] = unassigned_cost
+
+
         return robot_costs
+
 
     @staticmethod
     def assign_prioritized_roles(
@@ -131,6 +157,9 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             free_robots, flat_requests, world_state, prev_results
         )
 
+        # Get row index of unassigned cost
+        unassigned_idx: float = len(free_robots)
+
         # Get the optimal assignment using the Hungarian algorithm.
         robot_ind: np.ndarray
         request_ind: np.ndarray
@@ -141,16 +170,21 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             request_idx: int = request_ind[assignment_idx]
             robot_idx: int = robot_ind[assignment_idx]
             cost: float = robot_costs[robot_idx, request_idx]
-
             # If cost is equal to INVALID_COST, then it means that role assignment
             # failed. Throw an exception.
             if cost == INVALID_COST:
                 raise RuntimeError("Hard constraints not satisfied!")
 
-            robot: stp.rc.Robot = free_robots[robot_idx]
-            role_id = keys_list[request_idx]
+            # If the row index is not the unassigned row, fill the request
+            if robot_idx < unassigned_idx:
+                if robot_costs[robot_idx , request_idx] < robot_costs[unassigned_idx, request_idx]:
+                    robot: stp.rc.Robot = free_robots[robot_idx]
+                    role_id = keys_list[request_idx]
+                    flat_results[role_id].assign(robot, cost)
 
-            flat_results[role_id].assign(robot, cost)
+        # If unassigned index chosen, remove it from the list of row indices to prevent removing unassigned index from free_robots
+        if unassigned_idx in robot_ind:
+            robot_ind = robot_ind[robot_ind != unassigned_idx]
 
         # Remove the robots from free_robots.
         free_robots = np.delete(free_robots, robot_ind)

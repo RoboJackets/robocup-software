@@ -8,6 +8,7 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 import numpy as np
+from rj_gameplay.calculations import wall_calculations
 
 
 class Basic122(play.IPlay):
@@ -21,10 +22,12 @@ class Basic122(play.IPlay):
             target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic()
 
-        # TODO change priority float to something useful
-        self.wall_tactic = wall_tactic.WallTactic(2,
-                                                  3.0,
-                                                  cost_scale=0.1)
+        self.wall_tactic_1 = wall_tactic.WallTactic(3.0,
+                                                    cost_scale=0.1)
+        self.wall_tactic_2 = wall_tactic.WallTactic(3.0,
+                                                    cost_scale=0.1)
+
+        self.num_wallers = 2
 
         left_pt = np.array([1.5, 7.5])
         self.seek_left = pass_seek.Seek(left_pt,
@@ -48,6 +51,10 @@ class Basic122(play.IPlay):
         props,
     ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
                List[tactic.SkillEntry]]:
+        # pre-calculate wall points and store in numpy array
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
+                                                   world_state)
+
         # Get role requests from all tactics and put them into a dictionary
 
         role_requests: play.RoleRequests = {
@@ -60,8 +67,10 @@ class Basic122(play.IPlay):
             self.seek_right.get_requests(world_state, None),
             self.goalie_tactic:
             self.goalie_tactic.get_requests(world_state, None),
-            self.wall_tactic:
-            self.wall_tactic.get_requests(world_state, None)
+            self.wall_tactic_1:
+            self.wall_tactic_1.get_requests(world_state, wall_pts[0], None),
+            self.wall_tactic_2:
+            self.wall_tactic_2.get_requests(world_state, wall_pts[1], None)
         }
 
         # Flatten requests and use role assigner on them
@@ -81,15 +90,18 @@ class Basic122(play.IPlay):
                                        role_results[self.seek_right])
         skills += self.goalie_tactic.tick(world_state,
                                           role_results[self.goalie_tactic])
-        skills += self.wall_tactic.tick(world_state,
-                                        role_results[self.wall_tactic])
+        skills += self.wall_tactic_1.tick(world_state,
+                                          role_results[self.wall_tactic_1])
+        skills += self.wall_tactic_2.tick(world_state,
+                                          role_results[self.wall_tactic_2])
 
         skill_dict = {}
         skill_dict.update(role_results[self.striker_tactic])
         skill_dict.update(role_results[self.seek_left])
         skill_dict.update(role_results[self.seek_right])
         skill_dict.update(role_results[self.goalie_tactic])
-        skill_dict.update(role_results[self.wall_tactic])
+        skill_dict.update(role_results[self.wall_tactic_1])
+        skill_dict.update(role_results[self.wall_tactic_2])
         return skill_dict, skills
 
     def is_done(self, world_state):

@@ -73,16 +73,17 @@ class Coordinator:
         self._debug_callback(cur_play, [entry.skill for entry in skills])
 
         # Get the list of actions from the skills
-        actions = {}
+        intents = [msg.RobotIntent() for i in range(NUM_ROBOTS)]
+        intents_dict = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
-            actions.update(skill.skill.tick(robot, world_state))
-        intents = [msg.RobotIntent() for i in range(NUM_ROBOTS)]
+            if robot is not None:
+                intents_dict.update(skill.skill.tick(robot, world_state, intents[robot.id]))
+        
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):
-            if i in actions.keys() and actions[i]:
-                for action in actions[i]:
-                    intents[i] = action.tick(intents[i])
+            if i in intents_dict.keys():
+                intents[i] = intents_dict[i]
             else:
                 intents[i].motion_command.empty_command = [msg.EmptyMotionCommand()]
 
