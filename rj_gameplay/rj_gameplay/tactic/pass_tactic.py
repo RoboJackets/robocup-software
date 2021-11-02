@@ -152,20 +152,24 @@ class PassToBestReceiver(role.CostFn):
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
         if world_state is not None:
-            self.passer_robot = [robot for robot in world_state.our_robots if robot.has_ball_sense]
+            min_dist = 999
+            for our_robot in world_state.our_robots:
+                dist = np.linalg.norm(world_state.ball.pos -
+                                      our_robot.pose[0:2])
+                if min_dist > dist:
+                    min_dist = dist
+                    self.passer_robot = our_robot
         if robot is None or self.target_point is None:
             return 1e9
-        if not robot.visible:
-            return 1e9
+        # if not robot.visible:
+        #     return 1e9
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
             return 1e9
-        print(self.passer_robot)
         angle_threshold = 5
         dist_threshold = 3
         backpass_punish_weight = 1
-
-        if self.passer_robot is not None and robot.id != self.passer_robot.id:
+        if robot.id != self.passer_robot.id:
             pass_dist = np.linalg.norm(passer_robot.pose[0:2] -
                                        robot.pose[0:2])
 
@@ -194,7 +198,7 @@ class PassToBestReceiver(role.CostFn):
                     cost += (dist_threshold - enemy_to_receiver)**2
             return cost
         else:
-            return 1e9
+            return 0
 
     def unassigned_cost_fn(
         self,
@@ -241,7 +245,7 @@ class Pass(tactic.ITactic):
                 cost = curr_cost
                 print(f'cost: {cost}')
                 receive_robot = robot
-                self.tar
+                # self.tar
         return receive_robot
 
     def get_requests(
@@ -279,16 +283,18 @@ class Pass(tactic.ITactic):
         if receive_result and receive_result[0].is_filled():
             self.receiver_cost.chosen_receiver = receive_result[0].role.robot
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
-            self.receiver_cost.potential_receiver = receive_result[0].role.robot
+            self.receiver_cost.potential_receiver = receive_result[
+                0].role.robot
             return [self.receive]
         elif pivot_result and pivot_result[0].is_filled():
+            # self.receiver_cost.passer_robot = pivot_result[0].role.robot
             potential_receiver = self.find_potential_receiver(world_state)
             if potential_receiver is not None:
                 self.pivot_kick.skill.target_point = np.array(
                     [potential_receiver.pose[0], potential_receiver.pose[1]])
+                print(pivot_kick.skill)
                 return [self.pivot_kick]
         return []
 
     def is_done(self, world_state:rc.WorldState):
-        print(self.receive.skill.is_done(world_state))
         return self.receive.skill.is_done(world_state)
