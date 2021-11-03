@@ -55,6 +55,8 @@ rosidl_generate_interfaces(
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+  msg/ServerIntent.msg
+
   # Services
   srv/ListJoysticks.srv
   srv/QuickCommands.srv
@@ -63,6 +65,7 @@ rosidl_generate_interfaces(
   srv/SetGameSettings.srv
   srv/SimPlacement.srv
   srv/SetManual.srv
+
   # Actions
   action/Move.action
 

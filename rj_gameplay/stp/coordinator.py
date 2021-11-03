@@ -69,7 +69,7 @@ class Coordinator:
             self._props.get(cur_play_type, None))
 
         if isinstance(cur_play, type(
-            self._prev_play)) and not self._prev_play.is_done(world_state):
+                self._prev_play)) and not self._prev_play.is_done(world_state):
             cur_play = self._prev_play
             # This should be checked here or in the play selector, so we can restart a play easily
 
@@ -85,8 +85,10 @@ class Coordinator:
         move_action_clients = self._action_client_dict.get(Move)
 
         # TODO: type
-        mc = move_action_clients[0].generate_path_command([0.0,0.0], [0.0,0.0])
-        move_action_clients[0].send_goal(mc)
+        # TODO: move to correct STP class (skill??)
+        intent = move_action_clients[0].generate_server_intent([0.0, 0.0],
+                                                               [0.0, 0.0])
+        move_action_clients[0].send_goal(intent)
         intents_dict = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
@@ -99,7 +101,8 @@ class Coordinator:
                 intents[i] = intents_dict[i]
             else:
                 intents[i].motion_command.empty_command = [
-                    msg.EmptyMotionCommand()]
+                    msg.EmptyMotionCommand()
+                ]
 
         # Update _prev_*.
         self._prev_situation = cur_situation

@@ -1,5 +1,5 @@
 # Goal 
-PathTargetMotionCommand path_target_motion_command
+ServerIntent server_intent
 ---
 #Result
 bool is_done

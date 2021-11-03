@@ -6,20 +6,27 @@ from rclpy.node import Node
 
 from rj_msgs.action import Move
 
-from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
+from rj_msgs.msg import RobotIntent, ServerIntent
 from rj_geometry_msgs.msg import Point
 
 
 class MoveActionClient(Node):
     def __init__(self, robot_id):
-        super().__init__('move_action_client_{}'.format(robot_id))
+        super().__init__('move_action_client_{:02d}'.format(robot_id))
+        self._robot_id = robot_id
         self._action_client = ActionClient(self, Move, 'move')
 
-    def generate_path_command(self, target_pos,
-                              target_vel,
-                              ignore_ball=False,
-                              face_angle=None,
-                              face_point=None):
+    """
+    takes in params for path command, returns ServerIntent
+    (ServerIntent = RobotIntent + robot_id)
+    """
+
+    def generate_server_intent(self,
+                               target_pos,
+                               target_vel,
+                               ignore_ball=False,
+                               face_angle=None,
+                               face_point=None):
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=target_pos[0], y=target_pos[1])
         path_command.target.velocity = Point(x=target_vel[0], y=target_vel[1])
@@ -33,11 +40,18 @@ class MoveActionClient(Node):
                 Point(x=face_point[0], y=face_point[1])
             ]
 
-        return path_command
+        robot_intent = RobotIntent()
+        robot_intent.motion_command.path_target_command = [path_command]
+        robot_intent.is_active = True
 
-    def send_goal(self, ptms):
+        server_intent = ServerIntent()
+        server_intent.robot_intent = robot_intent
+        server_intent.robot_id = self._robot_id
+        return server_intent
+
+    def send_goal(self, intent):
         goal_msg = Move.Goal()
-        goal_msg.path_target_motion_command = ptms 
+        goal_msg.server_intent = intent
 
         self._action_client.wait_for_server()
 
@@ -47,7 +61,7 @@ class MoveActionClient(Node):
         self._send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
-        print("?"*80)
+        print("?" * 80)
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.get_logger().info('Goal not accepted by server.')
