@@ -17,6 +17,8 @@ Then build the codebase (this compiles all of our code) with:
 
    make perf
 
+(This step will take upwards of 15 minutes on a VM.)
+
 Afterwards, we need to source our local setup. Run the following in the **robocup-software** directory:
 
 .. code-block:: bash
