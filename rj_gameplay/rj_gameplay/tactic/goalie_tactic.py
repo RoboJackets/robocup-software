@@ -83,14 +83,18 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
 
 
 class GoalieTactic(tactic.ITactic):
-    def __init__(self, brick=False):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+            brick=False):
+
+        self._action_client_dict = action_client_dict
+
         self.brick = brick
 
         # init skills
-        self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
-        self.receive_se = tactic.SkillEntry(receive.Receive())
+        self.move_se = tactic.SkillEntry(move.Move(action_client_dict, ignore_ball=True))
+        self.receive_se = tactic.SkillEntry(receive.Receive(action_client_dict))
         self.pivot_kick_se = tactic.SkillEntry(
-            line_kick.LineKickSkill(None,
+            line_kick.LineKickSkill(action_client_dict, None,
                                     target_point=np.array([0.0, 6.0]),
                                     chip=True,
                                     kick_speed=5.5))

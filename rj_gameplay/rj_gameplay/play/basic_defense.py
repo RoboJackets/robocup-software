@@ -12,13 +12,16 @@ from rj_gameplay.calculations import wall_calculations
 class BasicDefense(play.IPlay):
     """For when we don't have the ball and are trying to stop the opponent from scoring.
     """
-    def __init__(self):
+    def __init__(self,  
+            action_client_dict: Dict[Type[Any], List[Any]]):
+
+        self._action_client_dict = action_client_dict
         self.tactics = [
-            wall_tactic.WallTactic(),
-            wall_tactic.WallTactic(),
-            wall_tactic.WallTactic(),
-            nmark_tactic.NMarkTactic(2),
-            goalie_tactic.GoalieTactic()
+            wall_tactic.WallTactic(action_client_dict),
+            wall_tactic.WallTactic(action_client_dict),
+            wall_tactic.WallTactic(action_client_dict),
+            nmark_tactic.NMarkTactic(action_client_dict, 2),
+            goalie_tactic.GoalieTactic(action_client_dict)
         ]
 
         self.num_wallers = 3

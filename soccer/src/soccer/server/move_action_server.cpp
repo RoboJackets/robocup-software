@@ -21,8 +21,9 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
     std::cout << "handle goal reached" << std::endl;
     auto server_intent = goal->server_intent;
     auto robot_intent = server_intent.intent;
+    auto robot_id = server_intent.robot_id;
     auto intent_pub_ = this->create_publisher<RobotIntent::Msg>(
-        gameplay::topics::robot_intent_pub(server_intent.robot_id),
+        gameplay::topics::robot_intent_pub(robot_id),
         rclcpp::QoS(1).transient_local());
     intent_pub_->publish(robot_intent);
     // rj_convert::convert_from_ros(

@@ -29,12 +29,14 @@ class LineKickSkill(ILineKickSkill):
     # self.robot = role.robot
     # role-blind implementation
     def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
                  robot: rc.Robot,
                  target_point: np.array,
                  priority: int = 0,
                  chip: bool = False,
                  kick_speed: float = 5.5) -> None:
         self.robot = robot
+        self.move_action_clients = self.action_client_dict.get(MoveActionClient)
 
         self.target_point = target_point
         self.priority = priority

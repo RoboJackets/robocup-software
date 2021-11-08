@@ -17,6 +17,7 @@ from stp.utils.constants import RobotConstants
 from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 
 from rj_geometry_msgs.msg import Point, Segment
+from rj_gameplay.action.move_action_client import MoveActionClient
 
 def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
     # workaround for non-working CostBehavior:
@@ -54,6 +55,7 @@ A skill which marks a given opponent robot according to some heuristic cost func
 class Mark(skill.ISkill):
 
     def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
                  robot: rc.Robot = None,
                  target_robot: rc.Robot = None,
                  face_point: np.ndarray = None,
@@ -62,6 +64,7 @@ class Mark(skill.ISkill):
                  ignore_ball: bool = False) -> None:
 
         self.__name__ = 'Mark'
+        self.move_action_clients = self.action_client_dict.get(MoveActionClient)
         self.robot = robot
         self.target_robot = target_robot
         self.target_vel = target_vel

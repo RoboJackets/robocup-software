@@ -6,7 +6,7 @@ from rclpy.node import Node
 
 from rj_msgs.action import Move
 
-from rj_msgs.msg import RobotIntent, ServerIntent
+from rj_msgs.msg import RobotIntent, ServerIntent, PathTargetMotionCommand
 from rj_geometry_msgs.msg import Point
 
 
@@ -45,8 +45,9 @@ class MoveActionClient(Node):
         robot_intent.is_active = True
 
         server_intent = ServerIntent()
-        server_intent.robot_intent = robot_intent
+        server_intent.intent = robot_intent
         server_intent.robot_id = self._robot_id
+        print(self._robot_id)
         return server_intent
 
     def send_goal(self, intent):

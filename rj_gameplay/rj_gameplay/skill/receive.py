@@ -15,16 +15,19 @@ from rj_msgs.msg import RobotIntent, SettleMotionCommand
 import stp.rc as rc
 from rj_msgs import msg
  
-
+from rj_gameplay.action.move_action_client import MoveActionClient
 
 """
 A skill version of receive so that actions don't have to be called in tactics
 """
 
 class Receive(skill.ISkill):
-    def __init__(self, robot: rc.Robot = None):
+    def __init__(self, 
+            action_client_dict: Dict[Type[Any], List[Any]],
+            robot: rc.Robot = None):
         self.robot = robot
         
+        self.move_action_clients = self.action_client_dict.get(MoveActionClient)
         self.__name__ = 'receive skill'
         self.settle = settle.Settle(robot)
         self.capture = capture.Capture(robot)

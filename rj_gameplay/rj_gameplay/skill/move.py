@@ -18,11 +18,14 @@ from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 import stp.rc as rc
 from rj_msgs import msg
 
+from rj_gameplay.action.move_action_client import MoveActionClient
+
 """
 A skill version of move so that actions don't have to be called in tactics
 """
 class Move(skill.ISkill):
     def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
                  robot: Optional[rc.Robot]=None,
                  target_point: np.ndarray = np.array([0.0, 0.0]),
                  target_vel: np.ndarray = np.array([0.0, 0.0]),
@@ -31,6 +34,7 @@ class Move(skill.ISkill):
                  ignore_ball: bool = False,
                  priority: int = 0):
 
+        self.move_action_clients = self.action_client_dict.get(MoveActionClient)
         self.robot = robot
         self.target_point = target_point
         self.target_vel = target_vel

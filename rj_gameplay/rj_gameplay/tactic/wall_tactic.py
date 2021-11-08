@@ -28,6 +28,7 @@ class wall_cost(role.CostFn):
     """Cost function for role request.
     """
     def __init__(self, wall_pt: np.ndarray = None, scale: float = 1.0):
+
         self.wall_pt = wall_pt
         self.scale = scale
 
@@ -66,20 +67,17 @@ class wall_cost(role.CostFn):
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class WallTactic(tactic.ITactic):
-    def __init__(self, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+            priority=role.Priority.MEDIUM, cost_scale: float = 1.0):
+
+        self._action_client_dict = action_client_dict
 
         # create move SkillEntry for every robot
-        self.move_var = tactic.SkillEntry(move.Move())
+        self.move_var = tactic.SkillEntry(move.Move(action_client_dict))
+
         # create empty cost_var (filled in get_requests)
         self.cost_var = wall_cost(scale=cost_scale)
         self.priority = priority
-
-        """
-        self.move_action_client = MoveActionClient()
-        # consider whether this ever needs to be returned to the tactic level
-        path_command = self.move_action_client.generate_path_command([0.0, 4.0], [0.0, 0.0])
-        self.move_action_client.send_goal(path_command)
-        """
 
     def compute_props(self):
         pass

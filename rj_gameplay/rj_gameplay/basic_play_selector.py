@@ -74,6 +74,7 @@ class BasicPlaySelector(situation.IPlaySelector):
         self.analyzer = analyzer.Analyzer()
         self.curr_situation = None
         self.curr_play = None
+        self._action_client_dict = None
 
     def select(
         self, world_state: rc.WorldState
@@ -87,9 +88,13 @@ class BasicPlaySelector(situation.IPlaySelector):
                 if isinstance(self.curr_situation, sit):
                     plays_selection = possible_plays
             if plays_selection:
-                self.curr_play = plays_selection[0]()
+                # action client dict is set by coordinator on init
+                self.curr_play = plays_selection[0](self._action_client_dict)
                 return (self.curr_situation, self.curr_play)
             else:
                 return (self.curr_situation, self.curr_play)
         else:
             return (self.curr_situation, self.curr_play)
+
+    def add_action_client_dict(self, action_client_dict: Dict[Type[Any], List[Any]]): 
+        self._action_client_dict = action_client_dict 

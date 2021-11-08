@@ -33,17 +33,18 @@ class Coordinator:
     _prev_play: Optional[stp.play.IPlay]
     _prev_role_results: assignment.FlatRoleResults
     _props: Dict[Type[stp.play.IPlay], Any]
-    _action_client_dict: Dict[Type[stp.action.IAction], List[Any]]
+    _action_client_dict: Dict[Type[Any], List[Any]]
 
     # TODO(1585): Properly handle type annotations for props instead of using Any.
 
     def __init__(
         self,
         play_selector: stp.situation.IPlaySelector,
-        action_client_dict: Dict[Type[stp.action.IAction], List[Any]],
+        action_client_dict: Dict[Type[Any], List[Any]],
         debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]],
                                  None] = None):
         self._play_selector = play_selector
+        self._play_selector.add_action_client_dict(action_client_dict)
         self._props = {}
         self._prev_situation = None
         self._prev_play = None
@@ -86,16 +87,19 @@ class Coordinator:
 
         # TODO: type
         # TODO: move to correct STP class (skill??)
-        intent = move_action_clients[0].generate_server_intent([0.0, 0.0],
-                                                               [0.0, 0.0])
-        move_action_clients[0].send_goal(intent)
+        """
+        for i in range(6):
+            intent = move_action_clients[i].generate_server_intent([0.0, i * 1.0],
+                                                                   [0.0, 0.0])
+            move_action_clients[i].send_goal(intent)
+        """
         intents_dict = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
             intents_dict.update(
                 skill.skill.tick(robot, world_state, intents[robot.id]))
 
-        # Get the list of robot intents from the actions
+        # Get the list of robot intents from the skill:
         for i in range(NUM_ROBOTS):
             if i in intents_dict.keys():
                 intents[i] = intents_dict[i]

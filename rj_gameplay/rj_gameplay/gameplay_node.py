@@ -24,7 +24,7 @@ import rj_gameplay.basic_play_selector as basic_play_selector
 
 from rj_gameplay.action import move_action_client
 
-from rj_gameplay.action.move import Move
+from rj_gameplay.action.move_action_client import MoveActionClient
 
 NUM_ROBOTS = 16
 
@@ -83,17 +83,23 @@ class GameplayNode(Node):
             self.robot_intent_pubs[i] = self.create_publisher(
                 msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
 
-        # TODO: spin other action clients too
+        # TODO: add other action clients too
         self.move_action_clients = [
             move_action_client.MoveActionClient(i) for i in range(NUM_ROBOTS)
         ]
 
         # action client dictionary mapping actions to list of action clients
-        self.action_client_dict: Dict[Type[stp.action.IAction], List[Any]] = \
-            {Move: self.move_action_clients}
+        self.action_client_dict: Dict[Type[Any], List[Any]] = \
+            {MoveActionClient: self.move_action_clients}
 
         # for ac in self.move_action_clients:
         #    rclpy.spin(ac)
+        
+        # this should publish all move ServerIntents
+        for i in range(NUM_ROBOTS):
+            self.robot_intent_pubs[i] = self.create_publisher(
+                msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
+
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
