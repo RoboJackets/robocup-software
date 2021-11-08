@@ -12,6 +12,7 @@ import stp.role as role
 import stp.action as action
 import stp.rc as rc
 from typing import Optional
+import numpy as np
 
 """
 A skill version of capture so that actions don't have to be called in tactics

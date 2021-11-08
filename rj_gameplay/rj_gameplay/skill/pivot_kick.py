@@ -51,6 +51,7 @@ class PivotKick(skill.ISkill): # add ABC if fails
              intent: RobotIntent):
         if self.capture.is_done(world_state):
             # self.robot = self.pivot.tick.robot
+            # self.pivot_point = self.pivot.tick.pivot_point
             return self.pivot.tick(robot, world_state, intent)
         elif self.pivot.is_done(world_state):
             return self.kick.tick(robot, world_state, intent)

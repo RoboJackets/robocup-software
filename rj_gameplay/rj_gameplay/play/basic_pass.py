@@ -16,8 +16,7 @@ class BasicPass(play.IPlay):
     """
     def __init__(self):
         self.tactics = [
-            pass_tactic.Pass(np.array([0., 0.]), pass_tactic.PasserCost(),
-                             pass_tactic.PassToBestReceiver()),
+            pass_tactic.Pass(),
             # pass_seek.Seek(np.array([0., 0.]),
             #                pass_seek.build_seek_function(np.array([0., 0.])),
             #                pass_seek.SeekCost(np.array([0., 0.]))),
@@ -53,7 +52,6 @@ class BasicPass(play.IPlay):
                                                        world_state,
                                                        prev_results)
         role_results = play.unflatten_results(flat_results)
-        print(role_results)
         skills = []
         for tactic in self.tactics:
             skills += tactic.tick(world_state, role_results[tactic])

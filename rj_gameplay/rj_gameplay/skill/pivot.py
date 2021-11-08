@@ -8,9 +8,12 @@ import time
 
 import stp.skill as skill
 import stp.role as role
-from rj_msgs.msg import RobotIntent
+from rj_msgs.msg import RobotIntent, PivotMotionCommand
+from rj_geometry_msgs.msg import Point
+from rj_gameplay.tactic import pass_tactic
 import stp.rc as rc
 import numpy as np
+
 
 
 class Pivot():
@@ -22,7 +25,7 @@ class Pivot():
                  robot: rc.Robot=None,
                  pivot_point: np.ndarray=None,
                  target_point: np.ndarray=None,
-                 dribble_speed: float = 1,
+                 dribble_speed: float = 1.0,
                  threshold: float = 0.02,
                  priority: int = 1):
         self.robot = robot
@@ -38,14 +41,16 @@ class Pivot():
              world_state: rc.WorldState, 
              intent: RobotIntent):
         self.robot = robot
-        self.pivot_point = world_state.ball.pos
+        self.pivot_point = world_state.ball.pos[0:2]
+        self.target_point = pass_tactic.find_potential_target(world_state).pose[0:2]
+        print(self.target_point)
 
         pivot_command = PivotMotionCommand()
         pivot_command.pivot_point = Point(x=self.pivot_point[0], y=self.pivot_point[1])
         pivot_command.pivot_target = Point(x=self.target_point[0], y=self.target_point[1])
         intent.motion_command.pivot_command = [pivot_command]
         intent.trigger_mode = intent.TRIGGER_MODE_STAND_DOWN
-        intent.dribbler_speed = self.dribble_speed
+        intent.dribbler_speed = float(self.dribble_speed)
         intent.is_active = True
         return {self.robot.id: intent}
 
