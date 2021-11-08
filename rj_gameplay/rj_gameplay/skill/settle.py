@@ -58,6 +58,7 @@ class Settle(skill.ISkill):
         if self.robot is None:
             return False
         if self.kick.is_done(world_state) and (world_state.our_robots[self.robot.id].has_ball_sense or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD):
+            print('settling')
             return True
 
         return False

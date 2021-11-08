@@ -23,9 +23,9 @@ class BasicPass(play.IPlay):
             pass_seek.Seek(np.array([-2., 7.5]),
                            pass_seek.build_seek_function(np.array([-2., 7.5])),
                            pass_seek.SeekCost(np.array([-2., 7.5]))),
-            pass_seek.Seek(np.array([1., 7.5]),
-                           pass_seek.build_seek_function(np.array([1., 5.])),
-                           pass_seek.SeekCost(np.array([1., 5.]))),
+            pass_seek.Seek(np.array([-4., 5.]),
+                           pass_seek.build_seek_function(np.array([-4., 5.])),
+                           pass_seek.SeekCost(np.array([-4., 5.]))),
             nmark_tactic.NMarkTactic(2),
             goalie_tactic.GoalieTactic()
         ]
