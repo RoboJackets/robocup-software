@@ -5,7 +5,8 @@ import argparse
 import py_trees
 import sys
 import time
-from rj_msgs.msg import RobotIntent, SettleMotionCommand
+from rj_msgs.msg import RobotIntent, SettleMotionCommand, PivotMotionCommand
+from rj_geometry_msgs.msg import Point
 
 import stp.skill as skill
 import stp.role as role
@@ -13,7 +14,7 @@ import stp.rc as rc
 from typing import Optional
 import numpy as np
 
-SETTLE_BALL_SPEED_THRESHOLD = 1.0
+SETTLE_BALL_SPEED_THRESHOLD = 0.4
 
 class Settle(skill.ISkill):
 
@@ -25,6 +26,7 @@ class Settle(skill.ISkill):
 
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
+        self.passer_loc = np.array([0., 0.])
 
         self.__name__ = 'settle skill'
 
@@ -32,7 +34,11 @@ class Settle(skill.ISkill):
     def tick(self, robot: rc.Robot, world_state: rc.WorldState,
              intent: RobotIntent):
         self.robot = robot
+        self.passer_loc = world_state.ball.pos[0:2]
+        pivot_command = PivotMotionCommand()
         settle_command = SettleMotionCommand()
+        pivot_command.pivot_target = Point(x=self.passer_loc[0], y=self.passer_loc[1])
+        intent.motion_command.pivot_command = [pivot_command]
         intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0
         intent.is_active = True

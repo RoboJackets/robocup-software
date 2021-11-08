@@ -43,4 +43,4 @@ class Receive(skill.ISkill):
 
 
     def __str__(self):
-        return f"Receive(robot={self.robot.id if self.robot is not None else '??'}, ticks={self.capture.ticks_done})"
+        return f"Receive[Settle(robot={self.settle.robot.id if self.settle.robot is not None else '??'}), Capture(robot={self.settle.robot.id if self.settle.robot is not None else '??'})]"

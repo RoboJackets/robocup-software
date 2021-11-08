@@ -242,6 +242,7 @@ class Pass(tactic.ITactic):
             if curr_cost < cost:
                 cost = curr_cost
                 receiver = robot
+        # print(receiver.id)
         return receiver
 
     def get_requests(

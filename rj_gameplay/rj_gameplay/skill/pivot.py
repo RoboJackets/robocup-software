@@ -26,7 +26,7 @@ class Pivot():
                  pivot_point: np.ndarray=None,
                  target_point: np.ndarray=None,
                  dribble_speed: float = 1.0,
-                 threshold: float = 0.02,
+                 threshold: float = 0.05,
                  priority: int = 1):
         self.robot = robot
         self.pivot_point = pivot_point
@@ -42,8 +42,7 @@ class Pivot():
              intent: RobotIntent):
         self.robot = robot
         self.pivot_point = world_state.ball.pos[0:2]
-        self.target_point = pass_tactic.find_potential_target(world_state).pose[0:2]
-        print(self.target_point)
+        self.target_point = pass_tactic.Pass().find_potential_receiver(world_state).pose[0:2]
 
         pivot_command = PivotMotionCommand()
         pivot_command.pivot_point = Point(x=self.pivot_point[0], y=self.pivot_point[1])
@@ -67,7 +66,7 @@ class Pivot():
         heading_vect = np.array([np.cos(robot.pose[2]), np.sin(robot.pose[2])])
         dot_product = np.dot(heading_vect, robot_to_target_unit)
         angle = np.arccos(dot_product)
-        if (angle < angle_threshold) and (abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold):
+        if (angle < angle_threshold) and (abs(world_state.our_robots[self.robot.id].twist[2]) < stopped_threshold):
             return True
         else:
             return False

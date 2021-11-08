@@ -17,15 +17,15 @@ class BasicPass(play.IPlay):
     def __init__(self):
         self.tactics = [
             pass_tactic.Pass(),
-            # pass_seek.Seek(np.array([0., 0.]),
-            #                pass_seek.build_seek_function(np.array([0., 0.])),
-            #                pass_seek.SeekCost(np.array([0., 0.]))),
-            # pass_seek.Seek(np.array([0., 0.]),
-            #                pass_seek.build_seek_function(np.array([0., 0.])),
-            #                pass_seek.SeekCost(np.array([0., 0.]))),
-            # pass_seek.Seek(np.array([0., 0.]),
-            #                pass_seek.build_seek_function(np.array([0., 0.])),
-            #                pass_seek.SeekCost(np.array([0., 0.]))),
+            pass_seek.Seek(np.array([3., 7.]),
+                           pass_seek.build_seek_function(np.array([3., 7.])),
+                           pass_seek.SeekCost(np.array([3., 7.]))),
+            pass_seek.Seek(np.array([-2., 7.5]),
+                           pass_seek.build_seek_function(np.array([-2., 7.5])),
+                           pass_seek.SeekCost(np.array([-2., 7.5]))),
+            pass_seek.Seek(np.array([1., 7.5]),
+                           pass_seek.build_seek_function(np.array([1., 5.])),
+                           pass_seek.SeekCost(np.array([1., 5.]))),
             nmark_tactic.NMarkTactic(1),
             goalie_tactic.GoalieTactic()
         ]
