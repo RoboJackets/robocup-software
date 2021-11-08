@@ -5,6 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
+from rj_gameplay.skill import kick
 from rj_msgs.msg import RobotIntent, SettleMotionCommand, PivotMotionCommand
 from rj_geometry_msgs.msg import Point
 
@@ -13,8 +14,9 @@ import stp.role as role
 import stp.rc as rc
 from typing import Optional
 import numpy as np
+from rj_gameplay.MAX_KICK_SPEED import *
 
-SETTLE_BALL_SPEED_THRESHOLD = 0.4
+SETTLE_BALL_SPEED_THRESHOLD = 1.0
 
 class Settle(skill.ISkill):
 
@@ -24,9 +26,15 @@ class Settle(skill.ISkill):
 
     #TODO: add move functionality so that robot can move to where the ball is going.
 
-    def __init__(self, robot: rc.Robot = None):
+    def __init__(self, 
+                 robot: rc.Robot,
+                 chip: bool = False,
+                 kick_speed: float = MAX_KICK_SPEED,
+                 threshold: float = 0.02):
         self.robot = robot
         self.passer_loc = np.array([0., 0.])
+        self.kick = kick.Kick(robot, chip, kick_speed, threshold)
+
 
         self.__name__ = 'settle skill'
 
@@ -49,8 +57,9 @@ class Settle(skill.ISkill):
     def is_done(self, world_state) -> bool:
         if self.robot is None:
             return False
-        if world_state.our_robots[self.robot.id].has_ball_sense or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD:
+        if self.kick.is_done(world_state) and (world_state.our_robots[self.robot.id].has_ball_sense or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD):
             return True
+
         return False
 
 
