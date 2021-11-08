@@ -86,7 +86,7 @@ class Basic122(play.IPlay):
 
         for s in role_requests.keys():
             skills += s.tick(world_state, role_results[s])
-            skil_dict.update(role_results[s])
+            skill_dict.update(role_results[s])
 
         ''' keeping this for now in case it doesn't work
         
