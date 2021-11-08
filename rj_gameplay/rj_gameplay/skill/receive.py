@@ -10,47 +10,40 @@ from typing import Optional
 
 import stp.skill as skill
 import stp.role as role
-import stp.action as action
-from rj_gameplay.action import receive, capture
-from stp.skill.action_behavior import ActionBehavior
-from stp.skill.rj_sequence import RjSequence as Sequence
+from rj_gameplay.skill import settle, capture
+from rj_msgs.msg import RobotIntent, SettleMotionCommand
 import stp.rc as rc
 from rj_msgs import msg
-
-class IReceive(skill.ISkill, ABC):
-    ...
+ 
 
 
 """
 A skill version of receive so that actions don't have to be called in tactics
 """
-class Receive(IReceive):
-    def __init__(self,
-            robot:rc.Robot = None):
 
+class Receive(skill.ISkill):
+    def __init__(self, robot: rc.Robot = None):
         self.robot = robot
-        if self.robot is not None:
-            self.receive = receive.Receive(self.robot.id)
-            self.capture = capture.Capture(self.robot.id)
-        else:
-            self.receive = receive.Receive()
-            self.capture = capture.Capture()
-        self.receive_behavior = ActionBehavior('Receive', self.receive)
-        self.capture_behavior = ActionBehavior('Capture', self.capture)
-        self.root = Sequence('Sequence')
-        self.root.add_children([self.receive_behavior, self.capture_behavior])
-        self.root.setup_with_descendants()
+        
         self.__name__ = 'receive skill'
+        self.settle = settle.Settle(robot)
+        self.capture = capture.Capture(robot)
 
-    def tick(self, robot:rc.Robot, world_state:rc.WorldState): #returns dict of robot and actions
-        self.robot = robot
-        actions = self.root.tick_once(self.robot, world_state)
-        self.capture.robot_id = self.robot.id
-        self.receive.robot_id = self.robot.id
-        return actions
+    def tick(self, 
+             robot: rc.Robot, 
+             world_state: rc.WorldState, 
+             intent: RobotIntent):
+        if self.settle.is_done(world_state):
+            return self.capture.tick(robot, world_state)
+        else:
+            return self.settle.tick(robot, world_state)
 
-    def is_done(self, world_state:rc.WorldState):
+
+    def is_done(self, world_state:rc.WorldState) -> bool:
+            
         return self.capture.is_done(world_state)
+
 
     def __str__(self):
         return f"Receive(robot={self.robot.id if self.robot is not None else '??'}, ticks={self.capture.ticks_done})"
+

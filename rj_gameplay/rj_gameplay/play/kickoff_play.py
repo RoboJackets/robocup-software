@@ -16,6 +16,15 @@ class kickoff_cost(role.CostFn):
                  world_state: rc.WorldState) -> float:
         return 0.0
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 class PrepareKickoffPlay(play.IPlay):
     """Hardcoded points to stand in for kickoff

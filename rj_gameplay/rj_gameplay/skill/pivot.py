@@ -1,48 +1,61 @@
-"""This module contains the interface and action for pivot."""
-
 from abc import ABC, abstractmethod
 
-import stp.role as role
-import stp.action as action
-import numpy as np
-import stp.rc as rc
-from rj_msgs.msg import RobotIntent, PivotMotionCommand
-from rj_geometry_msgs.msg import Point
+import rj_gameplay.eval as eval
+import argparse
+import py_trees
+import sys
+import time
 
-class Pivot(action.IFiniteAction):
+import stp.skill as skill
+import stp.role as role
+from rj_msgs.msg import RobotIntent
+import stp.rc as rc
+import numpy as np
+
+
+class Pivot():
+    """
+    Pivot skill that robot aims at the receiver or the goal
+    """
 
     def __init__(self,
-                 robot_id: int,
-                 pivot_point: np.ndarray,
-                 target_point: np.ndarray,
-                 dribble_speed: float,
+                 robot: rc.Robot=None,
+                 pivot_point: np.ndarray=None,
+                 target_point: np.ndarray=None,
+                 dribble_speed: float = 1,
                  threshold: float = 0.02,
                  priority: int = 1):
-        self.robot_id = robot_id
+        self.robot = robot
         self.pivot_point = pivot_point
         self.target_point = target_point
         self.dribble_speed = dribble_speed
         self.threshold = threshold
 
-    def tick(self, intent: RobotIntent) -> None:
-        new_intent = intent
+        self.__name__ = 'pivot skill'
+
+    def tick(self, 
+             robot: rc.Robot, 
+             world_state: rc.WorldState, 
+             intent: RobotIntent):
+        self.robot = robot
+        self.pivot_point = world_state.ball.pos
+
         pivot_command = PivotMotionCommand()
         pivot_command.pivot_point = Point(x=self.pivot_point[0], y=self.pivot_point[1])
         pivot_command.pivot_target = Point(x=self.target_point[0], y=self.target_point[1])
-        new_intent.motion_command.pivot_command = [pivot_command]
-        new_intent.trigger_mode = new_intent.TRIGGER_MODE_STAND_DOWN
-        new_intent.dribbler_speed = self.dribble_speed
-        new_intent.is_active = True
-        return new_intent
+        intent.motion_command.pivot_command = [pivot_command]
+        intent.trigger_mode = intent.TRIGGER_MODE_STAND_DOWN
+        intent.dribbler_speed = self.dribble_speed
+        intent.is_active = True
+        return {self.robot.id: intent}
+
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        # TODO: Change this when we get action state feedback
-        angle_threshold = self.threshold
-        # TODO: Make these local params
-        stopped_threshold = 5 * self.threshold  # We don't _really_ care about this when we're kicking, if not for latency
-        if self.robot_id is None:
+        if self.robot is None:
             return False
-        robot = world_state.our_robots[self.robot_id]
+        angle_threshold = self.threshold
+        stopped_threshold = 5 * self.threshold  # We don't _really_ care about this when we're kicking, if not for latency
+        robot = world_state.our_robots[self.robot.id]
         robot_pos_to_target = self.target_point - robot.pose[0:2]
         robot_to_target_unit = robot_pos_to_target / np.linalg.norm(
             robot_pos_to_target)

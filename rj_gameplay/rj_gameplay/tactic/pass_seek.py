@@ -106,6 +106,15 @@ class SeekCost(role.CostFn):
         return np.linalg.norm(robot.pose[0:2] - self.target_point
                               ) / global_parameters.soccer.robot.max_speed
 
+    def unassigned_cost_fn(
+        self,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
+
+        #TODO: Implement real unassigned cost function
+        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 class Seek(tactic.ITactic):
     """
