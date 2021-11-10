@@ -113,7 +113,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             # Throw an exception if the returned cost is not finite.
             if not isfinite(unassigned_cost):
                 raise ValueError(
-                    "Got a non-finite cost ({}) for request {} and unassinged robot".format(
+                    "Got a non-finite cost ({}) for request {} and \
+                    unassinged robot".format(
                         cost, request, robot
                     )
                 )
@@ -220,7 +221,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         # Iterate over requests from HIGH to LOW.
         if world_state is not None:
             for requests_dict in reversed(sorted_requests):
-                # Actually perform the assignment using the Hungarian algorithm.
+                """ Actually perform the assignment 
+                using the Hungarian algorithm."""
 
                 (
                     prioritized_results,
