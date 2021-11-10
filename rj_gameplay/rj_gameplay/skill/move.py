@@ -7,7 +7,7 @@ import sys
 import time
 import math
 import numpy as np
-from typing import Optional
+from typing import Optional, Dict, Type, List, Any
 
 import stp.skill as skill
 import stp.role as role
@@ -19,14 +19,13 @@ import stp.rc as rc
 from rj_msgs import msg
 
 from rj_gameplay.action.move_action_client import MoveActionClient
-
 """
 A skill version of move so that actions don't have to be called in tactics
 """
 class Move(skill.ISkill):
     def __init__(self,
                  action_client_dict: Dict[Type[Any], List[Any]],
-                 robot: Optional[rc.Robot]=None,
+                 robot: Optional[rc.Robot] = None,
                  target_point: np.ndarray = np.array([0.0, 0.0]),
                  target_vel: np.ndarray = np.array([0.0, 0.0]),
                  face_angle: float = None,
@@ -34,7 +33,7 @@ class Move(skill.ISkill):
                  ignore_ball: bool = False,
                  priority: int = 0):
 
-        self.move_action_clients = self.action_client_dict.get(MoveActionClient)
+        self.move_action_clients = action_client_dict.get(MoveActionClient)
         self.robot = robot
         self.target_point = target_point
         self.target_vel = target_vel
@@ -45,12 +44,10 @@ class Move(skill.ISkill):
 
         self.__name__ = 'Move'
 
-    def tick(self, 
-             robot: rc.Robot, 
-             world_state: rc.WorldState, 
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState,
              intent: RobotIntent):
         self.robot = robot
-        path_command = PathTargetMotionCommand()
+        """path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=self.target_point[0],
                                              y=self.target_point[1])
         path_command.target.velocity = Point(x=self.target_vel[0],
@@ -67,7 +64,13 @@ class Move(skill.ISkill):
 
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
-        return {self.robot.id : intent}
+        """
+        server_intent = self.move_action_clients[
+            robot.id].generate_server_intent(self.target_point,
+                                             self.target_vel, self.face_angle,
+                                             self.face_point, self.ignore_ball)
+        self.move_action_clients[robot.id].send_goal(server_intent)
+        # return {self.robot.id : intent}
 
     def is_done(self, world_state):
         threshold = 0.3

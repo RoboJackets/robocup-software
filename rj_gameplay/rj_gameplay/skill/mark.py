@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Optional
+from typing import Callable, Optional, Dict, List, Any, Type
 
 import rj_gameplay.eval as eval
 import argparse
@@ -18,6 +18,7 @@ from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 
 from rj_geometry_msgs.msg import Point, Segment
 from rj_gameplay.action.move_action_client import MoveActionClient
+
 
 def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
     # workaround for non-working CostBehavior:
@@ -64,7 +65,7 @@ class Mark(skill.ISkill):
                  ignore_ball: bool = False) -> None:
 
         self.__name__ = 'Mark'
-        self.move_action_clients = self.action_client_dict.get(MoveActionClient)
+        self.move_action_clients = action_client_dict.get(MoveActionClient)
         self.robot = robot
         self.target_robot = target_robot
         self.target_vel = target_vel
@@ -73,7 +74,6 @@ class Mark(skill.ISkill):
         self.ignore_ball = ignore_ball
 
 
-        
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
@@ -104,7 +104,6 @@ class Mark(skill.ISkill):
         intent.is_active = True
         return {self.robot.id : intent}
         # update target point every tick to match movement of ball & target robot
-        
 
     def is_done(self, world_state):
         threshold = 0.3

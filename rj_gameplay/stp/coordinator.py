@@ -93,11 +93,16 @@ class Coordinator:
                                                                    [0.0, 0.0])
             move_action_clients[i].send_goal(intent)
         """
+        # TODO : get rid of intents_dict
+        # (skills should be ticked but won't return intents after AS up for all skills)
+
         intents_dict = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
-            intents_dict.update(
-                skill.skill.tick(robot, world_state, intents[robot.id]))
+            print(intents_dict)
+            tick_ret = skill.skill.tick(robot, world_state, intents[robot.id])
+            if tick_ret:
+                intents_dict.update(tick_ret)
 
         # Get the list of robot intents from the skill:
         for i in range(NUM_ROBOTS):

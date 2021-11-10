@@ -34,9 +34,16 @@ class TestPlaySelector(situation.IPlaySelector):
 
     Import a new play, then change the select() method's return below to force gameplay to always use the selected type.
     """
+    def __init__(self):
+        self._action_client_dict = None
+
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
-        return (None, basic_defense.BasicDefense())
+        return (None, basic_defense.BasicDefense(self._action_client_dict))
+
+    def add_action_client_dict(self, action_client_dict: Dict[Type[Any],
+                                                              List[Any]]):
+        self._action_client_dict = action_client_dict
 
 
 class GameplayNode(Node):
@@ -94,12 +101,11 @@ class GameplayNode(Node):
 
         # for ac in self.move_action_clients:
         #    rclpy.spin(ac)
-        
+
         # this should publish all move ServerIntents
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(
                 msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
-
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state

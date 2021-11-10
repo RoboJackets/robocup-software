@@ -5,7 +5,7 @@ import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 import rj_gameplay.play as plays
 from rj_gameplay.play import basic122, basic_defense, defensive_clear, defend_restart, restart, kickoff_play, penalty_defense, penalty_offense, prep_penalty_offense
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Type, Any, List
 
 #TODO: Put new plays into the dict properly
 #TODO: Create different dictionaries for different playbooks
@@ -96,5 +96,6 @@ class BasicPlaySelector(situation.IPlaySelector):
         else:
             return (self.curr_situation, self.curr_play)
 
-    def add_action_client_dict(self, action_client_dict: Dict[Type[Any], List[Any]]): 
-        self._action_client_dict = action_client_dict 
+    def add_action_client_dict(self, action_client_dict: Dict[Type[Any],
+                                                              List[Any]]):
+        self._action_client_dict = action_client_dict

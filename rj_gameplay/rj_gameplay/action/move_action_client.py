@@ -24,9 +24,9 @@ class MoveActionClient(Node):
     def generate_server_intent(self,
                                target_pos,
                                target_vel,
-                               ignore_ball=False,
                                face_angle=None,
-                               face_point=None):
+                               face_point=None,
+                               ignore_ball=False):
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=target_pos[0], y=target_pos[1])
         path_command.target.velocity = Point(x=target_vel[0], y=target_vel[1])

@@ -23,8 +23,7 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
     auto robot_intent = server_intent.intent;
     auto robot_id = server_intent.robot_id;
     auto intent_pub_ = this->create_publisher<RobotIntent::Msg>(
-        gameplay::topics::robot_intent_pub(robot_id),
-        rclcpp::QoS(1).transient_local());
+        gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1).transient_local());
     intent_pub_->publish(robot_intent);
     // rj_convert::convert_from_ros(
     (void)uuid;
@@ -59,6 +58,7 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
 
     auto result = std::make_shared<Move::Result>();
 
+    // TODO : result should be set only when it is done
     result->is_done = true;
     goal_handle->succeed(result);
 }

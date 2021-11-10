@@ -5,15 +5,16 @@ from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-from typing import Dict, List, Tuple, Type
+from typing import Dict, List, Tuple, Type, Any
 from rj_gameplay.calculations import wall_calculations
+
+from rj_gameplay.tactic.wall_tactic import WallTactic
 
 
 class BasicDefense(play.IPlay):
     """For when we don't have the ball and are trying to stop the opponent from scoring.
     """
-    def __init__(self,  
-            action_client_dict: Dict[Type[Any], List[Any]]):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
 
         self._action_client_dict = action_client_dict
         self.tactics = [
@@ -47,7 +48,7 @@ class BasicDefense(play.IPlay):
         role_requests: play.RoleRequests = {}
         i = 0
         for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic()):
+            if type(tactic) == WallTactic:
                 role_requests[tactic] = tactic.get_requests(
                     world_state, wall_pts[i], None)
                 i += 1

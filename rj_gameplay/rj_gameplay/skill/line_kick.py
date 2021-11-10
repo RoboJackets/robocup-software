@@ -15,6 +15,10 @@ from rj_msgs.msg import RobotIntent, LineKickMotionCommand
 import stp.rc as rc
 from rj_gameplay.MAX_KICK_SPEED import *
 
+from rj_gameplay.action.move_action_client import MoveActionClient
+from typing import Optional, Dict, Type, List, Any
+
+
 class ILineKickSkill(skill.ISkill, ABC):
     ...
 
@@ -36,7 +40,7 @@ class LineKickSkill(ILineKickSkill):
                  chip: bool = False,
                  kick_speed: float = 5.5) -> None:
         self.robot = robot
-        self.move_action_clients = self.action_client_dict.get(MoveActionClient)
+        self.move_action_clients = action_client_dict.get(MoveActionClient)
 
         self.target_point = target_point
         self.priority = priority
@@ -57,7 +61,7 @@ class LineKickSkill(ILineKickSkill):
         right_direction = np.dot(ball_to_target, robot_dir) > 0.9
         if not right_direction:
             self.kick_speed = 0.0
-            
+
         line_kick_command = LineKickMotionCommand()
         line_kick_command.target = Point(x=self.target_point[0], y=self.target_point[1])
         intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK if not self.chip else RobotIntent.SHOOT_MODE_CHIP
@@ -70,7 +74,7 @@ class LineKickSkill(ILineKickSkill):
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True
 
-        return {self.robot.id : intent}        
+        return {self.robot.id: intent}
         # TODO: change so this properly returns the actions intent messages
 
     def is_done(self, world_state: rc.WorldState):

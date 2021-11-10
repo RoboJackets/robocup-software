@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action
 import stp.rc as rc
@@ -67,8 +67,10 @@ class wall_cost(role.CostFn):
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 class WallTactic(tactic.ITactic):
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
-            priority=role.Priority.MEDIUM, cost_scale: float = 1.0):
+    def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
+                 priority=role.Priority.MEDIUM,
+                 cost_scale: float = 1.0):
 
         self._action_client_dict = action_client_dict
 

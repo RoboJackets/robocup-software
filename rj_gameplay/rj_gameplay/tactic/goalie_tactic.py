@@ -1,8 +1,7 @@
 """Tactic to produce goalie behavior, which tracks the ball, moves to block if a shot on goal is taken, and stays within the goalie box (generally)."""
 
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action
 import stp.rc as rc
@@ -83,18 +82,24 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
 
 
 class GoalieTactic(tactic.ITactic):
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
-            brick=False):
+    def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
+                 brick=False):
 
         self._action_client_dict = action_client_dict
 
         self.brick = brick
 
         # init skills
-        self.move_se = tactic.SkillEntry(move.Move(action_client_dict, ignore_ball=True))
-        self.receive_se = tactic.SkillEntry(receive.Receive(action_client_dict))
+
+        # TODO: pass robot through plays to here?/ maybe None is ok
+        self.move_se = tactic.SkillEntry(
+            move.Move(action_client_dict, None, ignore_ball=True))
+        self.receive_se = tactic.SkillEntry(
+            receive.Receive(action_client_dict, None))
         self.pivot_kick_se = tactic.SkillEntry(
-            line_kick.LineKickSkill(action_client_dict, None,
+            line_kick.LineKickSkill(action_client_dict,
+                                    None,
                                     target_point=np.array([0.0, 6.0]),
                                     chip=True,
                                     kick_speed=5.5))
