@@ -1,2 +1,0 @@
-add_subdirectory(rj_vision_filter)
-add_subdirectory(soccer)
