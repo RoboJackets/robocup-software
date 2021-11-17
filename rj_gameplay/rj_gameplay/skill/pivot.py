@@ -50,6 +50,7 @@ class Pivot():
         intent.trigger_mode = intent.TRIGGER_MODE_STAND_DOWN
         intent.dribbler_speed = float(self.dribble_speed)
         intent.is_active = True
+        print(self.target_point)
         return {self.robot.id: intent}
 
 

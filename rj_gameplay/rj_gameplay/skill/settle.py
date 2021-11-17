@@ -48,7 +48,7 @@ class Settle(skill.ISkill):
         intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0
         intent.is_active = True
-
+        print(f'Passer: {self.passer.id}')
         return {self.robot.id: intent}
 
 

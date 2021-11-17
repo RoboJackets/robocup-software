@@ -28,8 +28,7 @@ class Capture(action.IAction):
         if self.robot_id is not None and world_state.our_robots[
                 self.robot_id].has_ball_sense:
             self.ticks_done += 1
-
-        # self.ticks_done = np.clip(self.ticks_done, a_min=0, a_max=200)
-        if self.ticks_done > 10:
-            print('GO!')
-            return True
+        else:
+            self.ticks_done -= 5
+        self.ticks_done = np.clip(self.ticks_done, a_min=0, a_max=200)
+        return self.ticks_done > 50

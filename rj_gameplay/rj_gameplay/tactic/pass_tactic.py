@@ -165,7 +165,7 @@ class PassToBestReceiver(role.CostFn):
             # can't pass to yourself
             return 1e9
         angle_threshold = 5
-        dist_threshold = 3
+        dist_threshold = 1.5
         backpass_punish_weight = 2
         if robot.id != self.passer_robot.id:
             pass_dist = np.linalg.norm(self.passer_robot.pose[0:2] -
