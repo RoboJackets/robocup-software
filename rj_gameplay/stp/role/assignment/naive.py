@@ -22,6 +22,9 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
     Algorithm (from scipy.optimize) on HIGH, then MEDIUM, then LOW priority in that
     order."""
 
+    def __init__(self):
+        self.prev_assignments = None
+
     @staticmethod
     def get_sorted_requests(requests: assignment.FlatRoleRequests) -> SortedRequests:
         """Returns a list of FlatRoleRequests sorted in ascending priority order.
@@ -71,28 +74,28 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             for robot_idx, robot in enumerate(free_robots):
 
                 # If the robot is not visible then do not consider its cost
+                # Cannot be infinte, will break linear_sum_assignment
                 if not robot.visible:
-                    robot_costs[robot_idx, request_idx] = float('inf')
+                    robot_costs[robot_idx, request_idx] = 1e9
+                    robot_costs[unassigned_idx, request_idx] = 1e9
                     continue
 
                 # Get the previous result for this role_id, if available.
-                prev_result: Optional[RoleResult] = prev_results.get(role_id, None)
-
+                if prev_results is not None:
+                    prev_result: Optional[RoleResult] = prev_results.get(
+                        role_id, None)
+                else:
+                    prev_result = None
                 # If the constraints are not satisfied, set the cost to INVALID_COST
                 # and continue.
                 if not request.constraint_fn(robot, prev_result, world_state):
                     robot_costs[robot_idx, request_idx] = INVALID_COST
                     continue
 
-                # TODO(1715): Make this cost infinite
-                if not robot.visible:
-                    robot_costs[robot_idx, request_idx] = 1e9
-                    continue
-
                 # Otherwise, record the cost.
                 cost: float = request.cost_fn(robot, prev_result, world_state)
 
-                # Throw an exception if the returned cost is not finite, 
+                # Throw an exception if the returned cost is not finite,
                 # so unassigned roles can be given infinite cost to be never be assigned
                 if not isfinite(cost):
                     raise ValueError(
@@ -109,11 +112,9 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
             # Throw an exception if the returned cost is not finite.
             if not isfinite(unassigned_cost):
-                    raise ValueError(
-                        "Got a non-finite cost ({}) for request {} and unassinged robot".format(
-                            cost, request, robot
-                        )
-                    )
+                raise ValueError(
+                    "Got a non-finite cost ({}) for request {} and \
+                    unassinged robot {}".format(cost, request, robot))
 
             # Add unassigned cost to last row of robot_costs
             robot_costs[unassigned_idx, request_idx] = unassigned_cost
@@ -187,8 +188,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
         return flat_results, free_robots
 
-    @staticmethod
     def assign_roles(
+        self,
         flat_requests: assignment.FlatRoleRequests,
         world_state: stp.rc.WorldState,
         prev_results: assignment.FlatRoleResults,
@@ -215,16 +216,20 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         flat_results: assignment.FlatRoleResults = {}
 
         # Iterate over requests from HIGH to LOW.
-        for requests_dict in reversed(sorted_requests):
-            # Actually perform the assignment using the Hungarian algorithm.
-            (
-                prioritized_results,
-                free_robots,
-            ) = NaiveRoleAssignment.assign_prioritized_roles(
-                requests_dict, world_state, free_robots, prev_results
-            )
+        if world_state is not None:
+            for requests_dict in reversed(sorted_requests):
+                """ Actually perform the assignment
+                using the Hungarian algorithm."""
 
-            # Add the prioritized_results to flat_results.
-            flat_results.update(prioritized_results)
+                (
+                    prioritized_results,
+                    free_robots,
+                ) = NaiveRoleAssignment.assign_prioritized_roles(
+                    requests_dict, world_state, free_robots,
+                    self.prev_assignments)
+
+                # Add the prioritized_results to flat_results.
+                flat_results.update(prioritized_results)
+        self.prev_assignments = flat_results
 
         return flat_results

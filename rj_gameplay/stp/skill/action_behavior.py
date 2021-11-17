@@ -19,7 +19,6 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
         self.robot = robot
         self.world_state = None
         super(ActionBehavior, self).__init__(name)
-
     def tick_once(self, robot:rc.Robot, world_state:rc.WorldState, ctx=None) -> RobotActions:
         """
         Ticks its action using the robot given (if root) or the robot from its parent.
