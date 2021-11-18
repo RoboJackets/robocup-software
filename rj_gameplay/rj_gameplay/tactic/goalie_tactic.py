@@ -154,7 +154,8 @@ class GoalieTactic(tactic.ITactic):
                     abs(ball_pos[0]) < box_w / 2 + line_w + MAX_OOB
                     and ball_pos[1] < box_h + line_w + MAX_OOB
             ) and not world_state.game_info.is_stopped():
-                self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
+                self.move_se = tactic.SkillEntry(move.Move(action_client_dict = self._action_client_dict,
+                                                ignore_ball=True))
                 if ball_speed < 1e-6:
                     # if ball is stopped and inside goalie box, collect it
                     role_requests[self.receive_se] = [
@@ -197,7 +198,8 @@ class GoalieTactic(tactic.ITactic):
                     ]
         if self.pivot_kick_se.skill.is_done(world_state):
             self.pivot_kick_se = tactic.SkillEntry(
-                line_kick.LineKickSkill(None,
+                line_kick.LineKickSkill(self._action_client_dict,
+                                        None,
                                         target_point=np.array([0.0, 6.0]),
                                         chip=True,
                                         kick_speed=5.5))
