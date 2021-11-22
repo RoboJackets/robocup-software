@@ -7,11 +7,13 @@ project(rj_robocup LANGUAGES CXX)
 # ======================================================================
 # C++ Version and Compiler Flags
 # ======================================================================
-
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# ======================================================================
+# Set to use PThreads  
+# ======================================================================
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_WIN32_THREADS_INIT 0)
