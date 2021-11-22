@@ -262,14 +262,14 @@ class Pass(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        # if self.pivot_kick.skill.is_done(world_state):
-        receive_request = role.RoleRequest(role.Priority.MEDIUM, True,
-                                           self.receiver_cost)
-        role_requests[self.receive] = [receive_request]
-        # else:
-        passer_request = role.RoleRequest(role.Priority.HIGH, True,
-                                          self.passer_cost)
-        role_requests[self.pivot_kick] = [passer_request]
+        if self.pivot_kick.skill.is_done(world_state):
+            receive_request = role.RoleRequest(role.Priority.MEDIUM, True,
+                                               self.receiver_cost)
+            role_requests[self.receive] = [receive_request]
+        else:
+            passer_request = role.RoleRequest(role.Priority.HIGH, True,
+                                              self.passer_cost)
+            role_requests[self.pivot_kick] = [passer_request]
 
 
 
@@ -283,22 +283,26 @@ class Pass(tactic.ITactic):
         """
         pivot_result = role_results[self.pivot_kick]
         receive_result = role_results[self.receive]
-        if receive_result and receive_result[0].is_filled(
-        ) and pivot_result and pivot_result[0].is_filled():
+        if pivot_result and pivot_result[0].is_filled():
             self.receiver_cost.passer_robot = pivot_result[0].role.robot
             self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
+            self.pivot_kick.skill.target_point = self.find_potential_receiver(world_state).pose[0:2]
             self.pivot_kick.skill.pivot_point = np.array(
                 pivot_result[0].role.robot.pose[0:2])
+
             # self.receiver_cost.potential_receiver = receive_result[
             #     0].role.robot
             # return [self.receive]
             # elif pivot_result and pivot_result[0].is_filled():
 
+
             # self.pivot_kick.skill.pivot.target_point =
             # if potential_receiver is not None:
             #     self.pivot_kick.skill.pivot.target_point = np.array(
             #         [potential_receiver.pose[0], potential_receiver.pose[1]])
-            return [self.pivot_kick, self.receive]
+            return [self.pivot_kick]
+        elif receive_result and receive_result[0].is_filled(): 
+            return [self.receive]
         return []
 
     def is_done(self, world_state:rc.WorldState):

@@ -24,7 +24,6 @@ A skill version of receive so that actions don't have to be called in tactics
 class Receive(skill.ISkill):
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
-
         self.__name__ = 'receive skill'
         self.settle = settle.Settle(robot)
         self.capture = capture.Capture(robot)

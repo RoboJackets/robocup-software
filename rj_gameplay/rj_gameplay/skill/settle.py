@@ -17,7 +17,7 @@ from rj_gameplay.tactic import pass_tactic
 
 from rj_gameplay.MAX_KICK_SPEED import *
 
-SETTLE_BALL_SPEED_THRESHOLD = 0.8
+SETTLE_BALL_SPEED_THRESHOLD = 2
 
 
 class Settle(skill.ISkill):
@@ -59,8 +59,9 @@ class Settle(skill.ISkill):
                 np.linalg.norm(self.robot.pose[0:2] - world_state.ball.pos[0:2]
                                ) < np.linalg.norm(self.passer.pose[0:2] -
                                                   world_state.ball.pos[0:2])
-                and np.linalg.norm(
+                and 0.01 < np.linalg.norm(
                     world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD):
+            print('Yes')
             return True
 
         return False
