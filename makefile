@@ -7,6 +7,7 @@ export CMAKE_PREFIX_PATH=/opt/ros/foxy
 # circleci has 2 cores, but advertises 32, which causes OOMs
 ifeq ($(CIRCLECI), true)
 	NINJA_FLAGS=-j2
+	sudo update-alternatives --set cc /usr/bin/clang
 endif
 
 # Tell CMake to create compile_commands.json for debug builds for clang-tidy
