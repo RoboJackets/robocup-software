@@ -166,7 +166,7 @@ class PassToBestReceiver(role.CostFn):
             return 1e9
         angle_threshold = 5
         dist_threshold = 1.5
-        backpass_punish_weight = 2
+        backpass_punish_weight = 0.5
         if robot.id != self.passer_robot.id:
             pass_dist = np.linalg.norm(self.passer_robot.pose[0:2] -
                                        robot.pose[0:2])
@@ -176,8 +176,8 @@ class PassToBestReceiver(role.CostFn):
                                               world_state.field.their_goal_loc)
             goal_to_passer = np.linalg.norm(self.passer_robot.pose[0:2] -
                                             world_state.field.their_goal_loc)
-            cost += (goal_to_passer -
-                     goal_to_receiver) * backpass_punish_weight
+            cost += (goal_to_receiver -
+                     goal_to_passer) * backpass_punish_weight
             for enemy in world_state.their_robots:
                 passer_to_enemy = np.linalg.norm(enemy.pose[0:2] -
                                                  self.passer_robot.pose[0:2])
@@ -285,7 +285,7 @@ class Pass(tactic.ITactic):
         receive_result = role_results[self.receive]
         if pivot_result and pivot_result[0].is_filled():
             self.receiver_cost.passer_robot = pivot_result[0].role.robot
-            self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
+            # self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
             self.pivot_kick.skill.target_point = self.find_potential_receiver(world_state).pose[0:2]
             self.pivot_kick.skill.pivot_point = np.array(
                 pivot_result[0].role.robot.pose[0:2])
