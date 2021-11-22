@@ -129,7 +129,10 @@ wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
 # Install clang-format-10 using llvm repo
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
-    sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
+    wget https://apt.llvm.org/llvm.sh
+    chmod +x llvm.sh
+    sudo ./llvm.sh <version number>
+    # sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
 fi
 
 # Add ROS key and repo
