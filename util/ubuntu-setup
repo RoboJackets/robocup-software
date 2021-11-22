@@ -127,12 +127,12 @@ apt-get install $ARGS wget curl # Somehow we don't have wget
 # Somehow 16.04 doesn't support https
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-# Install clang-format-10 using llvm repo
+# Install clang-format-10 using automatic llvm installation script
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
     wget https://apt.llvm.org/llvm.sh
     chmod +x llvm.sh
     sudo ./llvm.sh 10
-    # sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
+    rm llvm.sh
 fi
 
 # Add ROS key and repo
