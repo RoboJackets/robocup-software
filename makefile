@@ -116,7 +116,8 @@ coverage:
 		--gcov-options '\-lp'
 
 clean:
-	((cd build-debug && ninja clean); (cd build-release && ninja clean); (cd build-release-debug && ninja clean)) || true
+	((rm build-debug -rf); (rm build-release -rf); (rm build-release-debug -rf)) || true
+	git clean -f -e -d cmake*
 	rm -rf install/bin install/lib install/share install/include
 
 static-analysis:
