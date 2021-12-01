@@ -74,7 +74,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             for robot_idx, robot in enumerate(free_robots):
 
                 # If the robot is not visible then do not consider its cost
-                # Cannot be infinte, will break linear_sum_assignment
+                # Using 1e9 because float('inf') will break linear_sum_assignment
                 if not robot.visible:
                     robot_costs[robot_idx, request_idx] = 1e9
                     robot_costs[unassigned_idx, request_idx] = 1e9
