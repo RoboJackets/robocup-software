@@ -7,15 +7,23 @@ As a first step, let's run the stack on the GrSim_ simulation.
 
 Make sure you have sourced the ROS stack if you haven't already:
 
-.. code-block:: sh
+.. code-block:: bash
 
-    source /opt/ros/foxy/setup.sh
+    source /opt/ros/foxy/setup.bash
 
-Afterwards, we need to source our loca setup. Run the following in the **robocup-software** directory:
+Then build the codebase (this compiles all of our code) with:
 
-.. code-block:: sh
+.. code-block:: bash
 
-    source install/setup.sh
+   make perf
+
+(This step will take upwards of 15 minutes on a VM.)
+
+Afterwards, we need to source our local setup. Run the following in the **robocup-software** directory:
+
+.. code-block:: bash
+
+    source install/setup.bash
 
 If you're on zsh, source the ``.zsh`` version instead:
 

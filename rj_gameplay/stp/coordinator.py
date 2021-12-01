@@ -99,12 +99,13 @@ class Coordinator:
         intents_dict = {}
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
+
             print(intents_dict)
             tick_ret = skill.skill.tick(robot, world_state, intents[robot.id])
             if tick_ret:
                 intents_dict.update(tick_ret)
 
-        # Get the list of robot intents from the skill:
+        # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):
             if i in intents_dict.keys():
                 intents[i] = intents_dict[i]
