@@ -11,7 +11,7 @@ Stable code for gameplay.
 
 **Implementation - `rj_gameplay/`**
 
-Frequently changing code of gameplay .
+Frequently changing code of gameplay.
 
 **Tests - `tests/stp`**
 
@@ -19,24 +19,36 @@ Unit tests for stp/.
 
 ## STP Framework
 
-Our gameplay library adapts the [STP
+Our gameplay library adopts the name of the [STP
 framework](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.61.1972&rep=rep1&type=pdf)
-proposed by CMDragons.
-
-**Skill - `rj_gameplay/skill/`**
-
-Atomic robot behavior which consists of a behavior tree and calls a ROS action.
-(Examples: Move, Kick)
-
-**Tactic - `rj_gameplay/tactic/`**
-
-Handles complex single robot behavior. Think of as one role in a play.
-(Examples: Goalie Receiver Waller)
+proposed by CMDragons, but is quite different.
 
 **Play - `rj_gameplay/play/`**
 
-Handles multi-robot behavior. Gets potential roles from a list of >=6 tactics,
-then assigns them as it sees fit. (Examples: Basic Defense)
+Handles full team behavior. Gets potential roles from a list of >=6 tactics,
+then assigns 6 of them at any time.
+
+(Examples: Basic Defense)
+
+**Tactic - `rj_gameplay/tactic/`**
+
+Handles role costing for one or more robots, such that Plays can choose
+higher-level ideas for each robot. Think of as abstraction layer between single-robot
+Skills and whole-team Plays.
+
+(Examples: Goalie, Waller, Pass)
+
+**Skill - `rj_gameplay/skill/`**
+
+Atomic robot behavior which consists of a behavior tree of actions.
+
+(Examples: Move, Kick)
+
+**Action - `rj_gameplay/action/`** (in-progress)
+
+ROS Action Client that sends an action request to C++-side Action Server. This
+then handles motion planning & control and sends feedback to the client. Note
+that "ROS Action" =/= "Action" in the context of gameplay.
 
 ## Important Files
 
