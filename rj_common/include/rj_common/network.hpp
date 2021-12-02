@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "rc-fshare/network_config.hpp"
 
 // Here's how networking works:
 //
@@ -52,7 +53,8 @@ static const int kSharedVisionPortSinglePrimary = 10002;
 // Secondary Single-sized field port with old Protobuf protocol
 static const int kSharedVisionPortSingleSecondary = 10004;
 
-static constexpr int kNetworkRadioServerPort = 25565;
+static constexpr int kNetworkRadioServerPort = std::stoi(network_config::BASE_STATION_PORT); // port for server (soccer) in network
+static constexpr int kNetworkRadioRobotPort = std::stoi(network_config::LOCAL_PORT); // port for robots in network
 
 // Double-sized field port with old Protobuf protocol
 // static const int SharedVisionPortDoubleOld = 10005;

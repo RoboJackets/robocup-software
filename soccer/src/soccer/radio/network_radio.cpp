@@ -4,6 +4,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/status.hpp>
+#include <rj_common/network.hpp>
 
 #include "packet_convert.hpp"
 #include "rj_geometry/util.hpp"
@@ -87,7 +88,7 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
 
     auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&recv_buffer_[rtp::HeaderSize]);
 
-    robot_endpoint_.port(25566);
+    robot_endpoint_.port(kNetworkRadioRobotPort);
 
     int robot_id = msg->uid;
 
