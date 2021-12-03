@@ -219,8 +219,8 @@ class GameplayNode(Node):
     def add_def_areas_to_obs(self, def_area_obstacles, game_info) -> None:
         """Creates and publishes rectangles for the defense area in front of both goals.
 
-        The defense area, per the rules, is the box in front of each goal where only that
-        team's goalie can be in and touch the ball.
+        The defense area, per the rules, is the box in front of each goal where
+        only that team's goalie can be in and touch the ball.
 
         (Formerly referred to as "goal_zone_obstacles".)
         """
