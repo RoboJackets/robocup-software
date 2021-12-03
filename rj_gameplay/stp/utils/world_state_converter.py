@@ -2,7 +2,7 @@ from rj_msgs import msg
 import stp.rc as rc
 import numpy as np
 
-from typing import List
+from typing import List, Optional
 
 RobotId = int
 
@@ -243,7 +243,7 @@ def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robo
 
 def worldstate_creator(partial_world_state: PartialWorldState,
                        robot_statuses: List[RobotStatus],
-                       game_info: rc.GameInfo, field: rc.Field,
+                       game_info: Optional[rc.GameInfo], field: rc.Field,
                        goalie_id: int) -> rc.WorldState:
     """
     A function which combines the partial world state, robot statuses, game info, and field to create a whole world state
