@@ -6,7 +6,7 @@ from rj_msgs import msg
 from rj_geometry_msgs import msg as geo_msg
 import stp.rc as rc
 import stp.utils.world_state_converter as conv
-import stp.situation as situation
+from stp.situation import IPlaySelector, ISituation
 import stp.coordinator as coordinator
 import stp
 import stp.skill
@@ -26,12 +26,13 @@ import rj_gameplay.situation.decision_tree.situations as situations
 NUM_ROBOTS = 16
 
 
-class TestPlaySelector(situation.IPlaySelector):
+class TestPlaySelector(IPlaySelector):
     """Convenience class for testing individual plays in gameplay without having to go through the play selection system.
 
     Import a new play, then change the select() method's return below to force gameplay to always use the selected type.
     """
-    def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
+    T = TypeVar('T', bound="ISituation")
+    def select(self, world_state: rc.WorldState) -> Tuple[T, stp.play.IPlay]:
         self.curr_situation = None
         return (situations.NoSituation, penalty_defense.PenaltyDefense())
 
@@ -41,7 +42,7 @@ class GameplayNode(Node):
     A node which subscribes to the world_state, game state, robot status, and field topics and converts the messages to python types.
     """
 
-    def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
+    def __init__(self, play_selector: IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
         super().__init__('gameplay_node')
         self.world_state_sub = self.create_subscription(
