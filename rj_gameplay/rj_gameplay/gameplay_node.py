@@ -17,7 +17,7 @@ import numpy as np
 from rj_gameplay.action.move import Move
 from rj_gameplay.play import basic_defense, passing_tactic_play, defend_restart, restart, kickoff_play, \
     basic122, penalty_defense, wall_ball
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, TypeVar
 from std_msgs.msg import String as StringMsg
 
 import rj_gameplay.basic_play_selector as basic_play_selector
