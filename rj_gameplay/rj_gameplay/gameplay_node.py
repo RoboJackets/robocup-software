@@ -21,6 +21,7 @@ from typing import List, Optional, Tuple
 from std_msgs.msg import String as StringMsg
 
 import rj_gameplay.basic_play_selector as basic_play_selector
+import rj_gameplay.situation.decision_tree.situations as situations
 
 NUM_ROBOTS = 16
 
@@ -32,7 +33,7 @@ class TestPlaySelector(situation.IPlaySelector):
     """
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
         self.curr_situation = None
-        return (None, penalty_defense.PenaltyDefense())
+        return (situations.NoSituation, penalty_defense.PenaltyDefense())
 
 
 class GameplayNode(Node):
