@@ -159,7 +159,7 @@ class GameplayNode(Node):
         """
         self.goalie_id = msg.goalie_id
 
-    def get_world_state(self) -> rc.WorldState:
+    def update_world_state(self) -> None:
         """
         returns: an updated world state
         """
@@ -167,20 +167,14 @@ class GameplayNode(Node):
             self.world_state = conv.worldstate_creator(
                 self.partial_world_state, self.robot_statuses,
                 self.build_game_info(), self.field, self.goalie_id)
-
-        return self.world_state
+            assert self.world_state is not None
 
     def gameplay_tick(self) -> None:
         """
         ticks the gameplay coordinator using recent world_state
         """
 
-        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS and self.goalie_id is not None:
-            self.world_state = conv.worldstate_creator(
-                self.partial_world_state, self.robot_statuses,
-                self.build_game_info(), self.field, self.goalie_id)
-        else:
-            self.world_state = None
+        self.update_world_state()
 
         if self.world_state is not None:
             intents = self.coordinator.tick(self.world_state)
