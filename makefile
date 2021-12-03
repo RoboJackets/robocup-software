@@ -97,6 +97,7 @@ test-soccer:
 test-soccer-nobuild:
 	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 
+# these three lines don't actually run from here anymore: runs in .github/workflows/ci.yml
 test-python: perf
 	python3 -m pytest --cov rj_gameplay --cov stp rj_gameplay --cov-report xml
 pylint:
