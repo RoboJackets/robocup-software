@@ -82,9 +82,10 @@ class GameplayNode(Node):
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
-        self.partial_world_state: conv.PartialWorldState = None
-        self.goalie_id: int = None
-        self.field: rc.Field = None
+        # these 3 Nones will be filled in dynamically
+        self.partial_world_state: Optional[conv.PartialWorldState] = None
+        self.goalie_id: Optional[int] = None
+        self.field: Optional[rc.Field] = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()
                                                        ] * NUM_ROBOTS * 2
         self.ball_placement = None
@@ -163,7 +164,7 @@ class GameplayNode(Node):
         """
         returns: an updated world state
         """
-        if self.partial_world_state is not None and self.field is not None:
+        if self.partial_world_state is not None and self.field is not None and self.goalie_id is not None:
             self.world_state = conv.worldstate_creator(
                 self.partial_world_state, self.robot_statuses,
                 self.build_game_info(), self.field, self.goalie_id)
@@ -175,7 +176,7 @@ class GameplayNode(Node):
         ticks the gameplay coordinator using recent world_state
         """
 
-        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
+        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS and self.goalie_id is not None:
             self.world_state = conv.worldstate_creator(
                 self.partial_world_state, self.robot_statuses,
                 self.build_game_info(), self.field, self.goalie_id)
@@ -209,6 +210,8 @@ class GameplayNode(Node):
 
         The defense area, per the rules, is the box in front of each goal where only that team's goalie can be in and touch the ball. (Formerly referred to as "goal_zone_obstacles".)
         """
+        # this is only ever called when self.field is filled in
+        assert self.field is not None
 
         # create Rect for our def_area box
         our_def_area = geo_msg.Rect()
@@ -241,6 +244,9 @@ class GameplayNode(Node):
 
     def add_goals_to_global_obs(self, global_obstacles, game_info):
         """Adds the physical walls that form each goal to global_obstacles."""
+        # this is only ever called when self.field is filled in
+        assert self.field is not None
+
         physical_goal_board_width = 0.1
         our_goal = [
             geo_msg.Rect(pt=[
@@ -293,6 +299,9 @@ class GameplayNode(Node):
 
     def add_ball_to_global_obs(self, global_obstacles, game_info):
         """Adds circular no-fly zone around ball during stops or restarts, to comply with rulebook."""
+        # this is only ever called when self.field is filled in
+        assert self.field is not None
+
         if game_info is not None:
             ball_point = self.world_state.ball.pos
             if game_info.is_stopped() or game_info.their_restart and (
