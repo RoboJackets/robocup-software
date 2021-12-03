@@ -1,6 +1,6 @@
 """
 ROS entry point into Python-side gameplay library.
-Alternatively, where gameplay cedes control to ROS-side motion control/planning.
+Alternatively, where gameplay cedes control to cpp motion control/planning.
 
 Contains TestPlaySelector, GameplayNode, and main() which spins GameplayNode
 and allows the PlaySelector to be changed between Test and other forms.
@@ -30,29 +30,27 @@ from stp.global_parameters import GlobalParameterClient
 
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic_defense, passing_tactic_play, \
-    defend_restart, restart, kickoff_play, \
-    basic122, penalty_defense, wall_ball
+from rj_gameplay.play import penalty_defense
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
 
 class TestPlaySelector(situation.IPlaySelector):
     """
-    Convenience class for testing individual plays in gameplay without 
+    Convenience class for testing individual plays in gameplay without
     having to go through the play selection system.
 
-    Import a new play, then change the select() method's return below to force 
+    Import a new play, then change the select() method's return below to force
     gameplay to always use the selected type.
     """
     def select(self, world_state: rc.WorldState) -> \
-        Tuple[Optional[situation.ISituation], stp.play.IPlay]:
+            Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         return (None, penalty_defense.PenaltyDefense())
 
 
 class GameplayNode(Node):
     """
-    A node which subscribes to the world_state, game state, robot status, and 
+    A node which subscribes to the world_state, game state, robot status, and
     field topics and converts the messages to python types.
     """
 
@@ -181,8 +179,9 @@ class GameplayNode(Node):
         """
         returns: an updated world state
         """
-        if self.partial_world_state is not None and self.field is not None and \
-                self.goalie_id is not None:
+        if self.partial_world_state is not None \
+                and self.field is not None \
+                and self.goalie_id is not None:
             self.world_state = conv.worldstate_creator(
                 self.partial_world_state, self.robot_statuses,
                 self.build_game_info(), self.field, self.goalie_id)
@@ -220,8 +219,8 @@ class GameplayNode(Node):
     def add_def_areas_to_obs(self, def_area_obstacles, game_info) -> None:
         """Creates and publishes rectangles for the defense area in front of both goals.
 
-        The defense area, per the rules, is the box in front of each goal where only that 
-        team's goalie can be in and touch the ball. 
+        The defense area, per the rules, is the box in front of each goal where only that
+        team's goalie can be in and touch the ball.
 
         (Formerly referred to as "goal_zone_obstacles".)
         """
@@ -313,8 +312,10 @@ class GameplayNode(Node):
         global_obstacles.rectangles = our_goal + their_goal
 
     def add_ball_to_global_obs(self, global_obstacles, game_info):
-        """Adds circular no-fly zone around ball during stops or restarts, 
-        to comply with rulebook."""
+        """
+        Adds circular no-fly zone around ball during stops or restarts,
+        to comply with rulebook.
+        """
 
         # this is only ever called when self.field is filled in
         assert self.field is not None
