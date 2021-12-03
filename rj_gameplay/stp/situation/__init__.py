@@ -1,7 +1,7 @@
 """This module contains the interfaces ISituation, IAnalyzer and IPlaySelector."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
 import stp.play
 import stp.rc as rc
@@ -37,7 +37,7 @@ class IPlaySelector(ABC):
         self.curr_play: IPlay = None
 
     @abstractmethod
-    def select(self, world_state: rc.WorldState) -> Tuple[ISituation, stp.play.IPlay]:
+    def select(self, world_state: rc.WorldState) -> Tuple[Optional[ISituation], stp.play.IPlay]:
         """Selects the best situation and play given given the current world state.
         :param world_state: The current state of the world.
         :return: A tuple of the best situation and best play.
