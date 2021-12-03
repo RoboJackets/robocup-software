@@ -30,14 +30,15 @@ class IAnalyzer(ABC):
 
 class IPlaySelector(ABC):
     """Abstract class for play selector."""
-
     def __init__(self):
         self.analyzer: IAnalyzer = None
         self.curr_situation: ISituation = None
         self.curr_play: IPlay = None
 
     @abstractmethod
-    def select(self, world_state: rc.WorldState) -> Tuple[Optional[ISituation], stp.play.IPlay]:
+    def select(
+        self, world_state: rc.WorldState
+    ) -> Tuple[Optional[ISituation], stp.play.IPlay]:
         """Selects the best situation and play given given the current world state.
         :param world_state: The current state of the world.
         :return: A tuple of the best situation and best play.

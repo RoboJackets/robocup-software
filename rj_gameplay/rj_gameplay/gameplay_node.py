@@ -31,7 +31,9 @@ class TestPlaySelector(situation.IPlaySelector):
 
     Import a new play, then change the select() method's return below to force gameplay to always use the selected type.
     """
-    def select(self, world_state: rc.WorldState) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
+    def select(
+        self, world_state: rc.WorldState
+    ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         return (None, penalty_defense.PenaltyDefense())
 
 
