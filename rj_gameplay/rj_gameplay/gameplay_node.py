@@ -70,7 +70,7 @@ class GameplayNode(Node):
         self.robot_state_subs = [None] * NUM_ROBOTS
         self.robot_intent_pubs = [None] * NUM_ROBOTS
 
-        self.override_actions = [None] * NUM_ROBOTS
+        self.override_actions: List[Optional[IAction] = [None] * NUM_ROBOTS
 
         for i in range(NUM_ROBOTS):
             self.robot_state_subs[i] = self.create_subscription(
@@ -323,13 +323,10 @@ class GameplayNode(Node):
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
-            if self.override_actions[i] is not None and self.robot_intent_pubs[i] is not None:
+            if isinstance(self.override_actions[i], IAction):
                 fresh_intent = msg.RobotIntent()
-                # must be assigned to local vars to make mypy happy
-                oa_i = self.override_actions[i]
-                oa_i.tick(fresh_intent)
-                rip_i = self.robot_intent_pubs[i]
-                rip_i.publish(fresh_intent)
+                self.override_actions[i].tick(fresh_intent)
+                self.robot_intent_pubs[i].publish(fresh_intent)
 
     def clear_override_actions(self) -> None:
         self.override_actions = [None] * NUM_ROBOTS
