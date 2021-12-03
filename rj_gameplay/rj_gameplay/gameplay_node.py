@@ -11,6 +11,7 @@ import stp.coordinator as coordinator
 import stp
 import stp.skill
 import stp.play
+from stp.action import IAction
 import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 import numpy as np
@@ -65,24 +66,24 @@ class GameplayNode(Node):
                                                       self.create_goalie_id,
                                                       keep_latest)
 
-        self.robot_state_subs = [None] * NUM_ROBOTS
-        self.robot_intent_pubs = [None] * NUM_ROBOTS
+        self.override_actions: List[Optional[IAction]] = [None] * NUM_ROBOTS
 
-        self.override_actions = [None] * NUM_ROBOTS
-
+        # create lists for robot state subs and robot intent pubs (ROS)
+        self.robot_state_subs = []
         for i in range(NUM_ROBOTS):
-            self.robot_state_subs[i] = self.create_subscription(
+            self.robot_state_subs.append(self.create_subscription(
                 msg.RobotStatus, 'radio/robot_status/robot_' + str(i),
-                self.create_partial_robots, 10)
+                self.create_partial_robots, 10))
 
+        self.robot_intent_pubs = []
         for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(
-                msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
+            self.robot_intent_pubs.append(self.create_publisher(
+                msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10))
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
         self.partial_world_state: conv.PartialWorldState = None
-        self.goalie_id = None
+        self.goalie_id: int = None
         self.field: rc.Field = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()
                                                        ] * NUM_ROBOTS * 2
@@ -184,7 +185,8 @@ class GameplayNode(Node):
         if self.world_state is not None:
             intents = self.coordinator.tick(self.world_state)
             for i in range(NUM_ROBOTS):
-                self.robot_intent_pubs[i].publish(intents[i])
+                rip_i = self.robot_intent_pubs[i]
+                rip_i.publish(intents[i])
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -321,9 +323,10 @@ class GameplayNode(Node):
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
-            if self.override_actions[i] is not None:
+            oa_i = self.override_actions[i]
+            if oa_i is not None:
                 fresh_intent = msg.RobotIntent()
-                self.override_actions[i].tick(fresh_intent)
+                oa_i.tick(fresh_intent)
                 self.robot_intent_pubs[i].publish(fresh_intent)
 
     def clear_override_actions(self) -> None:
