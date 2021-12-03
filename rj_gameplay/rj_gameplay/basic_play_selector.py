@@ -2,7 +2,7 @@ import stp.situation as situation
 import stp
 import stp.rc as rc
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
-import rj_gameplay.situation.decision_tree.plays as situations
+import rj_gameplay.situation.decision_tree.situations as situations
 import rj_gameplay.play as plays
 from rj_gameplay.play import basic122, basic_defense, defensive_clear, defend_restart, restart, kickoff_play, penalty_defense, penalty_offense, prep_penalty_offense
 from typing import Tuple, Dict
