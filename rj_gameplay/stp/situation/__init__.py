@@ -1,9 +1,9 @@
 """This module contains the interfaces ISituation, IAnalyzer and IPlaySelector."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple, Optional
+from typing import Tuple, Optional
 
-import stp.play
+from stp.play import IPlay
 import stp.rc as rc
 
 
