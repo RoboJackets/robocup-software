@@ -32,7 +32,6 @@ class TestPlaySelector(situation.IPlaySelector):
     Import a new play, then change the select() method's return below to force gameplay to always use the selected type.
     """
     def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        self.curr_situation = None
         return (None, penalty_defense.PenaltyDefense())
 
 
@@ -105,7 +104,7 @@ class GameplayNode(Node):
 
         self.debug_text_pub = self.create_publisher(StringMsg,
                                                     '/gameplay/debug_text', 10)
-        self.play_selector = play_selector
+        self.play_selector: situation.IPlaySelector = play_selector
         self.coordinator = coordinator.Coordinator(play_selector,
                                                    self.debug_callback)
 

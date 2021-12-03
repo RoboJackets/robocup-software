@@ -29,7 +29,12 @@ class IAnalyzer(ABC):
 
 
 class IPlaySelector(ABC):
-    """Interface for play selector."""
+    """Abstract class for play selector."""
+
+    def __init__(self):
+        self.analyzer: IAnalyzer = None
+        self.curr_situation: ISituation = None
+        self.curr_play: IPlay = None
 
     @abstractmethod
     def select(self, world_state: rc.WorldState) -> Tuple[ISituation, stp.play.IPlay]:
