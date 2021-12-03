@@ -323,10 +323,13 @@ class GameplayNode(Node):
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
-            if self.override_actions[i] is not None:
+            if self.override_actions[i] is not None and self.robot_intent_pubs[i] is not None:
                 fresh_intent = msg.RobotIntent()
-                self.override_actions[i].tick(fresh_intent)
-                self.robot_intent_pubs[i].publish(fresh_intent)
+                # must be assigned to local vars to make mypy happy
+                oa_i = self.override_actions[i]
+                oa_i.tick(fresh_intent)
+                rip_i = self.robot_intent_pubs[i]
+                rip_i.publish(fresh_intent)
 
     def clear_override_actions(self) -> None:
         self.override_actions = [None] * NUM_ROBOTS
