@@ -78,7 +78,7 @@ jobs:
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
           echo "::add-matcher::ci/mypy.json"
-          mypy --ignore-missing-imports --strict-optional rj_gameplay/rj_gameplay rj_gameplay/stp
+          mypy --ignore-missing-imports --strict-optional rj_gameplay
           echo "::remove-matcher owner=mypy::"
 
   pylint:
