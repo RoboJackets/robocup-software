@@ -35,7 +35,7 @@ class marker_cost(role.CostFn):
     def __call__(
         self,
         robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -65,7 +65,7 @@ class marker_cost(role.CostFn):
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -79,7 +79,7 @@ class NMarkTactic(tactic.ITactic):
         self.num_markers = n
 
         # create empty mark SkillEntry for each robot
-        self.mark_list = [
+        self.mark_list: type[mark.Mark] = [
             tactic.SkillEntry(mark.Mark())
             for i in range(self.num_markers)
         ]
@@ -98,7 +98,7 @@ class NMarkTactic(tactic.ITactic):
 
     def get_requests(
         self, world_state: rc.WorldState, props
-    ) -> List[tactic.RoleRequests]:
+    ) -> tactic.RoleRequests:
         """
         :return: role request for n markers
         """
@@ -119,7 +119,7 @@ class NMarkTactic(tactic.ITactic):
         return role_requests
 
     def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+             role_results: tactic.RoleResults, props: tactic.PropT) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers
         """
