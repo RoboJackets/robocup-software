@@ -79,7 +79,7 @@ class NMarkTactic(tactic.ITactic):
         self.num_markers = n
 
         # create empty mark SkillEntry for each robot
-        self.mark_list: type[mark.Mark] = [
+        self.mark_list: tactic.SkillEntry = [
             tactic.SkillEntry(mark.Mark())
             for i in range(self.num_markers)
         ]
