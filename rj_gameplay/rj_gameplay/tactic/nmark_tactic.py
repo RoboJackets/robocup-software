@@ -119,7 +119,7 @@ class NMarkTactic(tactic.ITactic):
         return role_requests
 
     def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults, props: tactic.PropT) -> List[tactic.SkillEntry]:
+             role_results: tactic.RoleResults, props: Optional[tactic.PropT]) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers
         """
