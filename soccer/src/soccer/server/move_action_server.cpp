@@ -19,12 +19,7 @@ rclcpp_action::Server<Move>::SharedPtr action_server_;
 rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                            std::shared_ptr<const Move::Goal> goal) {
     std::cout << "handle goal reached" << std::endl;
-    auto server_intent = goal->server_intent;
-    auto robot_intent = server_intent.intent;
-    auto robot_id = server_intent.robot_id;
-    auto intent_pub_ = this->create_publisher<RobotIntent::Msg>(
-        gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1).transient_local());
-    intent_pub_->publish(robot_intent);
+
     // rj_convert::convert_from_ros(
     (void)uuid;
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
@@ -48,6 +43,13 @@ void MoveActionServer ::handle_accepted(const std::shared_ptr<GoalHandleMove> go
 void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handle) {
     std::cout << "executing" << std::endl;
     const auto goal = goal_handle->get_goal();
+    rj_msgs::msg::ServerIntent server_intent = goal->server_intent;
+    rj_msgs::msg::RobotIntent robot_intent = server_intent.intent;
+    int robot_id = server_intent.robot_id;
+    std::cout << robot_id << std::endl;
+    rclcpp::Publisher<RobotIntent::Msg>::SharedPtr intent_pub_ = this->create_publisher<RobotIntent::Msg>(
+        gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1).transient_local());
+    intent_pub_->publish(robot_intent);
 
     // TODO: get feedback from planner node
     auto feedback = std::make_shared<Move::Feedback>();

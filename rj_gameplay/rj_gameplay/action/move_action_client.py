@@ -47,7 +47,6 @@ class MoveActionClient(Node):
         server_intent = ServerIntent()
         server_intent.intent = robot_intent
         server_intent.robot_id = self._robot_id
-        print(self._robot_id)
         return server_intent
 
     def send_goal(self, intent):
