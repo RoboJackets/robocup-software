@@ -21,14 +21,14 @@ Unit tests for stp/.
 
 Our gameplay library adopts the name of the [STP
 framework](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.61.1972&rep=rep1&type=pdf)
-proposed by CMDragons, but is quite different.
+proposed by CMDragons, but is quite different. All implementation files for STP are in `rj_gameplay/` as clarified above.
 
 **Play - `rj_gameplay/play/`**
 
 Handles full team behavior. Gets potential roles from a list of >=6 tactics,
 then assigns 6 of them at any time.
 
-(Examples: Basic Defense)
+(Examples: `basic_defense.py` in folder above)
 
 **Tactic - `rj_gameplay/tactic/`**
 
@@ -36,13 +36,13 @@ Handles role costing for one or more robots, such that Plays can choose
 higher-level ideas for each robot. Think of as abstraction layer between single-robot
 Skills and whole-team Plays.
 
-(Examples: Goalie, Waller, Pass)
+(Examples: `goalie_tactic.py, wall_tactic.py, pass_tactic.py` in folder above)
 
 **Skill - `rj_gameplay/skill/`**
 
 Atomic robot behavior which consists of a behavior tree of actions.
 
-(Examples: Move, Kick)
+(Examples: `move.py, mark.py, capture.py` in folder above)
 
 **Action - `rj_gameplay/action/`** (in-progress)
 
