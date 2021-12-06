@@ -23,7 +23,7 @@ SETTLE_BALL_SPEED_THRESHOLD = 2
 class Settle(skill.ISkill):
 
     """
-    # Robot settles the ball as a receiver
+    Robot settles the ball as a receiver
     """
 
     #TODO: add move functionality so that robot can move to where the ball is going.
@@ -48,20 +48,22 @@ class Settle(skill.ISkill):
         intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0
         intent.is_active = True
-        print(f'Passer: {self.passer.id}')
         return {self.robot.id: intent}
 
 
     def is_done(self, world_state) -> bool:
         if self.robot is None:
             return False
+        """
+        if the robot has a ball sense or 
+        (closer to the ball than passer and ball speed is slow enough)
+        """
         if world_state.our_robots[self.robot.id].has_ball_sense or (
                 np.linalg.norm(self.robot.pose[0:2] - world_state.ball.pos[0:2]
                                ) < np.linalg.norm(self.passer.pose[0:2] -
                                                   world_state.ball.pos[0:2])
-                and 0.01 < np.linalg.norm(
+                and np.linalg.norm(
                     world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD):
-            print('Yes')
             return True
 
         return False

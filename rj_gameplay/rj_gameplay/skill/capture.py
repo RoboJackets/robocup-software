@@ -36,9 +36,17 @@ class Capture(skill.ISkill): #add ABC if something fails
         if self.robot is not None and world_state.our_robots[
                 self.robot.id].has_ball_sense:
             self.ticks_done += 1
+            print('touch')
         else:
             self.ticks_done -= 5
+            print('no')
         self.ticks_done = np.clip(self.ticks_done, a_min=0, a_max=200)
+        if self.ticks_done>50:
+            print('fin')
+        print(f'tick{self.ticks_done}')
+        if self.robot is not None:
+            print(self.robot.id)
+            print(world_state.our_robots[self.robot.id].has_ball_sense)
         return self.ticks_done > 50
 
     def __str__(self):

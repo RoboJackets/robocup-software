@@ -15,7 +15,6 @@ from rj_msgs.msg import RobotIntent, SettleMotionCommand
 import stp.rc as rc
 from rj_msgs import msg
 
-RECEIVE_BALL_SPEED_THRESHOLD = 1.0
 
 """
 A skill version of receive so that actions don't have to be called in tactics
@@ -32,7 +31,6 @@ class Receive(skill.ISkill):
              intent: RobotIntent):
         if self.settle.is_done(world_state):
             return self.capture.tick(robot, world_state, intent)
-        # elif np.linalg.norm(world_state.ball.vel) > RECEIVE_BALL_SPEED_THRESHOLD:
         else:
             return self.settle.tick(robot, world_state, intent)
 

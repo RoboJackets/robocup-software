@@ -89,7 +89,7 @@ class PassToOpenReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     TODO: Implement a better cost function
-    CURRENTLY NOT READY FOR USE
+    CURRENTLY NOT USED
     """
     def __init__(self,
                  target_point: Optional[np.ndarray] = None,
@@ -113,10 +113,7 @@ class PassToOpenReceiver(role.CostFn):
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
             return 1e9
-        # if self.chosen_receiver is not None and self.chosen_receiver.id == robot.id:
-        #     return -1e9
 
-        # TODO: pick "most open" pass
         if self.passer_robot is not None and robot.id != self.passer_robot.id:
             pass_dist = np.linalg.norm(passer_robot.pose[0:2] -
                                        robot.pose[0:2])
@@ -141,11 +138,11 @@ class PassToOpenReceiver(role.CostFn):
 class PassToBestReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
+    TODO: improve this cost function
 
     """
     def __init__(self, passer_robot: rc.Robot = None):
         self.passer_robot = passer_robot
-        # self.chosen_receiver = None
 
     def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
                  world_state: rc.WorldState) -> float:
@@ -159,45 +156,45 @@ class PassToBestReceiver(role.CostFn):
                     self.passer_robot = our_robot
         if robot is None:
             return 1e9
-        # if not robot.visible:
-        #     return 1e9
+
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
             return 1e9
+
         angle_threshold = 5
         dist_threshold = 1.5
         backpass_punish_weight = 0.5
-        if robot.id != self.passer_robot.id:
-            pass_dist = np.linalg.norm(self.passer_robot.pose[0:2] -
-                                       robot.pose[0:2])
 
-            cost = 0
-            goal_to_receiver = np.linalg.norm(robot.pose[0:2] -
-                                              world_state.field.their_goal_loc)
-            goal_to_passer = np.linalg.norm(self.passer_robot.pose[0:2] -
-                                            world_state.field.their_goal_loc)
-            cost += (goal_to_receiver -
-                     goal_to_passer) * backpass_punish_weight
-            for enemy in world_state.their_robots:
-                passer_to_enemy = np.linalg.norm(enemy.pose[0:2] -
-                                                 self.passer_robot.pose[0:2])
-                if passer_to_enemy <= pass_dist:
-                    vec_to_passer = robot.pose[0:2] - self.passer_robot.pose[
-                        0:2]
-                    vec_to_enemy = enemy.pose[0:2] - self.passer_robot.pose[0:2]
-                    angle = np.degrees(
-                        abs(
-                            atan2(np.linalg.det([vec_to_passer, vec_to_enemy]),
-                                  np.dot(vec_to_passer, vec_to_enemy))))
-                    if angle < angle_threshold:
-                        return 1e9
-                enemy_to_receiver = np.linalg.norm(robot.pose[0:2] -
-                                                   enemy.pose[0:2])
-                if enemy_to_receiver < dist_threshold:
-                    cost += (dist_threshold - enemy_to_receiver)**2
-            return cost
-        else:
-            return 0
+        pass_dist = np.linalg.norm(self.passer_robot.pose[0:2] -
+                                   robot.pose[0:2])
+
+        cost = 0
+        #distance from their goal to receiver
+        goal_to_receiver = np.linalg.norm(robot.pose[0:2] -
+                                          world_state.field.their_goal_loc)
+        #distance from their goal to passer
+        goal_to_passer = np.linalg.norm(self.passer_robot.pose[0:2] -
+                                        world_state.field.their_goal_loc)
+        #Add cost for backwards passes scaled by backpass_punish_weight
+        cost += (goal_to_receiver - goal_to_passer) * backpass_punish_weight
+        for enemy in world_state.their_robots:
+            passer_to_enemy = np.linalg.norm(enemy.pose[0:2] -
+                                             self.passer_robot.pose[0:2])
+            if passer_to_enemy <= pass_dist:
+                vec_to_passer = robot.pose[0:2] - self.passer_robot.pose[0:2]
+                vec_to_enemy = enemy.pose[0:2] - self.passer_robot.pose[0:2]
+                angle = np.degrees(
+                    abs(
+                        atan2(np.linalg.det([vec_to_passer, vec_to_enemy]),
+                              np.dot(vec_to_passer, vec_to_enemy))))
+                if angle < angle_threshold:
+                    return 1e9
+            enemy_to_receiver = np.linalg.norm(robot.pose[0:2] -
+                                               enemy.pose[0:2])
+            if enemy_to_receiver < dist_threshold:
+                cost += (dist_threshold - enemy_to_receiver)**2
+        return cost
+
 
     def unassigned_cost_fn(
         self,
@@ -241,7 +238,6 @@ class Pass(tactic.ITactic):
             if curr_cost < cost:
                 cost = curr_cost
                 receiver = robot
-        # print(receiver.id)
         return receiver
 
     def find_passer(self, world_state: rc.WorldState) -> rc.Robot:
@@ -285,23 +281,13 @@ class Pass(tactic.ITactic):
         receive_result = role_results[self.receive]
         if pivot_result and pivot_result[0].is_filled():
             self.receiver_cost.passer_robot = pivot_result[0].role.robot
-            # self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
-            self.pivot_kick.skill.target_point = self.find_potential_receiver(world_state).pose[0:2]
+            self.pivot_kick.skill.target_point = self.find_potential_receiver(
+                world_state).pose[0:2]
             self.pivot_kick.skill.pivot_point = np.array(
                 pivot_result[0].role.robot.pose[0:2])
 
-            # self.receiver_cost.potential_receiver = receive_result[
-            #     0].role.robot
-            # return [self.receive]
-            # elif pivot_result and pivot_result[0].is_filled():
-
-
-            # self.pivot_kick.skill.pivot.target_point =
-            # if potential_receiver is not None:
-            #     self.pivot_kick.skill.pivot.target_point = np.array(
-            #         [potential_receiver.pose[0], potential_receiver.pose[1]])
             return [self.pivot_kick]
-        elif receive_result and receive_result[0].is_filled(): 
+        elif receive_result and receive_result[0].is_filled():
             return [self.receive]
         return []
 
