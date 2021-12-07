@@ -32,7 +32,7 @@ class WallBall(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[List[tactic.SkillEntry]]]:
 
         # pre-calculate wall points and store in numpy array
         wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
