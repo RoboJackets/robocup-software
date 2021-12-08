@@ -142,7 +142,7 @@ class DefendKickoffPlay(play.IPlay):
                List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, 
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
                                                    world_state)
 
         # Get role requests from all tactics and put them into a dictionary
