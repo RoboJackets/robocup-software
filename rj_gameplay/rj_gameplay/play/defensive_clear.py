@@ -9,8 +9,8 @@ import stp.rc as rc
 import numpy as np
 from typing import Dict, List, Tuple
 
-class DefensiveClear(play.IPlay):
 
+class DefensiveClear(play.IPlay):
     def __init__(self):
         self.goalie = goalie_tactic.GoalieTactic()
         self.two_mark = nmark_tactic.NMarkTactic(2)
@@ -26,7 +26,7 @@ class DefensiveClear(play.IPlay):
         prev_results: role.assignment.FlatRoleResults,
         props,
     ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]],
-        List[tactic.SkillEntry]]:
+               List[tactic.SkillEntry]]:
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
