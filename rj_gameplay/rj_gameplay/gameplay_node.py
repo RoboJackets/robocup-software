@@ -1,9 +1,21 @@
+"""
+ROS entry point into Python-side gameplay library.
+Alternatively, where gameplay cedes control to cpp motion control/planning.
+
+Contains TestPlaySelector, GameplayNode, and main() which spins GameplayNode
+and allows the PlaySelector to be changed between Test and other forms.
+"""
+
+from typing import List, Optional, Tuple
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rj_msgs import msg
 from rj_geometry_msgs import msg as geo_msg
+from std_msgs.msg import String as StringMsg
+
 import stp.rc as rc
 import stp.utils.world_state_converter as conv
 import stp.situation as situation
@@ -11,36 +23,40 @@ import stp.coordinator as coordinator
 import stp
 import stp.skill
 import stp.play
+from stp.action import IAction
+
 import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
+
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import basic_defense, passing_tactic_play, defend_restart, restart, kickoff_play, \
-    basic122, penalty_defense, wall_ball
-from typing import List, Optional, Tuple
-from std_msgs.msg import String as StringMsg
-
+from rj_gameplay.play import penalty_defense
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
 
-
 class TestPlaySelector(situation.IPlaySelector):
-    """Convenience class for testing individual plays in gameplay without having to go through the play selection system.
-
-    Import a new play, then change the select() method's return below to force gameplay to always use the selected type.
     """
-    def select(self, world_state: rc.WorldState) -> Tuple[situation.ISituation, stp.play.IPlay]:
-        self.curr_situation = None
+    Convenience class for testing individual plays in gameplay without
+    having to go through the play selection system.
+
+    Import a new play, then change the select() method's return below to force
+    gameplay to always use the selected type.
+    """
+    def select(self, world_state: rc.WorldState) -> \
+            Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         return (None, penalty_defense.PenaltyDefense())
 
 
 class GameplayNode(Node):
     """
-    A node which subscribes to the world_state, game state, robot status, and field topics and converts the messages to python types.
+    A node which subscribes to the world_state, game state, robot status, and
+    field topics and converts the messages to python types.
     """
 
-    def __init__(self, play_selector: situation.IPlaySelector, world_state: Optional[rc.WorldState] = None) -> None:
+    def __init__(self,
+                 play_selector: situation.IPlaySelector,
+                 world_state: Optional[rc.WorldState] = None) -> None:
         rclpy.init()
         super().__init__('gameplay_node')
         self.world_state_sub = self.create_subscription(
@@ -65,25 +81,26 @@ class GameplayNode(Node):
                                                       self.create_goalie_id,
                                                       keep_latest)
 
-        self.robot_state_subs = [None] * NUM_ROBOTS
-        self.robot_intent_pubs = [None] * NUM_ROBOTS
+        self.override_actions: List[Optional[IAction]] = [None] * NUM_ROBOTS
 
-        self.override_actions = [None] * NUM_ROBOTS
-
+        # create lists for robot state subs and robot intent pubs (ROS)
+        self.robot_state_subs = []
         for i in range(NUM_ROBOTS):
-            self.robot_state_subs[i] = self.create_subscription(
+            self.robot_state_subs.append(self.create_subscription(
                 msg.RobotStatus, 'radio/robot_status/robot_' + str(i),
-                self.create_partial_robots, 10)
+                self.create_partial_robots, 10))
 
+        self.robot_intent_pubs = []
         for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(
-                msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
+            self.robot_intent_pubs.append(self.create_publisher(
+                msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10))
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
-        self.partial_world_state: conv.PartialWorldState = None
-        self.goalie_id = None
-        self.field: rc.Field = None
+        # these 3 Nones will be filled in dynamically
+        self.partial_world_state: Optional[conv.PartialWorldState] = None
+        self.goalie_id: Optional[int] = None
+        self.field: Optional[rc.Field] = None
         self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()
                                                        ] * NUM_ROBOTS * 2
         self.ball_placement = None
@@ -103,7 +120,7 @@ class GameplayNode(Node):
 
         self.debug_text_pub = self.create_publisher(StringMsg,
                                                     '/gameplay/debug_text', 10)
-        self.play_selector = play_selector
+        self.play_selector: situation.IPlaySelector = play_selector
         self.coordinator = coordinator.Coordinator(play_selector,
                                                    self.debug_callback)
 
@@ -158,33 +175,30 @@ class GameplayNode(Node):
         """
         self.goalie_id = msg.goalie_id
 
-    def get_world_state(self) -> rc.WorldState:
+    def update_world_state(self) -> None:
         """
         returns: an updated world state
         """
-        if self.partial_world_state is not None and self.field is not None:
+        if self.partial_world_state is not None \
+                and self.field is not None \
+                and self.goalie_id is not None:
             self.world_state = conv.worldstate_creator(
                 self.partial_world_state, self.robot_statuses,
                 self.build_game_info(), self.field, self.goalie_id)
-
-        return self.world_state
+            assert self.world_state is not None
 
     def gameplay_tick(self) -> None:
         """
         ticks the gameplay coordinator using recent world_state
         """
 
-        if self.partial_world_state is not None and self.field is not None and len(self.robot_statuses) >= NUM_ROBOTS:
-            self.world_state = conv.worldstate_creator(
-                self.partial_world_state, self.robot_statuses,
-                self.build_game_info(), self.field, self.goalie_id)
-        else:
-            self.world_state = None
+        self.update_world_state()
 
         if self.world_state is not None:
             intents = self.coordinator.tick(self.world_state)
             for i in range(NUM_ROBOTS):
-                self.robot_intent_pubs[i].publish(intents[i])
+                rip_i = self.robot_intent_pubs[i]
+                rip_i.publish(intents[i])
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -205,8 +219,13 @@ class GameplayNode(Node):
     def add_def_areas_to_obs(self, def_area_obstacles, game_info) -> None:
         """Creates and publishes rectangles for the defense area in front of both goals.
 
-        The defense area, per the rules, is the box in front of each goal where only that team's goalie can be in and touch the ball. (Formerly referred to as "goal_zone_obstacles".)
+        The defense area, per the rules, is the box in front of each goal where
+        only that team's goalie can be in and touch the ball.
+
+        (Formerly referred to as "goal_zone_obstacles".)
         """
+        # this is only ever called when self.field is filled in
+        assert self.field is not None
 
         # create Rect for our def_area box
         our_def_area = geo_msg.Rect()
@@ -239,6 +258,9 @@ class GameplayNode(Node):
 
     def add_goals_to_global_obs(self, global_obstacles, game_info):
         """Adds the physical walls that form each goal to global_obstacles."""
+        # this is only ever called when self.field is filled in
+        assert self.field is not None
+
         physical_goal_board_width = 0.1
         our_goal = [
             geo_msg.Rect(pt=[
@@ -290,7 +312,14 @@ class GameplayNode(Node):
         global_obstacles.rectangles = our_goal + their_goal
 
     def add_ball_to_global_obs(self, global_obstacles, game_info):
-        """Adds circular no-fly zone around ball during stops or restarts, to comply with rulebook."""
+        """
+        Adds circular no-fly zone around ball during stops or restarts,
+        to comply with rulebook.
+        """
+
+        # this is only ever called when self.field is filled in
+        assert self.field is not None
+
         if game_info is not None:
             ball_point = self.world_state.ball.pos
             if game_info.is_stopped() or game_info.their_restart and (
@@ -321,9 +350,10 @@ class GameplayNode(Node):
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
-            if self.override_actions[i] is not None:
+            oa_i = self.override_actions[i]
+            if oa_i is not None:
                 fresh_intent = msg.RobotIntent()
-                self.override_actions[i].tick(fresh_intent)
+                oa_i.tick(fresh_intent)
                 self.robot_intent_pubs[i].publish(fresh_intent)
 
     def clear_override_actions(self) -> None:
