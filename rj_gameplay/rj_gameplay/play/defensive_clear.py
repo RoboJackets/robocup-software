@@ -45,7 +45,7 @@ class DefensiveClear(play.IPlay):
 
         # Get list of all skills with assigned roles from tactics
         skills: List[tactic.SkillEntry] = []
-        skills = self.two_mark.tick(world_state, role_results[self.two_mark])
+        skills += self.two_mark.tick(world_state, role_results[self.two_mark])
         skills += self.clear.tick(world_state, role_results[self.clear])
         skills += self.goalie.tick(world_state, role_results[self.goalie])
         skill_dict = {}
