@@ -81,7 +81,8 @@ class BasicPlaySelector(situation.IPlaySelector):
         self, world_state: rc.WorldState
     ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         if world_state.game_info is None and self.curr_play is None:
-            return (self.curr_situation, basic_defense.BasicDefense(self._action_client_dict))
+            return (self.curr_situation,
+                    basic_defense.BasicDefense(self._action_client_dict))
         if world_state.game_info is not None:
             plays_selection = []
             self.curr_situation = self.analyzer.analyze_situation(world_state)

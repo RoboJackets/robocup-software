@@ -111,5 +111,4 @@ static inline std::string robot_intent_pub(int robot_id) {
     return "action_server/robot_intent/robot_" + std::to_string(robot_id);
 }
 
-
 }  // namespace action_server::topics

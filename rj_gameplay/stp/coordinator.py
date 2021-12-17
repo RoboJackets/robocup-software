@@ -100,7 +100,8 @@ class Coordinator:
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
             if robot:
-                tick_ret = skill.skill.tick(robot, world_state, intents[robot.id])
+                tick_ret = skill.skill.tick(robot, world_state,
+                                            intents[robot.id])
                 if tick_ret:
                     intents_dict.update(tick_ret)
 

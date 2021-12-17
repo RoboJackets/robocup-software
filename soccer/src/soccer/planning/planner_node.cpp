@@ -66,14 +66,14 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
         action_server::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
         [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT
-          if (robot_alive()) {
-              auto plan_request = make_request(rj_convert::convert_from_ros(*intent));
-              auto trajectory = plan_for_robot(plan_request);
-              trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
-              robot_trajectories_->put(robot_id_,
-                                       std::make_shared<Trajectory>(std::move(trajectory)),
-                                       intent->priority);
-          }
+            if (robot_alive()) {
+                auto plan_request = make_request(rj_convert::convert_from_ros(*intent));
+                auto trajectory = plan_for_robot(plan_request);
+                trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+                robot_trajectories_->put(robot_id_,
+                                         std::make_shared<Trajectory>(std::move(trajectory)),
+                                         intent->priority);
+            }
         });
 
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(

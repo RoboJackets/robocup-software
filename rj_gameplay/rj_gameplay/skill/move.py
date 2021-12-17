@@ -66,7 +66,7 @@ class Move(skill.ISkill):
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
         """
-        
+
         server_intent = self.move_action_clients[
             robot.id].generate_server_intent(self.target_point,
                                              self.target_vel, self.face_angle,

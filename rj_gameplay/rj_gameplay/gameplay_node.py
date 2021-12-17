@@ -48,7 +48,6 @@ class TestPlaySelector(situation.IPlaySelector):
     Import a new play, then change the select() method's return below to force
     gameplay to always use the selected type.
     """
-
     def __init__(self):
         self._action_client_dict = None
 

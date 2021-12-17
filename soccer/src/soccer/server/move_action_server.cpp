@@ -25,8 +25,9 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
     rj_msgs::msg::RobotIntent robot_intent = server_intent.intent;
     int robot_id = server_intent.robot_id;
     std::cout << robot_id << std::endl;
-    rclcpp::Publisher<RobotIntent::Msg>::SharedPtr intent_pub_ = this->create_publisher<RobotIntent::Msg>(
-        action_server::topics::robot_intent_pub(robot_id), rclcpp::QoS(1).transient_local());
+    rclcpp::Publisher<RobotIntent::Msg>::SharedPtr intent_pub_ =
+        this->create_publisher<RobotIntent::Msg>(action_server::topics::robot_intent_pub(robot_id),
+                                                 rclcpp::QoS(1).transient_local());
     intent_pub_->publish(robot_intent);
     // rj_convert::convert_from_ros(
     (void)uuid;
