@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action
 import stp.rc as rc
@@ -51,13 +51,14 @@ class Move(tactic.ITactic):
     A striker tactic which captures then shoots the ball
     """
 
-    def __init__(self,
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+
                  target_point: np.ndarray,
                  face_point: np.ndarray = None,
                  cost_scale: float = 1.0,
                  priority: role.Priority = role.Priority.MEDIUM):
         self.move = tactic.SkillEntry(
-            move.Move(target_point=target_point, face_point=face_point))
+            move.Move(action_client_dict, target_point=target_point, face_point=face_point))
         self.cost = move_cost(target_point, cost_scale=cost_scale)
         self.priority = priority
 

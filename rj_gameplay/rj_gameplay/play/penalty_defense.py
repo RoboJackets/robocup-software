@@ -6,7 +6,7 @@ import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar, Any
 
 
 class PreparePenaltyDefense(play.IPlay):
@@ -72,14 +72,14 @@ class PreparePenaltyDefense(play.IPlay):
 class PenaltyDefense(play.IPlay):
     """For when we don't have the ball and are trying to stop the opponent from scoring.
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.tactics = [
-            goalie_tactic.GoalieTactic(),
-            move_tactic.Move((1.6, 9.0)),
-            move_tactic.Move((1.9, 9.0)),
-            move_tactic.Move((2.2, 9.0)),
-            move_tactic.Move((2.5, 9.0)),
-            move_tactic.Move((2.8, 9.0)),
+            goalie_tactic.GoalieTactic(action_client_dict),
+            move_tactic.Move(action_client_dict, (1.6, 9.0)),
+            move_tactic.Move(action_client_dict, (1.9, 9.0)),
+            move_tactic.Move(action_client_dict, (2.2, 9.0)),
+            move_tactic.Move(action_client_dict, (2.5, 9.0)),
+            move_tactic.Move(action_client_dict, (2.8, 9.0)),
         ]
 
         self.role_assigner = NaiveRoleAssignment()

@@ -6,7 +6,7 @@ Contains TestPlaySelector, GameplayNode, and main() which spins GameplayNode
 and allows the PlaySelector to be changed between Test and other forms.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict, Type, Any
 
 import rclpy
 from rclpy.node import Node
@@ -31,7 +31,7 @@ from stp.global_parameters import GlobalParameterClient
 import numpy as np
 
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import penalty_defense
+from rj_gameplay.play import penalty_defense, basic_defense
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 from rj_gameplay.action import move_action_client
@@ -58,7 +58,8 @@ class TestPlaySelector(situation.IPlaySelector):
 
     def select(self, world_state: rc.WorldState) -> \
             Tuple[Optional[situation.ISituation], stp.play.IPlay]:
-        return (None, penalty_defense.PenaltyDefense())
+        self.curr_situation = None
+        return (None, basic_defense.BasicDefense(self._action_client_dict))
 
 
 class GameplayNode(Node):
