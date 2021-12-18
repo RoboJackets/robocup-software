@@ -84,7 +84,8 @@ class Mark(skill.ISkill):
                 mark_point = get_mark_point(self.target_robot.id, world_state)
         self.target_point = mark_point
         self.face_point = world_state.ball.pos
-
+        
+        """
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=self.target_point[0],
                                              y=self.target_point[1])
@@ -102,7 +103,16 @@ class Mark(skill.ISkill):
 
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
-        return {self.robot.id : intent}
+        """
+
+        server_intent = self.move_action_clients[
+            robot.id].generate_server_intent(self.target_point,
+                                             self.target_vel, self.face_angle,
+                                             self.face_point, self.ignore_ball)
+        print(server_intent)
+        self.move_action_clients[robot.id].send_goal(server_intent)
+
+        # return {self.robot.id : intent}
         # update target point every tick to match movement of ball & target robot
 
     def is_done(self, world_state):

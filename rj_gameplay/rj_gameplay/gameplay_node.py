@@ -30,7 +30,6 @@ from stp.global_parameters import GlobalParameterClient
 
 import numpy as np
 
-from rj_gameplay.action.move import Move
 from rj_gameplay.play import penalty_defense, basic_defense
 import rj_gameplay.basic_play_selector as basic_play_selector
 
@@ -113,7 +112,8 @@ class GameplayNode(Node):
             move_action_client.MoveActionClient(i) for i in range(NUM_ROBOTS)
         ]
 
-        # action client dictionary mapping actions to list of action clients
+        # action client dictionary mapping action clients types to a list of action clients
+        # TODO: delete above comment once fixed with mypy
         self.action_client_dict: Dict[Type[Any], List[Any]] = \
             {MoveActionClient: self.move_action_clients}
 

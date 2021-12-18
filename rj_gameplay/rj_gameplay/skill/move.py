@@ -12,7 +12,6 @@ from typing import Optional, Dict, Type, List, Any
 import stp.skill as skill
 import stp.role as role
 import stp.action as action
-from rj_gameplay.action import move
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 import stp.rc as rc
