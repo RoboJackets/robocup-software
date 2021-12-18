@@ -65,14 +65,14 @@ class Move(skill.ISkill):
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
         """
-
-        server_intent = self.move_action_clients[
-            robot.id].generate_server_intent(self.target_point,
-                                             self.target_vel, self.face_angle,
-                                             self.face_point, self.ignore_ball)
-        print(server_intent)
-        self.move_action_clients[robot.id].send_goal(server_intent)
-        # return {self.robot.id : intent}
+        if robot:
+            server_intent = self.move_action_clients[
+                robot.id].generate_server_intent(self.target_point,
+                                                 self.target_vel, self.face_angle,
+                                                 self.face_point, self.ignore_ball)
+            print(server_intent)
+            self.move_action_clients[robot.id].send_goal(server_intent)
+            # return {self.robot.id : intent}
 
     def is_done(self, world_state):
         threshold = 0.3
