@@ -1,7 +1,7 @@
 # rj\_gameplay - Gameplay for RJ RoboCup SSL 
 
 This is the Python library that controls gameplay, or high-level
-decision-making. 
+decision-making. For a more detailed overview, see this [Google Doc](https://docs.google.com/document/d/1pf-aaHnvonTPC6ccI7RdHudpuev84fZslMVDq8lw59s/edit?usp=sharing).
 
 ## Main Folders
 
