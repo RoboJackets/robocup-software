@@ -6,7 +6,7 @@ import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar, Any
 import numpy as np
 from rj_gameplay.calculations import wall_calculations
 

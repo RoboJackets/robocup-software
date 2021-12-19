@@ -5,7 +5,7 @@ from rj_gameplay.tactic import striker_tactic, assist_tactic
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar, Any
 import numpy as np
 
 

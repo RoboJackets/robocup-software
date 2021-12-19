@@ -7,7 +7,7 @@ import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 import numpy as np
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar, Any
 
 class DefensiveClear(play.IPlay):
 
