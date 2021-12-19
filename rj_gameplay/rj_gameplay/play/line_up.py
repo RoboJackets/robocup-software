@@ -13,7 +13,7 @@ class LineUp(play.IPlay):
     """A play which lines up two robots, one on the right the one on the left
     """
 
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.left_x = 1.0
         self.right_x = -1.5
         self.start_y = 2.0

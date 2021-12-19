@@ -12,7 +12,7 @@ from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 class PreparePenaltyDefense(play.IPlay):
     """For when we don't have the ball and are trying to stop the opponent from scoring.
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.goalie_move = move_tactic.Move((0.0, 1.0), face_point=(0.0, 4.5))
         self.goalie_move.cost = goalie_tactic.GoalieCost()
         self.tactics = [

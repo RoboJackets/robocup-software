@@ -10,7 +10,7 @@ import numpy as np
 
 
 class Striker(play.IPlay):
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.striker_loc: np.ndarray = np.array([0., 12.])
         self.target_point: np.ndarray = np.array([0., 12.])
         self.role_assigner = NaiveRoleAssignment()

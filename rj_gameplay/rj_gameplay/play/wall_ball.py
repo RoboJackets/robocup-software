@@ -15,7 +15,7 @@ class WallBall(play.IPlay):
     """
     Test play for the wall tactic. Directs robots to form a wall between the ball and goal.
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         # defaults to walling between ball pos and goal pos
         self.wall_tactic_1 = wall_tactic.WallTactic()
         self.wall_tactic_2 = wall_tactic.WallTactic()

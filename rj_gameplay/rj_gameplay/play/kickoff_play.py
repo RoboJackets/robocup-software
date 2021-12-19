@@ -29,7 +29,7 @@ class kickoff_cost(role.CostFn):
 class PrepareKickoffPlay(play.IPlay):
     """Hardcoded points to stand in for kickoff
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.points = [
             (0.0, 4.25),
             (0.6, 4.25),
@@ -104,7 +104,7 @@ class PrepareKickoffPlay(play.IPlay):
 class DefendKickoffPlay(play.IPlay):
     """Hardcoded points to stand in for kickoff
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.points = [
             (0.0, 3.9),
             (0.8, 4.25),

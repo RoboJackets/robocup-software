@@ -16,7 +16,7 @@ class Basic122(play.IPlay):
     other two seek to specific spots (BAD HARDCODING)
     """
 
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.target_point: np.ndarray = np.array([0., 9.])
         self.striker_tactic = striker_tactic.LineKickStrikerTactic(
             target_point=self.target_point)

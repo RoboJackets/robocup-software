@@ -13,7 +13,7 @@ import numpy as np
 class PenaltyOffense(play.IPlay):
     """Move all robots to our half, but away from ball to prep for penalty kick
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.tactics = [
             goalie_tactic.GoalieTactic(True),
             striker_tactic.LineKickStrikerTactic(None),

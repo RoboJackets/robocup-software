@@ -14,7 +14,7 @@ from rj_gameplay.calculations import wall_calculations
 class RestartPlay(play.IPlay):
     """One robot passes to another. Some markers.
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.target_point = np.array([1.0, 4.0])
 
         # TODO: simplify tactic with list (see basic_defense.py)
@@ -121,7 +121,7 @@ class RestartPlay(play.IPlay):
 class DirectRestartPlay(play.IPlay):
     """One robot passes to another. Some markers.
     """
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.target_point = np.array([1.0, 4.0])
 
         # TODO: simplify tactic with list (see basic_defense.py)
