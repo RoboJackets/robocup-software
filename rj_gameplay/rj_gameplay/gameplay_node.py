@@ -403,10 +403,10 @@ class GameplayNode(Node):
 
 def main():
     # uncomment this line to use the test play selector
-    play_selector = TestPlaySelector()
+    # play_selector = TestPlaySelector()
 
     # comment out this line when using the test play selector
-    # play_selector = basic_play_selector.BasicPlaySelector()
+    play_selector = basic_play_selector.BasicPlaySelector()
 
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)

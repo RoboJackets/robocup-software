@@ -70,21 +70,23 @@ class Move(skill.ISkill):
                 robot.id].generate_server_intent(self.target_point,
                                                  self.target_vel, self.face_angle,
                                                  self.face_point, self.ignore_ball)
-            print(server_intent)
             self.move_action_clients[robot.id].send_goal(server_intent)
             # return {self.robot.id : intent}
 
     def is_done(self, world_state):
         threshold = 0.3
-        if self.robot.id is None or world_state is None:
-            return False
-        elif (math.sqrt((world_state.our_robots[self.robot.id].pose[0] -
-                         self.target_point[0])**2 +
-                        (world_state.our_robots[self.robot.id].pose[1] -
-                         self.target_point[1])**2) < threshold):
-            return True
+        if self.robot:
+            if self.robot.id is None or world_state is None:
+                return False
+            elif (math.sqrt((world_state.our_robots[self.robot.id].pose[0] -
+                             self.target_point[0])**2 +
+                            (world_state.our_robots[self.robot.id].pose[1] -
+                             self.target_point[1])**2) < threshold):
+                return True
+            else:
+                return False
         else:
-            return False
+            return True
 
     def __str__(self):
         ignore_ball_str = ', ignoring ball' if self.ignore_ball else ''
