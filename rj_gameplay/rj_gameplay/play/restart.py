@@ -18,7 +18,7 @@ class RestartPlay(play.IPlay):
         self.target_point = np.array([1.0, 4.0])
 
         # TODO: simplify tactic with list (see basic_defense.py)
-        self.goalie_tactic = goalie_tactic.GoalieTactic()
+        self.goalie_tactic = goalie_tactic.GoalieTactic(action_client_dict)
         self.clear_tactic = clear_tactic.Clear(np.array([0.0, 9.0]),
                                                chip=True,
                                                kick_speed=3.0)
@@ -125,7 +125,7 @@ class DirectRestartPlay(play.IPlay):
         self.target_point = np.array([1.0, 4.0])
 
         # TODO: simplify tactic with list (see basic_defense.py)
-        self.goalie_tactic = goalie_tactic.GoalieTactic()
+        self.goalie_tactic = goalie_tactic.GoalieTactic(action_client_dict)
         self.clear_tactic = clear_tactic.Clear(np.array([0.0, 9.0]),
                                                chip=False,
                                                kick_speed=5.5)

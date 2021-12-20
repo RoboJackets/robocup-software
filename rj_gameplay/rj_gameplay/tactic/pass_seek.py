@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Callable
+from typing import List, Optional, Any
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Callable, Any
 
 import stp.action as action
 import stp.rc as rc
@@ -87,7 +87,7 @@ class SeekCost(role.CostFn):
     A cost function for how to choose a seeking robot
     TODO: Implement a better cost function
     """
-    def __init__(self, target_point: np.ndarray):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray):
         self.target_point = target_point
 
     def __call__(
@@ -122,7 +122,7 @@ class Seek(tactic.ITactic):
     Role chosen by SeekCost
     # TODO: make naming less arbitrary
     """
-    def __init__(self, target_point: np.ndarray,
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray,
                  seek_heuristic: Callable[[Tuple[float, float]],
                                           float], seeker_cost: role.CostFn):
         goal_pos = np.array([0, 9])

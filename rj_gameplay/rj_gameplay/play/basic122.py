@@ -20,7 +20,7 @@ class Basic122(play.IPlay):
         self.target_point: np.ndarray = np.array([0., 9.])
         self.striker_tactic = striker_tactic.LineKickStrikerTactic(
             target_point=self.target_point)
-        self.goalie_tactic = goalie_tactic.GoalieTactic()
+        self.goalie_tactic = goalie_tactic.GoalieTactic(action_client_dict)
         self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW,
                                                     cost_scale=0.1)
         self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW,

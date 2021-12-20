@@ -1,7 +1,7 @@
 """Tactic to test the mark skill. """
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Any, Dict, Type
 
 import stp.action as action
 import stp.rc as rc
@@ -50,7 +50,7 @@ class TestMarkTactic(tactic.ITactic):
     """
     A tactic which creates n robots with some marking heuristic
     """
-    def __init__(self, n: int):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], n: int):
         self.num_markers = n
         self.markers_list = []
         for i in range(self.num_markers):

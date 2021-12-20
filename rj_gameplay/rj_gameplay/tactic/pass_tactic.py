@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import List, Optional, Any
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action
 import stp.rc as rc
@@ -20,7 +20,7 @@ class PassToClosestReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     """
-    def __init__(self,
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
                  target_point: Optional[np.ndarray] = None,
                  passer_robot: rc.Robot = None):
         self.target_point = target_point
@@ -91,7 +91,7 @@ class PassToOpenReceiver(role.CostFn):
     TODO: Implement a better cost function
     CURRENTLY NOT READY FOR USE
     """
-    def __init__(self,
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
                  target_point: Optional[np.ndarray] = None,
                  passer_robot: rc.Robot = None):
         self.target_point = target_point
@@ -159,7 +159,7 @@ class Pass(tactic.ITactic):
     A passing tactic which captures then passes the ball
     """
 
-    def __init__(self, target_point: np.ndarray, passer_cost: role.CostFn,
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, passer_cost: role.CostFn,
                  receiver_cost: role.CostFn):
         self.target_point = target_point
         self.pivot_kick = tactic.SkillEntry(

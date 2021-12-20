@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional, Any, Dict, Type
+from typing import List, Optional, Any, Dict, Type, Any
 
 import stp.rc as rc
 import stp.tactic as tactic

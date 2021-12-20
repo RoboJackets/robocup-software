@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Any, Dict, Type
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
@@ -125,7 +125,7 @@ class StrikerTactic(tactic.ITactic):
     """
 	A striker tactic which receives then shoots the ball
 	"""
-    def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
         self.capture = tactic.SkillEntry(capture.Capture())
@@ -196,7 +196,7 @@ class LineKickStrikerTactic(tactic.ITactic):
     """
 	A striker tactic which receives then shoots the ball
 	"""
-    def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
         self.shoot = tactic.SkillEntry(

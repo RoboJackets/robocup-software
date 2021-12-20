@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import List, Optional, Any
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action
 import stp.rc as rc
@@ -40,7 +40,7 @@ class Clear(tactic.ITactic):
     """
     A passing tactic which captures then passes the ball
     """
-    def __init__(self, target_point: np.ndarray, kick_speed=3.0, chip=False):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, kick_speed=3.0, chip=False):
         self.target_point = target_point
         self.kick = tactic.SkillEntry(
             line_kick.LineKickSkill(None,

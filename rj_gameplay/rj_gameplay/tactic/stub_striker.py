@@ -1,8 +1,8 @@
 """Contains the stub for the striker tactic. """
 
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import List, Optional, Any
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action
 import stp.rc as rc

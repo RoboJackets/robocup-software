@@ -1,7 +1,7 @@
 """Contains the stub for the move tactic. """
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Any
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action

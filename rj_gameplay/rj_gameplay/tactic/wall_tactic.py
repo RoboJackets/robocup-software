@@ -1,7 +1,7 @@
 """Tactic to build a wall between mark pt (e.g. ball) and defense pt (e.g. goal)."""
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Any
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action

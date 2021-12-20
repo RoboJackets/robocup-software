@@ -1,8 +1,8 @@
 """Contains the stub for the move tactic. """
 
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import List, Optional, Any
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
 import stp.action as action
 import stp.rc as rc
@@ -45,7 +45,7 @@ class one_lineup_cost(role.CostFn):
 class one_lineup_constraint(role.ConstraintFn):
     """Protocol for ConstraintFn. """
 
-    def __init__(self, robot_id):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot_id):
         self.robot_id = robot_id
 
     def __call__(
@@ -62,7 +62,7 @@ class OneLineUp(tactic.ITactic):
     """
 
 
-    def __init__(self, robot_id):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot_id):
         self.left_x = 1.0
         self.right_x = -1.5
         self.start_y = 2.0

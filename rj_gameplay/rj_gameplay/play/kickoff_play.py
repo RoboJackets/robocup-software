@@ -39,9 +39,9 @@ class PrepareKickoffPlay(play.IPlay):
             move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5))
             for pt in self.points
         ]
-        self.tactics.append(goalie_tactic.GoalieTactic())
-        self.tactics.append(wall_tactic.WallTactic())
-        self.tactics.append(wall_tactic.WallTactic())
+        self.tactics.append(goalie_tactic.GoalieTactic(action_client_dict))
+        self.tactics.append(wall_tactic.WallTactic(action_client_dict))
+        self.tactics.append(wall_tactic.WallTactic(action_client_dict))
 
         self.num_wallers = 2
 
@@ -68,7 +68,7 @@ class PrepareKickoffPlay(play.IPlay):
         role_requests: play.RoleRequests = {}
         i = 0
         for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic()):
+            if type(tactic) == type(wall_tactic.WallTactic(action_client_dict)):
                 # if wall tactic, also pass in a wall point
                 role_requests[tactic] = tactic.get_requests(
                     world_state, wall_pts[i], None)
@@ -121,9 +121,9 @@ class DefendKickoffPlay(play.IPlay):
                              priority=priority)
             for pt, priority in zip(self.points, self.priorities)
         ]
-        self.tactics.append(goalie_tactic.GoalieTactic())
-        self.tactics.append(wall_tactic.WallTactic())
-        self.tactics.append(wall_tactic.WallTactic())
+        self.tactics.append(goalie_tactic.GoalieTactic(action_client_dict))
+        self.tactics.append(wall_tactic.WallTactic(action_client_dict))
+        self.tactics.append(wall_tactic.WallTactic(action_client_dict))
 
         self.num_wallers = 2
 
@@ -149,7 +149,7 @@ class DefendKickoffPlay(play.IPlay):
         role_requests: play.RoleRequests = {}
         i = 0
         for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic()):
+            if type(tactic) == type(wall_tactic.WallTactic(action_client_dict)):
                 # TODO : change to choose closest one
                 role_requests[tactic] = tactic.get_requests(
                     world_state, wall_pts[i], None)
