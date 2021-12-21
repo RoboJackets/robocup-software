@@ -45,7 +45,8 @@ class one_lineup_cost(role.CostFn):
 class one_lineup_constraint(role.ConstraintFn):
     """Protocol for ConstraintFn. """
 
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot_id):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+                 robot_id):
         self.robot_id = robot_id
 
     def __call__(
@@ -62,12 +63,17 @@ class OneLineUp(tactic.ITactic):
     """
 
 
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot_id):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+                 robot_id):
         self.left_x = 1.0
         self.right_x = -1.5
         self.start_y = 2.0
-        self.move_right = tactic.SkillEntry(move.Move(target_point = np.array([self.right_x, self.start_y])))
-        self.move_left = tactic.SkillEntry(move.Move(target_point = np.array([self.left_x, self.start_y])))
+        self.move_right = tactic.SkillEntry(
+            move.Move(action_client_dict,
+                      target_point=np.array([self.right_x, self.start_y])))
+        self.move_left = tactic.SkillEntry(
+            move.Move(action_client_dict,
+                      target_point=np.array([self.left_x, self.start_y])))
         self.cost = one_lineup_cost()
         self.robot_id = robot_id
         self.constraint = one_lineup_constraint(self.robot_id)

@@ -68,8 +68,10 @@ class Move(skill.ISkill):
         if robot:
             server_intent = self.move_action_clients[
                 robot.id].generate_server_intent(self.target_point,
-                                                 self.target_vel, self.face_angle,
-                                                 self.face_point, self.ignore_ball)
+                                                 self.target_vel,
+                                                 self.face_angle,
+                                                 self.face_point,
+                                                 self.ignore_ball)
             self.move_action_clients[robot.id].send_goal(server_intent)
             # return {self.robot.id : intent}
 

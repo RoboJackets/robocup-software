@@ -87,7 +87,8 @@ class SeekCost(role.CostFn):
     A cost function for how to choose a seeking robot
     TODO: Implement a better cost function
     """
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray):
+    def __init__(self, 
+                 target_point: np.ndarray):
         self.target_point = target_point
 
     def __call__(
@@ -122,12 +123,15 @@ class Seek(tactic.ITactic):
     Role chosen by SeekCost
     # TODO: make naming less arbitrary
     """
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray,
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+                 target_point: np.ndarray,
                  seek_heuristic: Callable[[Tuple[float, float]],
                                           float], seeker_cost: role.CostFn):
         goal_pos = np.array([0, 9])
         self.move = tactic.SkillEntry(
-            move.Move(target_point=target_point, face_point=goal_pos))
+            move.Move(action_client_dict,
+                      target_point=target_point,
+                      face_point=goal_pos))
         self.cost = seeker_cost
         self.seek_heuristic = seek_heuristic
 

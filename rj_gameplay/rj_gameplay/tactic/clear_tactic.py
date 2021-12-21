@@ -40,10 +40,15 @@ class Clear(tactic.ITactic):
     """
     A passing tactic which captures then passes the ball
     """
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, kick_speed=3.0, chip=False):
+    def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
+                 target_point: np.ndarray,
+                 kick_speed=3.0,
+                 chip=False):
         self.target_point = target_point
         self.kick = tactic.SkillEntry(
-            line_kick.LineKickSkill(None,
+            line_kick.LineKickSkill(action_client_dict,
+                                    None,
                                     target_point=target_point,
                                     chip=chip,
                                     kick_speed=kick_speed))

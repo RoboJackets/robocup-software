@@ -15,7 +15,8 @@ class Striker(play.IPlay):
         self.target_point: np.ndarray = np.array([0., 12.])
         self.role_assigner = NaiveRoleAssignment()
         self.assist_tactic = assist_tactic.AssistTactic(self.striker_loc)
-        self.striker_tactic = striker_tactic.StrikerTactic(self.target_point)
+        self.striker_tactic = striker_tactic.StrikerTactic(
+            action_client_dict, self.target_point)
 
     def compute_props(self, prev_props):
         pass

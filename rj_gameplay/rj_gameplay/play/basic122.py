@@ -19,22 +19,22 @@ class Basic122(play.IPlay):
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.target_point: np.ndarray = np.array([0., 9.])
         self.striker_tactic = striker_tactic.LineKickStrikerTactic(
-            target_point=self.target_point)
+            action_client_dict, target_point=self.target_point)
         self.goalie_tactic = goalie_tactic.GoalieTactic(action_client_dict)
-        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW,
+        self.wall_tactic_1 = wall_tactic.WallTactic(action_client_dict, role.Priority.LOW,
                                                     cost_scale=0.1)
-        self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW,
+        self.wall_tactic_2 = wall_tactic.WallTactic(action_client_dict, role.Priority.LOW,
                                                     cost_scale=0.1)
 
         self.num_wallers = 2
 
         left_pt = np.array([1.5, 7.5])
-        self.seek_left = pass_seek.Seek(left_pt,
+        self.seek_left = pass_seek.Seek(action_client_dict, left_pt,
                                         pass_seek.build_seek_function(left_pt),
                                         pass_seek.SeekCost(left_pt))
 
         right_pt = np.array([-1.5, 7.5])
-        self.seek_right = pass_seek.Seek(
+        self.seek_right = pass_seek.Seek(action_client_dict, 
             right_pt, pass_seek.build_seek_function(right_pt),
             pass_seek.SeekCost(right_pt))
 

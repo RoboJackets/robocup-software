@@ -9,12 +9,14 @@ import stp.rc as rc
 import numpy as np
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar, Any
 
+
 class DefensiveClear(play.IPlay):
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.goalie = goalie_tactic.GoalieTactic(action_client_dict)
-        self.two_mark = nmark_tactic.NMarkTactic(2)
-        self.clear = clear_tactic.Clear(np.array([0.0, 10.0]))
+        self.two_mark = nmark_tactic.NMarkTactic(action_client_dict, 2)
+        self.clear = clear_tactic.Clear(action_client_dict,
+                                        np.array([0.0, 10.0]))
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):

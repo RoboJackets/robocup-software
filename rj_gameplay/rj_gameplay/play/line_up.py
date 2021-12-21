@@ -18,8 +18,10 @@ class LineUp(play.IPlay):
         self.right_x = -1.5
         self.start_y = 2.0
         self.y_inc = 0.3
-        self.move_right = move_tactic.Move(np.array([self.right_x, self.start_y]))
-        self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
+        self.move_right = move_tactic.Move(
+            action_client_dict, np.array([self.right_x, self.start_y]))
+        self.move_left = move_tactic.Move(
+            action_client_dict, np.array([self.left_x, self.start_y]))
         self.role_assigner = NaiveRoleAssignment()
 
 

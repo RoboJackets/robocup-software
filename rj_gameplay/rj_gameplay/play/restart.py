@@ -19,7 +19,8 @@ class RestartPlay(play.IPlay):
 
         # TODO: simplify tactic with list (see basic_defense.py)
         self.goalie_tactic = goalie_tactic.GoalieTactic(action_client_dict)
-        self.clear_tactic = clear_tactic.Clear(np.array([0.0, 9.0]),
+        self.clear_tactic = clear_tactic.Clear(action_client_dict,
+                                               np.array([0.0, 9.0]),
                                                chip=True,
                                                kick_speed=3.0)
         # TODO: make it pass
@@ -27,22 +28,22 @@ class RestartPlay(play.IPlay):
         self.pass_tactic = pass_tactic.Pass(
             self.target_point, pass_tactic.PasserCost(self.target_point),
             pass_tactic.PassToClosestReceiver(self.target_point))
-        self.seek_tactic = pass_seek.Seek(
+        self.seek_tactic = pass_seek.Seek(action_client_dict, 
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW,
+        self.wall_tactic_1 = wall_tactic.WallTactic(action_client_dict, role.Priority.LOW,
                                                     cost_scale=0.1)
-        self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW,
+        self.wall_tactic_2 = wall_tactic.WallTactic(action_client_dict, role.Priority.LOW,
                                                     cost_scale=0.1)
 
         left_pt = np.array([1.5, 7.5])
-        self.seek_left = pass_seek.Seek(left_pt,
+        self.seek_left = pass_seek.Seek(action_client_dict, left_pt,
                                         pass_seek.build_seek_function(left_pt),
                                         pass_seek.SeekCost(left_pt))
 
         right_pt = np.array([-1.5, 7.5])
-        self.seek_right = pass_seek.Seek(
+        self.seek_right = pass_seek.Seek(action_client_dict, 
             right_pt, pass_seek.build_seek_function(right_pt),
             pass_seek.SeekCost(right_pt))
 
@@ -126,7 +127,8 @@ class DirectRestartPlay(play.IPlay):
 
         # TODO: simplify tactic with list (see basic_defense.py)
         self.goalie_tactic = goalie_tactic.GoalieTactic(action_client_dict)
-        self.clear_tactic = clear_tactic.Clear(np.array([0.0, 9.0]),
+        self.clear_tactic = clear_tactic.Clear(action_client_dict,
+                                               np.array([0.0, 9.0]),
                                                chip=False,
                                                kick_speed=5.5)
         # TODO: make it pass
@@ -134,25 +136,25 @@ class DirectRestartPlay(play.IPlay):
         self.pass_tactic = pass_tactic.Pass(
             self.target_point, pass_tactic.PasserCost(self.target_point),
             pass_tactic.PassToClosestReceiver(self.target_point))
-        self.seek_tactic = pass_seek.Seek(
+        self.seek_tactic = pass_seek.Seek(action_client_dict, 
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW,
+        self.wall_tactic_1 = wall_tactic.WallTactic(action_client_dict, role.Priority.LOW,
                                                     cost_scale=0.1)
-        self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW,
+        self.wall_tactic_2 = wall_tactic.WallTactic(action_client_dict, role.Priority.LOW,
                                                     cost_scale=0.1)
 
         # might need to change to for-loop
         self.num_wallers = 2
 
         left_pt = np.array([1.5, 7.5])
-        self.seek_left = pass_seek.Seek(left_pt,
+        self.seek_left = pass_seek.Seek(action_client_dict, left_pt,
                                         pass_seek.build_seek_function(left_pt),
                                         pass_seek.SeekCost(left_pt))
 
         right_pt = np.array([-1.5, 7.5])
-        self.seek_right = pass_seek.Seek(
+        self.seek_right = pass_seek.Seek(action_client_dict, 
             right_pt, pass_seek.build_seek_function(right_pt),
             pass_seek.SeekCost(right_pt))
 

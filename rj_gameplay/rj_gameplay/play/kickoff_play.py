@@ -36,8 +36,9 @@ class PrepareKickoffPlay(play.IPlay):
             (-0.6, 4.25),
         ]
         self.tactics = [
-            move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5))
-            for pt in self.points
+            move_tactic.Move(action_client_dict,
+                             target_point=np.array(pt),
+                             face_point=(0.0, 4.5)) for pt in self.points
         ]
         self.tactics.append(goalie_tactic.GoalieTactic(action_client_dict))
         self.tactics.append(wall_tactic.WallTactic(action_client_dict))
@@ -45,7 +46,7 @@ class PrepareKickoffPlay(play.IPlay):
 
         self.num_wallers = 2
 
-        # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
+        # self.move_left = move_tactic.Move(action_client_dict, np.array([self.left_x, self.start_y]))
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):
@@ -68,7 +69,8 @@ class PrepareKickoffPlay(play.IPlay):
         role_requests: play.RoleRequests = {}
         i = 0
         for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic(action_client_dict)):
+            if type(tactic) == type(
+                    wall_tactic.WallTactic(action_client_dict)):
                 # if wall tactic, also pass in a wall point
                 role_requests[tactic] = tactic.get_requests(
                     world_state, wall_pts[i], None)
@@ -116,7 +118,8 @@ class DefendKickoffPlay(play.IPlay):
             role.Priority.LOW,
         ]
         self.tactics = [
-            move_tactic.Move(target_point=np.array(pt),
+            move_tactic.Move(action_client_dict,
+                             target_point=np.array(pt),
                              face_point=(0.0, 4.5),
                              priority=priority)
             for pt, priority in zip(self.points, self.priorities)
@@ -127,7 +130,7 @@ class DefendKickoffPlay(play.IPlay):
 
         self.num_wallers = 2
 
-        # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
+        # self.move_left = move_tactic.Move(action_client_dict, np.array([self.left_x, self.start_y]))
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):
@@ -149,7 +152,8 @@ class DefendKickoffPlay(play.IPlay):
         role_requests: play.RoleRequests = {}
         i = 0
         for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic(action_client_dict)):
+            if type(tactic) == type(
+                    wall_tactic.WallTactic(action_client_dict)):
                 # TODO : change to choose closest one
                 role_requests[tactic] = tactic.get_requests(
                     world_state, wall_pts[i], None)

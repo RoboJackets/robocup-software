@@ -16,7 +16,7 @@ class PenaltyOffense(play.IPlay):
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.tactics = [
             goalie_tactic.GoalieTactic(True),
-            striker_tactic.LineKickStrikerTactic(None),
+            striker_tactic.LineKickStrikerTactic(action_client_dict, None),
             move_tactic.Move((1.8, 0.0), priority=role.Priority.LOW),
             move_tactic.Move((2.1, 0.0), priority=role.Priority.LOW),
             move_tactic.Move((2.4, 0.0), priority=role.Priority.LOW),

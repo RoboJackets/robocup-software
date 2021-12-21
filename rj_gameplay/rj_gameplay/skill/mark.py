@@ -84,7 +84,6 @@ class Mark(skill.ISkill):
                 mark_point = get_mark_point(self.target_robot.id, world_state)
         self.target_point = mark_point
         self.face_point = world_state.ball.pos
-        
         """
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=self.target_point[0],

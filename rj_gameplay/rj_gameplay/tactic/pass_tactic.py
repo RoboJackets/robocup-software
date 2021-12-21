@@ -20,7 +20,8 @@ class PassToClosestReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     """
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+    def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
                  target_point: Optional[np.ndarray] = None,
                  passer_robot: rc.Robot = None):
         self.target_point = target_point
@@ -91,7 +92,8 @@ class PassToOpenReceiver(role.CostFn):
     TODO: Implement a better cost function
     CURRENTLY NOT READY FOR USE
     """
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+    def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
                  target_point: Optional[np.ndarray] = None,
                  passer_robot: rc.Robot = None):
         self.target_point = target_point
@@ -136,12 +138,12 @@ class PassToOpenReceiver(role.CostFn):
             return 99
 
         # TODO: pick "most open" pass
-        cost = 0 
+        cost = 0
         for enemy in world_state.their_robots:
             cost -= 10*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
 
         # TODO: should be dist in sec
-        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point) 
+        # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point)
         # cost = cost + raw_dist
         return cost
 
@@ -159,7 +161,8 @@ class Pass(tactic.ITactic):
     A passing tactic which captures then passes the ball
     """
 
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, passer_cost: role.CostFn,
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+                 target_point: np.ndarray, passer_cost: role.CostFn,
                  receiver_cost: role.CostFn):
         self.target_point = target_point
         self.pivot_kick = tactic.SkillEntry(

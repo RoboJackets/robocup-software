@@ -18,7 +18,7 @@ class PassPlay(play.IPlay):
         self.pass_tactic = pass_tactic.Pass(
             self.target_point, pass_tactic.PasserCost(),
             pass_tactic.PassToOpenReceiver(self.target_point))
-        self.seek_tactic = pass_seek.Seek(
+        self.seek_tactic = pass_seek.Seek(action_client_dict, 
             self.target_point, pass_seek.seek_heuristic,
             pass_seek.SeekCost(self.target_point))
         self.role_assigner = NaiveRoleAssignment()

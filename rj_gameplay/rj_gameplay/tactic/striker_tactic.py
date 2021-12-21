@@ -125,7 +125,10 @@ class StrikerTactic(tactic.ITactic):
     """
 	A striker tactic which receives then shoots the ball
 	"""
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, cost: role.CostFn = None):
+    def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
+                 target_point: np.ndarray,
+                 cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
         self.capture = tactic.SkillEntry(capture.Capture())
@@ -196,11 +199,16 @@ class LineKickStrikerTactic(tactic.ITactic):
     """
 	A striker tactic which receives then shoots the ball
 	"""
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], target_point: np.ndarray, cost: role.CostFn = None):
+    def __init__(self,
+                 action_client_dict: Dict[Type[Any], List[Any]],
+                 target_point: np.ndarray,
+                 cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
         self.shoot = tactic.SkillEntry(
-            line_kick.LineKickSkill(robot=None, target_point=None))
+            line_kick.LineKickSkill(action_client_dict,
+                                    robot=None,
+                                    target_point=None))
         self.capture_cost = CaptureCost()
 
     def compute_props(self):
