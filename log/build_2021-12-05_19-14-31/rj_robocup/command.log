@@ -1,0 +1,2 @@
+Invoking command in '/home/robojackets/robocup-software/build/rj_robocup': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/robojackets/robocup-software -DCMAKE_INSTALL_PREFIX=/home/robojackets/robocup-software/install/rj_robocup
+Invoked command in '/home/robojackets/robocup-software/build/rj_robocup' returned '1': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/robojackets/robocup-software -DCMAKE_INSTALL_PREFIX=/home/robojackets/robocup-software/install/rj_robocup

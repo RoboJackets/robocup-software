@@ -2,9 +2,9 @@ from rj_msgs import msg
 import stp.rc as rc
 import numpy as np
 
-from typing import List
+from typing import List, Optional
 
-RobotId = int
+RobotId = Optional[int]
 
 
 class RobotStatus():
@@ -18,11 +18,13 @@ class RobotStatus():
     ]
 
     robot_id: RobotId
+    """
     visible: bool
     has_ball_sense: bool
     kicker_charged: bool
     kicker_healthy: bool
     lethal_fault: bool
+    """
 
     def __init__(self, robot_id: RobotId = None,
                  has_ball_sense: bool = None, kicker_charged: bool = None,
@@ -49,9 +51,9 @@ class RobotState():
     twist: np.ndarray
     visible: bool
 
-    def __init__(self, robot_id: RobotId, pose: np.ndarray,
+    def __init__(self, id: RobotId, pose: np.ndarray,
                  twist: np.ndarray, visible: bool):
-        self.id = robot_id
+        self.id = id
         self.pose = pose
         self.twist = twist
         self.visible = visible
@@ -70,7 +72,7 @@ class PartialWorldState():
     their_robots: List[RobotState]
     ball: rc.Ball
 
-    def __init__(self, our_robots: List[rc.Robot], their_robots: List[rc.Robot],
+    def __init__(self, our_robots: List[RobotState], their_robots: List[RobotState],
                  ball: rc.Ball):
         self.our_robots = our_robots
         self.their_robots = their_robots
@@ -211,7 +213,7 @@ def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
     return world_state
 
 
-def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robot:
+def robot_creator(robot_state: RobotState, robot_status: RobotStatus = None) -> rc.Robot:
     """
     A function which combines the robot state and robot status to create a rc.Robot class
         :return: Robot class from rc.Robot representing the status and state of the robot
@@ -227,10 +229,10 @@ def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robo
     else:
         is_ours = True
         robot_id = robot_state.id
-        ball_sense = robot_status.has_ball_sense
-        kicker_charged = robot_status.kicker_charged
-        kicker_healthy = robot_status.kicker_healthy
-        lethal_fault = robot_status.lethal_fault
+        ball_sense = Optional[robot_status.has_ball_sense]
+        kicker_charged = Optional[robot_status.kicker_charged]
+        kicker_healthy = Optional[robot_status.kicker_healthy]
+        lethal_fault = Optional[robot_status.lethal_fault]
     pose = robot_state.pose
     twist = robot_state.twist
     is_visible = robot_state.visible

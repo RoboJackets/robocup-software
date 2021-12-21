@@ -1,0 +1,51 @@
+CMake Error at external/CMakeLists.txt:1 (add_subdirectory):
+  The source directory
+
+    /home/robojackets/robocup-software/external/robocup-fshare
+
+  does not contain a CMakeLists.txt file.
+
+
+CMake Error at external/CMakeLists.txt:2 (add_subdirectory):
+  The source directory
+
+    /home/robojackets/robocup-software/external/rrt
+
+  does not contain a CMakeLists.txt file.
+
+
+CMake Error at external/CMakeLists.txt:3 (add_subdirectory):
+  The source directory
+
+    /home/robojackets/robocup-software/external/grSim
+
+  does not contain a CMakeLists.txt file.
+
+
+CMake Error at external/CMakeLists.txt:4 (add_subdirectory):
+  The source directory
+
+    /home/robojackets/robocup-software/external/googletest
+
+  does not contain a CMakeLists.txt file.
+
+
+CMake Error at external/CMakeLists.txt:9 (install):
+  install TARGETS given target "grSim" which does not exist.
+
+
+CMake Error at /usr/lib/x86_64-linux-gnu/cmake/Qt5/Qt5Config.cmake:28 (find_package):
+  Could not find a package configuration file provided by "Qt5Svg" with any
+  of the following names:
+
+    Qt5SvgConfig.cmake
+    qt5svg-config.cmake
+
+  Add the installation prefix of "Qt5Svg" to CMAKE_PREFIX_PATH or set
+  "Qt5Svg_DIR" to a directory containing one of the above files.  If "Qt5Svg"
+  provides a separate development package or SDK, be sure it has been
+  installed.
+Call Stack (most recent call first):
+  soccer/CMakeLists.txt:17 (find_package)
+
+
