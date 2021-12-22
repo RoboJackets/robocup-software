@@ -49,7 +49,7 @@ class Basic122(play.IPlay):
         prev_results: role.assignment.FlatRoleResults,
         props,
     ) -> Tuple[Dict[tactic.SkillEntry,
-                    List[role.RoleResult]], List[tactic.SkillEntry]]:
+                    List[role.RoleResult]], List[tactic.SkillEntry]]: # TODO: create NamedTuple for this type
         # pre-calculate wall points and store in numpy array
         wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
                                                    world_state)
