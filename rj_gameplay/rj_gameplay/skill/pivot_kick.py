@@ -52,14 +52,17 @@ class PivotKick(skill.ISkill): # add ABC if fails
         """
         Tick is done in the following order: capture -> pivot -> kick
         """
+
+        self.pivot.target_point = self.target_point
+        self.pivot.pivot_point = self.pivot_point
+        self.pivot.dribbler_speed = self.dribbler_speed
+
+        # TODO: put normal behavior tree in here (this is convoluted)
         if self.pivot.is_done(world_state):
             return self.kick.tick(robot, world_state, intent)
         elif self.capture.is_done(world_state):
-            print('pivoting')
             return self.pivot.tick(robot, world_state, intent)
-
         else:
-            print('go cap')
             return self.capture.tick(robot, world_state, intent)
 
     def is_done(self, world_state: rc.WorldState) -> bool:
