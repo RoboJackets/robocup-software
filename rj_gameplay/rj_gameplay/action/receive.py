@@ -24,8 +24,9 @@ class Receive(action.IAction):
         settle_command = SettleMotionCommand()
         intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0
-        intent.is_active = True
+        intent.trigger_mode = RobotIntent.TRIGGER_MODE_STAND_DOWN
 
+        intent.is_active = True
         return intent
 
     def is_done(self, world_state) -> bool:
