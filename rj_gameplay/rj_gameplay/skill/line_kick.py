@@ -73,6 +73,7 @@ class LineKickSkill(ILineKickSkill):
 
     def is_done(self, world_state: rc.WorldState):
         # skill is done after move + kick
+        # TODO: change 1.0 to SETTLE_BALL_SPEED_THRESHOLD (common file somewhere)
         return np.linalg.norm(world_state.ball.vel) > 1.0
 
     def __str__(self):
