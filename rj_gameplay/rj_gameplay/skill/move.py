@@ -67,7 +67,7 @@ class Move(skill.ISkill):
 
     def is_done(self, world_state):
         threshold = 0.3
-        if self.robot.id is None or world_state is None:
+        if self.robot is None or self.robot.id is None or world_state is None:
             return False
         elif (math.sqrt((world_state.our_robots[self.robot.id].pose[0] -
                          self.target_point[0])**2 +
