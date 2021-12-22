@@ -299,12 +299,6 @@ class Pass(tactic.ITactic):
             receiver_cost = PassToClosestReceiver(target_point=world_state.ball.pos, passer_robot=self.passer_robot)
             self.receiver_robot = self.find_min_cost_robot(world_state, receiver_cost)
 
-            # TODO: delete debug print here
-            if self.passer_robot is not None and self.receiver_robot is not None:
-                print("-" * 80)
-                print(self.passer_robot.id)
-                print(self.receiver_robot.id)
-
         if self.passer_robot is not None and self.receiver_robot is not None:
             if not self.kick_done:
                 # fill request for selected passer
@@ -361,7 +355,5 @@ class Pass(tactic.ITactic):
         return self.kick_done
 
         if self.receive_se is not None:
-            # print("receive isdone")
-            # print(self.receive_se.skill.is_done(world_state))
             return self.receive_se.skill.is_done(world_state)
         return False
