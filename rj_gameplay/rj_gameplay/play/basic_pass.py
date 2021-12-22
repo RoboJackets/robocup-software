@@ -26,7 +26,7 @@ class BasicPass(play.IPlay):
             # pass_seek.Seek(np.array([-4., 5.]),
             #                pass_seek.build_seek_function(np.array([-4., 5.])),
             #                pass_seek.SeekCost(np.array([-4., 5.]))),
-            nmark_tactic.NMarkTactic(2),
+            # nmark_tactic.NMarkTactic(2),
             goalie_tactic.GoalieTactic()
         ]
 
@@ -63,5 +63,5 @@ class BasicPass(play.IPlay):
         return skill_dict, skills
 
     def is_done(self, world_state):
-
-        return False
+        # TODO: make this less hardcoded
+        return self.tactics[0].is_done(world_state)
