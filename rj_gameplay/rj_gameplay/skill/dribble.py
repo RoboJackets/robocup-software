@@ -37,9 +37,8 @@ class Dribble(skill.ISkill):
         self.__name__ = 'Dribble'
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent): #returns dict of robot and actions
-        
         self.robot = robot
-        
+
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(x=self.target_point[0],y=self.target_point[1])
         path_command.target.velocity = Point(x=self.target_vel[0],y=self.target_vel[1])

@@ -49,7 +49,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     // Set up ROS
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
         planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
-    /* intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
+    /*intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
         gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
         [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT
             if (robot_alive()) {
@@ -60,8 +60,8 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                          std::make_shared<Trajectory>(std::move(trajectory)),
                                          intent->priority);
             }
-        });
-        */
+        });*/
+
 
     intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
         action_server::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),

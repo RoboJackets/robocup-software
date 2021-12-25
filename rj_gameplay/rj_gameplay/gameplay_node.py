@@ -120,7 +120,6 @@ class GameplayNode(Node):
         # for ac in self.move_action_clients:
         #    rclpy.spin(ac)
 
-        # this should publish all move ServerIntents
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(
                 msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10)
@@ -228,8 +227,11 @@ class GameplayNode(Node):
         if self.world_state is not None:
             intents = self.coordinator.tick(self.world_state)
             for i in range(NUM_ROBOTS):
-                rip_i = self.robot_intent_pubs[i]
-                rip_i.publish(intents[i])
+                server_intent: msg.ServerIntent = self.generate_server_intent(intents[i], i)
+                self.move_action_clients[i].send_goal(server_intent)
+
+                # rip_i = self.robot_intent_pubs[i]
+                # rip_i.publish(intents[i])
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -390,6 +392,16 @@ class GameplayNode(Node):
     def clear_override_actions(self) -> None:
         self.override_actions = [None] * NUM_ROBOTS
 
+    def generate_server_intent(self, intent: msg.RobotIntent, robot_id: int):
+        """
+        (ServerIntent = RobotIntent + robot_id)
+        """
+
+        server_intent = msg.ServerIntent()
+        server_intent.intent = intent
+        server_intent.robot_id = robot_id
+        return server_intent
+
     def shutdown(self) -> None:
         """
         destroys node
@@ -403,10 +415,10 @@ class GameplayNode(Node):
 
 def main():
     # uncomment this line to use the test play selector
-    # play_selector = TestPlaySelector()
+    play_selector = TestPlaySelector()
 
     # comment out this line when using the test play selector
-    play_selector = basic_play_selector.BasicPlaySelector()
+    # play_selector = basic_play_selector.BasicPlaySelector()
 
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)
