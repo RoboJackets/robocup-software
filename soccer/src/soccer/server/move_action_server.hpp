@@ -18,6 +18,7 @@
 #include <rj_msgs/msg/trajectory.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_constants/constants.hpp>
+#include <world_state.hpp>
 
 namespace server {
 using RobotIntent = rj_msgs::msg::RobotIntent;
@@ -30,6 +31,10 @@ public:
 
 private:
     std::vector<std::shared_ptr<rclcpp::Publisher<RobotIntent>>> intent_pubs_;
+    std::shared_ptr<rclcpp::Subscription<WorldState::Msg>> world_state_sub_;
+    std::vector<std::shared_ptr<rclcpp::Subscription<planning::Trajectory::Msg>>> trajectory_subs_;
+
+    std::vector<RobotState> robot_states_;
     rclcpp_action::Server<Move>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const Move::Goal> goal);

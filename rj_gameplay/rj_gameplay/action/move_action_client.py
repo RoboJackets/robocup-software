@@ -6,7 +6,7 @@ from rclpy.node import Node
 
 from rj_msgs.action import Move
 
-from rj_msgs.msg import ServerIntent
+from rj_msgs.msg import ServerIntent, RobotIntent, PathTargetMotionCommand
 
 
 class MoveActionClient(Node):
@@ -14,10 +14,20 @@ class MoveActionClient(Node):
         super().__init__('move_action_client_{:02d}'.format(robot_id))
         self._robot_id = robot_id
         self._action_client = ActionClient(self, Move, 'move')
+        self._curr_goal = Move.Goal()
+        self._goal_handle = None
 
-    def send_goal(self, intent: ServerIntent):
+    def send_goal(self, server_intent: ServerIntent):
+        if len(server_intent.intent.motion_command.path_target_command) > 0:
+            new_target_position \
+                = server_intent.intent.motion_command.path_target_command[0].target.position
+            if self._curr_goal is not None:
+                path_target_command = self._curr_goal.server_intent.intent.motion_command.path_target_command
+                if len(path_target_command) > 0 and path_target_command[0].target.position == new_target_position:
+                    return
+        self.cancel_goal()
         goal_msg = Move.Goal()
-        goal_msg.server_intent = intent
+        goal_msg.server_intent = server_intent
 
         self._action_client.wait_for_server()
 
@@ -32,6 +42,7 @@ class MoveActionClient(Node):
             self.get_logger().info('Goal not accepted by server.')
             return
 
+        self._goal_handle = goal_handle
         self.get_logger().info('Goal accepted by server!')
 
         self._get_result_future = goal_handle.get_result_async()
@@ -45,3 +56,18 @@ class MoveActionClient(Node):
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.get_logger().info('Got feedback:', feedback)
+
+    def cancel_done(self, future):
+        cancel_response = future.result()
+        if len(cancel_response.goals_canceling) > 0:
+            self.get_logger().info('Goal successfully canceled')
+        else:
+            self.get_logger().info('Goal failed to cancel')
+
+    def cancel_goal(self):
+        if self._goal_handle is None:
+            return
+        self.get_logger().info('Canceling goal')
+        # Cancel the goal
+        future = self._goal_handle.cancel_goal_async()
+        future.add_done_callback(self.cancel_done)
