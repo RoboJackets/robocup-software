@@ -36,8 +36,9 @@ class striker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 class Striker(tactic.ITactic):
     """
@@ -61,7 +62,7 @@ class Striker(tactic.ITactic):
     def get_requests(
         self, world_state: rc.WorldState, props
     ) -> List[tactic.RoleRequests]:
-        """ Checks if we have the ball and returns the proper request
+        """Checks if we have the ball and returns the proper request
         :return: A list of size 1 of role requests
         """
 
@@ -82,8 +83,9 @@ class Striker(tactic.ITactic):
 
         return role_requests
 
-    def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults
+    ) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 skill depending on which role is filled
         """

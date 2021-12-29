@@ -6,6 +6,7 @@ import stp.rc as rc
 from typing import List
 from stp.skill.action_behavior import ActionBehavior, RobotActions
 
+
 class RjSequence(py_trees.composites.Sequence):
     """
     A sequence block for our use
@@ -13,14 +14,14 @@ class RjSequence(py_trees.composites.Sequence):
     This will not be needed once the action server is implemented
     """
 
-    def __init__(self, name:str) -> None:
+    def __init__(self, name: str) -> None:
         self.robot = None
         self.world_state = None
         self.curr_index = -1
         self.current_child = None
         super().__init__(name)
 
-    def tick_once(self, robot:rc.Robot, world_state:rc.WorldState) -> RobotActions:
+    def tick_once(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:
         self.robot = robot
         self.world_state = world_state
         if self.current_child is None:

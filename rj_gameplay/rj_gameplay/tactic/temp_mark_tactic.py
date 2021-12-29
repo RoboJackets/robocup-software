@@ -15,6 +15,7 @@ import stp.skill as skill
 
 import numpy as np
 
+
 class marker_cost(role.CostFn):
     """
     A cost function for how to choose a marker
@@ -39,17 +40,20 @@ class marker_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 def marker_heuristic(point: np.array):
     # TODO: use with CostBehavior
     return -1
 
+
 class TestMarkTactic(tactic.ITactic):
     """
     A tactic which creates n robots with some marking heuristic
     """
+
     def __init__(self, n: int):
         self.num_markers = n
         self.markers_list = []
@@ -59,7 +63,6 @@ class TestMarkTactic(tactic.ITactic):
 
     def compute_props(self):
         pass
-
 
     def create_request(self, **kwargs) -> role.RoleRequest:
         """Creates a sane default RoleRequest.
@@ -77,12 +80,15 @@ class TestMarkTactic(tactic.ITactic):
         role_requests = {}
 
         for i in range(self.num_markers):
-            role_requests[self.markers_list[i]] = [role.RoleRequest(role.Priority.LOW, False, self.cost)]
+            role_requests[self.markers_list[i]] = [
+                role.RoleRequest(role.Priority.LOW, False, self.cost)
+            ]
 
         return role_requests
 
-    def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults
+    ) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers
         """

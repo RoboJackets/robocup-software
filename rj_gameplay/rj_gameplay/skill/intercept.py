@@ -26,19 +26,20 @@ A skill version of intercept so that actions don't have to be called in tactics
 
 # TODO: discuss collapsing skills/actions
 class Intercept(IIntercept):
-    def __init__(self,
-                 robot: rc.Robot = None,
-                 target_point: np.ndarray = np.array([0.0, 0.0])):
+    def __init__(
+        self, robot: rc.Robot = None, target_point: np.ndarray = np.array([0.0, 0.0])
+    ):
         self.robot = robot
         self.target_point = target_point
 
-        self.__name__ = 'Intercept Skill'
+        self.__name__ = "Intercept Skill"
         if self.robot is not None:
             self.intercept = intercept.Intercept(self.robot.id, target_point)
         else:
             self.intercept = intercept.Intercept(None, target_point)
-        self.intercept_behavior = ActionBehavior('Intercept', self.intercept,
-                                                 self.robot)
+        self.intercept_behavior = ActionBehavior(
+            "Intercept", self.intercept, self.robot
+        )
         self.root = self.intercept_behavior
         self.root.setup_with_descendants()
 

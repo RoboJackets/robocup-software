@@ -18,13 +18,17 @@ class ClearerCost(role.CostFn):
     """
     A cost function for how to choose a robot that will clears
     """
-    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
-                 world_state: rc.WorldState) -> float:
+
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
         if not robot.visible:
             return 99
         else:
-            return np.linalg.norm(world_state.ball.pos -
-                                  np.array(robot.pose[0:2]))
+            return np.linalg.norm(world_state.ball.pos - np.array(robot.pose[0:2]))
 
     def unassigned_cost_fn(
         self,
@@ -32,7 +36,7 @@ class ClearerCost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
@@ -40,13 +44,14 @@ class Clear(tactic.ITactic):
     """
     A passing tactic which captures then passes the ball
     """
+
     def __init__(self, target_point: np.ndarray, kick_speed=3.0, chip=False):
         self.target_point = target_point
         self.kick = tactic.SkillEntry(
-            line_kick.LineKickSkill(None,
-                                    target_point=target_point,
-                                    chip=chip,
-                                    kick_speed=kick_speed))
+            line_kick.LineKickSkill(
+                None, target_point=target_point, chip=chip, kick_speed=kick_speed
+            )
+        )
         self.clearer_cost = ClearerCost()
 
     def compute_props(self):
@@ -58,16 +63,18 @@ class Clear(tactic.ITactic):
         """
         pass
 
-    def get_requests(self, world_state: rc.WorldState,
-                     props) -> List[tactic.RoleRequests]:
-        """ Checks if we have the ball and returns the proper request
+    def get_requests(
+        self, world_state: rc.WorldState, props
+    ) -> List[tactic.RoleRequests]:
+        """Checks if we have the ball and returns the proper request
         :return: A list of size 2 of role requests
         """
 
         role_requests: tactic.RoleRequests = {}
 
-        clearer_request = role.RoleRequest(role.Priority.MEDIUM, True,
-                                           self.clearer_cost)
+        clearer_request = role.RoleRequest(
+            role.Priority.MEDIUM, True, self.clearer_cost
+        )
         role_requests[self.kick] = [clearer_request]
 
         return role_requests

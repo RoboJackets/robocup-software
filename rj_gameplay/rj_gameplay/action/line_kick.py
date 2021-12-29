@@ -6,7 +6,12 @@ import stp.role as role
 import stp.action as action
 import stp.rc as rc
 import numpy as np
-from rj_msgs.msg import RobotIntent, MotionCommand, EmptyMotionCommand, LineKickMotionCommand
+from rj_msgs.msg import (
+    RobotIntent,
+    MotionCommand,
+    EmptyMotionCommand,
+    LineKickMotionCommand,
+)
 from rj_geometry_msgs.msg import Point
 from typing import Optional
 import math
@@ -19,12 +24,15 @@ class LineKickAction(action.IFiniteAction):
     """
     Activates kicker. Intended to be used after an aim/drive action in a skill.
     """
-    def __init__(self,
-                 robot_id: int,
-                 target: np.ndarray,
-                 priority: int = 0,
-                 chip: bool = False,
-                 kick_speed: float = 6.0) -> None:
+
+    def __init__(
+        self,
+        robot_id: int,
+        target: np.ndarray,
+        priority: int = 0,
+        chip: bool = False,
+        kick_speed: float = 6.0,
+    ) -> None:
         self.robot_id = robot_id
         self.priority = priority
 
@@ -35,7 +43,11 @@ class LineKickAction(action.IFiniteAction):
     def tick(self, intent: msg.RobotIntent) -> msg.RobotIntent:
         line_kick_command = LineKickMotionCommand()
         line_kick_command.target = Point(x=self.target[0], y=self.target[1])
-        intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK if not self.chip else RobotIntent.SHOOT_MODE_CHIP
+        intent.shoot_mode = (
+            RobotIntent.SHOOT_MODE_KICK
+            if not self.chip
+            else RobotIntent.SHOOT_MODE_CHIP
+        )
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
         if self.kick_speed <= MAX_KICK_SPEED:
             intent.kick_speed = self.kick_speed

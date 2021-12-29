@@ -147,8 +147,9 @@ class ITactic(Generic[PropT], ABC):
         return [self.create_request(**kwargs) for _ in range(num_requests)]
 
     @abstractmethod
-    def tick(self, world_state: rc.WorldState, role_results: RoleResults,
-             props: PropT) -> List[skill.ISkill]:
+    def tick(
+        self, world_state: rc.WorldState, role_results: RoleResults, props: PropT
+    ) -> List[skill.ISkill]:
         """Ticks the tactic, returning a tuple of the skills and the skills executed.
         :param world_state: Current world state.
         :param role_results: The results of role assignment.

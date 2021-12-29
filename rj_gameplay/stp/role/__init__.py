@@ -7,6 +7,7 @@ import stp.rc as rc
 
 BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
 
+
 class Role:
     """This represents a role, ie. an Optional[rc.Robot]."""
 
@@ -60,9 +61,8 @@ class CostFn(Protocol):
         ...
 
     def unassigned_cost_fn(
-        self,
-        prev_results: Optional["RoleResult"],
-        world_state: rc.WorldState) -> float:
+        self, prev_results: Optional["RoleResult"], world_state: rc.WorldState
+    ) -> float:
         """Given the previous role assigment and current world state,
         returns the cost of not assigning any robot.
         :param prev_result: The previous role assignment result.

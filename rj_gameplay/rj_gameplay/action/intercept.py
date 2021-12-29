@@ -11,8 +11,8 @@ from rj_geometry_msgs.msg import Point
 
 
 class Intercept(action.IAction):
-    """Intercept action
-    """
+    """Intercept action"""
+
     def __init__(self, robot_id: int = None, target_point: np.ndarray = None):
         self.robot_id = robot_id
         self.target_point = target_point
@@ -23,7 +23,7 @@ class Intercept(action.IAction):
         intercept_command = InterceptMotionCommand()
         # TODO: numpy to Point conv
         intercept_command.target = Point(x=self.target_point[0], y=self.target_point[1])
-        intent.motion_command.intercept_command = [intercept_command] 
+        intent.motion_command.intercept_command = [intercept_command]
         """
         settle_command = SettleMotionCommand()
         intent.motion_command.settle_command = [settle_command]

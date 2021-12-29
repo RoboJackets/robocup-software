@@ -24,38 +24,56 @@ def run_format(args, file_queue, lock, return_codes):
         name = file_queue.get()
         invocation = get_format_invocation(name, args.cmake_format_binary, args.check)
 
-        proc = subprocess.Popen(invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         output, err = proc.communicate()
         with lock:
             return_codes.append(proc.returncode)
-            sys.stdout.write(' '.join(invocation) + '\n' + output.decode('utf-8'))
+            sys.stdout.write(" ".join(invocation) + "\n" + output.decode("utf-8"))
             if len(err) > 0:
                 sys.stdout.flush()
-                sys.stderr.write(err.decode('utf-8'))
+                sys.stderr.write(err.decode("utf-8"))
         file_queue.task_done()
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Runs cmake-format over all CMakeLists.txt')
-    parser.add_argument('-cmake-format-binary', metavar='PATH',
-                        default='cmake-format',
-                        help='path to cmake-format binary')
-    parser.add_argument('-i', action='store_true',
-                        help='Inplace edit <file>s, if specified')
-    parser.add_argument('-j', type=int, default=0,
-                        help='number of format instances to be run in parallel.')
-    parser.add_argument('files', nargs='*', default=['.*'],
-                        help='files to be processed (regex on path)')
-    parser.add_argument('-p', dest='build_path',
-                        help='Path used to read a compile command database.')
-    parser.add_argument('--check', action='store_true', help='Exit with status code 0 if formatting would not change '
-                                                             'file contents, or status code 1 if it would')
+    parser = argparse.ArgumentParser(
+        description="Runs cmake-format over all CMakeLists.txt"
+    )
+    parser.add_argument(
+        "-cmake-format-binary",
+        metavar="PATH",
+        default="cmake-format",
+        help="path to cmake-format binary",
+    )
+    parser.add_argument(
+        "-i", action="store_true", help="Inplace edit <file>s, if specified"
+    )
+    parser.add_argument(
+        "-j",
+        type=int,
+        default=0,
+        help="number of format instances to be run in parallel.",
+    )
+    parser.add_argument(
+        "files", nargs="*", default=[".*"], help="files to be processed (regex on path)"
+    )
+    parser.add_argument(
+        "-p", dest="build_path", help="Path used to read a compile command database."
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Exit with status code 0 if formatting would not change "
+        "file contents, or status code 1 if it would",
+    )
     args = parser.parse_args()
 
     cwd = Path.cwd()
 
     # Build up a big regexy filter from all command line arguments.
-    file_name_re = re.compile('|'.join(args.files))
+    file_name_re = re.compile("|".join(args.files))
 
     files = []
     for file in cwd.glob("**/CMakeLists.txt"):
@@ -76,8 +94,9 @@ def main():
         # List of files with a non-zero return code.
         lock = threading.Lock()
         for _ in range(max_task):
-            t = threading.Thread(target=run_format,
-                                 args=(args, task_queue, lock, return_codes))
+            t = threading.Thread(
+                target=run_format, args=(args, task_queue, lock, return_codes)
+            )
             t.daemon = True
             t.start()
 
@@ -91,7 +110,7 @@ def main():
     except KeyboardInterrupt:
         # This is a sad hack. Unfortunately subprocess goes
         # bonkers with ctrl-c and we start forking merrily.
-        print('\nCtrl-C detected, goodbye.')
+        print("\nCtrl-C detected, goodbye.")
         os.kill(0, 9)
 
     for return_code in return_codes:
@@ -101,5 +120,5 @@ def main():
     sys.exit(0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

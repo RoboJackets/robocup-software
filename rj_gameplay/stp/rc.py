@@ -15,9 +15,15 @@ class Robot:
     to enforce that instances of this class should not be mutated."""
 
     __slots__ = [
-        "__id", "__is_ours", "__pose", "__twist",
-        "__visible", "__has_ball_sense", "__kicker_charged",
-        "__kicker_healthy", "__lethal_fault"
+        "__id",
+        "__is_ours",
+        "__pose",
+        "__twist",
+        "__visible",
+        "__has_ball_sense",
+        "__kicker_charged",
+        "__kicker_healthy",
+        "__lethal_fault",
     ]
 
     __id: RobotId
@@ -30,10 +36,18 @@ class Robot:
     __kicker_healthy: bool
     __lethal_fault: bool
 
-    def __init__(self, robot_id: RobotId, is_ours: bool, pose: np.ndarray,
-                 twist: np.ndarray, visible: bool,
-                 has_ball_sense: bool, kicker_charged: bool,
-                 kicker_healthy: bool, lethal_fault: bool):
+    def __init__(
+        self,
+        robot_id: RobotId,
+        is_ours: bool,
+        pose: np.ndarray,
+        twist: np.ndarray,
+        visible: bool,
+        has_ball_sense: bool,
+        kicker_charged: bool,
+        kicker_healthy: bool,
+        lethal_fault: bool,
+    ):
         """
         :param robot_id: Shell id of the robot.
         :param is_ours: Whether the robot is one of our robots
@@ -57,12 +71,12 @@ class Robot:
 
     def __repr__(self) -> str:
         return "Robot(id:{}, is_ours:{}, pose:{}, twist:{}, visible:{})".format(
-            self.__id, self.__is_ours, self.__pose, self.__twist,
-            self.__visible)
+            self.__id, self.__is_ours, self.__pose, self.__twist, self.__visible
+        )
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Robot):
-            if (self.is_ours == other.is_ours and self.id == other.id):
+            if self.is_ours == other.is_ours and self.id == other.id:
                 return True
         return False
 
@@ -85,11 +99,12 @@ class Robot:
         """
         :return: Pose of the robot. [x, y, theta].
         """
-        if (not self.visible):
-            #I could see removing this as it's a thing that may happen fairly often
+        if not self.visible:
+            # I could see removing this as it's a thing that may happen fairly often
             warnings.warn(
                 "Attempting to retrieve robot pose from non-visible robot",
-                RuntimeWarning)
+                RuntimeWarning,
+            )
 
         return self.__pose
 
@@ -98,11 +113,12 @@ class Robot:
         """
         :return: Twist of the robot. [dx, dy, dtheta].
         """
-        if (not self.visible):
-            #I could see removing this as it's a thing that may happen fairly often
+        if not self.visible:
+            # I could see removing this as it's a thing that may happen fairly often
             warnings.warn(
                 "Attempting to retrieve robot pose from non-visible robot",
-                RuntimeWarning)
+                RuntimeWarning,
+            )
 
         return self.__twist
 
@@ -118,10 +134,11 @@ class Robot:
         """
         :return: True if this robot has functioning ball sensors
         """
-        if (not self.is_ours):
+        if not self.is_ours:
             warnings.warn(
                 "Attempting to retrieve ball sense status from an opposing robot",
-                RuntimeWarning)
+                RuntimeWarning,
+            )
 
         return self.__has_ball_sense
 
@@ -130,10 +147,11 @@ class Robot:
         """
         :return: True if the kicker capacitors are charged
         """
-        if (not self.is_ours):
+        if not self.is_ours:
             warnings.warn(
                 "Attempting to retrieve kicker charge status from an opposing robot",
-                RuntimeWarning)
+                RuntimeWarning,
+            )
             return False
 
         return self.__kicker_charged
@@ -143,10 +161,11 @@ class Robot:
         """
         :return: True if the kicker is healthy
         """
-        if (not self.is_ours):
+        if not self.is_ours:
             warnings.warn(
                 "Attempting to retrieve kicker health status from an opposing robot",
-                RuntimeWarning)
+                RuntimeWarning,
+            )
             return False
 
         return self.__kicker_healthy
@@ -156,10 +175,11 @@ class Robot:
         """
         :return: True if the robot has encounted a fault that will prevent further play, such as an FPGA or motor fault.
         """
-        if (not self.is_ours):
+        if not self.is_ours:
             warnings.warn(
                 "Attempting to retrieve lethal fault information from an opposing robot",
-                RuntimeWarning)
+                RuntimeWarning,
+            )
 
         return self.__lethal_fault
 
@@ -186,16 +206,18 @@ class Ball:
 
     def __repr__(self) -> str:
         return "Ball(pos:{}, vel:{}, visible:{})".format(
-            self.__pos, self.__vel, self.__visible)
+            self.__pos, self.__vel, self.__visible
+        )
 
     @property
     def pos(self) -> np.ndarray:
         """
         :return: Position of the ball. [x, y].
         """
-        if (not self.visible):
-            warnings.warn("Retrieved the position of a non-visible ball",
-                          RuntimeWarning)
+        if not self.visible:
+            warnings.warn(
+                "Retrieved the position of a non-visible ball", RuntimeWarning
+            )
 
         return self.__pos
 
@@ -204,9 +226,10 @@ class Ball:
         """
         :return: Velocity of the ball. [dx, dy].
         """
-        if (not self.visible):
-            warnings.warn("Retrieved the velocity of a non-visible ball",
-                          RuntimeWarning)
+        if not self.visible:
+            warnings.warn(
+                "Retrieved the velocity of a non-visible ball", RuntimeWarning
+            )
 
         return self.__vel
 
@@ -257,11 +280,20 @@ class Field:
     """Information about the field."""
 
     __slots__ = [
-        "__length_m", "__width_m", "__border_m", "__line_width_m",
-        "__goal_width_m", "__goal_depth_m", "__goal_height_m",
-        "__def_area_short_dist_m", "__def_area_long_dist_m",
-        "__center_radius_m", "__center_diameter_m", "__goal_flat_m",
-        "__floor_length_m", "__floor_width_m"
+        "__length_m",
+        "__width_m",
+        "__border_m",
+        "__line_width_m",
+        "__goal_width_m",
+        "__goal_depth_m",
+        "__goal_height_m",
+        "__def_area_short_dist_m",
+        "__def_area_long_dist_m",
+        "__center_radius_m",
+        "__center_diameter_m",
+        "__goal_flat_m",
+        "__floor_length_m",
+        "__floor_width_m",
     ]
 
     __length_m: float
@@ -279,12 +311,23 @@ class Field:
     __floor_length_m: float
     __floor_width_m: float
 
-    def __init__(self, length_m: float, width_m: float, border_m: float,
-                 line_width_m: float, goal_width_m: float, goal_depth_m: float,
-                 goal_height_m: float, def_area_short_dist_m: float,
-                 def_area_long_dist_m: float, center_radius_m: float,
-                 center_diameter_m: float, goal_flat_m: float,
-                 floor_length_m: float, floor_width_m: float):
+    def __init__(
+        self,
+        length_m: float,
+        width_m: float,
+        border_m: float,
+        line_width_m: float,
+        goal_width_m: float,
+        goal_depth_m: float,
+        goal_height_m: float,
+        def_area_short_dist_m: float,
+        def_area_long_dist_m: float,
+        center_radius_m: float,
+        center_diameter_m: float,
+        goal_flat_m: float,
+        floor_length_m: float,
+        floor_width_m: float,
+    ):
         self.__length_m = length_m
         self.__width_m = width_m
         self.__border_m = border_m
@@ -440,9 +483,14 @@ class GameInfo:
     __our_restart: bool
     __ball_placement: np.array
 
-    def __init__(self, period: GamePeriod, state: GameState,
-                 restart: GameRestart, our_restart: bool,
-                 ball_placement: np.array):
+    def __init__(
+        self,
+        period: GamePeriod,
+        state: GameState,
+        restart: GameRestart,
+        our_restart: bool,
+        ball_placement: np.array,
+    ):
         self.__period = period
         self.__state = state
         self.__restart = restart
@@ -475,11 +523,12 @@ class GameInfo:
         """
         :return: True if it is our restart
         """
-        if (not self.is_restart()):
+        if not self.is_restart():
             warnings.warn(
                 "Retrieved if it is our restart when it is not a restart at all",
-                RuntimeWarning)
-            return False  #Is returning this dangerous?
+                RuntimeWarning,
+            )
+            return False  # Is returning this dangerous?
 
         return self.__our_restart
 
@@ -488,11 +537,12 @@ class GameInfo:
         """
         :return: True if it is their restart
         """
-        if (not self.is_restart()):
+        if not self.is_restart():
             warnings.warn(
                 "Retrieved if it is our restart when it is not a restart at all",
-                RuntimeWarning)
-            return False  #Is returning this dangerous?
+                RuntimeWarning,
+            )
+            return False  # Is returning this dangerous?
 
         return not self.__our_restart
 
@@ -561,8 +611,12 @@ class WorldState:
     """Current state of the world."""
 
     __slots__ = [
-        "__our_robots", "__their_robots", "__ball", "__game_info", "__field",
-        "__goalie_id"
+        "__our_robots",
+        "__their_robots",
+        "__ball",
+        "__game_info",
+        "__field",
+        "__goalie_id",
     ]
 
     __our_robots: List[Robot]
@@ -572,9 +626,15 @@ class WorldState:
     __field: Field
     __goalie_id: int
 
-    def __init__(self, our_robots: List[Robot], their_robots: List[Robot],
-                 ball: Ball, game_info: GameInfo, field: Field,
-                 goalie_id: int):
+    def __init__(
+        self,
+        our_robots: List[Robot],
+        their_robots: List[Robot],
+        ball: Ball,
+        game_info: GameInfo,
+        field: Field,
+        goalie_id: int,
+    ):
         self.__our_robots = our_robots
         self.__their_robots = their_robots
         self.__ball = ball
@@ -631,12 +691,11 @@ class WorldState:
         """
         return self.__goalie_id
 
-
-    #def get_visible_robots(self) -> List[Robot]:
+    # def get_visible_robots(self) -> List[Robot]:
     #    pass
 
-    #def get_our_visible_robots(self) -> List[Robot]:
+    # def get_our_visible_robots(self) -> List[Robot]:
     #    pass
 
-    #def get_their_visible_robots(self) -> List[Robot]:
+    # def get_their_visible_robots(self) -> List[Robot]:
     #    pass
