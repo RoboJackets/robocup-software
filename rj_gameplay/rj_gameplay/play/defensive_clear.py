@@ -9,13 +9,9 @@ import stp.rc as rc
 import numpy as np
 from typing import (
     Dict,
-    Generic,
-    Iterator,
     List,
-    Optional,
     Tuple,
     Type,
-    TypeVar,
 )
 
 

@@ -8,13 +8,9 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import (
     Dict,
-    Generic,
-    Iterator,
     List,
-    Optional,
     Tuple,
     Type,
-    TypeVar,
 )
 import numpy as np
 from rj_gameplay.calculations import wall_calculations

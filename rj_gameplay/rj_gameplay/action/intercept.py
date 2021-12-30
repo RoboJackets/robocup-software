@@ -8,7 +8,8 @@ import stp.rc as rc
 import numpy as np
 from rj_msgs.msg import (
     RobotIntent,
-    InterceptMotionCommand,
+    # TODO: use this when intercept is fixed
+    # InterceptMotionCommand,
     SettleMotionCommand,
 )
 from rj_geometry_msgs.msg import Point
@@ -23,7 +24,6 @@ class Intercept(action.IAction):
 
     def tick(self, intent: RobotIntent) -> None:
         """
-        # TODO: use this when intercept is fixed
         intercept_command = InterceptMotionCommand()
         # TODO: numpy to Point conv
         intercept_command.target = Point(x=self.target_point[0], y=self.target_point[1])

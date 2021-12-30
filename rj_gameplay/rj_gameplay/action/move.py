@@ -9,9 +9,7 @@ import numpy as np
 from rj_msgs.msg import (
     RobotIntent,
     MotionCommand,
-    EmptyMotionCommand,
     PathTargetMotionCommand,
-    LinearMotionInstant,
 )
 from rj_geometry_msgs.msg import Point
 from typing import Optional

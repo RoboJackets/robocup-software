@@ -1,11 +1,6 @@
 import numpy as np
 import stp.testing as testing
 from stp.rc import (
-    Ball,
-    Robot,
-    WorldState,
-    Field,
-    GameInfo,
     GamePeriod,
     GameRestart,
     GameState,

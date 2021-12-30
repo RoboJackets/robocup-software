@@ -2,9 +2,8 @@ import stp.play as play
 import stp.tactic as tactic
 
 from rj_gameplay.tactic import (
-    pass_tactic,
+    # pass_tactic,
     pass_seek,
-    nmark_tactic,
     goalie_tactic,
     clear_tactic,
     wall_tactic,
@@ -15,13 +14,9 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 from typing import (
     Dict,
-    Generic,
-    Iterator,
     List,
-    Optional,
     Tuple,
     Type,
-    TypeVar,
 )
 import numpy as np
 from rj_gameplay.calculations import wall_calculations
