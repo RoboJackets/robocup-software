@@ -1,17 +1,31 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic, move_tactic
+from rj_gameplay.tactic import (
+    wall_tactic,
+    nmark_tactic,
+    goalie_tactic,
+    move_tactic,
+)
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import (
+    Dict,
+    Generic,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+)
 
 
 class PreparePenaltyDefense(play.IPlay):
-    """For when we don't have the ball and are trying to stop the opponent from scoring.
-    """
+    """For when we don't have the ball and are trying to stop the opponent from scoring."""
+
     def __init__(self):
         self.goalie_move = move_tactic.Move((0.0, 1.0), face_point=(0.0, 4.5))
         self.goalie_move.cost = goalie_tactic.GoalieCost()
@@ -34,8 +48,10 @@ class PreparePenaltyDefense(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-               List[tactic.SkillEntry]]:
+    ) -> Tuple[
+        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+        List[tactic.SkillEntry],
+    ]:
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {
@@ -45,9 +61,9 @@ class PreparePenaltyDefense(play.IPlay):
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests,
-                                                       world_state,
-                                                       prev_results)
+        flat_results = self.role_assigner.assign_roles(
+            flat_requests, world_state, prev_results
+        )
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all SkillEntries from all tactics
@@ -70,8 +86,8 @@ class PreparePenaltyDefense(play.IPlay):
 
 
 class PenaltyDefense(play.IPlay):
-    """For when we don't have the ball and are trying to stop the opponent from scoring.
-    """
+    """For when we don't have the ball and are trying to stop the opponent from scoring."""
+
     def __init__(self):
         self.tactics = [
             goalie_tactic.GoalieTactic(),
@@ -92,8 +108,10 @@ class PenaltyDefense(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-               List[tactic.SkillEntry]]:
+    ) -> Tuple[
+        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+        List[tactic.SkillEntry],
+    ]:
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {
@@ -103,9 +121,9 @@ class PenaltyDefense(play.IPlay):
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests,
-                                                       world_state,
-                                                       prev_results)
+        flat_results = self.role_assigner.assign_roles(
+            flat_requests, world_state, prev_results
+        )
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all SkillEntries from all tactics

@@ -15,16 +15,17 @@ KICK_BALL_SPEED_THRESHOLD = 0.9
 from rj_gameplay.MAX_KICK_SPEED import *
 
 
-class Kick(action.IAction): #add ABC if needed 
+class Kick(action.IAction):  # add ABC if needed
     """
     Kick action
     """
-    def __init__(self, robot_id:int, chip:bool, kick_speed:float) -> None:
+
+    def __init__(self, robot_id: int, chip: bool, kick_speed: float) -> None:
         self.robot_id = robot_id
         self.chip = chip
         self.kick_speed = kick_speed
 
-    def tick(self, intent:RobotIntent) -> RobotIntent:
+    def tick(self, intent: RobotIntent) -> RobotIntent:
         new_intent = intent
         empty_command = EmptyMotionCommand()
         new_intent.motion_command.empty_command = [empty_command]
@@ -38,14 +39,20 @@ class Kick(action.IAction): #add ABC if needed
         new_intent.is_active = True
         return new_intent
 
-    def is_done(self, world_state:rc.WorldState) -> bool:
+    def is_done(self, world_state: rc.WorldState) -> bool:
         if self.robot_id is None:
             return False
-        ball_vel_unit = world_state.ball.vel / np.linalg.norm(world_state.ball.vel)
+        ball_vel_unit = world_state.ball.vel / np.linalg.norm(
+            world_state.ball.vel
+        )
         heading_angle = world_state.our_robots[self.robot_id].pose[2]
         heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
         dot_product = np.dot(heading_vect, ball_vel_unit)
-        #TODO: Make this threshold a local param
-        if dot_product > KICK_DOT_THRESHOLD and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD:
+        # TODO: Make this threshold a local param
+        if (
+            dot_product > KICK_DOT_THRESHOLD
+            and np.linalg.norm(world_state.ball.vel)
+            > KICK_BALL_SPEED_THRESHOLD
+        ):
             return True
         return False

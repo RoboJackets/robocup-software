@@ -33,14 +33,18 @@ def test_distance_to_pt() -> None:
     target_pt = np.array([1.0, 2.0])
     cost_fn = cost.distance_to_pt(target_pt, saturate_dist, switch_cost)
 
-    robot1 = testing.generate_test_robot(robot_id=1,
-                                         is_ours=True,
-                                         pose=np.array([1.0, 2.0, 0]),
-                                         twist=np.array([0, 0, 0]))
-    robot2 = testing.generate_test_robot(robot_id=2,
-                                         is_ours=True,
-                                         pose=np.array([2.0, 3.0, 0]),
-                                         twist=np.array([0, 0, 0]))
+    robot1 = testing.generate_test_robot(
+        robot_id=1,
+        is_ours=True,
+        pose=np.array([1.0, 2.0, 0]),
+        twist=np.array([0, 0, 0]),
+    )
+    robot2 = testing.generate_test_robot(
+        robot_id=2,
+        is_ours=True,
+        pose=np.array([2.0, 3.0, 0]),
+        twist=np.array([0, 0, 0]),
+    )
 
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))
@@ -55,5 +59,7 @@ def test_distance_to_pt() -> None:
     cost_robot2: float = cost_fn(robot2, None, world_state)
     assert cost_robot2 == 1.0
 
-    cost_robot2_switch: float = cost_fn(robot2, robot1_role_result, world_state)
+    cost_robot2_switch: float = cost_fn(
+        robot2, robot1_role_result, world_state
+    )
     assert cost_robot2_switch == 1.5

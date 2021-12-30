@@ -10,7 +10,8 @@ from xml.sax.saxutils import escape
 
 # Create a `ErrorDescription` tuple with all the information we want to keep.
 ErrorDescription = collections.namedtuple(
-    'ErrorDescription', 'file line column error error_identifier description')
+    "ErrorDescription", "file line column error error_identifier description"
+)
 
 
 class ClangTidyConverter:
@@ -24,46 +25,56 @@ class ClangTidyConverter:
     # Group 4: error message
     # Group 5: error identifier
     error_regex = re.compile(
-        r"^([\w\/\.\-\ ]+):(\d+):(\d+): (.+) (\[[\w\-,\.]+\])$")
+        r"^([\w\/\.\-\ ]+):(\d+):(\d+): (.+) (\[[\w\-,\.]+\])$"
+    )
 
     # This identifies the main error line (it has a [the-warning-type] at the end)
     # We only create a new error when we encounter one of those.
-    main_error_identifier = re.compile(r'\[[\w\-,\.]+\]$')
+    main_error_identifier = re.compile(r"\[[\w\-,\.]+\]$")
 
     def __init__(self, basename):
         self.basename = basename
 
     def print_junit_file(self, output_file):
         # Write the header.
-        output_file.write("""<?xml version="1.0" encoding="UTF-8" ?>
-<testsuites>""")
+        output_file.write(
+            """<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>"""
+        )
 
         sorted_errors = sorted(self.errors, key=lambda x: x.file)
 
         # Iterate through the errors, grouped by file.
-        for file, errorIterator in itertools.groupby(sorted_errors,
-                                                     key=lambda x: x.file):
+        for file, errorIterator in itertools.groupby(
+            sorted_errors, key=lambda x: x.file
+        ):
             errors = list(errorIterator)
             error_count = len(errors)
 
             # Each file gets a test-suite
             output_file.write(
-                """\n    <testsuite errors="{error_count}" name="{file}" tests="{error_count}" failures="0" time="0">\n"""
-                .format(error_count=error_count, file=file))
+                """\n    <testsuite errors="{error_count}" name="{file}" tests="{error_count}" failures="0" time="0">\n""".format(
+                    error_count=error_count, file=file
+                )
+            )
             for i, error in enumerate(errors):
                 if i != 0:
                     output_file.write("\n")
                 # Write each error as a test case.
                 output_file.write(" " * 8)
-                output_file.write("""<testcase id="{id}" name="{id}" time="0">
+                output_file.write(
+                    """<testcase id="{id}" name="{id}" time="0">
             <failure message="{message}">
 {htmldata}
             </failure>
-        </testcase>""".format(id="[{}/{}] {}".format(error.line, error.column,
-                                                     error.error_identifier),
-                              message=escape(error.error,
-                                             entities={"\"": "&quot;"}),
-                              htmldata=escape(error.description)))
+        </testcase>""".format(
+                        id="[{}/{}] {}".format(
+                            error.line, error.column, error.error_identifier
+                        ),
+                        message=escape(error.error, entities={'"': "&quot;"}),
+                        htmldata=escape(error.description),
+                    )
+                )
             output_file.write("\n    </testsuite>\n")
         output_file.write("</testsuites>\n")
 
@@ -73,8 +84,9 @@ class ClangTidyConverter:
 
         result = self.error_regex.match(error_array[0])
         if result is None:
-            logging.warning('Could not match error_array to regex: %s',
-                            error_array)
+            logging.warning(
+                "Could not match error_array to regex: %s", error_array
+            )
             return
 
         # Remove ending newlines
@@ -94,8 +106,9 @@ class ClangTidyConverter:
         # Also remove `basename` from the message if it contains the path
         error_message = error_message.replace(self.basename, "")
 
-        error = ErrorDescription(file_path, line, col, error, error_identifier,
-                                 error_message)
+        error = ErrorDescription(
+            file_path, line, col, error, error_identifier, error_message
+        )
         self.errors.append(error)
 
     def convert(self, input_file, output_file):
@@ -103,7 +116,7 @@ class ClangTidyConverter:
         current_error = []
         for line in input_file:
             # If the line starts with a `/`, it is a line about a file.
-            if line[0] == '/':
+            if line[0] == "/":
                 # Look if it is the start of a error
                 if self.main_error_identifier.search(line, re.M):
                     # If so, process any `current_error` we might have

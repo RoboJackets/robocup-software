@@ -13,8 +13,12 @@ KICK_SPEED = 4.5
 EFF_BLOCK_WIDTH = 0.7
 
 
-def blocker_margin(kick_origin: np.array, kick_target: np.array,
-                   kick_speed: float, blocker: rc.Robot):
+def blocker_margin(
+    kick_origin: np.array,
+    kick_target: np.array,
+    kick_speed: float,
+    blocker: rc.Robot,
+):
     if not blocker.visible:
         return np.inf
 
@@ -26,16 +30,21 @@ def blocker_margin(kick_origin: np.array, kick_target: np.array,
     blocker_position = blocker.pose[0:2]
 
     # Calculate blocker intercept
-    blocker_intercept_dist_along_kick = np.dot(blocker_position - kick_origin,
-                                               kick_vector)
+    blocker_intercept_dist_along_kick = np.dot(
+        blocker_position - kick_origin, kick_vector
+    )
     blocker_intercept_dist_along_kick = np.clip(
-        blocker_intercept_dist_along_kick, a_min=0, a_max=kick_dist)
-    blocker_intercept = kick_origin + kick_vector * blocker_intercept_dist_along_kick
+        blocker_intercept_dist_along_kick, a_min=0, a_max=kick_dist
+    )
+    blocker_intercept = (
+        kick_origin + kick_vector * blocker_intercept_dist_along_kick
+    )
 
     blocker_distance = np.clip(
         np.linalg.norm(blocker_intercept - blocker_position) - EFF_BLOCK_WIDTH,
         a_min=0.0,
-        a_max=np.inf)
+        a_max=np.inf,
+    )
 
     blocker_time = np.abs(blocker_distance) / OPPONENT_SPEED
 
@@ -45,8 +54,12 @@ def blocker_margin(kick_origin: np.array, kick_target: np.array,
     return blocker_time - ball_time
 
 
-def kick_cost(point: np.array, kick_speed: float, kick_origin: np.array,
-              world_state: rc.WorldState):
+def kick_cost(
+    point: np.array,
+    kick_speed: float,
+    kick_origin: np.array,
+    world_state: rc.WorldState,
+):
     margins = [
         blocker_margin(kick_origin, point, kick_speed, blocker)
         for blocker in world_state.their_robots
@@ -74,10 +87,18 @@ def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
         np.array([x, goal_y]) for x in np.arange(xmin, xmax, step=0.05)
     ]
 
-    cost, point = min([(kick_cost(point, kick_speed, world_state.ball.pos,
-                                  world_state), point)
-                       for point in try_points],
-                      key=lambda x: x[0])
+    cost, point = min(
+        [
+            (
+                kick_cost(
+                    point, kick_speed, world_state.ball.pos, world_state
+                ),
+                point,
+            )
+            for point in try_points
+        ],
+        key=lambda x: x[0],
+    )
 
     return point
 
@@ -86,8 +107,13 @@ class CaptureCost(role.CostFn):
     """
     A cost function for how to choose a robot that will pass
     """
-    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
-                 world_state: rc.WorldState) -> float:
+
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
         if robot.has_ball_sense:
             return 0
         else:
@@ -95,7 +121,7 @@ class CaptureCost(role.CostFn):
             ball_pos = world_state.ball.pos[0:2]
 
             goal_y = world_state.field.length_m
-            goal_pos = np.array([0., goal_y])
+            goal_pos = np.array([0.0, goal_y])
             robot_to_ball = ball_pos - robot_pos
             # robot_to_ball /= np.linalg.norm(robot_to_ball) + 1e-6
             ball_to_goal = goal_pos - ball_pos
@@ -117,41 +143,47 @@ class CaptureCost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
 class StrikerTactic(tactic.ITactic):
     """
-	A striker tactic which receives then shoots the ball
-	"""
+    A striker tactic which receives then shoots the ball
+    """
+
     def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
         self.capture = tactic.SkillEntry(capture.Capture())
         self.capture_cost = CaptureCost()
         self.shoot = tactic.SkillEntry(
-            pivot_kick.PivotKick(robot=None,
-                                 chip=False,
-                                 kick_speed=KICK_SPEED,
-                                 target_point=target_point,
-                                 threshold=0.05))
+            pivot_kick.PivotKick(
+                robot=None,
+                chip=False,
+                kick_speed=KICK_SPEED,
+                target_point=target_point,
+                threshold=0.05,
+            )
+        )
 
     def compute_props(self):
         pass
 
     def create_request(self, **kwargs) -> role.RoleRequest:
         """
-		Creates a sane default RoleRequest.
-		:return: A list of size 1 of a sane default RoleRequest.
-		"""
+        Creates a sane default RoleRequest.
+        :return: A list of size 1 of a sane default RoleRequest.
+        """
         pass
 
-    def get_requests(self, world_state: rc.WorldState,
-                     props) -> List[tactic.RoleRequests]:
+    def get_requests(
+        self, world_state: rc.WorldState, props
+    ) -> List[tactic.RoleRequests]:
 
-        striker_request = role.RoleRequest(role.Priority.MEDIUM, True,
-                                           self.capture_cost)
+        striker_request = role.RoleRequest(
+            role.Priority.MEDIUM, True, self.capture_cost
+        )
         role_requests: tactic.RoleRequests = {}
 
         striker = [
@@ -173,8 +205,8 @@ class StrikerTactic(tactic.ITactic):
         role_results: tactic.RoleResults,
     ) -> List[tactic.SkillEntry]:
         """
-		:return: list of skills
-		"""
+        :return: list of skills
+        """
 
         capture_result = role_results[self.capture]
         shoot_result = role_results[self.shoot]
@@ -183,7 +215,8 @@ class StrikerTactic(tactic.ITactic):
             return [self.capture]
         if shoot_result and shoot_result[0].is_filled():
             self.shoot.skill.target_point = find_target_point(
-                world_state, kick_speed=KICK_SPEED)
+                world_state, kick_speed=KICK_SPEED
+            )
             return [self.shoot]
 
         return []
@@ -194,13 +227,15 @@ class StrikerTactic(tactic.ITactic):
 
 class LineKickStrikerTactic(tactic.ITactic):
     """
-	A striker tactic which receives then shoots the ball
-	"""
+    A striker tactic which receives then shoots the ball
+    """
+
     def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
         self.cost = cost  # unused
         self.target_point = target_point
         self.shoot = tactic.SkillEntry(
-            line_kick.LineKickSkill(robot=None, target_point=None))
+            line_kick.LineKickSkill(robot=None, target_point=None)
+        )
         self.capture_cost = CaptureCost()
 
     def compute_props(self):
@@ -208,43 +243,51 @@ class LineKickStrikerTactic(tactic.ITactic):
 
     def create_request(self, **kwargs) -> role.RoleRequest:
         """
-		Creates a sane default RoleRequest.
-		:return: A list of size 1 of a sane default RoleRequest.
-		"""
+        Creates a sane default RoleRequest.
+        :return: A list of size 1 of a sane default RoleRequest.
+        """
         pass
 
-    def get_requests(self, world_state: rc.WorldState,
-                     props) -> List[tactic.RoleRequests]:
+    def get_requests(
+        self, world_state: rc.WorldState, props
+    ) -> List[tactic.RoleRequests]:
 
-        striker_request = role.RoleRequest(role.Priority.MEDIUM, True,
-                                           self.capture_cost)
+        striker_request = role.RoleRequest(
+            role.Priority.MEDIUM, True, self.capture_cost
+        )
         role_requests: tactic.RoleRequests = {}
 
         role_requests[self.shoot] = [striker_request]
 
         return role_requests
 
-    def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults
+    ) -> List[tactic.SkillEntry]:
         """
-		:return: list of skills
-		"""
+        :return: list of skills
+        """
 
         shoot_result = role_results[self.shoot]
 
         if shoot_result and shoot_result[0].is_filled():
             self.shoot.skill.target_point = find_target_point(
-                world_state, kick_speed=KICK_SPEED)
+                world_state, kick_speed=KICK_SPEED
+            )
             shooter_vel = shoot_result[0].role.robot.twist[:2]
             if world_state is not None and world_state.game_info.is_penalty():
-                dist_to_goal = world_state.field.their_goal_loc[
-                    1] - world_state.ball.pos[1]
+                dist_to_goal = (
+                    world_state.field.their_goal_loc[1]
+                    - world_state.ball.pos[1]
+                )
                 if dist_to_goal > 4.0:
                     self.shoot.skill.kick_speed = max(
-                        0.0, 2.0 - np.linalg.norm(shooter_vel))
+                        0.0, 2.0 - np.linalg.norm(shooter_vel)
+                    )
                 elif dist_to_goal > 3.5:
                     self.shoot.skill.kick_speed = max(
-                        0.0, 1.5 - np.linalg.norm(shooter_vel))
+                        0.0, 1.5 - np.linalg.norm(shooter_vel)
+                    )
             return [self.shoot]
 
         return []

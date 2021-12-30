@@ -50,13 +50,18 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
         if not isinstance(other, SkillEntry):
             return False
 
-        return (self.concrete_cls, self._idx) == (other.concrete_cls, other._idx)
+        return (self.concrete_cls, self._idx) == (
+            other.concrete_cls,
+            other._idx,
+        )
 
     def __hash__(self) -> int:
         return hash((self.concrete_cls, self._idx))
 
     def __str__(self) -> str:
-        idx_string: str = "{:2}".format(self._idx) if self._idx is not None else "??"
+        idx_string: str = (
+            "{:2}".format(self._idx) if self._idx is not None else "??"
+        )
         return "SkillEntry({}: {} - {})".format(
             idx_string, self.concrete_cls.__name__, self.skill
         )
@@ -124,7 +129,9 @@ class ITactic(Generic[PropT], ABC):
         ...
 
     @abstractmethod
-    def get_requests(self, world_state: rc.WorldState, props: PropT) -> RoleRequests:
+    def get_requests(
+        self, world_state: rc.WorldState, props: PropT
+    ) -> RoleRequests:
         """Returns the RoleRequests for this tactic.
         :param world_state: Current world state.
         :param props: The state of the current tactic.
@@ -139,7 +146,9 @@ class ITactic(Generic[PropT], ABC):
         """
         ...
 
-    def create_requests(self, num_requests: int, **kwargs) -> List[role.RoleRequest]:
+    def create_requests(
+        self, num_requests: int, **kwargs
+    ) -> List[role.RoleRequest]:
         """Creates a list of sane default RoleRequests.
         :param num_requests: Number of role requests to create.
         :return: A list of size num_requests of sane default RoleRequsts.
@@ -147,8 +156,12 @@ class ITactic(Generic[PropT], ABC):
         return [self.create_request(**kwargs) for _ in range(num_requests)]
 
     @abstractmethod
-    def tick(self, world_state: rc.WorldState, role_results: RoleResults,
-             props: PropT) -> List[skill.ISkill]:
+    def tick(
+        self,
+        world_state: rc.WorldState,
+        role_results: RoleResults,
+        props: PropT,
+    ) -> List[skill.ISkill]:
         """Ticks the tactic, returning a tuple of the skills and the skills executed.
         :param world_state: Current world state.
         :param role_results: The results of role assignment.
@@ -186,14 +199,18 @@ class Registry:
 
         # Check that the item we got was an instance of the expected type.
         if not isinstance(skill, key):
-            raise KeyError("Tactic {} is not an instance of key {}".format(skill, key))
+            raise KeyError(
+                "Tactic {} is not an instance of key {}".format(skill, key)
+            )
 
         return tactic
 
     def __setitem__(self, key: Type[TacticT], value: TacticT) -> None:
         # Check that the item we're setting is an instance of the expected type.
         if not isinstance(value, key):
-            raise KeyError("Tactic {} is not an instance of {}".format(value, key))
+            raise KeyError(
+                "Tactic {} is not an instance of {}".format(value, key)
+            )
 
         self._dict.__setitem__(key, value)
 
@@ -226,7 +243,9 @@ class Factory:
         if tactic not in self._registry:
             # TODO: Create new class for this error category.
             raise ValueError(
-                "Trying to create tactic {}, but not in registry!".format(skill)
+                "Trying to create tactic {}, but not in registry!".format(
+                    skill
+                )
             )
 
         return self._registry[tactic]

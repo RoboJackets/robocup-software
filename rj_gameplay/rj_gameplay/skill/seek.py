@@ -11,11 +11,15 @@ import stp.rc as rc
 import numpy as np
 from typing import Callable
 
+
 class Seek(skill.ISkill):
     """
     A seeker skill based off of some heuristic
     """
-    def __init__(self, role: role.Role, heuristic: Callable[np.array, float]) -> None:
+
+    def __init__(
+        self, role: role.Role, heuristic: Callable[np.array, float]
+    ) -> None:
         # TODO: Properly implement using move action
         pass
 
@@ -24,4 +28,6 @@ class Seek(skill.ISkill):
         pass
 
     def __str__(self):
-        return f"Seek(robot={self.robot.id if self.robot is not None else '??'})"
+        return (
+            f"Seek(robot={self.robot.id if self.robot is not None else '??'})"
+        )

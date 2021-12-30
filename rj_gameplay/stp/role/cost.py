@@ -45,7 +45,9 @@ def distance_to_pt(
 
         # Add the cost for switching robots.
         if prev_result and prev_result.role.is_filled():
-            cost += flat_switch_cost(robot, prev_result.role.robot, switch_cost)
+            cost += flat_switch_cost(
+                robot, prev_result.role.robot, switch_cost
+            )
 
         return cost
 
@@ -68,7 +70,9 @@ def constant(value: float, switch_cost: float) -> role.CostFn:
 
         # Add the cost for switching robots.
         if prev_result and prev_result.role.is_filled():
-            cost += flat_switch_cost(robot, prev_result.role.robot, switch_cost)
+            cost += flat_switch_cost(
+                robot, prev_result.role.robot, switch_cost
+            )
 
         return cost
 

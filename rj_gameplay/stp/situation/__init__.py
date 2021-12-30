@@ -30,6 +30,7 @@ class IAnalyzer(ABC):
 
 class IPlaySelector(ABC):
     """Abstract class for play selector."""
+
     def __init__(self):
         self.analyzer: IAnalyzer = None
         self.curr_situation: ISituation = None

@@ -42,7 +42,9 @@ class HeuristicInformation:
     field_loc: FieldLoc
     is_pileup: bool
 
-    def __init__(self, world_state: stp.rc.WorldState, game_info: stp.rc.GameInfo):
+    def __init__(
+        self, world_state: stp.rc.WorldState, game_info: stp.rc.GameInfo
+    ):
         self.field_loc = self.__calc_field_loc(world_state, game_info)
         self.ball_pos = self.__calc_ball_pos(world_state, game_info)
         self.is_pileup = self.__calc_pileup(world_state, game_info)
@@ -78,31 +80,44 @@ class HeuristicInformation:
         :return: The current BallPos.
         """
         for our_bot in world_state.our_robots:
-            if our_bot.has_ball_sense or np.linalg.norm(
-                    np.array(world_state.ball.pos) -
-                    np.array(our_bot.pose[0:2])) < POSSESS_MIN_DIST:
+            if (
+                our_bot.has_ball_sense
+                or np.linalg.norm(
+                    np.array(world_state.ball.pos)
+                    - np.array(our_bot.pose[0:2])
+                )
+                < POSSESS_MIN_DIST
+            ):
                 return BallPos.OUR_BALL
         for their_bot in world_state.their_robots:
-            if np.linalg.norm(
-                    np.array(world_state.ball.pos) -
-                    np.array(their_bot.pose[0:2])) < POSSESS_MIN_DIST:
+            if (
+                np.linalg.norm(
+                    np.array(world_state.ball.pos)
+                    - np.array(their_bot.pose[0:2])
+                )
+                < POSSESS_MIN_DIST
+            ):
                 return BallPos.THEIR_BALL
         if np.linalg.norm(world_state.ball.vel) > MIN_PASS_SPEED:
             for our_bot in world_state.our_robots:
                 ball_to_bot = np.array(world_state.ball.pos) - np.array(
-                    our_bot.pose[0:2])
+                    our_bot.pose[0:2]
+                )
                 ball_to_bot_unit = ball_to_bot / np.linalg.norm(ball_to_bot)
                 ball_dir = world_state.ball.vel / np.linalg.norm(
-                    world_state.ball.vel)
+                    world_state.ball.vel
+                )
                 dot = abs(np.dot(ball_to_bot_unit, ball_dir))
                 if dot > 0.7:
                     return BallPos.OUR_BALL
             for their_bot in world_state.their_robots:
                 ball_to_bot = np.array(world_state.ball.pos) - np.array(
-                    their_bot.pose[0:2])
+                    their_bot.pose[0:2]
+                )
                 ball_to_bot_unit = ball_to_bot / np.linalg.norm(ball_to_bot)
                 ball_dir = world_state.ball.vel / np.linalg.norm(
-                    world_state.ball.vel)
+                    world_state.ball.vel
+                )
                 dot = abs(np.dot(ball_to_bot_unit, ball_dir))
                 if dot > 0.7:
                     return BallPos.THEIR_BALL
@@ -122,17 +137,29 @@ class HeuristicInformation:
         our_near_bots = 0
         their_near_bots = 0
         for their_bot in world_state.their_robots:
-            if np.linalg.norm(
-                    np.array(world_state.ball.pos) -
-                    np.array(their_bot.pose[0:2])) < MIN_NEAR_BALL_DIST:
+            if (
+                np.linalg.norm(
+                    np.array(world_state.ball.pos)
+                    - np.array(their_bot.pose[0:2])
+                )
+                < MIN_NEAR_BALL_DIST
+            ):
                 their_near_bots += 1
         for our_bot in world_state.our_robots:
-            if np.linalg.norm(
-                    np.array(world_state.ball.pos) -
-                    np.array(our_bot.pose[0:2])) < MIN_NEAR_BALL_DIST:
+            if (
+                np.linalg.norm(
+                    np.array(world_state.ball.pos)
+                    - np.array(our_bot.pose[0:2])
+                )
+                < MIN_NEAR_BALL_DIST
+            ):
                 our_near_bots += 1
 
-        if our_near_bots > 0 and their_near_bots > 0 and our_near_bots + their_near_bots >= 3:
+        if (
+            our_near_bots > 0
+            and their_near_bots > 0
+            and our_near_bots + their_near_bots >= 3
+        ):
             return True
         # TODO(1578): Re-implement all the logic here.
 
@@ -145,7 +172,8 @@ class Analyzer(stp.situation.IAnalyzer):
     __slots__ = []
 
     def analyze_situation(
-            self, world_state: stp.rc.WorldState) -> stp.situation.ISituation:
+        self, world_state: stp.rc.WorldState
+    ) -> stp.situation.ISituation:
         """Returns the best situation for the current world state based on a hardcoded
         decision tree.
         :param world_state: The current state of the world.
@@ -206,8 +234,9 @@ class Analyzer(stp.situation.IAnalyzer):
                 else:
                     return dt.plays.DefendRestartDefensiveDirect()
             else:
-                raise RuntimeError("Unknown field_loc {}".format(
-                    heuristics.field_loc))
+                raise RuntimeError(
+                    "Unknown field_loc {}".format(heuristics.field_loc)
+                )
 
         elif game_info.is_indirect():
             if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
@@ -226,7 +255,9 @@ class Analyzer(stp.situation.IAnalyzer):
                 else:
                     return dt.plays.DefendRestartDefensive()
             else:
-                raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
+                raise RuntimeError(
+                    "Unknown field_loc {}".format(heuristics.field_loc)
+                )
 
         elif game_info.is_free_placement():
             return dt.plays.Stop()

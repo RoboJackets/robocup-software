@@ -151,7 +151,12 @@ def test_tkdict_keys_values_items():
     tkdict[fixture.key_b2] = fixture.concrete_b2
 
     # Test .keys().
-    expected_keys = [fixture.key_a1, fixture.key_a2, fixture.key_b1, fixture.key_b2]
+    expected_keys = [
+        fixture.key_a1,
+        fixture.key_a2,
+        fixture.key_b1,
+        fixture.key_b2,
+    ]
     assert all([a == b for a, b in zip(tkdict.keys(), expected_keys)])
 
     # Test .values().
@@ -165,5 +170,10 @@ def test_tkdict_keys_values_items():
 
     # Test .items().
     assert all(
-        [a == b for a, b in zip(tkdict.items(), zip(expected_keys, expected_values))]
+        [
+            a == b
+            for a, b in zip(
+                tkdict.items(), zip(expected_keys, expected_values)
+            )
+        ]
     )

@@ -16,8 +16,8 @@ from stp.role import Priority
 from stp.role.assignment import FlatRoleRequests, RoleId
 from stp.role.assignment.naive import NaiveRoleAssignment, SortedRequests
 
-class AssignCostFn(role.CostFn):
 
+class AssignCostFn(role.CostFn):
     def __call__(
         self,
         robot: rc.Robot,
@@ -27,18 +27,17 @@ class AssignCostFn(role.CostFn):
 
         return -1
 
-
     def unassigned_cost_fn(
         self,
         prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return 9999
+
 
 class UnassignCostFn(role.CostFn):
-
     def __call__(
         self,
         robot: rc.Robot,
@@ -48,21 +47,20 @@ class UnassignCostFn(role.CostFn):
 
         return 9999
 
-
     def unassigned_cost_fn(
         self,
         prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return -1
 
-class TestCostFn(role.CostFn):
 
+class TestCostFn(role.CostFn):
     def __init__(
         self,
-        fn: Callable[[rc.Robot, Optional["RoleResult"], rc.WorldState], float]
+        fn: Callable[[rc.Robot, Optional["RoleResult"], rc.WorldState], float],
     ) -> None:
 
         self.fn = fn
@@ -77,11 +75,11 @@ class TestCostFn(role.CostFn):
         return self.fn(robot, prev_result, world_state)
 
     def unassigned_cost_fn(
-        self,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState) -> float:
+        self, prev_result: Optional["RoleResult"], world_state: rc.WorldState
+    ) -> float:
 
         return 9999
+
 
 class SkillBase(skill.ISkill):
     def define(self):
@@ -147,14 +145,28 @@ class TacticBase(tactic.ITactic[None]):
         # Dummy tick function doesn't return any actions.
         return []
 
-    def get_requests(self, world_state: WorldState, props: None) -> tactic.RoleRequests:
+    def get_requests(
+        self, world_state: WorldState, props: None
+    ) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
-            self.A1: [self.A1.skill.create_request().with_priority(Priority.LOW)],
-            self.A2: [self.A2.skill.create_request().with_priority(Priority.MEDIUM)],
-            self.B1: [self.B1.skill.create_request().with_priority(Priority.MEDIUM)],
-            self.B2: [self.B2.skill.create_request().with_priority(Priority.HIGH)],
-            self.C1: [self.C1.skill.create_request().with_priority(Priority.LOW)],
-            self.C2: [self.C2.skill.create_request().with_priority(Priority.MEDIUM)],
+            self.A1: [
+                self.A1.skill.create_request().with_priority(Priority.LOW)
+            ],
+            self.A2: [
+                self.A2.skill.create_request().with_priority(Priority.MEDIUM)
+            ],
+            self.B1: [
+                self.B1.skill.create_request().with_priority(Priority.MEDIUM)
+            ],
+            self.B2: [
+                self.B2.skill.create_request().with_priority(Priority.HIGH)
+            ],
+            self.C1: [
+                self.C1.skill.create_request().with_priority(Priority.LOW)
+            ],
+            self.C2: [
+                self.C2.skill.create_request().with_priority(Priority.MEDIUM)
+            ],
             self.BALL_SKILL: [
                 self.BALL_SKILL.skill.create_request()
                 .with_priority(Priority.HIGH)
@@ -204,7 +216,9 @@ def test_get_sorted_requests_simple():
         role_id_a: role.RoleRequest(
             Priority.HIGH, required=True, cost_fn=constant_cost
         ),
-        role_id_b: role.RoleRequest(Priority.LOW, required=True, cost_fn=constant_cost),
+        role_id_b: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=constant_cost
+        ),
         role_id_c: role.RoleRequest(
             Priority.MEDIUM, required=True, cost_fn=constant_cost
         ),
@@ -324,18 +338,26 @@ def test_compute_costs_matrix() -> None:
 
     # Create the requests of same priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_a),
-        role_id_b: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_b),
-        role_id_c: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_c),
+        role_id_a: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost_fn_a
+        ),
+        role_id_b: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost_fn_b
+        ),
+        role_id_c: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost_fn_c
+        ),
     }
 
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
-    free_robots = np.array([
-        testing.generate_test_robot(robot_id=1, pose=np.array([0, 0, 0])),
-        testing.generate_test_robot(robot_id=2, pose=np.array([1, 1, 0])),
-        testing.generate_test_robot(robot_id=3, pose=np.array([2, 2, 0])),
-        testing.generate_test_robot(robot_id=4, pose=np.array([3, 3, 0])),
-    ])
+    free_robots = np.array(
+        [
+            testing.generate_test_robot(robot_id=1, pose=np.array([0, 0, 0])),
+            testing.generate_test_robot(robot_id=2, pose=np.array([1, 1, 0])),
+            testing.generate_test_robot(robot_id=3, pose=np.array([2, 2, 0])),
+            testing.generate_test_robot(robot_id=4, pose=np.array([3, 3, 0])),
+        ]
+    )
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
@@ -343,7 +365,8 @@ def test_compute_costs_matrix() -> None:
     ball: Ball = testing.generate_test_ball()
 
     world_state: WorldState = testing.generate_test_worldstate(
-        our_robots=out_robots)
+        our_robots=out_robots
+    )
     prev_results = {}
 
     # Compute the cost matrix.
@@ -388,25 +411,34 @@ def test_assign_prioritized_roles() -> None:
 
     # Create the requests of same priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_a),
-        role_id_b: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_b),
-        role_id_c: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_c),
+        role_id_a: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost_fn_a
+        ),
+        role_id_b: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost_fn_b
+        ),
+        role_id_c: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost_fn_c
+        ),
     }
 
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
-    free_robots = np.array([
-        testing.generate_test_robot(robot_id=0, pose=np.array([0, 0, 0])),
-        testing.generate_test_robot(robot_id=0, pose=np.array([1, 1, 0])),
-        testing.generate_test_robot(robot_id=0, pose=np.array([2, 2, 0])),
-        testing.generate_test_robot(robot_id=0, pose=np.array([3, 3, 0])),
-    ])
+    free_robots = np.array(
+        [
+            testing.generate_test_robot(robot_id=0, pose=np.array([0, 0, 0])),
+            testing.generate_test_robot(robot_id=0, pose=np.array([1, 1, 0])),
+            testing.generate_test_robot(robot_id=0, pose=np.array([2, 2, 0])),
+            testing.generate_test_robot(robot_id=0, pose=np.array([3, 3, 0])),
+        ]
+    )
 
     # Construct the world state.
     our_bots: List[Robot] = list(free_robots)
     their_bots: List[Robot] = []
 
     world_state: WorldState = testing.generate_test_worldstate(
-        our_robots=our_bots, their_robots=their_bots)
+        our_robots=our_bots, their_robots=their_bots
+    )
 
     # Assign the roles.
     results, new_free_robots = NaiveRoleAssignment.assign_prioritized_roles(
@@ -457,27 +489,34 @@ def test_assign_roles() -> None:
 
     # Create the requests in descending priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(Priority.HIGH, required=True, cost_fn=cost_fn_a),
-        role_id_b: role.RoleRequest(Priority.MEDIUM, required=True, cost_fn=cost_fn_b),
-        role_id_c: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_c),
+        role_id_a: role.RoleRequest(
+            Priority.HIGH, required=True, cost_fn=cost_fn_a
+        ),
+        role_id_b: role.RoleRequest(
+            Priority.MEDIUM, required=True, cost_fn=cost_fn_b
+        ),
+        role_id_c: role.RoleRequest(
+            Priority.LOW, required=True, cost_fn=cost_fn_c
+        ),
     }
 
     # Create the robots at (1, 1), (2, 2), (3, 3), (4, 4).
-    free_robots = np.array([
-        testing.generate_test_robot(robot_id=0, pose=np.array([1, 1, 0])),
-        testing.generate_test_robot(robot_id=1, pose=np.array([2, 2, 0])),
-        testing.generate_test_robot(robot_id=2, pose=np.array([3, 3, 0])),
-        testing.generate_test_robot(robot_id=3, pose=np.array([4, 4, 0])),
-    ])
-
-
+    free_robots = np.array(
+        [
+            testing.generate_test_robot(robot_id=0, pose=np.array([1, 1, 0])),
+            testing.generate_test_robot(robot_id=1, pose=np.array([2, 2, 0])),
+            testing.generate_test_robot(robot_id=2, pose=np.array([3, 3, 0])),
+            testing.generate_test_robot(robot_id=3, pose=np.array([4, 4, 0])),
+        ]
+    )
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
 
     world_state: WorldState = testing.generate_test_worldstate(
-        our_robots=out_robots, their_robots=their_robots)
+        our_robots=out_robots, their_robots=their_robots
+    )
 
     # Assign the roles.
     results = NaiveRoleAssignment.assign_roles(requests, world_state, {})
@@ -518,7 +557,9 @@ def test_assign_roles_constrained() -> None:
     cost_a = cost.distance_to_pt(np.array([0, 0]), math.sqrt(8), switch_cost)
     cost_b = cost.distance_to_pt(np.array([1, 1]), math.sqrt(8), switch_cost)
     cost_c = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
-    cost_ball = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
+    cost_ball = cost.distance_to_pt(
+        np.array([2, 2]), math.sqrt(8), switch_cost
+    )
 
     # Create CosFns
     cost_fn_a = TestCostFn(cost_a)
@@ -528,32 +569,41 @@ def test_assign_roles_constrained() -> None:
 
     # Create the requests in descending priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(Priority.HIGH, required=False, cost_fn=cost_fn_a),
+        role_id_a: role.RoleRequest(
+            Priority.HIGH, required=False, cost_fn=cost_fn_a
+        ),
         role_id_ball: role.RoleRequest(
             Priority.HIGH,
             required=False,
             cost_fn=cost_fn_ball,
             constraint_fn=constraint.has_ball(),
         ),
-        role_id_b: role.RoleRequest(Priority.MEDIUM, required=False, cost_fn=cost_fn_b),
-        role_id_c: role.RoleRequest(Priority.LOW, required=False, cost_fn=cost_fn_c),
+        role_id_b: role.RoleRequest(
+            Priority.MEDIUM, required=False, cost_fn=cost_fn_b
+        ),
+        role_id_c: role.RoleRequest(
+            Priority.LOW, required=False, cost_fn=cost_fn_c
+        ),
     }
 
     # Create the robots at (0, 0) (1, 1) and (2, 2)
-    free_robots = np.array([
-        testing.generate_test_robot(robot_id=0,
-                                    pose=np.array([0, 0, 0]),
-                                    has_ball_sense=True),
-        testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
-        testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
-    ])
+    free_robots = np.array(
+        [
+            testing.generate_test_robot(
+                robot_id=0, pose=np.array([0, 0, 0]), has_ball_sense=True
+            ),
+            testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
+            testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
+        ]
+    )
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
 
     world_state: WorldState = testing.generate_test_worldstate(
-        our_robots=out_robots, their_robots=their_robots)
+        our_robots=out_robots, their_robots=their_robots
+    )
 
     # Assign the roles.
     results = NaiveRoleAssignment.assign_roles(requests, world_state, {})
@@ -585,34 +635,43 @@ def test_unassigned_role() -> None:
     assign_cost_fn = AssignCostFn()
     unassigned_cost_fn = UnassignCostFn()
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(Priority.HIGH, required=False, cost_fn=assign_cost_fn),
+        role_id_a: role.RoleRequest(
+            Priority.HIGH, required=False, cost_fn=assign_cost_fn
+        ),
         role_id_b: role.RoleRequest(
             Priority.HIGH,
             required=False,
             cost_fn=assign_cost_fn,
             constraint_fn=constraint.has_ball(),
         ),
-        role_id_c: role.RoleRequest(Priority.HIGH, required=False, cost_fn=assign_cost_fn),
-        role_id_d: role.RoleRequest(Priority.HIGH, required=False, cost_fn=unassigned_cost_fn),
+        role_id_c: role.RoleRequest(
+            Priority.HIGH, required=False, cost_fn=assign_cost_fn
+        ),
+        role_id_d: role.RoleRequest(
+            Priority.HIGH, required=False, cost_fn=unassigned_cost_fn
+        ),
     }
 
     # Create the robots at (0, 0) (1, 1) and (2, 2)
-    free_robots = np.array([
-        testing.generate_test_robot(robot_id=0,
-                                    pose=np.array([0, 0, 0]),
-                                    has_ball_sense=True),
-        testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
-        testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
-        testing.generate_test_robot(robot_id=3, pose=np.array([2, 1, 0])),
-        testing.generate_test_robot(robot_id=4, pose=np.array([1, 2, 0]))
-    ])
+    free_robots = np.array(
+        [
+            testing.generate_test_robot(
+                robot_id=0, pose=np.array([0, 0, 0]), has_ball_sense=True
+            ),
+            testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
+            testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
+            testing.generate_test_robot(robot_id=3, pose=np.array([2, 1, 0])),
+            testing.generate_test_robot(robot_id=4, pose=np.array([1, 2, 0])),
+        ]
+    )
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
 
     world_state: WorldState = testing.generate_test_worldstate(
-        our_robots=out_robots, their_robots=their_robots)
+        our_robots=out_robots, their_robots=their_robots
+    )
 
     # Assign the roles.
     results = role_assigner.assign_roles(requests, world_state, {})
@@ -626,6 +685,7 @@ def test_unassigned_role() -> None:
 
     # Check that D's role request is unfilled due to unassigned cost function.
     assert not results[role_id_d].is_filled()
+
 
 def test_unassigned_roles() -> None:
 
@@ -641,34 +701,43 @@ def test_unassigned_roles() -> None:
 
     # Create role requests
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(Priority.HIGH, required=False, cost_fn=unassigned_cost_fn),
+        role_id_a: role.RoleRequest(
+            Priority.HIGH, required=False, cost_fn=unassigned_cost_fn
+        ),
         role_id_b: role.RoleRequest(
             Priority.HIGH,
             required=False,
             cost_fn=unassigned_cost_fn,
             constraint_fn=constraint.has_ball(),
         ),
-        role_id_c: role.RoleRequest(Priority.HIGH, required=False, cost_fn=unassigned_cost_fn),
-        role_id_d: role.RoleRequest(Priority.HIGH, required=False, cost_fn=unassigned_cost_fn),
+        role_id_c: role.RoleRequest(
+            Priority.HIGH, required=False, cost_fn=unassigned_cost_fn
+        ),
+        role_id_d: role.RoleRequest(
+            Priority.HIGH, required=False, cost_fn=unassigned_cost_fn
+        ),
     }
 
     # Create the robots at (0, 0) (1, 1) and (2, 2)
-    free_robots = np.array([
-        testing.generate_test_robot(robot_id=0,
-                                    pose=np.array([0, 0, 0]),
-                                    has_ball_sense=True),
-        testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
-        testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
-        testing.generate_test_robot(robot_id=3, pose=np.array([2, 1, 0])),
-        testing.generate_test_robot(robot_id=4, pose=np.array([1, 2, 0]))
-    ])
+    free_robots = np.array(
+        [
+            testing.generate_test_robot(
+                robot_id=0, pose=np.array([0, 0, 0]), has_ball_sense=True
+            ),
+            testing.generate_test_robot(robot_id=1, pose=np.array([1, 1, 0])),
+            testing.generate_test_robot(robot_id=2, pose=np.array([2, 2, 0])),
+            testing.generate_test_robot(robot_id=3, pose=np.array([2, 1, 0])),
+            testing.generate_test_robot(robot_id=4, pose=np.array([1, 2, 0])),
+        ]
+    )
 
     # Construct the world state.
     out_robots: List[Robot] = list(free_robots)
     their_robots: List[Robot] = []
 
     world_state: WorldState = testing.generate_test_worldstate(
-        our_robots=out_robots, their_robots=their_robots)
+        our_robots=out_robots, their_robots=their_robots
+    )
 
     # Assign the roles.
     results = role_assigner.assign_roles(requests, world_state, {})
