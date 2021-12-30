@@ -12,9 +12,7 @@ class Pass:
     receiver: rc.RobotId
     pt: np.ndarray
 
-    def __init__(
-        self, passer: rc.RobotId, receiver: rc.RobotId, pt: np.ndarray
-    ):
+    def __init__(self, passer: rc.RobotId, receiver: rc.RobotId, pt: np.ndarray):
         """Creates a Pass.
         :param passer: The RobotId of the passing robot.
         :param receiver: The RobotId of the receiving robot.

@@ -28,8 +28,7 @@ def get_closest_enemies_to_ball(
     # sort dict keys by dist (shortest first)
     # return enemies that correspond to n shortest dists
     return [
-        dist_to_enemies[dist]
-        for dist in sorted(dist_to_enemies.keys())[0:num_enemies]
+        dist_to_enemies[dist] for dist in sorted(dist_to_enemies.keys())[0:num_enemies]
     ]
 
 
@@ -114,9 +113,7 @@ class NMarkTactic(tactic.ITactic):
 
         if world_state is not None and world_state.ball.visible:
             # assign n closest enemies to respective skill and role costFn
-            closest_enemies = get_closest_enemies_to_ball(
-                self.num_markers, world_state
-            )
+            closest_enemies = get_closest_enemies_to_ball(self.num_markers, world_state)
             for i in range(len(closest_enemies)):
                 self.mark_list[i].skill.target_robot = closest_enemies[i]
                 self.cost_list[i].enemy_to_mark = closest_enemies[i]

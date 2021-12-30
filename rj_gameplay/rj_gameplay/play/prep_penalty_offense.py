@@ -54,8 +54,7 @@ class PreparePenaltyOffense(play.IPlay):
     ]:
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {
-            tactic: tactic.get_requests(world_state, None)
-            for tactic in self.tactics
+            tactic: tactic.get_requests(world_state, None) for tactic in self.tactics
         }
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)

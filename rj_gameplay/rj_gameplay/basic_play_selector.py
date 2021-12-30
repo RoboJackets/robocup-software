@@ -26,15 +26,9 @@ PLAY_DICT[situations.DefendKickoff] = [kickoff_play.DefendKickoffPlay]
 PLAY_DICT[situations.DefendRestartOffensive] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartMidfield] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.DefendRestartDefensive] = [defend_restart.DefendRestart]
-PLAY_DICT[situations.DefendRestartOffensiveDirect] = [
-    defend_restart.DefendRestart
-]
-PLAY_DICT[situations.DefendRestartMidfieldDirect] = [
-    defend_restart.DefendRestart
-]
-PLAY_DICT[situations.DefendRestartDefensiveDirect] = [
-    defend_restart.DefendRestart
-]
+PLAY_DICT[situations.DefendRestartOffensiveDirect] = [defend_restart.DefendRestart]
+PLAY_DICT[situations.DefendRestartMidfieldDirect] = [defend_restart.DefendRestart]
+PLAY_DICT[situations.DefendRestartDefensiveDirect] = [defend_restart.DefendRestart]
 PLAY_DICT[situations.Clear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.DefendClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.DefendGoal] = [basic_defense.BasicDefense]
@@ -50,21 +44,13 @@ PLAY_DICT[situations.MidfieldPileup] = [basic122.Basic122]
 PLAY_DICT[situations.DefensivePileup] = [basic122.Basic122]
 PLAY_DICT[situations.MidfieldDefendClear] = [defensive_clear.DefensiveClear]
 PLAY_DICT[situations.Shootout] = [penalty_offense.PenaltyOffense]
-PLAY_DICT[situations.PrepareShootout] = [
-    prep_penalty_offense.PreparePenaltyOffense
-]
+PLAY_DICT[situations.PrepareShootout] = [prep_penalty_offense.PreparePenaltyOffense]
 PLAY_DICT[situations.DefendShootout] = [penalty_defense.PenaltyDefense]
-PLAY_DICT[situations.PrepareDefendShootout] = [
-    penalty_defense.PreparePenaltyDefense
-]
+PLAY_DICT[situations.PrepareDefendShootout] = [penalty_defense.PreparePenaltyDefense]
 PLAY_DICT[situations.Penalty] = [penalty_offense.PenaltyOffense]
-PLAY_DICT[situations.PreparePenalty] = [
-    prep_penalty_offense.PreparePenaltyOffense
-]
+PLAY_DICT[situations.PreparePenalty] = [prep_penalty_offense.PreparePenaltyOffense]
 PLAY_DICT[situations.DefendPenalty] = [penalty_defense.PenaltyDefense]
-PLAY_DICT[situations.PrepareDefendPenalty] = [
-    penalty_defense.PreparePenaltyDefense
-]
+PLAY_DICT[situations.PrepareDefendPenalty] = [penalty_defense.PreparePenaltyDefense]
 PLAY_DICT[situations.OffensiveKick] = [restart.RestartPlay]
 PLAY_DICT[situations.DefensiveKick] = [restart.RestartPlay]
 PLAY_DICT[situations.MidfieldKick] = [restart.RestartPlay]

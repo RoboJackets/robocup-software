@@ -64,9 +64,7 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
         Check action and return the current state of the aciton
         TODO: Needs to somehow use robot intents to check on status of action
         """
-        if not self.world_state is None and self.action.is_done(
-            self.world_state
-        ):
+        if not self.world_state is None and self.action.is_done(self.world_state):
             return py_trees.common.Status.SUCCESS
         else:
             return py_trees.common.Status.RUNNING

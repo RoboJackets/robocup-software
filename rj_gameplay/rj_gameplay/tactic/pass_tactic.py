@@ -45,10 +45,7 @@ class PassToClosestReceiver(role.CostFn):
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
             return 99
-        if (
-            self.chosen_receiver is not None
-            and self.chosen_receiver.id == robot.id
-        ):
+        if self.chosen_receiver is not None and self.chosen_receiver.id == robot.id:
             return -99
 
         # always pick closest receiver
@@ -124,10 +121,7 @@ class PassToOpenReceiver(role.CostFn):
         if self.passer_robot is not None and robot.id == self.passer_robot.id:
             # can't pass to yourself
             return 99
-        if (
-            self.chosen_receiver is not None
-            and self.chosen_receiver.id == robot.id
-        ):
+        if self.chosen_receiver is not None and self.chosen_receiver.id == robot.id:
             return -99
 
         # TODO: pick "most open" pass
@@ -221,9 +215,7 @@ class Pass(tactic.ITactic):
 
         role_requests: tactic.RoleRequests = {}
 
-        passer_request = role.RoleRequest(
-            role.Priority.MEDIUM, True, self.passer_cost
-        )
+        passer_request = role.RoleRequest(role.Priority.MEDIUM, True, self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         if self.pivot_kick.skill.is_done(world_state):
             receive_request = role.RoleRequest(

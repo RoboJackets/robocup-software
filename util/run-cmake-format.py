@@ -22,9 +22,7 @@ def run_format(args, file_queue, lock, return_codes):
     """Takes filenames out of queue and runs clang-format on them."""
     while True:
         name = file_queue.get()
-        invocation = get_format_invocation(
-            name, args.cmake_format_binary, args.check
-        )
+        invocation = get_format_invocation(name, args.cmake_format_binary, args.check)
 
         proc = subprocess.Popen(
             invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -32,9 +30,7 @@ def run_format(args, file_queue, lock, return_codes):
         output, err = proc.communicate()
         with lock:
             return_codes.append(proc.returncode)
-            sys.stdout.write(
-                " ".join(invocation) + "\n" + output.decode("utf-8")
-            )
+            sys.stdout.write(" ".join(invocation) + "\n" + output.decode("utf-8"))
             if len(err) > 0:
                 sys.stdout.flush()
                 sys.stderr.write(err.decode("utf-8"))

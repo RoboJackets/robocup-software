@@ -41,9 +41,7 @@ class PurePlay(play.IPlay["Prop"], ABC):
             tactic_type = type(tactic_entry.tactic)
 
             prev_prop = prev_props.tactic_props.get(tactic_type, None)
-            prev_props[tactic_type] = tactic_entry.tactic.compute_props(
-                prev_prop
-            )
+            prev_props[tactic_type] = tactic_entry.tactic.compute_props(prev_prop)
 
         return prev_props
 
@@ -68,9 +66,7 @@ class PurePlay(play.IPlay["Prop"], ABC):
         """
 
         # Collect the role requests.
-        role_requests: play.RoleRequests = self.collect_role_requests(
-            world_state
-        )
+        role_requests: play.RoleRequests = self.collect_role_requests(world_state)
 
         # Flatten from a dict of dicts to a single dict.
         flat_requests: assignment.FlatRoleRequests = play.flatten_requests(
@@ -79,9 +75,7 @@ class PurePlay(play.IPlay["Prop"], ABC):
 
         # Perform role assignment.
         assignment_results: assignment.FlatRoleResults = (
-            self._role_assignment.assign_roles(
-                flat_requests, world_state, prev_results
-            )
+            self._role_assignment.assign_roles(flat_requests, world_state, prev_results)
         )
 
         # Give each tactic its assigned roles and get the list of skills.
@@ -90,9 +84,7 @@ class PurePlay(play.IPlay["Prop"], ABC):
         # Return the role assignment results and the list of skills.
         return assignment_results, actions
 
-    def collect_role_requests(
-        self, world_state: rc.WorldState
-    ) -> play.RoleRequests:
+    def collect_role_requests(self, world_state: rc.WorldState) -> play.RoleRequests:
         """Collects the role requests from each tactic.
         :param world_state: The current WorldState.
         :return: The collected play.RoleRequests.
@@ -101,9 +93,7 @@ class PurePlay(play.IPlay["Prop"], ABC):
 
         tactic_entry: play.TacticEntry
         for tactic_entry in self.tactics:
-            tactic_requests = tactic_entry.tactic.get_requests(
-                world_state, None
-            )
+            tactic_requests = tactic_entry.tactic.get_requests(world_state, None)
             role_requests[type(tactic_entry.tactic)] = tactic_requests
 
         return role_requests
@@ -127,8 +117,6 @@ class PurePlay(play.IPlay["Prop"], ABC):
         for tactic_entry in self.tactics:
             tactic_type = type(tactic_entry.tactic)
             results: tactic.RoleResults = nested_results[tactic_type]
-            actions.extend(
-                tactic_entry.tactic.tick(results, prop[tactic_type])
-            )
+            actions.extend(tactic_entry.tactic.tick(results, prop[tactic_type]))
 
         return actions

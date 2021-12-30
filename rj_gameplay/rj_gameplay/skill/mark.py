@@ -72,9 +72,7 @@ class Mark(skill.ISkill):
         self.face_angle = face_angle
         self.ignore_ball = ignore_ball
 
-    def tick(
-        self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent
-    ):
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
         if world_state and world_state.ball.visible:
             if self.target_robot is None:
@@ -88,9 +86,7 @@ class Mark(skill.ISkill):
         path_command.target.position = Point(
             x=self.target_point[0], y=self.target_point[1]
         )
-        path_command.target.velocity = Point(
-            x=self.target_vel[0], y=self.target_vel[1]
-        )
+        path_command.target.velocity = Point(x=self.target_vel[0], y=self.target_vel[1])
         path_command.ignore_ball = self.ignore_ball
 
         if self.face_angle is not None:
@@ -112,15 +108,9 @@ class Mark(skill.ISkill):
             return False
         elif (
             math.sqrt(
-                (
-                    world_state.our_robots[self.robot.id].pose[0]
-                    - self.target_point[0]
-                )
+                (world_state.our_robots[self.robot.id].pose[0] - self.target_point[0])
                 ** 2
-                + (
-                    world_state.our_robots[self.robot.id].pose[1]
-                    - self.target_point[1]
-                )
+                + (world_state.our_robots[self.robot.id].pose[1] - self.target_point[1])
                 ** 2
             )
             < threshold

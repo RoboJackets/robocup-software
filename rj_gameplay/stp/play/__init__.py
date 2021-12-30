@@ -149,9 +149,7 @@ class IPlay(Generic[PropT], ABC):
         world_state: rc.WorldState,
         prev_results: assignment.FlatRoleResults,
         props: PropT,
-    ) -> Tuple[
-        Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]
-    ]:
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
         """Performs one "tick" of the specified play.
 
         This should:
@@ -192,9 +190,7 @@ def flatten_requests(
             request: role.RoleRequest
 
             for request_idx, request in enumerate(requests):
-                flat_role_requests[
-                    (tactic_t, skill_entry, request_idx)
-                ] = request
+                flat_role_requests[(tactic_t, skill_entry, request_idx)] = request
 
     return flat_role_requests
 
@@ -215,9 +211,7 @@ def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
     tactic_t: Type[tactic.ITactic]
     skill_entry: tactic.SkillEntry
     for (tactic_t, skill_entry, request_idx), result in results.items():
-        results_list: List[Optional[RoleResult]] = nested_results[tactic_t][
-            skill_entry
-        ]
+        results_list: List[Optional[RoleResult]] = nested_results[tactic_t][skill_entry]
 
         # Extend the list so that it's long enough to put in result at request_idx.
         if len(results_list) <= request_idx:

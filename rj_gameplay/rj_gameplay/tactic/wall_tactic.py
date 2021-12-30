@@ -39,9 +39,7 @@ class wall_cost(role.CostFn):
         if robot is None:
             return 9999
 
-        wall_pt = (
-            np.array([0.0, 0.0]) if self.wall_pt is None else self.wall_pt
-        )
+        wall_pt = np.array([0.0, 0.0]) if self.wall_pt is None else self.wall_pt
 
         # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
         if not robot.visible:
@@ -113,9 +111,7 @@ class WallTactic(tactic.ITactic):
 
         # create RoleRequest for each SkillEntry
         role_requests = {
-            self.move_var: [
-                role.RoleRequest(self.priority, False, self.cost_var)
-            ]
+            self.move_var: [role.RoleRequest(self.priority, False, self.cost_var)]
             for _ in range(1)
         }
 

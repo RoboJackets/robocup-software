@@ -37,12 +37,8 @@ class Basic122(play.IPlay):
             target_point=self.target_point
         )
         self.goalie_tactic = goalie_tactic.GoalieTactic()
-        self.wall_tactic_1 = wall_tactic.WallTactic(
-            role.Priority.LOW, cost_scale=0.1
-        )
-        self.wall_tactic_2 = wall_tactic.WallTactic(
-            role.Priority.LOW, cost_scale=0.1
-        )
+        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
+        self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
 
         self.num_wallers = 2
 
@@ -75,22 +71,16 @@ class Basic122(play.IPlay):
         List[tactic.SkillEntry],
     ]:
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(
-            self.num_wallers, world_state
-        )
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
 
         role_requests: play.RoleRequests = {
-            self.striker_tactic: self.striker_tactic.get_requests(
-                world_state, None
-            ),
+            self.striker_tactic: self.striker_tactic.get_requests(world_state, None),
             # self.two_mark: self.two_mark.get_requests(world_state, None),
             self.seek_left: self.seek_left.get_requests(world_state, None),
             self.seek_right: self.seek_right.get_requests(world_state, None),
-            self.goalie_tactic: self.goalie_tactic.get_requests(
-                world_state, None
-            ),
+            self.goalie_tactic: self.goalie_tactic.get_requests(world_state, None),
             self.wall_tactic_1: self.wall_tactic_1.get_requests(
                 world_state, wall_pts[0], None
             ),
@@ -111,21 +101,11 @@ class Basic122(play.IPlay):
         skills = self.striker_tactic.tick(
             world_state, role_results[self.striker_tactic]
         )
-        skills += self.seek_left.tick(
-            world_state, role_results[self.seek_left]
-        )
-        skills += self.seek_right.tick(
-            world_state, role_results[self.seek_right]
-        )
-        skills += self.goalie_tactic.tick(
-            world_state, role_results[self.goalie_tactic]
-        )
-        skills += self.wall_tactic_1.tick(
-            world_state, role_results[self.wall_tactic_1]
-        )
-        skills += self.wall_tactic_2.tick(
-            world_state, role_results[self.wall_tactic_2]
-        )
+        skills += self.seek_left.tick(world_state, role_results[self.seek_left])
+        skills += self.seek_right.tick(world_state, role_results[self.seek_right])
+        skills += self.goalie_tactic.tick(world_state, role_results[self.goalie_tactic])
+        skills += self.wall_tactic_1.tick(world_state, role_results[self.wall_tactic_1])
+        skills += self.wall_tactic_2.tick(world_state, role_results[self.wall_tactic_2])
 
         skill_dict = {}
         skill_dict.update(role_results[self.striker_tactic])

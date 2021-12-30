@@ -89,9 +89,7 @@ class PartialWorldState:
         self.ball = ball
 
 
-def robotstate_to_partial_robot(
-    robot_msg: msg.RobotState, index: int
-) -> RobotState:
+def robotstate_to_partial_robot(robot_msg: msg.RobotState, index: int) -> RobotState:
     """
     :return: robot state class representing the state of the robot, partially representing the larger Robot class.
     """
@@ -238,9 +236,7 @@ def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
         our_robots.append(robotstate_to_partial_robot(msg.our_robots[i], i))
 
     for i in range(len(msg.their_robots)):
-        their_robots.append(
-            robotstate_to_partial_robot(msg.their_robots[i], i)
-        )
+        their_robots.append(robotstate_to_partial_robot(msg.their_robots[i], i))
 
     ball = ballstate_to_ball(msg.ball)
 
@@ -249,9 +245,7 @@ def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
     return world_state
 
 
-def robot_creator(
-    robot_state: RobotState, robot_status: RobotStatus
-) -> rc.Robot:
+def robot_creator(robot_state: RobotState, robot_status: RobotStatus) -> rc.Robot:
     """
     A function which combines the robot state and robot status to create a rc.Robot class
         :return: Robot class from rc.Robot representing the status and state of the robot

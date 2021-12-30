@@ -105,9 +105,7 @@ def test_generate_test_world_state() -> None:
     their_bots = list()
     for g in range(1, 12):
         our_bots.append(testing.generate_test_robot(robot_id=g))
-        their_bots.append(
-            testing.generate_test_robot(robot_id=g, is_ours=False)
-        )
+        their_bots.append(testing.generate_test_robot(robot_id=g, is_ours=False))
 
     world2 = testing.generate_test_worldstate(
         our_robots=our_bots,

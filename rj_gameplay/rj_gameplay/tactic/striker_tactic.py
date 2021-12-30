@@ -36,9 +36,7 @@ def blocker_margin(
     blocker_intercept_dist_along_kick = np.clip(
         blocker_intercept_dist_along_kick, a_min=0, a_max=kick_dist
     )
-    blocker_intercept = (
-        kick_origin + kick_vector * blocker_intercept_dist_along_kick
-    )
+    blocker_intercept = kick_origin + kick_vector * blocker_intercept_dist_along_kick
 
     blocker_distance = np.clip(
         np.linalg.norm(blocker_intercept - blocker_position) - EFF_BLOCK_WIDTH,
@@ -83,16 +81,12 @@ def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
         elif kick_extent > 0:
             xmax = np.clip(kick_extent, a_min=0, a_max=xmax)
 
-    try_points = [
-        np.array([x, goal_y]) for x in np.arange(xmin, xmax, step=0.05)
-    ]
+    try_points = [np.array([x, goal_y]) for x in np.arange(xmin, xmax, step=0.05)]
 
     cost, point = min(
         [
             (
-                kick_cost(
-                    point, kick_speed, world_state.ball.pos, world_state
-                ),
+                kick_cost(point, kick_speed, world_state.ball.pos, world_state),
                 point,
             )
             for point in try_points
@@ -186,9 +180,7 @@ class StrikerTactic(tactic.ITactic):
         )
         role_requests: tactic.RoleRequests = {}
 
-        striker = [
-            robot for robot in world_state.our_robots if robot.has_ball_sense
-        ]
+        striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
 
         if striker:
             role_requests[self.capture] = []
@@ -277,8 +269,7 @@ class LineKickStrikerTactic(tactic.ITactic):
             shooter_vel = shoot_result[0].role.robot.twist[:2]
             if world_state is not None and world_state.game_info.is_penalty():
                 dist_to_goal = (
-                    world_state.field.their_goal_loc[1]
-                    - world_state.ball.pos[1]
+                    world_state.field.their_goal_loc[1] - world_state.ball.pos[1]
                 )
                 if dist_to_goal > 4.0:
                     self.shoot.skill.kick_speed = max(

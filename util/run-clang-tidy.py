@@ -149,9 +149,7 @@ def merge_replacement_files(tmpdir, mergefile):
 def check_clang_apply_replacements_binary(args):
     """Checks if invoking supplied clang-apply-replacements binary works."""
     try:
-        subprocess.check_call(
-            [args.clang_apply_replacements_binary, "--version"]
-        )
+        subprocess.check_call([args.clang_apply_replacements_binary, "--version"])
     except:
         print(
             "Unable to run clang-apply-replacements. Is clang-apply-replacements "
@@ -198,9 +196,7 @@ def run_tidy(args, tmpdir, build_path, queue, lock, failed_files):
         if proc.returncode != 0:
             failed_files.append(name)
         with lock:
-            sys.stdout.write(
-                " ".join(invocation) + "\n" + output.decode("utf-8")
-            )
+            sys.stdout.write(" ".join(invocation) + "\n" + output.decode("utf-8"))
             if len(err) > 0:
                 sys.stdout.flush()
                 sys.stderr.write(err.decode("utf-8"))

@@ -21,9 +21,7 @@ class RjSequence(py_trees.composites.Sequence):
         self.current_child = None
         super().__init__(name)
 
-    def tick_once(
-        self, robot: rc.Robot, world_state: rc.WorldState
-    ) -> RobotActions:
+    def tick_once(self, robot: rc.Robot, world_state: rc.WorldState) -> RobotActions:
         self.robot = robot
         self.world_state = world_state
         if self.current_child is None:

@@ -48,9 +48,7 @@ class Param:
             parameters[name] = (default_value, param_type, description)
 
         if param_node is not None:
-            register_parameter(
-                param_node, name, default_value, param_type, description
-            )
+            register_parameter(param_node, name, default_value, param_type, description)
 
     @property
     def value(self):

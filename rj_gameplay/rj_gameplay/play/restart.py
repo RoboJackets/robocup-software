@@ -47,12 +47,8 @@ class RestartPlay(play.IPlay):
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.wall_tactic_1 = wall_tactic.WallTactic(
-            role.Priority.LOW, cost_scale=0.1
-        )
-        self.wall_tactic_2 = wall_tactic.WallTactic(
-            role.Priority.LOW, cost_scale=0.1
-        )
+        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
+        self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
 
         left_pt = np.array([1.5, 7.5])
         self.seek_left = pass_seek.Seek(
@@ -87,9 +83,7 @@ class RestartPlay(play.IPlay):
     ]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(
-            self.num_wallers, world_state
-        )
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
@@ -107,12 +101,8 @@ class RestartPlay(play.IPlay):
         role_requests[self.goalie_tactic] = self.goalie_tactic.get_requests(
             world_state, None
         )
-        role_requests[self.seek_left] = self.seek_left.get_requests(
-            world_state, None
-        )
-        role_requests[self.seek_right] = self.seek_right.get_requests(
-            world_state, None
-        )
+        role_requests[self.seek_left] = self.seek_left.get_requests(world_state, None)
+        role_requests[self.seek_right] = self.seek_right.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -124,24 +114,12 @@ class RestartPlay(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
-        skills = self.clear_tactic.tick(
-            world_state, role_results[self.clear_tactic]
-        )
-        skills += self.goalie_tactic.tick(
-            world_state, role_results[self.goalie_tactic]
-        )
-        skills += self.wall_tactic_1.tick(
-            world_state, role_results[self.wall_tactic_1]
-        )
-        skills += self.wall_tactic_2.tick(
-            world_state, role_results[self.wall_tactic_2]
-        )
-        skills += self.seek_left.tick(
-            world_state, role_results[self.seek_left]
-        )
-        skills += self.seek_right.tick(
-            world_state, role_results[self.seek_right]
-        )
+        skills = self.clear_tactic.tick(world_state, role_results[self.clear_tactic])
+        skills += self.goalie_tactic.tick(world_state, role_results[self.goalie_tactic])
+        skills += self.wall_tactic_1.tick(world_state, role_results[self.wall_tactic_1])
+        skills += self.wall_tactic_2.tick(world_state, role_results[self.wall_tactic_2])
+        skills += self.seek_left.tick(world_state, role_results[self.seek_left])
+        skills += self.seek_right.tick(world_state, role_results[self.seek_right])
         skill_dict.update(role_results[self.clear_tactic])
         skill_dict.update(role_results[self.goalie_tactic])
         skill_dict.update(role_results[self.wall_tactic_1])
@@ -175,12 +153,8 @@ class DirectRestartPlay(play.IPlay):
             self.target_point, pass_seek.restart_seek,
             pass_seek.SeekCost(self.target_point))
         """
-        self.wall_tactic_1 = wall_tactic.WallTactic(
-            role.Priority.LOW, cost_scale=0.1
-        )
-        self.wall_tactic_2 = wall_tactic.WallTactic(
-            role.Priority.LOW, cost_scale=0.1
-        )
+        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
+        self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
 
         # might need to change to for-loop
         self.num_wallers = 2
@@ -233,12 +207,8 @@ class DirectRestartPlay(play.IPlay):
         role_requests[self.goalie_tactic] = self.goalie_tactic.get_requests(
             world_state, None
         )
-        role_requests[self.seek_left] = self.seek_left.get_requests(
-            world_state, None
-        )
-        role_requests[self.seek_right] = self.seek_right.get_requests(
-            world_state, None
-        )
+        role_requests[self.seek_left] = self.seek_left.get_requests(world_state, None)
+        role_requests[self.seek_right] = self.seek_right.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
@@ -250,24 +220,12 @@ class DirectRestartPlay(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
-        skills = self.clear_tactic.tick(
-            world_state, role_results[self.clear_tactic]
-        )
-        skills += self.goalie_tactic.tick(
-            world_state, role_results[self.goalie_tactic]
-        )
-        skills += self.wall_tactic_1.tick(
-            world_state, role_results[self.wall_tactic_1]
-        )
-        skills += self.wall_tactic_2.tick(
-            world_state, role_results[self.wall_tactic_2]
-        )
-        skills += self.seek_left.tick(
-            world_state, role_results[self.seek_left]
-        )
-        skills += self.seek_right.tick(
-            world_state, role_results[self.seek_right]
-        )
+        skills = self.clear_tactic.tick(world_state, role_results[self.clear_tactic])
+        skills += self.goalie_tactic.tick(world_state, role_results[self.goalie_tactic])
+        skills += self.wall_tactic_1.tick(world_state, role_results[self.wall_tactic_1])
+        skills += self.wall_tactic_2.tick(world_state, role_results[self.wall_tactic_2])
+        skills += self.seek_left.tick(world_state, role_results[self.seek_left])
+        skills += self.seek_right.tick(world_state, role_results[self.seek_right])
         skill_dict.update(role_results[self.clear_tactic])
         skill_dict.update(role_results[self.goalie_tactic])
         skill_dict.update(role_results[self.wall_tactic_1])

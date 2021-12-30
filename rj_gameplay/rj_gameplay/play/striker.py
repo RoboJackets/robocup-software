@@ -43,16 +43,16 @@ class Striker(play.IPlay):
         if not self.striker_tactic.is_done(
             world_state
         ) and not self.assist_tactic.is_done(world_state):
-            role_requests[
-                self.assist_tactic
-            ] = self.assist_tactic.get_requests(world_state, None)
+            role_requests[self.assist_tactic] = self.assist_tactic.get_requests(
+                world_state, None
+            )
 
         elif not self.striker_tactic.is_done(
             world_state
         ) and self.assist_tactic.is_done(world_state):
-            role_requests[
-                self.striker_tactic
-            ] = self.striker_tactic.get_requests(world_state, None)
+            role_requests[self.striker_tactic] = self.striker_tactic.get_requests(
+                world_state, None
+            )
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)

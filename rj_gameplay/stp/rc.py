@@ -70,14 +70,12 @@ class Robot:
         self.__lethal_fault = lethal_fault
 
     def __repr__(self) -> str:
-        return (
-            "Robot(id:{}, is_ours:{}, pose:{}, twist:{}, visible:{})".format(
-                self.__id,
-                self.__is_ours,
-                self.__pose,
-                self.__twist,
-                self.__visible,
-            )
+        return "Robot(id:{}, is_ours:{}, pose:{}, twist:{}, visible:{})".format(
+            self.__id,
+            self.__is_ours,
+            self.__pose,
+            self.__twist,
+            self.__visible,
         )
 
     def __eq__(self, other) -> bool:

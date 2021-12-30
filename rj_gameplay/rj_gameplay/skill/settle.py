@@ -28,9 +28,7 @@ class Settle(skill.ISkill):
 
         self.__name__ = "settle skill"
 
-    def tick(
-        self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent
-    ):
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
         settle_command = SettleMotionCommand()
         intent.motion_command.settle_command = [settle_command]
@@ -44,8 +42,7 @@ class Settle(skill.ISkill):
             return False
         if (
             world_state.our_robots[self.robot.id].has_ball_sense
-            or np.linalg.norm(world_state.ball.vel)
-            < SETTLE_BALL_SPEED_THRESHOLD
+            or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD
         ):
             return True
         return False

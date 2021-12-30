@@ -45,9 +45,7 @@ class GlobalParameterClient:
             list_future.cancel()
             list_future = list_client.call_async(list_parameter_request)
             print("Waiting for ListParameters")
-            rclpy.spin_until_future_complete(
-                node, list_future, timeout_sec=0.5
-            )
+            rclpy.spin_until_future_complete(node, list_future, timeout_sec=0.5)
 
         params_names = list_future.result().result.names
         get_parameter_request = GetParameters.Request(names=params_names)

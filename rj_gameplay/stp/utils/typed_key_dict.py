@@ -50,9 +50,7 @@ class TypedKeyDict(Generic[ValueInterfaceT], MutableMapping):
 
         return item
 
-    def __setitem__(
-        self, key: TypedKey[ValueConcreteT], value: ValueConcreteT
-    ) -> None:
+    def __setitem__(self, key: TypedKey[ValueConcreteT], value: ValueConcreteT) -> None:
         # Check that the item we're setting is an instance of the expected type.
         if not isinstance(value, key.concrete_cls):
             raise KeyError(

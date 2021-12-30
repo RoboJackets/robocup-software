@@ -69,14 +69,10 @@ class PrepareKickoffPlay(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[
-        Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]
-    ]:
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(
-            self.num_wallers, world_state
-        )
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
 
@@ -156,14 +152,10 @@ class DefendKickoffPlay(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[
-        Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]
-    ]:
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(
-            self.num_wallers, world_state
-        )
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
 

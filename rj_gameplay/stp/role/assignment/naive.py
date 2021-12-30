@@ -64,18 +64,14 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         """
 
         # Cost matrix size (n_free_robots + 1, n_requests), extra row for unassigned cost
-        robot_costs: np.ndarray = np.zeros(
-            (len(free_robots) + 1, len(flat_requests))
-        )
+        robot_costs: np.ndarray = np.zeros((len(free_robots) + 1, len(flat_requests)))
 
         # Row index for unassigned cost of role request
         unassigned_idx: float = len(free_robots)
 
         # Iterate over each role request.
         request: role.RoleRequest
-        for request_idx, (role_id, request) in enumerate(
-            flat_requests.items()
-        ):
+        for request_idx, (role_id, request) in enumerate(flat_requests.items()):
             # For each role request, iterate over robots.
             for robot_idx, robot in enumerate(free_robots):
 
@@ -88,9 +84,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
 
                 # Get the previous result for this role_id, if available.
                 if prev_results is not None:
-                    prev_result: Optional[RoleResult] = prev_results.get(
-                        role_id, None
-                    )
+                    prev_result: Optional[RoleResult] = prev_results.get(role_id, None)
                 else:
                     prev_result = None
                 # If the constraints are not satisfied, set the cost to INVALID_COST
@@ -170,9 +164,7 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         # Get the optimal assignment using the Hungarian algorithm.
         robot_ind: np.ndarray
         request_ind: np.ndarray
-        robot_ind, request_ind = scipy.optimize.linear_sum_assignment(
-            robot_costs
-        )
+        robot_ind, request_ind = scipy.optimize.linear_sum_assignment(robot_costs)
 
         # Set the assigned robot for each request.
         for assignment_idx in range(request_ind.shape[0]):
@@ -217,8 +209,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         """
         # Collect high, medium and low priority requests, sorted in ascending priority
         # order.
-        sorted_requests: SortedRequests = (
-            NaiveRoleAssignment.get_sorted_requests(flat_requests)
+        sorted_requests: SortedRequests = NaiveRoleAssignment.get_sorted_requests(
+            flat_requests
         )
 
         # Assign roles for each priority from HIGH to LOW.

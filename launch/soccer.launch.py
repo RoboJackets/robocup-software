@@ -101,9 +101,7 @@ def generate_launch_description():
     )
 
     global_param_server = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            str(launch_dir / "global_param_server.launch.py")
-        )
+        PythonLaunchDescriptionSource(str(launch_dir / "global_param_server.launch.py"))
     )
 
     return LaunchDescription(

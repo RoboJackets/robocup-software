@@ -22,9 +22,7 @@ import stp.global_parameters as global_parameters
 MIN_WALL_RAD = None
 
 
-def find_wall_pts(
-    num_wallers: int, world_state: rc.WorldState
-) -> List[np.ndarray]:
+def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarray]:
     global MIN_WALL_RAD
     """Calculates num_wallers points to form a wall between the ball and goal.
     :return list of wall_pts (as numpy arrays)

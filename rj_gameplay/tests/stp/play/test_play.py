@@ -68,15 +68,11 @@ class TacticBase(tactic.ITactic[None]):
             cost_fn=cost.constant(0.5, switch_cost),
         )
 
-    def tick(
-        self, role_results: RoleResults, props: None
-    ) -> List[action.IAction]:
+    def tick(self, role_results: RoleResults, props: None) -> List[action.IAction]:
         # Dummy tick function doesn't return any actions.
         return []
 
-    def get_requests(
-        self, world_state: WorldState, props: None
-    ) -> tactic.RoleRequests:
+    def get_requests(self, world_state: WorldState, props: None) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
             self.A1: [self.create_request()],
             self.A2: self.create_requests(5),
@@ -129,9 +125,5 @@ def test_flatten_requests() -> None:
         tactic_instance.C1,
         tactic_instance.C2,
     ]:
-        for request_idx, request in enumerate(
-            requests[TacticBase][skill_entry]
-        ):
-            assert (
-                request == flat_requests[TacticBase, skill_entry, request_idx]
-            )
+        for request_idx, request in enumerate(requests[TacticBase][skill_entry]):
+            assert request == flat_requests[TacticBase, skill_entry, request_idx]

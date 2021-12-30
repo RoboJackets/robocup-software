@@ -24,9 +24,7 @@ class ClangTidyConverter:
     # Group 3: column
     # Group 4: error message
     # Group 5: error identifier
-    error_regex = re.compile(
-        r"^([\w\/\.\-\ ]+):(\d+):(\d+): (.+) (\[[\w\-,\.]+\])$"
-    )
+    error_regex = re.compile(r"^([\w\/\.\-\ ]+):(\d+):(\d+): (.+) (\[[\w\-,\.]+\])$")
 
     # This identifies the main error line (it has a [the-warning-type] at the end)
     # We only create a new error when we encounter one of those.
@@ -84,9 +82,7 @@ class ClangTidyConverter:
 
         result = self.error_regex.match(error_array[0])
         if result is None:
-            logging.warning(
-                "Could not match error_array to regex: %s", error_array
-            )
+            logging.warning("Could not match error_array to regex: %s", error_array)
             return
 
         # Remove ending newlines

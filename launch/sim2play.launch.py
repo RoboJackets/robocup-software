@@ -26,9 +26,7 @@ def generate_launch_description():
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     headless_flag = LaunchConfiguration("headless_flag", default="")
 
-    grsim = Node(
-        package="rj_robocup", executable="grSim", arguments=["--headless"]
-    )
+    grsim = Node(package="rj_robocup", executable="grSim", arguments=["--headless"])
 
     soccer_launch_path = str(launch_dir / "soccer.launch.py")
 

@@ -45,9 +45,7 @@ class LineKickSkill(ILineKickSkill):
         self.kick_speed = kick_speed
         # self.kick_speed = 5.5
 
-    def tick(
-        self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent
-    ):
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
 
         ball_to_target = self.target_point - world_state.ball.pos
@@ -59,9 +57,7 @@ class LineKickSkill(ILineKickSkill):
             self.kick_speed = 0.0
 
         line_kick_command = LineKickMotionCommand()
-        line_kick_command.target = Point(
-            x=self.target_point[0], y=self.target_point[1]
-        )
+        line_kick_command.target = Point(x=self.target_point[0], y=self.target_point[1])
         intent.shoot_mode = (
             RobotIntent.SHOOT_MODE_KICK
             if not self.chip

@@ -59,9 +59,7 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    grsim = Node(
-        package="rj_robocup", executable="grSim", arguments=[headless_flag]
-    )
+    grsim = Node(package="rj_robocup", executable="grSim", arguments=[headless_flag])
 
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
     vision_receiver = IncludeLaunchDescription(

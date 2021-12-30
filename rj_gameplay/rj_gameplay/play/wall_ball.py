@@ -48,9 +48,7 @@ class WallBall(play.IPlay):
     ]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(
-            self.num_wallers, world_state
-        )
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
@@ -74,19 +72,13 @@ class WallBall(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
-        skills += self.wall_tactic_1.tick(
-            world_state, role_results[self.wall_tactic_1]
-        )
+        skills += self.wall_tactic_1.tick(world_state, role_results[self.wall_tactic_1])
         skill_dict.update(role_results[self.wall_tactic_1])
 
-        skills += self.wall_tactic_2.tick(
-            world_state, role_results[self.wall_tactic_2]
-        )
+        skills += self.wall_tactic_2.tick(world_state, role_results[self.wall_tactic_2])
         skill_dict.update(role_results[self.wall_tactic_2])
 
-        skills += self.wall_tactic_3.tick(
-            world_state, role_results[self.wall_tactic_3]
-        )
+        skills += self.wall_tactic_3.tick(world_state, role_results[self.wall_tactic_3])
         skill_dict.update(role_results[self.wall_tactic_3])
 
         return (skill_dict, skills)

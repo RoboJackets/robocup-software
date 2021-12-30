@@ -73,9 +73,7 @@ class StateMachine:
             # transition if an 'event' fires
             next_states = []
             if self.state in self._transitions:
-                for next_state, transition in self._transitions[
-                    self.state
-                ].items():
+                for next_state, transition in self._transitions[self.state].items():
                     if transition["condition"]():
                         next_states += [next_state]
 
@@ -127,9 +125,7 @@ class StateMachine:
             if exit_callback is not None:
                 exit_callback()
 
-            method_name = (
-                "on_enter_" + new_state.name
-            )  # pylint: disable=no-member
+            method_name = "on_enter_" + new_state.name  # pylint: disable=no-member
             enter_callback: Optional[OnEnterMethod] = None
             try:
                 enter_callback = getattr(

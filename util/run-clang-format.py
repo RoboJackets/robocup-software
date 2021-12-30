@@ -29,9 +29,7 @@ def run_format(args, file_queue, lock):
         )
         output, err = proc.communicate()
         with lock:
-            sys.stdout.write(
-                " ".join(invocation) + "\n" + output.decode("utf-8")
-            )
+            sys.stdout.write(" ".join(invocation) + "\n" + output.decode("utf-8"))
             if len(err) > 0:
                 sys.stdout.flush()
                 sys.stderr.write(err.decode("utf-8"))
@@ -40,8 +38,7 @@ def run_format(args, file_queue, lock):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Runs clang-format over all files "
-        "in a compilation database."
+        description="Runs clang-format over all files " "in a compilation database."
     )
     parser.add_argument(
         "-clang-format-binary",
@@ -103,9 +100,7 @@ def main():
         # List of files with a non-zero return code.
         lock = threading.Lock()
         for _ in range(max_task):
-            t = threading.Thread(
-                target=run_format, args=(args, task_queue, lock)
-            )
+            t = threading.Thread(target=run_format, args=(args, task_queue, lock))
             t.daemon = True
             t.start()
 

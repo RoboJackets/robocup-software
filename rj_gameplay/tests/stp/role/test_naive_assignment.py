@@ -90,9 +90,7 @@ class SkillBase(skill.ISkill):
 
     def create_request(self) -> role.RoleRequest:
         assign_cost_fn = AssignCostFn()
-        return role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=assign_cost_fn
-        )
+        return role.RoleRequest(Priority.LOW, required=True, cost_fn=assign_cost_fn)
 
     def __repr__(self) -> str:
         return "<{} object>".format(self.__class__.__name__)
@@ -145,28 +143,14 @@ class TacticBase(tactic.ITactic[None]):
         # Dummy tick function doesn't return any actions.
         return []
 
-    def get_requests(
-        self, world_state: WorldState, props: None
-    ) -> tactic.RoleRequests:
+    def get_requests(self, world_state: WorldState, props: None) -> tactic.RoleRequests:
         role_requests: tactic.RoleRequests = {
-            self.A1: [
-                self.A1.skill.create_request().with_priority(Priority.LOW)
-            ],
-            self.A2: [
-                self.A2.skill.create_request().with_priority(Priority.MEDIUM)
-            ],
-            self.B1: [
-                self.B1.skill.create_request().with_priority(Priority.MEDIUM)
-            ],
-            self.B2: [
-                self.B2.skill.create_request().with_priority(Priority.HIGH)
-            ],
-            self.C1: [
-                self.C1.skill.create_request().with_priority(Priority.LOW)
-            ],
-            self.C2: [
-                self.C2.skill.create_request().with_priority(Priority.MEDIUM)
-            ],
+            self.A1: [self.A1.skill.create_request().with_priority(Priority.LOW)],
+            self.A2: [self.A2.skill.create_request().with_priority(Priority.MEDIUM)],
+            self.B1: [self.B1.skill.create_request().with_priority(Priority.MEDIUM)],
+            self.B2: [self.B2.skill.create_request().with_priority(Priority.HIGH)],
+            self.C1: [self.C1.skill.create_request().with_priority(Priority.LOW)],
+            self.C2: [self.C2.skill.create_request().with_priority(Priority.MEDIUM)],
             self.BALL_SKILL: [
                 self.BALL_SKILL.skill.create_request()
                 .with_priority(Priority.HIGH)
@@ -216,9 +200,7 @@ def test_get_sorted_requests_simple():
         role_id_a: role.RoleRequest(
             Priority.HIGH, required=True, cost_fn=constant_cost
         ),
-        role_id_b: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=constant_cost
-        ),
+        role_id_b: role.RoleRequest(Priority.LOW, required=True, cost_fn=constant_cost),
         role_id_c: role.RoleRequest(
             Priority.MEDIUM, required=True, cost_fn=constant_cost
         ),
@@ -338,15 +320,9 @@ def test_compute_costs_matrix() -> None:
 
     # Create the requests of same priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost_fn_a
-        ),
-        role_id_b: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost_fn_b
-        ),
-        role_id_c: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost_fn_c
-        ),
+        role_id_a: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_a),
+        role_id_b: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_b),
+        role_id_c: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_c),
     }
 
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
@@ -364,9 +340,7 @@ def test_compute_costs_matrix() -> None:
     their_robots: List[Robot] = []
     ball: Ball = testing.generate_test_ball()
 
-    world_state: WorldState = testing.generate_test_worldstate(
-        our_robots=out_robots
-    )
+    world_state: WorldState = testing.generate_test_worldstate(our_robots=out_robots)
     prev_results = {}
 
     # Compute the cost matrix.
@@ -411,15 +385,9 @@ def test_assign_prioritized_roles() -> None:
 
     # Create the requests of same priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost_fn_a
-        ),
-        role_id_b: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost_fn_b
-        ),
-        role_id_c: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost_fn_c
-        ),
+        role_id_a: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_a),
+        role_id_b: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_b),
+        role_id_c: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_c),
     }
 
     # Create the robots at (0, 0), (1, 1), (2, 2), (3, 3)
@@ -489,15 +457,9 @@ def test_assign_roles() -> None:
 
     # Create the requests in descending priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(
-            Priority.HIGH, required=True, cost_fn=cost_fn_a
-        ),
-        role_id_b: role.RoleRequest(
-            Priority.MEDIUM, required=True, cost_fn=cost_fn_b
-        ),
-        role_id_c: role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost_fn_c
-        ),
+        role_id_a: role.RoleRequest(Priority.HIGH, required=True, cost_fn=cost_fn_a),
+        role_id_b: role.RoleRequest(Priority.MEDIUM, required=True, cost_fn=cost_fn_b),
+        role_id_c: role.RoleRequest(Priority.LOW, required=True, cost_fn=cost_fn_c),
     }
 
     # Create the robots at (1, 1), (2, 2), (3, 3), (4, 4).
@@ -557,9 +519,7 @@ def test_assign_roles_constrained() -> None:
     cost_a = cost.distance_to_pt(np.array([0, 0]), math.sqrt(8), switch_cost)
     cost_b = cost.distance_to_pt(np.array([1, 1]), math.sqrt(8), switch_cost)
     cost_c = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
-    cost_ball = cost.distance_to_pt(
-        np.array([2, 2]), math.sqrt(8), switch_cost
-    )
+    cost_ball = cost.distance_to_pt(np.array([2, 2]), math.sqrt(8), switch_cost)
 
     # Create CosFns
     cost_fn_a = TestCostFn(cost_a)
@@ -569,21 +529,15 @@ def test_assign_roles_constrained() -> None:
 
     # Create the requests in descending priority.
     requests: FlatRoleRequests = {
-        role_id_a: role.RoleRequest(
-            Priority.HIGH, required=False, cost_fn=cost_fn_a
-        ),
+        role_id_a: role.RoleRequest(Priority.HIGH, required=False, cost_fn=cost_fn_a),
         role_id_ball: role.RoleRequest(
             Priority.HIGH,
             required=False,
             cost_fn=cost_fn_ball,
             constraint_fn=constraint.has_ball(),
         ),
-        role_id_b: role.RoleRequest(
-            Priority.MEDIUM, required=False, cost_fn=cost_fn_b
-        ),
-        role_id_c: role.RoleRequest(
-            Priority.LOW, required=False, cost_fn=cost_fn_c
-        ),
+        role_id_b: role.RoleRequest(Priority.MEDIUM, required=False, cost_fn=cost_fn_b),
+        role_id_c: role.RoleRequest(Priority.LOW, required=False, cost_fn=cost_fn_c),
     }
 
     # Create the robots at (0, 0) (1, 1) and (2, 2)

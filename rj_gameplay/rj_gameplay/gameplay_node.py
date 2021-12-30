@@ -151,9 +151,7 @@ class GameplayNode(Node):
             StringMsg, "/gameplay/debug_text", 10
         )
         self.play_selector: situation.IPlaySelector = play_selector
-        self.coordinator = coordinator.Coordinator(
-            play_selector, self.debug_callback
-        )
+        self.coordinator = coordinator.Coordinator(play_selector, self.debug_callback)
 
     def set_play_state(self, play_state: msg.PlayState):
         self.play_state = play_state
@@ -333,8 +331,7 @@ class GameplayNode(Node):
                         y=-self.field.goal_depth_m,
                     ),
                     geo_msg.Point(
-                        x=self.field.goal_width_m / 2
-                        + physical_goal_board_width,
+                        x=self.field.goal_width_m / 2 + physical_goal_board_width,
                         y=0.0,
                     ),
                 ]
@@ -346,8 +343,7 @@ class GameplayNode(Node):
                         y=-self.field.goal_depth_m,
                     ),
                     geo_msg.Point(
-                        x=-self.field.goal_width_m / 2
-                        - physical_goal_board_width,
+                        x=-self.field.goal_width_m / 2 - physical_goal_board_width,
                         y=0.0,
                     ),
                 ]
@@ -375,8 +371,7 @@ class GameplayNode(Node):
                         y=self.field.length_m + self.field.goal_depth_m,
                     ),
                     geo_msg.Point(
-                        x=self.field.goal_width_m / 2
-                        + physical_goal_board_width,
+                        x=self.field.goal_width_m / 2 + physical_goal_board_width,
                         y=self.field.length_m,
                     ),
                 ]
@@ -388,8 +383,7 @@ class GameplayNode(Node):
                         y=self.field.length_m + self.field.goal_depth_m,
                     ),
                     geo_msg.Point(
-                        x=-self.field.goal_width_m / 2
-                        - physical_goal_board_width,
+                        x=-self.field.goal_width_m / 2 - physical_goal_board_width,
                         y=self.field.length_m,
                     ),
                 ]

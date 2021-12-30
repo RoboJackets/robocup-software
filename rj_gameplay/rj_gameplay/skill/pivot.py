@@ -35,16 +35,12 @@ class Pivot:
 
         self.__name__ = "pivot skill"
 
-    def tick(
-        self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent
-    ):
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
         self.pivot_point = world_state.ball.pos
 
         pivot_command = PivotMotionCommand()
-        pivot_command.pivot_point = Point(
-            x=self.pivot_point[0], y=self.pivot_point[1]
-        )
+        pivot_command.pivot_point = Point(x=self.pivot_point[0], y=self.pivot_point[1])
         pivot_command.pivot_target = Point(
             x=self.target_point[0], y=self.target_point[1]
         )
@@ -63,15 +59,12 @@ class Pivot:
         )  # We don't _really_ care about this when we're kicking, if not for latency
         robot = world_state.our_robots[self.robot.id]
         robot_pos_to_target = self.target_point - robot.pose[0:2]
-        robot_to_target_unit = robot_pos_to_target / np.linalg.norm(
-            robot_pos_to_target
-        )
+        robot_to_target_unit = robot_pos_to_target / np.linalg.norm(robot_pos_to_target)
         heading_vect = np.array([np.cos(robot.pose[2]), np.sin(robot.pose[2])])
         dot_product = np.dot(heading_vect, robot_to_target_unit)
         angle = np.arccos(dot_product)
         if (angle < angle_threshold) and (
-            abs(world_state.our_robots[self.robot_id].twist[2])
-            < stopped_threshold
+            abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold
         ):
             return True
         else:

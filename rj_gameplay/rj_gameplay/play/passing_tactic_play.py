@@ -67,14 +67,10 @@ class PassPlay(play.IPlay):
         # Get list of all skills with assigned roles from tactics
         skill_dict = {}
         skills = []
-        skills = self.pass_tactic.tick(
-            world_state, role_results[self.pass_tactic]
-        )
+        skills = self.pass_tactic.tick(world_state, role_results[self.pass_tactic])
         skill_dict.update(role_results[self.pass_tactic])
         if not self.pass_tactic.pivot_kick.skill.is_done(world_state):
-            skills += self.seek_tactic.tick(
-                world_state, role_results[self.seek_tactic]
-            )
+            skills += self.seek_tactic.tick(world_state, role_results[self.seek_tactic])
             skill_dict.update(role_results[self.seek_tactic])
 
         return (skill_dict, skills)

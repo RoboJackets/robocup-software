@@ -71,17 +71,13 @@ def run_tidy(task_queue, lock, timeout):
                     sys.stderr.flush()
         except Exception as e:
             with lock:
-                sys.stderr.write(
-                    "Failed: " + str(e) + ": ".join(command) + "\n"
-                )
+                sys.stderr.write("Failed: " + str(e) + ": ".join(command) + "\n")
         finally:
             with lock:
                 if (not timeout is None) and (not watchdog is None):
                     if not watchdog.is_alive():
                         sys.stderr.write(
-                            "Terminated by timeout: "
-                            + " ".join(command)
-                            + "\n"
+                            "Terminated by timeout: " + " ".join(command) + "\n"
                         )
                     watchdog.cancel()
             task_queue.task_done()
@@ -89,9 +85,7 @@ def run_tidy(task_queue, lock, timeout):
 
 def start_workers(max_tasks, tidy_caller, task_queue, lock, timeout):
     for _ in range(max_tasks):
-        t = threading.Thread(
-            target=tidy_caller, args=(task_queue, lock, timeout)
-        )
+        t = threading.Thread(target=tidy_caller, args=(task_queue, lock, timeout))
         t.daemon = True
         t.start()
 
@@ -157,8 +151,7 @@ def main():
         "-ignore",
         metavar="PATTERN",
         default=None,
-        help="custom pattern selecting file paths to ignore "
-        "(case sensitive)",
+        help="custom pattern selecting file paths to ignore " "(case sensitive)",
     )
     parser.add_argument(
         "-j",
@@ -254,9 +247,7 @@ def main():
             if line_count == 0:
                 continue
             end_line = start_line + line_count - 1
-            lines_by_file.setdefault(filename, []).append(
-                [start_line, end_line]
-            )
+            lines_by_file.setdefault(filename, []).append([start_line, end_line])
 
     if not any(lines_by_file):
         print("No relevant changes found.")

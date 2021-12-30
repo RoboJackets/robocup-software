@@ -32,18 +32,14 @@ class Registry:
 
         # Check that the item we got was an instance of the expected type.
         if not isinstance(skill, key):
-            raise KeyError(
-                "Skill {} is not an instance of key {}".format(skill, key)
-            )
+            raise KeyError("Skill {} is not an instance of key {}".format(skill, key))
 
         return skill
 
     def __setitem__(self, key: Type[SkillT], value: SkillT) -> None:
         # Check that the item we're setting is an instance of the expected type.
         if not isinstance(value, key):
-            raise KeyError(
-                "Skill {} is not an instance of {}".format(value, key)
-            )
+            raise KeyError("Skill {} is not an instance of {}".format(value, key))
 
         self._dict.__setitem__(key, value)
 

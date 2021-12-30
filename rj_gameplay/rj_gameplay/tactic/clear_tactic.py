@@ -28,9 +28,7 @@ class ClearerCost(role.CostFn):
         if not robot.visible:
             return 99
         else:
-            return np.linalg.norm(
-                world_state.ball.pos - np.array(robot.pose[0:2])
-            )
+            return np.linalg.norm(world_state.ball.pos - np.array(robot.pose[0:2]))
 
     def unassigned_cost_fn(
         self,

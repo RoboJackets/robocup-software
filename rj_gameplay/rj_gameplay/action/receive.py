@@ -39,8 +39,7 @@ class Receive(action.IAction):
         # TODO: Use local params for this threshold
         if (
             world_state.our_robots[self.robot_id].has_ball_sense
-            or np.linalg.norm(world_state.ball.vel)
-            < SETTLE_BALL_SPEED_THRESHOLD
+            or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD
         ):
             return True
         return False

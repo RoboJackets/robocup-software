@@ -42,17 +42,14 @@ class Kick(action.IAction):  # add ABC if needed
     def is_done(self, world_state: rc.WorldState) -> bool:
         if self.robot_id is None:
             return False
-        ball_vel_unit = world_state.ball.vel / np.linalg.norm(
-            world_state.ball.vel
-        )
+        ball_vel_unit = world_state.ball.vel / np.linalg.norm(world_state.ball.vel)
         heading_angle = world_state.our_robots[self.robot_id].pose[2]
         heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
         dot_product = np.dot(heading_vect, ball_vel_unit)
         # TODO: Make this threshold a local param
         if (
             dot_product > KICK_DOT_THRESHOLD
-            and np.linalg.norm(world_state.ball.vel)
-            > KICK_BALL_SPEED_THRESHOLD
+            and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD
         ):
             return True
         return False

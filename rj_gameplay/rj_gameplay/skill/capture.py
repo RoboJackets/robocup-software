@@ -25,9 +25,7 @@ class Capture(skill.ISkill):  # add ABC if something fails
 
         self.__name__ = "capture skill"
 
-    def tick(
-        self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent
-    ):
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command]

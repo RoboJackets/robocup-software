@@ -41,13 +41,9 @@ class DefensiveClear(play.IPlay):
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        role_requests[self.two_mark] = self.two_mark.get_requests(
-            world_state, None
-        )
+        role_requests[self.two_mark] = self.two_mark.get_requests(world_state, None)
         role_requests[self.clear] = self.clear.get_requests(world_state, None)
-        role_requests[self.goalie] = self.goalie.get_requests(
-            world_state, None
-        )
+        role_requests[self.goalie] = self.goalie.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)

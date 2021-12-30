@@ -81,9 +81,7 @@ def build_seek_function(target):
             ball_to_goal_dist = np.linalg.norm(ball_to_goal_vec)
             ball_to_goal_vec /= ball_to_goal_dist
 
-            ball_to_goal_perp = np.array(
-                [-ball_to_goal_vec[1], ball_to_goal_vec[0]]
-            )
+            ball_to_goal_perp = np.array([-ball_to_goal_vec[1], ball_to_goal_vec[0]])
             perp_dist = np.dot(ball_to_goal_perp, point - world_state.ball.pos)
 
             range_diff = np.linalg.norm(goal_pos - point) - ball_to_goal_dist
