@@ -132,7 +132,7 @@ class GoalieTactic(tactic.ITactic):
         if world_state and world_state.ball.visible:
             ball_speed = np.linalg.norm(world_state.ball.vel)
             ball_pos = world_state.ball.pos
-            ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos)
+            # ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos)
             goal_pos = world_state.field.our_goal_loc
             towards_goal = goal_pos - ball_pos
 

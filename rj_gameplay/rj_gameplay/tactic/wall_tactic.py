@@ -32,7 +32,7 @@ class wall_cost(role.CostFn):
     def __call__(
         self,
         robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -62,7 +62,7 @@ class wall_cost(role.CostFn):
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 

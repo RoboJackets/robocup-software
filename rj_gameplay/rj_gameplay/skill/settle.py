@@ -5,6 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
+import numpy as np
 from rj_msgs.msg import RobotIntent, SettleMotionCommand
 
 import stp.skill as skill

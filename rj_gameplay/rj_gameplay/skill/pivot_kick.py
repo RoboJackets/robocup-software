@@ -12,7 +12,7 @@ from rj_gameplay.skill import kick, pivot, capture
 from rj_msgs.msg import RobotIntent
 import stp.rc as rc
 import numpy as np
-from rj_gameplay.MAX_KICK_SPEED import *
+from rj_gameplay.MAX_KICK_SPEED import MAX_KICK_SPEED
 
 
 class PivotKick(skill.ISkill):  # add ABC if fails

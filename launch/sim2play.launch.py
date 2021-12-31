@@ -6,7 +6,6 @@ from launch import LaunchDescription
 from launch.actions import (
     IncludeLaunchDescription,
     SetEnvironmentVariable,
-    Shutdown,
     GroupAction,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -24,7 +23,7 @@ def generate_launch_description():
     )
 
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
-    headless_flag = LaunchConfiguration("headless_flag", default="")
+    # headless_flag = LaunchConfiguration("headless_flag", default="")
 
     grsim = Node(package="rj_robocup", executable="grSim", arguments=["--headless"])
 

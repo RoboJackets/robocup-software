@@ -21,7 +21,7 @@ class AssignCostFn(role.CostFn):
     def __call__(
         self,
         robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -29,7 +29,7 @@ class AssignCostFn(role.CostFn):
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -41,7 +41,7 @@ class UnassignCostFn(role.CostFn):
     def __call__(
         self,
         robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -49,7 +49,7 @@ class UnassignCostFn(role.CostFn):
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -60,7 +60,7 @@ class UnassignCostFn(role.CostFn):
 class TestCostFn(role.CostFn):
     def __init__(
         self,
-        fn: Callable[[rc.Robot, Optional["RoleResult"], rc.WorldState], float],
+        fn: Callable[[rc.Robot, Optional[role.RoleResult], rc.WorldState], float],
     ) -> None:
 
         self.fn = fn
@@ -68,14 +68,14 @@ class TestCostFn(role.CostFn):
     def __call__(
         self,
         robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
         return self.fn(robot, prev_result, world_state)
 
     def unassigned_cost_fn(
-        self, prev_result: Optional["RoleResult"], world_state: rc.WorldState
+        self, prev_result: Optional[role.RoleResult], world_state: rc.WorldState
     ) -> float:
 
         return 9999

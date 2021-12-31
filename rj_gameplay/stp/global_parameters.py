@@ -30,9 +30,9 @@ class GlobalParameterClient:
         get_client = node.create_client(
             GetParameters, f"{global_param_server}/get_parameters"
         )
-        sub = node.create_subscription(
-            ParameterEvent, f"/parameter_events", self.update_parameters, 10
-        )
+        #sub = node.create_subscription(
+            #ParameterEvent, f"/parameter_events", self.update_parameters, 10
+        #)
 
         list_parameter_request = ListParameters.Request()
         list_future = list_client.call_async(list_parameter_request)

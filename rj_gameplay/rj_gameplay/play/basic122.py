@@ -3,7 +3,6 @@ import stp.tactic as tactic
 
 from rj_gameplay.tactic import (
     striker_tactic,
-    nmark_tactic,
     goalie_tactic,
     pass_seek,
     wall_tactic,
