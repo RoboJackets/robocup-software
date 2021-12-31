@@ -15,24 +15,21 @@ KICK_DOT_THRESHOLD = 0.4
 KICK_BALL_SPEED_THRESHOLD = 0.9
 
 
-class Kick():
+class Kick:
+    def __init__(
+        self,
+        robot: rc.Robot,
+        chip: bool,
+        kick_speed: float,
+        threshold: float = 0.02,
+    ) -> None:
 
-    def __init__(self,
-                 robot: rc.Robot,
-                 chip: bool,
-                 kick_speed: float,
-                 threshold: float = 0.02) -> None:
-        
-        self.__name__ = 'kick skill'
+        self.__name__ = "kick skill"
         self.robot = robot
         self.chip = chip
         self.kick_speed = kick_speed
 
-
-    def tick(self, 
-             robot: rc.Robot, 
-             world_state: rc.WorldState, 
-             intent: RobotIntent):
+    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
 
         empty_command = EmptyMotionCommand()
@@ -43,7 +40,6 @@ class Kick():
         intent.is_active = True
         return {self.robot.id: intent}
 
-
     def is_done(self, world_state: rc.WorldState) -> bool:
         if self.robot is None:
             return False
@@ -51,7 +47,10 @@ class Kick():
         heading_angle = world_state.our_robots[self.robot.id].pose[2]
         heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
         dot_product = np.dot(heading_vect, ball_vel_unit)
-        #TODO: Make this threshold a local param
-        if dot_product > KICK_DOT_THRESHOLD and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD:
+        # TODO: Make this threshold a local param
+        if (
+            dot_product > KICK_DOT_THRESHOLD
+            and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD
+        ):
             return True
         return False

@@ -8,7 +8,7 @@ import stp.role as role
 
 
 class ISkill(ABC):
-    """ Interface for Skills. """
+    """Interface for Skills."""
 
     @abstractmethod
     def tick(self) -> None:
