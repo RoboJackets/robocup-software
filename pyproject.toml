@@ -7,4 +7,5 @@ extend-exclude = '''
   | external
   | build
 )/
+  | ^/build
 '''

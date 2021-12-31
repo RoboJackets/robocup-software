@@ -11,6 +11,7 @@ import stp.role as role
 from rj_msgs.msg import RobotIntent
 import stp.rc as rc
 import numpy as np
+from rj_geometry_msgs.msg import Point
 
 
 class Pivot:
