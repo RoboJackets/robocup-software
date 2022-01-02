@@ -18,6 +18,9 @@ import numpy as np
 from rj_gameplay.skill import move
 from rj_msgs.msg import RobotIntent
 
+import stp.global_parameters as global_parameters
+SLOWNESS_FACTOR = 0.5
+
 class Intercept(skill.ISkill):
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
@@ -33,30 +36,21 @@ class Intercept(skill.ISkill):
 
         ball_pos = world_state.ball.pos
         ball_vel = world_state.ball.vel
-        block_pt = self.get_block_pt(ball_pos, ball_vel, robot.pose[:2])
+        intercept_pt = self.get_intercept_pt(ball_pos, ball_vel, robot.pose[:2])
 
-        print(block_pt)
-        # CRASH = 1 / 0
-
-        self.move.target_point = block_pt
+        self.move.target_point = intercept_pt
         self.move.face_point = ball_pos
 
         return self.move.tick(robot, world_state, intent)
 
-    # TODO: this method is ripped from goalie_tactic, either make goalie use Intercept or have common import
-    # actually modifying it so it's not identical to goalie one (merge?)
-    def get_block_pt(self, ball_pos, ball_vel, robot_pos: np.ndarray) -> np.ndarray:
 
-        # ball_dir = ball_vel / (np.linalg.norm(ball_vel) + 1e-9)
-        # 1) set ball_pos as origin of coordinate frame
-        # robot_pos -= ball_pos
+    def get_intercept_pt(self, ball_pos, ball_vel, robot_pos: np.ndarray) -> np.ndarray:
+        # TODO: put into motion planning?
+        """
+        Finds optimal intercept point with law of cosines. Assumes constant velocity of robot, so slowness factor applied to robot's max speed.
 
-        # 2) find projection of robot_pos onto ball_vel
-        proj = np.dot(robot_pos, ball_vel) / (ball_vel + 1e-9)
-
-        # 3) scale proj back to real coordinates, return
-        # block_pt = proj + ball_pos
-        block_pt = proj
+        Credit: https://www.codeproject.com/Articles/990452/Interception-of-Two-Moving-Objects-in-D-Space
+        """
 
         """
         tangent = vel / (np.linalg.norm(vel) + 1e-6)
@@ -71,7 +65,27 @@ class Intercept(skill.ISkill):
         block_pt = np.dot(tangent, pos - my_pos) * tangent + pos
         """
 
-        return block_pt
+        # compute time to intercept (see Credit for explanation)
+        ball_speed = np.linalg.norm(ball_vel)
+        robot_speed = SLOWNESS_FACTOR * global_parameters.soccer.robot.max_speed
+        ball_to_robot_dist = robot_pos - ball_pos
+        
+        a = ball_speed ** 2 + robot_speed ** 2
+        b = 2 * np.dot(ball_to_robot_dist, ball_vel)
+        c = np.linalg.norm(ball_to_robot_dist)
+
+        roots = np.roots([a, b, c])
+        times_to_intercept = np.where(roots > 0, roots, np.inf)
+        if times_to_intercept.shape[0] == 0:
+            # if no positive roots, no way to intercept ball
+            return ball_pos
+        min_time = np.min(times_to_intercept)
+        
+        # given time, compute point of intercept (see Credit for explanation)
+        # could also compute robot_velocity here, but that assumes const vel
+        intercept_pt = ball_pos + ball_vel * min_time
+
+        return intercept_pt
 
     def is_done(self, world_state) -> bool:
         # TODO: resolve these shared params
