@@ -15,6 +15,7 @@ from rj_msgs.msg import RobotIntent, LineKickMotionCommand
 import stp.rc as rc
 from rj_gameplay.MAX_KICK_SPEED import *
 
+
 class ILineKickSkill(skill.ISkill, ABC):
     ...
 
@@ -28,12 +29,14 @@ class LineKickSkill(ILineKickSkill):
     # def __init__(self, role: role.Role) -> None:
     # self.robot = role.robot
     # role-blind implementation
-    def __init__(self,
-                 robot: rc.Robot,
-                 target_point: np.array,
-                 priority: int = 0,
-                 chip: bool = False,
-                 kick_speed: float = 5.5) -> None:
+    def __init__(
+        self,
+        robot: rc.Robot,
+        target_point: np.array,
+        priority: int = 0,
+        chip: bool = False,
+        kick_speed: float = 5.5,
+    ) -> None:
         self.robot = robot
 
         self.target_point = target_point
@@ -41,9 +44,6 @@ class LineKickSkill(ILineKickSkill):
         self.chip = chip
         self.kick_speed = kick_speed
         # self.kick_speed = 5.5
-
-
-
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
@@ -55,10 +55,14 @@ class LineKickSkill(ILineKickSkill):
         right_direction = np.dot(ball_to_target, robot_dir) > 0.9
         if not right_direction:
             self.kick_speed = 0.0
-            
+
         line_kick_command = LineKickMotionCommand()
         line_kick_command.target = Point(x=self.target_point[0], y=self.target_point[1])
-        intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK if not self.chip else RobotIntent.SHOOT_MODE_CHIP
+        intent.shoot_mode = (
+            RobotIntent.SHOOT_MODE_KICK
+            if not self.chip
+            else RobotIntent.SHOOT_MODE_CHIP
+        )
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
         if self.kick_speed <= MAX_KICK_SPEED:
             intent.kick_speed = self.kick_speed
@@ -68,7 +72,7 @@ class LineKickSkill(ILineKickSkill):
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True
 
-        return {self.robot.id : intent}        
+        return {self.robot.id: intent}
         # TODO: change so this properly returns the actions intent messages
 
     def is_done(self, world_state: rc.WorldState):

@@ -63,7 +63,9 @@ class TacticBase(tactic.ITactic[None]):
     def create_request(self) -> role.RoleRequest:
         switch_cost = 0.0
         return role.RoleRequest(
-            Priority.LOW, required=True, cost_fn=cost.constant(0.5, switch_cost)
+            Priority.LOW,
+            required=True,
+            cost_fn=cost.constant(0.5, switch_cost),
         )
 
     def tick(self, role_results: RoleResults, props: None) -> List[action.IAction]:

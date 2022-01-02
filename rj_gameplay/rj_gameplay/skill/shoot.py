@@ -21,12 +21,12 @@ A shoot skill which aims at the goal and shoots
 """
 
 
-#Since the functionality is the same as pivot_kick, we no longer need shoot skill
+# Since the functionality is the same as pivot_kick, we no longer need shoot skill
 
 # class Shoot(IShoot):
 
-#     def __init__(self, 
-#                  chip: bool, 
+#     def __init__(self,
+#                  chip: bool,
 #                  kick_speed: float,
 #                  target_point: np.ndarray) -> None:
 #         self.robot: rc.Robot = None
@@ -46,9 +46,9 @@ A shoot skill which aims at the goal and shoots
 #         self.root.add_children([self.pivot_behavior, self.kick_behavior])
 #         self.root.setup_with_descendants()
 
-#     def tick(self, 
-#              robot: rc.Robot, 
-#              world_state: rc.WorldState, 
+#     def tick(self,
+#              robot: rc.Robot,
+#              world_state: rc.WorldState,
 #              intent: RobotIntent):
 #         self.robot = robot
 #         self.pivot.pivot_point = world_state.ball.pos
