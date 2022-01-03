@@ -12,13 +12,13 @@ from rj_gameplay.calculations import wall_calculations
 
 
 class kickoff_cost(role.CostFn):
-    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
+    def __call__(self, robot: rc.Robot, prev_result: Optional[role.RoleResult],
                  world_state: rc.WorldState) -> float:
         return 0.0
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -57,7 +57,7 @@ class PrepareKickoffPlay(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]],
                List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
@@ -141,11 +141,12 @@ class DefendKickoffPlay(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]],
                List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = calculations.find_wall_pts(self.num_wallers, world_state)
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
+                                                   world_state)
 
         # Get role requests from all tactics and put them into a dictionary
 
