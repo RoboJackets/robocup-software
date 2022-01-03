@@ -12,6 +12,7 @@
 #include <rclcpp_components/register_node_macro.hpp>
 
 // rj includes
+#include <rj_convert/ros_convert.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_msgs/action/move.hpp>
 #include <rj_constants/topic_names.hpp>
@@ -35,6 +36,11 @@ private:
     std::vector<std::shared_ptr<rclcpp::Subscription<planning::Trajectory::Msg>>> trajectory_subs_;
 
     std::vector<RobotState> robot_states_;
+    std::vector<planning::Trajectory> robot_trajectories_;
+    planning::Trajectory trajectory_;
+    std::vector<RobotState> robot_desired_states_;
+    std::vector<bool> robot_test_;
+    RobotState desired_state_;
     rclcpp_action::Server<Move>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const Move::Goal> goal);

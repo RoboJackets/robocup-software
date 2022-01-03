@@ -16,6 +16,7 @@ class MoveActionClient(Node):
         self._action_client = ActionClient(self, Move, 'move')
         self._curr_goal = Move.Goal()
         self._goal_handle = None
+        self.curr_feedback = Move.Feedback()
 
     def send_goal(self, server_intent: ServerIntent):
         if len(server_intent.intent.motion_command.path_target_command) > 0:
@@ -25,7 +26,6 @@ class MoveActionClient(Node):
                 path_target_command = self._curr_goal.server_intent.intent.motion_command.path_target_command
                 if len(path_target_command) > 0 and path_target_command[0].target.position == new_target_position:
                     return
-        self.cancel_goal()
         goal_msg = Move.Goal()
         goal_msg.server_intent = server_intent
 
@@ -61,8 +61,10 @@ class MoveActionClient(Node):
         cancel_response = future.result()
         if len(cancel_response.goals_canceling) > 0:
             self.get_logger().info('Goal successfully canceled')
+            return cancel_response
         else:
             self.get_logger().info('Goal failed to cancel')
+            return cancel_response
 
     def cancel_goal(self):
         if self._goal_handle is None:

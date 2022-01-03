@@ -228,7 +228,9 @@ class GameplayNode(Node):
             intents = self.coordinator.tick(self.world_state)
             for i in range(NUM_ROBOTS):
                 server_intent: msg.ServerIntent = self.generate_server_intent(intents[i], i)
+                # self.move_action_clients[i].cancel_goal()
                 self.move_action_clients[i].send_goal(server_intent)
+                # self.move_action_clients[i].
 
                 # rip_i = self.robot_intent_pubs[i]
                 # rip_i.publish(intents[i])

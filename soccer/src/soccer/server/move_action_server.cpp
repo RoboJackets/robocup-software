@@ -21,21 +21,29 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
         });
 
     this->trajectory_subs_.reserve(kNumShells);
+    this->robot_trajectories_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(this->create_publisher<RobotIntent>
             (action_server::topics::robot_intent_pub(i),rclcpp::QoS(1).transient_local()));
-
-        trajectory_subs_.emplace_back(this->create_subscription<planning::Trajectory::Msg>(
+        // TODO: change this (causes crashing)
+        this->create_subscription<planning::Trajectory::Msg>(
             planning::topics::trajectory_pub(i), rclcpp::QoS(1),
-            [this](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
-              auto trajectory_ = rj_convert::convert_from_ros(*trajectory);
-            }));
+            [this, i](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
+              int id = i;
+              trajectory_ = rj_convert::convert_from_ros(*trajectory);
+              this->robot_trajectories_[id] = trajectory_;
+            });
+        this->create_subscription<RobotState::Msg>(control::topics::desired_state_pub(i),rclcpp::QoS(1),
+            [this, i](RobotState::Msg::SharedPtr desired_state) {  // NOLINT
+              int id = i;
+              this->robot_desired_states_[id] = rj_convert::convert_from_ros(*desired_state);
+            });
     }
 }
 
 rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                            std::shared_ptr<const Move::Goal> goal) {
-    // std::cout << "handle goal reached" << std::endl;
+    std::cout << "handle goal reached" << std::endl;
 
     // rj_convert::convert_from_ros(
     (void)uuid;
@@ -55,33 +63,43 @@ void MoveActionServer ::handle_accepted(const std::shared_ptr<GoalHandleMove> go
     std::thread{std::bind(&MoveActionServer::execute, this, _1), goal_handle}.detach();
 }
 
-// TODO: handle_cancel (see web example)
-
 void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handle) {
-    // std::cout << "executing" << std::endl;
-
+    std::cout << "executing" << std::endl;
     const auto goal = goal_handle->get_goal();
     rj_msgs::msg::ServerIntent server_intent = goal->server_intent;
     rj_msgs::msg::RobotIntent robot_intent = server_intent.intent;
     int robot_id = server_intent.robot_id;
-    // std::cout << robot_id << std::endl;
+    std::cout << robot_id << std::endl;
     this->intent_pubs_[robot_id]->publish(robot_intent);
+    auto result = std::make_shared<Move::Result>();
 
     // TODO: get feedback from planner node (and fix below)
-    /*const rj_geometry::Point goal_point = goal->server_intent.intent.motion_command.path_target_command[0].target.position.y;
-    while (this->robot_states_[robot_id].pose.position() != goal_point) {
-        auto feedback = std::make_shared<Move::Feedback>();
-        auto traj = this->trajectory_subs_[robot_id];
-
-        auto trajectory = rj_msgs::msg::Trajectory();
-
-        goal_handle->publish_feedback(feedback);
-        RCLCPP_INFO(this->get_logger(), "published feedback");
-    }*/
-    auto result = std::make_shared<Move::Result>();
+    //  (not working use motion control target_state instead for while cond.)
+    if (!goal->server_intent.intent.motion_command.path_target_command.empty()) {
+        const auto target_position =
+            rj_convert::convert_from_ros(goal->server_intent.intent.motion_command.path_target_command[0].target.position);
+        do {
+           if (goal_handle->is_canceling()) {
+              result->is_done = true;
+              goal_handle->canceled(result);
+              RCLCPP_INFO(this->get_logger(), "Goal Canceled");
+              return;
+            }
+            auto feedback = std::make_shared<Move::Feedback>();
+            planning::Trajectory robot_trajectory = this->robot_trajectories_[robot_id];
+            if (!robot_trajectory.empty()) {
+                planning::Trajectory::Msg trajectory_msg =
+                    rj_convert::convert_to_ros(robot_trajectory);
+                feedback->trajectory = trajectory_msg;
+            }
+            goal_handle->publish_feedback(feedback);
+            RCLCPP_INFO(this->get_logger(), "published feedback");
+        } while (robot_test_[robot_id] && target_position != robot_desired_states_[robot_id].pose.position());
+    }
 
     // TODO : result should be set only when it is done
     result->is_done = true;
+    robot_test_[robot_id] = true;
     goal_handle->succeed(result);
 }
 }  // namespace server
