@@ -24,33 +24,51 @@ def run_format(args, file_queue, lock):
         name = file_queue.get()
         invocation = get_format_invocation(name, args.clang_format_binary)
 
-        proc = subprocess.Popen(invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         output, err = proc.communicate()
         with lock:
-            sys.stdout.write(' '.join(invocation) + '\n' + output.decode('utf-8'))
+            sys.stdout.write(" ".join(invocation) + "\n" + output.decode("utf-8"))
             if len(err) > 0:
                 sys.stdout.flush()
-                sys.stderr.write(err.decode('utf-8'))
+                sys.stderr.write(err.decode("utf-8"))
         file_queue.task_done()
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Runs clang-format over all files '
-                                                 'in a compilation database.')
-    parser.add_argument('-clang-format-binary', metavar='PATH',
-                        default='clang-format',
-                        help='path to clang-format binary')
-    parser.add_argument('-i', action='store_true',
-                        help='Inplace edit <file>s, if specified')
-    parser.add_argument('-j', type=int, default=0,
-                        help='number of format instances to be run in parallel.')
-    parser.add_argument('files', nargs='*', default=['.*'],
-                        help='files to be processed (regex on path)')
-    parser.add_argument('-p', dest='build_path',
-                        help='Path used to read a compile command database.')
+    parser = argparse.ArgumentParser(
+        description="Runs clang-format over all files " "in a compilation database."
+    )
+    parser.add_argument(
+        "-clang-format-binary",
+        metavar="PATH",
+        default="clang-format",
+        help="path to clang-format binary",
+    )
+    parser.add_argument(
+        "-i", action="store_true", help="Inplace edit <file>s, if specified"
+    )
+    parser.add_argument(
+        "-j",
+        type=int,
+        default=0,
+        help="number of format instances to be run in parallel.",
+    )
+    parser.add_argument(
+        "files",
+        nargs="*",
+        default=[".*"],
+        help="files to be processed (regex on path)",
+    )
+    parser.add_argument(
+        "-p",
+        dest="build_path",
+        help="Path used to read a compile command database.",
+    )
     args = parser.parse_args()
 
-    db_path = 'compile_commands.json'
+    db_path = "compile_commands.json"
 
     build_path = args.build_path
 
@@ -60,12 +78,12 @@ def main():
     cwd = Path.cwd()
 
     # Build up a big regexy filter from all command line arguments.
-    file_name_re = re.compile('|'.join(args.files))
+    file_name_re = re.compile("|".join(args.files))
 
     files = []
     for entry in database:
-        directory = Path(entry['directory'])
-        file = directory / entry['file']
+        directory = Path(entry["directory"])
+        file = directory / entry["file"]
         relative_path = file.relative_to(cwd)
 
         if file_name_re.search(str(relative_path)):
@@ -82,8 +100,7 @@ def main():
         # List of files with a non-zero return code.
         lock = threading.Lock()
         for _ in range(max_task):
-            t = threading.Thread(target=run_format,
-                                 args=(args, task_queue, lock))
+            t = threading.Thread(target=run_format, args=(args, task_queue, lock))
             t.daemon = True
             t.start()
 
@@ -97,9 +114,9 @@ def main():
     except KeyboardInterrupt:
         # This is a sad hack. Unfortunately subprocess goes
         # bonkers with ctrl-c and we start forking merrily.
-        print('\nCtrl-C detected, goodbye.')
+        print("\nCtrl-C detected, goodbye.")
         os.kill(0, 9)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,6 +1,10 @@
 import numpy as np
 import stp.testing as testing
-from stp.rc import Ball, Robot, WorldState, Field, GameInfo, GamePeriod, GameRestart, GameState
+from stp.rc import (
+    GamePeriod,
+    GameRestart,
+    GameState,
+)
 import warnings
 
 
@@ -18,19 +22,21 @@ def test_generate_test_robot() -> None:
     assert bot.kicker_healthy is True
     assert bot.lethal_fault is False
 
-    bot2 = testing.generate_test_robot(robot_id=2,
-                                       is_ours=False,
-                                       pose=np.array([1.0, 2.0, 3.0]),
-                                       twist=np.array([0.0, 2.0, 1.1]),
-                                       has_ball_sense=True)
+    bot2 = testing.generate_test_robot(
+        robot_id=2,
+        is_ours=False,
+        pose=np.array([1.0, 2.0, 3.0]),
+        twist=np.array([0.0, 2.0, 1.1]),
+        has_ball_sense=True,
+    )
 
     assert bot2.id == 2
     assert bot2.is_ours is False
     assert np.all(bot2.pose == np.array([1.0, 2.0, 3.0]))
     assert np.all(bot2.twist == np.array([0.0, 2.0, 1.1]))
 
-    #Make warnings into errors
-    warnings.filterwarnings('error')
+    # Make warnings into errors
+    warnings.filterwarnings("error")
     try:
         assert bot2.has_ball_sense is True
     except RuntimeWarning:
@@ -43,7 +49,7 @@ def test_generate_test_ball() -> None:
     assert np.all(ball.pos == np.array([0.0, 0.0]))
     assert ball.visible is True
 
-    warnings.filterwarnings('error')
+    warnings.filterwarnings("error")
     invis_ball = testing.generate_test_ball(visible=False)
     try:
         assert np.all(invis_ball.vel == np.array([0.0, 0.0]))
@@ -51,9 +57,9 @@ def test_generate_test_ball() -> None:
     except RuntimeWarning:
         pass
 
-    ball2 = testing.generate_test_ball(pos=np.array([1.0, 2.0]),
-                                       vel=np.array([2.0, 3.0]),
-                                       visible=True)
+    ball2 = testing.generate_test_ball(
+        pos=np.array([1.0, 2.0]), vel=np.array([2.0, 3.0]), visible=True
+    )
     assert np.all(np.array([1.0, 2.0]) == ball2.pos)
     assert np.all(np.array([2.0, 3.0]) == ball2.vel)
 
@@ -76,7 +82,7 @@ def test_generate_test_game_info() -> None:
     assert info.period == GamePeriod.FIRST_HALF
     assert info.state == GameState.PLAYING
     assert info.restart == GameRestart.NONE
-    warnings.filterwarnings('error')
+    warnings.filterwarnings("error")
     try:
         assert info.our_restart == False
         assert False
@@ -94,13 +100,13 @@ def test_generate_test_world_state() -> None:
     their_bots = list()
     for g in range(1, 12):
         our_bots.append(testing.generate_test_robot(robot_id=g))
-        their_bots.append(
-            testing.generate_test_robot(robot_id=g, is_ours=False))
+        their_bots.append(testing.generate_test_robot(robot_id=g, is_ours=False))
 
     world2 = testing.generate_test_worldstate(
         our_robots=our_bots,
         their_robots=their_bots,
         field=testing.generate_divA_field(),
-        ball=testing.generate_test_ball(pos=np.array([0.0, 1.0])))
+        ball=testing.generate_test_ball(pos=np.array([0.0, 1.0])),
+    )
     assert len(world2.robots) == 22
     assert len(world2.our_robots) == 11
