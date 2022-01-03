@@ -73,6 +73,14 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    move_action_server = Node(
+        package="rj_robocup",
+        executable="move_action_server",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
     gameplay = Node(
         package="rj_robocup",
         executable="gameplay_node",
@@ -117,6 +125,7 @@ def generate_launch_description():
             radio,
             control,
             planner,
+            move_action_server,
             vision_receiver,
             vision_filter,
             ref_receiver,
