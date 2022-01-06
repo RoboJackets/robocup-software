@@ -11,7 +11,7 @@ import stp.skill as skill
 import stp.utils.enum as enum
 import stp.utils.typed_key_dict as tkdict
 
-from rj_msgs.msg import RobotIntent 
+from rj_msgs.msg import RobotIntent
 
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
 
@@ -118,8 +118,7 @@ PropT = TypeVar("PropT")
 
 
 class Tactic(ABC):
-    """Complex single-robot role, such as Goalie or Striker. Created and ticked by Plays. Uses Skills to achieve behavior.
-    """
+    """Complex single-robot role, such as Goalie or Striker. Created and ticked by Plays. Uses Skills to achieve behavior."""
 
     def __init__(self):
         self.robot: rc.Robot = None
@@ -128,7 +127,7 @@ class Tactic(ABC):
     def tick(
         self,
         world_state: rc.WorldState,
-    ) -> RobotIntent
+    ) -> RobotIntent:
         """Logic for role goes here. RobotIntents obtained via Skills. (e.g. Goalie can tick Capture to get ball or Intercept to block a shot.)
 
         :param world_state: Current world state.

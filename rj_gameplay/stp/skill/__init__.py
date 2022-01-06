@@ -8,8 +8,8 @@ import stp.role as role
 
 
 class Skill(ABC):
-    """Atomic single-robot behavior, such as Move or PivotKick. Created and ticked by Tactics. Uses Actions to get RobotIntents.
-    """
+    """Atomic single-robot behavior, such as Move or PivotKick. Created and ticked by Tactics. Uses Actions to get RobotIntents."""
+
     # TODO: update docstring when ActionClients are up and running
 
     @abstractmethod
