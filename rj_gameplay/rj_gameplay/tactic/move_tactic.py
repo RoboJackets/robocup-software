@@ -11,7 +11,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import shoot, capture, move
+from rj_gameplay.skill import capture, move
 import stp.skill as skill
 import numpy as np
 
@@ -53,9 +53,6 @@ class move_cost(role.CostFn):
 
 
 class Move(tactic.ITactic):
-    """
-    A striker tactic which captures then shoots the ball
-    """
 
     def __init__(
         self,
@@ -89,17 +86,6 @@ class Move(tactic.ITactic):
         role_requests: tactic.RoleRequests = {}
 
         move_request = role.RoleRequest(self.priority, True, self.cost)
-        # has_ball = True
-        # for robot in world_state.our_robots:
-        #     if robot.has_ball_sense:
-        #         has_ball = True
-        # if has_ball:
-        #     role_requests[self.shoot] = [striker_request]
-        #     role_requests[self.capture] = []
-        # else:
-        #     role_requests[self.capture] = [striker_request]
-        #     role_requests[self.shoot] = []
-        # role_requests
         role_requests[self.move] = [move_request]
 
         return role_requests
@@ -110,9 +96,6 @@ class Move(tactic.ITactic):
         """
         :return: A list of size 1 skill depending on which role is filled
         """
-        # capture_result: tactic.RoleResults
-        # capture_result = role_results[self.capture]
-        # shoot_result = role_results[self.shoot]
         move_result = role_results[self.move]
 
         if move_result and move_result[0].is_filled():
