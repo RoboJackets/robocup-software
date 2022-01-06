@@ -7,11 +7,18 @@ from typing import Dict, List, Type, TypeVar
 import stp.role as role
 
 
-class ISkill(ABC):
-    """Interface for Skills."""
+class Skill(ABC):
+    """Atomic single-robot behavior, such as Move or PivotKick. Created and ticked by Tactics. Uses Actions to get RobotIntents.
+    """
+    # TODO: update docstring when ActionClients are up and running
 
     @abstractmethod
-    def tick(self) -> None:
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        """Logic for Skill goes here. RobotIntents obtained via Actions.
+
+        :param world_state: Current world state.
+        :return: A single RobotIntent.
+        """
         ...
 
 

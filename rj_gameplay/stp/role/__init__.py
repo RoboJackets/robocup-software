@@ -48,7 +48,6 @@ class CostFn(Protocol):
     def __call__(
         self,
         robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
         world_state: rc.WorldState,
     ) -> float:
         """Given a robot, the previous role assignment result, and the current world

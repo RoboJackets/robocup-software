@@ -11,6 +11,8 @@ import stp.skill as skill
 import stp.utils.enum as enum
 import stp.utils.typed_key_dict as tkdict
 
+from rj_msgs.msg import RobotIntent 
+
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
 
 
@@ -115,56 +117,27 @@ class SkillsDict(tkdict.TypedKeyDict[List[skill.ISkill]]):
 PropT = TypeVar("PropT")
 
 
-class ITactic(Generic[PropT], ABC):
-    """The interface class for all tactics."""
+class Tactic(ABC):
+    """Complex single-robot role, such as Goalie or Striker. Created and ticked by Plays. Uses Skills to achieve behavior.
+    """
 
-    @abstractmethod
-    def compute_props(self, prev_props: Optional[PropT]) -> PropT:
-        """Computes the props(state) required for the current tick.
-        :param prev_props: The props from the previous tick, if available.
-        :return: The props for the current tick.
-        """
-        ...
-
-    @abstractmethod
-    def get_requests(self, world_state: rc.WorldState, props: PropT) -> RoleRequests:
-        """Returns the RoleRequests for this tactic.
-        :param world_state: Current world state.
-        :param props: The state of the current tactic.
-        :return: RoleRequests for the tactic.
-        """
-        ...
-
-    @abstractmethod
-    def create_request(self, **kwargs) -> role.RoleRequest:
-        """Creates a sane default RoleRequest.
-        :return: A list of size 1 of a sane default RoleRequest.
-        """
-        ...
-
-    def create_requests(self, num_requests: int, **kwargs) -> List[role.RoleRequest]:
-        """Creates a list of sane default RoleRequests.
-        :param num_requests: Number of role requests to create.
-        :return: A list of size num_requests of sane default RoleRequsts.
-        """
-        return [self.create_request(**kwargs) for _ in range(num_requests)]
+    def __init__(self):
+        self.robot: rc.Robot = None
 
     @abstractmethod
     def tick(
         self,
         world_state: rc.WorldState,
-        role_results: RoleResults,
-        props: PropT,
-    ) -> List[skill.ISkill]:
-        """Ticks the tactic, returning a tuple of the skills and the skills executed.
+    ) -> RobotIntent
+        """Logic for role goes here. RobotIntents obtained via Skills. (e.g. Goalie can tick Capture to get ball or Intercept to block a shot.)
+
         :param world_state: Current world state.
-        :param role_results: The results of role assignment.
-        :param props: The state of the current tactic.
-        :return: A list of skills to be executed.
+        :return: A single RobotIntent.
         """
         ...
 
 
+# TODO: is below unused? if so delete
 class Ctx:
     """Context for tactics."""
 
