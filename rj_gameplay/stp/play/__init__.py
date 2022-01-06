@@ -32,15 +32,17 @@ PropT = TypeVar("PropT")
 # roles = un-initialized Tactics
 Role = Type[stp.tactic.Tactic]
 
+
 class IPlay(ABC):
     pass
+
 
 class Play(ABC):
     """Coordinate full-team behaviors via Tactics. Assumes number of roles matches number of robots on the field. See tick() for more details."""
 
     def __init__(self):
         # TODO: all three of these are required for assign_roles()
-        # should I make these abstract to force subclasses to use? 
+        # should I make these abstract to force subclasses to use?
         # https://stackoverflow.com/questions/23831510/abstract-attribute-not-property
         #
         # or should it just be part of a RoleAssign class with passed in params?
@@ -80,7 +82,8 @@ class Play(ABC):
             min_cost = 1e9
             cheapest_robot = None
             for robot in world_state.our_robots:
-                if robot.id in used_robot_ids: continue
+                if robot.id in used_robot_ids:
+                    continue
                 cost = cost_fn(robot, world_state)
                 print(robot.id, cost)
                 if cost < min_cost:
@@ -101,8 +104,7 @@ class Play(ABC):
 
     @abstractmethod
     def init_tactics(self, assigned_robots: List[stp.rc.Robot]) -> None:
-        """After self.ordered_costs is filled, instantiate each Tactic with its new robot and the parameters each Tactic needs.
-        """
+        """After self.ordered_costs is filled, instantiate each Tactic with its new robot and the parameters each Tactic needs."""
         ...
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
@@ -110,6 +112,6 @@ class Play(ABC):
         robot_intents = [None for _ in self.ordered_tactics]
         for tactic in self.ordered_tactics:
             robot_intent = tactic.tick(world_state)
-            robot_id = tactic.robot.id # TODO: enforce existence with getter?
+            robot_id = tactic.robot.id  # TODO: enforce existence with getter?
             robot_intents[robot_id] = robot_intent
         return robot_intents

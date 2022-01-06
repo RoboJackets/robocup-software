@@ -239,7 +239,8 @@ class GameplayNode(Node):
             if intents:
                 for i in range(len(self.world_state.our_robots)):
                     # TODO: rm this check once grSim is fixed to Div B
-                    if i >= len(intents): break
+                    if i >= len(intents):
+                        break
                     if intents[i] is not None:
                         rip_i = self.robot_intent_pubs[i]
                         rip_i.publish(intents[i])

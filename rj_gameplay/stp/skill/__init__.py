@@ -8,8 +8,10 @@ import stp.role as role
 import stp.rc
 from rj_msgs.msg import RobotIntent
 
+
 class ISkill(ABC):
     pass
+
 
 class Skill(ABC):
     """Atomic single-robot behavior, such as Move or PivotKick. Created and ticked by Tactics. Uses Actions to get RobotIntents."""
@@ -19,9 +21,9 @@ class Skill(ABC):
     @abstractmethod
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """Logic for Skill goes here. RobotIntents obtained via Actions.
-.msg
-        :param world_state: Current world state.
-        :return: A single RobotIntent.
+        .msg
+                :param world_state: Current world state.
+                :return: A single RobotIntent.
         """
         ...
 
@@ -29,4 +31,3 @@ class Skill(ABC):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # TODO: docstring
         ...
-

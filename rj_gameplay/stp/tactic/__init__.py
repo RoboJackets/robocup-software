@@ -13,12 +13,15 @@ import stp.utils.typed_key_dict
 
 from rj_msgs.msg import RobotIntent
 
+
 class ITactic(ABC):
     pass
+
 
 RoleRequests = Any
 RoleResults = Any
 SkillEntry = Any
+
 
 class Tactic(ABC):
     """Complex single-robot role, such as Goalie or Striker. Created and ticked by Plays. Uses Skills to achieve behavior."""

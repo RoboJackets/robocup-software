@@ -65,7 +65,11 @@ class Move(tactic.Tactic):
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         # create skill with correct target & face_point
         if self.move_skill is None:
-            self.move_skill = move.Move(robot=self.robot, target_point=self.target_point, face_point=self.face_point)
+            self.move_skill = move.Move(
+                robot=self.robot,
+                target_point=self.target_point,
+                face_point=self.face_point,
+            )
 
         # tick skill and return
         # TODO: what happens if robot intent doesn't continuously get refilled? (i.e correct motion planning)

@@ -42,9 +42,9 @@ class PickRobotById(stp.role.CostFn):
     def __repr__(self):
         return f"PickRobotById(robot={self._robot_id})"
 
+
 class LineUp(stp.play.Play):
-    """Play that lines up all six robots on the side of the field.
-    """
+    """Play that lines up all six robots on the side of the field."""
 
     def __init__(self):
         print("init LineUp Play")
@@ -58,7 +58,7 @@ class LineUp(stp.play.Play):
         self.ordered_roles = [move_tactic.Move for _ in range(6)]
 
         # filled by assign_roles() later
-        self.ordered_tactics = [] 
+        self.ordered_tactics = []
 
     def tick(
         self,
@@ -80,11 +80,9 @@ class LineUp(stp.play.Play):
         # compute move points
         start = (3.0, 1.0)
         dy = 0.5
-        move_points = [(start[0], start[1] + i*dy) for i in range(6)]
+        move_points = [(start[0], start[1] + i * dy) for i in range(6)]
 
         for role, robot, pt in zip(self.ordered_roles, assigned_robots, move_points):
-            kwargs = {'target_point': pt, 'face_point': (0.0, 0.0)}
+            kwargs = {"target_point": pt, "face_point": (0.0, 0.0)}
             new_tactic = role(robot, **kwargs)
             self.ordered_tactics.append(new_tactic)
-
-
