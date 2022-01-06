@@ -54,12 +54,13 @@ class move_cost(role.CostFn):
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
-class Move(tactic.Tactic):
-    def __init__(self, robot: rc.Robot, **kwargs):
-        super().__init__(robot, **kwargs)
-        print("init Move tactic")
-        print(robot.id)
-        print(kwargs)
+class MoveTactic(tactic.Tactic):
+    def __init__(self, robot: rc.Robot, target_point, face_point):
+        super().__init__(robot)
+
+        self.target_point = target_point
+        self.face_point = face_point
+
         self.move_skill = None
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
@@ -72,7 +73,6 @@ class Move(tactic.Tactic):
             )
 
         # tick skill and return
-        # TODO: what happens if robot intent doesn't continuously get refilled? (i.e correct motion planning)
         intent = self.move_skill.tick(world_state)
         return intent
 

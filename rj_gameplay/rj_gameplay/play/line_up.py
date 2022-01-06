@@ -47,7 +47,6 @@ class LineUp(stp.play.Play):
     """Play that lines up all six robots on the side of the field."""
 
     def __init__(self):
-        print("init LineUp Play")
         super().__init__()
 
         # fill cost functions by priority
@@ -55,7 +54,7 @@ class LineUp(stp.play.Play):
         self.ordered_costs = [PickRobotById(i) for i in range(6)]
 
         # fill roles
-        self.ordered_roles = [move_tactic.Move for _ in range(6)]
+        self.ordered_roles = [move_tactic.MoveTactic for _ in range(6)]
 
         # filled by assign_roles() later
         self.ordered_tactics = []
@@ -67,22 +66,24 @@ class LineUp(stp.play.Play):
 
         # if no tactics created, assign roles and create them
         if not self.ordered_tactics:
-            print(self.ordered_costs)
-            print(self.ordered_roles)
             self.assign_roles(world_state)
 
         # return robot intents from assigned tactics back to gameplay node
         return self.get_robot_intents(world_state)
 
-    def init_tactics(self, assigned_robots: List[stp.rc.Robot]) -> None:
-        # TODO: consider moving this logic to outside this method, put in superclass, pass through kwargs
-
+    def init_new_tactics(self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState) -> None:
         # compute move points
-        start = (3.0, 1.0)
+        start = (3.0, 0.0)
         dy = 0.5
         move_points = [(start[0], start[1] + i * dy) for i in range(6)]
 
         for role, robot, pt in zip(self.ordered_roles, assigned_robots, move_points):
-            kwargs = {"target_point": pt, "face_point": (0.0, 0.0)}
-            new_tactic = role(robot, **kwargs)
-            self.ordered_tactics.append(new_tactic)
+            new_tactic = None
+            # TODO: this is bad, shouldn't have to check types of tactics imo
+            # the only role in this play is the move tactic, but in other plays there will be more
+            # although perhaps this is fine since the play has to manually fill ordered_roles dynamically anyhow, indicating it knows what roles to expect
+            if role is move_tactic.MoveTactic:
+                new_tactic = role(robot, pt, (0.0, 0.0))
+
+            if new_tactic is not None:
+                self.ordered_tactics.append(new_tactic)

@@ -85,7 +85,6 @@ class Play(ABC):
                 if robot.id in used_robot_ids:
                     continue
                 cost = cost_fn(robot, world_state)
-                print(robot.id, cost)
                 if cost < min_cost:
                     min_cost = cost
                     cheapest_robot = robot
@@ -96,14 +95,11 @@ class Play(ABC):
 
             used_robot_ids.add(cheapest_robot.id)
             assigned_robots.append(cheapest_robot)
-            print(used_robot_ids)
 
-        for rob in assigned_robots:
-            print(rob.id)
-        self.init_tactics(assigned_robots)
+        self.init_new_tactics(assigned_robots, world_state)
 
     @abstractmethod
-    def init_tactics(self, assigned_robots: List[stp.rc.Robot]) -> None:
+    def init_new_tactics(self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState) -> None:
         """After self.ordered_costs is filled, instantiate each Tactic with its new robot and the parameters each Tactic needs."""
         ...
 

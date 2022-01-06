@@ -38,6 +38,8 @@ class Move(stp.skill.Skill):
         self.ignore_ball = ignore_ball
         self.priority = priority
 
+        self.cached_intent = None
+
         self.__name__ = "Move"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
@@ -59,6 +61,8 @@ class Move(stp.skill.Skill):
 
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
+
+        # TODO: motion planning is a lot more stable when not being spammed with repeat intents, use Action Client/Server to avoid re-requests when the intent is the same
         return intent
 
     def is_done(self, world_state: rc.WorldState) -> bool:

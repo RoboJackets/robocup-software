@@ -26,11 +26,10 @@ SkillEntry = Any
 class Tactic(ABC):
     """Complex single-robot role, such as Goalie or Striker. Created and ticked by Plays. Uses Skills to achieve behavior."""
 
-    def __init__(self, robot: stp.rc.Robot, **kwargs):
+    def __init__(self, robot: stp.rc.Robot):
+        """All Tactics should apply to one robot's behavior; thus, robot is defined as a formal argument here. Concrete Tactics should overwrite init with their own fields, but call super()'s init to use this shared code.
+        """
         self.robot: rc.Robot = robot
-        # set all "keyword arguments" in kwargs as class attributes
-        for attr, val in kwargs.items():
-            setattr(self, attr, val)
 
     @abstractmethod
     def tick(
