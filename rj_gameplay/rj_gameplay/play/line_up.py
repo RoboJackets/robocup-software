@@ -1,75 +1,90 @@
-import stp.play as play
-import stp.tactic as tactic
+import stp.play
+import stp.tactic
 
 from rj_gameplay.tactic import move_tactic
-import stp.skill as skill
-import stp.role as role
+import stp.skill
+import stp.role
 from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc as rc
+import stp.rc
 from typing import (
     Dict,
     List,
     Tuple,
+    Optional,
     Type,
 )
 import numpy as np
+from rj_msgs.msg import RobotIntent
 
+# TODO: move this cost fn to its own module
+class PickRobotById(stp.role.CostFn):
+    def __init__(self, robot_id: int):
+        self._robot_id = robot_id
 
-class LineUp(play.IPlay):
-    """A play which lines up two robots, one on the right the one on the left"""
+    def __call__(
+        self,
+        robot: stp.rc.Robot,
+        world_state: stp.rc.WorldState,
+    ) -> float:
+
+        if robot.id == self._robot_id:
+            return 0.0
+
+        # TODO: use max int or float('inf')
+        return 1e9
+
+    # TODO: rm this from stp/role/__init__.py
+    def unassigned_cost_fn(
+        self, prev_results: Optional["RoleResult"], world_state: stp.rc.WorldState
+    ) -> float:
+        pass
+
+    def __repr__(self):
+        return f"PickRobotById(robot={self._robot_id})"
+
+class LineUp(stp.play.Play):
+    """Play that lines up all six robots on the side of the field.
+    """
 
     def __init__(self):
-        self.left_x = 1.0
-        self.right_x = -1.5
-        self.start_y = 2.0
-        self.y_inc = 0.3
-        self.move_right = move_tactic.Move(np.array([self.right_x, self.start_y]))
-        self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
-        self.role_assigner = NaiveRoleAssignment()
+        print("init LineUp Play")
+        super().__init__()
 
-    def compute_props(self, prev_props):
-        pass
+        # fill cost functions by priority
+        # (this is a contrived example)
+        self.ordered_costs = [PickRobotById(i) for i in range(6)]
+
+        # fill roles
+        self.ordered_roles = [move_tactic.Move for _ in range(6)]
+
+        # filled by assign_roles() later
+        self.ordered_tactics = [] 
 
     def tick(
         self,
-        world_state: rc.WorldState,
-        prev_results: role.assignment.FlatRoleResults,
-        props,
-    ) -> Tuple[
-        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-        List[tactic.SkillEntry],
-    ]:
-        # Get role requests from all tactics and put them into a dictionary
-        role_requests: play.RoleRequests = {}
-        if self.move_right.is_done(world_state):
-            role_requests[self.move_left] = self.move_left.get_requests(
-                world_state, None
-            )
-        else:
-            role_requests[self.move_right] = self.move_right.get_requests(
-                world_state, None
-            )
-        # Flatten requests and use role assigner on them
-        flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(
-            flat_requests, world_state, prev_results
-        )
-        role_results = play.unflatten_results(flat_results)
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
 
-        # Get list of all skills with assigned roles from tactics
-        skill_dict = {}
-        if self.move_right.is_done(world_state):
-            skills = self.move_left.tick(world_state, role_results[self.move_left])
-            skill_dict.update(role_results[self.move_left])
-        else:
-            skills = self.move_right.tick(world_state, role_results[self.move_right])
-            skill_dict.update(role_results[self.move_right])
-        # skills = self.move_right.tick(role_results[self.move_right]) + self.move_left.tick(role_results[self.move_left])
-        # skill_dict = {}
-        # skill_dict.update(role_results[self.move_right])
-        # skill_dict.update(role_results[self.move_left])
+        # if no tactics created, assign roles and create them
+        if not self.ordered_tactics:
+            print(self.ordered_costs)
+            print(self.ordered_roles)
+            self.assign_roles(world_state)
 
-        return (skill_dict, skills)
+        # return robot intents from assigned tactics back to gameplay node
+        return self.get_robot_intents(world_state)
 
-    def is_done(self, world_state):
-        return self.move_left.is_done(world_state)
+    def init_tactics(self, assigned_robots: List[stp.rc.Robot]) -> None:
+        # TODO: consider moving this logic to outside this method, put in superclass, pass through kwargs
+
+        # compute move points
+        start = (3.0, 1.0)
+        dy = 0.5
+        move_points = [(start[0], start[1] + i*dy) for i in range(6)]
+
+        for role, robot, pt in zip(self.ordered_roles, assigned_robots, move_points):
+            kwargs = {'target_point': pt, 'face_point': (0.0, 0.0)}
+            new_tactic = role(robot, **kwargs)
+            self.ordered_tactics.append(new_tactic)
+
+

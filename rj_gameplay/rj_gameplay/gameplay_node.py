@@ -30,7 +30,7 @@ from stp.global_parameters import GlobalParameterClient
 
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import penalty_defense
+from rj_gameplay.play import line_up
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
@@ -48,7 +48,7 @@ class TestPlaySelector(situation.IPlaySelector):
     def select(
         self, world_state: rc.WorldState
     ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
-        return (None, penalty_defense.PenaltyDefense())
+        return (None, line_up.LineUp())
 
 
 class GameplayNode(Node):
@@ -64,6 +64,9 @@ class GameplayNode(Node):
     ) -> None:
         rclpy.init()
         super().__init__("gameplay_node")
+
+        self.test_play = line_up.LineUp()
+
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
             "vision_filter/world_state",
@@ -230,10 +233,16 @@ class GameplayNode(Node):
         self.update_world_state()
 
         if self.world_state is not None:
-            intents = self.coordinator.tick(self.world_state)
-            for i in range(NUM_ROBOTS):
-                rip_i = self.robot_intent_pubs[i]
-                rip_i.publish(intents[i])
+            # intents = self.coordinator.tick(self.world_state)
+            intents = self.test_play.tick(self.world_state)
+
+            if intents:
+                for i in range(len(self.world_state.our_robots)):
+                    # TODO: rm this check once grSim is fixed to Div B
+                    if i >= len(intents): break
+                    if intents[i] is not None:
+                        rip_i = self.robot_intent_pubs[i]
+                        rip_i.publish(intents[i])
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -464,10 +473,10 @@ class GameplayNode(Node):
 
 def main():
     # uncomment this line to use the test play selector
-    # play_selector = TestPlaySelector()
+    play_selector = TestPlaySelector()
 
     # comment out this line when using the test play selector
-    play_selector = basic_play_selector.BasicPlaySelector()
+    # play_selector = basic_play_selector.BasicPlaySelector()
 
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)

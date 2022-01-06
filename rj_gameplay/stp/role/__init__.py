@@ -50,10 +50,8 @@ class CostFn(Protocol):
         robot: rc.Robot,
         world_state: rc.WorldState,
     ) -> float:
-        """Given a robot, the previous role assignment result, and the current world
-        state, returns the cost of the assignment.
+        """Given a robot and the current world state, returns the cost of assigning that robot to a given role.
         :param robot: The current robot to check costs for.
-        :param prev_result: The previous role assignment result.
         :param world_state: The current world state.
         :return:
         """

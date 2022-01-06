@@ -15,6 +15,8 @@ from rj_gameplay.skill import move
 import stp.skill as skill
 import numpy as np
 
+from rj_msgs.msg import RobotIntent
+
 MAX_ROBOT_VELOCITY = 3.0
 
 
@@ -52,54 +54,23 @@ class move_cost(role.CostFn):
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
-class Move(tactic.ITactic):
-    def __init__(
-        self,
-        target_point: np.ndarray,
-        face_point: np.ndarray = None,
-        cost_scale: float = 1.0,
-        priority: role.Priority = role.Priority.MEDIUM,
-    ):
-        self.move = tactic.SkillEntry(
-            move.Move(target_point=target_point, face_point=face_point)
-        )
-        self.cost = move_cost(target_point, cost_scale=cost_scale)
-        self.priority = priority
+class Move(tactic.Tactic):
+    def __init__(self, robot: rc.Robot, **kwargs):
+        super().__init__(robot, **kwargs)
+        print("init Move tactic")
+        print(robot.id)
+        print(kwargs)
+        self.move_skill = None
 
-    def compute_props(self):
-        pass
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        # create skill with correct target & face_point
+        if self.move_skill is None:
+            self.move_skill = move.Move(robot=self.robot, target_point=self.target_point, face_point=self.face_point)
 
-    def create_request(self, **kwargs) -> role.RoleRequest:
-        """Creates a sane default RoleRequest.
-        :return: A list of size 1 of a sane default RoleRequest.
-        """
-        pass
-
-    def get_requests(
-        self, world_state: rc.WorldState, props
-    ) -> List[tactic.RoleRequests]:
-        """Checks if we have the ball and returns the proper request
-        :return: A list of size 1 of role requests
-        """
-
-        role_requests: tactic.RoleRequests = {}
-
-        move_request = role.RoleRequest(self.priority, True, self.cost)
-        role_requests[self.move] = [move_request]
-
-        return role_requests
-
-    def tick(
-        self, world_state: rc.WorldState, role_results: tactic.RoleResults
-    ) -> List[tactic.SkillEntry]:
-        """
-        :return: A list of size 1 skill depending on which role is filled
-        """
-        move_result = role_results[self.move]
-
-        if move_result and move_result[0].is_filled():
-            return [self.move]
-        return []
+        # tick skill and return
+        # TODO: what happens if robot intent doesn't continuously get refilled? (i.e correct motion planning)
+        intent = self.move_skill.tick(world_state)
+        return intent
 
     def is_done(self, world_state):
-        return self.move.skill.is_done(world_state)
+        return self.move_skill.is_done(world_state)

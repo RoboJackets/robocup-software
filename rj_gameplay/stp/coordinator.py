@@ -27,16 +27,16 @@ class Coordinator:
 
     _play_selector: stp.situation.IPlaySelector
     _prev_situation: Optional[stp.situation.ISituation]
-    _prev_play: Optional[stp.play.IPlay]
+    _prev_play: Optional[stp.play.Play]
     _prev_role_results: assignment.FlatRoleResults
-    _props: Dict[Type[stp.play.IPlay], Any]
+    _props: Dict[Type[stp.play.Play], Any]
 
     # TODO(1585): Properly handle type annotations for props instead of using Any.
 
     def __init__(
         self,
         play_selector: stp.situation.IPlaySelector,
-        debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]], None] = None,
+        debug_callback: Callable[[stp.play.Play, List[stp.skill.Skill]], None] = None,
     ):
         self._play_selector = play_selector
         self._props = {}
@@ -56,7 +56,7 @@ class Coordinator:
         # Call situational analysis to see which play should be running.
         cur_situation, cur_play = self._play_selector.select(world_state)
 
-        cur_play_type: Type[stp.play.IPlay] = type(cur_play)
+        cur_play_type: Type[stp.play.Play] = type(cur_play)
 
         # Update the props.
         cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
