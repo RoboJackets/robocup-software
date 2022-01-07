@@ -7,6 +7,7 @@ import numpy as np
 import stp.rc
 import stp.role
 
+
 class PickRobotById(stp.role.CostFn):
     def __init__(self, robot_id: int):
         self._robot_id = robot_id
@@ -34,6 +35,7 @@ class PickRobotById(stp.role.CostFn):
     def __repr__(self):
         return f"PickRobotById(robot={self._robot_id})"
 
+
 class PickClosestRobot(stp.role.CostFn):
     def __init__(self, target_point):
         self._target_point = target_point
@@ -51,4 +53,3 @@ class PickClosestRobot(stp.role.CostFn):
 
     def __repr__(self):
         return f"PickClosestRobot(target_point={self._target_point})"
-

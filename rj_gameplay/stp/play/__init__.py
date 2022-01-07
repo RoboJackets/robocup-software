@@ -29,8 +29,9 @@ from rj_msgs.msg import RobotIntent
 PropT = TypeVar("PropT")
 
 # TODO: move to stp.role and delete old RoleRequest definition
-# role = (uninit Tactic + associated cost fn)
-RoleRequest = Tuple[stp.tactic.ITactic, stp.role.CostFn]
+RoleRequest = Tuple[
+    stp.tactic.ITactic, stp.role.CostFn
+]  # (un-initialized Tactic, associated cost fn)
 
 
 class IPlay(ABC):
@@ -49,8 +50,8 @@ class Play(ABC):
         # that kicks the problem down to forcing roles to have a RoleAssign property, I suppose
 
         # TODO: rename to "prioritized" (since they are ordered by priority)
-        self.ordered_role_requests: List[RoleRequest] = []
-        self.ordered_tactics: List[stp.tactic.ITactic] = []
+        self.prioritized_role_requests: List[RoleRequest] = []
+        self.prioritized_tactics: List[stp.tactic.ITactic] = []
 
     @abstractmethod
     def tick(
@@ -79,7 +80,7 @@ class Play(ABC):
         assigned_robots = []
         # TODO: make rc.Robot hashable by id to avoid the inconvenience of using robot_id as a hash
         used_robot_ids = set()
-        for role, cost_fn in self.ordered_role_requests:
+        for role, cost_fn in self.prioritized_role_requests:
             min_cost = 1e9
             cheapest_robot = None
             for robot in world_state.our_robots:
@@ -100,16 +101,18 @@ class Play(ABC):
         self.init_new_tactics(assigned_robots, world_state)
 
     @abstractmethod
-    def init_new_tactics(self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState) -> None:
-        """After self.ordered_costs is filled, instantiate each Tactic with its new robot and the parameters each Tactic needs."""
+    def init_new_tactics(
+        self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState
+    ) -> None:
+        """After self.prioritized_costs is filled, instantiate each Tactic with its new robot and the parameters each Tactic needs."""
         ...
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
-        """Given assigned roles in self.ordered_tactics, tick each tactic and aggregate the results in one List, where indices are robot_ids and values are RobotIntents. GameplayNode then sends these back to motion planning via ROS."""
+        """Given assigned roles in self.prioritized_tactics, tick each tactic and aggregate the results in one List, where indices are robot_ids and values are RobotIntents. GameplayNode then sends these back to motion planning via ROS."""
         # TODO: this is from gameplay_node, move to a common gameplay params file
         NUM_ROBOTS = 16
         robot_intents = [None for _ in range(NUM_ROBOTS)]
-        for tactic in self.ordered_tactics:
+        for tactic in self.prioritized_tactics:
             robot_intent = tactic.tick(world_state)
             robot_id = tactic.robot.id  # TODO: enforce existence with getter?
             robot_intents[robot_id] = robot_intent
