@@ -21,7 +21,7 @@ A skill version of receive so that actions don't have to be called in tactics
 """
 
 
-class Receive(skill.ISkill):
+class Receive(skill.Skill):
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
 
@@ -29,11 +29,11 @@ class Receive(skill.ISkill):
         self.settle = settle.Settle(robot)
         self.capture = capture.Capture(robot)
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
         if self.settle.is_done(world_state):
-            return self.capture.tick(robot, world_state)
+            return self.capture.tick(world_state)
         else:
-            return self.settle.tick(robot, world_state)
+            return self.settle.tick(world_state)
 
     def is_done(self, world_state: rc.WorldState) -> bool:
 

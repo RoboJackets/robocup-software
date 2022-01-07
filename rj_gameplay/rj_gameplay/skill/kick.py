@@ -15,7 +15,7 @@ KICK_DOT_THRESHOLD = 0.4
 KICK_BALL_SPEED_THRESHOLD = 0.9
 
 
-class Kick:
+class Kick(skill.Skill):
     def __init__(
         self,
         robot: rc.Robot,
@@ -29,8 +29,8 @@ class Kick:
         self.chip = chip
         self.kick_speed = kick_speed
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        intent = RobotIntent()
 
         empty_command = EmptyMotionCommand()
         intent.motion_command.empty_command = [empty_command]
@@ -38,7 +38,8 @@ class Kick:
         intent.trigger_mode = 2
         intent.shoot_mode = self.chip
         intent.is_active = True
-        return {self.robot.id: intent}
+
+        return intent
 
     def is_done(self, world_state: rc.WorldState) -> bool:
         if self.robot is None:

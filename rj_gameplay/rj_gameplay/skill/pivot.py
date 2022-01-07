@@ -8,23 +8,19 @@ import time
 
 import stp.skill as skill
 import stp.role as role
-from rj_msgs.msg import RobotIntent
+from rj_msgs.msg import RobotIntent, PivotMotionCommand
 import stp.rc as rc
 import numpy as np
 from rj_geometry_msgs.msg import Point
 
 
-class Pivot:
-    """
-    Pivot skill that robot aims at the receiver or the goal
-    """
-
+class Pivot(skill.Skill):
     def __init__(
         self,
         robot: rc.Robot = None,
         pivot_point: np.ndarray = None,
         target_point: np.ndarray = None,
-        dribble_speed: float = 1,
+        dribble_speed: float = 1.0,
         threshold: float = 0.02,
         priority: int = 1,
     ):
@@ -36,8 +32,9 @@ class Pivot:
 
         self.__name__ = "pivot skill"
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        intent = RobotIntent()
+
         self.pivot_point = world_state.ball.pos
 
         pivot_command = PivotMotionCommand()
@@ -49,7 +46,8 @@ class Pivot:
         intent.trigger_mode = intent.TRIGGER_MODE_STAND_DOWN
         intent.dribbler_speed = self.dribble_speed
         intent.is_active = True
-        return {self.robot.id: intent}
+
+        return intent
 
     def is_done(self, world_state: rc.WorldState) -> bool:
         if self.robot is None:
@@ -65,7 +63,7 @@ class Pivot:
         dot_product = np.dot(heading_vect, robot_to_target_unit)
         angle = np.arccos(dot_product)
         if (angle < angle_threshold) and (
-            abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold
+            abs(world_state.our_robots[self.robot.id].twist[2]) < stopped_threshold
         ):
             return True
         else:

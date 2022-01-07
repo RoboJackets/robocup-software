@@ -15,7 +15,7 @@ import numpy as np
 from rj_gameplay.MAX_KICK_SPEED import MAX_KICK_SPEED
 
 
-class PivotKick(skill.ISkill):  # add ABC if fails
+class PivotKick(skill.Skill):  # add ABC if fails
     """
     A pivot kick skill
     capture -> pivot -> kick
@@ -27,7 +27,7 @@ class PivotKick(skill.ISkill):  # add ABC if fails
         robot: rc.Robot = None,
         pivot_point: np.ndarray = None,
         target_point: np.ndarray = None,
-        dribble_speed: float = 1,
+        dribble_speed: float = 1.0,
         chip: bool = False,
         kick_speed: float = MAX_KICK_SPEED,
         threshold: float = 0.02,
@@ -36,6 +36,7 @@ class PivotKick(skill.ISkill):  # add ABC if fails
 
         self.__name__ = "pivot kick"
         self.robot = robot
+        # TODO: make skill take either np array or tuple (and auto-cast to whichever is best)
         self.pivot_point = pivot_point
         self.target_point = target_point
         self.dribble_speed = dribble_speed
@@ -54,16 +55,16 @@ class PivotKick(skill.ISkill):  # add ABC if fails
         )
         self.capture = capture.Capture(robot)
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
         if self.kick.is_done(world_state):
-            return self.capture.tick(robot, world_state, intent)
+            return self.capture.tick(world_state)
         elif self.pivot.is_done(world_state):
-            return self.kick.tick(robot, world_state, intent)
+            return self.kick.tick(world_state)
         else:
-            return self.pivot.tick(robot, world_state, intent)
+            return self.pivot.tick(world_state)
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return self.capture.is_done
+        return self.capture.is_done(world_state)
 
     def __str__(self):
         return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"

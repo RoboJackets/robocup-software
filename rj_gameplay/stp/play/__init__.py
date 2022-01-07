@@ -70,7 +70,6 @@ class Play(ABC):
         """
         ...
 
-    # TODO: add typing when finalized
     def assign_roles(
         self,
         world_state: stp.rc.WorldState,

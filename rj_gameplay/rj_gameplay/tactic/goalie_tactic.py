@@ -11,42 +11,20 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import move, receive, line_kick  # , intercept
+from rj_gameplay.skill import move, receive, line_kick, pivot_kick  # , intercept
 import stp.skill as skill
 import numpy as np
 
-# TODO: replace w/ global param server
 from stp.utils.constants import RobotConstants, BallConstants
 import stp.global_parameters as global_parameters
 from stp.local_parameters import Param
 
-# TODO: param server this const
+from rj_msgs.msg import RobotIntent
+
+# TODO: move to constants file
 MIN_WALL_RAD = 0
 GOALIE_PCT_TO_BALL = 0.15
 DIST_TO_FAST_KICK = 7
-
-
-class GoalieCost(role.CostFn):
-    def __call__(
-        self,
-        robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
-    ) -> float:
-        if world_state.game_info is not None:
-            if robot.id == world_state.goalie_id:
-                return 0.0
-
-        return 10000000
-
-    def unassigned_cost_fn(
-        self,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
-    ) -> float:
-
-        # TODO: Implement real unassigned cost function
-        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
 def get_goalie_pt(world_state: rc.WorldState) -> np.ndarray:
@@ -82,41 +60,33 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
     return block_pt
 
 
-class GoalieTactic(tactic.ITactic):
-    def __init__(self, brick=False):
+class GoalieTactic(tactic.Tactic):
+    def __init__(self, robot: rc.Robot, brick=False):
+        super().__init__(robot)
+
         self.brick = brick
 
         # init skills
-        self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
-        self.receive_se = tactic.SkillEntry(receive.Receive())
-        self.pivot_kick_se = tactic.SkillEntry(
-            line_kick.LineKickSkill(
-                None,
-                target_point=np.array([0.0, 6.0]),
-                chip=True,
-                kick_speed=5.5,
-            )
-        )
+        # self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
+        # self.receive_se = tactic.SkillEntry(receive.Receive())
+        # self.pivot_kick_se = tactic.SkillEntry(
+        #     line_kick.LineKickSkill(
+        #         None,
+        #         target_point=np.array([0.0, 6.0]),
+        #         chip=True,
+        #         kick_speed=5.5,
+        #     )
+        # )
 
-        # TODO: rename cost_list to role_cost in other gameplay files
-        self.role_cost = GoalieCost()
+        # TODO: have a self.curr_skill instead of 3 separate ones, tick at end of tick
+        self.move_skill = None
+        self.receive_skill = None
+        self.pivot_kick_skill = None
 
-    def compute_props(self):
-        pass
-
-    def create_request(self, **kwargs) -> role.RoleRequest:
-        """Creates a sane default RoleRequest.
-        :return: A list of size 1 of a sane default RoleRequest.
-        """
-        pass
-
-    def get_requests(
-        self, world_state: rc.WorldState, props
-    ) -> List[tactic.RoleRequests]:
+    # TODO: there is crusty if-else here, use utility AI or behavior tree or FSM
+    #       anything more readable than this (behavior tree prob best fit for current logic)
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
         global MIN_WALL_RAD
-        """
-        :return: A list of role requests for move skills needed
-        """
 
         # TODO: this calculation is copy-pasted from wall_tactic
         # put into common param file: https://www.geeksforgeeks.org/global-keyword-in-python/
@@ -128,7 +98,6 @@ class GoalieTactic(tactic.ITactic):
         # max out of box to cap for goalie
         MAX_OOB = RobotConstants.RADIUS
 
-        role_requests = {}
         if world_state and world_state.ball.visible:
             ball_speed = np.linalg.norm(world_state.ball.vel)
             ball_pos = world_state.ball.pos
@@ -137,12 +106,12 @@ class GoalieTactic(tactic.ITactic):
             towards_goal = goal_pos - ball_pos
 
             if self.brick:
-                self.move_se.skill.target_point = world_state.field.our_goal_loc
-                self.move_se.skill.face_point = world_state.ball.pos
-                role_requests[self.move_se] = [
-                    role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
-                ]
-                return role_requests
+                self.move_skill = move.Move(
+                    robot=self.robot,
+                    target_point=world_state.field.our_goal_loc,
+                    face_point=world_state.ball.pos,
+                )
+                return self.move_skill.tick(world_state)
 
             if (
                 ball_speed < 0.5
@@ -152,18 +121,16 @@ class GoalieTactic(tactic.ITactic):
                 )
                 and not world_state.game_info.is_stopped()
             ):
-                self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
                 if ball_speed < 1e-6:
                     # if ball is stopped and inside goalie box, collect it
-                    role_requests[self.receive_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
-                    ]
+                    self.receive_skill = receive.Receive(robot=self.robot)
+                    return self.receive_skill.tick(world_state)
                 else:
                     # if ball has been stopped already, chip toward center field
-                    self.pivot_kick_se.skill.target_point = np.array([0.0, 6.0])
-                    role_requests[self.pivot_kick_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
-                    ]
+                    self.pivot_kick_skill = pivot_kick.PivotKick(
+                        robot=self.robot, target_point=np.array([0.0, 6.0])
+                    )
+                    return self.pivot_kick_skill.tick(world_state)
             else:
                 if ball_speed > 0 and np.dot(towards_goal, world_state.ball.vel) > 0.3:
                     # if ball is moving and coming at goal, move laterally to block ball
@@ -173,59 +140,45 @@ class GoalieTactic(tactic.ITactic):
                         if world_state.goalie_id is not None
                         else np.array([0.0, 0.0])
                     )
-                    self.move_se.skill.target_point = get_block_pt(
-                        world_state, goalie_pos
+
+                    block_point = get_block_pt(world_state, goalie_pos)
+                    face_point = world_state.ball.pos
+
+                    self.move_skill = move.Move(
+                        robot=self.robot,
+                        target_point=block_point,
+                        face_point=face_point,
                     )
-                    self.move_se.skill.face_point = world_state.ball.pos
-                    role_requests[self.move_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
-                    ]
+                    return self.move_skill.tick(world_state)
+
                 else:
                     # else, track ball normally
-                    self.move_se.skill.target_point = get_goalie_pt(world_state)
-                    self.move_se.skill.face_point = world_state.ball.pos
-                    role_requests[self.move_se] = [
-                        role.RoleRequest(role.Priority.HIGH, True, self.role_cost)
-                    ]
-        if self.pivot_kick_se.skill.is_done(world_state):
-            self.pivot_kick_se = tactic.SkillEntry(
-                line_kick.LineKickSkill(
-                    None,
-                    target_point=np.array([0.0, 6.0]),
-                    chip=True,
-                    kick_speed=5.5,
-                )
+                    self.move_skill = move.Move(
+                        target_point=get_goalie_pt(world_state),
+                        face_point=world_state.ball.pos,
+                    )
+                    return self.move_skill.tick(world_state)
+
+        if self.pivot_kick_skill is not None and self.pivot_kick_skill.is_done(
+            world_state
+        ):
+            self.pivot_kick_skill = pivot_kick.PivotKick(
+                robot=self.robot,
+                target_point=np.array([0.0, 6.0]),
+                chip=True,
+                kick_speed=5.5,
             )
 
-        return role_requests
-
-    def tick(
-        self, world_state: rc.WorldState, role_results: tactic.RoleResults
-    ) -> List[tactic.SkillEntry]:
-        """
-        :return: A list of skills depending on which roles are filled
-        """
-
-        # create list of skills based on if RoleResult exists for SkillEntry
-        skills = []
-
-        move_result = role_results[self.move_se]
-        receive_result = role_results[self.receive_se]
-        pivot_kick_result = role_results[self.pivot_kick_se]
-
-        # move skill takes priority
-        if move_result and move_result[0].is_filled():
-            skills.append(self.move_se)
-        elif receive_result and receive_result[0].is_filled():
-            skills.append(self.receive_se)
-        elif pivot_kick_result and pivot_kick_result[0].is_filled():
-            skills.append(self.pivot_kick_se)
-
-        return skills
+            return self.pivot_kick_skill.tick(world_state)
+            # self.pivot_kick_se = tactic.SkillEntry(
+            #     line_kick.LineKickSkill(
+            #         None,
+            #         target_point=np.array([0.0, 6.0]),
+            #         chip=True,
+            #         kick_speed=5.5,
+            #     )
+            # )
 
     def is_done(self, world_state):
-        """
-        :return boolean indicating if tactic is done
-        """
         # goalie tactic always active
         return False

@@ -1,83 +1,73 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
-import stp.role as role
+from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic, move_tactic
+import stp.role
 from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc as rc
+import stp.rc
 from typing import Dict, List, Tuple, Type
 from rj_gameplay.calculations import wall_calculations
 
+import stp.role.cost
+from rj_msgs.msg import RobotIntent
 
-class BasicDefense(play.IPlay):
+
+class BasicDefense(play.Play):
     """For when we don't have the ball and are trying to stop the opponent from scoring."""
 
     def __init__(self):
-        self.tactics = [
-            wall_tactic.WallTactic(),
-            wall_tactic.WallTactic(),
-            wall_tactic.WallTactic(),
-            nmark_tactic.NMarkTactic(2),
-            goalie_tactic.GoalieTactic(),
-        ]
-
-        self.num_wallers = 3
-
-        self.role_assigner = NaiveRoleAssignment()
-
-    def compute_props(self, prev_props):
-        pass
+        super().__init__()
 
     def tick(
         self,
-        world_state: rc.WorldState,
-        prev_results: role.assignment.FlatRoleResults,
-        props,
-    ) -> Tuple[
-        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-        List[tactic.SkillEntry],
-    ]:
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
 
-        # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
+        # if no tactics created, assign roles and create them
+        if world_state is not None and not self.prioritized_tactics:
+            # TODO: figure out better way to share wall pts than calculations file
+            #       maybe a shared wall class? but wall tactic must remain 1:1 for roles
 
-        # Get role requests from all tactics and put them into a dictionary
-        role_requests: play.RoleRequests = {}
-        i = 0
-        for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic()):
-                role_requests[tactic] = tactic.get_requests(
-                    world_state, wall_pts[i], None
+            # 1 goalie, 5 wallers (for now)
+            # TODO: break nmark into single-robot mark tactics
+
+            # pre-calculate wall points and store in numpy array
+            num_wallers = 5
+            self.wall_pts = wall_calculations.find_wall_pts(num_wallers, world_state)
+
+            self.prioritized_role_requests = [
+                (
+                    goalie_tactic.GoalieTactic,
+                    stp.role.cost.PickRobotById(world_state.goalie_id),
                 )
-                i += 1
-            else:
-                role_requests[tactic] = tactic.get_requests(world_state, None)
-        """role_requests: play.RoleRequests = {
-            tactic: tactic.get_requests(world_state, None)
-            for tactic in self.tactics
-        }"""
+            ]
+            for pt in self.wall_pts:
+                self.prioritized_role_requests.append(
+                    (move_tactic.MoveTactic, stp.role.cost.PickClosestRobot(pt))
+                )
+            self.assign_roles(world_state)
 
-        # Flatten requests and use role assigner on them
-        flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(
-            flat_requests, world_state, prev_results
-        )
-        role_results = play.unflatten_results(flat_results)
+        # TODO: fix wall tactic to change its own point based on ball pos, without feeding info via Play
 
-        # Get list of all SkillEntries from all tactics
-        skills = []
-        for tactic in self.tactics:
-            skills += tactic.tick(world_state, role_results[tactic])
+        # return robot intents from assigned tactics back to gameplay node
+        return self.get_robot_intents(world_state)
 
-        # Get all role assignments
-        # SkillEntry to (list of?) RoleResult
-        skill_dict = {}
-        for tactic in self.tactics:
-            skill_dict.update(role_results[tactic])
+    def init_new_tactics(
+        self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState
+    ) -> None:
 
-        return (skill_dict, skills)
+        for role_request, robot, pt in zip(
+            self.prioritized_role_requests, assigned_robots, self.wall_pts
+        ):
+            role, cost_fn = role_request
 
-    def is_done(self, world_state):
-        # returns done when all tactics are done
-        # TODO: change all is_done() to use all()?
-        return all([tactic.is_done(world_state) for tactic in self.tactics])
+            new_tactic = None
+            # TODO: this is bad, shouldn't have to check types of tactics imo
+            # although perhaps this is fine since the play has to fill prioritized_roles dynamically anyhow, indicating it knows what roles to expect and what order
+            if role is move_tactic.MoveTactic:
+                new_tactic = role(robot, pt, world_state.ball.pos)
+            elif role is goalie_tactic.GoalieTactic:
+                new_tactic = role(robot)
+
+            if new_tactic is not None:
+                self.prioritized_tactics.append(new_tactic)

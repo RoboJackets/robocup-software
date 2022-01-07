@@ -5,7 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
-from rj_msgs.msg import RobotIntent
+from rj_msgs.msg import RobotIntent, CollectMotionCommand
 
 import stp.skill as skill
 import stp.role as role
@@ -13,25 +13,23 @@ import stp.action as action
 import stp.rc as rc
 from typing import Optional
 
-"""
-A skill version of capture so that actions don't have to be called in tactics
-"""
 
-
-class Capture(skill.ISkill):  # add ABC if something fails
+class Capture(skill.Skill):
     def __init__(self, robot: Optional[rc.Robot] = None):
         self.robot = robot
         self.ticks_done = 0
 
         self.__name__ = "capture skill"
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        intent = RobotIntent()
+
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command]
         intent.dribbler_speed = 1.0
         intent.is_active = True
-        return {self.robot.id: intent}
+
+        return intent
 
     def is_done(self, world_state) -> bool:
         if (

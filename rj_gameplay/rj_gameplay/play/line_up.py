@@ -19,7 +19,7 @@ from rj_msgs.msg import RobotIntent
 
 
 class LineUp(stp.play.Play):
-    """Play that lines up all six robots on the side of the field."""
+    """Lines up all six robots on the side of the field."""
 
     def __init__(self):
         super().__init__()
@@ -68,7 +68,7 @@ class LineUp(stp.play.Play):
             new_tactic = None
             # TODO: this is bad, shouldn't have to check types of tactics imo
             # the only role in this play is the move tactic, but in other plays there will be more
-            # although perhaps this is fine since the play has to manually fill prioritized_roles dynamically anyhow, indicating it knows what roles to expect
+            # although perhaps this is fine since the play has to fill prioritized_roles dynamically anyhow, indicating it knows what roles to expect and what order
             if role is move_tactic.MoveTactic:
                 new_tactic = role(robot, pt, (0.0, 0.0))
 

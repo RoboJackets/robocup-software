@@ -17,42 +17,6 @@ import numpy as np
 
 from rj_msgs.msg import RobotIntent
 
-MAX_ROBOT_VELOCITY = 3.0
-
-
-class move_cost(role.CostFn):
-    """
-    A cost function for how to choose a striker
-    TODO: Implement a better cost function
-    """
-
-    def __init__(self, target_point: np.ndarray, cost_scale: float = 1.0):
-        self.target_point = target_point
-        self.cost_scale = cost_scale
-
-    def __call__(
-        self,
-        robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
-    ) -> float:
-        return (
-            (
-                (robot.pose[0] - self.target_point[0]) ** 2
-                + (robot.pose[1] - self.target_point[1]) ** 2
-            )
-            / MAX_ROBOT_VELOCITY
-            * self.cost_scale
-        )
-
-    def unassigned_cost_fn(
-        self,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
-    ) -> float:
-
-        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
-
 
 class MoveTactic(tactic.Tactic):
     def __init__(self, robot: rc.Robot, target_point, face_point):

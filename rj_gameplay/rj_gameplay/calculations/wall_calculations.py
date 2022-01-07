@@ -15,7 +15,6 @@ from rj_gameplay.skill import move
 import stp.skill as skill
 import numpy as np
 
-# TODO: replace w/ global param server
 from stp.utils.constants import RobotConstants, BallConstants
 import stp.global_parameters as global_parameters
 
