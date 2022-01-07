@@ -28,9 +28,9 @@ from rj_msgs.msg import RobotIntent
 
 PropT = TypeVar("PropT")
 
-# TODO: move to stp.role
-# roles = un-initialized Tactics
-Role = Type[stp.tactic.Tactic]
+# TODO: move to stp.role and delete old RoleRequest definition
+# role = (uninit Tactic + associated cost fn)
+RoleRequest = Tuple[stp.tactic.ITactic, stp.role.CostFn]
 
 
 class IPlay(ABC):
@@ -47,8 +47,9 @@ class Play(ABC):
         #
         # or should it just be part of a RoleAssign class with passed in params?
         # that kicks the problem down to forcing roles to have a RoleAssign property, I suppose
-        self.ordered_costs: List[stp.role.costFn] = []
-        self.ordered_roles: List[Role] = []
+
+        # TODO: rename to "prioritized" (since they are ordered by priority)
+        self.ordered_role_requests: List[RoleRequest] = []
         self.ordered_tactics: List[stp.tactic.ITactic] = []
 
     @abstractmethod
@@ -76,9 +77,9 @@ class Play(ABC):
         """Given that all roles are in sorted order of priority, greedily assign the highest-priority role to the lowest-cost robot for that role. Instantiate tactics with the correct robots post-assignment."""
 
         assigned_robots = []
-        # TODO: make rc.Robot hashable by id to avoid this
+        # TODO: make rc.Robot hashable by id to avoid the inconvenience of using robot_id as a hash
         used_robot_ids = set()
-        for cost_fn in self.ordered_costs:
+        for role, cost_fn in self.ordered_role_requests:
             min_cost = 1e9
             cheapest_robot = None
             for robot in world_state.our_robots:

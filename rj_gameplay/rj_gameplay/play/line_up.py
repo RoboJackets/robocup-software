@@ -30,13 +30,13 @@ class LineUp(stp.play.Play):
 
         # fill cost functions by priority
         # "hardcode" robot ids to line up
-        # self.ordered_costs = [stp.role.cost.PickRobotById(5-i) for i in range(6)]
+        ordered_costs = [stp.role.cost.PickRobotById(5-i) for i in range(6)]
 
         # OR assign closest robot to each point to go
-        self.ordered_costs = [stp.role.cost.PickClosestRobot(pt) for pt in self.move_points]
+        # ordered_costs = [stp.role.cost.PickClosestRobot(pt) for pt in self.move_points]
 
         # fill roles
-        self.ordered_roles = [move_tactic.MoveTactic for _ in range(6)]
+        self.ordered_role_requests = [(move_tactic.MoveTactic, cost_fn) for cost_fn in ordered_costs]
 
         # filled by assign_roles() later
         self.ordered_tactics = []
@@ -55,7 +55,9 @@ class LineUp(stp.play.Play):
 
     def init_new_tactics(self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState) -> None:
 
-        for role, robot, pt in zip(self.ordered_roles, assigned_robots, self.move_points):
+        for role_request, robot, pt in zip(self.ordered_role_requests, assigned_robots, self.move_points):
+            role, cost_fn = role_request
+
             new_tactic = None
             # TODO: this is bad, shouldn't have to check types of tactics imo
             # the only role in this play is the move tactic, but in other plays there will be more
