@@ -11,7 +11,7 @@ import stp.role as role
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
-from rj_gameplay.skill import capture, move
+from rj_gameplay.skill import move
 import stp.skill as skill
 import numpy as np
 
