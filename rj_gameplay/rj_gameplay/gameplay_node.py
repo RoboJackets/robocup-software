@@ -238,13 +238,6 @@ class GameplayNode(Node):
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
-                    # TODO: this if is here because grSim defaults to Div A and 11 bots
-                    #       rm this check once grSim is fixed to Div B, 6 bots
-                    #       or work around somehow
-                    if i >= len(intents):
-                        break
-
-                    # robots keep intent active if already given one
                     if intents[i] is not None:
                         rip_i = self.robot_intent_pubs[i]
                         rip_i.publish(intents[i])
