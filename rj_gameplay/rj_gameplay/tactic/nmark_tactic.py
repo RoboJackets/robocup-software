@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import stp.rc as rc
 import stp.tactic as tactic
@@ -79,7 +79,7 @@ class NMarkTactic(tactic.ITactic):
         self.num_markers = n
 
         # create empty mark SkillEntry for each robot
-        self.mark_list: List[tactic.SkillEntry] = [
+        self.mark_list: Optional[List[tactic.SkillEntry]] = [
             tactic.SkillEntry(mark.Mark())
             for i in range(self.num_markers)
         ]
@@ -98,7 +98,7 @@ class NMarkTactic(tactic.ITactic):
 
     def get_requests(
         self, world_state: rc.WorldState, props
-    ) -> tactic.RoleRequests:
+    ) -> Dict[tactic.SkillEntry[Any],List[role.RoleRequests]]:
         """
         :return: role request for n markers
         """
@@ -119,8 +119,7 @@ class NMarkTactic(tactic.ITactic):
         return role_requests
 
     def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults, 
-             props: Optional[tactic.PropT]) -> List[tactic.SkillEntry]:
+             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers
         """
