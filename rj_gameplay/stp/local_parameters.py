@@ -14,7 +14,11 @@ from typing import List, Optional
 
 from rclpy.node import Node
 from rclpy.parameter import Parameter
-from rcl_interfaces.msg import SetParametersResult, ParameterType, ParameterDescriptor
+from rcl_interfaces.msg import (
+    SetParametersResult,
+    ParameterType,
+    ParameterDescriptor,
+)
 
 parameters = {}
 param_node: Optional[Node] = None
@@ -30,7 +34,13 @@ class Param:
     PARAMETER_INTEGER_ARRAY = ParameterType.PARAMETER_INTEGER_ARRAY
     PARAMETER_DOUBLE_ARRAY = ParameterType.PARAMETER_DOUBLE_ARRAY
 
-    def __init__(self, name: str, default_value, param_type: ParameterType = None, description: str = ''):
+    def __init__(
+        self,
+        name: str,
+        default_value,
+        param_type: ParameterType = None,
+        description: str = "",
+    ):
         global parameters, param_node
 
         self.name = name
@@ -53,7 +63,11 @@ def update_params(params: List[Parameter]) -> SetParametersResult:
     :param params: A list of ROS Parameter changes
     """
     for param in params:
-        parameters[param.name] = (param.value, parameters[param.name][1], parameters[param.name][2])
+        parameters[param.name] = (
+            param.value,
+            parameters[param.name][1],
+            parameters[param.name][2],
+        )
 
     return SetParametersResult(successful=True)
 
@@ -76,10 +90,22 @@ def register_parameters(node: Node):
     param_node = node
 
 
-def register_parameter(node: Node, param_name: str, value, param_type: ParameterType, description: Optional[str]):
+def register_parameter(
+    node: Node,
+    param_name: str,
+    value,
+    param_type: ParameterType,
+    description: Optional[str],
+):
     global parameters
 
-    descriptor = ParameterDescriptor(name=param_name, type=param_type, description=description or '')
+    descriptor = ParameterDescriptor(
+        name=param_name, type=param_type, description=description or ""
+    )
     if not node.has_parameter(param_name):
         node.declare_parameter(param_name, value, descriptor)
-    parameters[param_name] = node.get_parameter(param_name).value, parameters[param_name][1], parameters[param_name][2]
+    parameters[param_name] = (
+        node.get_parameter(param_name).value,
+        parameters[param_name][1],
+        parameters[param_name][2],
+    )

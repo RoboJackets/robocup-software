@@ -1,6 +1,10 @@
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Callable
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Callable,
+)
 
 import stp.action as action
 import stp.rc as rc
@@ -17,8 +21,9 @@ import numpy as np
 import stp.global_parameters as global_parameters
 
 
-def seek_heuristic(point: Tuple[float, float],
-                   world_state: Tuple[rc.WorldState]) -> float:
+def seek_heuristic(
+    point: Tuple[float, float], world_state: Tuple[rc.WorldState]
+) -> float:
     """
     func to find a point to move to
     """
@@ -29,8 +34,9 @@ def seek_heuristic(point: Tuple[float, float],
     return cost
 
 
-def restart_seek(point: Tuple[float, float],
-                 world_state: Tuple[rc.WorldState]) -> float:
+def restart_seek(
+    point: Tuple[float, float], world_state: Tuple[rc.WorldState]
+) -> float:
     """
     func to find a point to move to
     robot "most open" @ point found by optimizer
@@ -56,8 +62,9 @@ def restart_seek(point: Tuple[float, float],
 
 
 def build_seek_function(target):
-    def seek_heuristic(point: Tuple[float, float],
-                       world_state: Tuple[rc.WorldState]) -> float:
+    def seek_heuristic(
+        point: Tuple[float, float], world_state: Tuple[rc.WorldState]
+    ) -> float:
         nonlocal target
         target = np.array(target)
         point = np.array(point)
@@ -69,13 +76,12 @@ def build_seek_function(target):
             ball_to_goal_dist = np.linalg.norm(ball_to_goal_vec)
             ball_to_goal_vec /= ball_to_goal_dist
 
-            ball_to_goal_perp = np.array(
-                [-ball_to_goal_vec[1], ball_to_goal_vec[0]])
+            ball_to_goal_perp = np.array([-ball_to_goal_vec[1], ball_to_goal_vec[0]])
             perp_dist = np.dot(ball_to_goal_perp, point - world_state.ball.pos)
 
             range_diff = np.linalg.norm(goal_pos - point) - ball_to_goal_dist
             range_decay = np.exp(-range_diff) / (1.0 + np.exp(-range_diff))
-            avoid_ball_cost = np.exp(-perp_dist**2 * 30) * range_decay
+            avoid_ball_cost = np.exp(-(perp_dist ** 2) * 30) * range_decay
 
         return np.linalg.norm(point - target) + avoid_ball_cost
 
@@ -87,6 +93,7 @@ class SeekCost(role.CostFn):
     A cost function for how to choose a seeking robot
     TODO: Implement a better cost function
     """
+
     def __init__(self, target_point: np.ndarray):
         self.target_point = target_point
 
@@ -103,8 +110,10 @@ class SeekCost(role.CostFn):
         if not robot.visible:
             return 99
 
-        return np.linalg.norm(robot.pose[0:2] - self.target_point
-                              ) / global_parameters.soccer.robot.max_speed
+        return (
+            np.linalg.norm(robot.pose[0:2] - self.target_point)
+            / global_parameters.soccer.robot.max_speed
+        )
 
     def unassigned_cost_fn(
         self,
@@ -112,7 +121,7 @@ class SeekCost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
@@ -122,12 +131,17 @@ class Seek(tactic.ITactic):
     Role chosen by SeekCost
     # TODO: make naming less arbitrary
     """
-    def __init__(self, target_point: np.ndarray,
-                 seek_heuristic: Callable[[Tuple[float, float]],
-                                          float], seeker_cost: role.CostFn):
+
+    def __init__(
+        self,
+        target_point: np.ndarray,
+        seek_heuristic: Callable[[Tuple[float, float]], float],
+        seeker_cost: role.CostFn,
+    ):
         goal_pos = np.array([0, 9])
         self.move = tactic.SkillEntry(
-            move.Move(target_point=target_point, face_point=goal_pos))
+            move.Move(target_point=target_point, face_point=goal_pos)
+        )
         self.cost = seeker_cost
         self.seek_heuristic = seek_heuristic
 
@@ -140,9 +154,10 @@ class Seek(tactic.ITactic):
         """
         pass
 
-    def get_requests(self, world_state: rc.WorldState,
-                     props) -> List[tactic.RoleRequests]:
-        """ Checks if we have the ball and returns the proper request
+    def get_requests(
+        self, world_state: rc.WorldState, props
+    ) -> List[tactic.RoleRequests]:
+        """Checks if we have the ball and returns the proper request
         :return: A list of size 1 of role requests
         """
 
@@ -164,7 +179,8 @@ class Seek(tactic.ITactic):
         goal_pos = np.array([0, world_state.field.length_m])
         self.move.skill.face_point = goal_pos
         self.move.skill.target_point = optimizer.find_seek_point(
-            self.seek_heuristic, world_state)
+            self.seek_heuristic, world_state
+        )
         move_result = role_results[self.move]
 
         if move_result and move_result[0].is_filled():

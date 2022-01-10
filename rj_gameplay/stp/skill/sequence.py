@@ -4,9 +4,9 @@ import stp.action as action
 from typing import Optional, Any
 import stp.rc as rc
 
-class RJSequence(py_trees.composites.Sequence):
 
-    def __init__(self, robot: rc.Robot=None, ctx=None):
+class RJSequence(py_trees.composites.Sequence):
+    def __init__(self, robot: rc.Robot = None, ctx=None):
         self.robot = robot
         self.ctx = ctx
         super().__init__()
@@ -15,4 +15,3 @@ class RJSequence(py_trees.composites.Sequence):
         self.robot = robot
         self.ctx = ctx
         super().tick_once()
-
