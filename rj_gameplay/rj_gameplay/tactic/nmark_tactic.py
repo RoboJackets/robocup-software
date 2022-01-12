@@ -89,7 +89,7 @@ class NMarkTactic(tactic.ITactic):
 
         # create empty mark SkillEntry for each robot
         self.mark_list: List[tactic.SkillEntry] = [
-            tactic.SkillEntry(mark.Mark()) for i in range(self.num_markers)
+            tactic.SkillEntry(skills.mark.Mark()) for i in range(self.num_markers)
         ]
 
         # create cost func for each robot
@@ -130,7 +130,7 @@ class NMarkTactic(tactic.ITactic):
 
     def tick(
         self, world_state: rc.WorldState, role_results: tactic.RoleResults, props: None
-    ) -> List[skill.ISkill]:
+    ) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers
         """
