@@ -5,21 +5,33 @@ from typing import Optional, Any
 import stp.rc as rc
 from typing import TypedDict, List
 
+
 class RobotActions(TypedDict):
     robot_id: int
     actions: List[action.IAction]
+
 
 class ActionBehavior(py_trees.behaviour.Behaviour):
     """
     A behaviour for behviour trees which ticks its action when ticked
     """
-    def __init__(self, name:str, action:action.IAction, robot:rc.Robot=None, ctx=None) -> None:
+
+    def __init__(
+        self,
+        name: str,
+        action: action.IAction,
+        robot: rc.Robot = None,
+        ctx=None,
+    ) -> None:
         self.action = action
         self.ctx = ctx
         self.robot = robot
         self.world_state = None
         super(ActionBehavior, self).__init__(name)
-    def tick_once(self, robot:rc.Robot, world_state:rc.WorldState, ctx=None) -> RobotActions:
+
+    def tick_once(
+        self, robot: rc.Robot, world_state: rc.WorldState, ctx=None
+    ) -> RobotActions:
         """
         Ticks its action using the robot given (if root) or the robot from its parent.
         This will probably become tick() or spin() once action server is implemented
@@ -38,7 +50,7 @@ class ActionBehavior(py_trees.behaviour.Behaviour):
         #     self.robot = self.parent.robot
         self.ctx = ctx
         super().tick_once()
-        return {self.robot.id : [self.action]}
+        return {self.robot.id: [self.action]}
 
     def initialise(self) -> None:
         """

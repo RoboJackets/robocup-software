@@ -18,6 +18,7 @@ from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 
 from rj_geometry_msgs.msg import Point, Segment
 
+
 def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
     # workaround for non-working CostBehavior:
     # initialize move action, update target point every tick (target point being opponent robot pos)
@@ -45,32 +46,31 @@ def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
 
     return mark_pos
 
+
 """
 A skill which marks a given opponent robot according to some heuristic cost function
 """
 
 
-#TODO: delete mark skill -> change to tactic
+# TODO: delete mark skill -> change to tactic
 class Mark(skill.ISkill):
+    def __init__(
+        self,
+        robot: rc.Robot = None,
+        target_robot: rc.Robot = None,
+        face_point: np.ndarray = None,
+        face_angle: Optional[float] = None,
+        target_vel: np.ndarray = np.array([0.0, 0.0]),
+        ignore_ball: bool = False,
+    ) -> None:
 
-    def __init__(self,
-                 robot: rc.Robot = None,
-                 target_robot: rc.Robot = None,
-                 face_point: np.ndarray = None,
-                 face_angle: Optional[float] = None,
-                 target_vel: np.ndarray = np.array([0.0, 0.0]),
-                 ignore_ball: bool = False) -> None:
-
-        self.__name__ = 'Mark'
+        self.__name__ = "Mark"
         self.robot = robot
         self.target_robot = target_robot
         self.target_vel = target_vel
         self.face_point = face_point
         self.face_angle = face_angle
         self.ignore_ball = ignore_ball
-
-
-        
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
@@ -83,34 +83,38 @@ class Mark(skill.ISkill):
         self.face_point = world_state.ball.pos
 
         path_command = PathTargetMotionCommand()
-        path_command.target.position = Point(x=self.target_point[0],
-                                             y=self.target_point[1])
-        path_command.target.velocity = Point(x=self.target_vel[0],
-                                             y=self.target_vel[1])
+        path_command.target.position = Point(
+            x=self.target_point[0], y=self.target_point[1]
+        )
+        path_command.target.velocity = Point(x=self.target_vel[0], y=self.target_vel[1])
         path_command.ignore_ball = self.ignore_ball
 
-        if (self.face_angle is not None):
+        if self.face_angle is not None:
             path_command.override_angle = [self.face_angle]
 
-        if (self.face_point is not None):
+        if self.face_point is not None:
             path_command.override_face_point = [
                 Point(x=self.face_point[0], y=self.face_point[1])
             ]
 
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
-        return {self.robot.id : intent}
+        return {self.robot.id: intent}
         # update target point every tick to match movement of ball & target robot
-        
 
     def is_done(self, world_state):
         threshold = 0.3
         if self.robot.id is None or world_state is None:
             return False
-        elif (math.sqrt((world_state.our_robots[self.robot.id].pose[0] -
-                         self.target_point[0])**2 +
-                        (world_state.our_robots[self.robot.id].pose[1] -
-                         self.target_point[1])**2) < threshold):
+        elif (
+            math.sqrt(
+                (world_state.our_robots[self.robot.id].pose[0] - self.target_point[0])
+                ** 2
+                + (world_state.our_robots[self.robot.id].pose[1] - self.target_point[1])
+                ** 2
+            )
+            < threshold
+        ):
             return True
         else:
             return False

@@ -36,8 +36,8 @@ class Coordinator:
     def __init__(
         self,
         play_selector: stp.situation.IPlaySelector,
-        debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]],
-                                 None] = None):
+        debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]], None] = None,
+    ):
         self._play_selector = play_selector
         self._props = {}
         self._prev_situation = None
@@ -61,8 +61,9 @@ class Coordinator:
         # Update the props.
         cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
 
-        if isinstance(cur_play, type(
-                self._prev_play)) and not self._prev_play.is_done(world_state):
+        if isinstance(cur_play, type(self._prev_play)) and not self._prev_play.is_done(
+            world_state
+        ):
             cur_play = self._prev_play
             # This should be checked here or in the play selector, so we can restart a play easily
 
@@ -79,7 +80,8 @@ class Coordinator:
             robot = new_role_results[skill][0].role.robot
             if robot is not None:
                 intents_dict.update(
-                    skill.skill.tick(robot, world_state, intents[robot.id]))
+                    skill.skill.tick(robot, world_state, intents[robot.id])
+                )
 
         # Get the list of robot intents from the actions
         for i in range(NUM_ROBOTS):

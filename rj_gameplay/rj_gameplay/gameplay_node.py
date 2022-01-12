@@ -35,6 +35,7 @@ import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
 
+
 class TestPlaySelector(situation.IPlaySelector):
     """
     Convenience class for testing individual plays in gameplay without
@@ -43,8 +44,10 @@ class TestPlaySelector(situation.IPlaySelector):
     Import a new play, then change the select() method's return below to force
     gameplay to always use the selected type.
     """
-    def select(self, world_state: rc.WorldState) -> \
-            Tuple[Optional[situation.ISituation], stp.play.IPlay]:
+
+    def select(
+        self, world_state: rc.WorldState
+    ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         return (None, penalty_defense.PenaltyDefense())
 
 
@@ -54,46 +57,68 @@ class GameplayNode(Node):
     field topics and converts the messages to python types.
     """
 
-    def __init__(self,
-                 play_selector: situation.IPlaySelector,
-                 world_state: Optional[rc.WorldState] = None) -> None:
+    def __init__(
+        self,
+        play_selector: situation.IPlaySelector,
+        world_state: Optional[rc.WorldState] = None,
+    ) -> None:
         rclpy.init()
-        super().__init__('gameplay_node')
+        super().__init__("gameplay_node")
         self.world_state_sub = self.create_subscription(
-            msg.WorldState, 'vision_filter/world_state',
-            self.create_partial_world_state, 10)
+            msg.WorldState,
+            "vision_filter/world_state",
+            self.create_partial_world_state,
+            10,
+        )
         self.field_dimensions = self.create_subscription(
-            msg.FieldDimensions, 'config/field_dimensions', self.create_field,
-            10)
+            msg.FieldDimensions,
+            "config/field_dimensions",
+            self.create_field,
+            10,
+        )
 
         self.play_state = None
         self.match_state = None
-        self.play_state_sub = self.create_subscription(msg.PlayState,
-                                                       'referee/play_state',
-                                                       self.set_play_state, 10)
+        self.play_state_sub = self.create_subscription(
+            msg.PlayState, "referee/play_state", self.set_play_state, 10
+        )
         self.match_state_sub = self.create_subscription(
-            msg.MatchState, 'referee/match_state', self.set_match_state, 10)
+            msg.MatchState, "referee/match_state", self.set_match_state, 10
+        )
 
         keep_latest = QoSProfile(
-            depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
-        self.goalie_id_sub = self.create_subscription(msg.Goalie,
-                                                      'referee/our_goalie',
-                                                      self.create_goalie_id,
-                                                      keep_latest)
+            depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL
+        )
+        self.goalie_id_sub = self.create_subscription(
+            msg.Goalie,
+            "referee/our_goalie",
+            self.create_goalie_id,
+            keep_latest,
+        )
 
         self.override_actions: List[Optional[IAction]] = [None] * NUM_ROBOTS
 
         # create lists for robot state subs and robot intent pubs (ROS)
         self.robot_state_subs = []
         for i in range(NUM_ROBOTS):
-            self.robot_state_subs.append(self.create_subscription(
-                msg.RobotStatus, 'radio/robot_status/robot_' + str(i),
-                self.create_partial_robots, 10))
+            self.robot_state_subs.append(
+                self.create_subscription(
+                    msg.RobotStatus,
+                    "radio/robot_status/robot_" + str(i),
+                    self.create_partial_robots,
+                    10,
+                )
+            )
 
         self.robot_intent_pubs = []
         for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs.append(self.create_publisher(
-                msg.RobotIntent, 'gameplay/robot_intent/robot_' + str(i), 10))
+            self.robot_intent_pubs.append(
+                self.create_publisher(
+                    msg.RobotIntent,
+                    "gameplay/robot_intent/robot_" + str(i),
+                    10,
+                )
+            )
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
@@ -101,28 +126,32 @@ class GameplayNode(Node):
         self.partial_world_state: Optional[conv.PartialWorldState] = None
         self.goalie_id: Optional[int] = None
         self.field: Optional[rc.Field] = None
-        self.robot_statuses: List[conv.RobotStatus] = [conv.RobotStatus()
-                                                       ] * NUM_ROBOTS * 2
+        self.robot_statuses: List[conv.RobotStatus] = (
+            [conv.RobotStatus()] * NUM_ROBOTS * 2
+        )
         self.ball_placement = None
 
         self.global_parameter_client = GlobalParameterClient(
-            self, 'global_parameter_server')
+            self, "global_parameter_server"
+        )
         local_parameters.register_parameters(self)
 
         # publish def_area_obstacles, global obstacles
         self.def_area_obstacles_pub = self.create_publisher(
-            geo_msg.ShapeSet, 'planning/def_area_obstacles', 10)
+            geo_msg.ShapeSet, "planning/def_area_obstacles", 10
+        )
         self.global_obstacles_pub = self.create_publisher(
-            geo_msg.ShapeSet, 'planning/global_obstacles', 10)
+            geo_msg.ShapeSet, "planning/global_obstacles", 10
+        )
 
         timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
 
-        self.debug_text_pub = self.create_publisher(StringMsg,
-                                                    '/gameplay/debug_text', 10)
+        self.debug_text_pub = self.create_publisher(
+            StringMsg, "/gameplay/debug_text", 10
+        )
         self.play_selector: situation.IPlaySelector = play_selector
-        self.coordinator = coordinator.Coordinator(play_selector,
-                                                   self.debug_callback)
+        self.coordinator = coordinator.Coordinator(play_selector, self.debug_callback)
 
     def set_play_state(self, play_state: msg.PlayState):
         self.play_state = play_state
@@ -179,12 +208,18 @@ class GameplayNode(Node):
         """
         returns: an updated world state
         """
-        if self.partial_world_state is not None \
-                and self.field is not None \
-                and self.goalie_id is not None:
+        if (
+            self.partial_world_state is not None
+            and self.field is not None
+            and self.goalie_id is not None
+        ):
             self.world_state = conv.worldstate_creator(
-                self.partial_world_state, self.robot_statuses,
-                self.build_game_info(), self.field, self.goalie_id)
+                self.partial_world_state,
+                self.robot_statuses,
+                self.build_game_info(),
+                self.field,
+                self.goalie_id,
+            )
             assert self.world_state is not None
 
     def gameplay_tick(self) -> None:
@@ -229,28 +264,42 @@ class GameplayNode(Node):
 
         # create Rect for our def_area box
         our_def_area = geo_msg.Rect()
-        top_left = geo_msg.Point(x=self.field.def_area_long_dist_m / 2 +
-                                 self.field.line_width_m,
-                                 y=0.0)
-        bot_right = geo_msg.Point(x=-self.field.def_area_long_dist_m / 2 -
-                                  self.field.line_width_m,
-                                  y=self.field.def_area_short_dist_m)
+        top_left = geo_msg.Point(
+            x=self.field.def_area_long_dist_m / 2 + self.field.line_width_m,
+            y=0.0,
+        )
+        bot_right = geo_msg.Point(
+            x=-self.field.def_area_long_dist_m / 2 - self.field.line_width_m,
+            y=self.field.def_area_short_dist_m,
+        )
         our_def_area.pt = [top_left, bot_right]
 
         # slack for distance (m) in Stop situations
         # https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
-        add_stop_dist = game_info is None or game_info.state == rc.GameState.STOP or (
-            game_info.is_restart() and not game_info.is_penalty())
+        add_stop_dist = (
+            game_info is None
+            or game_info.state == rc.GameState.STOP
+            or (game_info.is_restart() and not game_info.is_penalty())
+        )
         DIST_FOR_STOP = 0.3 if add_stop_dist else 0.0
 
         # create Rect for their def_area box
         their_def_area = geo_msg.Rect()
-        left_x = self.field.def_area_long_dist_m / 2 + self.field.line_width_m + DIST_FOR_STOP
+        left_x = (
+            self.field.def_area_long_dist_m / 2
+            + self.field.line_width_m
+            + DIST_FOR_STOP
+        )
         bot_left = geo_msg.Point(x=left_x, y=self.field.length_m)
-        top_right = geo_msg.Point(x=-left_x,
-                                  y=self.field.length_m -
-                                  (self.field.def_area_short_dist_m +
-                                   self.field.line_width_m + DIST_FOR_STOP))
+        top_right = geo_msg.Point(
+            x=-left_x,
+            y=self.field.length_m
+            - (
+                self.field.def_area_short_dist_m
+                + self.field.line_width_m
+                + DIST_FOR_STOP
+            ),
+        )
         their_def_area.pt = [bot_left, top_right]
 
         # publish Rect shape to def_area_obstacles topic
@@ -263,50 +312,82 @@ class GameplayNode(Node):
 
         physical_goal_board_width = 0.1
         our_goal = [
-            geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2,
-                              y=-self.field.goal_depth_m),
-                geo_msg.Point(x=-self.field.goal_width_m / 2,
-                              y=-self.field.goal_depth_m -
-                              physical_goal_board_width),
-            ]),
-            geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2,
-                              y=-self.field.goal_depth_m),
-                geo_msg.Point(x=self.field.goal_width_m / 2 +
-                              physical_goal_board_width,
-                              y=0.),
-            ]),
-            geo_msg.Rect(pt=[
-                geo_msg.Point(x=-self.field.goal_width_m / 2,
-                              y=-self.field.goal_depth_m),
-                geo_msg.Point(x=-self.field.goal_width_m / 2 -
-                              physical_goal_board_width,
-                              y=0.),
-            ]),
+            geo_msg.Rect(
+                pt=[
+                    geo_msg.Point(
+                        x=self.field.goal_width_m / 2,
+                        y=-self.field.goal_depth_m,
+                    ),
+                    geo_msg.Point(
+                        x=-self.field.goal_width_m / 2,
+                        y=-self.field.goal_depth_m - physical_goal_board_width,
+                    ),
+                ]
+            ),
+            geo_msg.Rect(
+                pt=[
+                    geo_msg.Point(
+                        x=self.field.goal_width_m / 2,
+                        y=-self.field.goal_depth_m,
+                    ),
+                    geo_msg.Point(
+                        x=self.field.goal_width_m / 2 + physical_goal_board_width,
+                        y=0.0,
+                    ),
+                ]
+            ),
+            geo_msg.Rect(
+                pt=[
+                    geo_msg.Point(
+                        x=-self.field.goal_width_m / 2,
+                        y=-self.field.goal_depth_m,
+                    ),
+                    geo_msg.Point(
+                        x=-self.field.goal_width_m / 2 - physical_goal_board_width,
+                        y=0.0,
+                    ),
+                ]
+            ),
         ]
         their_goal = [
-            geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2,
-                              y=self.field.length_m + self.field.goal_depth_m),
-                geo_msg.Point(x=-self.field.goal_width_m / 2,
-                              y=self.field.length_m + self.field.goal_depth_m +
-                              physical_goal_board_width),
-            ]),
-            geo_msg.Rect(pt=[
-                geo_msg.Point(x=self.field.goal_width_m / 2,
-                              y=self.field.length_m + self.field.goal_depth_m),
-                geo_msg.Point(x=self.field.goal_width_m / 2 +
-                              physical_goal_board_width,
-                              y=self.field.length_m),
-            ]),
-            geo_msg.Rect(pt=[
-                geo_msg.Point(x=-self.field.goal_width_m / 2,
-                              y=self.field.length_m + self.field.goal_depth_m),
-                geo_msg.Point(x=-self.field.goal_width_m / 2 -
-                              physical_goal_board_width,
-                              y=self.field.length_m),
-            ]),
+            geo_msg.Rect(
+                pt=[
+                    geo_msg.Point(
+                        x=self.field.goal_width_m / 2,
+                        y=self.field.length_m + self.field.goal_depth_m,
+                    ),
+                    geo_msg.Point(
+                        x=-self.field.goal_width_m / 2,
+                        y=self.field.length_m
+                        + self.field.goal_depth_m
+                        + physical_goal_board_width,
+                    ),
+                ]
+            ),
+            geo_msg.Rect(
+                pt=[
+                    geo_msg.Point(
+                        x=self.field.goal_width_m / 2,
+                        y=self.field.length_m + self.field.goal_depth_m,
+                    ),
+                    geo_msg.Point(
+                        x=self.field.goal_width_m / 2 + physical_goal_board_width,
+                        y=self.field.length_m,
+                    ),
+                ]
+            ),
+            geo_msg.Rect(
+                pt=[
+                    geo_msg.Point(
+                        x=-self.field.goal_width_m / 2,
+                        y=self.field.length_m + self.field.goal_depth_m,
+                    ),
+                    geo_msg.Point(
+                        x=-self.field.goal_width_m / 2 - physical_goal_board_width,
+                        y=self.field.length_m,
+                    ),
+                ]
+            ),
         ]
 
         global_obstacles.rectangles = our_goal + their_goal
@@ -322,31 +403,45 @@ class GameplayNode(Node):
 
         if game_info is not None:
             ball_point = self.world_state.ball.pos
-            if game_info.is_stopped() or game_info.their_restart and (
-                    game_info.is_indirect() or game_info.is_direct()):
+            if (
+                game_info.is_stopped()
+                or game_info.their_restart
+                and (game_info.is_indirect() or game_info.is_direct())
+            ):
                 global_obstacles.circles.append(
-                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
-                                                        y=ball_point[1]),
-                                   radius=0.6))
+                    geo_msg.Circle(
+                        center=geo_msg.Point(x=ball_point[0], y=ball_point[1]),
+                        radius=0.6,
+                    )
+                )
             if game_info.is_kickoff() and game_info.their_restart:
                 global_obstacles.circles.append(
-                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
-                                                        y=ball_point[1]),
-                                   radius=0.3))
-            if game_info.is_kickoff() and game_info.is_setup(
-            ) and game_info.our_restart:
+                    geo_msg.Circle(
+                        center=geo_msg.Point(x=ball_point[0], y=ball_point[1]),
+                        radius=0.3,
+                    )
+                )
+            if (
+                game_info.is_kickoff()
+                and game_info.is_setup()
+                and game_info.our_restart
+            ):
                 global_obstacles.circles.append(
-                    geo_msg.Circle(center=geo_msg.Point(x=ball_point[0],
-                                                        y=ball_point[1]),
-                                   radius=0.1))
+                    geo_msg.Circle(
+                        center=geo_msg.Point(x=ball_point[0], y=ball_point[1]),
+                        radius=0.1,
+                    )
+                )
             if game_info.is_free_placement():
                 for t in np.linspace(0.0, 1.0, 20):
                     placement = game_info.ball_placement()
 
                     pt = ball_point * t + (1 - t) * placement
                     global_obstacles.circles.append(
-                        geo_msg.Circle(center=geo_msg.Point(x=pt[0], y=pt[1]),
-                                       radius=0.8))
+                        geo_msg.Circle(
+                            center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8
+                        )
+                    )
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):

@@ -16,12 +16,14 @@ from typing import Optional
 """
 A skill version of capture so that actions don't have to be called in tactics
 """
-class Capture(skill.ISkill): #add ABC if something fails
-    def __init__(self, robot: Optional[rc.Robot]=None):
+
+
+class Capture(skill.ISkill):  # add ABC if something fails
+    def __init__(self, robot: Optional[rc.Robot] = None):
         self.robot = robot
         self.ticks_done = 0
 
-        self.__name__ = 'capture skill'
+        self.__name__ = "capture skill"
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
@@ -32,8 +34,10 @@ class Capture(skill.ISkill): #add ABC if something fails
         return {self.robot.id: intent}
 
     def is_done(self, world_state) -> bool:
-        if self.robot is not None and world_state.our_robots[
-                self.robot.id].has_ball_sense:
+        if (
+            self.robot is not None
+            and world_state.our_robots[self.robot.id].has_ball_sense
+        ):
             self.ticks_done += 1
         else:
             self.ticks_done -= 5
