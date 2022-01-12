@@ -78,6 +78,16 @@ class Play(ABC):
 
         assigned_robots = []
         # TODO: make rc.Robot hashable by id to avoid the inconvenience of using robot_id as a hash
+        # TODO: how to fix assign_roles for roles that could encompass many robots?
+        #       make new class that holds multiple linked Tactics (NMark, Wall, Pass)
+        #       "SingleTactic" & "MultiTactic"
+        #        - make both implement tick as is
+        #        - MultiTactic holds SingleTactics
+        #        - when MultiTactic is being assigned, have role assign break into its single tactics
+        #           (get_roles)
+        #        - give costs to MT how?
+        #
+        # on second thought, should revert to single-robot Tactics and see what passing looks like, then compare the two
         used_robot_ids = set()
         for role, cost_fn in self.prioritized_role_requests:
             min_cost = 1e9

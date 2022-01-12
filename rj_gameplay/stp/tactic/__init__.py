@@ -29,8 +29,7 @@ class Tactic(ABC):
     @abstractmethod
     def __init__(self):
         # TODO: add docstring
-        """
-        """
+        """ """
 
     @abstractmethod
     def tick(

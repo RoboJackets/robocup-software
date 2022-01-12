@@ -62,14 +62,11 @@ def get_block_pt(world_state: rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
 
 class GoalieTactic(tactic.Tactic):
     def __init__(self, robot: rc.Robot, brick=False):
-        super().__init__(robot)
+        self.robot = robot
 
         self.brick = brick
 
-        # TODO: have a self.curr_skill instead of 3 separate ones, tick at end of tick
-        self.move_skill = None
-        self.receive_skill = None
-        self.pivot_kick_skill = None
+        self.curr_skill = None
 
     # TODO: there is crusty if-else here, use utility AI or behavior tree or FSM
     #       anything more readable than this (behavior tree prob best fit for current logic)
@@ -94,12 +91,13 @@ class GoalieTactic(tactic.Tactic):
             towards_goal = goal_pos - ball_pos
 
             if self.brick:
-                self.move_skill = move.Move(
+                self.curr_skill = move.Move(
                     robot=self.robot,
                     target_point=world_state.field.our_goal_loc,
                     face_point=world_state.ball.pos,
                 )
-                return self.move_skill.tick(world_state)
+                intent = self.curr_skill.tick(world_state)
+                return [(self.robot.id, intent)]
 
             if (
                 ball_speed < 0.5
@@ -111,14 +109,16 @@ class GoalieTactic(tactic.Tactic):
             ):
                 if ball_speed < 1e-6:
                     # if ball is stopped and inside goalie box, collect it
-                    self.receive_skill = receive.Receive(robot=self.robot)
-                    return self.receive_skill.tick(world_state)
+                    self.curr_skill = receive.Receive(robot=self.robot)
+                    intent = self.curr_skill.tick(world_state)
+                    return [(self.robot.id, intent)]
                 else:
                     # if ball has been stopped already, chip toward center field
-                    self.pivot_kick_skill = pivot_kick.PivotKick(
+                    self.curr_skill = pivot_kick.PivotKick(
                         robot=self.robot, target_point=np.array([0.0, 6.0])
                     )
-                    return self.pivot_kick_skill.tick(world_state)
+                    intent = self.curr_skill.tick(world_state)
+                    return [(self.robot.id, intent)]
             else:
                 if ball_speed > 0 and np.dot(towards_goal, world_state.ball.vel) > 0.3:
                     # if ball is moving and coming at goal, move laterally to block ball
@@ -132,32 +132,35 @@ class GoalieTactic(tactic.Tactic):
                     block_point = get_block_pt(world_state, goalie_pos)
                     face_point = world_state.ball.pos
 
-                    self.move_skill = move.Move(
+                    self.curr_skill = move.Move(
                         robot=self.robot,
                         target_point=block_point,
                         face_point=face_point,
                     )
-                    return self.move_skill.tick(world_state)
+                    intent = self.curr_skill.tick(world_state)
+                    return [(self.robot.id, intent)]
 
                 else:
                     # else, track ball normally
-                    self.move_skill = move.Move(
+                    self.curr_skill = move.Move(
                         target_point=get_goalie_pt(world_state),
                         face_point=world_state.ball.pos,
                     )
-                    return self.move_skill.tick(world_state)
+                    intent = self.curr_skill.tick(world_state)
+                    return [(self.robot.id, intent)]
 
         if self.pivot_kick_skill is not None and self.pivot_kick_skill.is_done(
             world_state
         ):
-            self.pivot_kick_skill = pivot_kick.PivotKick(
+            self.curr_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=np.array([0.0, 6.0]),
                 chip=True,
                 kick_speed=5.5,
             )
 
-            return self.pivot_kick_skill.tick(world_state)
+            intent = self.curr_skill.tick(world_state)
+            return [(self.robot.id, intent)]
 
     def is_done(self, world_state):
         # goalie tactic always active
