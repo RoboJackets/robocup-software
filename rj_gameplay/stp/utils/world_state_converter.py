@@ -7,14 +7,17 @@ from typing import List, Optional
 RobotId = Optional[int]
 
 
-class RobotStatus():
+class RobotStatus:
     """
     A class to contain the information from the robot status messsage
     """
 
     __slots = [
-        "robot_id", "has_ball_sense", "kicker_charged",
-        "kicker_healthy", "lethal_fault"
+        "robot_id",
+        "has_ball_sense",
+        "kicker_charged",
+        "kicker_healthy",
+        "lethal_fault",
     ]
 
     robot_id: RobotId
@@ -26,9 +29,14 @@ class RobotStatus():
     lethal_fault: bool
     """
 
-    def __init__(self, robot_id: RobotId = None,
-                 has_ball_sense: bool = None, kicker_charged: bool = None,
-                 kicker_healthy: bool = None, lethal_fault: bool = None):
+    def __init__(
+        self,
+        robot_id: RobotId = None,
+        has_ball_sense: bool = None,
+        kicker_charged: bool = None,
+        kicker_healthy: bool = None,
+        lethal_fault: bool = None,
+    ):
         self.robot_id = robot_id
         self.has_ball_sense = has_ball_sense
         self.kicker_charged = kicker_charged
@@ -36,44 +44,43 @@ class RobotStatus():
         self.lethal_fault = lethal_fault
 
 
-class RobotState():
+class RobotState:
     """
     A class to contain the infomration from the robot state message
     """
 
-    __slots = [
-        "id", "pose", "twist",
-        "visible"
-    ]
+    __slots = ["id", "pose", "twist", "visible"]
 
     id: RobotId
     pose: np.ndarray
     twist: np.ndarray
     visible: bool
 
+
     def __init__(self, id: RobotId, pose: np.ndarray,
                  twist: np.ndarray, visible: bool):
         self.id = id
+
         self.pose = pose
         self.twist = twist
         self.visible = visible
 
 
-class PartialWorldState():
+class PartialWorldState:
     """
     A class that contains all the ball, and robot states
     """
 
-    __slots = [
-        "our_robots", "their_robots", "ball"
-    ]
+    __slots = ["our_robots", "their_robots", "ball"]
 
     our_robots: List[RobotState]
     their_robots: List[RobotState]
     ball: rc.Ball
 
+
     def __init__(self, our_robots: List[RobotState], their_robots: List[RobotState],
                  ball: rc.Ball):
+
         self.our_robots = our_robots
         self.their_robots = their_robots
         self.ball = ball
@@ -81,7 +88,7 @@ class PartialWorldState():
 
 def robotstate_to_partial_robot(robot_msg: msg.RobotState, index: int) -> RobotState:
     """
-        :return: robot state class representing the state of the robot, partially representing the larger Robot class.
+    :return: robot state class representing the state of the robot, partially representing the larger Robot class.
     """
     robot_id = index
 
@@ -104,7 +111,7 @@ def robotstate_to_partial_robot(robot_msg: msg.RobotState, index: int) -> RobotS
 
 def robotstatus_to_partial_robot(robot_msg: msg.RobotStatus) -> RobotStatus:
     """
-        :return: robot status class representing the status of the robot, partially representing the larger Robot class.
+    :return: robot status class representing the status of the robot, partially representing the larger Robot class.
     """
     robot_id = robot_msg.robot_id
 
@@ -116,14 +123,16 @@ def robotstatus_to_partial_robot(robot_msg: msg.RobotStatus) -> RobotStatus:
 
     lethal_fault = robot_msg.fpga_error
 
-    robot = RobotStatus(robot_id, ball_sense, kicker_charged, kicker_healthy, lethal_fault)
+    robot = RobotStatus(
+        robot_id, ball_sense, kicker_charged, kicker_healthy, lethal_fault
+    )
 
     return robot
 
 
 def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
     """
-        :return: ball class representing the state of the ball.
+    :return: ball class representing the state of the ball.
     """
     x = ball_msg.position.x
     y = ball_msg.position.y
@@ -139,10 +148,11 @@ def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
     return ball
 
 
-def build_game_info(play_state_msg: msg.PlayState,
-                    match_state_msg: msg.MatchState) -> rc.GameInfo:
+def build_game_info(
+    play_state_msg: msg.PlayState, match_state_msg: msg.MatchState
+) -> rc.GameInfo:
     """
-        :return: GameInfo class from rc.py
+    :return: GameInfo class from rc.py
     """
 
     period = rc.GamePeriod(match_state_msg.period)
@@ -154,17 +164,24 @@ def build_game_info(play_state_msg: msg.PlayState,
     our_restart = play_state_msg.our_restart
 
     game_info = rc.GameInfo(
-        period, state, restart, our_restart,
-        np.array([
-            play_state_msg.placement_point.x, play_state_msg.placement_point.y
-        ]))
+        period,
+        state,
+        restart,
+        our_restart,
+        np.array(
+            [
+                play_state_msg.placement_point.x,
+                play_state_msg.placement_point.y,
+            ]
+        ),
+    )
 
     return game_info
 
 
 def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
     """
-        :return: Field class from rc.py
+    :return: Field class from rc.py
     """
 
     length = field_msg.length
@@ -182,17 +199,29 @@ def field_msg_to_field(field_msg: msg.FieldDimensions) -> rc.Field:
     floor_length = field_msg.floor_length
     floor_width = field_msg.floor_width
 
-    field = rc.Field(length, width, border, line_width, goal_width, goal_depth,
-                     goal_height, penalty_short_dist, penalty_long_dist,
-                     center_radius, center_diameter, goal_flat, floor_length,
-                     floor_width)
+    field = rc.Field(
+        length,
+        width,
+        border,
+        line_width,
+        goal_width,
+        goal_depth,
+        goal_height,
+        penalty_short_dist,
+        penalty_long_dist,
+        center_radius,
+        center_diameter,
+        goal_flat,
+        floor_length,
+        floor_width,
+    )
 
     return field
 
 
 def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
     """
-        :return: partial world state class representing the state of the robots and ball.
+    :return: partial world state class representing the state of the robots and ball.
     """
     our_robots: List[RobotState]
     our_robots = []
@@ -237,16 +266,28 @@ def robot_creator(robot_state: RobotState, robot_status: RobotStatus = None) -> 
     twist = robot_state.twist
     is_visible = robot_state.visible
 
-    robot = rc.Robot(robot_id, is_ours, pose, twist, is_visible, ball_sense,
-                     kicker_charged, kicker_healthy, lethal_fault)
+    robot = rc.Robot(
+        robot_id,
+        is_ours,
+        pose,
+        twist,
+        is_visible,
+        ball_sense,
+        kicker_charged,
+        kicker_healthy,
+        lethal_fault,
+    )
 
     return robot
 
 
-def worldstate_creator(partial_world_state: PartialWorldState,
-                       robot_statuses: List[RobotStatus],
-                       game_info: Optional[rc.GameInfo], field: rc.Field,
-                       goalie_id: int) -> rc.WorldState:
+def worldstate_creator(
+    partial_world_state: PartialWorldState,
+    robot_statuses: List[RobotStatus],
+    game_info: Optional[rc.GameInfo],
+    field: rc.Field,
+    goalie_id: int,
+) -> rc.WorldState:
     """
     A function which combines the partial world state, robot statuses, game info, and field to create a whole world state
         :return: a world state as a rc.WorldState object
@@ -268,8 +309,13 @@ def worldstate_creator(partial_world_state: PartialWorldState,
     if game_info is None:
         game_info = None
 
-    world_state = rc.WorldState(our_robots, their_robots,
-                                partial_world_state.ball, game_info, field,
-                                goalie_id)
+    world_state = rc.WorldState(
+        our_robots,
+        their_robots,
+        partial_world_state.ball,
+        game_info,
+        field,
+        goalie_id,
+    )
 
     return world_state

@@ -1,6 +1,3 @@
-[submodule "external/mbed_lib_build_tools"]
-	path = external/mbed_lib_build_tools
-	url = https://github.com/mbedmicro/mbed.git
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest
@@ -12,10 +9,10 @@
 	url = https://github.com/robojackets/rrt
 [submodule "external/grSim"]
 	path = external/grSim
-	url = https://github.com/RoboJackets/grSim
+	url = https://github.com/RoboCup-SSL/grSim
 [submodule "external/robocup-fshare"]
 	path = external/robocup-fshare
 	url = https://github.com/robojackets/robocup-fshare
 [submodule "external/sdlcontrollerdb"]
 	path = external/sdlcontrollerdb
-	url = https://github.com/kylestach/SDL_GameControllerDB
+	url = https://github.com/gabomdq/SDL_GameControllerDB

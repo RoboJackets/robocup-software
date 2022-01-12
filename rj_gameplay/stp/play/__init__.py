@@ -3,7 +3,16 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import (
+    Dict,
+    Generic,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+)
 
 import stp.action as action
 import stp.skill as skill
@@ -53,7 +62,10 @@ class TacticEntry(tkdict.TypedKey[TacticT]):
         if not isinstance(other, TacticEntry):
             return False
 
-        return (self.concrete_cls, self._idx) == (other.concrete_cls, other._idx)
+        return (self.concrete_cls, self._idx) == (
+            other.concrete_cls,
+            other._idx,
+        )
 
     def __hash__(self) -> int:
         return hash((self.concrete_cls, self._idx))
@@ -137,8 +149,7 @@ class IPlay(Generic[PropT], ABC):
         world_state: rc.WorldState,
         prev_results: assignment.FlatRoleResults,
         props: PropT,
-    ) -> Tuple[Dict[tactic.SkillEntry,
-                    List[role.RoleResult]], List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
         """Performs one "tick" of the specified play.
 
         This should:
@@ -158,7 +169,9 @@ RoleRequests = Dict[Type[tactic.ITactic], tactic.RoleRequests]
 RoleResults = Dict[Type[tactic.ITactic], tactic.RoleResults]
 
 
-def flatten_requests(role_requests: RoleRequests) -> assignment.FlatRoleRequests:
+def flatten_requests(
+    role_requests: RoleRequests,
+) -> assignment.FlatRoleRequests:
     """Flattens play.RoleRequests into assignment.FlatRoleRequests, ie. a nested
     dict into just a flat dict.
     :param role_requests: The nested play.RoleRequests dicts.

@@ -15,6 +15,7 @@ class GlobalParameterClient:
 
     After creating this class, global parameters will be available as globals in the global_parameters module.
     """
+
     def __init__(self, node: Node, global_param_server: str):
         """
         Initialize the global parameter client. Do this before running anything that might use global parameters.
@@ -24,11 +25,14 @@ class GlobalParameterClient:
         self.global_param_server = global_param_server
 
         list_client = node.create_client(
-            ListParameters, f"{global_param_server}/list_parameters")
+            ListParameters, f"{global_param_server}/list_parameters"
+        )
         get_client = node.create_client(
-            GetParameters, f"{global_param_server}/get_parameters")
-        sub = node.create_subscription(ParameterEvent, f"/parameter_events",
-                                       self.update_parameters, 10)
+            GetParameters, f"{global_param_server}/get_parameters"
+        )
+        # sub = node.create_subscription(
+        # ParameterEvent, f"/parameter_events", self.update_parameters, 10
+        # )
 
         list_parameter_request = ListParameters.Request()
         list_future = list_client.call_async(list_parameter_request)
@@ -41,9 +45,7 @@ class GlobalParameterClient:
             list_future.cancel()
             list_future = list_client.call_async(list_parameter_request)
             print("Waiting for ListParameters")
-            rclpy.spin_until_future_complete(node,
-                                             list_future,
-                                             timeout_sec=0.5)
+            rclpy.spin_until_future_complete(node, list_future, timeout_sec=0.5)
 
         params_names = list_future.result().result.names
         get_parameter_request = GetParameters.Request(names=params_names)
@@ -84,7 +86,7 @@ class GlobalParameterClient:
             value = value_ros.integer_array_value
         elif value_ros.type == ParameterType.PARAMETER_DOUBLE_ARRAY:
             value = value_ros.double_array_value
-        names = name.split('.')
+        names = name.split(".")
         tree = globals()
         for prefix in names[:-1]:
             if prefix not in tree:
@@ -93,9 +95,9 @@ class GlobalParameterClient:
         tree[names[-1]] = value
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     rclpy.init()
-    node = rclpy.create_node('_test_gps')
+    node = rclpy.create_node("_test_gps")
     client = GlobalParameterClient(node, "/global_parameter_server")
     rclpy.spin(node)
     rclpy.shutdown()
