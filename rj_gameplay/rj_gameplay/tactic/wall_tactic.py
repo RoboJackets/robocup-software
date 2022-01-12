@@ -23,7 +23,6 @@ from rj_msgs.msg import RobotIntent
 
 MIN_WALL_RAD = None
 
-
 def find_wall_pts(num_wallers: int, world_state: stp.rc.WorldState) -> List[np.ndarray]:
     global MIN_WALL_RAD
     """Calculates num_wallers points to form a wall between the ball and goal.
@@ -61,22 +60,15 @@ def find_wall_pts(num_wallers: int, world_state: stp.rc.WorldState) -> List[np.n
 
     return wall_pts
 
-
 class WallTactic(tactic.Tactic):
-    def __init__(self, robots: List[stp.rc.Robot]):
-        self.robots = robots
-        self.move_skills = [None for _ in self.robots]
+    def __init__(self, wallers: List[stp.rc.Robot]):
+        self.wallers = wallers
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         wall_pts = find_wall_pts(len(self.wallers), world_state)
+        
 
-        for robot, wall_pt in zip(self.robots, wall_pts):
-            new_move = move.Move(
-                robot=robot, target_point=wall_pt, face_point=world_state.ball.pos
-            )
-            self.move_skills.append(new_move)
-
-        return [(skill.robot.id, skill.tick(world_state)) for skill in self.move_skills]
+        return intents
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         """

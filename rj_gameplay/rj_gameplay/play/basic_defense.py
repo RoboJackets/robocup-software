@@ -27,7 +27,7 @@ class BasicDefense(play.Play):
         if world_state is not None and not self.prioritized_tactics:
             # TODO: figure out better way to share wall pts than calculations file
             #       maybe a shared wall class? but wall tactic must remain 1:1 for roles
-            #
+            # 
             # OR change role assignment to accept multi-tactic roles and output how many robots it needs?
             # would make some passing things more logically separated, theoretically
 
