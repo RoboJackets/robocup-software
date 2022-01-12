@@ -260,6 +260,9 @@ class GameplayNode(Node):
                     intents[i], i
                 )
                 # self.move_action_clients[i].cancel_goal()
+                if server_intent.intent.motion_command.path_target_command is not None:
+                    server_intent.is_move = True
+
                 self.move_action_clients[i].send_goal(server_intent)
                 # self.move_action_clients[i].
 
@@ -488,6 +491,7 @@ class GameplayNode(Node):
         server_intent = msg.ServerIntent()
         server_intent.intent = intent
         server_intent.robot_id = robot_id
+        server_intent.is_move = False
         return server_intent
 
     def shutdown(self) -> None:

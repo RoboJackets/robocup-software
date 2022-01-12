@@ -12,13 +12,13 @@
 #include <rclcpp_components/register_node_macro.hpp>
 
 // rj includes
-#include <rj_convert/ros_convert.hpp>
 #include <rj_common/utils.hpp>
-#include <rj_msgs/action/move.hpp>
+#include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_convert/ros_convert.hpp>
+#include <rj_msgs/action/move.hpp>
 #include <rj_msgs/msg/trajectory.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_constants/constants.hpp>
 #include <world_state.hpp>
 
 namespace server {

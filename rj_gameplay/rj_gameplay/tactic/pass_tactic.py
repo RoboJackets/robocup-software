@@ -20,10 +20,13 @@ class PassToClosestReceiver(role.CostFn):
     """
     A cost function for how to choose a robot to pass to
     """
-    def __init__(self,
-                 action_client_dict: Dict[Type[Any], List[Any]],
-                 target_point: Optional[np.ndarray] = None,
-                 passer_robot: rc.Robot = None):
+
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        target_point: Optional[np.ndarray] = None,
+        passer_robot: rc.Robot = None,
+    ):
         self.target_point = target_point
         self.passer_robot = passer_robot
         self.chosen_receiver = None
@@ -56,7 +59,7 @@ class PassToClosestReceiver(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
@@ -66,10 +69,12 @@ class PasserCost(role.CostFn):
     TODO: Implement a better cost function
     """
 
-    def __call__(self,
-                robot:rc.Robot,
-                prev_result:Optional["RoleResult"],
-                world_state:rc.WorldState) -> float:
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional["RoleResult"],
+        world_state: rc.WorldState,
+    ) -> float:
         if robot.has_ball_sense:
             return 0
         else:
@@ -82,7 +87,7 @@ class PasserCost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
@@ -92,10 +97,13 @@ class PassToOpenReceiver(role.CostFn):
     TODO: Implement a better cost function
     CURRENTLY NOT READY FOR USE
     """
-    def __init__(self,
-                 action_client_dict: Dict[Type[Any], List[Any]],
-                 target_point: Optional[np.ndarray] = None,
-                 passer_robot: rc.Robot = None):
+
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        target_point: Optional[np.ndarray] = None,
+        passer_robot: rc.Robot = None,
+    ):
         self.target_point = target_point
         self.passer_robot = passer_robot
         self.chosen_receiver = None
@@ -140,7 +148,7 @@ class PassToOpenReceiver(role.CostFn):
         # TODO: pick "most open" pass
         cost = 0
         for enemy in world_state.their_robots:
-            cost -= 10*np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
+            cost -= 10 * np.linalg.norm(enemy.pose[0:2] - robot.pose[0:2])
 
         # TODO: should be dist in sec
         # raw_dist = np.linalg.norm(robot.pose[0:2] - self.target_point)
@@ -153,23 +161,28 @@ class PassToOpenReceiver(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+
 
 class Pass(tactic.ITactic):
     """
     A passing tactic which captures then passes the ball
     """
 
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
-                 target_point: np.ndarray, passer_cost: role.CostFn,
-                 receiver_cost: role.CostFn):
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        target_point: np.ndarray,
+        passer_cost: role.CostFn,
+        receiver_cost: role.CostFn,
+    ):
         self.target_point = target_point
         self.pivot_kick = tactic.SkillEntry(
-            pivot_kick.PivotKick(robot=None,
-                                 target_point=target_point,
-                                 chip=False,
-                                 kick_speed=4.0))
+            pivot_kick.PivotKick(
+                robot=None, target_point=target_point, chip=False, kick_speed=4.0
+            )
+        )
         self.receive = tactic.SkillEntry(receive.Receive())
         self.receiver_cost = receiver_cost
         self.passer_cost = passer_cost
@@ -184,7 +197,7 @@ class Pass(tactic.ITactic):
         pass
 
     def find_potential_receiver(self, world_state: rc.WorldState) -> rc.Robot:
-        cost = float('inf')
+        cost = float("inf")
         receive_robot = None
         for robot in world_state.our_robots:
             curr_cost = self.receiver_cost(robot, None, world_state)
@@ -194,31 +207,34 @@ class Pass(tactic.ITactic):
         return receive_robot
 
     def get_requests(
-        self, world_state:rc.WorldState, props) -> List[tactic.RoleRequests]:
-        """ Checks if we have the ball and returns the proper request
+        self, world_state: rc.WorldState, props
+    ) -> List[tactic.RoleRequests]:
+        """Checks if we have the ball and returns the proper request
         :return: A list of size 2 of role requests
         """
 
         role_requests: tactic.RoleRequests = {}
 
-        passer_request = role.RoleRequest(role.Priority.MEDIUM, True,
-                                          self.passer_cost)
+        passer_request = role.RoleRequest(role.Priority.MEDIUM, True, self.passer_cost)
         role_requests[self.pivot_kick] = [passer_request]
         if self.pivot_kick.skill.is_done(world_state):
-            receive_request = role.RoleRequest(role.Priority.MEDIUM, True,
-                                               self.receiver_cost)
+            receive_request = role.RoleRequest(
+                role.Priority.MEDIUM, True, self.receiver_cost
+            )
             role_requests[self.receive] = [receive_request]
         else:
-            passer_request = role.RoleRequest(role.Priority.HIGH, True,
-                                              self.passer_cost)
+            passer_request = role.RoleRequest(
+                role.Priority.HIGH, True, self.passer_cost
+            )
             role_requests[self.pivot_kick] = [passer_request]
 
         self.receiver_cost.passer_robot = self.pivot_kick.skill.robot
 
         return role_requests
 
-    def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults
+    ) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
         TODO: Come up with better timings for starting receive
@@ -227,16 +243,19 @@ class Pass(tactic.ITactic):
         receive_result = role_results[self.receive]
         if receive_result and receive_result[0].is_filled():
             self.passer_cost.chosen_receiver = receive_result[0].role.robot
-            self.pivot_kick.skill.target_point = np.array(receive_result[0].role.robot.pose[0:2])
+            self.pivot_kick.skill.target_point = np.array(
+                receive_result[0].role.robot.pose[0:2]
+            )
             self.passer_cost.potential_receiver = receive_result[0].role.robot
             return [self.receive]
         elif pivot_result and pivot_result[0].is_filled():
             potential_receiver = self.find_potential_receiver(world_state)
             self.pivot_kick.skill.target_point = np.array(
-                [potential_receiver.pose[0], potential_receiver.pose[1]])
+                [potential_receiver.pose[0], potential_receiver.pose[1]]
+            )
             return [self.pivot_kick]
         return []
 
-    def is_done(self, world_state:rc.WorldState):
+    def is_done(self, world_state: rc.WorldState):
         print(self.receive.skill.is_done(world_state))
         return self.receive.skill.is_done(world_state)

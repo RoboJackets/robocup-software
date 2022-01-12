@@ -62,7 +62,6 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
             }
         });*/
 
-
     intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
         action_server::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
         [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT

@@ -12,8 +12,12 @@ from rj_gameplay.calculations import wall_calculations
 
 
 class kickoff_cost(role.CostFn):
-    def __call__(self, robot: rc.Robot, prev_result: Optional[role.RoleResult],
-                 world_state: rc.WorldState) -> float:
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional[role.RoleResult],
+        world_state: rc.WorldState,
+    ) -> float:
         return 0.0
 
     def unassigned_cost_fn(
@@ -22,13 +26,13 @@ class kickoff_cost(role.CostFn):
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
 
 class PrepareKickoffPlay(play.IPlay):
-    """Hardcoded points to stand in for kickoff
-    """
+    """Hardcoded points to stand in for kickoff"""
+
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.points = [
             (0.0, 4.25),
@@ -36,9 +40,10 @@ class PrepareKickoffPlay(play.IPlay):
             (-0.6, 4.25),
         ]
         self.tactics = [
-            move_tactic.Move(action_client_dict,
-                             target_point=np.array(pt),
-                             face_point=(0.0, 4.5)) for pt in self.points
+            move_tactic.Move(
+                action_client_dict, target_point=np.array(pt), face_point=(0.0, 4.5)
+            )
+            for pt in self.points
         ]
         self.tactics.append(goalie_tactic.GoalieTactic(action_client_dict))
         self.tactics.append(wall_tactic.WallTactic(action_client_dict))
@@ -57,32 +62,30 @@ class PrepareKickoffPlay(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]],
-               List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
-                                                   world_state)
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
 
         role_requests: play.RoleRequests = {}
         i = 0
         for tactic in self.tactics:
-            if type(tactic) == type(
-                    wall_tactic.WallTactic(action_client_dict)):
+            if type(tactic) == type(wall_tactic.WallTactic(action_client_dict)):
                 # if wall tactic, also pass in a wall point
                 role_requests[tactic] = tactic.get_requests(
-                    world_state, wall_pts[i], None)
+                    world_state, wall_pts[i], None
+                )
                 i += 1
             else:
                 role_requests[tactic] = tactic.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests,
-                                                       world_state,
-                                                       prev_results)
+        flat_results = self.role_assigner.assign_roles(
+            flat_requests, world_state, prev_results
+        )
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all SkillEntries from all tactics
@@ -104,8 +107,8 @@ class PrepareKickoffPlay(play.IPlay):
 
 
 class DefendKickoffPlay(play.IPlay):
-    """Hardcoded points to stand in for kickoff
-    """
+    """Hardcoded points to stand in for kickoff"""
+
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.points = [
             (0.0, 3.9),
@@ -118,10 +121,12 @@ class DefendKickoffPlay(play.IPlay):
             role.Priority.LOW,
         ]
         self.tactics = [
-            move_tactic.Move(action_client_dict,
-                             target_point=np.array(pt),
-                             face_point=(0.0, 4.5),
-                             priority=priority)
+            move_tactic.Move(
+                action_client_dict,
+                target_point=np.array(pt),
+                face_point=(0.0, 4.5),
+                priority=priority,
+            )
             for pt, priority in zip(self.points, self.priorities)
         ]
         self.tactics.append(goalie_tactic.GoalieTactic(action_client_dict))
@@ -141,32 +146,30 @@ class DefendKickoffPlay(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]],
-               List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
-                                                   world_state)
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
 
         role_requests: play.RoleRequests = {}
         i = 0
         for tactic in self.tactics:
-            if type(tactic) == type(
-                    wall_tactic.WallTactic(action_client_dict)):
+            if type(tactic) == type(wall_tactic.WallTactic(action_client_dict)):
                 # TODO : change to choose closest one
                 role_requests[tactic] = tactic.get_requests(
-                    world_state, wall_pts[i], None)
+                    world_state, wall_pts[i], None
+                )
                 i += 1
             else:
                 role_requests[tactic] = tactic.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests,
-                                                       world_state,
-                                                       prev_results)
+        flat_results = self.role_assigner.assign_roles(
+            flat_requests, world_state, prev_results
+        )
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all SkillEntries from all tactics

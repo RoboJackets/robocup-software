@@ -41,8 +41,8 @@ class Coordinator:
         self,
         play_selector: stp.situation.IPlaySelector,
         action_client_dict: Dict[Type[Any], List[Any]],
-        debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]],
-                                 None] = None):
+        debug_callback: Callable[[stp.play.IPlay, List[stp.skill.ISkill]], None] = None,
+    ):
         self._play_selector = play_selector
         self._play_selector.add_action_client_dict(action_client_dict)
         self._props = {}
@@ -66,11 +66,11 @@ class Coordinator:
         cur_play_type: Type[stp.play.IPlay] = type(cur_play)
 
         # Update the props.
-        cur_play_props = cur_play.compute_props(
-            self._props.get(cur_play_type, None))
+        cur_play_props = cur_play.compute_props(self._props.get(cur_play_type, None))
 
-        if isinstance(cur_play, type(
-                self._prev_play)) and not self._prev_play.is_done(world_state):
+        if isinstance(cur_play, type(self._prev_play)) and not self._prev_play.is_done(
+            world_state
+        ):
             cur_play = self._prev_play
             # This should be checked here or in the play selector, so we can restart a play easily
 
@@ -100,8 +100,7 @@ class Coordinator:
         for skill in skills:
             robot = new_role_results[skill][0].role.robot
             if robot:
-                tick_ret = skill.skill.tick(robot, world_state,
-                                            intents[robot.id])
+                tick_ret = skill.skill.tick(robot, world_state, intents[robot.id])
                 if tick_ret:
                     intents_dict.update(tick_ret)
 
@@ -110,9 +109,7 @@ class Coordinator:
             if i in intents_dict.keys():
                 intents[i] = intents_dict[i]
             else:
-                intents[i].motion_command.empty_command = [
-                    msg.EmptyMotionCommand()
-                ]
+                intents[i].motion_command.empty_command = [msg.EmptyMotionCommand()]
 
         # Update _prev_*.
         self._prev_situation = cur_situation

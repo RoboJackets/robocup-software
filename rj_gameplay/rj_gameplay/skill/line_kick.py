@@ -32,13 +32,15 @@ class LineKickSkill(ILineKickSkill):
     # def __init__(self, role: role.Role) -> None:
     # self.robot = role.robot
     # role-blind implementation
-    def __init__(self,
-                 action_client_dict: Dict[Type[Any], List[Any]],
-                 robot: rc.Robot,
-                 target_point: np.array,
-                 priority: int = 0,
-                 chip: bool = False,
-                 kick_speed: float = 5.5) -> None:
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        robot: rc.Robot,
+        target_point: np.array,
+        priority: int = 0,
+        chip: bool = False,
+        kick_speed: float = 5.5,
+    ) -> None:
         self.robot = robot
         self.move_action_clients = action_client_dict.get(MoveActionClient)
 
@@ -47,9 +49,6 @@ class LineKickSkill(ILineKickSkill):
         self.chip = chip
         self.kick_speed = kick_speed
         # self.kick_speed = 5.5
-
-
-
 
     def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
         self.robot = robot
@@ -64,7 +63,11 @@ class LineKickSkill(ILineKickSkill):
 
         line_kick_command = LineKickMotionCommand()
         line_kick_command.target = Point(x=self.target_point[0], y=self.target_point[1])
-        intent.shoot_mode = RobotIntent.SHOOT_MODE_KICK if not self.chip else RobotIntent.SHOOT_MODE_CHIP
+        intent.shoot_mode = (
+            RobotIntent.SHOOT_MODE_KICK
+            if not self.chip
+            else RobotIntent.SHOOT_MODE_CHIP
+        )
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
         if self.kick_speed <= MAX_KICK_SPEED:
             intent.kick_speed = self.kick_speed

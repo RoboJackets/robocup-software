@@ -84,10 +84,12 @@ class wall_cost(role.CostFn):
 
 
 class WallTactic(tactic.ITactic):
-    def __init__(self,
-                 action_client_dict: Dict[Type[Any], List[Any]],
-                 priority=role.Priority.MEDIUM,
-                 cost_scale: float = 1.0):
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        priority=role.Priority.MEDIUM,
+        cost_scale: float = 1.0,
+    ):
 
         self._action_client_dict = action_client_dict
 

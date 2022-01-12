@@ -11,12 +11,10 @@ from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
 
 
 class DefensiveClear(play.IPlay):
-
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.goalie = goalie_tactic.GoalieTactic(action_client_dict)
         self.two_mark = nmark_tactic.NMarkTactic(action_client_dict, 2)
-        self.clear = clear_tactic.Clear(action_client_dict,
-                                        np.array([0.0, 10.0]))
+        self.clear = clear_tactic.Clear(action_client_dict, np.array([0.0, 10.0]))
         self.role_assigner = NaiveRoleAssignment()
 
     def compute_props(self, prev_props):
@@ -27,21 +25,21 @@ class DefensiveClear(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]]:
+    ) -> Tuple[
+        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]
+    ]:
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
-        role_requests[self.two_mark] = (self.two_mark.get_requests(
-            world_state, None))
+        role_requests[self.two_mark] = self.two_mark.get_requests(world_state, None)
         role_requests[self.clear] = self.clear.get_requests(world_state, None)
-        role_requests[self.goalie] = self.goalie.get_requests(
-            world_state, None)
+        role_requests[self.goalie] = self.goalie.get_requests(world_state, None)
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests,
-                                                       world_state,
-                                                       prev_results)
+        flat_results = self.role_assigner.assign_roles(
+            flat_requests, world_state, prev_results
+        )
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all skills with assigned roles from tactics
