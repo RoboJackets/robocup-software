@@ -10,6 +10,7 @@ import stp.role as role
 import stp.skill as skill
 import stp.utils.enum as enum
 import stp.utils.typed_key_dict as tkdict
+import stp.tactic as tactic
 
 SkillT = TypeVar("SkillT", bound=skill.ISkill)
 
@@ -155,7 +156,7 @@ class ITactic(Generic[PropT], ABC):
         world_state: rc.WorldState,
         role_results: RoleResults,
         props: PropT,
-    ) -> List[skill.ISkill]:
+    ) -> List[tactic.SkillEntry]:
         """Ticks the tactic, returning a tuple of the skills and the skills executed.
         :param world_state: Current world state.
         :param role_results: The results of role assignment.
