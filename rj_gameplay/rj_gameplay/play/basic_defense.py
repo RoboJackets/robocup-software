@@ -27,9 +27,6 @@ class BasicDefense(play.Play):
         if world_state is not None and not self.prioritized_tactics:
             # TODO: figure out better way to share wall pts than calculations file
             #       maybe a shared wall class? but wall tactic must remain 1:1 for roles
-            # 
-            # OR change role assignment to accept multi-tactic roles and output how many robots it needs?
-            # would make some passing things more logically separated, theoretically
 
             # 1 goalie, 5 wallers (for now)
             # TODO: break nmark into single-robot mark tactics
@@ -59,7 +56,7 @@ class BasicDefense(play.Play):
         self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState
     ) -> None:
 
-        for role_request, robot, wall_pt in zip(
+        for role_request, robot, pt in zip(
             self.prioritized_role_requests, assigned_robots, self.wall_pts
         ):
             role, cost_fn = role_request
@@ -68,7 +65,7 @@ class BasicDefense(play.Play):
             # TODO: this is bad, shouldn't have to check types of tactics imo
             # although perhaps this is fine since the play has to fill prioritized_roles dynamically anyhow, indicating it knows what roles to expect and what order
             if role is move_tactic.MoveTactic:
-                new_tactic = role(robot, wall_pt, world_state.ball.pos)
+                new_tactic = role(robot, pt, world_state.ball.pos)
             elif role is goalie_tactic.GoalieTactic:
                 new_tactic = role(robot)
 
