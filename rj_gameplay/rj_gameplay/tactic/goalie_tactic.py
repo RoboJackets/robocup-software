@@ -66,18 +66,6 @@ class GoalieTactic(tactic.Tactic):
 
         self.brick = brick
 
-        # init skills
-        # self.move_se = tactic.SkillEntry(move.Move(ignore_ball=True))
-        # self.receive_se = tactic.SkillEntry(receive.Receive())
-        # self.pivot_kick_se = tactic.SkillEntry(
-        #     line_kick.LineKickSkill(
-        #         None,
-        #         target_point=np.array([0.0, 6.0]),
-        #         chip=True,
-        #         kick_speed=5.5,
-        #     )
-        # )
-
         # TODO: have a self.curr_skill instead of 3 separate ones, tick at end of tick
         self.move_skill = None
         self.receive_skill = None
@@ -170,14 +158,6 @@ class GoalieTactic(tactic.Tactic):
             )
 
             return self.pivot_kick_skill.tick(world_state)
-            # self.pivot_kick_se = tactic.SkillEntry(
-            #     line_kick.LineKickSkill(
-            #         None,
-            #         target_point=np.array([0.0, 6.0]),
-            #         chip=True,
-            #         kick_speed=5.5,
-            #     )
-            # )
 
     def is_done(self, world_state):
         # goalie tactic always active

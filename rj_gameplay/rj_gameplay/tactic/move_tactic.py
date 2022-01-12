@@ -20,14 +20,14 @@ from rj_msgs.msg import RobotIntent
 
 class MoveTactic(tactic.Tactic):
     def __init__(self, robot: rc.Robot, target_point, face_point):
-        super().__init__(robot)
+        self.robot = robot
 
         self.target_point = target_point
         self.face_point = face_point
 
         self.move_skill = None
 
-    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+    def tick(self, world_state: rc.WorldState) -> List[Tuple[int, RobotIntent]]:
         # create skill with correct target & face_point
         if self.move_skill is None:
             self.move_skill = move.Move(
@@ -38,7 +38,7 @@ class MoveTactic(tactic.Tactic):
 
         # tick skill and return
         intent = self.move_skill.tick(world_state)
-        return intent
+        return [(self.robot.id, intent)]
 
     def is_done(self, world_state):
         return self.move_skill.is_done(world_state)

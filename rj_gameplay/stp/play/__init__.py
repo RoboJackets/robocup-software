@@ -108,11 +108,11 @@ class Play(ABC):
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Given assigned roles in self.prioritized_tactics, tick each tactic and aggregate the results in one List, where indices are robot_ids and values are RobotIntents. GameplayNode then sends these back to motion planning via ROS."""
-        # TODO: this is from gameplay_node, move to a common gameplay params file
+        # TODO: this param from gameplay_node, move to a common gameplay params file
         NUM_ROBOTS = 16
         robot_intents = [None for _ in range(NUM_ROBOTS)]
         for tactic in self.prioritized_tactics:
-            robot_intent = tactic.tick(world_state)
-            robot_id = tactic.robot.id  # TODO: enforce existence with getter?
-            robot_intents[robot_id] = robot_intent
+            id_intent_list = tactic.tick(world_state)
+            for robot_id, intent in id_intent_list:
+                robot_intents[robot_id] = intent
         return robot_intents
