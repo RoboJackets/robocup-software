@@ -57,4 +57,3 @@ class Tactic(ABC):
     @property
     def role_requests(self):
         return self._role_requests
-

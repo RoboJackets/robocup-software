@@ -27,7 +27,7 @@ class BasicDefense(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self.state is "init":
-            # TODO: add goalie T
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
             self.assign_roles(world_state)
             self.state = "active"

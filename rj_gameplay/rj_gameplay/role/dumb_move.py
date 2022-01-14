@@ -1,9 +1,6 @@
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
-import stp.action as action
-import stp.rc as rc
-import stp.tactic as tactic
-import stp.role
+import stp
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
@@ -15,7 +12,7 @@ from rj_msgs.msg import RobotIntent
 
 
 class DumbMove(stp.role.Role):
-    def __init__(self, robot: rc.Robot, target_point, face_point):
+    def __init__(self, robot: stp.rc.Robot, target_point, face_point):
         super().__init__(robot)
 
         self.target_point = target_point
@@ -23,7 +20,9 @@ class DumbMove(stp.role.Role):
 
         self.move_skill = None
 
-    def tick(self, world_state, target_point=None, face_point=None) -> RobotIntent:
+    def tick(
+        self, world_state: stp.rc.WorldState, target_point=None, face_point=None
+    ) -> RobotIntent:
         if target_point is not None:
             self.target_point = target_point
             # TODO: clean this up

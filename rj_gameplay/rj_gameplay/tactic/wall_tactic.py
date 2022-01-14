@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-from typing import List, Optional
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
 from rj_gameplay.role import dumb_move
@@ -33,12 +31,13 @@ class WallTactic(stp.tactic.Tactic):
 
         # request closest robot every pt
         for pt in self.wall_pts:
-            self._role_requests.append((stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove))
-
+            self._role_requests.append(
+                (stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove)
+            )
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         self.wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
-        
+
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
@@ -47,11 +46,13 @@ class WallTactic(stp.tactic.Tactic):
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
             wall_pt = self.wall_pts[i]
-            robot_intents.append((role.robot.id, role.tick(world_state, target_point=wall_pt)))
+            robot_intents.append(
+                (role.robot.id, role.tick(world_state, target_point=wall_pt))
+            )
         return robot_intents
-    
+
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
-        # waller never ends
+        # wall never ends (until basic defense decides)
         return False
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:

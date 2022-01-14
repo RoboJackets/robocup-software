@@ -4,6 +4,7 @@ from typing import List, Tuple
 
 from rj_msgs.msg import RobotIntent
 
+
 class LineTactic(stp.tactic.Tactic):
     # TODO docs
 
@@ -18,7 +19,9 @@ class LineTactic(stp.tactic.Tactic):
         # request closest robot every pt
         for pt in self.move_points:
             # for some reason stp.role doesn't need to be imported?
-            self._role_requests.append((stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove))
+            self._role_requests.append(
+                (stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove)
+            )
 
         # OR hardcode certain ids to go
         # for i, pt in enumerate(self.move_points):

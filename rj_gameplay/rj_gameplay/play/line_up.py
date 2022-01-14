@@ -45,4 +45,3 @@ class LineUp(stp.play.Play):
             print("line up play done")
             # TODO: does this need to exist?
             return None
-

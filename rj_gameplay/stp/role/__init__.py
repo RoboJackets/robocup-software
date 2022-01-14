@@ -10,6 +10,7 @@ BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
 
 from abc import ABC, abstractmethod
 
+
 class Role(ABC):
     """Complex single-robot role, such as Goalie or Striker. Uses Skills to achieve behavior."""
 
@@ -19,8 +20,7 @@ class Role(ABC):
 
     @abstractmethod
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
-        """Ticks Skill to get RobotIntent.
-        """
+        """Ticks Skill to get RobotIntent."""
         # TODO: add docstring here
         ...
 
