@@ -1,4 +1,4 @@
-import stp.tactic
+import stp
 from rj_gameplay.role import dumb_move
 from typing import List, Tuple
 
@@ -7,8 +7,8 @@ from rj_msgs.msg import RobotIntent
 class LineTactic(stp.tactic.Tactic):
     # TODO docs
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, world_state: stp.rc.WorldState):
+        super().__init__(world_state)
 
         # compute move points
         start = (3.0, 0.0)
@@ -17,6 +17,7 @@ class LineTactic(stp.tactic.Tactic):
 
         # request closest robot every pt
         for pt in self.move_points:
+            # for some reason stp.role doesn't need to be imported?
             self._role_requests.append((stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove))
 
         # OR hardcode certain ids to go

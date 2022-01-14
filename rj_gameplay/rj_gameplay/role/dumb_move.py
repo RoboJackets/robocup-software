@@ -23,7 +23,24 @@ class DumbMove(stp.role.Role):
 
         self.move_skill = None
 
-    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+    def tick(self, world_state, target_point=None, face_point=None) -> RobotIntent:
+        if target_point is not None:
+            self.target_point = target_point
+            # TODO: clean this up
+            self.move_skill = move.Move(
+                robot=self.robot,
+                target_point=self.target_point,
+                face_point=self.face_point,
+            )
+
+        if face_point is not None:
+            self.face_point = face_point
+            self.move_skill = move.Move(
+                robot=self.robot,
+                target_point=self.target_point,
+                face_point=self.face_point,
+            )
+
         # create skill with correct target & face_point
         if self.move_skill is None:
             self.move_skill = move.Move(

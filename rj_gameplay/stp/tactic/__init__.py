@@ -25,7 +25,9 @@ class Tactic(ABC):
     # TODO: add docstring here
 
     @abstractmethod
-    def __init__(self):
+    def __init__(self, world_state: stp.rc.WorldState):
+        self.world_state = world_state
+
         # TODO: add docstring here
         # TODO: make tuple = RoleRequest (or make obj with these two params)
         self._role_requests: List[Tuple[role.Role, role.CostFn]] = []
@@ -49,10 +51,7 @@ class Tactic(ABC):
         ...
 
     @abstractmethod
-    def init_roles(
-        self,
-        world_state: stp.rc.WorldState,
-    ):
+    def init_roles(self, world_state: stp.rc.WorldState) -> None:
         ...
 
     @property

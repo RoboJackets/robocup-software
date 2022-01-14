@@ -33,7 +33,7 @@ class LineUp(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self.state is "init":
-            self.prioritized_tactics.append(line_tactic.LineTactic())
+            self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
             self.assign_roles(world_state)
             self.state = "line_up"
             return self.get_robot_intents(world_state)
