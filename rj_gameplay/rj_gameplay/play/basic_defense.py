@@ -23,6 +23,10 @@ class BasicDefense(play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
 
+        # calculate wall pts
+        num_wallers = 5
+        self.wall_pts = wall_calculations.find_wall_pts(num_wallers, world_state)
+
         # if no tactics created, assign roles and create them
         if world_state is not None and not self.prioritized_tactics:
             # TODO: figure out better way to share wall pts than calculations file
@@ -30,10 +34,6 @@ class BasicDefense(play.Play):
 
             # 1 goalie, 5 wallers (for now)
             # TODO: break nmark into single-robot mark tactics
-
-            # pre-calculate wall points and store in numpy array
-            num_wallers = 5
-            self.wall_pts = wall_calculations.find_wall_pts(num_wallers, world_state)
 
             self.prioritized_role_requests = [
                 (
@@ -43,11 +43,9 @@ class BasicDefense(play.Play):
             ]
             for pt in self.wall_pts:
                 self.prioritized_role_requests.append(
-                    (move_tactic.MoveTactic, stp.role.cost.PickClosestRobot(pt))
+                    (wall_tactic.WallTactic, stp.role.cost.PickClosestRobot(pt))
                 )
             self.assign_roles(world_state)
-
-        # TODO: fix wall tactic to change its own point based on ball pos, without feeding info via Play
 
         # return robot intents from assigned tactics back to gameplay node
         return self.get_robot_intents(world_state)
@@ -56,6 +54,7 @@ class BasicDefense(play.Play):
         self, assigned_robots: List[stp.rc.Robot], world_state: stp.rc.WorldState
     ) -> None:
 
+        wall_ct = 0
         for role_request, robot, pt in zip(
             self.prioritized_role_requests, assigned_robots, self.wall_pts
         ):
@@ -64,8 +63,11 @@ class BasicDefense(play.Play):
             new_tactic = None
             # TODO: this is bad, shouldn't have to check types of tactics imo
             # although perhaps this is fine since the play has to fill prioritized_roles dynamically anyhow, indicating it knows what roles to expect and what order
-            if role is move_tactic.MoveTactic:
-                new_tactic = role(robot, pt, world_state.ball.pos)
+            if role is wall_tactic.WallTactic:
+                # TODO: figure out how to coordinate multiple robots in less janky way
+                new_tactic = role(robot, wall_ct)
+                new_tactic.pass_wall_pts(self.wall_pts)
+                wall_ct += 1
             elif role is goalie_tactic.GoalieTactic:
                 new_tactic = role(robot)
 

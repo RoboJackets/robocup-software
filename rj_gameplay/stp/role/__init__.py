@@ -1,38 +1,40 @@
-"""This module contains data structures for role assignment."""
-
 from enum import IntEnum
 from typing import Optional, Protocol
 
-import stp.rc as rc
+import stp.rc
+
+from rj_msgs.msg import RobotIntent
 
 BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
 
 
-class Role:
-    """This represents a role, ie. an Optional[rc.Robot]."""
+from abc import ABC, abstractmethod
 
-    __slots__ = ["robot"]
-    robot: Optional[rc.Robot]
+class Role(ABC):
+    """Complex single-robot role, such as Goalie or Striker. Uses Skills to achieve behavior."""
 
-    def __init__(self, robot: Optional[rc.Robot]):
-        self.robot = robot
+    def __init__(self, robot: stp.rc.Robot):
+        """All Roles should apply to one robot's behavior; thus, robot is defined as a formal argument here. Concrete Roles should overwrite init with their own fields, but call super()'s init to use this shared code."""
+        self._robot: stp.rc.Robot = robot
 
-    def is_filled(self) -> bool:
-        """Returns true if the role is filled.
-        :return: True if the role is filled.
+    @abstractmethod
+    def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
+        """Ticks Skill to get RobotIntent.
         """
-        return self.robot is not None
+        # TODO: add docstring here
+        ...
 
-    def __str__(self) -> str:
-        if self.robot is None:
-            return "Role(Unassigned)"
+    @abstractmethod
+    def tick(self, world_state: stp.rc.WorldState) -> bool:
+        # TODO doc
+        ...
 
-        return "Role({})".format(self.robot)
+    @property
+    def robot(self):
+        return self._robot
 
-    def __repr__(self) -> str:
-        return self.__str__()
 
-
+# TODO: delete this
 class Priority(IntEnum):
     """An enum to represent priority of the role assignment."""
 
@@ -47,8 +49,8 @@ class CostFn(Protocol):
 
     def __call__(
         self,
-        robot: rc.Robot,
-        world_state: rc.WorldState,
+        robot: stp.rc.Robot,
+        world_state: stp.rc.WorldState,
     ) -> float:
         """Given a robot and the current world state, returns the cost of assigning that robot to a given role.
         :param robot: The current robot to check costs for.
@@ -58,7 +60,7 @@ class CostFn(Protocol):
         ...
 
     def unassigned_cost_fn(
-        self, prev_results: Optional["RoleResult"], world_state: rc.WorldState
+        self, prev_results: Optional["RoleResult"], world_state: stp.rc.WorldState
     ) -> float:
         """Given the previous role assigment and current world state,
         returns the cost of not assigning any robot.
@@ -71,7 +73,7 @@ class CostFn(Protocol):
     # def switch_cost_fn(
     #     self,
     #     prev_results: Optional["RoleResult"],
-    #     world_state: rc.WorldState,
+    #     world_state: stp.rc.WorldState,
     #     sticky_weight) -> float:
     #     """Given the preevious role assignment and current world state,
     #     returns the cost of switch the role.
@@ -88,9 +90,9 @@ class ConstraintFn(Protocol):
 
     def __call__(
         self,
-        robot: rc.Robot,
+        robot: stp.rc.Robot,
         prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
+        world_state: stp.rc.WorldState,
     ) -> bool:
         """Given a robot, the previous role assignment result, and the current world
         state, returns true if the assignment is valid.
@@ -103,9 +105,9 @@ class ConstraintFn(Protocol):
 
 
 def unconstrained_constraint_fn(
-    robot: rc.Robot,
+    robot: stp.rc.Robot,
     prev_result: Optional["RoleResult"],
-    world_state: rc.WorldState,
+    world_state: stp.rc.WorldState,
 ) -> bool:
     """An unconstrained constraint fn, ie it always returns True.
     :param robot: The current robot to check costs for.
@@ -209,7 +211,7 @@ class RoleResult:
         """
         return self.role.is_filled()
 
-    def assign(self, robot: rc.Robot, cost: float) -> None:
+    def assign(self, robot: stp.rc.Robot, cost: float) -> None:
         """Assigns self.role to the passed in robot, updating self.cost to the
         assignment cost.
         :param robot: Robot to use for the role.
