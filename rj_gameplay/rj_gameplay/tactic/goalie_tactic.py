@@ -29,7 +29,7 @@ class GoalieTactic(stp.tactic.Tactic):
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # special case: we know the only role is Goalie, so we borrow that is_done()
-        return self.self.assigned_roles[0].is_done(world_state)
+        return self.assigned_roles[0].is_done(world_state)
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         # only has one role, but it's easier to copy-paste the structure

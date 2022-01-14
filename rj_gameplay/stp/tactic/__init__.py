@@ -1,12 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
-import stp.action
-import stp.rc
-import stp.role
-import stp.skill
-import stp.utils.enum
-import stp.utils.typed_key_dict
+import stp
 
 from rj_msgs.msg import RobotIntent
 
@@ -25,12 +20,12 @@ class Tactic(ABC):
     # TODO: add docstring here
 
     @abstractmethod
-    def __init__(self, world_state: stp.rc.WorldState):
+    def __init__(self, world_state: stp.rc.WorldState) -> None:
         self.world_state = world_state
 
         # TODO: add docstring here
         # TODO: make tuple = RoleRequest (or make obj with these two params)
-        self._role_requests: List[Tuple[role.Role, role.CostFn]] = []
+        self._role_requests: List[Tuple[stp.role.Role, stp.role.CostFn]] = []
         self.assigned_robots = []
         self.assigned_roles = []
 
@@ -55,5 +50,5 @@ class Tactic(ABC):
         ...
 
     @property
-    def role_requests(self):
+    def role_requests(self) -> List[Tuple[stp.role.Role, stp.role.CostFn]]:
         return self._role_requests

@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 class Role(ABC):
     """Complex single-robot role, such as Goalie or Striker. Uses Skills to achieve behavior."""
 
-    def __init__(self, robot: stp.rc.Robot):
+    def __init__(self, robot: stp.rc.Robot) -> None:
         """All Roles should apply to one robot's behavior; thus, robot is defined as a formal argument here. Concrete Roles should overwrite init with their own fields, but call super()'s init to use this shared code."""
         self._robot: stp.rc.Robot = robot
 
@@ -30,7 +30,7 @@ class Role(ABC):
         ...
 
     @property
-    def robot(self):
+    def robot(self) -> stp.rc.Robot:
         return self._robot
 
 

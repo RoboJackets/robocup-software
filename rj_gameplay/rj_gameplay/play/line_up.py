@@ -25,6 +25,7 @@ class LineUp(stp.play.Play):
         super().__init__()
 
         # super simple FSM
+        # TODO: use FSM class (or at least don't use string literals)
         self.state = "init"
 
     def tick(
@@ -32,12 +33,12 @@ class LineUp(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
 
-        if self.state is "init":
+        if self.state == "init":
             self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
             self.assign_roles(world_state)
             self.state = "line_up"
             return self.get_robot_intents(world_state)
-        elif self.state is "line_up":
+        elif self.state == "line_up":
             if self.prioritized_tactics[0].is_done(world_state):
                 self.state = "done"
             return self.get_robot_intents(world_state)
