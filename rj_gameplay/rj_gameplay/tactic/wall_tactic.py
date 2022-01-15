@@ -35,7 +35,14 @@ class WallTactic(stp.tactic.Tactic):
                 (stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove)
             )
 
-    def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
+    def init_roles(self, world_state: stp.rc.WorldState) -> None:
+        for i, robot in enumerate(self.assigned_robots):
+            role = self._role_requests[i][1]
+            pt = self.wall_pts[i]
+            if role is dumb_move.DumbMove:
+                self.assigned_roles.append(role(robot, pt, world_state.ball.pos))
+
+    def tick(self, world_state: stp.rc.WorldState):
         self.wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # assumes all roles requested are filled, because tactic is one unit
@@ -54,10 +61,3 @@ class WallTactic(stp.tactic.Tactic):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # wall never ends (until basic defense decides)
         return False
-
-    def init_roles(self, world_state: stp.rc.WorldState) -> None:
-        for i, robot in enumerate(self.assigned_robots):
-            role = self._role_requests[i][1]
-            pt = self.wall_pts[i]
-            if role is dumb_move.DumbMove:
-                self.assigned_roles.append(role(robot, pt, world_state.ball.pos))

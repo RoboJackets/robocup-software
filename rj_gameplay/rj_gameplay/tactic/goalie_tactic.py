@@ -15,6 +15,13 @@ class GoalieTactic(stp.tactic.Tactic):
             (stp.role.cost.PickRobotById(goalie_id), goalie_role.GoalieRole)
         )
 
+    def init_roles(self, world_state: stp.rc.WorldState) -> None:
+        # only has one role, but it's easier to copy-paste the structure
+        for i, robot in enumerate(self.assigned_robots):
+            role = self._role_requests[i][1]
+            if role is goalie_role.GoalieRole:
+                self.assigned_roles.append(role(robot))
+
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
@@ -30,10 +37,3 @@ class GoalieTactic(stp.tactic.Tactic):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # special case: we know the only role is Goalie, so we borrow that is_done()
         return self.assigned_roles[0].is_done(world_state)
-
-    def init_roles(self, world_state: stp.rc.WorldState) -> None:
-        # only has one role, but it's easier to copy-paste the structure
-        for i, robot in enumerate(self.assigned_robots):
-            role = self._role_requests[i][1]
-            if role is goalie_role.GoalieRole:
-                self.assigned_roles.append(role(robot))

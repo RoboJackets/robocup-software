@@ -1,19 +1,6 @@
 import stp
 
-from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
-import stp.role
-from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc
-from typing import Dict, List, Tuple, Type
-from rj_gameplay.calculations import wall_calculations
-
-import stp.role.cost
-from rj_msgs.msg import RobotIntent
-
-
-class BasicDefense(stp.play.Play):
-    """For when we don't have the ball and are trying to stop the opponent from scoring."""
-
+class Keepaway(stp.play.Play):
     def __init__(self):
         super().__init__()
 

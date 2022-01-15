@@ -46,7 +46,6 @@ class DumbMove(stp.role.Role):
                 face_point=self.face_point,
             )
 
-        # tick skill and return
         intent = self.move_skill.tick(world_state)
         return intent
 

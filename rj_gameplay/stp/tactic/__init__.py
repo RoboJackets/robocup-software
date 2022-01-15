@@ -26,6 +26,7 @@ class Tactic(ABC):
         # TODO: add docstring here
         # TODO: make tuple = RoleRequest (or make obj with these two params)
         self._role_requests: List[Tuple[stp.role.Role, stp.role.CostFn]] = []
+        # TODO: make these properties too?
         self.assigned_robots = []
         self.assigned_roles = []
 
@@ -33,7 +34,7 @@ class Tactic(ABC):
     def tick(
         self,
         world_state: stp.rc.WorldState,
-    ) -> List[RobotIntent]:
+    ) -> List[Tuple[int, RobotIntent]]: # (id, intent)
         # TODO: add docstring here
         ...
 
@@ -46,9 +47,13 @@ class Tactic(ABC):
         ...
 
     @abstractmethod
+    # TODO: change order of methods so this is above tick
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         ...
 
     @property
     def role_requests(self) -> List[Tuple[stp.role.Role, stp.role.CostFn]]:
         return self._role_requests
+
+    def get_req_role_ct(self) -> int:
+        return len(self._role_requests)
