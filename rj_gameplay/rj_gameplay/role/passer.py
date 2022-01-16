@@ -50,7 +50,7 @@ class PasserRole(stp.role.Role):
                 robot=self.robot,
                 target_point=self._target_point,
                 chip=False, # TODO: make these params configurable
-                kick_speed=5.5,
+                kick_speed=4.0,
             )
             self._state = "execute_pass"
         elif self._state == "execute_pass":

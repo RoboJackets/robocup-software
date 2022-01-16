@@ -143,6 +143,7 @@ class PassTactic(stp.tactic.Tactic):
             assert isinstance(receiver_role, receiver.ReceiverRole)
 
             role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
+            print(role_intents[0][1])
 
             if receiver_role.is_done(world_state):
                 self._state = "done"
