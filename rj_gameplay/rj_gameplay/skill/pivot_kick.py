@@ -55,16 +55,29 @@ class PivotKick(skill.Skill):  # add ABC if fails
         )
         self.capture = capture.Capture(robot)
 
+        self._state = "capture"
+
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
-        if self.kick.is_done(world_state):
-            return self.capture.tick(world_state)
-        elif self.pivot.is_done(world_state):
-            return self.kick.tick(world_state)
-        else:
-            return self.pivot.tick(world_state)
+        print("pivot kick state:", self._state)
+
+        intent = None
+        if self._state == "capture":
+            intent = self.capture.tick(world_state)
+            if self.capture.is_done(world_state):
+                self._state = "pivot"
+        elif self._state == "pivot":
+            intent = self.pivot.tick(world_state)
+            if self.pivot.is_done(world_state):
+                self._state = "kick"
+        elif self._state == "kick":
+            intent = self.kick.tick(world_state)
+            if self.kick.is_done(world_state):
+                self._state = "done"
+
+        return intent
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return self.capture.is_done(world_state)
+        return self._state == "done"
 
     def __str__(self):
         return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"

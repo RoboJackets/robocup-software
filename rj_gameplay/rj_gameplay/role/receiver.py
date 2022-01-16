@@ -1,6 +1,8 @@
 import stp
 from rj_gameplay.skill import receive, line_kick, pivot_kick
 
+from rj_msgs.msg import RobotIntent
+
 class ReceiverRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
@@ -10,9 +12,15 @@ class ReceiverRole(stp.role.Role):
         # TODO: make FSM class (or at least use enum instead of str literals)
         self._state = "init"
 
+        self._target_point = None
+
     @property
     def pass_ready(self):
         return self._state == "pass_ready"
+
+    def set_receive_pass(self):
+        self._state = "receive_pass"
+        self.receive_skill = receive.Receive(robot=self.robot)
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """
@@ -21,20 +29,18 @@ class ReceiverRole(stp.role.Role):
          - interrupt signal from Tactic: go get ball
          - when got ball: done
         """
+        print("receiver state:", self._state)
+
         intent = None
 
-        # let this signal override other FSM behavior
-        if #<signal-from-tactic>:
-            self.receive_skill = receive.Receive(robot=self.robot)
-            intent = self.receive_skill.tick(world_state)
-            self._state = "receiving"
-
         if self._state == "init":
-            # <seek behavior>
-        elif self._state == "receiving":
+            # do seek behavior
+            pass
+        elif self._state == "receive_pass":
             intent = self.receive_skill.tick(world_state)
             if self.receive_skill.is_done(world_state):
                 self._state = "done"
+                # end FSM
 
         return intent
 

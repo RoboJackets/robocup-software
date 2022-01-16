@@ -30,7 +30,7 @@ from stp.global_parameters import GlobalParameterClient
 
 import numpy as np
 from rj_gameplay.action.move import Move
-from rj_gameplay.play import line_up, basic_defense
+from rj_gameplay.play import line_up, basic_defense, keepaway
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
@@ -65,7 +65,7 @@ class GameplayNode(Node):
         rclpy.init()
         super().__init__("gameplay_node")
 
-        self.test_play = basic_defense.BasicDefense()
+        self.test_play = keepaway.Keepaway()
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,

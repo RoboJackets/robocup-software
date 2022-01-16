@@ -73,7 +73,10 @@ class Play(ABC):
         self,
         world_state: stp.rc.WorldState,
     ) -> None:
-        """Given that all roles are in sorted order of priority, greedily assign the highest-priority role to the lowest-cost robot for that role. Instantiate tactics with the correct robots post-assignment."""
+        """Given that all roles are in sorted order of priority, greedily assign the highest-priority role to the lowest-cost robot for that role. Instantiate tactics with the correct robots post-assignment.
+        Satisfy constraint that all roles of a tactic must be assigned together.
+        """
+        
 
         all_assigned_robots = []
         # TODO: use hashable Robots directly once PR #1815 merged
