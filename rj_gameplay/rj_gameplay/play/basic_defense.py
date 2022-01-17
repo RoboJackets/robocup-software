@@ -5,7 +5,6 @@ import stp.role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc
 from typing import Dict, List, Tuple, Type
-from rj_gameplay.calculations import wall_calculations
 
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
