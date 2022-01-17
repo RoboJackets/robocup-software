@@ -149,6 +149,8 @@ def build_game_info(play_state_msg: msg.PlayState,
 
     state = rc.GameState(play_state_msg.state)
 
+    
+
     restart = rc.GameRestart(play_state_msg.restart)
 
     our_restart = play_state_msg.our_restart
