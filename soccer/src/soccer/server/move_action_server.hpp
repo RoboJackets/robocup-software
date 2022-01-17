@@ -32,6 +32,7 @@ public:
     ~MoveActionServer() = default;
 
 private:
+    std::array<std::mutex, kNumShells> accept_mutexes;
     std::vector<std::shared_ptr<rclcpp::Publisher<RobotIntent>>> intent_pubs_;
     std::shared_ptr<rclcpp::Subscription<WorldState::Msg>> world_state_sub_;
     std::vector<std::shared_ptr<rclcpp::Subscription<planning::Trajectory::Msg>>> trajectory_subs_;

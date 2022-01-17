@@ -43,6 +43,7 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
             control::topics::desired_state_pub(i), rclcpp::QoS(1),
             [this, i](RobotState::Msg::SharedPtr desired_state) {  // NOLINT
                 this->test_desired_states_[i] = true;
+                // TODO : add mutex here?
                 this->robot_desired_states_[i] = (rj_convert::convert_from_ros(*desired_state));
             });
     }
@@ -55,7 +56,9 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
     (void)uuid;
     int robot_id = goal->server_intent.robot_id;
     if (this->test_accept_goal_[robot_id]) {
+        accept_mutexes[robot_id].lock();
         this->test_accept_goal_[robot_id] = false;
+        accept_mutexes[robot_id].unlock();
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
     return rclcpp_action::GoalResponse::REJECT;
@@ -117,8 +120,9 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
         } while (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
                  robot_desired_states_[robot_id].timestamp <= old_timestamp);
     }
-
+    accept_mutexes[robot_id].lock();
     this->test_accept_goal_[robot_id] = true;
+    accept_mutexes[robot_id].unlock();
     result->is_done = true;
     goal_handle->succeed(result);
 }
