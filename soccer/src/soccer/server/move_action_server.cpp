@@ -55,12 +55,14 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
     std::cout << "handle goal reached" << std::endl;
     (void)uuid;
     int robot_id = goal->server_intent.robot_id;
+    accept_mutexes[robot_id].lock();
+    // TODO: accept if new position is different than old
     if (this->test_accept_goal_[robot_id]) {
-        accept_mutexes[robot_id].lock();
         this->test_accept_goal_[robot_id] = false;
         accept_mutexes[robot_id].unlock();
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
+    accept_mutexes[robot_id].unlock();
     return rclcpp_action::GoalResponse::REJECT;
 }
 
