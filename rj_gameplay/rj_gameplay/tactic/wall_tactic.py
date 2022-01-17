@@ -16,7 +16,6 @@ import stp.global_parameters as global_parameters
 from rj_msgs.msg import RobotIntent
 
 # TODO: move this out of calculations file and into this tactic
-from rj_gameplay.calculations import wall_calculations
 
  """Holds functions used by plays that use the wall tactic."""
 
@@ -47,7 +46,7 @@ class WallTactic(stp.tactic.Tactic):
 
         self.num_wallers = num_wallers
 
-        self.wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
+        self.wall_pts = find_wall_pts(self.num_wallers, world_state)
 
         # request closest robot every pt
         for pt in self.wall_pts:
@@ -63,7 +62,7 @@ class WallTactic(stp.tactic.Tactic):
                 self.assigned_roles.append(role(robot, pt, world_state.ball.pos))
 
     def tick(self, world_state: stp.rc.WorldState):
-        self.wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
+        self.wall_pts = find_wall_pts(self.num_wallers, world_state)
 
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
