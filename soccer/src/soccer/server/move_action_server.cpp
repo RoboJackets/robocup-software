@@ -1,4 +1,5 @@
 #include "move_action_server.hpp"
+#include <signal.h>
 
 namespace server {
 using Move = rj_msgs::action::Move;
@@ -22,7 +23,10 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
     this->intent_pubs_.reserve(kNumShells);
     this->trajectory_subs_.reserve(kNumShells);
     this->robot_trajectories_.reserve(kNumShells);
-    this->robot_test_.reserve(kNumShells);
+    this->test_desired_states_.reserve(kNumShells);
+    this->test_desired_states_.assign(kNumShells, false);
+    this->test_accept_goal_.reserve(kNumShells);
+    this->test_accept_goal_.assign(kNumShells, true);
 
     for (size_t i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(this->create_publisher<RobotIntent>(
@@ -31,25 +35,30 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
         this->create_subscription<planning::Trajectory::Msg>(
             planning::topics::trajectory_pub(i), rclcpp::QoS(1),
             [this, i](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
-                int id = i;
                 trajectory_ = rj_convert::convert_from_ros(*trajectory);
-                this->robot_trajectories_[id] = trajectory_;
+                this->robot_trajectories_[i] = (trajectory_);
             });
 
         this->create_subscription<RobotState::Msg>(
             control::topics::desired_state_pub(i), rclcpp::QoS(1),
             [this, i](RobotState::Msg::SharedPtr desired_state) {  // NOLINT
-                int id = i;
-                this->robot_desired_states_[id] = rj_convert::convert_from_ros(*desired_state);
+                this->test_desired_states_[i] = true;
+                this->robot_desired_states_[i] = (rj_convert::convert_from_ros(*desired_state));
             });
     }
 }
 
 rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                            std::shared_ptr<const Move::Goal> goal) {
+    // TODO: only accept if goal is move action
     std::cout << "handle goal reached" << std::endl;
     (void)uuid;
-    return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+    int robot_id = goal->server_intent.robot_id;
+    if (this->test_accept_goal_[robot_id]) {
+        this->test_accept_goal_[robot_id] = false;
+        return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+    }
+    return rclcpp_action::GoalResponse::REJECT;
 }
 
 rclcpp_action::CancelResponse MoveActionServer ::handle_cancel(
@@ -76,10 +85,9 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
 
     this->intent_pubs_[robot_id]->publish(robot_intent);
 
-    // TODO: get feedback from planner node (and fix below)
-    //  (not working use motion control target_state instead for while cond.)
     RJ::Time base_time = RJ::Time();
-    RJ::Time old_timestamp = robot_test_[robot_id] ? robot_desired_states_[robot_id].timestamp : base_time;
+    bool tested = this->test_desired_states_.at(robot_id);
+    RJ::Time old_timestamp = tested ? robot_desired_states_[robot_id].timestamp : base_time;
 
     std::shared_ptr<Move::Result>  result = std::make_shared<Move::Result>();
 
@@ -106,13 +114,12 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
 
             goal_handle->publish_feedback(feedback);
             RCLCPP_INFO(this->get_logger(), "published feedback");
-        } while (robot_test_[robot_id] && robot_desired_states_[robot_id].visible &&
+        } while (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
                  robot_desired_states_[robot_id].timestamp <= old_timestamp);
     }
 
-    // target_position != robot_desired_states_[robot_id].pose.position());
+    this->test_accept_goal_[robot_id] = true;
     result->is_done = true;
-    robot_test_[robot_id] = true;
     goal_handle->succeed(result);
 }
 }  // namespace server

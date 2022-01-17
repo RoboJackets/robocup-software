@@ -29,6 +29,7 @@ public:
     using GoalHandleMove = rclcpp_action::ServerGoalHandle<Move>;
 
     MoveActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
+    ~MoveActionServer() = default;
 
 private:
     std::vector<std::shared_ptr<rclcpp::Publisher<RobotIntent>>> intent_pubs_;
@@ -39,7 +40,8 @@ private:
     std::vector<planning::Trajectory> robot_trajectories_;
     planning::Trajectory trajectory_;
     std::vector<RobotState> robot_desired_states_;
-    std::vector<bool> robot_test_;
+    std::vector<bool> test_desired_states_;
+    std::vector<bool> test_accept_goal_;
     RobotState desired_state_;
     rclcpp_action::Server<Move>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
