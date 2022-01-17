@@ -6,6 +6,7 @@ from rj_gameplay.tactic import pass_tactic
 
 from rj_msgs.msg import RobotIntent
 
+
 class Keepaway(stp.play.Play):
     def __init__(self):
         super().__init__()
@@ -37,7 +38,7 @@ class Keepaway(stp.play.Play):
 
         elif self.state == "active":
             for tactic in self.prioritized_tactics:
-                # TODO: this line/logic is fairly crucial in role assignment, 
+                # TODO: this line/logic is fairly crucial in role assignment,
                 # is there a way I can force this to happen as a precondition to assign_roles?
                 # maybe call assign_roles() every tick but check tactic for needs_assign before assigning it
                 # (this works as the method is in Play superclass)
@@ -51,7 +52,7 @@ class Keepaway(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self.state == "assign_roles":
-            print("*"*80)
+            print("*" * 80)
             # duplicate code from init
             self.assign_roles(world_state)
             self.state = "active"

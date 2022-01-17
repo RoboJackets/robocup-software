@@ -34,7 +34,7 @@ class Tactic(ABC):
     def tick(
         self,
         world_state: stp.rc.WorldState,
-    ) -> List[Tuple[int, RobotIntent]]: # (id, intent)
+    ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
         # TODO: add docstring here
         ...
 

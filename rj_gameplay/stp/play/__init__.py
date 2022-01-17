@@ -76,7 +76,6 @@ class Play(ABC):
         """Given that all roles are in sorted order of priority, greedily assign the highest-priority role to the lowest-cost robot for that role. Instantiate tactics with the correct robots post-assignment.
         Satisfy constraint that all roles of a tactic must be assigned together.
         """
-        
 
         # TODO: use hashable Robots directly once PR #1815 merged
         used_robot_ids = set()
@@ -91,7 +90,8 @@ class Play(ABC):
                 for robot in world_state.our_robots:
                     if robot.id in used_robot_ids:
                         continue
-                    if not robot.visible: continue
+                    if not robot.visible:
+                        continue
                     cost = cost_fn(robot, world_state)
                     if cost < min_cost:
                         min_cost = cost

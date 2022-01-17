@@ -9,6 +9,7 @@ import stp.global_parameters as global_parameters
 
 from rj_msgs.msg import RobotIntent
 
+
 class PassTactic(stp.tactic.Tactic):
     def __init__(self, world_state: stp.rc.WorldState):
         super().__init__(world_state)
@@ -42,8 +43,11 @@ class PassTactic(stp.tactic.Tactic):
 
         if self._state == "init":
             self._role_requests = [
-                    (stp.role.cost.PickClosestRobot(world_state.ball.pos), passer.PasserRole)
-                ]
+                (
+                    stp.role.cost.PickClosestRobot(world_state.ball.pos),
+                    passer.PasserRole,
+                )
+            ]
             self._needs_assign = True
 
             self._state = "init_passer_capture"
@@ -55,7 +59,7 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == "passer_capture":
             # TODO: these lines are a little ugly, any fix?
-            passer_role = self.assigned_roles[0] 
+            passer_role = self.assigned_roles[0]
             assert isinstance(passer_role, passer.PasserRole)
             intent = passer_role.tick(world_state)
 
@@ -66,9 +70,15 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == "get_receiver":
             self._role_requests = [
-                    (stp.role.cost.PickClosestRobot(world_state.ball.pos), passer.PasserRole),
-                    (stp.role.cost.PickClosestRobot(world_state.field.their_goal_loc), receiver.ReceiverRole)
-                ]
+                (
+                    stp.role.cost.PickClosestRobot(world_state.ball.pos),
+                    passer.PasserRole,
+                ),
+                (
+                    stp.role.cost.PickClosestRobot(world_state.field.their_goal_loc),
+                    receiver.ReceiverRole,
+                ),
+            ]
             self._needs_assign = True
 
             self._state = "init_execute_pass"
@@ -84,7 +94,7 @@ class PassTactic(stp.tactic.Tactic):
             self.init_roles(world_state)
 
             # TODO: these lines are a little ugly, any fix?
-            passer_role = self.assigned_roles[0] 
+            passer_role = self.assigned_roles[0]
             assert isinstance(passer_role, passer.PasserRole)
             receiver_role = self.assigned_roles[1]
             assert isinstance(receiver_role, receiver.ReceiverRole)
@@ -94,18 +104,24 @@ class PassTactic(stp.tactic.Tactic):
             target_point = world_state.our_robots[receiver_role.robot.id].pose[0:2]
             passer_role.set_execute_pass(target_point)
 
-            role_intents = [(passer_role.robot.id, passer_role.tick(world_state)), (receiver_role.robot.id, receiver_role.tick(world_state))]
+            role_intents = [
+                (passer_role.robot.id, passer_role.tick(world_state)),
+                (receiver_role.robot.id, receiver_role.tick(world_state)),
+            ]
 
             self._state = "await_pass"
 
         elif self._state == "await_pass":
             # TODO: these lines are a little ugly, any fix?
-            passer_role = self.assigned_roles[0] 
+            passer_role = self.assigned_roles[0]
             assert isinstance(passer_role, passer.PasserRole)
             receiver_role = self.assigned_roles[1]
             assert isinstance(receiver_role, receiver.ReceiverRole)
 
-            role_intents = [(passer_role.robot.id, passer_role.tick(world_state)), (receiver_role.robot.id, receiver_role.tick(world_state))]
+            role_intents = [
+                (passer_role.robot.id, passer_role.tick(world_state)),
+                (receiver_role.robot.id, receiver_role.tick(world_state)),
+            ]
 
             if passer_role.is_done(world_state):
                 self._state = "pass_incoming"
@@ -115,8 +131,11 @@ class PassTactic(stp.tactic.Tactic):
             assert isinstance(receiver_role, receiver.ReceiverRole)
 
             self._role_requests = [
-                    (stp.role.cost.PickRobotById(receiver_role.robot.id), receiver.ReceiverRole)
-                ]
+                (
+                    stp.role.cost.PickRobotById(receiver_role.robot.id),
+                    receiver.ReceiverRole,
+                )
+            ]
             self._needs_assign = True
 
             self._state = "init_await_receive"

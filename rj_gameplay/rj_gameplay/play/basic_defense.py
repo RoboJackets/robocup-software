@@ -30,7 +30,9 @@ class BasicDefense(stp.play.Play):
             # TODO: had to add this check or role assignment behaved oddly
             #       fix by updating gameplay node to only tick once world_state is not None
             if world_state is not None:
-                self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+                self.prioritized_tactics.append(
+                    goalie_tactic.GoalieTactic(world_state, 0)
+                )
                 self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
                 # TODO: add nmark tactic
                 #       and make it go for the ball (rather than stopping in front)

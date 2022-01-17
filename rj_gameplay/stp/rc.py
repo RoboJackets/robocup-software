@@ -87,7 +87,6 @@ class Robot:
     def __hash__(self) -> int:
         return hash(self)
 
-
     @property
     def id(self) -> RobotId:
         """
