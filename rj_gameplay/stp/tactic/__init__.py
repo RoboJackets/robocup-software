@@ -55,5 +55,6 @@ class Tactic(ABC):
     def role_requests(self) -> List[Tuple[stp.role.Role, stp.role.CostFn]]:
         return self._role_requests
 
-    def get_req_role_ct(self) -> int:
-        return len(self._role_requests)
+    # TODO: use @property setter?
+    def set_assigned_robots(self, assigned_robots):
+        self.assigned_robots = assigned_robots

@@ -78,20 +78,20 @@ class Play(ABC):
         """
         
 
-        all_assigned_robots = []
         # TODO: use hashable Robots directly once PR #1815 merged
         used_robot_ids = set()
         for tactic in self.prioritized_tactics:
             # TODO: handle if tactic requests more roles than exist
             #       by not assigning tactic at all!
             #       and give some default behavior (later)
-            assigned_robots = []
+            robots_for_tactic = []
             for cost_fn, role in tactic.role_requests:
                 min_cost = 1e9
                 cheapest_robot = None
                 for robot in world_state.our_robots:
                     if robot.id in used_robot_ids:
                         continue
+                    if not robot.visible: continue
                     cost = cost_fn(robot, world_state)
                     if cost < min_cost:
                         min_cost = cost
@@ -102,8 +102,8 @@ class Play(ABC):
                     print(f"RoleRequest ({role}, {cost_fn}) was not assigned")
 
                 used_robot_ids.add(cheapest_robot.id)
-                assigned_robots.append(cheapest_robot)
-            tactic.assigned_robots = assigned_robots
+                robots_for_tactic.append(cheapest_robot)
+            tactic.set_assigned_robots(robots_for_tactic)
 
         for tactic in self.prioritized_tactics:
             tactic.init_roles(world_state)
