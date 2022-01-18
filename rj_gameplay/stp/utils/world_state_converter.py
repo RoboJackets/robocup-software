@@ -273,3 +273,4 @@ def worldstate_creator(partial_world_state: PartialWorldState,
                                 goalie_id)
 
     return world_state
+    
