@@ -50,7 +50,10 @@ class SkillEntry(tkdict.TypedKey[SkillT]):
         if not isinstance(other, SkillEntry):
             return False
 
-        return (self.concrete_cls, self._idx) == (other.concrete_cls, other._idx)
+        return (self.concrete_cls, self._idx) == (
+            other.concrete_cls,
+            other._idx,
+        )
 
     def __hash__(self) -> int:
         return hash((self.concrete_cls, self._idx))
@@ -147,8 +150,12 @@ class ITactic(Generic[PropT], ABC):
         return [self.create_request(**kwargs) for _ in range(num_requests)]
 
     @abstractmethod
-    def tick(self, world_state: rc.WorldState, role_results: RoleResults,
-             props: PropT) -> List[skill.ISkill]:
+    def tick(
+        self,
+        world_state: rc.WorldState,
+        role_results: RoleResults,
+        props: PropT,
+    ) -> List[skill.ISkill]:
         """Ticks the tactic, returning a tuple of the skills and the skills executed.
         :param world_state: Current world state.
         :param role_results: The results of role assignment.

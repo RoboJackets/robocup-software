@@ -11,10 +11,12 @@ import stp.rc as rc
 import numpy as np
 from typing import Callable
 
+
 class Seek(skill.ISkill):
     """
     A seeker skill based off of some heuristic
     """
+
     def __init__(self, role: role.Role, heuristic: Callable[np.array, float]) -> None:
         # TODO: Properly implement using move action
         pass

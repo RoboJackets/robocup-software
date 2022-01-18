@@ -14,6 +14,7 @@ import rj_gameplay.skill as skills
 from rj_gameplay.skill import move
 import stp.skill as skill
 import numpy as np
+
 # TODO: replace w/ global param server
 from stp.utils.constants import RobotConstants, BallConstants
 import stp.global_parameters as global_parameters
@@ -21,8 +22,7 @@ import stp.global_parameters as global_parameters
 MIN_WALL_RAD = None
 
 
-def find_wall_pts(num_wallers: int,
-                  world_state: rc.WorldState) -> List[np.ndarray]:
+def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarray]:
     global MIN_WALL_RAD
     """Calculates num_wallers points to form a wall between the ball and goal.
     :return list of wall_pts (as numpy arrays)
@@ -53,7 +53,8 @@ def find_wall_pts(num_wallers: int,
     for i in range(num_wallers - 1):
         mult = i // 2 + 1
         delta = (mult * (2 * RobotConstants.RADIUS + WALL_SPACING)) * wall_vec
-        if i % 2: delta = -delta
+        if i % 2:
+            delta = -delta
         wall_pts.append(mid_pt + delta)
 
     return wall_pts
