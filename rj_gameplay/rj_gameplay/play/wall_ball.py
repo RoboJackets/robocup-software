@@ -13,7 +13,6 @@ from typing import (
     Type,
 )
 import numpy as np
-from rj_gameplay.calculations import wall_calculations
 
 
 class WallBall(play.IPlay):
@@ -44,7 +43,7 @@ class WallBall(play.IPlay):
     ]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
+        wall_pts = wall_tactic.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
