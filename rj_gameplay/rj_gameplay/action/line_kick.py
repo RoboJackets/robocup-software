@@ -15,9 +15,6 @@ from typing import Optional
 import math
 from rj_msgs import msg
 
-from rj_gameplay.MAX_KICK_SPEED import *
-
-
 class LineKickAction(action.IFiniteAction):
     """
     Activates kicker. Intended to be used after an aim/drive action in a skill.
@@ -47,10 +44,6 @@ class LineKickAction(action.IFiniteAction):
             else RobotIntent.SHOOT_MODE_CHIP
         )
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
-        if self.kick_speed <= MAX_KICK_SPEED:
-            intent.kick_speed = self.kick_speed
-        else:
-            intent.kick_speed = MAX_KICK_SPEED
 
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True
