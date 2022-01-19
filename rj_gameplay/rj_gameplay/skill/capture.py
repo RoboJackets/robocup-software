@@ -25,6 +25,9 @@ class Capture(skill.Skill):
         self.__name__ = "capture skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        """
+        self.robot is updated in superclass
+        """
         intent = RobotIntent()
 
         collect_command = CollectMotionCommand()
@@ -43,8 +46,6 @@ class Capture(skill.Skill):
         # this doesn't work:
         # robot_pos = self.robot.pos
         # because self.robot is passed on init and never updated
-        # TODO: make superclass force robot update in tick()
-        #       (do this quietly with self.robot = world_state.our_robots[self.robot.id]
 
         dist_to_ball = np.linalg.norm(robot_pos - ball_pos)
 
