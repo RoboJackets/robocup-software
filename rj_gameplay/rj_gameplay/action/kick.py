@@ -28,7 +28,6 @@ class Kick(action.IAction):  # add ABC if needed
         new_intent = intent
         empty_command = EmptyMotionCommand()
         new_intent.motion_command.empty_command = [empty_command]
-        #removed max kick speed related stuff
         new_intent.trigger_mode = 2
         new_intent.shoot_mode = self.chip
         new_intent.is_active = True
