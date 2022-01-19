@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-HELP_STR="Usage: ./debug-cpp.sh [-n] 
+HELP_STR="Usage: ./debug-cpp.sh [-n] [-h]
 \tn:\t\t\t name of node to debug (default soccer)
 \th:\t\t\t print this message!
 "
