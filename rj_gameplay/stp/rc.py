@@ -84,6 +84,10 @@ class Robot:
                 return True
         return False
 
+    def __hash__(self) -> int:
+        return hash(self)
+
+
     @property
     def id(self) -> RobotId:
         """

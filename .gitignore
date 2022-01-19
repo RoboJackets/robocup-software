@@ -12,6 +12,7 @@
 /.settings
 /api_docs
 *~
+build-*
 
 # sublime-text
 *.sublime-workspace
