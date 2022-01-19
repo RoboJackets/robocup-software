@@ -2,25 +2,18 @@
 
 HELP_STR="Usage: ./debug-cpp.sh [-n] [-d] [-h]
 \tn:\t\t\t name of node to debug (default soccer)
-\t #TODO : fix these next 2 features or delete:
-\te:\t\t\t name of executable to debug, may be different than node name (default soccer)
-\td:\t\t\t select either gdb or lldb (default gdb)
 \th:\t\t\t print this message!
 "
 
 while getopts ":n:e:d:h" arg; do case "${arg}" in
 	h) printf "$HELP_STR" && exit 1 ;;
-	d) debugger=${OPTARG} && ([ "$debugger" = gdb ] || [ "$debugger" = lldb ]) || (printf "Unrecognized/Invalid Option: ${OPTARG}" && printf "\n$HELP_STR" exit 1);;
 	n) node=${OPTARG} ;;
-	e) executable=${OPTARG} ;;
 	?) printf "Unrecognized/Invalid Option: -${OPTARG}"
 	   printf "\n$HELP_STR"
 	   exit 1 ;;
 esac done
 
-[ -z "$debugger" ] && debugger="gdb"
 [ -z "$node" ] && node="soccer"
-[ -z "$executable" ] && executable="soccer"
 
 echo -e "for now we will assume the node "$node" is valid...\n"
 
@@ -62,11 +55,5 @@ echo -e "
 	1. ros2 launch rj_robocup debug-sim.launch.py\n
 	in a new terminal tab:\n
 	(recommended debugger is lldb-10 which is already installed by util/ubuntu-setup)  
-	2. ros2 run --prefix debugger_name -ex run --args' rj_robocup executable_name\n
+	2. ros2 run --prefix 'lldb-10 run' rj_robocup executable_name\n
 	"
-	
-# TODO: automatically launch launch file and run executable in new terminal
-# make perf
-#ros2 run --prefix '"$debugger" -ex run --args' rj_robocup "$executable"
-#xterm -hold 'ros2 launch rj_robocup debug-sim.launch.py -n' &
-
