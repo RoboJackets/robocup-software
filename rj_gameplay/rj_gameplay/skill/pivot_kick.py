@@ -12,8 +12,6 @@ from rj_gameplay.skill import kick, pivot, capture
 from rj_msgs.msg import RobotIntent
 import stp.rc as rc
 import numpy as np
-from rj_gameplay.MAX_KICK_SPEED import MAX_KICK_SPEED
-
 
 class PivotKick(skill.ISkill):  # add ABC if fails
     """
@@ -29,7 +27,7 @@ class PivotKick(skill.ISkill):  # add ABC if fails
         target_point: np.ndarray = None,
         dribble_speed: float = 1,
         chip: bool = False,
-        kick_speed: float = MAX_KICK_SPEED,
+        kick_speed: float = 5.0,
         threshold: float = 0.02,
         priority: int = 1,
     ) -> None:
