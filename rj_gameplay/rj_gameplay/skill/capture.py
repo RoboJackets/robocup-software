@@ -43,7 +43,7 @@ class Capture(skill.Skill):
         ball_pos = world_state.ball.pos
         #robot_pos = world_state.our_robots[self.robot.id].pose[0:2]
 
-        # this doesn'tdetriments of multiple hard drive partitions work:
+        # this doesn't work:
         robot_pos = self.robot.pos
         # because self.robot is passed on init and never updated
 
