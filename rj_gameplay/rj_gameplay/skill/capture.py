@@ -16,6 +16,7 @@ import numpy as np
 
 from stp.utils.constants import RobotConstants
 
+
 class Capture(skill.Skill):
     def __init__(self, robot: Optional[rc.Robot] = None):
         self.robot = robot
@@ -47,7 +48,7 @@ class Capture(skill.Skill):
 
         dist_to_ball = np.linalg.norm(robot_pos - ball_pos)
 
-        ball_slow = ball_speed < 1.0 
+        ball_slow = ball_speed < 1.0
         ball_close = dist_to_ball < RobotConstants.RADIUS * 1.3
 
         return ball_slow and ball_close

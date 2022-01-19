@@ -4,6 +4,7 @@ from rj_gameplay.role import goalie_role
 
 from rj_msgs.msg import RobotIntent
 
+
 class GoalieTactic(stp.tactic.Tactic):
     """Single-robot Tactic that serves as a Goalie Role wrapper."""
 

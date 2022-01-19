@@ -3,6 +3,7 @@ from rj_gameplay.skill import receive, line_kick, pivot_kick
 
 from rj_msgs.msg import RobotIntent
 
+
 class PasserRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
@@ -30,7 +31,7 @@ class PasserRole(stp.role.Role):
          - when got ball: mark pass ready for Tactic, dribble, wait
          - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
-        print("passer state:", self._state)
+        # print("passer state:", self._state)
 
         intent = None
         if self._state == "init":
@@ -49,7 +50,7 @@ class PasserRole(stp.role.Role):
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=self._target_point,
-                chip=False, # TODO: make these params configurable
+                chip=False,  # TODO: make these params configurable
                 kick_speed=4.0,
             )
             self._state = "execute_pass"

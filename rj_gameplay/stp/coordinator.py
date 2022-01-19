@@ -31,8 +31,6 @@ class Coordinator:
     _prev_role_results: assignment.FlatRoleResults
     _props: Dict[Type[stp.play.Play], Any]
 
-    # TODO(1585): Properly handle type annotations for props instead of using Any.
-
     def __init__(
         self,
         play_selector: stp.situation.IPlaySelector,

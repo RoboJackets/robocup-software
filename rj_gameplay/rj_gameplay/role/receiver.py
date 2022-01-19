@@ -3,6 +3,7 @@ from rj_gameplay.skill import receive, line_kick, pivot_kick
 
 from rj_msgs.msg import RobotIntent
 
+
 class ReceiverRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
@@ -24,12 +25,12 @@ class ReceiverRole(stp.role.Role):
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """
-        Assume passer already has ball on init. Then: 
+        Assume passer already has ball on init. Then:
          - on init: continue seeking
          - interrupt signal from Tactic: go get ball
          - when got ball: done
         """
-        print("receiver state:", self._state)
+        # print("receiver state:", self._state)
 
         intent = None
 
