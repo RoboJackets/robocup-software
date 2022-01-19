@@ -1,11 +1,11 @@
 #!/bin/bash -e
 
-HELP_STR="Usage: ./debug-cpp.sh [-n] [-d] [-h]
+HELP_STR="Usage: ./debug-cpp.sh [-n] 
 \tn:\t\t\t name of node to debug (default soccer)
 \th:\t\t\t print this message!
 "
 
-while getopts ":n:e:d:h" arg; do case "${arg}" in
+while getopts ":n:h" arg; do case "${arg}" in
 	h) printf "$HELP_STR" && exit 1 ;;
 	n) node=${OPTARG} ;;
 	?) printf "Unrecognized/Invalid Option: -${OPTARG}"
