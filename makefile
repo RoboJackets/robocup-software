@@ -71,7 +71,6 @@ backend-headless-simulator-soccer:
 backend-simulator-soccer:
 	ros2 launch rj_robocup sim.launch.py
 
-# TODO: add debug-sim again
 debug: all
 
 # Run both C++ and python unit tests
