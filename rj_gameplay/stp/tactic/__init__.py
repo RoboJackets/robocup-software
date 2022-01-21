@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
 
-import stp
+import stp.rc
+import stp.role
 
 from rj_msgs.msg import RobotIntent
 

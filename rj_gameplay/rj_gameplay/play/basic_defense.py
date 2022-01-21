@@ -30,7 +30,7 @@ class BasicDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
 
-        if self.state is "init":
+        if self.state == "init":
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
             # TODO: add nmark tactic
@@ -38,6 +38,6 @@ class BasicDefense(stp.play.Play):
             self.assign_roles(world_state)
             self.state = "active"
             return self.get_robot_intents(world_state)
-        elif self.state is "active":
+        elif self.state == "active":
             # return robot intents from assigned tactics back to gameplay node
             return self.get_robot_intents(world_state)
