@@ -8,6 +8,9 @@ from rj_msgs.msg import RobotIntent
 
 
 class Keepaway(stp.play.Play):
+    """Play that passes repeatedly, effectively playing keepaway.
+    See tick() for more details.
+    """
     def __init__(self):
         super().__init__()
 

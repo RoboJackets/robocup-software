@@ -15,6 +15,7 @@ class PassTactic(stp.tactic.Tactic):
         super().__init__(world_state)
 
         # TODO: make FSM class (or at least use enum instead of str literals)
+        #       - allow FSM class to print state as debug tool
         self._state = "init"
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
@@ -36,12 +37,12 @@ class PassTactic(stp.tactic.Tactic):
          - on ball passed: tick receiver, release passer role
          - when receiver done: done
         """
-        # make this the default print behavior
-        # print("tactic state:", self._state)
 
         role_intents = []
 
         if self._state == "init":
+            # TODO: allow Plays to pass in this (and further below) cost fns,
+            #       otherwise behavior is not easy to manipulate
             self._role_requests = [
                 (
                     stp.role.cost.PickClosestRobot(world_state.ball.pos),
