@@ -19,7 +19,7 @@ DIST_TO_FAST_KICK = 7
 
 
 def get_goalie_pt(world_state: stp.rc.WorldState) -> np.ndarray:
-    """Finds point for goalie to best be in to block a shot.
+    """Gives goalie a default location to track the ball from when it is not actively intercepting or capturing the ball.
     :return numpy point
     """
     # TODO: param server any constant from stp/utils/constants.py (this includes BallConstants)
