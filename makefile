@@ -71,22 +71,7 @@ backend-headless-simulator-soccer:
 backend-simulator-soccer:
 	ros2 launch rj_robocup sim.launch.py
 
-
 debug: all
-ifeq ($(shell uname), Linux)
-	gdb ./run/soccer
-else
-	lldb ./run/soccer.app
-endif
-
-debug-sim: all
-	-pkill -f './grSim'
-	-(cd run && ./grSim) &
-ifeq ($(shell uname), Linux)
-	gdb --args ./run/soccer -sim
-else
-	lldb -- ./run/soccer.app -sim
-endif
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
@@ -117,7 +102,7 @@ coverage:
 
 clean:
 	((rm build-debug -rf); (rm build-release -rf); (rm build-release-debug -rf)) || true
-	git clean -f -e -d cmake*
+	git clean -f -X -d cmake-*
 	rm -rf install/bin install/lib install/share install/include
 
 static-analysis:

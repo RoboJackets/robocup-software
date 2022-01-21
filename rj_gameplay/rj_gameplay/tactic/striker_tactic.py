@@ -3,7 +3,7 @@ from typing import List, Optional, Any, Dict, Type
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
-from rj_gameplay.skill import shoot, capture, pivot_kick, line_kick
+from rj_gameplay.skill import capture, pivot_kick, line_kick
 import stp.skill as skill
 import numpy as np
 from math import atan2

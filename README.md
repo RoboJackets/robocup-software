@@ -42,6 +42,10 @@ Compiled programs and some configuration files are stored here.
 
 ## Setup
 
+### OUTDATED (since ROS2 rewrite)
+
+**Read the docs in `docs/src/getting_started/index.rst` instead.**
+
 Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on 20.04 Ubuntu Linux due to the limitations of ROS2.
 
 1) Clone the repository
