@@ -15,10 +15,12 @@ from rj_msgs.msg import RobotIntent, SettleMotionCommand
 import stp.rc as rc
 from rj_msgs import msg
 
+
 class Receive(skill.Skill):
     """Skill that ends when robot has possession of the ball.
     Consists of Settle then Capture.
     """
+
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
 

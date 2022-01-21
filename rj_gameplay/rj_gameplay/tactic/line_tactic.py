@@ -6,8 +6,7 @@ from rj_msgs.msg import RobotIntent
 
 
 class LineTactic(stp.tactic.Tactic):
-    """Tactic for line up play that puts all six robots in a line on the left of the field.
-    """
+    """Tactic for line up play that puts all six robots in a line on the left of the field."""
 
     def __init__(self, world_state: stp.rc.WorldState):
         super().__init__(world_state)

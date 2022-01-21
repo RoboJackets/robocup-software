@@ -39,7 +39,7 @@ class IPlay(ABC):
 
 
 class Play(ABC):
-    """Coordinate full-team behaviors via Tactics. Assumes number of Roles matches number of robots on the field. 
+    """Coordinate full-team behaviors via Tactics. Assumes number of Roles matches number of robots on the field.
     Ends when SituationAnalysis switches the Play, so no is_done() necessary.
     See tick() for more details on behavior.
     """

@@ -18,8 +18,8 @@ SETTLE_BALL_SPEED_THRESHOLD = 1.0
 
 # TODO: change to skill.Skill and test
 class Settle(skill.ISkill):
-    """First half of a Receive Skill. Slows the ball down to allow Capture planner to work.
-    """
+    """First half of a Receive Skill. Slows the ball down to allow Capture planner to work."""
+
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
 

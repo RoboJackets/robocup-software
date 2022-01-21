@@ -35,6 +35,8 @@ def get_goalie_pt(world_state: stp.rc.WorldState) -> np.ndarray:
 
 """Calculates point to move to to stop the ball, standing in for an intercept planner.
 """
+
+
 def get_block_pt(world_state: stp.rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
     pos = world_state.ball.pos
     vel = world_state.ball.vel

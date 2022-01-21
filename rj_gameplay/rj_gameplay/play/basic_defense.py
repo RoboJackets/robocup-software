@@ -13,9 +13,9 @@ from rj_msgs.msg import RobotIntent
 
 class BasicDefense(stp.play.Play):
     """Play that consists of:
-     - 1 Goalie
-     - 5 Wallers
-     TODO: add 2 aggressive markers, go down to 3 Wallers
+    - 1 Goalie
+    - 5 Wallers
+    TODO: add 2 aggressive markers, go down to 3 Wallers
     """
 
     def __init__(self):
