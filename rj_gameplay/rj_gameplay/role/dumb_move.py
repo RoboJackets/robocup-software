@@ -10,6 +10,8 @@ from rj_msgs.msg import RobotIntent
 
 
 class DumbMove(stp.role.Role):
+    """Wrapper for the Move Skill. Named "Dumb" because it does not have much other functionality (breaking the ideal of a "complex" single-robot Role).
+    """
     def __init__(self, robot: stp.rc.Robot, target_point, face_point) -> None:
         super().__init__(robot)
 
