@@ -1,5 +1,4 @@
 #include "move_action_server.hpp"
-#include <signal.h>
 
 namespace server {
 using Move = rj_msgs::action::Move;
@@ -52,6 +51,8 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
 rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                            std::shared_ptr<const Move::Goal> goal) {
     // TODO: only accept if goal is move action
+    //  (so just check that the empty command is not filled)
+
     std::cout << "handle goal reached" << std::endl;
     (void)uuid;
     int robot_id = goal->server_intent.robot_id;
@@ -81,10 +82,12 @@ void MoveActionServer ::handle_accepted(const std::shared_ptr<GoalHandleMove> go
 
 void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handle) {
     std::cout << "executing" << std::endl;
-    std::shared_ptr<const Move::Goal>  goal = goal_handle->get_goal();
+    std::shared_ptr<const Move::Goal> goal = goal_handle->get_goal();
     rj_msgs::msg::ServerIntent server_intent = goal->server_intent;
-    bool is_move = server_intent.is_move;
     rj_msgs::msg::RobotIntent robot_intent = server_intent.intent;
+
+    const planning::MotionCommand motion_command =
+        rj_convert::convert_from_ros(robot_intent.motion_command);
     int robot_id = server_intent.robot_id;
     std::cout << robot_id << std::endl;
 
@@ -94,10 +97,10 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
     bool tested = this->test_desired_states_.at(robot_id);
     RJ::Time old_timestamp = tested ? robot_desired_states_[robot_id].timestamp : base_time;
 
-    std::shared_ptr<Move::Result>  result = std::make_shared<Move::Result>();
+    std::shared_ptr<Move::Result> result = std::make_shared<Move::Result>();
 
     // TODO : remove if statement once move action server is only responsible for move actions
-    if (is_move) {
+    if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
         /*const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.path_target_command[0].target.position);*/
         do {
@@ -108,7 +111,7 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
                 return;
             }
 
-            std::shared_ptr<Move::Feedback>  feedback = std::make_shared<Move::Feedback>();
+            std::shared_ptr<Move::Feedback> feedback = std::make_shared<Move::Feedback>();
             planning::Trajectory robot_trajectory = this->robot_trajectories_[robot_id];
 
             if (!robot_trajectory.empty()) {
@@ -129,5 +132,3 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
     goal_handle->succeed(result);
 }
 }  // namespace server
-
-// RCLCPP_COMPONENTS_REGISTER_NODE(rj_robocup::MoveActionServer)

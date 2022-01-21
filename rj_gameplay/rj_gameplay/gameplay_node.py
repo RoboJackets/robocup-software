@@ -260,9 +260,6 @@ class GameplayNode(Node):
                     intents[i], i
                 )
                 # self.move_action_clients[i].cancel_goal()
-                if server_intent.intent.motion_command.path_target_command is not None:
-                    server_intent.is_move = True
-
                 self.move_action_clients[i].send_goal(server_intent)
                 # self.move_action_clients[i].
 
@@ -498,9 +495,6 @@ class GameplayNode(Node):
         """
         destroys node
         """
-        # TODO: destroy action clients?
-        # self.action_client.shutdown()
-
         self.destroy_node()
         rclpy.shutdown()
 
