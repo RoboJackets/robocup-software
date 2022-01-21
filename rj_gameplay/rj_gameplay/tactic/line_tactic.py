@@ -6,14 +6,17 @@ from rj_msgs.msg import RobotIntent
 
 
 class LineTactic(stp.tactic.Tactic):
-    # TODO docs
+    """Tactic for line up play that puts all six robots in a line on the left of the field.
+    """
 
     def __init__(self, world_state: stp.rc.WorldState):
         super().__init__(world_state)
 
         # compute move points
+        # TODO: make start on side of the field, so this Tactic is actually useful during penalty situations
         start = (3.0, 0.0)
         dy = 0.5
+        # TODO: make the # here a param instead of hardcoding for same reason as above TODO
         self.move_points = [(start[0], start[1] + i * dy) for i in range(6)]
 
         # request closest robot every pt
