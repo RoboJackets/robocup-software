@@ -17,13 +17,11 @@ SkillEntry = Any
 
 
 class Tactic(ABC):
-    """High-level construct that coordinates one or more roles. Creates role requests to be handled by Plays.
-    """
+    """High-level construct that coordinates one or more roles. Creates role requests to be handled by Plays."""
 
     @abstractmethod
     def __init__(self, world_state: stp.rc.WorldState) -> None:
-        """Save the world_state, and create empty lists for handling role requests.
-        """
+        """Save the world_state, and create empty lists for handling role requests."""
 
         self.world_state = world_state
 
@@ -35,8 +33,7 @@ class Tactic(ABC):
 
     @abstractmethod
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
-        """Given assigned robots by the Play, initialize each role of role_requests with its assigned robot.
-        """
+        """Given assigned robots by the Play, initialize each role of role_requests with its assigned robot."""
         ...
 
     @abstractmethod
@@ -44,8 +41,7 @@ class Tactic(ABC):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
-        """Tick each Role of the Tactic to get a list of robot_ids and linked RobotIntents for the Play.
-        """
+        """Tick each Role of the Tactic to get a list of robot_ids and linked RobotIntents for the Play."""
 
         # TODO: update self.world_state every tick, like Skills?
         ...
@@ -55,8 +51,7 @@ class Tactic(ABC):
         self,
         world_state: stp.rc.WorldState,
     ) -> bool:
-        """True when Tactic is done; False otherwise.
-        """
+        """True when Tactic is done; False otherwise."""
         ...
 
     @property

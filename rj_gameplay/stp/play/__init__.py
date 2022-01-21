@@ -39,7 +39,7 @@ class IPlay(ABC):
 
 
 class Play(ABC):
-    """Coordinate full-team behaviors via Tactics. Assumes number of roles matches number of robots on the field. See tick() for more details."""
+    """Coordinate full-team behaviors via Tactics. Assumes number of Roles matches number of robots on the field. See tick() for more details."""
 
     def __init__(self):
         # TODO: all three of these are required for assign_roles()
@@ -62,7 +62,7 @@ class Play(ABC):
         This should:
             1. Determine if role assignment is necessary.
             2. If so, perform role assignment with self.assign_roles().
-            3. Tick tactics to aggregate robot_intents with self.get_robot_intents().
+            3. Tick Tactics to aggregate robot_intents with self.get_robot_intents().
 
         :param world_state: Current state of the world.
         :return: list of robot intents where index = robot_id
@@ -73,8 +73,8 @@ class Play(ABC):
         self,
         world_state: stp.rc.WorldState,
     ) -> None:
-        """Given that all roles are in sorted order of priority, greedily assign the highest-priority role to the lowest-cost robot for that role. Instantiate tactics with the correct robots post-assignment.
-        Satisfy constraint that all roles of a tactic must be assigned together.
+        """Given that all Roles are in sorted order of priority, greedily assign the highest-priority Role to the lowest-cost robot for that Role. Instantiate Tactics with the correct robots post-assignment. (Note that this behavior is largely handled by the init_roles of each Tactic.)
+        Satisfy constraint that all Roles of a Tactic must all be assigned at once. If a Tactic's Roles cannot all be filled, do not fill any of its Roles.
         """
 
         # TODO: use hashable Robots directly once PR #1815 merged
@@ -109,6 +109,7 @@ class Play(ABC):
             tactic.init_roles(world_state)
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
+        """Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent"""
         # TODO: this constant is from gameplay_node, move to a common gameplay params file
         NUM_ROBOTS = 16
         robot_intents = [None for _ in range(NUM_ROBOTS)]

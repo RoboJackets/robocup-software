@@ -27,9 +27,7 @@ class BasicDefense(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self.state is "init":
-            self.prioritized_tactics.append(
-                goalie_tactic.GoalieTactic(world_state, 0)
-            )
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
             # TODO: add nmark tactic
             #       and make it go for the ball (rather than stopping in front)
