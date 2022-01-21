@@ -29,5 +29,6 @@ class Skill(ABC):
 
     @abstractmethod
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
-        # TODO: docstring
+        """True when skill is done; False otherwise.
+        """
         ...
