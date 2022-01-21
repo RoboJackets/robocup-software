@@ -6,12 +6,15 @@ from rj_msgs.msg import RobotIntent
 
 
 class GoalieTactic(stp.tactic.Tactic):
-    """Single-robot Tactic that serves as a Goalie Role wrapper."""
+    """Wrapper for the Goalie Role that handles assigning said role to whichever Robot is our goalie.
+    """
 
     def __init__(self, world_state: stp.rc.WorldState, goalie_id: int):
         """Special case where we want only robot 0 to be goalie, from init."""
         super().__init__(world_state)
 
+        # TODO: rather than passing in hardcoded goalie id on init, gameplay node should 
+        #       have a set robot and pass that (in case robot 0 is ejected or broken)
         self._role_requests.append(
             (stp.role.cost.PickRobotById(goalie_id), goalie_role.GoalieRole)
         )
