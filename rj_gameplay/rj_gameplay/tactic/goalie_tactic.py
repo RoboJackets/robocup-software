@@ -4,6 +4,8 @@ from rj_gameplay.role import goalie_role
 
 from rj_msgs.msg import RobotIntent
 
+from typing import List, Tuple
+
 
 class GoalieTactic(stp.tactic.Tactic):
     """Wrapper for the Goalie Role that handles assigning said role to whichever Robot is our goalie."""

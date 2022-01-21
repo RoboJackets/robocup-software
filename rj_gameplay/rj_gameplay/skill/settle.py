@@ -16,8 +16,7 @@ from typing import Optional
 SETTLE_BALL_SPEED_THRESHOLD = 1.0
 
 
-# TODO: change to skill.Skill and test
-class Settle(skill.ISkill):
+class Settle(skill.Skill):
     """First half of a Receive Skill. Slows the ball down to allow Capture planner to work."""
 
     def __init__(self, robot: rc.Robot = None):
