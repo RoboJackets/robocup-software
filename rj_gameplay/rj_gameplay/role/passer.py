@@ -31,7 +31,6 @@ class PasserRole(stp.role.Role):
          - when got ball: mark pass ready for Tactic, dribble, wait
          - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
-        # print("passer state:", self._state)
 
         intent = None
         if self._state == "init":
