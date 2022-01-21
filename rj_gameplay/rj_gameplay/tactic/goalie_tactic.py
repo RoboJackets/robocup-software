@@ -23,7 +23,8 @@ class GoalieTactic(stp.tactic.Tactic):
             if role is goalie_role.GoalieRole:
                 self.assigned_roles.append(role(robot))
 
-    def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
+    def tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
+
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
