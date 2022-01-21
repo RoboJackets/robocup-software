@@ -30,7 +30,6 @@ class ReceiverRole(stp.role.Role):
          - interrupt signal from Tactic: go get ball
          - when got ball: done
         """
-        # print("receiver state:", self._state)
 
         intent = None
 
