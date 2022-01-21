@@ -29,7 +29,8 @@ class BasicDefense(stp.play.Play):
         if self.state is "init":
             # TODO: had to add this check or role assignment behaved oddly
             #       fix by updating gameplay node to only tick once world_state is not None
-            if world_state is not None:
+            # if world_state is not None:
+            if True:
                 self.prioritized_tactics.append(
                     goalie_tactic.GoalieTactic(world_state, 0)
                 )

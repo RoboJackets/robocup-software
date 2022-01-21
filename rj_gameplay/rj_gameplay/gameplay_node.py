@@ -462,7 +462,7 @@ def main():
     play_selector = basic_play_selector.BasicPlaySelector()
 
     # change this line to test different plays
-    test_play = line_up.LineUp()
+    test_play = basic_defense.BasicDefense()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
