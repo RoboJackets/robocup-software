@@ -26,6 +26,7 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
     this->test_desired_states_.assign(kNumShells, false);
     this->test_accept_goal_.reserve(kNumShells);
     this->test_accept_goal_.assign(kNumShells, true);
+    this->target_positions.fill((-1, -1));
 
     for (size_t i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(this->create_publisher<RobotIntent>(
@@ -52,12 +53,26 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
                                                            std::shared_ptr<const Move::Goal> goal) {
     // TODO: only accept if goal is move action
     //  (so just check that the empty command is not filled)
-
     std::cout << "handle goal reached" << std::endl;
     (void)uuid;
+
     int robot_id = goal->server_intent.robot_id;
+    RobotIntent robot_intent = goal->server_intent.intent;
+    const planning::MotionCommand motion_command =
+        rj_convert::convert_from_ros(robot_intent.motion_command);
+    if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
+        const auto target_position = rj_convert::convert_from_ros(
+            goal->server_intent.intent.motion_command.path_target_command[0].target.position);
+        rj_geometry::Point old_position = target_positions[robot_id];
+        if (target_position.nearly_equals(old_position)) {
+            return rclcpp_action::GoalResponse::REJECT;
+        } else {
+            target_positions[robot_id] = target_position;
+        }
+    }
+
     accept_mutexes[robot_id].lock();
-    // TODO: accept if new position is different than old
+    // TODO : remove this once fixed slowness
     if (this->test_accept_goal_[robot_id]) {
         this->test_accept_goal_[robot_id] = false;
         accept_mutexes[robot_id].unlock();
@@ -101,8 +116,6 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
 
     // TODO : remove if statement once move action server is only responsible for move actions
     if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
-        /*const auto target_position = rj_convert::convert_from_ros(
-            goal->server_intent.intent.motion_command.path_target_command[0].target.position);*/
         do {
             if (goal_handle->is_canceling()) {
                 result->is_done = true;

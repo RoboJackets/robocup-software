@@ -488,7 +488,6 @@ class GameplayNode(Node):
         server_intent = msg.ServerIntent()
         server_intent.intent = intent
         server_intent.robot_id = robot_id
-        server_intent.is_move = False
         return server_intent
 
     def shutdown(self) -> None:

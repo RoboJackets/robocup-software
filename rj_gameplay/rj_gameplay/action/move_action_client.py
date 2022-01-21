@@ -33,7 +33,7 @@ class MoveActionClient(Node):
                     len(path_target_command) > 0
                     and path_target_command[0].target.position == new_target_position
                 ):
-                    return
+                    self.cancel_goal()
         goal_msg = Move.Goal()
         goal_msg.server_intent = server_intent
 
