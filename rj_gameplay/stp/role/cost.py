@@ -9,6 +9,8 @@ import stp.role
 
 
 class PickRobotById(stp.role.CostFn):
+    """Always select robot of robot_id (passed on init)."""
+
     def __init__(self, robot_id: int):
         self._robot_id = robot_id
 
@@ -37,6 +39,8 @@ class PickRobotById(stp.role.CostFn):
 
 
 class PickClosestRobot(stp.role.CostFn):
+    """Always select closest robot to some target_point (passed on init)."""
+
     def __init__(self, target_point):
         self._target_point = target_point
 

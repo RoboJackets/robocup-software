@@ -15,26 +15,34 @@ class Role(ABC):
     """Complex single-robot role, such as Goalie or Striker. Uses Skills to achieve behavior."""
 
     def __init__(self, robot: stp.rc.Robot) -> None:
-        """All Roles should apply to one robot's behavior; thus, robot is defined as a formal argument here. Concrete Roles should overwrite init with their own fields, but call super()'s init to use this shared code."""
+        """All Roles should apply to one robot's behavior; thus, robot is defined as a formal argument here. Concrete Roles should overwrite init with their own fields, but call super()'s init to use this shared code, like so:
+
+        super().__init__(robot)
+        """
+
         self._robot: stp.rc.Robot = robot
 
     @abstractmethod
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
-        """Ticks Skill to get RobotIntent."""
-        # TODO: add docstring here
+        """Handle behavior of Role by handling which Skill is ticked, and with what params. Return the RobotIntent returned from ticking a Skill."""
         ...
 
     @abstractmethod
-    def tick(self, world_state: stp.rc.WorldState) -> bool:
-        # TODO doc
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
+        """True if Role is done; False otherwise."""
         ...
 
     @property
     def robot(self) -> stp.rc.Robot:
+        """Returns self._robot. @property allows the getter to be called like this:
+
+        some_role = ConcreteRole()
+        some_robot = some_role.robot
+        """
         return self._robot
 
 
-# TODO: delete this
+# TODO: delete this when role assignment switched over completely
 class Priority(IntEnum):
     """An enum to represent priority of the role assignment."""
 
@@ -118,6 +126,7 @@ def unconstrained_constraint_fn(
     return True
 
 
+# TODO: delete this when role assignment switched over completely
 class RoleRequest:
     """Role Request."""
 
@@ -186,6 +195,7 @@ class RoleRequest:
         return self.__str__()
 
 
+# TODO: delete this when role assignment switched over completely
 class RoleResult:
     """The result of role assignment."""
 
