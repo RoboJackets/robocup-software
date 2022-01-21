@@ -8,6 +8,7 @@ import stp.role as role
 import stp.tactic as tactic
 
 # RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry, int]
+# TODO: delete once role assignment switched over entirely
 RoleId = Any
 
 FlatRoleRequests = Dict[RoleId, role.RoleRequest]
