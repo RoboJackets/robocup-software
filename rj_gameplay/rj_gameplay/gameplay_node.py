@@ -36,21 +36,6 @@ import rj_gameplay.basic_play_selector as basic_play_selector
 NUM_ROBOTS = 16
 
 
-class TestPlaySelector(situation.IPlaySelector):
-    """
-    Convenience class for testing individual plays in gameplay without
-    having to go through the play selection system.
-
-    Import a new play, then change the select() method's return below to force
-    gameplay to always use the selected type.
-    """
-
-    def select(
-        self, world_state: rc.WorldState
-    ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
-        return (None, line_up.LineUp())
-
-
 class GameplayNode(Node):
     """
     A node which subscribes to the world_state, game state, robot status, and
@@ -60,12 +45,14 @@ class GameplayNode(Node):
     def __init__(
         self,
         play_selector: situation.IPlaySelector,
+        test_play: Optional[stp.play.Play] = None,
+        # TODO: see whether or not world_state is ever not None here
         world_state: Optional[rc.WorldState] = None,
     ) -> None:
         rclpy.init()
         super().__init__("gameplay_node")
 
-        self.test_play = keepaway.Keepaway()
+        self.test_play = test_play
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
@@ -154,7 +141,6 @@ class GameplayNode(Node):
             StringMsg, "/gameplay/debug_text", 10
         )
         self.play_selector: situation.IPlaySelector = play_selector
-        self.coordinator = coordinator.Coordinator(play_selector, self.debug_callback)
 
     def set_play_state(self, play_state: msg.PlayState):
         self.play_state = play_state
@@ -233,8 +219,11 @@ class GameplayNode(Node):
         self.update_world_state()
 
         if self.world_state is not None:
-            # intents = self.coordinator.tick(self.world_state)
-            intents = self.test_play.tick(self.world_state)
+            if self.test_play is None:
+                curr_situation, curr_play = self.play_selector.select(self.world_state)
+                intents = curr_play.tick(self.world_state)
+            else:
+                intents = self.test_play.tick(self.world_state)
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
@@ -470,11 +459,10 @@ class GameplayNode(Node):
 
 
 def main():
-    # uncomment this line to use the test play selector
-    play_selector = TestPlaySelector()
+    play_selector = basic_play_selector.BasicPlaySelector()
 
-    # comment out this line when using the test play selector
-    # play_selector = basic_play_selector.BasicPlaySelector()
+    # change this line to test different plays
+    test_play = line_up.LineUp()
 
-    gameplay = GameplayNode(play_selector)
+    gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
