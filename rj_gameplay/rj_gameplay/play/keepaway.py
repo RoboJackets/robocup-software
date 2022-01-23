@@ -41,7 +41,7 @@ class Keepaway(stp.play.Play):
 
         elif self.state == "active":
             # TODO: this loop's logic is fairly crucial in role assignment
-            # 
+            #
             # is there a way I can force this to happen as a precondition to assign_roles?
             # maybe call assign_roles() every tick but check tactic for needs_assign before assigning it
             # (this works as the method is in Play superclass)

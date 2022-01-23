@@ -1,14 +1,13 @@
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
-
 import stp
 
-import rj_gameplay.eval
-from rj_gameplay.skill import move, receive, line_kick, pivot_kick  # , intercept
+from rj_gameplay.skill import move, receive, pivot_kick  # , line_kick, intercept
 import numpy as np
 
-from stp.utils.constants import RobotConstants, BallConstants
-import stp.global_parameters as global_parameters
-from stp.local_parameters import Param
+# TODO: settle on unified way to define constants in gameplay
+from stp.utils.constants import RobotConstants  # , BallConstants
+
+# import stp.global_parameters as global_parameters
+# from stp.local_parameters import Param
 
 from rj_msgs.msg import RobotIntent
 
@@ -22,7 +21,6 @@ def get_goalie_pt(world_state: stp.rc.WorldState) -> np.ndarray:
     """Gives goalie a default location to track the ball from when it is not actively intercepting or capturing the ball.
     :return numpy point
     """
-    # TODO: param server any constant from stp/utils/constants.py (this includes BallConstants)
     ball_pt = world_state.ball.pos
     goal_pt = world_state.field.our_goal_loc
 
@@ -159,7 +157,7 @@ class GoalieRole(stp.role.Role):
 
             return self.pivot_kick_skill.tick(world_state)
 
-    def is_done(self, world_state):
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # goalie always active
         # TODO: make role end on capture, let passing role take over
         return False

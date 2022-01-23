@@ -1,9 +1,7 @@
-import stp
+import stp.role
+import stp.rc
 
-import rj_gameplay.skill as skills
 from rj_gameplay.skill import move
-import stp.skill as skill
-import numpy as np
 
 from rj_msgs.msg import RobotIntent
 

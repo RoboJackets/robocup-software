@@ -1,5 +1,7 @@
-import stp
-from rj_gameplay.skill import receive, line_kick, pivot_kick
+import stp.role
+import stp.rc
+
+from rj_gameplay.skill import receive
 
 from rj_msgs.msg import RobotIntent
 

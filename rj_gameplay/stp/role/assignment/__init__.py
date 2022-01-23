@@ -1,7 +1,7 @@
 """This module contains the interface for role assignment."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple, Type, Any
+from typing import Dict, Any
 
 import stp.rc
 import stp.role as role

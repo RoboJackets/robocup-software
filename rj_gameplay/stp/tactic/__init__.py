@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
+from typing import List, Tuple, Any
 
 import stp.rc
 import stp.role
@@ -39,8 +39,7 @@ class Tactic(ABC):
 
     @abstractmethod
     def tick(
-        self,
-        world_state: stp.rc.WorldState,
+        self, world_state: stp.rc.WorldState
     ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
         """Tick each Role of the Tactic to get a list of robot_ids and linked RobotIntents for the Play."""
 

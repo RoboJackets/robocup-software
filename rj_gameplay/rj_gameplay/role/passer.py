@@ -1,5 +1,7 @@
-import stp
-from rj_gameplay.skill import receive, line_kick, pivot_kick
+import stp.role
+import stp.rc
+
+from rj_gameplay.skill import receive, pivot_kick  # , line_kick
 
 from rj_msgs.msg import RobotIntent
 
@@ -50,8 +52,8 @@ class PasserRole(stp.role.Role):
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=self._target_point,
-                chip=False,  
-                kick_speed=4.0, # TODO: adjust based on dist from target_point
+                chip=False,
+                kick_speed=4.0,  # TODO: adjust based on dist from target_point
             )
             self._state = "execute_pass"
         elif self._state == "execute_pass":

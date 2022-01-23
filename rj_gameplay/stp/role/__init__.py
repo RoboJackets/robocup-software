@@ -5,10 +5,9 @@ import stp.rc
 
 from rj_msgs.msg import RobotIntent
 
-BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
-
-
 from abc import ABC, abstractmethod
+
+BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
 
 
 class Role(ABC):
