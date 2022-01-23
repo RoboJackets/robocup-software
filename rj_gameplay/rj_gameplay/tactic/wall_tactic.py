@@ -99,7 +99,7 @@ class WallTactic(tactic.ITactic):
 
     def get_requests(
         self, world_state: rc.WorldState, wall_pt, props
-    ) -> List[tactic.RoleRequests]:
+    ) -> Dict[tactic.RoleRequests, List[tactic.RoleRequests]]:
         """
         :return: A list of role requests for move skills needed
         """
