@@ -46,11 +46,12 @@ class PasserRole(stp.role.Role):
             pass
         # this state transition is done by the PassTactic, which is not canonical FSM
         elif self._state == "init_execute_pass":
+            # TODO: make these params configurable
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=self._target_point,
-                chip=False,  # TODO: make these params configurable
-                kick_speed=4.0,
+                chip=False,  
+                kick_speed=4.0, # TODO: adjust based on dist from target_point
             )
             self._state = "execute_pass"
         elif self._state == "execute_pass":

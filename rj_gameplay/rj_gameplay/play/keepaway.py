@@ -30,7 +30,6 @@ class Keepaway(stp.play.Play):
         when pass_done: return to init
         (the effect is to pass indefinitely)
         """
-        print("play state:", self.state)
 
         if self.state == "init":
             self.prioritized_tactics = [pass_tactic.PassTactic(world_state)]
@@ -51,14 +50,13 @@ class Keepaway(stp.play.Play):
                     self.state = "assign_roles"
 
             # only one tactic in this play
-            pass_tactic = self.prioritized_tactics[0]
-            if pass_tactic.is_done(world_state):
+            tactic = self.prioritized_tactics[0]
+            if tactic.is_done(world_state):
                 self.state = "init"
 
             return self.get_robot_intents(world_state)
 
         elif self.state == "assign_roles":
-            print("*" * 80)
             # duplicate code from init
             self.assign_roles(world_state)
             self.state = "active"

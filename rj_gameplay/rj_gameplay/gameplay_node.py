@@ -19,8 +19,6 @@ from std_msgs.msg import String as StringMsg
 import stp.rc as rc
 import stp.utils.world_state_converter as conv
 import stp.situation as situation
-import stp.coordinator as coordinator
-import stp
 import stp.skill
 import stp.play
 from stp.action import IAction
@@ -212,10 +210,6 @@ class GameplayNode(Node):
             assert self.world_state is not None
 
     def gameplay_tick(self) -> None:
-        """
-        ticks the gameplay coordinator using recent world_state
-        """
-
         self.update_world_state()
 
         if self.world_state is not None:

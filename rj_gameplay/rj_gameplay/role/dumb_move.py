@@ -1,6 +1,5 @@
 import stp
 
-import rj_gameplay.eval
 import rj_gameplay.skill as skills
 from rj_gameplay.skill import move
 import stp.skill as skill
