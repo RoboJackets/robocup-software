@@ -1,6 +1,6 @@
 """This module contains a variety of cost functions for convenience."""
 
-from typing import Optional
+from typing import Optional, Any
 
 import numpy as np
 import stp.rc

@@ -30,8 +30,7 @@ import numpy as np
 from rj_gameplay.action.move import Move
 
 # ignore "unused import" error
-# noqa: F401
-from rj_gameplay.play import line_up, basic_defense, keepaway
+from rj_gameplay.play import line_up, basic_defense, keepaway # noqa: F401
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
