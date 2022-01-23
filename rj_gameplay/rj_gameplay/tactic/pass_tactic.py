@@ -175,7 +175,7 @@ class PassTactic(stp.tactic.Tactic):
     @property
     def needs_assign(self):
         # style is wrong here: this convoluted way of returning self._needs_assign is necessary because we want to set it to False after the call, always
-        ret = self._needs_assign == True # noqa: E712
+        ret = self._needs_assign == True  # noqa: E712
         self._needs_assign = False
         return ret
 
