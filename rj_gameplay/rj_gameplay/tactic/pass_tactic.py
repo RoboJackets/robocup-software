@@ -27,7 +27,9 @@ class PassTactic(stp.tactic.Tactic):
             elif role is receiver.ReceiverRole:
                 self.assigned_roles.append(role(robot))
 
-    def tick(self, world_state: stp.rc.WorldState):
+    def tick(
+        self, world_state: stp.rc.WorldState
+    ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
         """
         FSM
          - init: request passer
@@ -171,6 +173,7 @@ class PassTactic(stp.tactic.Tactic):
         return role_intents
 
     @property
+    # noqa: E712
     def needs_assign(self):
         # style is wrong here: this convoluted way of returning self._needs_assign is necessary because we want to set it to False after the call, always
         ret = self._needs_assign == True

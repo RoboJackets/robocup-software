@@ -1,5 +1,4 @@
-"""This module contains a variety of functions that return cost functions for
-convenience."""
+"""This module contains a variety of cost functions for convenience."""
 
 from typing import Optional
 
@@ -26,9 +25,11 @@ class PickRobotById(stp.role.CostFn):
         # TODO: use max int or float('inf')
         return 1e9
 
-    # TODO: rm this from stp/role/__init__.py
+    # TODO: rm this as it is not needed in new architecture
+    #       (costFns are linked to Roles, implying that each costFn is the cost
+    #        of a specific robot filling a specific Role -> "unassigned cost" = ??)
     def unassigned_cost_fn(
-        self, prev_results: Optional["RoleResult"], world_state: stp.rc.WorldState
+        self, prev_results: Any, world_state: stp.rc.WorldState
     ) -> float:
         pass
 

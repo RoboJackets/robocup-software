@@ -28,6 +28,9 @@ from stp.global_parameters import GlobalParameterClient
 
 import numpy as np
 from rj_gameplay.action.move import Move
+
+# ignore "unused import" error
+# noqa: F401
 from rj_gameplay.play import line_up, basic_defense, keepaway
 import rj_gameplay.basic_play_selector as basic_play_selector
 
