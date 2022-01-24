@@ -17,6 +17,12 @@ Make sure you have sourced the ROS stack if you haven't already:
 
     source /opt/ros/foxy/setup.bash
 
+If you're on zsh, source the ``.zsh`` version instead:
+
+.. code-block:: sh
+
+    source /opt/ros/foxy/setup.zsh
+
 Then build the codebase (this compiles all of our code) with:
 
 .. code-block:: bash
