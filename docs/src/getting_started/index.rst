@@ -1,7 +1,13 @@
 Getting Started
 ===============
 
-As a first step, let's run the stack on the GrSim_ simulation.
+If you have a clean Ubuntu VM, run the following to install all required dependencies first:
+
+.. code-block:: bash
+
+    ./util/ubuntu-setup
+
+Then, let's run the stack on the GrSim_ simulation.
 
 .. _GrSim: https://github.com/RoboCup-SSL/grSim
 
