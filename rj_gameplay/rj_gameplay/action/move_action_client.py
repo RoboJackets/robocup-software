@@ -5,6 +5,7 @@ from rclpy.action import ActionClient
 from rclpy.node import Node
 
 from rj_msgs.action import Move
+from rj_geometry_msgs.msg import Point
 
 from rj_msgs.msg import ServerIntent, RobotIntent, PathTargetMotionCommand
 
@@ -20,7 +21,7 @@ class MoveActionClient(Node):
 
     def send_goal(self, server_intent: ServerIntent):
         if len(server_intent.intent.motion_command.path_target_command) > 0:
-            new_target_position = (
+            new_target_position: Point = (
                 server_intent.intent.motion_command.path_target_command[
                     0
                 ].target.position
@@ -33,9 +34,11 @@ class MoveActionClient(Node):
                     len(path_target_command) > 0
                     and path_target_command[0].target.position == new_target_position
                 ):
-                    self.cancel_goal()
+                    return
+
         goal_msg = Move.Goal()
         goal_msg.server_intent = server_intent
+        self._curr_goal = goal_msg
 
         self._action_client.wait_for_server()
 
@@ -52,6 +55,7 @@ class MoveActionClient(Node):
             return
 
         self._goal_handle = goal_handle
+        print(goal_handle + "accepted")
         self.get_logger().info("Goal accepted by server!")
 
         self._get_result_future = goal_handle.get_result_async()
@@ -60,7 +64,6 @@ class MoveActionClient(Node):
     def get_result_callback(self, future):
         result = future.result().result
         self.get_logger().info("Result:", result)
-        # rclpy.shutdown()
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
@@ -68,6 +71,7 @@ class MoveActionClient(Node):
 
     def cancel_done(self, future):
         cancel_response = future.result()
+        self._goal_handle = None
         if len(cancel_response.goals_canceling) > 0:
             self.get_logger().info("Goal successfully canceled")
             return cancel_response
@@ -76,9 +80,14 @@ class MoveActionClient(Node):
             return cancel_response
 
     def cancel_goal(self):
+        print("cancel goal")
+        print(self._robot_id)
+        print(self._goal_handle)
+        # TODO : Figure out why goal handle is always none
         if self._goal_handle is None:
             return
         self.get_logger().info("Canceling goal")
         # Cancel the goal
+        print("cancelling")
         future = self._goal_handle.cancel_goal_async()
         future.add_done_callback(self.cancel_done)

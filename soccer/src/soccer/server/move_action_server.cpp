@@ -53,50 +53,51 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
                                                            std::shared_ptr<const Move::Goal> goal) {
     // TODO: only accept if goal is move action
     //  (so just check that the empty command is not filled)
-    std::cout << "handle goal reached" << std::endl;
+    // std::cout << "handle goal reached" << std::endl;
     (void)uuid;
 
     int robot_id = goal->server_intent.robot_id;
     RobotIntent robot_intent = goal->server_intent.intent;
     const planning::MotionCommand motion_command =
         rj_convert::convert_from_ros(robot_intent.motion_command);
-    if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
+    if (robot_states_[robot_id].visible && std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
         const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.path_target_command[0].target.position);
         rj_geometry::Point old_position = target_positions[robot_id];
-        if (target_position.nearly_equals(old_position)) {
-            return rclcpp_action::GoalResponse::REJECT;
+        if (target_position == old_position) {
+            target_positions[robot_id] = target_position;
+            // return rclcpp_action::GoalResponse::REJECT;
         } else {
             target_positions[robot_id] = target_position;
         }
     }
 
-    accept_mutexes[robot_id].lock();
+    //accept_mutexes[robot_id].lock();
     // TODO : remove this once fixed slowness
-    if (this->test_accept_goal_[robot_id]) {
-        this->test_accept_goal_[robot_id] = false;
-        accept_mutexes[robot_id].unlock();
-        return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
-    }
-    accept_mutexes[robot_id].unlock();
-    return rclcpp_action::GoalResponse::REJECT;
+    // if (this->test_accept_goal_[robot_id]) {
+        //this->test_accept_goal_[robot_id] = false;
+        //accept_mutexes[robot_id].unlock();
+        //return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+    //}
+    //accept_mutexes[robot_id].unlock();
+    return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
 rclcpp_action::CancelResponse MoveActionServer ::handle_cancel(
     const std::shared_ptr<GoalHandleMove> goal_handle) {
-    // std::cout << "cancel reached" << std::endl;
+    std::cout << "cancel reached" << std::endl;
     (void)goal_handle;
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
 void MoveActionServer ::handle_accepted(const std::shared_ptr<GoalHandleMove> goal_handle) {
+    // this needs to return quickly to avoid blocking the executor, so spin up a new thread
     using namespace std::placeholders;
-    // std::cout << "accepted reached" << std::endl;
+    std::cout << "accepted reached" << std::endl;
     std::thread{std::bind(&MoveActionServer::execute, this, _1), goal_handle}.detach();
 }
 
 void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handle) {
-    std::cout << "executing" << std::endl;
     std::shared_ptr<const Move::Goal> goal = goal_handle->get_goal();
     rj_msgs::msg::ServerIntent server_intent = goal->server_intent;
     rj_msgs::msg::RobotIntent robot_intent = server_intent.intent;
@@ -115,7 +116,7 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
     std::shared_ptr<Move::Result> result = std::make_shared<Move::Result>();
 
     // TODO : remove if statement once move action server is only responsible for move actions
-    if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
+    if (!std::holds_alternative<planning::EmptyCommand>(motion_command)) {
         do {
             if (goal_handle->is_canceling()) {
                 result->is_done = true;
@@ -138,9 +139,9 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
         } while (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
                  robot_desired_states_[robot_id].timestamp <= old_timestamp);
     }
-    accept_mutexes[robot_id].lock();
-    this->test_accept_goal_[robot_id] = true;
-    accept_mutexes[robot_id].unlock();
+    //accept_mutexes[robot_id].lock();
+    //this->test_accept_goal_[robot_id] = true;
+    //accept_mutexes[robot_id].unlock();
     result->is_done = true;
     goal_handle->succeed(result);
 }
