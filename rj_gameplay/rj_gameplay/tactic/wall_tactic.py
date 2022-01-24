@@ -42,7 +42,9 @@ class WallTactic(stp.tactic.Tactic):
             if role is dumb_move.DumbMove:
                 self.assigned_roles.append(role(robot, pt, world_state.ball.pos))
 
-    def tick(self, world_state: stp.rc.WorldState):
+    def tick(
+        self, world_state: stp.rc.WorldState
+    ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
         self.wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # assumes all roles requested are filled, because tactic is one unit

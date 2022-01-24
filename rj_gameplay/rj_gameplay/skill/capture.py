@@ -18,6 +18,8 @@ from stp.utils.constants import RobotConstants
 
 
 class Capture(skill.Skill):
+    """Second half of a Receive Skill. Captures the ball once it has been slowed down."""
+
     def __init__(self, robot: Optional[rc.Robot] = None):
         self.robot = robot
         self.ticks_done = 0

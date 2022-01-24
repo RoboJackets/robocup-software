@@ -1,13 +1,14 @@
 """This module contains the interface for role assignment."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple, Type, Any
+from typing import Dict, Any
 
 import stp.rc
 import stp.role as role
 import stp.tactic as tactic
 
 # RoleId = Tuple[Type[tactic.ITactic], tactic.SkillEntry, int]
+# TODO: delete once role assignment switched over entirely
 RoleId = Any
 
 FlatRoleRequests = Dict[RoleId, role.RoleRequest]
