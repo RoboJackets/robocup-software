@@ -30,6 +30,7 @@ class Receive(skill.Skill):
         self.capture = capture.Capture(robot)
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state=world_state)
         if self.settle.is_done(world_state):
             return self.capture.tick(world_state)
         else:
