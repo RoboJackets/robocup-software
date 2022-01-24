@@ -27,12 +27,12 @@ def generate_launch_description():
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
     )
 
-    grsim = Node(
-        package="rj_robocup",
-        executable="grSim",
-        arguments=[headless_flag],
-        on_exit=Shutdown(),
-    )
+    #grsim = Node(
+    #    package="rj_robocup",
+    #    executable="grSim",
+    #    arguments=[headless_flag],
+    #    on_exit=Shutdown(),
+    #)
 
     soccer_launch_path = str(launch_dir / "soccer.launch.py")
     soccer = IncludeLaunchDescription(
@@ -52,7 +52,7 @@ def generate_launch_description():
             DeclareLaunchArgument("headless_flag", default_value=""),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             stdout_linebuf_envvar,
-            grsim,
+            # grsim,
             soccer,
         ]
     )
