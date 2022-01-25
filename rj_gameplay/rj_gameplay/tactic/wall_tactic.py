@@ -100,8 +100,8 @@ class WallTactic(tactic.ITactic):
         pass
 
     def get_requests(
-        self, world_state: rc.WorldState, wall_pt, props: Optional[tactic.PropT]
-    ) -> Dict[Optional[tactic.RoleRequests], List[tactic.RoleRequests]]:
+        self, world_state: rc.WorldState, wall_pt, props: tactic.PropT
+    ) -> Optional[tactic.RoleRequests]:
         """
         :return: A list of role requests for move skills needed
         """
@@ -121,7 +121,7 @@ class WallTactic(tactic.ITactic):
 
     def tick(
         self, world_state: rc.WorldState, role_results: tactic.RoleResults, props: Optional[tactic.PropT]
-    ) -> List[Optional[tactic.SkillEntry]]:
+    ) -> List[Optional[skill.ISkill]]:
         """
         :return: A list of skills depending on which roles are filled
         """
