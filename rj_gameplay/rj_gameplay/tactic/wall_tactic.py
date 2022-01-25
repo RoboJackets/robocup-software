@@ -54,10 +54,11 @@ class wall_cost(role.CostFn):
             switch_cost = 1 * (prev_result_id != robot.id)
 
         # costs should be in seconds, not dist
+        max_speed = global_parameters.soccer.robot.max_speed
         return (
             self.scale
             * np.linalg.norm(robot.pose[0:2] - wall_pt)
-            / global_parameters.soccer.robot.max_speed
+            / max_speed
             + switch_cost
         )
 
@@ -99,8 +100,8 @@ class WallTactic(tactic.ITactic):
         pass
 
     def get_requests(
-        self, world_state: rc.WorldState, wall_pt, props
-    ) -> Dict[tactic.RoleRequests, List[tactic.RoleRequests]]:
+        self, world_state: rc.WorldState, wall_pt, props: PropT
+    ) -> Dict[Optional[tactic.RoleRequests], List[tactic.RoleRequests]]:
         """
         :return: A list of role requests for move skills needed
         """
@@ -119,8 +120,8 @@ class WallTactic(tactic.ITactic):
         return role_requests
 
     def tick(
-        self, world_state: rc.WorldState, role_results: tactic.RoleResults
-    ) -> List[tactic.SkillEntry]:
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults, props: PropT
+    ) -> List[Optional[tactic.SkillEntry]]:
         """
         :return: A list of skills depending on which roles are filled
         """
