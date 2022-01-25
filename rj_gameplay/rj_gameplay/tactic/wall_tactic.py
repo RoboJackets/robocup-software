@@ -49,8 +49,9 @@ class wall_cost(role.CostFn):
         # if np.linalg.norm(robot.pose[0:2] - world_state.field.our_goal_loc) < MIN_WALL_RAD:
         #     return 9999
         switch_cost = 0
+        prev_result_id = prev_result.role.robot.id
         if prev_result and prev_result.is_filled():
-            switch_cost = 1 * (prev_result.role.robot.id != robot.id)
+            switch_cost = 1 * (prev_result_id != robot.id)
 
         # costs should be in seconds, not dist
         return (
