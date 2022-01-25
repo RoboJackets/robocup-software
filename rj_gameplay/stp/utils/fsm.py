@@ -1,6 +1,12 @@
 import logging
 from enum import Enum
-from typing import Union, Callable, Dict, Optional, Iterable, List, Any, TypedDict
+from typing import (
+    Union,
+    Callable,
+    Dict,
+    Optional,
+    TypedDict,
+)
 
 State = Enum
 TransitionFunction = Callable[[], bool]  # Takes no args, returns a bool
@@ -64,25 +70,29 @@ class StateMachine:
             # transition if an 'event' fires
             next_states = []
             if self.state in self._transitions:
-                for next_state, transition in self._transitions[
-                        self.state].items():
-                    if transition['condition']():
+                for next_state, transition in self._transitions[self.state].items():
+                    if transition["condition"]():
                         next_states += [next_state]
 
             if len(next_states) > 1:
                 logging.warning(
-                    "Ambiguous fsm transitions from state'" + str(self.state) +
-                    "'.  The following states are reachable now: " +
-                    str(next_states) +
-                    ";  Proceeding by taking the first option.")
+                    "Ambiguous fsm transitions from state'"
+                    + str(self.state)
+                    + "'.  The following states are reachable now: "
+                    + str(next_states)
+                    + ";  Proceeding by taking the first option."
+                )
             if len(next_states) > 0:
                 self.transition(next_states[0])
 
-
     # if you add a transition that already exists, the old one will be overwritten
-    def add_transition(self, from_state: State, to_state: State,
-                       condition: Union[bool, TransitionFunction],
-                       event_name: str) -> None:
+    def add_transition(
+        self,
+        from_state: State,
+        to_state: State,
+        condition: Union[bool, TransitionFunction],
+        event_name: str,
+    ) -> None:
         if isinstance(condition, bool):
             condition_fn = lambda: condition
         else:
@@ -92,8 +102,8 @@ class StateMachine:
             self._transitions[from_state] = {}
 
         self._transitions[from_state][to_state] = {
-            'condition': condition_fn,
-            'name': event_name
+            "condition": condition_fn,
+            "name": event_name,
         }
 
     # sets @state to the new_state given

@@ -10,15 +10,15 @@ from rj_gameplay.calculations import wall_calculations
 
 
 class BasicDefense(play.IPlay):
-    """For when we don't have the ball and are trying to stop the opponent from scoring.
-    """
+    """For when we don't have the ball and are trying to stop the opponent from scoring."""
+
     def __init__(self):
         self.tactics = [
             wall_tactic.WallTactic(),
             wall_tactic.WallTactic(),
             wall_tactic.WallTactic(),
             nmark_tactic.NMarkTactic(2),
-            goalie_tactic.GoalieTactic()
+            goalie_tactic.GoalieTactic(),
         ]
 
         self.num_wallers = 3
@@ -33,12 +33,13 @@ class BasicDefense(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-               List[tactic.SkillEntry]]:
+    ) -> Tuple[
+        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
+        List[tactic.SkillEntry],
+    ]:
 
         # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers,
-                                                   world_state)
+        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
@@ -46,7 +47,8 @@ class BasicDefense(play.IPlay):
         for tactic in self.tactics:
             if type(tactic) == type(wall_tactic.WallTactic()):
                 role_requests[tactic] = tactic.get_requests(
-                    world_state, wall_pts[i], None)
+                    world_state, wall_pts[i], None
+                )
                 i += 1
             else:
                 role_requests[tactic] = tactic.get_requests(world_state, None)
@@ -57,9 +59,9 @@ class BasicDefense(play.IPlay):
 
         # Flatten requests and use role assigner on them
         flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(flat_requests,
-                                                       world_state,
-                                                       prev_results)
+        flat_results = self.role_assigner.assign_roles(
+            flat_requests, world_state, prev_results
+        )
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all SkillEntries from all tactics

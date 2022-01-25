@@ -7,15 +7,18 @@ from launch.actions import Shutdown
 
 
 def generate_launch_description():
-    config = os.path.join(get_package_share_directory('rj_robocup'), 'config',
-                          'sim.yaml')
+    config = os.path.join(
+        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+    )
 
-    return LaunchDescription([
-        Node(
-            package="rj_robocup",
-            executable="vision_receiver",
-            output="screen",
-            parameters=[config],
-            on_exit=Shutdown(),
-        )
-    ])
+    return LaunchDescription(
+        [
+            Node(
+                package="rj_robocup",
+                executable="vision_receiver",
+                output="screen",
+                parameters=[config],
+                on_exit=Shutdown(),
+            )
+        ]
+    )

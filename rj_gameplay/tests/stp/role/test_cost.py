@@ -33,14 +33,18 @@ def test_distance_to_pt() -> None:
     target_pt = np.array([1.0, 2.0])
     cost_fn = cost.distance_to_pt(target_pt, saturate_dist, switch_cost)
 
-    robot1 = testing.generate_test_robot(robot_id=1,
-                                         is_ours=True,
-                                         pose=np.array([1.0, 2.0, 0]),
-                                         twist=np.array([0, 0, 0]))
-    robot2 = testing.generate_test_robot(robot_id=2,
-                                         is_ours=True,
-                                         pose=np.array([2.0, 3.0, 0]),
-                                         twist=np.array([0, 0, 0]))
+    robot1 = testing.generate_test_robot(
+        robot_id=1,
+        is_ours=True,
+        pose=np.array([1.0, 2.0, 0]),
+        twist=np.array([0, 0, 0]),
+    )
+    robot2 = testing.generate_test_robot(
+        robot_id=2,
+        is_ours=True,
+        pose=np.array([2.0, 3.0, 0]),
+        twist=np.array([0, 0, 0]),
+    )
 
     stub_request = role.RoleRequest(role.Priority.HIGH, True, None)
     robot1_role_result = role.RoleResult(stub_request, 0.0, role.Role(robot1))

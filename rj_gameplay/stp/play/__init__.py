@@ -3,7 +3,16 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar
+from typing import (
+    Dict,
+    Generic,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+)
 
 import stp.action as action
 import stp.skill as skill
@@ -157,8 +166,7 @@ RoleRequests = Dict[Type[tactic.ITactic], tactic.RoleRequests]
 RoleResults = Dict[Type[tactic.ITactic], tactic.RoleResults]
 
 
-def flatten_requests(
-        role_requests: RoleRequests) -> assignment.FlatRoleRequests:
+def flatten_requests(role_requests: RoleRequests) -> assignment.FlatRoleRequests:
     """Flattens play.RoleRequests into assignment.FlatRoleRequests, ie. a nested
     dict into just a flat dict.
     :param role_requests: The nested play.RoleRequests dicts.

@@ -8,6 +8,7 @@ import stp.rc as rc
 import numpy as np
 from rj_msgs.msg import RobotIntent, CollectMotionCommand
 
+
 class Capture(action.IAction):
     """
     Capture action
@@ -25,8 +26,10 @@ class Capture(action.IAction):
         return intent
 
     def is_done(self, world_state) -> bool:
-        if self.robot_id is not None and world_state.our_robots[
-                self.robot_id].has_ball_sense:
+        if (
+            self.robot_id is not None
+            and world_state.our_robots[self.robot_id].has_ball_sense
+        ):
             self.ticks_done += 1
         else:
             self.ticks_done -= 5

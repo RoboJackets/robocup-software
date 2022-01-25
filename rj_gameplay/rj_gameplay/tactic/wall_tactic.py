@@ -14,6 +14,7 @@ import rj_gameplay.skill as skills
 from rj_gameplay.skill import move
 import stp.skill as skill
 import numpy as np
+
 # TODO: replace w/ global param server
 from stp.utils.constants import RobotConstants, BallConstants
 import stp.global_parameters as global_parameters
@@ -22,19 +23,23 @@ MIN_WALL_RAD = None
 
 
 class wall_cost(role.CostFn):
-    """Cost function for role request.
-    """
+    """Cost function for role request."""
+
     def __init__(self, wall_pt: np.ndarray = None, scale: float = 1.0):
         self.wall_pt = wall_pt
         self.scale = scale
 
-    def __call__(self, robot: rc.Robot, prev_result: Optional["RoleResult"],
-                 world_state: rc.WorldState) -> float:
+    def __call__(
+        self,
+        robot: rc.Robot,
+        prev_result: Optional[role.RoleResult],
+        world_state: rc.WorldState,
+    ) -> float:
 
         if robot is None:
             return 9999
 
-        wall_pt = np.array([0., 0.]) if self.wall_pt is None else self.wall_pt
+        wall_pt = np.array([0.0, 0.0]) if self.wall_pt is None else self.wall_pt
 
         # TODO(#1669): Remove this once role assignment no longer assigns non-visible robots
         if not robot.visible:
@@ -48,17 +53,20 @@ class wall_cost(role.CostFn):
             switch_cost = 1 * (prev_result.role.robot.id != robot.id)
 
         # costs should be in seconds, not dist
-        return self.scale * np.linalg.norm(
-            robot.pose[0:2] -
-            wall_pt) / global_parameters.soccer.robot.max_speed + switch_cost
+        return (
+            self.scale
+            * np.linalg.norm(robot.pose[0:2] - wall_pt)
+            / global_parameters.soccer.robot.max_speed
+            + switch_cost
+        )
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
-        #TODO: Implement real unassigned cost function
+        # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
     # def switch_cost_fn(
@@ -89,8 +97,9 @@ class WallTactic(tactic.ITactic):
         """
         pass
 
-    def get_requests(self, world_state: rc.WorldState, wall_pt,
-                     props) -> List[tactic.RoleRequests]:
+    def get_requests(
+        self, world_state: rc.WorldState, wall_pt, props
+    ) -> List[tactic.RoleRequests]:
         """
         :return: A list of role requests for move skills needed
         """
@@ -102,15 +111,15 @@ class WallTactic(tactic.ITactic):
 
         # create RoleRequest for each SkillEntry
         role_requests = {
-            self.move_var:
-            [role.RoleRequest(self.priority, False, self.cost_var)]
+            self.move_var: [role.RoleRequest(self.priority, False, self.cost_var)]
             for _ in range(1)
         }
 
         return role_requests
 
-    def tick(self, world_state: rc.WorldState,
-             role_results: tactic.RoleResults) -> List[tactic.SkillEntry]:
+    def tick(
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults
+    ) -> List[tactic.SkillEntry]:
         """
         :return: A list of skills depending on which roles are filled
         """
