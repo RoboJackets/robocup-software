@@ -49,8 +49,8 @@ class wall_cost(role.CostFn):
         # if np.linalg.norm(robot.pose[0:2] - world_state.field.our_goal_loc) < MIN_WALL_RAD:
         #     return 9999
         switch_cost = 0
-        prev_result_id = prev_result.role.robot.id
         if prev_result and prev_result.is_filled():
+            prev_result_id = prev_result.role.robot.id
             switch_cost = 1 * (prev_result_id != robot.id)
 
         # costs should be in seconds, not dist
@@ -100,7 +100,7 @@ class WallTactic(tactic.ITactic):
         pass
 
     def get_requests(
-        self, world_state: rc.WorldState, wall_pt, props: PropT
+        self, world_state: rc.WorldState, wall_pt, props: Optional[tactic.PropT]
     ) -> Dict[Optional[tactic.RoleRequests], List[tactic.RoleRequests]]:
         """
         :return: A list of role requests for move skills needed
@@ -120,7 +120,7 @@ class WallTactic(tactic.ITactic):
         return role_requests
 
     def tick(
-        self, world_state: rc.WorldState, role_results: tactic.RoleResults, props: PropT
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults, props: Optional[tactic.PropT]
     ) -> List[Optional[tactic.SkillEntry]]:
         """
         :return: A list of skills depending on which roles are filled

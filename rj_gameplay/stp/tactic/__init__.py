@@ -117,6 +117,12 @@ PropT = TypeVar("PropT")
 
 class ITactic(Generic[PropT], ABC):
     """The interface class for all tactics."""
+    """The Abstract class for all tactics"""
+
+    def __init__(self):
+        self.move_var = None
+        self.cost_var = None
+        self.priority = None
 
     @abstractmethod
     def compute_props(self, prev_props: Optional[PropT]) -> PropT:
