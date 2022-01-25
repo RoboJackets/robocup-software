@@ -49,7 +49,6 @@ class wall_cost(role.CostFn):
         # if np.linalg.norm(robot.pose[0:2] - world_state.field.our_goal_loc) < MIN_WALL_RAD:
         #     return 9999
         switch_cost = 0
-        prev_result_id = None
         if prev_result and prev_result.is_filled():
             prev_result_id = prev_result.role.robot.id
             switch_cost = 1 * (prev_result_id != robot.id)
@@ -113,8 +112,7 @@ class WallTactic(tactic.ITactic):
             self.cost_var.wall_pt = wall_pt
 
         # create RoleRequest for each SkillEntry
-        role_requests = {}
-        role_requests = {
+        tactic.role_requests = {
             self.move_var: [role.RoleRequest(self.priority, False, self.cost_var)]
             for _ in range(1)
         }
@@ -129,7 +127,7 @@ class WallTactic(tactic.ITactic):
         """
 
         # create list of skills based on if RoleResult exists for SkillEntry
-        skills = [];
+        skills = []
         skills = [self.move_var if role_results[self.move_var] else None]
 
         return skills
