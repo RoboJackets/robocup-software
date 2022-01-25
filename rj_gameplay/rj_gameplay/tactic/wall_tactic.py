@@ -50,8 +50,8 @@ class wall_cost(role.CostFn):
         #     return 9999
         switch_cost = 0
         if prev_result and prev_result.is_filled():
-            prev_result_robot = prev_result.role.robot
-            prev_result_id = prev_result_robot.id
+            prev_result_temp = prev_result
+            prev_result_id = prev_result_temp.role.robot.id
             switch_cost = 1 * (prev_result_id != robot.id)
 
         # costs should be in seconds, not dist
