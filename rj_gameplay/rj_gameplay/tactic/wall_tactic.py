@@ -53,7 +53,7 @@ class wall_cost(role.CostFn):
             prev_result_temp = prev_result
             prev_result_id = None
             prev_result_id = Optional[prev_result_temp.role.robot.id]
-            switch_cost = 1 * (prev_result_id != robot.id)
+            switch_cost = Optional[1 * (prev_result_id != robot.id)]
 
         # costs should be in seconds, not dist
         max_speed = global_parameters.soccer.robot.max_speed
