@@ -62,18 +62,15 @@ class TacticEntry(tkdict.TypedKey[TacticT]):
         if not isinstance(other, TacticEntry):
             return False
 
-        return (self.concrete_cls, self._idx) == (
-            other.concrete_cls,
-            other._idx,
-        )
+        return (self.concrete_cls, self._idx) == (other.concrete_cls,
+                                                  other._idx)
 
     def __hash__(self) -> int:
         return hash((self.concrete_cls, self._idx))
 
     def __str__(self) -> str:
-        return "{:3}: {} - {}".format(
-            self._idx, self.concrete_cls.__name__, self._tactic
-        )
+        return "{:3}: {} - {}".format(self._idx, self.concrete_cls.__name__,
+                                      self._tactic)
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -81,7 +78,6 @@ class TacticEntry(tkdict.TypedKey[TacticT]):
 
 class TacticsEnum(metaclass=enum.SimpleEnumMeta):
     """Enum holding all the tactics that a given play will use."""
-
     def __init__(self, tactic_factory: tactic.Factory):
         """
         :param tactic_factory: Tactic Factory used to initialize the tactic instances in
@@ -149,7 +145,8 @@ class IPlay(Generic[PropT], ABC):
         world_state: rc.WorldState,
         prev_results: assignment.FlatRoleResults,
         props: PropT,
-    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]],
+               List[tactic.SkillEntry]]:
         """Performs one "tick" of the specified play.
 
         This should:
@@ -169,9 +166,7 @@ RoleRequests = Dict[Type[tactic.ITactic], tactic.RoleRequests]
 RoleResults = Dict[Type[tactic.ITactic], tactic.RoleResults]
 
 
-def flatten_requests(
-    role_requests: RoleRequests,
-) -> assignment.FlatRoleRequests:
+def flatten_requests(role_requests: RoleRequests) -> assignment.FlatRoleRequests:
     """Flattens play.RoleRequests into assignment.FlatRoleRequests, ie. a nested
     dict into just a flat dict.
     :param role_requests: The nested play.RoleRequests dicts.
@@ -190,14 +185,14 @@ def flatten_requests(
             request: role.RoleRequest
 
             for request_idx, request in enumerate(requests):
-                flat_role_requests[(tactic_t, skill_entry, request_idx)] = request
+                flat_role_requests[(tactic_t, skill_entry,
+                                    request_idx)] = request
 
     return flat_role_requests
 
 
-MaybeRoleResults = Dict[
-    Type[tactic.ITactic], Dict[SkillEntry, List[Optional[role.RoleResult]]]
-]
+MaybeRoleResults = Dict[Type[tactic.ITactic],
+                        Dict[SkillEntry, List[Optional[role.RoleResult]]]]
 
 
 def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
@@ -211,7 +206,8 @@ def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
     tactic_t: Type[tactic.ITactic]
     skill_entry: tactic.SkillEntry
     for (tactic_t, skill_entry, request_idx), result in results.items():
-        results_list: List[Optional[RoleResult]] = nested_results[tactic_t][skill_entry]
+        results_list: List[
+            Optional[RoleResult]] = nested_results[tactic_t][skill_entry]
 
         # Extend the list so that it's long enough to put in result at request_idx.
         if len(results_list) <= request_idx:
@@ -226,8 +222,7 @@ def unflatten_results(results: assignment.FlatRoleResults) -> RoleResults:
             if None in skill_results:
                 raise RuntimeError(
                     "Somehow there's a None in the list of RoleResults, meaning that "
-                    "we dropped an index somewhere..."
-                )
+                    "we dropped an index somewhere...")
 
     # mypy fails to infer that there won't be any Nones in the list.
     return nested_results  # type: ignore
