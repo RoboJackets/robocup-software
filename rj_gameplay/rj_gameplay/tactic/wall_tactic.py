@@ -85,7 +85,7 @@ class WallTactic(tactic.ITactic):
     def __init__(self, priority=role.Priority.MEDIUM, cost_scale: float = 1.0):
 
         # create move SkillEntry for every robot
-        self.move_var = tactic.SkillEntry(move.Move())
+        self.move_var = tactic.SkillEntry(Optional[move.Move()])
         # create empty cost_var (filled in get_requests)
         self.cost_var = wall_cost(scale=cost_scale)
         self.priority = priority
@@ -100,19 +100,19 @@ class WallTactic(tactic.ITactic):
         pass
 
     def get_requests(
-        self, world_state: rc.WorldState, wall_pt, props: tactic.PropT
+        self, world_state: rc.WorldState, props: tactic.PropT
     ) -> tactic.RoleRequests:
         """
         :return: A list of role requests for move skills needed
         """
         if world_state and world_state.ball.visible:
-            self.move_var.skill.target_point = wall_pt
+            self.move_var.skill.target_point = wall_cost.wall_pt
             self.move_var.skill.face_point = world_state.ball.pos
             robot = self.move_var.skill.robot
-            self.cost_var.wall_pt = wall_pt
+            self.cost_var.wall_pt = wall_cost.wall_pt
 
         # create RoleRequest for each SkillEntry
-        tactic.role_requests = {
+        role_requests = {
             self.move_var: [role.RoleRequest(self.priority, False, self.cost_var)]
             for _ in range(1)
         }
