@@ -79,9 +79,8 @@ class Play(ABC):
         """Given that all Roles are in sorted order of priority, greedily assign the highest-priority Role to the lowest-cost robot for that Role. Instantiate Tactics with the correct robots post-assignment. (Note that this behavior is largely handled by the init_roles of each Tactic.)
         Satisfy constraint that all Roles of a Tactic must all be assigned at once. If a Tactic's Roles cannot all be filled, do not fill any of its Roles.
         """
-
-        # TODO: use hashable Robots directly once PR #1815 merged
-        used_robot_ids = set()
+        
+        used_robots = set()
         for tactic in self.prioritized_tactics:
             # TODO: handle if tactic requests more roles than exist
             #       by not assigning tactic at all!
@@ -91,7 +90,7 @@ class Play(ABC):
                 min_cost = 1e9
                 cheapest_robot = None
                 for robot in world_state.our_robots:
-                    if robot.id in used_robot_ids:
+                    if robot in used_robots:
                         continue
                     if not robot.visible:
                         continue
@@ -104,7 +103,7 @@ class Play(ABC):
                     # TODO: properly error handle if cheapest_robot is None
                     print(f"RoleRequest ({role}, {cost_fn}) was not assigned")
 
-                used_robot_ids.add(cheapest_robot.id)
+                used_robots.add(cheapest_robot)
                 robots_for_tactic.append(cheapest_robot)
             tactic.set_assigned_robots(robots_for_tactic)
 
