@@ -31,7 +31,7 @@ class Capture(skill.Skill):
 
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command]
-        intent.dribbler_speed = 1.0
+        intent.dribbler_speed = 1.0  #dribbler is on by default 
         intent.is_active = True
 
         return intent
