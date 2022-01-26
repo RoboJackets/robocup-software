@@ -18,6 +18,8 @@ from stp.utils.constants import RobotConstants
 
 
 class Capture(skill.Skill):
+    """Second half of a Receive Skill. Captures the ball once it has been slowed down."""
+
     def __init__(self, robot: Optional[rc.Robot] = None):
         self.robot = robot
         self.ticks_done = 0
@@ -29,7 +31,7 @@ class Capture(skill.Skill):
 
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command]
-        intent.dribbler_speed = 1.0
+        intent.dribbler_speed = 1.0  #dribbler is on by default 
         intent.is_active = True
 
         return intent

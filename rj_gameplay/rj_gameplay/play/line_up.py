@@ -42,7 +42,6 @@ class LineUp(stp.play.Play):
             if self.prioritized_tactics[0].is_done(world_state):
                 self.state = "done"
             return self.get_robot_intents(world_state)
-        elif self.state is "done":
-            print("line up play done")
-            # TODO: does this need to exist?
+        elif self.state == "done":
+            # TODO: does this state need to exist?
             return None

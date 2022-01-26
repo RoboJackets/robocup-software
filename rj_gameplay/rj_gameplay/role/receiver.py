@@ -1,5 +1,7 @@
-import stp
-from rj_gameplay.skill import receive, line_kick, pivot_kick
+import stp.role
+import stp.rc
+
+from rj_gameplay.skill import receive
 
 from rj_msgs.msg import RobotIntent
 
@@ -30,7 +32,6 @@ class ReceiverRole(stp.role.Role):
          - interrupt signal from Tactic: go get ball
          - when got ball: done
         """
-        # print("receiver state:", self._state)
 
         intent = None
 
