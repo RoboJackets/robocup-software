@@ -55,3 +55,4 @@ class Kick(skill.Skill):
         ):
             return True
         return False
+

@@ -44,4 +44,12 @@ class Settle(skill.Skill):
             return True
         return False
 
+<<<<<<< Updated upstream
     # TODO: def __repr__
+=======
+    def __str__(self):
+        return f"Capture(robot={self.robot.id if self.robot is not None else '??'})"
+    
+    def __repr__(self) -> str:
+        return self.__str__()
+>>>>>>> Stashed changes

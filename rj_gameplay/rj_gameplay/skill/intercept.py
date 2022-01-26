@@ -53,3 +53,9 @@ class Intercept(IIntercept):
 
     def is_done(self, world_state) -> bool:
         return self.intercept.is_done(world_state)
+    
+    def __str__(self):
+        return f"Capture(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
+    
+    def __repr__(self) -> str:
+        return self.__str__()

@@ -85,3 +85,6 @@ class Move(stp.skill.Skill):
     def __str__(self):
         ignore_ball_str = ", ignoring ball" if self.ignore_ball else ""
         return f"Move(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}{ignore_ball_str})"
+    
+    def __repr__(self) -> str:
+        return self.__str__()
