@@ -65,7 +65,7 @@ class GameplayNode(Node):
         rclpy.init()
         super().__init__("gameplay_node")
 
-        self.test_play = keepaway.Keepaway()
+        self.test_play = basic_defense.BasicDefense()
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
