@@ -457,7 +457,7 @@ class GameplayNode(Node):
 def main():
     play_selector = basic_play_selector.BasicPlaySelector()
     # play_selector = None
-    test_play = basic_defense.BasicDefense()
+    test_play = keepaway.Keepaway()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)

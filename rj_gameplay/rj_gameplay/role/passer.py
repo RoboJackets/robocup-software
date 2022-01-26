@@ -41,6 +41,10 @@ class PasserRole(stp.role.Role):
             self._state = "receiving"
         elif self._state == "receiving":
             intent = self.receive_skill.tick(world_state)
+
+            print("ReceiveSkill:***************************************************")
+            print(self.receive_skill)
+
             if self.receive_skill.is_done(world_state):
                 self._state = "pass_ready"
         elif self._state == "pass_ready":
@@ -58,6 +62,9 @@ class PasserRole(stp.role.Role):
             self._state = "execute_pass"
         elif self._state == "execute_pass":
             intent = self.pivot_kick_skill.tick(world_state)
+            
+            print("PivotKickSkill:***************************************************")
+            print(self.pivot_kick_skill)
 
             if self.pivot_kick_skill.is_done(world_state):
                 self._state = "kick_done"
