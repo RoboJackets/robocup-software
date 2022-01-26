@@ -8,7 +8,11 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
     using namespace std::placeholders;
 
     this->action_server_ = rclcpp_action::create_server<Move>(
-        this, "move", std::bind(&MoveActionServer::handle_goal, this, _1, _2),
+        this->get_node_base_interface(),
+        this->get_node_clock_interface(),
+        this->get_node_logging_interface(),
+        this->get_node_waitables_interface(),
+        "move", std::bind(&MoveActionServer::handle_goal, this, _1, _2),
         std::bind(&MoveActionServer::handle_cancel, this, _1),
         std::bind(&MoveActionServer::handle_accepted, this, _1));
 
@@ -66,7 +70,7 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
         rj_geometry::Point old_position = target_positions[robot_id];
         if (target_position == old_position) {
             target_positions[robot_id] = target_position;
-            // return rclcpp_action::GoalResponse::REJECT;
+            return rclcpp_action::GoalResponse::REJECT;
         } else {
             target_positions[robot_id] = target_position;
         }
@@ -107,8 +111,6 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
     int robot_id = server_intent.robot_id;
     std::cout << robot_id << std::endl;
 
-    this->intent_pubs_[robot_id]->publish(robot_intent);
-
     RJ::Time base_time = RJ::Time();
     bool tested = this->test_desired_states_.at(robot_id);
     RJ::Time old_timestamp = tested ? robot_desired_states_[robot_id].timestamp : base_time;
@@ -116,8 +118,10 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
     std::shared_ptr<Move::Result> result = std::make_shared<Move::Result>();
 
     // TODO : remove if statement once move action server is only responsible for move actions
+    rclcpp::Rate loop_rate(1);
     if (!std::holds_alternative<planning::EmptyCommand>(motion_command)) {
         do {
+            this->intent_pubs_[robot_id]->publish(robot_intent);
             if (goal_handle->is_canceling()) {
                 result->is_done = true;
                 goal_handle->canceled(result);
@@ -136,13 +140,23 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
 
             goal_handle->publish_feedback(feedback);
             RCLCPP_INFO(this->get_logger(), "published feedback");
+            loop_rate.sleep();
         } while (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
-                 robot_desired_states_[robot_id].timestamp <= old_timestamp);
+                 robot_desired_states_[robot_id].timestamp < old_timestamp);
     }
     //accept_mutexes[robot_id].lock();
     //this->test_accept_goal_[robot_id] = true;
-    //accept_mutexes[robot_id].unlock();
-    result->is_done = true;
-    goal_handle->succeed(result);
+    //accept_mutexes[robot_id].unlock()
+    if (goal_handle->is_canceling()) {
+        result->is_done = true;
+        goal_handle->canceled(result);
+        RCLCPP_INFO(this->get_logger(), "Goal Canceled");
+        return;
+    }
+
+    if (rclcpp::ok()) {
+        result->is_done = true;
+        goal_handle->succeed(result);
+    }
 }
 }  // namespace server
