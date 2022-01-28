@@ -2,7 +2,7 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
 import stp.action as action
 import stp.rc as rc
@@ -155,7 +155,7 @@ class ITactic(Generic[PropT], ABC):
         world_state: rc.WorldState,
         role_results: RoleResults,
         props: PropT,
-    ) -> List[skill.ISkill]:
+    ) -> List[SkillEntry[Any]]:
         """Ticks the tactic, returning a tuple of the skills and the skills executed.
         :param world_state: Current world state.
         :param role_results: The results of role assignment.
