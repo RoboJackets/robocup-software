@@ -104,9 +104,7 @@ class NMarkTactic(tactic.ITactic):
         """
         pass
 
-    def get_requests(
-        self, world_state: rc.WorldState, props
-        ) -> Any:
+    def get_requests(self, world_state: rc.WorldState, props) -> Any:
         """
         :return: role request for n markers
         """
