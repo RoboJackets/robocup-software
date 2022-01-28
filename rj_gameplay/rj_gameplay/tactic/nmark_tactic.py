@@ -106,7 +106,7 @@ class NMarkTactic(tactic.ITactic):
 
     def get_requests(
         self, world_state: rc.WorldState, props
-    ) -> Dict[tactic.SkillEntry[Any], List[role.RoleRequest]]:
+        ) -> Any:
         """
         :return: role request for n markers
         """
