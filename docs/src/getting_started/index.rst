@@ -1,7 +1,13 @@
 Getting Started
 ===============
 
-As a first step, let's run the stack on the GrSim_ simulation.
+If you have a clean Ubuntu VM, run the following to install all required dependencies first:
+
+.. code-block:: bash
+
+    ./util/ubuntu-setup
+
+Then, let's run the stack on the GrSim_ simulation.
 
 .. _GrSim: https://github.com/RoboCup-SSL/grSim
 
@@ -10,6 +16,12 @@ Make sure you have sourced the ROS stack if you haven't already:
 .. code-block:: bash
 
     source /opt/ros/foxy/setup.bash
+
+If you're on zsh, source the ``.zsh`` version instead:
+
+.. code-block:: sh
+
+    source /opt/ros/foxy/setup.zsh
 
 Then build the codebase (this compiles all of our code) with:
 

@@ -60,6 +60,7 @@ class Play(ABC):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
+
         """Performs one "tick" of the specified play.
 
         This should:
@@ -120,3 +121,4 @@ class Play(ABC):
             for robot_id, robot_intent in role_robot_intents:
                 robot_intents[robot_id] = robot_intent
         return robot_intents
+

@@ -7,12 +7,9 @@ import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
 import numpy as np
-from typing import (
-    Dict,
-    List,
-    Tuple,
-    Type,
-)
+
+from typing import Dict, List, Tuple
+
 
 
 class DefensiveClear(play.IPlay):
@@ -30,10 +27,10 @@ class DefensiveClear(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-    ) -> Tuple[
-        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-        List[tactic.SkillEntry],
-    ]:
+
+    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]],
+               List[tactic.SkillEntry]]:
+
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
@@ -49,7 +46,8 @@ class DefensiveClear(play.IPlay):
         role_results = play.unflatten_results(flat_results)
 
         # Get list of all skills with assigned roles from tactics
-        skills = self.two_mark.tick(world_state, role_results[self.two_mark])
+        skills: List[tactic.SkillEntry] = []
+        skills += self.two_mark.tick(world_state, role_results[self.two_mark])
         skills += self.clear.tick(world_state, role_results[self.clear])
         skills += self.goalie.tick(world_state, role_results[self.goalie])
         skill_dict = {}
