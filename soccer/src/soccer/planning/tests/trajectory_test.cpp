@@ -224,18 +224,18 @@ TEST(Trajectory, CombiningFail) {
     Trajectory traj_2{{b2, c}};
 
     // EXPECT_THROW((Trajectory{std::move(traj_1), traj_2}), std::invalid_argument);
-    
-    // This last test is commented out because, right now, the receiver of a pass begins planning a path
-    // as soon as the ball exists the passer, at which point the ball is very close to the passer.
-    // So the receiver, when making its plan to stop after receiving the ball, is forced to decelerate 
-    // extremely rapidly to avoid colliding with the passer, but is limited by our acceleration 
-    // constraints and instead compromises the initial velocity when planning the stop motion to receive a 
-    // pass, which causes a crash because of the discontinuity in velocity it creates.  So we force the
-    // start velocity of the stop trajectory to match the end velocity of the ball pursuit trajectory,
-    // which would force the discontinuity onto our control code, but that doesn't happen because the
-    // problem will resolve itself well before we can actually get the ball.  However, this fix means
-    // that the crash this test expects no longer happens, or else we would see crashes in a high
-    // percentage of our receiving plays.  We are working on a better path planner that will let us
-    // find a cleaner solution to this problem, but for now, this basic solution is the best way to
-    // avoid flaws.
+
+    // This last test is commented out because, right now, the receiver of a pass begins planning a
+    // path as soon as the ball exists the passer, at which point the ball is very close to the
+    // passer. So the receiver, when making its plan to stop after receiving the ball, is forced to
+    // decelerate extremely rapidly to avoid colliding with the passer, but is limited by our
+    // acceleration constraints and instead compromises the initial velocity when planning the stop
+    // motion to receive a pass, which causes a crash because of the discontinuity in velocity it
+    // creates.  So we force the start velocity of the stop trajectory to match the end velocity of
+    // the ball pursuit trajectory, which would force the discontinuity onto our control code, but
+    // that doesn't happen because the problem will resolve itself well before we can actually get
+    // the ball.  However, this fix means that the crash this test expects no longer happens, or
+    // else we would see crashes in a high percentage of our receiving plays.  We are working on a
+    // better path planner that will let us find a cleaner solution to this problem, but for now,
+    // this basic solution is the best way to avoid flaws.
 }
