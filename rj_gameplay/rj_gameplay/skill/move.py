@@ -43,7 +43,8 @@ class Move(stp.skill.Skill):
         self.__name__ = "Move"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
-        super().tick(world_state=world_state)
+        if self.robot is not None:
+            self.robot = world_state.our_robots[self.robot.id]
         intent = RobotIntent()
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(

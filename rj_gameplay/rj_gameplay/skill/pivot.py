@@ -33,7 +33,7 @@ class Pivot(skill.Skill):
         self.__name__ = "pivot skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
-        super().tick(world_state=world_state)
+        self.robot = world_state.our_robots[self.robot.id]
         intent = RobotIntent()
 
         self.pivot_point = world_state.ball.pos
