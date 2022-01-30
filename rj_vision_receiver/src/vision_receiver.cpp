@@ -14,7 +14,7 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
+DEFINE_INT64(kVisionReceiverParamModule, port, kSharedVisionPortDoubleNew,
              "The port used for the vision receiver.")
 DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "", "The hardware interface to use.")
 
