@@ -16,12 +16,6 @@ class CaptureRole(stp.role.Role):
 
 	def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
 
-		# intent = None
-
-		# if self._state == "init":
-		# 	pass
-
-		# elif self._state =="capture":
 		self.capture_skill = capture.Capture(robot=self.robot)
 		intent = self.capture_skill.tick(world_state)
 		if self.capture_skill.is_done(world_state):

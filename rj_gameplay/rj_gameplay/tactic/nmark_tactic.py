@@ -11,6 +11,7 @@ from rj_msgs.msg import RobotIntent
 
 
 def get_opponents_to_mark(world_state: stp.rc.WorldState, num_markers: int):
+    #TODO: need to be optimized
     ball_pt = world_state.ball.pos
 
     dist_to_opponents = {
@@ -18,6 +19,7 @@ def get_opponents_to_mark(world_state: stp.rc.WorldState, num_markers: int):
         for robot in world_state.their_robots
     }
     return [dist_to_opponents[dist] for dist in sorted(dist_to_opponents.keys())[0:num_markers]]
+    print('hi')
 
 class NMarkTactic(stp.tactic.Tactic): 
     def __init__(self, world_state: stp.rc.WorldState, num_markers: int):
@@ -25,10 +27,7 @@ class NMarkTactic(stp.tactic.Tactic):
         self.num_markers = num_markers
 
         self.opponents_to_mark = get_opponents_to_mark(world_state, self.num_markers)
-        # self._role_requests.append(
-        #     (stp.role.cost.PickClosestRobot(self.opponents_to_mark.pos)
 
-        #     )
         for i in range(len(self.opponents_to_mark)):
             if i==0:
                 self._role_requests.append(
@@ -38,22 +37,20 @@ class NMarkTactic(stp.tactic.Tactic):
                 self._role_requests.append(
                     (stp.role.cost.PickClosestRobot(self.opponents_to_mark[i].pose[:2]), marker.MarkerRole) 
                     )
-            
-            
-
-
     
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         self.assigned_roles = []
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
-            if role is capturer.CaptureRole or marker.MarkerRole:
+            if role is capture_role.CaptureRole:
                 self.assigned_roles.append(role(robot))
-            # elif role is marker.MarkerRole:
-            #     self.assigned_roles.append(role(robot))
+            elif role is marker.MarkerRole:
+                self.assigned_roles.append(role(robot, self.opponents_to_mark[i]))
 
 
-    def tick(self, world_state: stp.rc.WorldState):
+
+
+    def tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, RobotIntent]]:
 
         self.opponents_to_mark = get_opponents_to_mark(world_state, self.num_markers)
 
@@ -63,9 +60,15 @@ class NMarkTactic(stp.tactic.Tactic):
         robot_intents = []
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
-            robot_intents.append(
-                (role.robot.id, role.tick(world_state))
-                )
+            if role.robot is not None:
+                if i==0:
+                    robot_intents.append(
+                        (role.robot.id, role.tick(world_state))
+                        )
+                else:
+                    robot_intents.append(
+                        (role.robot.id, role.tick(world_state, target_robot=self.opponents_to_mark[i]))
+                        )
 
         return robot_intents
 
@@ -89,63 +92,10 @@ class NMarkTactic(stp.tactic.Tactic):
         # elif self._state == "keep_marking":
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
-        return False
         #While on the defense play, it always returns False
+        return False
 
 
-
-
-
-
-
-
-
-# class NMarkTactic(tactic.ITactic):
-#     """Marks the n closest enemies to ball with the closest robots on our team to said enemies."""
-
-#     def __init__(self, n: int):
-#         self.num_markers = n
-
-#         # create empty mark SkillEntry for each robot
-#         self.mark_list = [
-#             tactic.SkillEntry(mark.Mark()) for i in range(self.num_markers)
-#         ]
-
-#         # create cost func for each robot
-#         self.cost_list = [marker_cost() for _ in range(self.num_markers)]
-
-#     def compute_props(self):
-#         pass
-
-#     def create_request(self, **kwargs) -> role.RoleRequest:
-#         """Creates a sane default RoleRequest.
-#         :return: A list of size 1 of a sane default RoleRequest.
-#         """
-#         pass
-
-#     def get_requests(
-#         self, world_state: rc.WorldState, props
-#     ) -> List[tactic.RoleRequests]:
-#         """
-#         :return: role request for n markers
-#         """
-
-#         if world_state is not None and world_state.ball.visible:
-#             # assign n closest enemies to respective skill and role costFn
-#             closest_enemies = get_closest_enemies_to_ball(self.num_markers, world_state)
-#             for i in range(len(closest_enemies)):
-#                 self.mark_list[i].skill.target_robot = closest_enemies[i]
-#                 self.cost_list[i].enemy_to_mark = closest_enemies[i]
-
-#         # create RoleRequest for each SkillEntry
-#         role_requests = {
-#             self.mark_list[i]: [
-#                 role.RoleRequest(role.Priority.LOW, False, self.cost_list[i])
-#             ]
-#             for i in range(self.num_markers)
-#         }
-
-#         return role_requests
 
 #     def tick(
 #         self, world_state: rc.WorldState, role_results: tactic.RoleResults
@@ -163,10 +113,3 @@ class NMarkTactic(stp.tactic.Tactic):
 
 #         return skills
 
-#     def is_done(self, world_state):
-#         # TODO: replace all similar is_done() with a .all() and generator expr
-#         # see https://www.w3schools.com/python/ref_func_all.asp
-#         for mark_skill in self.mark_list:
-#             if not mark_skill.skill.is_done(world_state):
-#                 return False
-#         return True

@@ -55,9 +55,10 @@ class WallTactic(stp.tactic.Tactic):
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
             wall_pt = self.wall_pts[i]
-            robot_intents.append(
-                (role.robot.id, role.tick(world_state, target_point=wall_pt))
-            )
+            if role.robot is not None:
+                robot_intents.append(
+                    (role.robot.id, role.tick(world_state, target_point=wall_pt))
+                )
         return robot_intents
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:

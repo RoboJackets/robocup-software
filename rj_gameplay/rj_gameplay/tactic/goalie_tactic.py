@@ -39,7 +39,8 @@ class GoalieTactic(stp.tactic.Tactic):
         robot_intents = []
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
-            robot_intents.append((role.robot.id, role.tick(world_state)))
+            if role.robot is not None:
+                robot_intents.append((role.robot.id, role.tick(world_state)))
         return robot_intents
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
