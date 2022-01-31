@@ -30,7 +30,7 @@ class Capture(skill.Skill):
         """
         self.robot is updated in superclass
         """
-        self.robot = world_state.our_robots[self.robot.id]
+        super().tick(world_state)
         intent = RobotIntent()
 
         collect_command = CollectMotionCommand()

@@ -30,7 +30,7 @@ class Kick(skill.Skill):
         self.kick_speed = kick_speed
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
-        self.robot = world_state.our_robots[self.robot.id]
+        super().tick(world_state)
         intent = RobotIntent()
 
         empty_command = EmptyMotionCommand()
