@@ -20,6 +20,9 @@ class Skill(ABC):
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """Logic for Skill goes here. RobotIntents obtained via Actions.
+
+        robot state is updated through super call to this method (i.e. super().tick(world_state))
+
         .msg
                 :param world_state: Current world state.
                 :return: A single RobotIntent.

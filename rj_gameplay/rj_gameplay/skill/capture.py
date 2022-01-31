@@ -27,9 +27,6 @@ class Capture(skill.Skill):
         self.__name__ = "capture skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
-        """
-        self.robot is updated in superclass
-        """
         super().tick(world_state)
         intent = RobotIntent()
 
