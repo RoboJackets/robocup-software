@@ -21,12 +21,10 @@ class Skill(ABC):
     @abstractmethod
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """Logic for Skill goes here. RobotIntents obtained via Actions.
-        self.robot is updated forably and quietly.
         .msg
                 :param world_state: Current world state.
                 :return: A single RobotIntent.
         """
-        self.robot = world_state.our_robots[self.robot.id]
         ...
 
     @abstractmethod
