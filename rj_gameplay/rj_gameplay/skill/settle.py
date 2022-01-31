@@ -25,6 +25,7 @@ class Settle(skill.Skill):
         self.__name__ = "settle skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
         intent = RobotIntent()
 
         settle_command = SettleMotionCommand()
