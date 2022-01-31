@@ -13,6 +13,7 @@
 /api_docs
 *~
 build-*
+cmake-*
 
 # sublime-text
 *.sublime-workspace
@@ -43,3 +44,6 @@ perf.data*
 .coverage
 .coverage.*
 coverage.xml
+
+# Debugging launch files
+launch/debug-*

@@ -1,6 +1,6 @@
 import stp
 
-from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
+from rj_gameplay.tactic import wall_tactic, goalie_tactic
 import stp.role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc

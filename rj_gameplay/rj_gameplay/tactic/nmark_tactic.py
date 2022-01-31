@@ -19,7 +19,6 @@ def get_opponents_to_mark(world_state: stp.rc.WorldState, num_markers: int):
         for robot in world_state.their_robots
     }
     return [dist_to_opponents[dist] for dist in sorted(dist_to_opponents.keys())[0:num_markers]]
-    print('hi')
 
 class NMarkTactic(stp.tactic.Tactic): 
     def __init__(self, world_state: stp.rc.WorldState, num_markers: int):
@@ -72,44 +71,6 @@ class NMarkTactic(stp.tactic.Tactic):
 
         return robot_intents
 
-
-        # if self._state == "init":
-        #     self._role_requests = []
-
-        # elif self._state == "execute_mark":
-        #     marker_role.set_mark()
-        #     self._role_requests = [
-        #     (
-        #         stp.role.cost.PickClosestRobot(world_state.ball.pos)
-        #         ),
-        #     (
-        #         stp.role.cost.PickClosestRobot(world_state.pos))
-
-        #     ]
-        # elif self._state == "switch_mark":
-
-
-        # elif self._state == "keep_marking":
-
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         #While on the defense play, it always returns False
         return False
-
-
-
-#     def tick(
-#         self, world_state: rc.WorldState, role_results: tactic.RoleResults
-#     ) -> List[tactic.SkillEntry]:
-#         """
-#         :return: skills for the number of markers assigned from the n markers
-#         """
-
-#         # create list of skills based on if RoleResult exists for SkillEntry
-#         skills = [
-#             mark_skill_entry
-#             for mark_skill_entry in self.mark_list
-#             if role_results[mark_skill_entry][0]
-#         ]
-
-#         return skills
-
