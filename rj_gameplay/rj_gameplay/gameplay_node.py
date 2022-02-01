@@ -33,6 +33,10 @@ from rj_gameplay.action.move import Move
 from rj_gameplay.play import penalty_defense
 import rj_gameplay.basic_play_selector as basic_play_selector
 
+#TODO make sure all the imrt r correct
+from rcl_interfaces.srv import GetParameters, ListParameters
+import xml.etree.cElementTree as ET
+
 NUM_ROBOTS = 16
 
 
@@ -442,6 +446,52 @@ class GameplayNode(Node):
                             center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8
                         )
                     )
+    def ros_params_to_xml(self, global_param_server: str, filename: str):
+        list_client = self.create_client(
+            ListParameters, f"{global_param_server}/list_parameters"
+        )
+        list_param_request = ListParameters.Request()
+        list_future = list_client.call_async(list_param_request)
+        rclpy.spin_until_future_complete(self, list_future, timeout_sec=0.5)
+        while not list_future.done():
+            list_future.cancel()
+            list_future = list_client.call_async(list_parameter_request)
+            print("Waiting for ListParameters")
+            rclpy.spin_until_future_complete(self, list_future, timeout_sec=0.5)
+        params_names = list_future.result().result.names
+
+        get_client = self.create_client(
+            GetParameters, f"{global_param_server}/get_parameters"
+        )
+        get_parameter_request = GetParameters.Request(names=params_names)
+        get_future = get_client.call_async(get_parameter_request)
+        rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
+        while not get_future.done():
+            get_future.cancel()
+            get_future = get_client.call_async(get_parameter_request)
+            print("Waiting for GetParameters")
+            rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
+        param_values = get_future.result().values
+
+        with open(filename, 'r+') as f:
+            f.truncate(0)
+
+        root = ET.Element("Global_Params")
+        for name, val in zip(params_names, param_values):
+            ET.subElement(root, "param", name=name).text = val
+        tree = ET.ElementTree(root)
+        tree.write(filename)
+
+
+
+
+
+
+
+
+
+
+
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
