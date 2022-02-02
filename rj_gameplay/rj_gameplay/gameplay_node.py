@@ -20,6 +20,7 @@ import stp.rc as rc
 import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.coordinator as coordinator
+from stp.gameplay_executor import GameplayExecutor
 import stp
 import stp.skill
 import stp.play
@@ -133,9 +134,6 @@ class GameplayNode(Node):
         self.action_client_dict: Dict[Type[Any], List[Any]] = {
             MoveActionClient: self.move_action_clients
         }
-
-        # for ac in self.move_action_clients:
-        #    rclpy.spin(ac)
 
         for i in range(NUM_ROBOTS):
             self.robot_intent_pubs[i] = self.create_publisher(
@@ -259,12 +257,7 @@ class GameplayNode(Node):
                 server_intent: msg.ServerIntent = self.generate_server_intent(
                     intents[i], i
                 )
-                # self.move_action_clients[i].cancel_goal()
                 self.move_action_clients[i].send_goal(server_intent)
-                # self.move_action_clients[i].
-
-                # rip_i = self.robot_intent_pubs[i]
-                # rip_i.publish(intents[i])
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -506,4 +499,7 @@ def main():
     # play_selector = basic_play_selector.BasicPlaySelector()
 
     gameplay = GameplayNode(play_selector)
-    rclpy.spin(gameplay)
+    executor = GameplayExecutor()
+    executor.add_solo_node(node=gameplay)
+    executor.add_pool_nodes(gameplay.move_action_clients)
+    executor.spin()

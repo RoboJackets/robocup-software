@@ -1,5 +1,3 @@
-# TODO: add cancel move option
-
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
@@ -87,7 +85,6 @@ class MoveActionClient(Node):
         print("cancel goal")
         print(self._robot_id)
         print(self._goal_handle)
-        # TODO : Figure out why goal handle is always none
         if self._goal_handle is None:
             return
         self.get_logger().info("Canceling goal")
