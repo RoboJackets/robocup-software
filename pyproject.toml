@@ -9,3 +9,9 @@ extend-exclude = '''
 )/
   | ^/build
 '''
+
+[pylint]
+max-line-length = 88
+
+[pylint.messages_control]
+disable = C0330, C0326
