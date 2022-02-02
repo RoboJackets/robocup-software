@@ -53,7 +53,6 @@ class move_cost(role.CostFn):
 
 
 class Move(tactic.ITactic):
-
     def __init__(
         self,
         target_point: np.ndarray,
