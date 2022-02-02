@@ -18,7 +18,7 @@ using namespace boost::asio;
 
 namespace radio {
 
-DEFINE_STRING(kRadioParamModule, interface, "127.0.0.1", "The interface for sim radio operation");
+DEFINE_STRING(kRadioParamModule, interface, "172.16.1.1", "The interface for sim radio operation");
 
 static SimulatorCommand convert_placement_to_proto(
     const rj_msgs::srv::SimPlacement::Request& placement) {

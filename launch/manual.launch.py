@@ -16,6 +16,7 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
+    config = os.path.join(get_package_share_directory("rj_robocup"), "config", "soccer-real.cfg")
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
@@ -34,7 +35,8 @@ def generate_launch_description():
         executable="soccer",
         output="screen",
         arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        on_exit=Shutdown(),
+        parameters=[config],
+	on_exit=Shutdown(),
     )
 
     config_server = Node(
@@ -42,21 +44,24 @@ def generate_launch_description():
         executable="config_server",
         output="screen",
         arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        on_exit=Shutdown(),
+        parameters=[config],
+	on_exit=Shutdown(),
     )
 
     radio = Node(
         package="rj_robocup",
-        executable="sim_radio_node",
+        executable="network_radio_node",
         output="screen",
-        on_exit=Shutdown(),
+        parameters=[config],
+	on_exit=Shutdown(),
     )
 
     manual = Node(
         package="rj_robocup",
         executable="manual_control_node",
         output="screen",
-        on_exit=Shutdown(),
+        parameters=[config],
+	on_exit=Shutdown(),
     )
 
     grsim = Node(package="rj_robocup", executable="grSim", arguments=[headless_flag])
@@ -70,7 +75,8 @@ def generate_launch_description():
         package="rj_robocup",
         executable="internal_referee_node",
         output="screen",
-        on_exit=Shutdown(),
+	parameters=[config],
+	on_exit=Shutdown(),
     )
 
     vision_filter_launch_path = str(launch_dir / "vision_filter.launch.py")
@@ -81,7 +87,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             DeclareLaunchArgument("team_flag", default_value=""),
-            DeclareLaunchArgument("sim_flag", default_value="-sim"),
+            DeclareLaunchArgument("sim_flag", default_value=""),
             DeclareLaunchArgument("ref_flag", default_value=""),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             stdout_linebuf_envvar,
@@ -92,6 +98,5 @@ def generate_launch_description():
             vision_receiver,
             vision_filter,
             ref_receiver,
-            grsim,
         ]
     )
