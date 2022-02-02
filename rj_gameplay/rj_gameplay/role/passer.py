@@ -38,8 +38,8 @@ class PasserRole(stp.role.Role):
         if self._state == "init":
             self.receive_skill = receive.Receive(robot=self.robot)
             intent = self.receive_skill.tick(world_state)
-            self._state = "receiving"
-        elif self._state == "receiving":
+            self._state = "capturing"
+        elif self._state == "capturing":
             intent = self.receive_skill.tick(world_state)
             if self.receive_skill.is_done(world_state):
                 self._state = "pass_ready"

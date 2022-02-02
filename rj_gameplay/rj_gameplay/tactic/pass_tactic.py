@@ -47,7 +47,7 @@ class PassTactic(stp.tactic.Tactic):
             #       otherwise behavior is not easy to manipulate
             self._role_requests = [
                 (
-                    stp.role.cost.PickClosestRobot(world_state.ball.pos),
+                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
                     passer.PasserRole,
                 )
             ]
@@ -74,11 +74,11 @@ class PassTactic(stp.tactic.Tactic):
         elif self._state == "get_receiver":
             self._role_requests = [
                 (
-                    stp.role.cost.PickClosestRobot(world_state.ball.pos),
+                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
                     passer.PasserRole,
                 ),
                 (
-                    stp.role.cost.PickClosestRobot(world_state.field.their_goal_loc),
+                    stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc),
                     receiver.ReceiverRole,
                 ),
             ]

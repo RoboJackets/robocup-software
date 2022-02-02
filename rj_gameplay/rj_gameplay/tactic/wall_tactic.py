@@ -32,7 +32,7 @@ class WallTactic(stp.tactic.Tactic):
         # request closest robot every pt
         for pt in self.wall_pts:
             self._role_requests.append(
-                (stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove)
+                (stp.role.cost.PickClosestToPoint(pt), dumb_move.DumbMove)
             )
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:

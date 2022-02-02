@@ -22,9 +22,9 @@ class Tactic(ABC):
 
     @abstractmethod
     def __init__(self, world_state: stp.rc.WorldState) -> None:
-        """Save the world_state, and create empty lists for handling role requests."""
-
-        self.world_state = world_state
+        """Create empty lists for handling role requests. world_state given on init because
+        some Tactics need world_state on init.
+        """
 
         # TODO: make tuple = RoleRequest (or make obj with these two params)?
         self._role_requests: List[Tuple[stp.role.Role, stp.role.CostFn]] = []
