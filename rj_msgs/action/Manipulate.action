@@ -1,0 +1,8 @@
+# Goal
+ServerIntent server_intent
+---
+# Result
+bool is_done
+---
+# Feedback
+bool is_healthy

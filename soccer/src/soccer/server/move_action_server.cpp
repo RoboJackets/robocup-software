@@ -144,9 +144,6 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
         } while (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
                  robot_desired_states_[robot_id].timestamp < old_timestamp);
     }
-    //accept_mutexes[robot_id].lock();
-    //this->test_accept_goal_[robot_id] = true;
-    //accept_mutexes[robot_id].unlock()
     if (goal_handle->is_canceling()) {
         result->is_done = true;
         goal_handle->canceled(result);

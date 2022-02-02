@@ -68,6 +68,7 @@ rosidl_generate_interfaces(
 
   # Actions
   action/Move.action
+  action/Manipulate.action
 
   DEPENDENCIES
   std_msgs
