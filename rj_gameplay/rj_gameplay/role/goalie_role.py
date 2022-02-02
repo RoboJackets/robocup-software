@@ -1,14 +1,13 @@
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
-
 import stp
 
-import rj_gameplay.eval
-from rj_gameplay.skill import move, receive, line_kick, pivot_kick  # , intercept
+from rj_gameplay.skill import move, receive, pivot_kick  # , line_kick, intercept
 import numpy as np
 
-from stp.utils.constants import RobotConstants, BallConstants
-import stp.global_parameters as global_parameters
-from stp.local_parameters import Param
+# TODO: settle on unified way to define constants in gameplay
+from stp.utils.constants import RobotConstants  # , BallConstants
+
+# import stp.global_parameters as global_parameters
+# from stp.local_parameters import Param
 
 from rj_msgs.msg import RobotIntent
 
@@ -19,10 +18,9 @@ DIST_TO_FAST_KICK = 7
 
 
 def get_goalie_pt(world_state: stp.rc.WorldState) -> np.ndarray:
-    """Finds point for goalie to best be in to block a shot.
+    """Gives goalie a default location to track the ball from when it is not actively intercepting or capturing the ball.
     :return numpy point
     """
-    # TODO: param server any constant from stp/utils/constants.py (this includes BallConstants)
     ball_pt = world_state.ball.pos
     goal_pt = world_state.field.our_goal_loc
 
@@ -31,6 +29,10 @@ def get_goalie_pt(world_state: stp.rc.WorldState) -> np.ndarray:
     dist_from_goal = min(GOALIE_PCT_TO_BALL * np.linalg.norm(ball_pt - goal_pt), 1.0)
     mid_pt = goal_pt + (dir_vec * dist_from_goal)
     return mid_pt
+
+
+"""Calculates point to move to to stop the ball, standing in for an intercept planner.
+"""
 
 
 def get_block_pt(world_state: stp.rc.WorldState, my_pos: np.ndarray) -> np.ndarray:
@@ -155,7 +157,7 @@ class GoalieRole(stp.role.Role):
 
             return self.pivot_kick_skill.tick(world_state)
 
-    def is_done(self, world_state):
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # goalie always active
         # TODO: make role end on capture, let passing role take over
         return False

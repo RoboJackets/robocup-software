@@ -15,6 +15,7 @@ class PassTactic(stp.tactic.Tactic):
         super().__init__(world_state)
 
         # TODO: make FSM class (or at least use enum instead of str literals)
+        #       - allow FSM class to print state as debug tool
         self._state = "init"
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
@@ -26,7 +27,9 @@ class PassTactic(stp.tactic.Tactic):
             elif role is receiver.ReceiverRole:
                 self.assigned_roles.append(role(robot))
 
-    def tick(self, world_state: stp.rc.WorldState):
+    def tick(
+        self, world_state: stp.rc.WorldState
+    ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
         """
         FSM
          - init: request passer
@@ -36,12 +39,12 @@ class PassTactic(stp.tactic.Tactic):
          - on ball passed: tick receiver, release passer role
          - when receiver done: done
         """
-        # make this the default print behavior
-        # print("tactic state:", self._state)
 
         role_intents = []
 
         if self._state == "init":
+            # TODO: allow Plays to pass in this (and further below) cost fns,
+            #       otherwise behavior is not easy to manipulate
             self._role_requests = [
                 (
                     stp.role.cost.PickClosestRobot(world_state.ball.pos),
@@ -171,8 +174,8 @@ class PassTactic(stp.tactic.Tactic):
 
     @property
     def needs_assign(self):
-        # maybe issues with one-tick flag?
-        ret = self._needs_assign == True
+        # style is wrong here: this convoluted way of returning self._needs_assign is necessary because we want to set it to False after the call, always
+        ret = self._needs_assign == True  # noqa: E712
         self._needs_assign = False
         return ret
 

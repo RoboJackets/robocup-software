@@ -18,6 +18,8 @@ from stp.utils.constants import RobotConstants
 
 
 class Capture(skill.Skill):
+    """Second half of a Receive Skill. Captures the ball once it has been slowed down."""
+
     def __init__(self, robot: Optional[rc.Robot] = None):
         self.robot = robot
         self.ticks_done = 0
@@ -25,11 +27,12 @@ class Capture(skill.Skill):
         self.__name__ = "capture skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
         intent = RobotIntent()
 
         collect_command = CollectMotionCommand()
         intent.motion_command.collect_command = [collect_command]
-        intent.dribbler_speed = 1.0 #dribbler is on by default 
+        intent.dribbler_speed = 1.0  # dribbler is on by default
         intent.is_active = True
 
         return intent
@@ -38,13 +41,8 @@ class Capture(skill.Skill):
         ball_speed = np.linalg.norm(world_state.ball.vel)
 
         ball_pos = world_state.ball.pos
-        robot_pos = world_state.our_robots[self.robot.id].pose[0:2]
 
-        # this doesn't work:
-        # robot_pos = self.robot.pos
-        # because self.robot is passed on init and never updated
-        # TODO: make superclass force robot update in tick()
-        #       (do this quietly with self.robot = world_state.our_robots[self.robot.id]
+        robot_pos = self.robot.pose[0:2]
 
         dist_to_ball = np.linalg.norm(robot_pos - ball_pos)
 

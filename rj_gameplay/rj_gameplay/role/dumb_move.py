@@ -1,15 +1,14 @@
-import stp
+import stp.role
+import stp.rc
 
-import rj_gameplay.eval
-import rj_gameplay.skill as skills
 from rj_gameplay.skill import move
-import stp.skill as skill
-import numpy as np
 
 from rj_msgs.msg import RobotIntent
 
 
 class DumbMove(stp.role.Role):
+    """Wrapper for the Move Skill. Named "Dumb" because it does not have much other functionality (breaking the ideal of a "complex" single-robot Role)."""
+
     def __init__(self, robot: stp.rc.Robot, target_point, face_point) -> None:
         super().__init__(robot)
 
@@ -21,25 +20,19 @@ class DumbMove(stp.role.Role):
     def tick(
         self, world_state: stp.rc.WorldState, target_point=None, face_point=None
     ) -> RobotIntent:
+
+        skill_needs_update = self.move_skill is None
+
         if target_point is not None:
             self.target_point = target_point
-            # TODO: clean this up
-            self.move_skill = move.Move(
-                robot=self.robot,
-                target_point=self.target_point,
-                face_point=self.face_point,
-            )
+            skill_needs_update = True
 
         if face_point is not None:
             self.face_point = face_point
-            self.move_skill = move.Move(
-                robot=self.robot,
-                target_point=self.target_point,
-                face_point=self.face_point,
-            )
+            skill_needs_update = True
 
         # create skill with correct target & face_point
-        if self.move_skill is None:
+        if skill_needs_update:
             self.move_skill = move.Move(
                 robot=self.robot,
                 target_point=self.target_point,

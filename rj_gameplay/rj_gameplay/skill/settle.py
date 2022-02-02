@@ -16,9 +16,8 @@ from typing import Optional
 SETTLE_BALL_SPEED_THRESHOLD = 1.0
 
 
-class Settle(skill.ISkill):
-
-    # TODO: add move functionality so that robot can move to where the ball is going.
+class Settle(skill.Skill):
+    """First half of a Receive Skill. Slows the ball down to allow Capture planner to work."""
 
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
@@ -26,6 +25,7 @@ class Settle(skill.ISkill):
         self.__name__ = "settle skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
         intent = RobotIntent()
 
         settle_command = SettleMotionCommand()

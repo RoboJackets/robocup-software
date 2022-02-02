@@ -33,6 +33,7 @@ class Pivot(skill.Skill):
         self.__name__ = "pivot skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
         intent = RobotIntent()
 
         self.pivot_point = world_state.ball.pos
@@ -43,7 +44,6 @@ class Pivot(skill.Skill):
             x=self.target_point[0], y=self.target_point[1]
         )
         intent.motion_command.pivot_command = [pivot_command]
-        intent.trigger_mode = intent.TRIGGER_MODE_STAND_DOWN
         intent.dribbler_speed = self.dribble_speed
         intent.is_active = True
 

@@ -18,16 +18,19 @@ class Skill(ABC):
 
     # TODO: update docstring when ActionClients are up and running
 
-    @abstractmethod
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """Logic for Skill goes here. RobotIntents obtained via Actions.
+
+        robot state is updated through super call to this method (i.e. super().tick(world_state))
+
         .msg
                 :param world_state: Current world state.
                 :return: A single RobotIntent.
         """
-        ...
+        if self.robot is not None:
+            self.robot = world_state.our_robots[self.robot.id]
 
     @abstractmethod
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
-        # TODO: docstring
+        """True when skill is done; False otherwise."""
         ...

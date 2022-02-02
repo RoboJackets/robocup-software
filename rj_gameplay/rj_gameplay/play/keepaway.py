@@ -1,4 +1,4 @@
-from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import List
 
 import stp
 
@@ -8,6 +8,10 @@ from rj_msgs.msg import RobotIntent
 
 
 class Keepaway(stp.play.Play):
+    """Play that passes repeatedly, effectively playing keepaway.
+    See tick() for more details.
+    """
+
     def __init__(self):
         super().__init__()
 
@@ -26,7 +30,6 @@ class Keepaway(stp.play.Play):
         when pass_done: return to init
         (the effect is to pass indefinitely)
         """
-        print("play state:", self.state)
 
         if self.state == "init":
             self.prioritized_tactics = [pass_tactic.PassTactic(world_state)]
@@ -37,22 +40,23 @@ class Keepaway(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self.state == "active":
+            # TODO: this loop's logic is fairly crucial in role assignment
+            #
+            # is there a way I can force this to happen as a precondition to assign_roles?
+            # maybe call assign_roles() every tick but check tactic for needs_assign before assigning it
+            # (this works as the method is in Play superclass)
             for tactic in self.prioritized_tactics:
-                # TODO: this line/logic is fairly crucial in role assignment,
-                # is there a way I can force this to happen as a precondition to assign_roles?
-                # maybe call assign_roles() every tick but check tactic for needs_assign before assigning it
-                # (this works as the method is in Play superclass)
                 if tactic.needs_assign:
                     self.state = "assign_roles"
 
-                # TODO: this line abuses the fact that there's only one tactic rn, fix please
-                if tactic.is_done(world_state):
-                    self.state = "init"
+            # only one tactic in this play
+            tactic = self.prioritized_tactics[0]
+            if tactic.is_done(world_state):
+                self.state = "init"
 
             return self.get_robot_intents(world_state)
 
         elif self.state == "assign_roles":
-            print("*" * 80)
             # duplicate code from init
             self.assign_roles(world_state)
             self.state = "active"
