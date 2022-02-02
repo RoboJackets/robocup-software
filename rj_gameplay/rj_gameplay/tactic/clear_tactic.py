@@ -44,12 +44,12 @@ class Clear(tactic.ITactic):
     """
     A passing tactic which captures then passes the ball
     """
-
-    def __init__(self, target_point: np.ndarray, kick_speed=3.0, chip=False):
+    kick:tactic.SkillEntry
+    def __init__(self, robot:rc.Robot,target_point: np.ndarray, kick_speed=3.0, chip=False):
         self.target_point = target_point
         self.kick = tactic.SkillEntry(
             line_kick.LineKickSkill(
-                None,
+                robot = robot,
                 target_point=target_point,
                 chip=chip,
                 kick_speed=kick_speed,
@@ -68,7 +68,7 @@ class Clear(tactic.ITactic):
 
     def get_requests(
         self, world_state: rc.WorldState, props
-    ) -> List[tactic.RoleRequests]:
+    ) -> tactic.RoleRequests:
         """Checks if we have the ball and returns the proper request
         :return: A list of size 2 of role requests
         """
@@ -86,6 +86,7 @@ class Clear(tactic.ITactic):
         self,
         world_state: rc.WorldState,
         role_results: tactic.RoleResults,
+        props: tactic.PropT
     ) -> List[tactic.SkillEntry]:
         """
         :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
