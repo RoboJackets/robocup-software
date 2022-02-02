@@ -1,6 +1,6 @@
 import stp
 
-from rj_gameplay.tactic import wall_tactic, goalie_tactic
+from rj_gameplay.tactic import wall_tactic, goalie_tactic, nmark_tactic
 import stp.role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc
@@ -40,7 +40,9 @@ class BasicDefense(stp.play.Play):
                 self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
                 # TODO: add nmark tactic
                 #       and make it go for the ball (rather than stopping in front)
-                self.prioritized_tactics.append(nmark_tactic.NMarkTactic(world_state, 2))
+                self.prioritized_tactics.append(
+                    nmark_tactic.NMarkTactic(world_state, 2)
+                )
                 self.assign_roles(world_state)
                 self.state = "active"
                 return self.get_robot_intents(world_state)
