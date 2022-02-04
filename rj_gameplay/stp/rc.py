@@ -7,7 +7,7 @@ from typing import List, Optional
 import numpy as np
 import warnings
 
-RobotId = int
+RobotId = Optional[int]
 
 
 class Robot:
