@@ -26,22 +26,22 @@ class LineUp(stp.play.Play):
 
         # super simple FSM
         # TODO: use FSM class (or at least don't use string literals)
-        self.state = "init"
+        self._state = "init"
 
     def tick(
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
 
-        if self.state == "init":
+        if self._state == "init":
             self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
             self.assign_roles(world_state)
-            self.state = "line_up"
+            self._state = "line_up"
             return self.get_robot_intents(world_state)
-        elif self.state == "line_up":
+        elif self._state == "line_up":
             if self.prioritized_tactics[0].is_done(world_state):
-                self.state = "done"
+                self._state = "done"
             return self.get_robot_intents(world_state)
-        elif self.state == "done":
+        elif self._state == "done":
             # TODO: does this state need to exist?
             return None
