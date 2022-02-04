@@ -63,7 +63,6 @@ class PassTactic(stp.tactic.Tactic):
         elif self._state == "passer_capture":
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
-            assert isinstance(passer_role, passer.PasserRole)
             intent = passer_role.tick(world_state)
 
             role_intents = [(passer_role.robot.id, intent)]
@@ -98,9 +97,7 @@ class PassTactic(stp.tactic.Tactic):
 
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
-            assert isinstance(passer_role, passer.PasserRole)
             receiver_role = self.assigned_roles[1]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             # TODO: create func to find good target point
             # TODO: should update receiver_role robot every tick in the role (see skill/capture.py)
@@ -117,9 +114,7 @@ class PassTactic(stp.tactic.Tactic):
         elif self._state == "await_pass":
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
-            assert isinstance(passer_role, passer.PasserRole)
             receiver_role = self.assigned_roles[1]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             role_intents = [
                 (passer_role.robot.id, passer_role.tick(world_state)),
@@ -131,7 +126,6 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == "pass_incoming":
             receiver_role = self.assigned_roles[1]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             self._role_requests = [
                 (
@@ -153,7 +147,6 @@ class PassTactic(stp.tactic.Tactic):
 
             # TODO: these lines are a little ugly, any fix?
             receiver_role = self.assigned_roles[0]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
             receiver_role.set_receive_pass()
 
             role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
@@ -162,7 +155,6 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == "await_receive":
             receiver_role = self.assigned_roles[0]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
 
