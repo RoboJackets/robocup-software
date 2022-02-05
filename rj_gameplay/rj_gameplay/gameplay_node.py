@@ -469,5 +469,8 @@ def main():
     # comment out this line when using the test play selector
     play_selector = basic_play_selector.BasicPlaySelector()
 
+    # change this line to test different plays (set to None if no desired test play)
+    test_play = None
+
     gameplay = GameplayNode(play_selector)
     rclpy.spin(gameplay)
