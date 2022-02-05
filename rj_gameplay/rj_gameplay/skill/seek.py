@@ -27,6 +27,6 @@ class Seek(skill.ISkill):
 
     def __str__(self):
         return f"Seek(robot={self.robot.id if self.robot is not None else '??'})"
-    
+
     def __repr__(self) -> str:
         return self.__str__()
