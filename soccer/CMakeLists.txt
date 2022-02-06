@@ -122,6 +122,7 @@ add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
 add_executable(move_action_server)
+add_executable(manipulate_action_server)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -223,6 +224,9 @@ set(GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES robocup)
 set(MOVE_ACTION_SERVER_DEPS_SYSTEM_LIBRARIES)
 set(MOVE_ACTION_SERVER_DEPS_LIBRARIES robocup)
 
+set(MANIPULATE_ACTION_SERVER_DEPS_SYSTEM_LIBRARIES)
+set(MANIPULATE_ACTION_SERVER_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -284,6 +288,9 @@ target_link_libraries(global_param_server_node PRIVATE ${GLOBAL_PARAM_SERVER_NOD
 # -- move_action_server --
 target_link_libraries(move_action_server PRIVATE ${MOVE_ACTION_SERVER_DEPS_SYSTEM_LIBRARIES} ${MOVE_ACTION_SERVER_DEPS_LIBRARIES})
 
+# -- manipulate_action_server --
+target_link_libraries(manipulate_action_server PRIVATE ${MANIPULATE_ACTION_SERVER_DEPS_SYSTEM_LIBRARIES} ${MANIPULATE_ACTION_SERVER_DEPS_LIBRARIES})
+
 # ======================================================================
 # Testing
 # ======================================================================
@@ -327,7 +334,8 @@ install(
         network_radio_node
         manual_control_node
         global_param_server_node
-	move_action_server
+	    move_action_server
+        manipulate_action_server
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

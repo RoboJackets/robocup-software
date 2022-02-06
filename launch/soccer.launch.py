@@ -73,6 +73,14 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    manipulate_action_server = Node(
+        package="rj_robocup",
+        executable="manipulate_action_server",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
     move_action_server = Node(
         package="rj_robocup",
         executable="move_action_server",
@@ -125,6 +133,7 @@ def generate_launch_description():
             radio,
             control,
             planner,
+            manipulate_action_server,
             move_action_server,
             vision_receiver,
             vision_filter,

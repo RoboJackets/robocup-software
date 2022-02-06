@@ -105,10 +105,18 @@ static inline std::string robot_status_pub(int robot_id) {
 
 }  // namespace radio::topics
 
-namespace action_server::topics {
+namespace move_action_server::topics {
 
 static inline std::string robot_intent_pub(int robot_id) {
-    return "action_server/robot_intent/robot_" + std::to_string(robot_id);
+    return "move_action_server/robot_intent/robot_" + std::to_string(robot_id);
 }
 
-}  // namespace action_server::topics
+}  // namespace move_action_server::topics
+
+namespace manipulate_action_server::topics {
+
+static inline std::string robot_intent_pub(int robot_id) {
+    return "manipulate_action_server/robot_intent/robot_" + std::to_string(robot_id);
+}
+
+}  // namespace manipulate_action_server::topics

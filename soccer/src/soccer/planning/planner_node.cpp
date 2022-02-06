@@ -51,7 +51,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
 
     intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
-        action_server::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
+        move_action_server::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
         [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT
             if (robot_alive()) {
                 auto plan_request = make_request(rj_convert::convert_from_ros(*intent));

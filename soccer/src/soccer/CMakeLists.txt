@@ -69,12 +69,13 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     server/move_action_server.cpp
+    server/manipulate_action_server.cpp
         )
 
 set(SOCCER_TEST_SRC
     battery_profile_test.cpp
     ball_test.cpp
-        control/trapezoidal_motion_test.cpp
+    control/trapezoidal_motion_test.cpp
     control/motion_control_test.cpp
     optimization/gradient_ascent_1d_test.cpp
     optimization/parallel_gradient_ascent_1d_test.cpp
@@ -89,7 +90,7 @@ set(SOCCER_TEST_SRC
     planning/tests/trapezoidal_motion_test.cpp
     planning/tests/velocity_profiling_test.cpp
     test_main.cpp
-        logger_test.cpp)
+    logger_test.cpp)
 
 set(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
 
@@ -114,6 +115,8 @@ set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
 set(MOVE_ACTION_SERVER_SRC server/move_action_server_main.cpp)
+
+set(MANIPULATE_ACTION_SERVER_SRC server/manipulate_action_server_main.cpp)
 
 # ======================================================================
 # Add sources
@@ -157,6 +160,9 @@ target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_S
 
 # ---- move_action_server ----
 target_sources(move_action_server PRIVATE ${MOVE_ACTION_SERVER_SRC})
+
+# ---- manipulate_action_server ----
+target_sources(manipulate_action_server PRIVATE ${MANIPULATE_ACTION_SERVER_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})

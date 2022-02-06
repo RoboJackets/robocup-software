@@ -31,12 +31,13 @@ from stp.global_parameters import GlobalParameterClient
 
 import numpy as np
 
-from rj_gameplay.play import penalty_defense, basic_defense
+from rj_gameplay.play import penalty_defense, basic_defense, basic122
 import rj_gameplay.basic_play_selector as basic_play_selector
 
-from rj_gameplay.action import move_action_client
+from rj_gameplay.action import move_action_client, manipulate_action_client
 
 from rj_gameplay.action.move_action_client import MoveActionClient
+from rj_gameplay.action.manipulate_action_client import ManipulateActionClient
 
 NUM_ROBOTS = 16
 
@@ -60,7 +61,7 @@ class TestPlaySelector(situation.IPlaySelector):
         self, world_state: rc.WorldState
     ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         self.curr_situation = None
-        return (None, basic_defense.BasicDefense(self._action_client_dict))
+        return (None, basic122.Basic122(self._action_client_dict))
 
 
 class GameplayNode(Node):
@@ -116,29 +117,20 @@ class GameplayNode(Node):
                 )
             )
 
-        self.robot_intent_pubs = []
-        for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs.append(
-                self.create_publisher(
-                    msg.RobotIntent, "gameplay/robot_intent/robot_" + str(i), 10
-                )
-            )
-
-        # TODO: add other action clients too
         self.move_action_clients = [
             move_action_client.MoveActionClient(i) for i in range(NUM_ROBOTS)
+        ]
+
+        self.manipulate_action_clients = [
+            manipulate_action_client.ManipulateActionClient(i) for i in range(NUM_ROBOTS)
         ]
 
         # action client dictionary mapping action clients types to a list of action clients
         # TODO: delete above comment once fixed with mypy
         self.action_client_dict: Dict[Type[Any], List[Any]] = {
-            MoveActionClient: self.move_action_clients
+            MoveActionClient: self.move_action_clients,
+            ManipulateActionClient: self.manipulate_action_clients
         }
-
-        for i in range(NUM_ROBOTS):
-            self.robot_intent_pubs[i] = self.create_publisher(
-                msg.RobotIntent, "gameplay/robot_intent/robot_" + str(i), 10
-            )
 
         self.get_logger().info("Gameplay node started")
         self.world_state = world_state
@@ -257,7 +249,13 @@ class GameplayNode(Node):
                 server_intent: msg.ServerIntent = self.generate_server_intent(
                     intents[i], i
                 )
-                self.move_action_clients[i].send_goal(server_intent)
+                # TODO : this logic will be moved to the skills soon
+                # there they will not need to perform this check
+                motion_command = server_intent.intent.motion_command
+                if len(motion_command.empty_command) > 0:
+                    self.move_action_clients[i].send_goal(server_intent)
+                else:
+                    self.manipulate_action_clients[i].send_goal(server_intent)
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -493,13 +491,14 @@ class GameplayNode(Node):
 
 def main():
     # uncomment this line to use the test play selector
-    play_selector = TestPlaySelector()
+    # play_selector = TestPlaySelector()
 
     # comment out this line when using the test play selector
-    # play_selector = basic_play_selector.BasicPlaySelector()
+    play_selector = basic_play_selector.BasicPlaySelector()
 
     gameplay = GameplayNode(play_selector)
     executor = GameplayExecutor()
     executor.add_solo_node(node=gameplay)
     executor.add_pool_nodes(gameplay.move_action_clients)
+    executor.add_pool_nodes(gameplay.manipulate_action_clients)
     executor.spin()
