@@ -35,6 +35,8 @@ public:
 
 private:
     std::vector<std::shared_ptr<rclcpp::Publisher<RobotIntent>>> intent_pubs_;
+    std::vector<bool> kick_avl;
+    std::vector<std::mutex> accept_goal;
 
     std::vector<rj_msgs::msg::RobotStatus> robot_statuses_;
     rclcpp_action::Server<Manipulate>::SharedPtr action_server_;

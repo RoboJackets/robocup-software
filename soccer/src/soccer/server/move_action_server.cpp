@@ -31,8 +31,8 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
         this->create_subscription<planning::Trajectory::Msg>(
             planning::topics::trajectory_pub(i), rclcpp::QoS(1),
             [this, i](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
-                trajectory_ = rj_convert::convert_from_ros(*trajectory);
-                this->robot_trajectories_[i] = (trajectory_);
+                planning::Trajectory trajectory_ = rj_convert::convert_from_ros(*trajectory);
+                this->robot_trajectories_[i] = trajectory_;
             });
 
         this->create_subscription<RobotState::Msg>(
@@ -59,9 +59,22 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
         return rclcpp_action::GoalResponse::REJECT;
     }
 
+    // TODO: best way to check all motion commands? this way isn't that great
     if (robot_states_[robot_id].visible && std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
         const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.path_target_command[0].target.position);
+        rj_geometry::Point old_position = target_positions[robot_id];
+        if (target_position == old_position) {
+            target_positions[robot_id] = target_position;
+            return rclcpp_action::GoalResponse::REJECT;
+        } else {
+            target_positions[robot_id] = target_position;
+        }
+    }
+
+    if (robot_states_[robot_id].visible && std::holds_alternative<planning::LineKickCommand>(motion_command)) {
+        const auto target_position = rj_convert::convert_from_ros(
+            goal->server_intent.intent.motion_command.line_kick_command[0].target);
         rj_geometry::Point old_position = target_positions[robot_id];
         if (target_position == old_position) {
             target_positions[robot_id] = target_position;

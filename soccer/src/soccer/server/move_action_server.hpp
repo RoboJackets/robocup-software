@@ -37,7 +37,6 @@ private:
 
     std::vector<RobotState> robot_states_;
     std::vector<planning::Trajectory> robot_trajectories_;
-    planning::Trajectory trajectory_;
     std::vector<RobotState> robot_desired_states_;
     std::vector<bool> test_desired_states_;
     std::vector<bool> test_accept_goal_;

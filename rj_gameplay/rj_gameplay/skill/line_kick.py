@@ -16,6 +16,7 @@ import stp.rc as rc
 from rj_gameplay.MAX_KICK_SPEED import *
 
 from rj_gameplay.action.move_action_client import MoveActionClient
+from rj_gameplay.action.manipulate_action_client import ManipulateActionClient
 from typing import Optional, Dict, Type, List, Any
 
 
@@ -43,6 +44,8 @@ class LineKickSkill(ILineKickSkill):
     ) -> None:
         self.robot = robot
         self.move_action_clients = action_client_dict.get(MoveActionClient)
+        self.manipulate_action_clients \
+            = action_client_dict.get(ManipulateActionClient)
 
         self.target_point = target_point
         self.priority = priority

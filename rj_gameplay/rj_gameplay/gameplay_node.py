@@ -255,6 +255,8 @@ class GameplayNode(Node):
                 if len(motion_command.empty_command) > 0:
                     self.move_action_clients[i].send_goal(server_intent)
                 else:
+                    if len(motion_command.line_kick_command) < 0:
+                        self.move_action_clients[i].send_goal(server_intent)
                     self.manipulate_action_clients[i].send_goal(server_intent)
 
             field = self.world_state.field
@@ -501,4 +503,5 @@ def main():
     executor.add_solo_node(node=gameplay)
     executor.add_pool_nodes(gameplay.move_action_clients)
     executor.add_pool_nodes(gameplay.manipulate_action_clients)
+    # TODO: shutdown this properly
     executor.spin()
