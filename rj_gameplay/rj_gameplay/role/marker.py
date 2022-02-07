@@ -5,12 +5,14 @@ from rj_msgs.msg import RobotIntent
 
 
 class MarkerRole(stp.role.Role):
-    def __init__(self, robot: stp.rc.Robot, target_robot: stp.rc.Robot) -> None:
-        super().__init__(robot)
+    """Role to produce marking behavior"""
+    
+	def __init__(self, robot:stp.rc.Robot, target_robot: stp.rc.Robot) -> None:
+		super().__init__(robot)
 
-        self.mark_skill = None
-        self.target_robot = target_robot
-
+		self.mark_skill = None
+		self.target_robot = target_robot
+		
     def tick(
         self, world_state: stp.rc.WorldState, target_robot: stp.rc.Robot
     ) -> RobotIntent:
