@@ -81,7 +81,7 @@ def build_seek_function(target):
 
             range_diff = np.linalg.norm(goal_pos - point) - ball_to_goal_dist
             range_decay = np.exp(-range_diff) / (1.0 + np.exp(-range_diff))
-            avoid_ball_cost = np.exp(-(perp_dist ** 2) * 30) * range_decay
+            avoid_ball_cost = np.exp(-(perp_dist**2) * 30) * range_decay
 
         return np.linalg.norm(point - target) + avoid_ball_cost
 

@@ -247,7 +247,9 @@ def worldstate_message_converter(msg: msg.WorldState) -> PartialWorldState:
     return world_state
 
 
-def robot_creator(robot_state: RobotState, robot_status: RobotStatus = None) -> rc.Robot:
+def robot_creator(
+    robot_state: RobotState, robot_status: RobotStatus = None
+) -> rc.Robot:
     """
     A function which combines the robot state and robot status to create a rc.Robot class
         :return: Robot class from rc.Robot representing the status and state of the robot
