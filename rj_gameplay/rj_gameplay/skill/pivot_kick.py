@@ -5,7 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
-from typing import Tuple
+from typing import Tuple, Union
 
 import stp.skill as skill
 import stp.role as role
@@ -26,8 +26,8 @@ class PivotKick(skill.ISkill):  # add ABC if fails
     def __init__(
         self,
         robot: rc.Robot = None,
-        pivot_point: Tuple = None,
-        target_point: Tuple = None,
+        pivot_point: Union[Tuple, np.ndarray] = None,
+        target_point: Union[Tuple, np.ndarray] = None,
         dribble_speed: float = 1,
         chip: bool = False,
         kick_speed: float = MAX_KICK_SPEED,

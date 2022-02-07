@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional, Tuple, Union
 
 import rj_gameplay.eval as eval
 import argparse
@@ -58,9 +58,9 @@ class Mark(skill.ISkill):
         self,
         robot: rc.Robot = None,
         target_robot: rc.Robot = None,
-        face_point: Tuple = None,
+        face_point: Union[Tuple, np.ndarray] = None,
         face_angle: Optional[float] = None,
-        target_vel: Tuple = (0.0, 0.0),
+        target_vel: Union[Tuple, np.ndarray] = (0.0, 0.0),
         ignore_ball: bool = False,
     ) -> None:
 

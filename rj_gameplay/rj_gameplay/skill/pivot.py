@@ -5,7 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
-from typing import Tuple
+from typing import Tuple, Union
 
 import stp.skill as skill
 import stp.role as role
@@ -23,8 +23,8 @@ class Pivot:
     def __init__(
         self,
         robot: rc.Robot = None,
-        pivot_point: Tuple = None,
-        target_point: Tuple = None,
+        pivot_point: Union[Tuple, np.ndarray] = None,
+        target_point: Union[Tuple, np.ndarray] = None,
         dribble_speed: float = 1,
         threshold: float = 0.02,
         priority: int = 1,

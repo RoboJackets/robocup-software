@@ -5,7 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
-from typing import Tuple
+from typing import Tuple, Union
 
 import stp.skill as skill
 import stp.role as role
@@ -30,7 +30,7 @@ class Intercept(IIntercept):
     def __init__(
         self,
         robot: rc.Robot = None,
-        target_point: Tuple = (0.0, 0.0),
+        target_point: Union[Tuple, np.ndarray] = (0.0, 0.0),
     ):
         self.robot = robot
         self.target_point = np.asarray_chkfinite(target_point)

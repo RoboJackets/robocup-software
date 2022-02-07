@@ -7,7 +7,7 @@ import sys
 import time
 import math
 import numpy as np
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 import stp.skill as skill
 import stp.role as role
@@ -27,10 +27,10 @@ class Move(skill.ISkill):
     def __init__(
         self,
         robot: Optional[rc.Robot] = None,
-        target_point: Tuple = (0.0, 0.0),
-        target_vel: Tuple = (0.0, 0.0),
+        target_point: Union[Tuple, np.ndarray] = (0.0, 0.0),
+        target_vel: Union[Tuple, np.ndarray] = (0.0, 0.0),
         face_angle: float = None,
-        face_point: Tuple = None,
+        face_point: Union[Tuple, np.ndarray] = None,
         ignore_ball: bool = False,
         priority: int = 0,
     ):

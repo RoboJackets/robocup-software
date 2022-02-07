@@ -6,7 +6,7 @@ import py_trees
 import sys
 import time
 import numpy as np
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 import math
 
 import stp.skill as skill
@@ -26,10 +26,10 @@ class Dribble(skill.ISkill):
     def __init__(
         self,
         robot: rc.Robot = None,
-        target_point: Tuple = (0.0, 0.0),
-        target_vel: Tuple = (0.0, 0.0),
+        target_point: Union[Tuple, np.ndarray] = (0.0, 0.0),
+        target_vel: Union[Tuple, np.ndarray] = (0.0, 0.0),
         face_angle: Optional[float] = None,
-        face_point: Optional[Tuple] = None,
+        face_point: Optional[Union[Tuple, np.ndarray]] = None,
         priority: int = 0,
     ):
 
