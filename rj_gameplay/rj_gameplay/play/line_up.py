@@ -32,8 +32,6 @@ class LineUp(stp.play.Play):
     def __init__(self):
         super().__init__()
 
-        # super simple FSM
-        # TODO: use FSM class (or at least don't use string literals)
         self._state = State.INIT
 
     def tick(
