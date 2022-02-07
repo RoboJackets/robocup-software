@@ -17,7 +17,7 @@ class Keepaway(stp.play.Play):
 
         # super simple FSM
         # TODO: use FSM class (or at least don't use string literals)
-        self.state = "init"
+        self._state = "init"
 
     def tick(
         self,
@@ -31,15 +31,15 @@ class Keepaway(stp.play.Play):
         (the effect is to pass indefinitely)
         """
 
-        if self.state == "init":
+        if self._state == "init":
             self.prioritized_tactics = [pass_tactic.PassTactic(world_state)]
             # TODO: either add seek tactic(s) or unassigned behavior
 
             self.assign_roles(world_state)
-            self.state = "active"
+            self._state = "active"
             return self.get_robot_intents(world_state)
 
-        elif self.state == "active":
+        elif self._state == "active":
             # TODO: this loop's logic is fairly crucial in role assignment
             #
             # is there a way I can force this to happen as a precondition to assign_roles?
@@ -47,17 +47,17 @@ class Keepaway(stp.play.Play):
             # (this works as the method is in Play superclass)
             for tactic in self.prioritized_tactics:
                 if tactic.needs_assign:
-                    self.state = "assign_roles"
+                    self._state = "assign_roles"
 
             # only one tactic in this play
             tactic = self.prioritized_tactics[0]
             if tactic.is_done(world_state):
-                self.state = "init"
+                self._state = "init"
 
             return self.get_robot_intents(world_state)
 
-        elif self.state == "assign_roles":
+        elif self._state == "assign_roles":
             # duplicate code from init
             self.assign_roles(world_state)
-            self.state = "active"
+            self._state = "active"
             return self.get_robot_intents(world_state)
