@@ -5,6 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
+from typing import Tuple
 
 import stp.skill as skill
 import stp.role as role
@@ -29,10 +30,10 @@ class Intercept(IIntercept):
     def __init__(
         self,
         robot: rc.Robot = None,
-        target_point: np.ndarray = np.array([0.0, 0.0]),
+        target_point: Tuple = (0.0, 0.0),
     ):
         self.robot = robot
-        self.target_point = target_point
+        self.target_point = np.asarray_chkfinite(target_point)
 
         self.__name__ = "Intercept Skill"
         if self.robot is not None:

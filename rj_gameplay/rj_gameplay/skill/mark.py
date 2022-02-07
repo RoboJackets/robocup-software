@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import rj_gameplay.eval as eval
 import argparse
@@ -58,17 +58,17 @@ class Mark(skill.ISkill):
         self,
         robot: rc.Robot = None,
         target_robot: rc.Robot = None,
-        face_point: np.ndarray = None,
+        face_point: Tuple = None,
         face_angle: Optional[float] = None,
-        target_vel: np.ndarray = np.array([0.0, 0.0]),
+        target_vel: Tuple = (0.0, 0.0),
         ignore_ball: bool = False,
     ) -> None:
 
         self.__name__ = "Mark"
         self.robot = robot
         self.target_robot = target_robot
-        self.target_vel = target_vel
-        self.face_point = face_point
+        self.target_vel = np.asarray_chkfinite(target_vel)
+        self.face_point = np.asarray_chkfinite(face_point)
         self.face_angle = face_angle
         self.ignore_ball = ignore_ball
 

@@ -6,6 +6,7 @@ import py_trees
 import sys
 import time
 import numpy as np
+from typing import Tuple
 
 import stp.skill as skill
 import stp.role as role
@@ -32,14 +33,14 @@ class LineKickSkill(ILineKickSkill):
     def __init__(
         self,
         robot: rc.Robot,
-        target_point: np.array,
+        target_point: Tuple,
         priority: int = 0,
         chip: bool = False,
         kick_speed: float = 5.5,
     ) -> None:
         self.robot = robot
 
-        self.target_point = target_point
+        self.target_point = np.asarray_chkfinite(target_point)
         self.priority = priority
         self.chip = chip
         self.kick_speed = kick_speed

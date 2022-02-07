@@ -5,6 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
+from typing import Tuple
 
 import stp.skill as skill
 import stp.role as role
@@ -22,15 +23,15 @@ class Pivot:
     def __init__(
         self,
         robot: rc.Robot = None,
-        pivot_point: np.ndarray = None,
-        target_point: np.ndarray = None,
+        pivot_point: Tuple = None,
+        target_point: Tuple = None,
         dribble_speed: float = 1,
         threshold: float = 0.02,
         priority: int = 1,
     ):
         self.robot = robot
-        self.pivot_point = pivot_point
-        self.target_point = target_point
+        self.pivot_point = np.asarray_chkfinite(pivot_point)
+        self.target_point = np.asarray_chkfinite(target_point)
         self.dribble_speed = dribble_speed
         self.threshold = threshold
 
