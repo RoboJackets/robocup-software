@@ -24,5 +24,5 @@ class CaptureRole(stp.role.Role):
 
         return intent
 
-    def is_done(self, world_state) -> bool:
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return self._state == "done"
