@@ -7,29 +7,6 @@ from rj_gameplay.situation.decision_tree import analyzer
 from rj_msgs.msg import RobotIntent
 from stp.utils.constants import RobotConstants
 
-
-class FieldLoc(Enum):
-    """Enum for representing where the ball is on the field."""
-
-    DEFEND_SIDE = 1
-    MIDFIELD = 2
-    ATTACK_SIDE = 3
-
-def point_field_loc(target_point: np.ndarray)-> FieldLoc:
-    """Computes the field location of target point.
-        :param robot target_point:
-        :return: The current FieldLoc.
-        """
-    field_len: float = world_state.field.length_m
-    midfield: float = field_len / 2
-
-    if target_point[1] <= midfield:
-        return FieldLoc.DEFEND_SIDE
-    elif target_point[1] > midfield:
-        return FieldLoc.ATTACK_SIDE
-    else:
-        return FieldLoc.MIDFIELD
-
 class SeekerRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
@@ -43,7 +20,7 @@ class SeekerRole(stp.role.Role):
 
     def possible_target_point(self, world_state: rc.WorldState) -> List:
 
-        SAG_DIST = RobotConstants.RADIUS * 0.5
+        SAG_DIST = RobotConstants.RADIUS * 0.75
         pointList : list
         box_w = world_state.field.def_area_long_dist_m
         box_h = world_state.field.def_area_short_dist_m
@@ -59,9 +36,8 @@ class SeekerRole(stp.role.Role):
 
         for angle in range(0, 360): #num represents passing angle 
             point = SAG_DIST * np.array([np.cos(angle), np.sin(angle)])
-            if point_field_loc(point) == 3:
-                if check == True or neither == True:
-                    pointList.append(point)
+            if check == True or neither == True:
+                pointList.append(point)
         
         return pointList
     
