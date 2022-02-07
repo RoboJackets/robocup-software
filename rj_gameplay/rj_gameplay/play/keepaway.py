@@ -2,7 +2,7 @@ from typing import List
 
 import stp
 
-from rj_gameplay.tactic import pass_tactic
+from rj_gameplay.tactic import pass_tactic, seeker_test_tactic
 
 from rj_msgs.msg import RobotIntent
 
@@ -32,7 +32,8 @@ class Keepaway(stp.play.Play):
         """
 
         if self._state == "init":
-            self.prioritized_tactics = [pass_tactic.PassTactic(world_state)]
+            self.prioritized_tactics = [pass_tactic.PassTactic(world_state),
+            seeker_test_tactic.SeekerTactic(world_state)]
             # TODO: either add seek tactic(s) or unassigned behavior
 
             self.assign_roles(world_state)
