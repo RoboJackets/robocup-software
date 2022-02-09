@@ -1,8 +1,7 @@
 import stp
-import math
 from operator import xor 
-from enum import Enum
-from rj_gameplay.skill import move, seek
+from typing import List
+from rj_gameplay.skill import move
 from rj_gameplay.situation.decision_tree import analyzer
 from rj_msgs.msg import RobotIntent
 from stp.utils.constants import RobotConstants
@@ -18,7 +17,7 @@ class SeekerRole(stp.role.Role):
 
         self._target_point = None
 
-    def possible_target_point(self, world_state: rc.WorldState) -> List:
+    def possible_target_point(self, world_state: stp.rc.WorldState) -> List:
 
         SAG_DIST = RobotConstants.RADIUS * 0.75
         pointList : list
