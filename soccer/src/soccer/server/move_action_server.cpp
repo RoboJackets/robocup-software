@@ -23,6 +23,14 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
     this->test_accept_goal_.reserve(kNumShells);
     this->test_accept_goal_.assign(kNumShells, true);
     this->target_positions.fill((-1, -1));
+    this->target_pivots.fill((-1, -1));
+
+    world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
+        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
+        [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
+          auto lock = std::lock_guard(mutex_);
+          last_world_state_ = rj_convert::convert_from_ros(*world_state);
+        });
 
     for (size_t i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(this->create_publisher<RobotIntent>(
@@ -60,7 +68,7 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
     }
 
     // TODO: best way to check all motion commands? this way isn't that great
-    if (robot_states_[robot_id].visible && std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
+    if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible && std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
         const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.path_target_command[0].target.position);
         rj_geometry::Point old_position = target_positions[robot_id];
@@ -70,14 +78,26 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
         } else {
             target_positions[robot_id] = target_position;
         }
-    }
-
-    if (robot_states_[robot_id].visible && std::holds_alternative<planning::LineKickCommand>(motion_command)) {
+    } else if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible && std::holds_alternative<planning::LineKickCommand>(motion_command)) {
         const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.line_kick_command[0].target);
         rj_geometry::Point old_position = target_positions[robot_id];
         if (target_position == old_position) {
             target_positions[robot_id] = target_position;
+            return rclcpp_action::GoalResponse::REJECT;
+        } else {
+            target_positions[robot_id] = target_position;
+        }
+    } else if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible && std::holds_alternative<planning::PivotCommand>(motion_command)) {
+        const auto target_position = rj_convert::convert_from_ros(
+            goal->server_intent.intent.motion_command.pivot_command[0].pivot_target);
+        const auto target_pivot = rj_convert::convert_from_ros(
+            goal->server_intent.intent.motion_command.pivot_command[0].pivot_point);
+        rj_geometry::Point old_position = target_positions[robot_id];
+        rj_geometry::Point old_pivot = target_pivots[robot_id];
+        if (target_position == old_position && target_pivot == old_pivot) {
+            target_positions[robot_id] = target_position;
+            target_pivots[robot_id] = target_pivot;
             return rclcpp_action::GoalResponse::REJECT;
         } else {
             target_positions[robot_id] = target_position;
@@ -109,15 +129,16 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
     int robot_id = server_intent.robot_id;
     std::cout << robot_id << std::endl;
 
+    bool is_pivot = std::holds_alternative<planning::PivotCommand>(motion_command);
+
     RJ::Time base_time = RJ::Time();
     bool tested = this->test_desired_states_.at(robot_id);
     RJ::Time old_timestamp = tested ? robot_desired_states_[robot_id].timestamp : base_time;
 
     std::shared_ptr<Move::Result> result = std::make_shared<Move::Result>();
+    this->intent_pubs_[robot_id]->publish(robot_intent);
 
-    rclcpp::Rate loop_rate(1);
     do {
-        this->intent_pubs_[robot_id]->publish(robot_intent);
         if (goal_handle->is_canceling()) {
             result->is_done = true;
             goal_handle->canceled(result);
@@ -134,9 +155,7 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
         }
 
         goal_handle->publish_feedback(feedback);
-        loop_rate.sleep();
-    } while (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
-             robot_desired_states_[robot_id].timestamp < old_timestamp);
+    } while (robot_trajectories_[robot_id].time_created() != std::nullopt);
 
     if (goal_handle->is_canceling()) {
         result->is_done = true;

@@ -17,19 +17,18 @@ ManipulateActionServer ::ManipulateActionServer(const rclcpp::NodeOptions& optio
         std::bind(&ManipulateActionServer::handle_accepted, this, _1));
 
     this->intent_pubs_.reserve(kNumShells);
-    this->robot_statuses_.reserve(kNumShells);
+    this->robot_kicker_statuses_.reserve(kNumShells);
     kick_avl.reserve(kNumShells);
 
     for (size_t i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(this->create_publisher<RobotIntent>(
-            move_action_server::topics::robot_intent_pub(i), rclcpp::QoS(1).transient_local()));
+            manipulate_action_server::topics::robot_intent_pub(i), rclcpp::QoS(1).transient_local()));
 
         this->create_subscription<rj_msgs::msg::RobotStatus>(
             radio::topics::robot_status_pub(i), rclcpp::QoS(1),
             [this, i](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
-                // TODO: why does this not work here but it does it move?
-                // RobotStatus status_ = *status;
-                // this->robot_statuses_[i] = rj_convert::convert_from_ros(status_);
+                this->robot_kicker_statuses_[i].kicker_charged = status->kicker_charged;
+                this->robot_kicker_statuses_[i].kicker_healthy = status->kicker_healthy;
             });
 
         kick_avl[i] = true;
@@ -42,15 +41,17 @@ rclcpp_action::GoalResponse ManipulateActionServer ::handle_goal(const rclcpp_ac
 
     int robot_id = goal->server_intent.robot_id;
     RobotIntent robot_intent = goal->server_intent.intent;
+
     /*
-    if (kick_avl[robot_id]) {
-
-        accept_goal[robot_id].lock();
-        kick_avl[robot_id] = false;
-        accept_goal[robot_id].unlock();
-
+    // temp for now, eventually kick_avl should only check if the kicker charged and healthy
+    if (!kick_avl[robot_id]) {
         return rclcpp_action::GoalResponse::REJECT;
-    }*/
+    }
+
+    accept_goal[robot_id].lock();
+    kick_avl[robot_id] = false;
+    accept_goal[robot_id].unlock();
+    */
 
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
@@ -77,14 +78,9 @@ void ManipulateActionServer ::execute(const std::shared_ptr<GoalHandleManipulate
 
     this->intent_pubs_[robot_id]->publish(robot_intent);
 
-    /*
     std::shared_ptr<Manipulate::Feedback> feedback = std::make_shared<Manipulate::Feedback>();
     goal_handle->publish_feedback(feedback);
 
-    accept_goal[robot_id].lock();
-    kick_avl[robot_id] = true;
-    accept_goal[robot_id].unlock();
-     */
 
     if (goal_handle->is_canceling()) {
         result->is_done = true;

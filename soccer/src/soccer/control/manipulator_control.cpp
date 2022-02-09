@@ -17,7 +17,7 @@ ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell
 
     manipulator_pub_ = manipulator_pub;
     intent_sub_ = node->create_subscription<rj_msgs::msg::RobotIntent>(
-        manipulate_action_server::topics::robot_intent_pub(shell_id), rclcpp::QoS(1),
+        move_action_server::topics::robot_intent_pub(shell_id), rclcpp::QoS(1),
         [manipulator_pub](rj_msgs::msg::RobotIntent::SharedPtr intent) {  // NOLINT
             manipulator_pub->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
                                          .shoot_mode(intent->shoot_mode)

@@ -34,11 +34,16 @@ public:
     ~ManipulateActionServer() = default;
 
 private:
+    struct kicker_info {
+        bool kicker_charged;
+        bool kicker_healthy;
+    };
+
     std::vector<std::shared_ptr<rclcpp::Publisher<RobotIntent>>> intent_pubs_;
     std::vector<bool> kick_avl;
     std::vector<std::mutex> accept_goal;
 
-    std::vector<rj_msgs::msg::RobotStatus> robot_statuses_;
+    std::vector<kicker_info> robot_kicker_statuses_;
     rclcpp_action::Server<Manipulate>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const Manipulate::Goal> goal);

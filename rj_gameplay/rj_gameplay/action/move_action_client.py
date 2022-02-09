@@ -68,6 +68,7 @@ class MoveActionClient(Node):
         cancel_response = future.result()
         self._goal_handle = None
         if len(cancel_response.goals_canceling) > 0:
+            # goal successfully canceled
             return cancel_response
         else:
             return cancel_response

@@ -61,7 +61,7 @@ class TestPlaySelector(situation.IPlaySelector):
         self, world_state: rc.WorldState
     ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         self.curr_situation = None
-        return (None, basic122.Basic122(self._action_client_dict))
+        return (None, basic_defense.BasicDefense(self._action_client_dict))
 
 
 class GameplayNode(Node):
@@ -252,12 +252,9 @@ class GameplayNode(Node):
                 # TODO : this logic will be moved to the skills soon
                 # there they will not need to perform this check
                 motion_command = server_intent.intent.motion_command
-                if len(motion_command.empty_command) > 0:
+                if self.move_action_clients[i]:
                     self.move_action_clients[i].send_goal(server_intent)
-                else:
-                    if len(motion_command.line_kick_command) < 0:
-                        self.move_action_clients[i].send_goal(server_intent)
-                    self.manipulate_action_clients[i].send_goal(server_intent)
+                    #self.manipulate_action_clients[i].send_goal(server_intent)
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -505,3 +502,4 @@ def main():
     executor.add_pool_nodes(gameplay.manipulate_action_clients)
     # TODO: shutdown this properly
     executor.spin()
+    executor.shutdown()

@@ -173,7 +173,7 @@
 	</Var>
 	<Var name="Communication" type="list">
 		<Var name="Vision multicast address" type="string">
-			224.5.23.2
+			127.0.0.1
 		</Var>
 		<Var name="Vision multicast port" type="int" minval="" maxval="">
 			10020

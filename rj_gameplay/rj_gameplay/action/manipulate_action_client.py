@@ -9,7 +9,7 @@ from rj_msgs.msg import ServerIntent, RobotIntent
 
 
 class ManipulateActionClient(Node):
-    """The move action client"""
+    """The manipulate action client"""
     def __init__(self, robot_id):
         super().__init__("manipulate_action_client_{:02d}".format(robot_id))
         self._robot_id = robot_id
@@ -51,6 +51,7 @@ class ManipulateActionClient(Node):
         cancel_response = future.result()
         self._goal_handle = None
         if len(cancel_response.goals_canceling) > 0:
+            # goal successfully canceled
             return cancel_response
         else:
             return cancel_response

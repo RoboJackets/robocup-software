@@ -32,16 +32,25 @@ public:
     ~MoveActionServer() = default;
 
 private:
+    mutable std::mutex mutex_;
+    std::array<rj_geometry::Point, kNumShells> target_pivots;
     std::array<rj_geometry::Point, kNumShells> target_positions;
     std::vector<std::shared_ptr<rclcpp::Publisher<RobotIntent>>> intent_pubs_;
+    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
 
-    std::vector<RobotState> robot_states_;
+    [[nodiscard]] const WorldState* world_state() const {
+        auto lock = std::lock_guard(mutex_);
+        return &last_world_state_;
+    }
+
+    WorldState last_world_state_;
     std::vector<planning::Trajectory> robot_trajectories_;
     std::vector<RobotState> robot_desired_states_;
     std::vector<bool> test_desired_states_;
     std::vector<bool> test_accept_goal_;
     RobotState desired_state_;
     rclcpp_action::Server<Move>::SharedPtr action_server_;
+
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const Move::Goal> goal);
     rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleMove> goal_handle);
