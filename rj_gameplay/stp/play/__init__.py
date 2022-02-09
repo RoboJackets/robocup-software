@@ -3,6 +3,9 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
+
+import asyncio
+
 from typing import (
     Callable,
     Dict,
@@ -73,7 +76,7 @@ class Play(ABC):
         """
         ...
 
-    def assign_roles(
+    async def assign_roles(
         self,
         world_state: stp.rc.WorldState,
     ) -> None:
@@ -98,7 +101,7 @@ class Play(ABC):
                     cost = cost_fn(robot, world_state)
                     if cost < min_cost:
                         min_cost = cost
-                        cheapest_robot = robot
+                        cheapest_robot = await robot
 
                 if cheapest_robot is None:
                     # TODO: properly error handle if cheapest_robot is None
