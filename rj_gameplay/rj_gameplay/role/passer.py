@@ -43,6 +43,8 @@ PASS_CUTOFF = 0.1
 THETA_LEADING_OFFSET = 0.1
 # Constant for how far from the path of the ball the closest enemy robot can be
 SHOOT_COVERAGE_CUTOFF = 0.1
+# Number of divisions for finding the best shot on goal
+NUM_DIVISIONS = 15
 
 class PasserRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
@@ -58,6 +60,10 @@ class PasserRole(stp.role.Role):
         self._target_point = None
 
         # BEGIN dynamic tendency variables #
+
+        ### TODO: ADD LEFT AND RIGHT GOAL POSTS INTO FILE ###
+        # left_goal_post = 
+        # right_goal_post = 
         
         # floating point value [0,1] representing how open this robot is, i.e. how much coverage
         # is the other team placing on this robot and how "at risk" is the ball towards being stolen.
@@ -67,7 +73,7 @@ class PasserRole(stp.role.Role):
         # floating point value [0,1] representing how much of the percieved goal is being covered by the
         # other teams goalie and players.  Basically, in the line of sight of this robot what percent of the goal is
         # being occupied by the opposing teams goalie (and players) + a buffer of _____%.
-        self.shot_on_goal = [False, np.zeros(0, 0)]
+        self.shot_on_goal = tuple(np.zeros(0, 0), 0)
 
         self.min_rob_dist_pass = []
 
@@ -95,8 +101,6 @@ class PasserRole(stp.role.Role):
 
         our_vecs, their_vecs = self.calc_displacement_vecs(world_state)
         self.min_rob_dist_pass = self.calc_min_distance_from_lines(our_vecs, their_vecs)
-
-        self.shot_on_goal = self.is_shot_on_goal(world_state)
 
         intent = None
 
@@ -185,18 +189,49 @@ class PasserRole(stp.role.Role):
             final_distances[i] = min(distances)
         return final_distances
 
-    def best_goal_shot(self, world_state: stp.rc.WorldState, our_vecs: np.ndarray, their_vecs: np.ndarray) -> Tuple[np.ndarray, float]:
+    def best_goal_shot(self, world_state: stp.rc.WorldState, divisions: int, left_post: np.ndarray, right_post: np.ndarray) -> Tuple[np.ndarray, float]:
         """
         Finds the vector pointing to the area of the net that maximizes the distance from each robot to the path of the ball towards the net
 
         :param world_state: the current state of the world updated every tick
         :type world_state: stp.rc.WorldState
-        :param our_vecs: the displacement vectors between our robot and our other teammates
-        :type our_vecs: np.ndarray of size [(our_robots), 2]
-        :param their_vecs: the displacement vectors between our robot and the other team's robots
-        :type their_vecs: np.ndarray of size [(their_robots), 2]
+        :param divisions: the number of divisions to split the goal into to find the best shot
+        :type divisions: int
+        :param left_post: the location of the left post of the goal
+        :type left_post: np.ndarray of size [1, 2] (x, y)
+        :param right_post: the location of the right post of the goal
+        :type right_post: np.ndarray of size [1, 2] (x, y)
 
         :return vector pointing from this robot to the best shot and the distance from the closest robot to the line spanning from this robot to the goal
         :type return: Tuple[np.ndarray [1, 2] (x, y), float]
         """
-        pass
+        largest_gap = 0
+        best_shot_location = np.zeros(1, 2)
+
+        front_robs = []
+        for robot in world_state.robots:
+            if robot.pose[1] > self.robot.pose[1]:
+                front_robs.append(robot)
+
+        delta = (right_post - left_post) / divisions
+
+        for i in range(0, divisions):
+            shot_position = left_post + (delta * i)
+            shot_constant = shot_position - self.robot.pose[0:2]
+            closest_value = 0
+            closest_index = 0
+
+            index = 0
+            for robot in front_robs:
+                value = robot.pose[1] * shot_constant[0] - robot.pose[0] * shot_constant[1]
+                if value < closest_value:
+                    closest_value = value
+                    closest_index = index
+                index += 1
+            
+            distance = np.linalg.norm(np.cross(self.robot.pose[0:2], (front_robs[closest_index] - self.robot.pose[0:2]))) / np.linalg.norm(self.robot.pose[0:2])
+            if distance > largest_gap:
+                largest_gap = distance
+                best_shot_location = shot_position
+
+        return best_shot_location, largest_gap
