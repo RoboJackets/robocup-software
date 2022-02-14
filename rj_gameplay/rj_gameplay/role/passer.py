@@ -69,10 +69,7 @@ class PasserRole(stp.role.Role):
         # being occupied by the opposing teams goalie (and players) + a buffer of _____%.
         self.shot_on_goal = [False, np.zeros(0, 0)]
 
-        # a dictionary mapping robot ids to floating point values [0,1] representing how much of each teammate is being covered by the
-        # other teams players.  Basically, in the line of sight of this robot what percent of the teammate is
-        # being occupied by the opposing team + a buffer of ____%.
-        self.teammate_direct_openness = {}
+        self.min_rob_dist_pass = []
 
         # a dictionary mapping robot ids to floating point values [-1,1] representing how much coverege is in the counter-clockwise (-) (with this robot
         # as the pivot) of another robot and or in the positive direction (+) (again with this robot as the pivot point) dependent
@@ -96,9 +93,8 @@ class PasserRole(stp.role.Role):
          - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
 
-        displacements = self.calc_displacement_vecs(world_state)
-        distances = self.calc_dist_from_lines(world_state, displacements)
-        self.teammate_direct_openness = self.can_pass_to_teammates(world_state, distances)
+        our_vecs, their_vecs = self.calc_displacement_vecs(world_state)
+        self.min_rob_dist_pass = self.calc_min_distance_from_lines(our_vecs, their_vecs)
 
         self.shot_on_goal = self.is_shot_on_goal(world_state)
 
@@ -137,89 +133,70 @@ class PasserRole(stp.role.Role):
     def is_done(self, world_state) -> bool:
         return self._state == "kick_done"
 
-    def calc_displacement_vecs(
-            self, our_robots: List[stp.rc.Robot], this_robot_id: stp.rc.RobotId, this_robot_pos: np.ndarray
-        ) -> TypedDict[stp.rc.RobotId: np.ndarray]:
+    def calc_displacement_vecs(self, world_state: stp.rc.WorldState) -> Tuple[np.ndarray]:
         """
-        Calculates the displacement between all of our robots and the robot that has this role.
-        
-        :param our_robots: the list of our robots
-        :type our_robots: List[stp.rc.Robot]
-        :param this_robot_id: the id of the robot that is given the passer/ball_handler role
-        :type this_robot_id: stp.rc.RobotId (int)
-        :param this_robot_pos: the position of this robot in the x,y grid
-        :type this_robot_pos: np.ndarray
+        Calculates the vector between the robot assigned the passer role and the other robots on the field.  For the case where the robot is checking against
+        it's own position, the vector given is (0, 0)
 
-        :return: a displacement vector between one of our robots and the robot currently assigned to the passer/ball_handler role
-        :type return: TypedDict[RobotId: np.ndarray]
-        """
-
-        vectors = {}
-        for i in range(0, len(our_robots)):
-            if our_robots[i].id == this_robot_id:
-                vectors[our_robots[i].id] = None
-                continue
-            vectors[our_robots[i].id] = our_robots[i].pose[0:2] - this_robot_pos
-        return vectors
-
-    def calc_dist_from_lines(
-            self, our_robots: List[stp.rc.Robot], their_robots: List[stp.rc.Robot], displacement_vectors: TypedDict[stp.rc.RobotId: np.ndarray],
-            this_robot_pos: np.ndarray, this_robot_id: stp.rc.RobotId
-        ) -> np.array:
-        """
-        Calculates the distance from our displacement lines of each robot on the field.
-
-        :param our_robots: A list of our robots
-        :type our_robots: List[Robot]
-        :param their_robots: A list of the other team's robots
-        :type their_robots: List[Robot]
-
-        :return list of distance of each robot (listed in order by id) from the displacement vector spanning from this robot
-        :type: np.ndarray of shape [NUM_ROBOTS / 2, NUM_ROBOTS] (distance from line per robot)
-        """
-
-        distances = np.zeros(gameplay_node.NUM_ROBOTS / 2, gameplay_node.NUM_ROBOTS)
-        for i in range(0, len(displacement_vectors)):
-            for j in range(0, gameplay_node.NUM_ROBOTS):
-                distance = np.cross(displacement_vectors[i], world_state.robots[j]) / np.linalg.norm(displacement_vectors[i])
-                distances[i,j] = distance
-        return distances
-
-    def can_direct_pass_to_teammates(self, world_state: stp.rc.WorldState, distances: np.ndarray) -> TypedDict[int: bool]:
-        """
-        Creates a list of boolean values indicating whether or not this robot can pass to a friendly robot.  These values are
-        calculated by setting a cutoff threshold that, when a distance is less than, decides that a robot is no longer open.
-
-        :param world_state: the current world state
+        :param world_state: the world_state representation we have each tick
         :type world_state: stp.rc.WorldState
-        :param distances: the numpy array of distances of each robot from the line between this robot and the designated receiver.
-        :type distances: np.ndarray of shape [NUM_ROBOTS / 2, NUM_ROBOTS]
 
-        :return boolean value indicating whether the robot is open for a direct pass
-        :type return: TypedDict[int: bool] mapping robots by their id to whether or not they are open
+        :return [(our_robots), 3] array corresponding to the displacement vector (x, y, 0) this robot to each of our other robots and a second array between this robot
+        and the other teams robots
+        :type return: 2 np.ndarray of dimension [(NUM_ROBOTS / 2), 3]
         """
-
-        passable_list = {}
+        our_vecs = np.zeros(gameplay_node.NUM_ROBOTS / 2, 3)
         for i in range(0, gameplay_node.NUM_ROBOTS / 2):
-            passable_list[world_state.our_robots[i].id] = True
-            for j in range(0, gameplay_node.NUM_ROBOTS):
-                if (world_state.robots[j] != self.robot and world_state.robot[i] != world_state.robot[j]):
-                    if distances[i,j] < PASS_CUTOFF:
-                        passable_list[world_state.our_robots[i]] = False
-                        break
-        return passable_list
+            if (world_state.our_robots[i].id != self.robot.id):
+                our_vecs[i,0:2] = world_state.our_robots[i].pose[0:2] - self.robot.pose[0:2]
+        their_vecs = np.zeros(gameplay_node.NUM_ROBOTS / 2, 2)
+        for j in range(0, gameplay_node.NUM_ROBOTS / 2):
+            their_vecs[i,0:2] = world_state.their_robots[i].pose[0:2] - self.robot.pose[0:2]
+        return our_vecs, their_vecs
 
-    def is_shot_on_goal(self, world_state: stp.rc.WorldState) -> Tuple(bool, np.ndarray):
+    def calc_min_distance_from_lines(self, our_vecs: np.ndarray, their_vecs: np.ndarray) -> np.ndarray:
         """
-        Checks a few points in the goal line to see if a shot at the location would be blockable by the opposing team's goalie.
+        Creates a list of the distance from the closest robot to the path the ball will have to take to make a direct pass to each teammate.
 
-        :param world_state: the current world state
-        :type worl_state: stp.rc.WorldState
+        :param our_vecs: the np array of displacement vectors from this robot to the robot with id equal to the index of the (x,y) pair in the
+        numpy array
+        :type our_vecs: np.ndarray of size [(our_robots),3] (x, y, 0)
+        :param their_vecs: the np array of displacement vectors from this robot to the other team's robots
+        :type their_vecs: np.ndarray of size [(their_robots), 3] (x, y, 0)]
 
-        :return: Tuple that says whether or not a shot can be made as well as the location the shot should be shot at.
-        :type return: Tuple(bool, np.ndarray)
+        :return list of distance from robot closest to the linear path of the ball to the path the ball will have to take to make a direct path.
+        :type return: np.ndarray of size [(our_robots):1] (distance)
         """
-        
-        num_divisions = 5
-        goal_top = np.zero(2)
-        goal_top[0] = gameplay_node.GameplayNode.field.goal_width_m / 2 + physical_goal
+        final_distances = np.zeros(1, gameplay_node.NUM_ROBOTS / 2)
+        for i in range(0, gameplay_node.NUM_ROBOTS / 2):
+            distances = []
+            for our_vec in our_vecs:
+                if our_vec == np.zeros(1, 2) or our_vecs[i] == our_vec:
+                    continue
+                dot_over_mag = np.dot(our_vecs[i], our_vec) / (np.linalg.norm(our_vecs[i]) * np.linalg.norm(our_vec))
+                if dot_over_mag < 0:
+                    continue
+                distances.append(np.linalg.norm(np.cross(our_vec, our_vecs[i])) / np.linalg.norm(our_vecs[i]))
+            for their_vec in their_vecs:
+                dot_over_mag = np.dot(our_vecs[i], their_vec) / (np.linalg.norm(our_vecs[i]) * np.linalg.norm(their_vec))
+                if dot_over_mag < 0:
+                    continue
+                distances.append(np.linalg.norm(np.cross(their_vec, our_vecs[i])) / np.linalg.norm(our_vecs[i]))
+            final_distances[i] = min(distances)
+        return final_distances
+
+    def best_goal_shot(self, world_state: stp.rc.WorldState, our_vecs: np.ndarray, their_vecs: np.ndarray) -> Tuple[np.ndarray, float]:
+        """
+        Finds the vector pointing to the area of the net that maximizes the distance from each robot to the path of the ball towards the net
+
+        :param world_state: the current state of the world updated every tick
+        :type world_state: stp.rc.WorldState
+        :param our_vecs: the displacement vectors between our robot and our other teammates
+        :type our_vecs: np.ndarray of size [(our_robots), 2]
+        :param their_vecs: the displacement vectors between our robot and the other team's robots
+        :type their_vecs: np.ndarray of size [(their_robots), 2]
+
+        :return vector pointing from this robot to the best shot and the distance from the closest robot to the line spanning from this robot to the goal
+        :type return: Tuple[np.ndarray [1, 2] (x, y), float]
+        """
+        pass
