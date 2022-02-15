@@ -35,7 +35,9 @@ import rj_gameplay.basic_play_selector as basic_play_selector
 
 #TODO make sure all the imrt r correct
 from rcl_interfaces.srv import GetParameters, ListParameters
-import xml.etree.cElementTree as ET
+from rcl_interfaces.msg import ParameterType
+import xml.etree.ElementTree as ET
+import os
 
 NUM_ROBOTS = 16
 
@@ -139,6 +141,9 @@ class GameplayNode(Node):
             self, "global_parameter_server"
         )
         local_parameters.register_parameters(self)
+        self.ros_params_to_xml("global_parameter_server",'/home/christina/robocup/robocup-software/rj_gameplay/rj_gameplay/global_param.xml')
+
+        
 
         # publish def_area_obstacles, global obstacles
         self.def_area_obstacles_pub = self.create_publisher(
@@ -156,7 +161,7 @@ class GameplayNode(Node):
         )
         self.play_selector: situation.IPlaySelector = play_selector
         self.coordinator = coordinator.Coordinator(play_selector, self.debug_callback)
-
+        
     def set_play_state(self, play_state: msg.PlayState):
         self.play_state = play_state
 
@@ -446,7 +451,11 @@ class GameplayNode(Node):
                             center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8
                         )
                     )
+
     def ros_params_to_xml(self, global_param_server: str, filename: str):
+        here = os.path.dirname(os.path.abspath(filename))
+        self.param_filename = os.path.join(here, filename)
+        self.global_param_server = global_param_server
         list_client = self.create_client(
             ListParameters, f"{global_param_server}/list_parameters"
         )
@@ -455,15 +464,15 @@ class GameplayNode(Node):
         rclpy.spin_until_future_complete(self, list_future, timeout_sec=0.5)
         while not list_future.done():
             list_future.cancel()
-            list_future = list_client.call_async(list_parameter_request)
-            print("Waiting for ListParameters")
-            rclpy.spin_until_future_complete(self, list_future, timeout_sec=0.5)
-        params_names = list_future.result().result.names
+            list_future = list_client.call_async(list_param_request)
+            print("Waiting for ListParameters in gameplay_node")
+            rclpy.spin_until_future_complete(self, list_future, timeout_sec=1.0)
+        param_name = list_future.result().result.names
 
         get_client = self.create_client(
             GetParameters, f"{global_param_server}/get_parameters"
         )
-        get_parameter_request = GetParameters.Request(names=params_names)
+        get_parameter_request = GetParameters.Request(names=param_name)
         get_future = get_client.call_async(get_parameter_request)
         rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
         while not get_future.done():
@@ -473,23 +482,46 @@ class GameplayNode(Node):
             rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
         param_values = get_future.result().values
 
-        with open(filename, 'r+') as f:
-            f.truncate(0)
-
-        root = ET.Element("Global_Params")
-        for name, val in zip(params_names, param_values):
-            ET.subElement(root, "param", name=name).text = val
+        root = ET.Element("global_param")
         tree = ET.ElementTree(root)
-        tree.write(filename)
+        for name, val in zip(param_name, param_values):
+            if val.type == ParameterType.PARAMETER_NOT_SET:
+                pass
+            elif val.type == ParameterType.PARAMETER_BOOL:
+                value = val.bool_value
+            elif val.type == ParameterType.PARAMETER_INTEGER:
+                value = val.integer_value
+            elif val.type == ParameterType.PARAMETER_DOUBLE:
+                value = val.double_value
+            elif val.type == ParameterType.PARAMETER_BYTE_ARRAY:
+                value = val.byte_array_value
+            elif val.type == ParameterType.PARAMETER_BOOL_ARRAY:
+                value = val.bool_array_value
+            elif val.type == ParameterType.PARAMETER_INTEGER_ARRAY:
+                value = val.integer_array_value
+            elif val.type == ParameterType.PARAMETER_DOUBLE_ARRAY:
+                value = val.double_array_value
 
+            param_names = name.split(".")
+            curr_tag = root
+            for prefix in param_names[:-1]:
+                if curr_tag.find(prefix) == None:
+                    curr_tag = ET.SubElement(curr_tag, prefix)
+                else:
+                    curr_tag = curr_tag.find(prefix)
+            ET.SubElement(curr_tag, param_names[-1]).text = str(value)
+        tree.write(self.param_filename)
+        
 
-
-
-
-
-
-
-
+    
+    def get_param(self, param_name):
+        """
+        param_name is namespace by '/'. eg: get_param('soccer/physics/ball_decay_constant').
+        throws run time error if the parameter does not exist.
+        """
+        tree = ET.parse(self.param_filename)
+        curr_elem = tree.getroot().find(param_name)
+        return curr_elem.text
 
 
 
