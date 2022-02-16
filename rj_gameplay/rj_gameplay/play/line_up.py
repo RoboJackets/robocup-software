@@ -17,6 +17,14 @@ from typing import (
 import numpy as np
 from rj_msgs.msg import RobotIntent
 
+from enum import Enum, auto
+
+
+class State(Enum):
+    INIT = auto()
+    LINE_UP = auto()
+    DONE = auto()
+
 
 class LineUp(stp.play.Play):
     """Lines up all six robots on the side of the field."""
@@ -24,24 +32,22 @@ class LineUp(stp.play.Play):
     def __init__(self):
         super().__init__()
 
-        # super simple FSM
-        # TODO: use FSM class (or at least don't use string literals)
-        self._state = "init"
+        self._state = State.INIT
 
     def tick(
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
 
-        if self._state == "init":
+        if self._state == State.INIT:
             self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
             self.assign_roles(world_state)
-            self._state = "line_up"
+            self._state = State.LINE_UP
             return self.get_robot_intents(world_state)
-        elif self._state == "line_up":
+        elif self._state == State.LINE_UP:
             if self.prioritized_tactics[0].is_done(world_state):
-                self._state = "done"
+                self._state = State.DONE
             return self.get_robot_intents(world_state)
-        elif self._state == "done":
+        elif self._state == State.DONE:
             # TODO: does this state need to exist?
             return None

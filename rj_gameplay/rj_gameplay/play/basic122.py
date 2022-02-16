@@ -1,116 +1,99 @@
-import stp.play as play
-import stp.tactic as tactic
+from typing import List
 
-from rj_gameplay.tactic import (
-    striker_tactic,
-    goalie_tactic,
-    pass_seek,
-    wall_tactic,
-)
-import stp.skill as skill
-import stp.role as role
-from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc as rc
-from typing import (
-    Dict,
-    List,
-    Tuple,
-    Type,
-)
+import stp
+
+from rj_gameplay.tactic import pass_tactic, basic_seek, goalie_tactic
+
+from rj_msgs.msg import RobotIntent
+
+from enum import Enum, auto
+
 import numpy as np
-from rj_gameplay.calculations import wall_calculations
 
 
-class Basic122(play.IPlay):
-    """A basic offensive play. One robot is a striker and shoots as soon it gets the ball.
-    other two seek to specific spots (BAD HARDCODING)
+class State(Enum):
+    INIT = auto()
+    SETUP = auto()
+    READY_TO_PASS = auto()
+    SEEKER_SHOOT = auto()
+    ASSIGN_ROLES = auto()
+
+
+class Basic122(stp.play.Play):
+    """Basic play to score goals. Set up two flank and one center handler. Pass ball as needed.
+    See tick() for more details.
     """
 
     def __init__(self):
-        self.target_point: np.ndarray = np.array([0.0, 9.0])
-        self.striker_tactic = striker_tactic.LineKickStrikerTactic(
-            target_point=self.target_point
-        )
-        self.goalie_tactic = goalie_tactic.GoalieTactic()
-        self.wall_tactic_1 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
-        self.wall_tactic_2 = wall_tactic.WallTactic(role.Priority.LOW, cost_scale=0.1)
+        super().__init__()
 
-        self.num_wallers = 2
+        self._state = State.INIT
 
-        left_pt = np.array([1.5, 7.5])
-        self.seek_left = pass_seek.Seek(
-            left_pt,
-            pass_seek.build_seek_function(left_pt),
-            pass_seek.SeekCost(left_pt),
-        )
-
-        right_pt = np.array([-1.5, 7.5])
-        self.seek_right = pass_seek.Seek(
-            right_pt,
-            pass_seek.build_seek_function(right_pt),
-            pass_seek.SeekCost(right_pt),
-        )
-
-        self.role_assigner = NaiveRoleAssignment()
-
-    def compute_props(self, prev_props):
-        pass
+        self._seek_pts = [
+            np.array((2.0, 7.0)),
+            np.array((-2.0, 7.0)),
+        ]
 
     def tick(
         self,
-        world_state: rc.WorldState,
-        prev_results: role.assignment.FlatRoleResults,
-        props,
-    ) -> Tuple[
-        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]],
-        List[tactic.SkillEntry],
-    ]:
-        # TODO: create NamedTuple for this type
-        # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
+        """
+        init: 1 ball handler, 2 seekers, 1 goalie
+        when seekers make it to hardcoded pt: ball handler passes to seeker
+        when pass to seeker made: seeker shoots
+        """
 
-        # Get role requests from all tactics and put them into a dictionary
+        if self._state == State.INIT:
+            self.prioritized_tactics = [
+                goalie_tactic.GoalieTactic(world_state, 0),
+                basic_seek.BasicSeek(self._seek_pts[0], world_state),
+                basic_seek.BasicSeek(self._seek_pts[1], world_state),
+            ]
 
-        role_requests: play.RoleRequests = {
-            self.striker_tactic: self.striker_tactic.get_requests(world_state, None),
-            # self.two_mark: self.two_mark.get_requests(world_state, None),
-            self.seek_left: self.seek_left.get_requests(world_state, None),
-            self.seek_right: self.seek_right.get_requests(world_state, None),
-            self.goalie_tactic: self.goalie_tactic.get_requests(world_state, None),
-            self.wall_tactic_1: self.wall_tactic_1.get_requests(
-                world_state, wall_pts[0], None
-            ),
-            self.wall_tactic_2: self.wall_tactic_2.get_requests(
-                world_state, wall_pts[1], None
-            ),
-        }
+            self.assign_roles(world_state)
+            self._state = State.SETUP
+            return self.get_robot_intents(world_state)
 
-        # Flatten requests and use role assigner on them
-        flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(
-            flat_requests, world_state, prev_results
-        )
-        role_results = play.unflatten_results(flat_results)
+        elif self._state == State.SETUP:
+            # TODO: this loop's logic is fairly crucial in role assignment
+            #
+            # is there a way I can force this to happen as a precondition to assign_roles?
+            # maybe call assign_roles() every tick but check tactic for needs_assign before assigning it
+            # (this works as the method is in Play superclass)
+            for tactic in self.prioritized_tactics:
+                # TODO: goalie tactic (and all tactics?) need a needs_assign
+                #       build in the logic for needs_assign of pass tactic into superclass
+                if tactic.needs_assign:
+                    self._state = State.ASSIGN_ROLES
 
-        # Get list of all skills with assigned roles from tactics
+            seek_1 = self.prioritized_tactics[0]
+            seek_2 = self.prioritized_tactics[1]
+            if seek_1.is_done(world_state) and seek_2.is_done(world_state):
+                self._state = State.READY_TO_PASS
 
-        skills = self.striker_tactic.tick(
-            world_state, role_results[self.striker_tactic]
-        )
-        skills += self.seek_left.tick(world_state, role_results[self.seek_left])
-        skills += self.seek_right.tick(world_state, role_results[self.seek_right])
-        skills += self.goalie_tactic.tick(world_state, role_results[self.goalie_tactic])
-        skills += self.wall_tactic_1.tick(world_state, role_results[self.wall_tactic_1])
-        skills += self.wall_tactic_2.tick(world_state, role_results[self.wall_tactic_2])
+            return self.get_robot_intents(world_state)
 
-        skill_dict = {}
-        skill_dict.update(role_results[self.striker_tactic])
-        skill_dict.update(role_results[self.seek_left])
-        skill_dict.update(role_results[self.seek_right])
-        skill_dict.update(role_results[self.goalie_tactic])
-        skill_dict.update(role_results[self.wall_tactic_1])
-        skill_dict.update(role_results[self.wall_tactic_2])
-        return skill_dict, skills
+        elif self._state == State.READY_TO_PASS:
+            init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
+            init_receiver_cost = stp.role.cost.PickClosestToPoint(self._seek_pts[0])
+            self.prioritized_tactics = [
+                goalie_tactic.GoalieTactic(world_state, 0),
+                pass_tactic.PassTactic(
+                    world_state, init_passer_cost, init_receiver_cost
+                ),
+            ]
 
-    def is_done(self, world_state):
-        return self.striker_tactic.is_done(world_state)
+            self.assign_roles(world_state)
+            # self._state = State.SEEKER_SHOOT
+            return self.get_robot_intents(world_state)
+
+        elif self._state == State.SEEKER_SHOOT:
+            # TODO: write dummy shoot tactic? or role?
+            pass
+
+        elif self._state == State.ASSIGN_ROLES:
+            # duplicate role assign from init, merge states?
+            self.assign_roles(world_state)
+            # self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)

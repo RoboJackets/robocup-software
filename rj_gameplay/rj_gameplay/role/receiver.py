@@ -5,6 +5,15 @@ from rj_gameplay.skill import receive
 
 from rj_msgs.msg import RobotIntent
 
+from enum import Enum, auto
+
+
+class State(Enum):
+    INIT = auto()
+    PASS_READY = auto()
+    RECEIVE_PASS = auto()
+    DONE = auto()
+
 
 class ReceiverRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
@@ -12,17 +21,16 @@ class ReceiverRole(stp.role.Role):
 
         self.receive_skill = None
 
-        # TODO: make FSM class (or at least use enum instead of str literals)
-        self._state = "init"
+        self._state = State.INIT
 
         self._target_point = None
 
     @property
     def pass_ready(self):
-        return self._state == "pass_ready"
+        return self._state == State.PASS_READY
 
     def set_receive_pass(self):
-        self._state = "receive_pass"
+        self._state = State.RECEIVE_PASS
         self.receive_skill = receive.Receive(robot=self.robot)
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
@@ -35,16 +43,16 @@ class ReceiverRole(stp.role.Role):
 
         intent = None
 
-        if self._state == "init":
-            # do seek behavior
+        if self._state == State.INIT:
+            # TODO: do seek behavior
             pass
-        elif self._state == "receive_pass":
+        elif self._state == State.RECEIVE_PASS:
             intent = self.receive_skill.tick(world_state)
             if self.receive_skill.is_done(world_state):
-                self._state = "done"
+                self._state = State.DONE
                 # end FSM
 
         return intent
 
     def is_done(self, world_state) -> bool:
-        return self._state == "done"
+        return self._state == State.DONE

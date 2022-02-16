@@ -5,6 +5,17 @@ from rj_gameplay.skill import receive, pivot_kick  # , line_kick
 
 from rj_msgs.msg import RobotIntent
 
+from enum import Enum, auto
+
+
+class State(Enum):
+    INIT = auto()
+    CAPTURING = auto()
+    PASS_READY = auto()
+    INIT_EXECUTE_PASS = auto()
+    EXECUTE_PASS = auto()
+    KICK_DONE = auto()
+
 
 class PasserRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
@@ -13,17 +24,16 @@ class PasserRole(stp.role.Role):
         self.receive_skill = None
         self.pivot_kick_skill = None
 
-        # TODO: make FSM class (or at least use enum instead of str literals)
-        self._state = "init"
+        self._state = State.INIT
 
         self._target_point = None
 
     @property
     def pass_ready(self):
-        return self._state == "pass_ready"
+        return self._state == State.PASS_READY
 
     def set_execute_pass(self, target_point):
-        self._state = "init_execute_pass"
+        self._state = State.INIT_EXECUTE_PASS
         self._target_point = target_point
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
@@ -35,20 +45,20 @@ class PasserRole(stp.role.Role):
         """
 
         intent = None
-        if self._state == "init":
+        if self._state == State.INIT:
             self.receive_skill = receive.Receive(robot=self.robot)
             intent = self.receive_skill.tick(world_state)
-            self._state = "capturing"
-        elif self._state == "capturing":
+            self._state = State.CAPTURING
+        elif self._state == State.CAPTURING:
             intent = self.receive_skill.tick(world_state)
 
             if self.receive_skill.is_done(world_state):
-                self._state = "pass_ready"
-        elif self._state == "pass_ready":
+                self._state = State.PASS_READY
+        elif self._state == State.PASS_READY:
             # TODO: dribble until the receiver is ready
             pass
         # this state transition is done by the PassTactic, which is not canonical FSM
-        elif self._state == "init_execute_pass":
+        elif self._state == State.INIT_EXECUTE_PASS:
             # TODO: make these params configurable
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
@@ -56,15 +66,15 @@ class PasserRole(stp.role.Role):
                 chip=False,
                 kick_speed=4.0,  # TODO: adjust based on dist from target_point
             )
-            self._state = "execute_pass"
-        elif self._state == "execute_pass":
+            self._state = State.EXECUTE_PASS
+        elif self._state == State.EXECUTE_PASS:
             intent = self.pivot_kick_skill.tick(world_state)
 
             if self.pivot_kick_skill.is_done(world_state):
-                self._state = "kick_done"
+                self._state = State.KICK_DONE
                 # end FSM
 
         return intent
 
     def is_done(self, world_state) -> bool:
-        return self._state == "kick_done"
+        return self._state == State.KICK_DONE
