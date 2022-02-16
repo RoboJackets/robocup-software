@@ -7,6 +7,9 @@ and allows the PlaySelector to be changed between Test and other forms.
 """
 
 from typing import List, Optional, Tuple
+import numpy as np
+import xml.etree.ElementTree as ET
+import os
 
 import rclpy
 from rclpy.node import Node
@@ -26,18 +29,14 @@ from stp.action import IAction
 import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 
-import numpy as np
 from rj_gameplay.action.move import Move
 
 # ignore "unused import" error
 from rj_gameplay.play import line_up, basic_defense, keepaway  # noqa: F401
 import rj_gameplay.basic_play_selector as basic_play_selector
 
-# TODO make sure all the imrt r correct
 from rcl_interfaces.srv import GetParameters, ListParameters
 from rcl_interfaces.msg import ParameterType
-import xml.etree.ElementTree as ET
-import os
 
 NUM_ROBOTS = 16
 

@@ -28,8 +28,8 @@ public:
     using Ptr = std::unique_ptr<Param>;
     static constexpr auto kPrefixSeparator = "::";
 
-    Param(const char* module, const char* prefix, const char* name,
-          const cha r* help, const char* filename, T& param)
+    Param(const char* module, const char* prefix, const char* name, const cha r* help,
+          const char* filename, T& param)
         : module_{module},
           prefix_{prefix},
           name_{name},
@@ -271,7 +271,7 @@ protected:
  */
 #define DECLARE_VARIABLE(type, module, name) \
     namespace params::storage {              \
-    extern const type& PARAM_## ;         \
+    extern const type& PARAM_##;             \
     }                                        \
     using params::storage::PARAM_##name;
 
