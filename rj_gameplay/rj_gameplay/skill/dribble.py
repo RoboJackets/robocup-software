@@ -6,7 +6,7 @@ import py_trees
 import sys
 import time
 import numpy as np
-from typing import Optional
+from typing import Optional, Dict, Type, List, Any
 
 import stp.skill as skill
 import stp.role as role
@@ -23,6 +23,7 @@ A simple skill wrapper version of dribble so that actions don't have to be calle
 class Dribble(skill.ISkill):
     def __init__(
         self,
+        action_client_dict: Dict[Type[Any], List[Any]],
         robot: rc.Robot = None,
         target_point: np.ndarray = np.array([0.0, 0.0]),
         target_vel: np.ndarray = np.array([0.0, 0.0]),
@@ -30,6 +31,7 @@ class Dribble(skill.ISkill):
         face_point: Optional[np.ndarray] = None,
         priority: int = 0,
     ):
+        super().__init__(action_client_dict)
 
         self.robot = robot
         self.target_point = target_point

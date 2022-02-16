@@ -65,9 +65,10 @@ class Mark(skill.ISkill):
         target_vel: np.ndarray = np.array([0.0, 0.0]),
         ignore_ball: bool = False,
     ):
+        super().__init__(action_client_dict)
 
         self.__name__ = "Mark"
-        self.move_action_clients = action_client_dict.get(MoveActionClient)
+        # self.move_action_clients = action_client_dict.get(MoveActionClient)
         self.robot = robot
         self.target_robot = target_robot
         self.target_vel = target_vel

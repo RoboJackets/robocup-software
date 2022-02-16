@@ -11,12 +11,14 @@ import stp.role as role
 from rj_msgs.msg import RobotIntent, PivotMotionCommand
 import stp.rc as rc
 import numpy as np
+from typing import Optional, Dict, Type, List, Any
 from rj_geometry_msgs.msg import Point
 
 
 class Pivot(skill.Skill):
     def __init__(
         self,
+        action_client_dict: Dict[Type[Any], List[Any]],
         robot: rc.Robot = None,
         pivot_point: np.ndarray = None,
         target_point: np.ndarray = None,
@@ -24,6 +26,8 @@ class Pivot(skill.Skill):
         threshold: float = 0.02,
         priority: int = 1,
     ):
+        super().__init__(action_client_dict)
+
         self.robot = robot
         self.pivot_point = pivot_point
         self.target_point = target_point

@@ -33,6 +33,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
     # TODO: Have something which automatically determines kick speed based on target point distance
     def __init__(
         self,
+        action_client_dict: Dict[Type[Any], List[Any]],
         robot: rc.Robot = None,
         pivot_point: np.ndarray = None,
         target_point: np.ndarray = None,
@@ -42,6 +43,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
         threshold: float = 0.02,
         priority: int = 1,
     ) -> None:
+        super().__init__(action_client_dict)
 
         self.__name__ = "pivot kick"
         self.robot = robot

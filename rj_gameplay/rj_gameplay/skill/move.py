@@ -16,14 +16,13 @@ from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 import stp.rc as rc
 
-<<<<<<< HEAD
+
 from rj_gameplay.action.move_action_client import MoveActionClient
 
 """
 A skill version of move so that actions don't have to be called in tactics
 """
-=======
->>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
+
 
 class Move(stp.skill.Skill):
     def __init__(
@@ -37,8 +36,7 @@ class Move(stp.skill.Skill):
         ignore_ball: bool = False,
         priority: int = 0,
     ):
-
-        self.move_action_clients = action_client_dict.get(MoveActionClient)
+        super().__init__(action_client_dict)
         self.robot = robot
         self.target_point = target_point
         self.target_vel = target_vel
@@ -51,15 +49,9 @@ class Move(stp.skill.Skill):
 
         self.__name__ = "Move"
 
-<<<<<<< HEAD
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
-
-=======
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
         intent = RobotIntent()
->>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(
             x=self.target_point[0], y=self.target_point[1]
@@ -77,11 +69,6 @@ class Move(stp.skill.Skill):
 
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
-<<<<<<< HEAD
-
-        return {self.robot.id: intent}
-=======
->>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
         # TODO: motion planning is a lot more stable when not being spammed with repeat intents, use Action Client/Server to avoid re-requests when the intent is the same
         return intent

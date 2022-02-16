@@ -2,7 +2,7 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Type, TypeVar
+from typing import Dict, List, Type, TypeVar, Any
 
 import stp.role as role
 import stp.rc
@@ -17,6 +17,9 @@ class Skill(ABC):
     """Atomic single-robot behavior, such as Move or PivotKick. Created and ticked by Tactics. Uses Actions to get RobotIntents."""
 
     # TODO: update docstring when ActionClients are up and running
+
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        self.action_client_dict = action_client_dict
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """Logic for Skill goes here. RobotIntents obtained via Actions.

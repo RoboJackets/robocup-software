@@ -28,9 +28,12 @@ A skill version of intercept so that actions don't have to be called in tactics
 class Intercept(IIntercept):
     def __init__(
         self,
+        action_client_dict: Dict[Type[Any], List[Any]],
         robot: rc.Robot = None,
         target_point: np.ndarray = np.array([0.0, 0.0]),
     ):
+        super().__init__(action_client_dict)
+
         self.robot = robot
         self.target_point = target_point
 

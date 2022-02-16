@@ -5,6 +5,7 @@ import argparse
 import py_trees
 import sys
 import time
+from typing import Optional, Dict, Type, List, Any
 
 import stp.skill as skill
 import stp.rc as rc
@@ -18,11 +19,13 @@ KICK_BALL_SPEED_THRESHOLD = 0.9
 class Kick(skill.Skill):
     def __init__(
         self,
+        action_client_dict: Dict[Type[Any], List[Any]],
         robot: rc.Robot,
         chip: bool,
         kick_speed: float,
         threshold: float = 0.02,
     ) -> None:
+        super().__init__(action_client_dict)
 
         self.__name__ = "kick skill"
         self.robot = robot

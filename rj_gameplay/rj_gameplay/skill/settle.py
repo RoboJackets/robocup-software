@@ -19,7 +19,12 @@ SETTLE_BALL_SPEED_THRESHOLD = 1.0
 class Settle(skill.Skill):
     """First half of a Receive Skill. Slows the ball down to allow Capture planner to work."""
 
-    def __init__(self, robot: rc.Robot = None):
+    def __init__(
+        self, action_client_dict: Dict[Type[Any], List[Any]], robot: rc.Robot = None
+    ):
+
+        super().__init__(action_client_dict)
+
         self.robot = robot
 
         self.__name__ = "settle skill"

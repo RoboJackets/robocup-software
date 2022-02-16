@@ -42,10 +42,12 @@ class LineKickSkill(ILineKickSkill):
         chip: bool = False,
         kick_speed: float = 5.5,
     ) -> None:
+        super().__init__(action_client_dict)
+
         self.robot = robot
-        self.move_action_clients = action_client_dict.get(MoveActionClient)
-        self.manipulate_action_clients \
-            = action_client_dict.get(ManipulateActionClient)
+        # self.move_action_clients = action_client_dict.get(MoveActionClient)
+        # self.manipulate_action_clients \
+        #     = action_client_dict.get(ManipulateActionClient)
 
         self.target_point = target_point
         self.priority = priority
