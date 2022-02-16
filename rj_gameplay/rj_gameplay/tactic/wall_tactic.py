@@ -19,8 +19,14 @@ from rj_gameplay.calculations import wall_calculations
 
 MIN_WALL_RAD = None
 
+
 class WallTactic(stp.tactic.Tactic):
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState, num_wallers: int):
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        world_state: stp.rc.WorldState,
+        num_wallers: int,
+    ):
         super().__init__(action_client_dict, world_state)
 
         self.num_wallers = num_wallers
@@ -33,12 +39,18 @@ class WallTactic(stp.tactic.Tactic):
                 (stp.role.cost.PickClosestToPoint(pt), dumb_move.DumbMove)
             )
 
-    def init_roles(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState) -> None:
+    def init_roles(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        world_state: stp.rc.WorldState,
+    ) -> None:
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
             pt = self.wall_pts[i]
             if role is dumb_move.DumbMove:
-                self.assigned_roles.append(role(action_client_dict, robot, pt, world_state.ball.pos))
+                self.assigned_roles.append(
+                    role(action_client_dict, robot, pt, world_state.ball.pos)
+                )
 
     def tick(
         self, world_state: stp.rc.WorldState
@@ -47,7 +59,7 @@ class WallTactic(stp.tactic.Tactic):
 
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
-            self.init_roles(world_state)
+            self.init_roles(self.action_client_dict, world_state)
 
         robot_intents = []
         for i in range(len(self.assigned_roles)):

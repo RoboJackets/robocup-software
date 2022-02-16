@@ -8,8 +8,11 @@ from rj_msgs.msg import RobotIntent
 class LineTactic(stp.tactic.Tactic):
     """Tactic for line up play that puts all six robots in a line on the left of the field."""
 
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
-                 world_state: stp.rc.WorldState):
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        world_state: stp.rc.WorldState,
+    ):
         super().__init__(action_client_dict, world_state)
 
         # compute move points
@@ -39,7 +42,7 @@ class LineTactic(stp.tactic.Tactic):
         # if not self.assigned_roles:
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
-            self.init_roles(world_state)
+            self.init_roles(self.action_client_dict, world_state)
 
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
 
@@ -58,4 +61,6 @@ class LineTactic(stp.tactic.Tactic):
             role = self._role_requests[i][1]
             pt = self.move_points[i]
             if role is dumb_move.DumbMove:
-                self.assigned_roles.append(role(action_client_dict, robot, pt, world_state.ball.pos))
+                self.assigned_roles.append(
+                    role(action_client_dict, robot, pt, world_state.ball.pos)
+                )

@@ -6,10 +6,16 @@ from rj_gameplay.role import goalie_role
 
 from rj_msgs.msg import RobotIntent
 
+
 class GoalieTactic(stp.tactic.Tactic):
     """Wrapper for the Goalie Role that handles assigning said role to whichever Robot is our goalie."""
 
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState, goalie_id: int):
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        world_state: stp.rc.WorldState,
+        goalie_id: int,
+    ):
         """Special case where we want only robot 0 to be goalie, from init."""
         super().__init__(action_client_dict, world_state)
         # TODO: rather than passing in hardcoded goalie id on init, gameplay node should
@@ -18,7 +24,11 @@ class GoalieTactic(stp.tactic.Tactic):
             (stp.role.cost.PickRobotById(goalie_id), goalie_role.GoalieRole)
         )
 
-    def init_roles(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState) -> None:
+    def init_roles(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        world_state: stp.rc.WorldState,
+    ) -> None:
         # only has one role, but it's easier to copy-paste the structure
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
@@ -31,7 +41,7 @@ class GoalieTactic(stp.tactic.Tactic):
 
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
-            self.init_roles(world_state)
+            self.init_roles(self.action_client_dict, world_state)
 
         # only has one role request, but it's easier to copy-paste the structure
         robot_intents = []
