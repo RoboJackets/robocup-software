@@ -497,7 +497,7 @@ class GameplayNode(Node):
             param_names = name.split(".")
             curr_tag = root
             for prefix in param_names[:-1]:
-                if curr_tag.find(prefix) == None:
+                if curr_tag.find(prefix) is None:
                     curr_tag = ET.SubElement(curr_tag, prefix)
                 else:
                     curr_tag = curr_tag.find(prefix)
