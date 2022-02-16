@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import rj_gameplay.eval as eval
 import argparse

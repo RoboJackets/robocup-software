@@ -9,7 +9,7 @@ from typing import Tuple, Union
 
 import stp.skill as skill
 import stp.role as role
-from rj_msgs.msg import RobotIntent
+from rj_msgs.msg import RobotIntent, PivotMotionCommand
 import stp.rc as rc
 import numpy as np
 from rj_geometry_msgs.msg import Point
@@ -66,7 +66,7 @@ class Pivot:
         dot_product = np.dot(heading_vect, robot_to_target_unit)
         angle = np.arccos(dot_product)
         if (angle < angle_threshold) and (
-            abs(world_state.our_robots[self.robot_id].twist[2]) < stopped_threshold
+            abs(world_state.our_robots[self.robot.id].twist[2]) < stopped_threshold
         ):
             return True
         else:
