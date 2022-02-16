@@ -11,7 +11,7 @@ from rj_msgs.msg import RobotIntent, SettleMotionCommand
 import stp.skill as skill
 import stp.role as role
 import stp.rc as rc
-from typing import Optional
+from typing import Optional, Dict, Type, List, Any
 
 SETTLE_BALL_SPEED_THRESHOLD = 1.0
 

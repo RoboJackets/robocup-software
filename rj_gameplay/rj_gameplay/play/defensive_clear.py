@@ -6,7 +6,7 @@ import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Type, Any
 
 
 class DefensiveClear(play.IPlay):

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, Type, List, Any
 
 import stp
 
@@ -20,8 +20,8 @@ class Keepaway(stp.play.Play):
     See tick() for more details.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
 
         self._state = State.INIT
 
