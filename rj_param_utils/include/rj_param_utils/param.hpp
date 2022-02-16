@@ -28,7 +28,7 @@ public:
     using Ptr = std::unique_ptr<Param>;
     static constexpr auto kPrefixSeparator = "::";
 
-    Param(const char* module, const char* prefix, const char* name, const cha r* help,
+    Param(const char* module, const char* prefix, const char* name, const char* help,
           const char* filename, T& param)
         : module_{module},
           prefix_{prefix},
