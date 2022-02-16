@@ -44,14 +44,14 @@ class Play(ABC):
     See tick() for more details on behavior.
     """
 
-    def __init__(self):
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         # TODO: all three of these are required for assign_roles()
         # should I make these abstract to force subclasses to use?
         # https://stackoverflow.com/questions/23831510/abstract-attribute-not-property
         #
         # or should it just be part of a RoleAssign class with passed in params?
         # that kicks the problem down to forcing roles to have a RoleAssign property, I suppose
-
+        self.action_client_dict = action_client_dict
         self.prioritized_tactics: List[stp.tactic.Tactic] = []
         self.prioritized_roles: List[stp.role.Role] = []
 
@@ -107,7 +107,7 @@ class Play(ABC):
             tactic.set_assigned_robots(robots_for_tactic)
 
         for tactic in self.prioritized_tactics:
-            tactic.init_roles(world_state)
+            tactic.init_roles(self.action_client_dict, world_state)
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent"""

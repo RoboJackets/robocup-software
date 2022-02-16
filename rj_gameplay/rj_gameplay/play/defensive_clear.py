@@ -6,13 +6,7 @@ import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
-import numpy as np
-<<<<<<< HEAD
-from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar, Any
-=======
-
 from typing import Dict, List, Tuple
->>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
 
 class DefensiveClear(play.IPlay):
@@ -30,13 +24,7 @@ class DefensiveClear(play.IPlay):
         world_state: rc.WorldState,
         prev_results: role.assignment.FlatRoleResults,
         props,
-<<<<<<< HEAD
-    ) -> Tuple[
-        Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]
-    ]:
-=======
     ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
->>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
