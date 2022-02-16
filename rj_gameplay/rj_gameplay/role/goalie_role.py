@@ -1,3 +1,4 @@
+from typing import Dict, Type, List, Any
 import stp
 
 from rj_gameplay.skill import move, receive, pivot_kick  # , line_kick, intercept
@@ -56,8 +57,8 @@ def get_block_pt(world_state: stp.rc.WorldState, my_pos: np.ndarray) -> np.ndarr
 class GoalieRole(stp.role.Role):
     """Role to produce goalie behavior, which tracks the ball, moves to block if a shot on goal is taken, stays within the goalie box (generally), and clears ball away."""
 
-    def __init__(self, robot: stp.rc.Robot, brick=False):
-        super().__init__(robot)
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot: stp.rc.Robot, brick=False):
+        super().__init__(action_client_dict, robot)
 
         self.brick = brick
 

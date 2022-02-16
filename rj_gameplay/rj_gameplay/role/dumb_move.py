@@ -1,3 +1,4 @@
+from typing import Dict, Type, List, Any
 import stp.role
 import stp.rc
 
@@ -9,8 +10,8 @@ from rj_msgs.msg import RobotIntent
 class DumbMove(stp.role.Role):
     """Wrapper for the Move Skill. Named "Dumb" because it does not have much other functionality (breaking the ideal of a "complex" single-robot Role)."""
 
-    def __init__(self, robot: stp.rc.Robot, target_point, face_point) -> None:
-        super().__init__(robot)
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot: stp.rc.Robot, target_point, face_point) -> None:
+        super().__init__(action_client_dict, robot)
 
         self.target_point = target_point
         self.face_point = face_point
@@ -34,6 +35,7 @@ class DumbMove(stp.role.Role):
         # create skill with correct target & face_point
         if skill_needs_update:
             self.move_skill = move.Move(
+                action_client_dict=self.action_client_dict,
                 robot=self.robot,
                 target_point=self.target_point,
                 face_point=self.face_point,

@@ -1,3 +1,4 @@
+from typing import Dict, Type, List, Any
 import stp.role
 import stp.rc
 
@@ -16,8 +17,8 @@ class State(Enum):
 
 
 class ReceiverRole(stp.role.Role):
-    def __init__(self, robot: stp.rc.Robot) -> None:
-        super().__init__(robot)
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot: stp.rc.Robot) -> None:
+        super().__init__(action_client_dict, robot)
 
         self.receive_skill = None
 

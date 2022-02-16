@@ -1,5 +1,5 @@
 from enum import IntEnum
-from typing import Optional, Protocol
+from typing import Optional, Protocol, Type, Dict, List, Any
 
 import stp.rc
 
@@ -13,12 +13,12 @@ BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
 class Role(ABC):
     """Complex single-robot role, such as Goalie or Striker. Uses Skills to achieve behavior."""
 
-    def __init__(self, robot: stp.rc.Robot) -> None:
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], robot: stp.rc.Robot) -> None:
         """All Roles should apply to one robot's behavior; thus, robot is defined as a formal argument here. Concrete Roles should overwrite init with their own fields, but call super()'s init to use this shared code, like so:
 
-        super().__init__(robot)
+        super().__init__(action_client_dict, robot)
         """
-
+        self.action_client_dict: Dict[Type[Any], List[Any]] = action_client_dict
         self._robot: stp.rc.Robot = robot
 
     @abstractmethod
