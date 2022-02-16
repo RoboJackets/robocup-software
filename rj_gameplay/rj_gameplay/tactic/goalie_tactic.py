@@ -18,12 +18,12 @@ class GoalieTactic(stp.tactic.Tactic):
             (stp.role.cost.PickRobotById(goalie_id), goalie_role.GoalieRole)
         )
 
-    def init_roles(self, world_state: stp.rc.WorldState) -> None:
+    def init_roles(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState) -> None:
         # only has one role, but it's easier to copy-paste the structure
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
             if role is goalie_role.GoalieRole:
-                self.assigned_roles.append(role(robot))
+                self.assigned_roles.append(role(action_client_dict, robot))
 
     def tick(
         self, world_state: stp.rc.WorldState

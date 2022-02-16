@@ -38,7 +38,7 @@ class Keepaway(stp.play.Play):
         """
 
         if self._state == State.INIT:
-            self.prioritized_tactics = [pass_tactic.PassTactic(world_state)]
+            self.prioritized_tactics = [pass_tactic.PassTactic(self.action_client_dict, world_state)]
             # TODO: either add seek tactic(s) or unassigned behavior
 
             self.assign_roles(world_state)

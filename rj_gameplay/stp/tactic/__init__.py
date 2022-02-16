@@ -27,6 +27,7 @@ class Tactic(ABC):
         """
 
         # TODO: make tuple = RoleRequest (or make obj with these two params)?
+        self.world_state = world_state
         self._role_requests: List[Tuple[stp.role.Role, stp.role.CostFn]] = []
         # TODO: make these properties too?
         self.assigned_robots = []

@@ -42,6 +42,7 @@ from rj_gameplay.action.manipulate_action_client import ManipulateActionClient
 
 NUM_ROBOTS = 16
 
+
 class GameplayNode(Node):
     """
     A node which subscribes to the world_state, game state, robot status, and
@@ -110,7 +111,6 @@ class GameplayNode(Node):
 
         # action client dictionary mapping action clients types to a list of action clients
         # TODO: delete above comment once fixed with mypy
-        # TODO: pass this everywhere again :(
         self.action_client_dict: Dict[Type[Any], List[Any]] = {
             MoveActionClient: self.move_action_clients,
             ManipulateActionClient: self.manipulate_action_clients
@@ -147,6 +147,9 @@ class GameplayNode(Node):
             StringMsg, "/gameplay/debug_text", 10
         )
         self.play_selector: situation.IPlaySelector = play_selector
+
+    def add_test_play(self, test_play):
+        self.test_play = test_play
 
     def set_play_state(self, play_state: msg.PlayState):
         self.play_state = play_state
@@ -470,14 +473,15 @@ class GameplayNode(Node):
         self.destroy_node()
         rclpy.shutdown()
 
-
 def main():
     play_selector = basic_play_selector.BasicPlaySelector()
 
-    # change this line to test different plays (set to None if no desired test play)
-    test_play = keepaway.Keepaway()
+    gameplay = GameplayNode(play_selector)
 
-    gameplay = GameplayNode(play_selector, test_play)
+    # change this line to test different plays (set to None if no desired test play)
+    test_play = keepaway.Keepaway(gameplay.action_client_dict)
+    gameplay.add_test_play(test_play)
+
     executor = GameplayExecutor()
     executor.add_solo_node(node=gameplay)
     executor.add_pool_nodes(gameplay.move_action_clients)
