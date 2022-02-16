@@ -30,12 +30,20 @@ class State(Enum):
 
 
 class PassTactic(stp.tactic.Tactic):
-    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState):
+    def __init__(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        world_state: stp.rc.WorldState,
+    ):
         super().__init__(action_client_dict, world_state)
 
         self._state = State.INIT
 
-    def init_roles(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState) -> None:
+    def init_roles(
+        self,
+        action_client_dict: Dict[Type[Any], List[Any]],
+        world_state: stp.rc.WorldState,
+    ) -> None:
         self.assigned_roles = []
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
@@ -74,7 +82,7 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == State.INIT_PASSER_CAPTURE:
             # assumes play has given new role_requests
-            self.init_roles(world_state)
+            self.init_roles(self.action_client_dict, world_state)
             self._state = State.PASSER_CAPTURE
 
         elif self._state == State.PASSER_CAPTURE:
@@ -110,7 +118,7 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == State.EXECUTE_PASS:
             # assumes play has given new role_requests
-            self.init_roles(world_state)
+            self.init_roles(self.action_client_dict, world_state)
 
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
@@ -160,7 +168,7 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == State.EXECUTE_RECEIVE:
             # assumes play has given new role_requests
-            self.init_roles(world_state)
+            self.init_roles(self.action_client_dict, world_state)
 
             # TODO: these lines are a little ugly, any fix?
             receiver_role = self.assigned_roles[0]
