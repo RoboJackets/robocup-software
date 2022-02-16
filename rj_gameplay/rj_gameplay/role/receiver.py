@@ -32,7 +32,8 @@ class ReceiverRole(stp.role.Role):
 
     def set_receive_pass(self):
         self._state = State.RECEIVE_PASS
-        self.receive_skill = receive.Receive(robot=self.robot)
+        self.receive_skill = receive.Receive(action_client_dict=self.action_client_dict,
+                                             robot=self.robot)
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """

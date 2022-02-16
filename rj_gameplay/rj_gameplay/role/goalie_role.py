@@ -94,6 +94,7 @@ class GoalieRole(stp.role.Role):
 
         if self.brick:
             self.move_skill = move.Move(
+                action_client_dict=self.action_client_dict,
                 robot=self.robot,
                 target_point=world_state.field.our_goal_loc,
                 face_point=world_state.ball.pos,
@@ -110,11 +111,13 @@ class GoalieRole(stp.role.Role):
         ):
             if ball_speed < 1e-6:
                 # if ball is stopped and inside goalie box, collect it
-                self.receive_skill = receive.Receive(robot=self.robot)
+                self.receive_skill = receive.Receive(action_client_dict=self.action_client_dict,
+                                                     robot=self.robot)
                 return self.receive_skill.tick(world_state)
             else:
                 # if ball has been stopped already, chip toward center field
                 self.pivot_kick_skill = pivot_kick.PivotKick(
+                    action_client_dict=self.action_client_dict,
                     robot=self.robot, target_point=np.array([0.0, 6.0])
                 )
                 return self.pivot_kick_skill.tick(world_state)
@@ -132,6 +135,7 @@ class GoalieRole(stp.role.Role):
                 face_point = world_state.ball.pos
 
                 self.move_skill = move.Move(
+                    action_client_dict=self.action_client_dict,
                     robot=self.robot,
                     target_point=block_point,
                     face_point=face_point,
@@ -141,6 +145,8 @@ class GoalieRole(stp.role.Role):
             else:
                 # else, track ball normally
                 self.move_skill = move.Move(
+                    action_client_dict=self.action_client_dict,
+                    robot=self.robot,
                     target_point=get_goalie_pt(world_state),
                     face_point=world_state.ball.pos,
                 )
@@ -150,6 +156,7 @@ class GoalieRole(stp.role.Role):
             world_state
         ):
             self.pivot_kick_skill = pivot_kick.PivotKick(
+                action_client_dict=self.action_client_dict,
                 robot=self.robot,
                 target_point=np.array([0.0, 6.0]),
                 chip=True,
