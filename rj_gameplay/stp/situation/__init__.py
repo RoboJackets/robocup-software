@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, Optional
 
-from stp.play import IPlay
+from stp.play import Play
 import stp.rc as rc
 
 
@@ -34,10 +34,10 @@ class IPlaySelector(ABC):
     def __init__(self):
         self.analyzer: IAnalyzer = None
         self.curr_situation: ISituation = None
-        self.curr_play: IPlay = None
+        self.curr_play: Play = None
 
     @abstractmethod
-    def select(self, world_state: rc.WorldState) -> Tuple[Optional[ISituation], IPlay]:
+    def select(self, world_state: rc.WorldState) -> Tuple[Optional[ISituation], Play]:
         """Selects the best situation and play given given the current world state.
         :param world_state: The current state of the world.
         :return: A tuple of the best situation and best play.

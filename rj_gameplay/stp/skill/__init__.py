@@ -5,74 +5,32 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Type, TypeVar
 
 import stp.role as role
+import stp.rc
+from rj_msgs.msg import RobotIntent
 
 
 class ISkill(ABC):
-    """Interface for Skills."""
+    pass
+
+
+class Skill(ABC):
+    """Atomic single-robot behavior, such as Move or PivotKick. Created and ticked by Tactics. Uses Actions to get RobotIntents."""
+
+    # TODO: update docstring when ActionClients are up and running
+
+    def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
+        """Logic for Skill goes here. RobotIntents obtained via Actions.
+
+        robot state is updated through super call to this method (i.e. super().tick(world_state))
+
+        .msg
+                :param world_state: Current world state.
+                :return: A single RobotIntent.
+        """
+        if self.robot is not None:
+            self.robot = world_state.our_robots[self.robot.id]
 
     @abstractmethod
-    def tick(self) -> None:
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
+        """True when skill is done; False otherwise."""
         ...
-
-
-SkillT = TypeVar("SkillT", bound=ISkill)
-
-
-class Registry:
-    """Registry that holds instances of skills indexed by the type."""
-
-    __slots__ = ["_dict"]
-
-    def __init__(self):
-        self._dict: Dict[Type[ISkill], ISkill] = {}
-
-    def __getitem__(self, key: Type[SkillT]) -> SkillT:
-        # The below can throw a KeyError.
-        skill: ISkill = self._dict[key]
-
-        # Check that the item we got was an instance of the expected type.
-        if not isinstance(skill, key):
-            raise KeyError("Skill {} is not an instance of key {}".format(skill, key))
-
-        return skill
-
-    def __setitem__(self, key: Type[SkillT], value: SkillT) -> None:
-        # Check that the item we're setting is an instance of the expected type.
-        if not isinstance(value, key):
-            raise KeyError("Skill {} is not an instance of {}".format(value, key))
-
-        self._dict.__setitem__(key, value)
-
-    def __delitem__(self, key: Type[SkillT]) -> None:
-        self._dict.__delitem__(key)
-
-    def __len__(self) -> int:
-        return self._dict.__len__()
-
-    def __iter__(self):
-        return self._dict.__iter__()
-
-    def __contains__(self, item) -> bool:
-        return self._dict.__contains__(item)
-
-
-class Factory:
-    """Factory that creates skills according to the SkillRegistry passed in."""
-
-    __slots__ = ["_registry"]
-
-    _registry: Registry
-
-    def __init__(self, registry: Registry):
-        self._registry = registry
-
-    def create(self, skill: Type[SkillT]) -> SkillT:
-        """Creates an instance of the skill given the type of the interface of the
-        skill."""
-        if skill not in self._registry:
-            # TODO: Create new class for this error category.
-            raise ValueError(
-                "Trying to create skill {}, but not in registry!".format(skill)
-            )
-
-        return self._registry[skill]

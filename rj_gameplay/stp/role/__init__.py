@@ -1,38 +1,47 @@
-"""This module contains data structures for role assignment."""
-
 from enum import IntEnum
 from typing import Optional, Protocol
 
-import stp.rc as rc
+import stp.rc
+
+from rj_msgs.msg import RobotIntent
+
+from abc import ABC, abstractmethod
 
 BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE = 9999
 
 
-class Role:
-    """This represents a role, ie. an Optional[rc.Robot]."""
+class Role(ABC):
+    """Complex single-robot role, such as Goalie or Striker. Uses Skills to achieve behavior."""
 
-    __slots__ = ["robot"]
-    robot: Optional[rc.Robot]
+    def __init__(self, robot: stp.rc.Robot) -> None:
+        """All Roles should apply to one robot's behavior; thus, robot is defined as a formal argument here. Concrete Roles should overwrite init with their own fields, but call super()'s init to use this shared code, like so:
 
-    def __init__(self, robot: Optional[rc.Robot]):
-        self.robot = robot
-
-    def is_filled(self) -> bool:
-        """Returns true if the role is filled.
-        :return: True if the role is filled.
+        super().__init__(robot)
         """
-        return self.robot is not None
 
-    def __str__(self) -> str:
-        if self.robot is None:
-            return "Role(Unassigned)"
+        self._robot: stp.rc.Robot = robot
 
-        return "Role({})".format(self.robot)
+    @abstractmethod
+    def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
+        """Handle behavior of Role by handling which Skill is ticked, and with what params. Return the RobotIntent returned from ticking a Skill."""
+        ...
 
-    def __repr__(self) -> str:
-        return self.__str__()
+    @abstractmethod
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
+        """True if Role is done; False otherwise."""
+        ...
+
+    @property
+    def robot(self) -> stp.rc.Robot:
+        """Returns self._robot. @property allows the getter to be called like this:
+
+        some_role = ConcreteRole()
+        some_robot = some_role.robot
+        """
+        return self._robot
 
 
+# TODO: delete this when role assignment switched over completely
 class Priority(IntEnum):
     """An enum to represent priority of the role assignment."""
 
@@ -47,21 +56,18 @@ class CostFn(Protocol):
 
     def __call__(
         self,
-        robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
+        robot: stp.rc.Robot,
+        world_state: stp.rc.WorldState,
     ) -> float:
-        """Given a robot, the previous role assignment result, and the current world
-        state, returns the cost of the assignment.
+        """Given a robot and the current world state, returns the cost of assigning that robot to a given role.
         :param robot: The current robot to check costs for.
-        :param prev_result: The previous role assignment result.
         :param world_state: The current world state.
         :return:
         """
         ...
 
     def unassigned_cost_fn(
-        self, prev_results: Optional["RoleResult"], world_state: rc.WorldState
+        self, prev_results: Optional["RoleResult"], world_state: stp.rc.WorldState
     ) -> float:
         """Given the previous role assigment and current world state,
         returns the cost of not assigning any robot.
@@ -74,7 +80,7 @@ class CostFn(Protocol):
     # def switch_cost_fn(
     #     self,
     #     prev_results: Optional["RoleResult"],
-    #     world_state: rc.WorldState,
+    #     world_state: stp.rc.WorldState,
     #     sticky_weight) -> float:
     #     """Given the preevious role assignment and current world state,
     #     returns the cost of switch the role.
@@ -91,9 +97,9 @@ class ConstraintFn(Protocol):
 
     def __call__(
         self,
-        robot: rc.Robot,
+        robot: stp.rc.Robot,
         prev_result: Optional["RoleResult"],
-        world_state: rc.WorldState,
+        world_state: stp.rc.WorldState,
     ) -> bool:
         """Given a robot, the previous role assignment result, and the current world
         state, returns true if the assignment is valid.
@@ -106,9 +112,9 @@ class ConstraintFn(Protocol):
 
 
 def unconstrained_constraint_fn(
-    robot: rc.Robot,
+    robot: stp.rc.Robot,
     prev_result: Optional["RoleResult"],
-    world_state: rc.WorldState,
+    world_state: stp.rc.WorldState,
 ) -> bool:
     """An unconstrained constraint fn, ie it always returns True.
     :param robot: The current robot to check costs for.
@@ -119,6 +125,7 @@ def unconstrained_constraint_fn(
     return True
 
 
+# TODO: delete this when role assignment switched over completely
 class RoleRequest:
     """Role Request."""
 
@@ -187,6 +194,7 @@ class RoleRequest:
         return self.__str__()
 
 
+# TODO: delete this when role assignment switched over completely
 class RoleResult:
     """The result of role assignment."""
 
@@ -212,7 +220,7 @@ class RoleResult:
         """
         return self.role.is_filled()
 
-    def assign(self, robot: rc.Robot, cost: float) -> None:
+    def assign(self, robot: stp.rc.Robot, cost: float) -> None:
         """Assigns self.role to the passed in robot, updating self.cost to the
         assignment cost.
         :param robot: Robot to use for the role.

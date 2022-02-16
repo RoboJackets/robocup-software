@@ -46,8 +46,6 @@ ROS node that links gameplay to the C++ side of our codebase. Gets world\_state
 and status of all robots, and sends motion commands to ROS.  (This second
 function will be replaced by ROS Actions soon.)
 
-**Coordinator - `stp/coordinator.py`**
-
 Uses SituationAnalyzer to select the best play to run, calling tick() on the
 play to get the list of skills, then ticking all of the resulting skills.
 

@@ -16,12 +16,11 @@ import stp.rc as rc
 from rj_msgs import msg
 
 
-"""
-A skill version of receive so that actions don't have to be called in tactics
-"""
+class Receive(skill.Skill):
+    """Skill that ends when robot has possession of the ball.
+    Consists of Settle then Capture.
+    """
 
-
-class Receive(skill.ISkill):
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
 
@@ -29,11 +28,14 @@ class Receive(skill.ISkill):
         self.settle = settle.Settle(robot)
         self.capture = capture.Capture(robot)
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
+
+        # TODO: put an FSM here instead of this obfuscated if-else
         if self.settle.is_done(world_state):
-            return self.capture.tick(robot, world_state)
+            return self.capture.tick(world_state)
         else:
-            return self.settle.tick(robot, world_state)
+            return self.settle.tick(world_state)
 
     def is_done(self, world_state: rc.WorldState) -> bool:
 
@@ -41,3 +43,6 @@ class Receive(skill.ISkill):
 
     def __str__(self):
         return f"Receive(robot={self.robot.id if self.robot is not None else '??'}, ticks={self.capture.ticks_done})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
