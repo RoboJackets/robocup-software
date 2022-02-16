@@ -63,7 +63,7 @@ class PasserRole(stp.role.Role):
                 robot=self.robot,
                 target_point=self._target_point,
                 chip=False,
-                kick_speed=4.0,  # TODO: adjust based on dist from target_point
+                kick_speed=3.0,  # TODO: adjust based on dist from target_point
             )
             self._state = State.EXECUTE_PASS
         elif self._state == State.EXECUTE_PASS:
