@@ -12,6 +12,7 @@
 
 // rj includes
 #include <planning/planner/motion_command.hpp>
+#include <radio/robot_status.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
@@ -20,8 +21,6 @@
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <world_state.hpp>
-#include <radio/robot_status.hpp>
-
 
 namespace server {
 using RobotIntent = rj_msgs::msg::RobotIntent;
@@ -47,7 +46,8 @@ private:
     rclcpp_action::Server<Manipulate>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const Manipulate::Goal> goal);
-    rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleManipulate> goal_handle);
+    rclcpp_action::CancelResponse handle_cancel(
+        const std::shared_ptr<GoalHandleManipulate> goal_handle);
     void handle_accepted(const std::shared_ptr<GoalHandleManipulate> goal_handle);
     void execute(const std::shared_ptr<GoalHandleManipulate> goal_handle);
 };

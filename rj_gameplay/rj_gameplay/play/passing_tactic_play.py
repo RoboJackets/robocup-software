@@ -14,6 +14,7 @@ class PassPlay(play.IPlay):
     """A play which makes one robot pass to another"""
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
         self.target_point = np.array([1.0, 1.0])
         self.pass_tactic = pass_tactic.Pass(
             self.target_point,

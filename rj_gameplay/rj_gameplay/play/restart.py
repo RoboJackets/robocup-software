@@ -22,6 +22,7 @@ class RestartPlay(play.IPlay):
     """One robot passes to another. Some markers."""
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
         self.target_point = np.array([1.0, 4.0])
 
         # TODO: simplify tactic with list (see basic_defense.py)

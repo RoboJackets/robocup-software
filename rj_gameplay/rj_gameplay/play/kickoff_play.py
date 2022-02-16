@@ -34,6 +34,8 @@ class PrepareKickoffPlay(play.IPlay):
     """Hardcoded points to stand in for kickoff"""
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+
+        super().__init__(action_client_dict)
         self.points = [
             (0.0, 4.25),
             (0.6, 4.25),

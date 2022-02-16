@@ -13,6 +13,7 @@ class PreparePenaltyDefense(play.IPlay):
     """For when we don't have the ball and are trying to stop the opponent from scoring."""
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
         self.goalie_move = move_tactic.Move((0.0, 1.0), face_point=(0.0, 4.5))
         self.goalie_move.cost = goalie_tactic.GoalieCost()
         self.tactics = [
@@ -73,6 +74,7 @@ class PenaltyDefense(play.IPlay):
     """For when we don't have the ball and are trying to stop the opponent from scoring."""
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
         self.tactics = [
             goalie_tactic.GoalieTactic(action_client_dict),
             move_tactic.Move(action_client_dict, (1.6, 9.0)),

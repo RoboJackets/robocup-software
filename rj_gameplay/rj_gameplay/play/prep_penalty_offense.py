@@ -21,6 +21,7 @@ class PreparePenaltyOffense(play.IPlay):
     """Move all robots to our half, but away from ball to prep for penalty kick"""
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
         self.tactics = [
             goalie_tactic.GoalieTactic(True),
             move_tactic.Move((0.0, 1.2)),

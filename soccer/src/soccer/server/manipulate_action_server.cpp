@@ -8,11 +8,9 @@ ManipulateActionServer ::ManipulateActionServer(const rclcpp::NodeOptions& optio
     using namespace std::placeholders;
 
     this->action_server_ = rclcpp_action::create_server<Manipulate>(
-        this->get_node_base_interface(),
-        this->get_node_clock_interface(),
-        this->get_node_logging_interface(),
-        this->get_node_waitables_interface(),
-        "manipulate", std::bind(&ManipulateActionServer::handle_goal, this, _1, _2),
+        this->get_node_base_interface(), this->get_node_clock_interface(),
+        this->get_node_logging_interface(), this->get_node_waitables_interface(), "manipulate",
+        std::bind(&ManipulateActionServer::handle_goal, this, _1, _2),
         std::bind(&ManipulateActionServer::handle_cancel, this, _1),
         std::bind(&ManipulateActionServer::handle_accepted, this, _1));
 
@@ -22,7 +20,8 @@ ManipulateActionServer ::ManipulateActionServer(const rclcpp::NodeOptions& optio
 
     for (size_t i = 0; i < kNumShells; i++) {
         intent_pubs_.emplace_back(this->create_publisher<RobotIntent>(
-            manipulate_action_server::topics::robot_intent_pub(i), rclcpp::QoS(1).transient_local()));
+            manipulate_action_server::topics::robot_intent_pub(i),
+            rclcpp::QoS(1).transient_local()));
 
         this->create_subscription<rj_msgs::msg::RobotStatus>(
             radio::topics::robot_status_pub(i), rclcpp::QoS(1),
@@ -35,8 +34,8 @@ ManipulateActionServer ::ManipulateActionServer(const rclcpp::NodeOptions& optio
     }
 }
 
-rclcpp_action::GoalResponse ManipulateActionServer ::handle_goal(const rclcpp_action::GoalUUID& uuid,
-                                                           std::shared_ptr<const Manipulate::Goal> goal) {
+rclcpp_action::GoalResponse ManipulateActionServer ::handle_goal(
+    const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const Manipulate::Goal> goal) {
     (void)uuid;
 
     int robot_id = goal->server_intent.robot_id;
@@ -62,7 +61,8 @@ rclcpp_action::CancelResponse ManipulateActionServer ::handle_cancel(
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
-void ManipulateActionServer ::handle_accepted(const std::shared_ptr<GoalHandleManipulate> goal_handle) {
+void ManipulateActionServer ::handle_accepted(
+    const std::shared_ptr<GoalHandleManipulate> goal_handle) {
     // this needs to return quickly to avoid blocking the executor, so spin up a new thread
     using namespace std::placeholders;
     std::thread{std::bind(&ManipulateActionServer::execute, this, _1), goal_handle}.detach();
@@ -80,7 +80,6 @@ void ManipulateActionServer ::execute(const std::shared_ptr<GoalHandleManipulate
 
     std::shared_ptr<Manipulate::Feedback> feedback = std::make_shared<Manipulate::Feedback>();
     goal_handle->publish_feedback(feedback);
-
 
     if (goal_handle->is_canceling()) {
         result->is_done = true;

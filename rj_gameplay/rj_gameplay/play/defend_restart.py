@@ -13,6 +13,7 @@ from rj_gameplay.calculations import wall_calculations
 class DefendRestart(play.IPlay):
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         # TODO: add chipper tactic here
+        super().__init__(action_client_dict)
         self.goalie = goalie_tactic.GoalieTactic(action_client_dict)
         self.markers = nmark_tactic.NMarkTactic(action_client_dict, 3)
         self.wall_1 = wall_tactic.WallTactic(action_client_dict)

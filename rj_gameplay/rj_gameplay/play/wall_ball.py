@@ -18,6 +18,7 @@ class WallBall(play.IPlay):
 
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         # defaults to walling between ball pos and goal pos
+        super().__init__(action_client_dict)
         self.wall_tactic_1 = wall_tactic.WallTactic(action_client_dict)
         self.wall_tactic_2 = wall_tactic.WallTactic(action_client_dict)
         self.wall_tactic_3 = wall_tactic.WallTactic(action_client_dict)

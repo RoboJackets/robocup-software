@@ -2,7 +2,6 @@ import stp
 
 from rj_gameplay.tactic import wall_tactic, goalie_tactic
 import stp.role
-from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc
 from typing import Dict, List, Tuple, Type, Any
 from rj_gameplay.calculations import wall_calculations
@@ -25,8 +24,8 @@ class BasicDefense(stp.play.Play):
     TODO: add 2 aggressive markers, go down to 3 Wallers
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
 
         self._state = State.INIT
 

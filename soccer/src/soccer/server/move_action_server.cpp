@@ -8,11 +8,9 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
     using namespace std::placeholders;
 
     this->action_server_ = rclcpp_action::create_server<Move>(
-        this->get_node_base_interface(),
-        this->get_node_clock_interface(),
-        this->get_node_logging_interface(),
-        this->get_node_waitables_interface(),
-        "move", std::bind(&MoveActionServer::handle_goal, this, _1, _2),
+        this->get_node_base_interface(), this->get_node_clock_interface(),
+        this->get_node_logging_interface(), this->get_node_waitables_interface(), "move",
+        std::bind(&MoveActionServer::handle_goal, this, _1, _2),
         std::bind(&MoveActionServer::handle_cancel, this, _1),
         std::bind(&MoveActionServer::handle_accepted, this, _1));
 
@@ -28,8 +26,8 @@ MoveActionServer ::MoveActionServer(const rclcpp::NodeOptions& options)
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
-          auto lock = std::lock_guard(mutex_);
-          last_world_state_ = rj_convert::convert_from_ros(*world_state);
+            auto lock = std::lock_guard(mutex_);
+            last_world_state_ = rj_convert::convert_from_ros(*world_state);
         });
 
     for (size_t i = 0; i < kNumShells; i++) {
@@ -68,7 +66,8 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
     }
 
     // TODO: best way to check all motion commands? this way isn't that great
-    if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible && std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
+    if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
+        std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
         const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.path_target_command[0].target.position);
         rj_geometry::Point old_position = target_positions[robot_id];
@@ -78,7 +77,8 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
         } else {
             target_positions[robot_id] = target_position;
         }
-    } else if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible && std::holds_alternative<planning::LineKickCommand>(motion_command)) {
+    } else if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
+               std::holds_alternative<planning::LineKickCommand>(motion_command)) {
         const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.line_kick_command[0].target);
         rj_geometry::Point old_position = target_positions[robot_id];
@@ -88,7 +88,8 @@ rclcpp_action::GoalResponse MoveActionServer ::handle_goal(const rclcpp_action::
         } else {
             target_positions[robot_id] = target_position;
         }
-    } else if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible && std::holds_alternative<planning::PivotCommand>(motion_command)) {
+    } else if (test_desired_states_[robot_id] && robot_desired_states_[robot_id].visible &&
+               std::holds_alternative<planning::PivotCommand>(motion_command)) {
         const auto target_position = rj_convert::convert_from_ros(
             goal->server_intent.intent.motion_command.pivot_command[0].pivot_target);
         const auto target_pivot = rj_convert::convert_from_ros(
@@ -149,8 +150,7 @@ void MoveActionServer ::execute(const std::shared_ptr<GoalHandleMove> goal_handl
         planning::Trajectory robot_trajectory = this->robot_trajectories_[robot_id];
 
         if (!robot_trajectory.empty()) {
-            planning::Trajectory::Msg trajectory_msg =
-                rj_convert::convert_to_ros(robot_trajectory);
+            planning::Trajectory::Msg trajectory_msg = rj_convert::convert_to_ros(robot_trajectory);
             feedback->trajectory = trajectory_msg;
         }
 

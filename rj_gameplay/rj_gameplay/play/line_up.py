@@ -7,13 +7,7 @@ import stp.role
 import stp.role.cost
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc
-from typing import (
-    Dict,
-    List,
-    Tuple,
-    Optional,
-    Type,
-)
+from typing import Dict, List, Tuple, Optional, Type, Any
 
 import numpy as np
 from rj_msgs.msg import RobotIntent
@@ -30,8 +24,8 @@ class State(Enum):
 class LineUp(stp.play.Play):
     """Lines up all six robots on the side of the field."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
+        super().__init__(action_client_dict)
 
         self._state = State.INIT
 
