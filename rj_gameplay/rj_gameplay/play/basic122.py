@@ -28,11 +28,12 @@ class Basic122(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
-
+        """
         self._seek_pts = [
             np.array((2.0, 7.0)),
             np.array((-2.0, 7.0)),
         ]
+        """
 
     def tick(
         self,
@@ -47,8 +48,8 @@ class Basic122(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
-                basic_seek.BasicSeek(self._seek_pts[0], world_state),
-                basic_seek.BasicSeek(self._seek_pts[1], world_state),
+                basic_seek.BasicSeek(world_state),
+                basic_seek.BasicSeek(world_state),
             ]
 
             self.assign_roles(world_state)
@@ -76,7 +77,7 @@ class Basic122(stp.play.Play):
 
         elif self._state == State.READY_TO_PASS:
             init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
-            init_receiver_cost = stp.role.cost.PickClosestToPoint(self._seek_pts[0])
+            init_receiver_cost = stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc())
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 pass_tactic.PassTactic(
