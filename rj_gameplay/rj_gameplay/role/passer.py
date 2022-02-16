@@ -48,7 +48,8 @@ class PasserRole(stp.role.Role):
 
         intent = None
         if self._state == State.INIT:
-            self.receive_skill = receive.Receive(robot=self.robot)
+            self.receive_skill = receive.Receive(action_client_dict=self.action_client_dict,
+                                                 robot=self.robot)
             intent = self.receive_skill.tick(world_state)
             self._state = State.CAPTURING
         elif self._state == State.CAPTURING:
@@ -63,6 +64,7 @@ class PasserRole(stp.role.Role):
         elif self._state == State.INIT_EXECUTE_PASS:
             # TODO: make these params configurable
             self.pivot_kick_skill = pivot_kick.PivotKick(
+                action_client_dict=self.action_client_dict,
                 robot=self.robot,
                 target_point=self._target_point,
                 chip=False,
