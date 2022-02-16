@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Contains the stub for the move tactic. """
 
 from dataclasses import dataclass
@@ -107,3 +108,9 @@ class Move(tactic.ITactic):
 
     def is_done(self, world_state):
         return self.move.skill.is_done(world_state)
+=======
+"""
+This file left in so I don't have to fix dozens of broken imports, which will be resolved naturally as we rewrite plays.
+However, move Tactic no longer exists, as the move Role does the same behavior in the new framework.
+"""
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15

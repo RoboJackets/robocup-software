@@ -172,6 +172,7 @@
 		</Var>
 	</Var>
 	<Var name="Communication" type="list">
+		<!-- use local host since we are only using grSim locally -->
 		<Var name="Vision multicast address" type="string">
 			127.0.0.1
 		</Var>

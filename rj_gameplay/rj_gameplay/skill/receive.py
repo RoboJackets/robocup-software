@@ -17,15 +17,20 @@ from rj_msgs import msg
 
 from rj_gameplay.action.move_action_client import MoveActionClient
 
-"""
-A skill version of receive so that actions don't have to be called in tactics
-"""
+class Receive(skill.Skill):
+    """Skill that ends when robot has possession of the ball.
+    Consists of Settle then Capture.
+    """
 
+<<<<<<< HEAD
 
 class Receive(skill.ISkill):
     def __init__(
         self, action_client_dict: Dict[Type[Any], List[Any]], robot: rc.Robot = None
     ):
+=======
+    def __init__(self, robot: rc.Robot = None):
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
         self.robot = robot
 
         self.move_action_clients = action_client_dict.get(MoveActionClient)
@@ -33,11 +38,20 @@ class Receive(skill.ISkill):
         self.settle = settle.Settle(robot)
         self.capture = capture.Capture(robot)
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
+
+        # TODO: put an FSM here instead of this obfuscated if-else
         if self.settle.is_done(world_state):
+<<<<<<< HEAD
             return self.capture.tick(robot, world_state, intent)
         else:
             return self.settle.tick(robot, world_state, intent)
+=======
+            return self.capture.tick(world_state)
+        else:
+            return self.settle.tick(world_state)
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
     def is_done(self, world_state: rc.WorldState) -> bool:
 
@@ -45,3 +59,6 @@ class Receive(skill.ISkill):
 
     def __str__(self):
         return f"Receive(robot={self.robot.id if self.robot is not None else '??'}, ticks={self.capture.ticks_done})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

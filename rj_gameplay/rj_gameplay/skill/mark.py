@@ -64,7 +64,7 @@ class Mark(skill.ISkill):
         face_angle: Optional[float] = None,
         target_vel: np.ndarray = np.array([0.0, 0.0]),
         ignore_ball: bool = False,
-    ) -> None:
+    ):
 
         self.__name__ = "Mark"
         self.move_action_clients = action_client_dict.get(MoveActionClient)
@@ -106,7 +106,7 @@ class Mark(skill.ISkill):
         return {self.robot.id: intent}
         # update target point every tick to match movement of ball & target robot
 
-    def is_done(self, world_state):
+    def is_done(self, world_state) -> bool:
         threshold = 0.3
         if self.robot:
             if self.robot.id is None or world_state is None:
@@ -134,3 +134,6 @@ class Mark(skill.ISkill):
 
     def __str__(self):
         return f"Mark(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_robot.id if self.target_robot is not None else '??'})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

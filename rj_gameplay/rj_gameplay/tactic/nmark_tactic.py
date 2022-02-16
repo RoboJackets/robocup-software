@@ -1,5 +1,9 @@
 from dataclasses import dataclass
+<<<<<<< HEAD
 from typing import List, Optional, Any, Dict, Type, Any
+=======
+from typing import Any, Dict, List, Optional
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
 import stp.rc as rc
 import stp.tactic as tactic
@@ -41,7 +45,7 @@ class marker_cost(role.CostFn):
     def __call__(
         self,
         robot: rc.Robot,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -73,7 +77,7 @@ class marker_cost(role.CostFn):
 
     def unassigned_cost_fn(
         self,
-        prev_result: Optional["RoleResult"],
+        prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
 
@@ -90,9 +94,14 @@ class NMarkTactic(tactic.ITactic):
         self.num_markers = n
 
         # create empty mark SkillEntry for each robot
+<<<<<<< HEAD
         self.mark_list = [
             tactic.SkillEntry(mark.Mark(action_client_dict))
             for i in range(self.num_markers)
+=======
+        self.mark_list: List[tactic.SkillEntry] = [
+            tactic.SkillEntry(skills.mark.Mark()) for i in range(self.num_markers)
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
         ]
 
         # create cost func for each robot
@@ -107,9 +116,7 @@ class NMarkTactic(tactic.ITactic):
         """
         pass
 
-    def get_requests(
-        self, world_state: rc.WorldState, props
-    ) -> List[tactic.RoleRequests]:
+    def get_requests(self, world_state: rc.WorldState, props) -> Any:
         """
         :return: role request for n markers
         """
@@ -132,7 +139,7 @@ class NMarkTactic(tactic.ITactic):
         return role_requests
 
     def tick(
-        self, world_state: rc.WorldState, role_results: tactic.RoleResults
+        self, world_state: rc.WorldState, role_results: tactic.RoleResults, props: None
     ) -> List[tactic.SkillEntry]:
         """
         :return: skills for the number of markers assigned from the n markers

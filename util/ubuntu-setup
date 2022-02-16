@@ -167,6 +167,10 @@ apt-get install $ARGS $PACKAGES
 python3 -m pip install pip==20.2.4
 pip3 install -r $BASE/util/requirements3.txt
 
+# install pre-commit hook for Black formatter
+echo "-- Installing pre-commit hook"
+pre-commit install
+
 echo "-- Installing grSim default configuration"
 GRSIM_XML_INSTALL_LOCATION="$HOME/.grsim.xml"
 SOURCE_GRSIM_XML_LOCATION="$BASE"/grsim.xml

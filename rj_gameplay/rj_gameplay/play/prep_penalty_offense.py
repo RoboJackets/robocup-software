@@ -40,7 +40,12 @@ class PreparePenaltyOffense(play.IPlay):
         prev_results: role.assignment.FlatRoleResults,
         props,
     ) -> Tuple[
+<<<<<<< HEAD
         Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]
+=======
+        Dict[tactic.SkillEntry, List[role.RoleResult]],
+        List[tactic.SkillEntry],
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
     ]:
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {

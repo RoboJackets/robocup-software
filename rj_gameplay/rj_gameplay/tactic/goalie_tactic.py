@@ -1,30 +1,25 @@
-"""Tactic to produce goalie behavior, which tracks the ball, moves to block if a shot on goal is taken, and stays within the goalie box (generally)."""
+import stp
 
+<<<<<<< HEAD
 from dataclasses import dataclass
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar, Any
+=======
+from rj_gameplay.role import goalie_role
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
-import stp.action as action
-import stp.rc as rc
-import stp.tactic as tactic
-import stp.role as role
+from rj_msgs.msg import RobotIntent
 
-import rj_gameplay.eval
-import rj_gameplay.skill as skills
-from rj_gameplay.skill import move, receive, line_kick  # , intercept
-import stp.skill as skill
-import numpy as np
-
-# TODO: replace w/ global param server
-from stp.utils.constants import RobotConstants, BallConstants
-import stp.global_parameters as global_parameters
-from stp.local_parameters import Param
-
-# TODO: param server this const
-MIN_WALL_RAD = 0
-GOALIE_PCT_TO_BALL = 0.15
-DIST_TO_FAST_KICK = 7
+from typing import List, Tuple
 
 
+class GoalieTactic(stp.tactic.Tactic):
+    """Wrapper for the Goalie Role that handles assigning said role to whichever Robot is our goalie."""
+
+    def __init__(self, world_state: stp.rc.WorldState, goalie_id: int):
+        """Special case where we want only robot 0 to be goalie, from init."""
+        super().__init__(world_state)
+
+<<<<<<< HEAD
 class GoalieCost(role.CostFn):
     def __call__(
         self,
@@ -210,34 +205,36 @@ class GoalieTactic(tactic.ITactic):
             )
 
         return role_requests
+=======
+        # TODO: rather than passing in hardcoded goalie id on init, gameplay node should
+        #       have a set robot and pass that (in case robot 0 is ejected or broken)
+        self._role_requests.append(
+            (stp.role.cost.PickRobotById(goalie_id), goalie_role.GoalieRole)
+        )
+
+    def init_roles(self, world_state: stp.rc.WorldState) -> None:
+        # only has one role, but it's easier to copy-paste the structure
+        for i, robot in enumerate(self.assigned_robots):
+            role = self._role_requests[i][1]
+            if role is goalie_role.GoalieRole:
+                self.assigned_roles.append(role(robot))
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
     def tick(
-        self, world_state: rc.WorldState, role_results: tactic.RoleResults
-    ) -> List[tactic.SkillEntry]:
-        """
-        :return: A list of skills depending on which roles are filled
-        """
+        self, world_state: stp.rc.WorldState
+    ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
 
-        # create list of skills based on if RoleResult exists for SkillEntry
-        skills = []
+        # assumes all roles requested are filled, because tactic is one unit
+        if len(self.assigned_roles) != len(self._role_requests):
+            self.init_roles(world_state)
 
-        move_result = role_results[self.move_se]
-        receive_result = role_results[self.receive_se]
-        pivot_kick_result = role_results[self.pivot_kick_se]
+        # only has one role request, but it's easier to copy-paste the structure
+        robot_intents = []
+        for i in range(len(self.assigned_roles)):
+            role = self.assigned_roles[i]
+            robot_intents.append((role.robot.id, role.tick(world_state)))
+        return robot_intents
 
-        # move skill takes priority
-        if move_result and move_result[0].is_filled():
-            skills.append(self.move_se)
-        elif receive_result and receive_result[0].is_filled():
-            skills.append(self.receive_se)
-        elif pivot_kick_result and pivot_kick_result[0].is_filled():
-            skills.append(self.pivot_kick_se)
-
-        return skills
-
-    def is_done(self, world_state):
-        """
-        :return boolean indicating if tactic is done
-        """
-        # goalie tactic always active
-        return False
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
+        # special case: we know the only role is Goalie, so we borrow that is_done()
+        return self.assigned_roles[0].is_done(world_state)

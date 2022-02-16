@@ -1,19 +1,18 @@
-import stp.play as play
-import stp.tactic as tactic
+import stp
 
-from rj_gameplay.tactic import wall_tactic, nmark_tactic, goalie_tactic
-import stp.role as role
+from rj_gameplay.tactic import wall_tactic, goalie_tactic
+import stp.role
 from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc as rc
+import stp.rc
 from typing import Dict, List, Tuple, Type, Any
 from rj_gameplay.calculations import wall_calculations
 
-from rj_gameplay.tactic.wall_tactic import WallTactic
+import stp.role.cost
+from rj_msgs.msg import RobotIntent
 
+from enum import Enum, auto
 
-class BasicDefense(play.IPlay):
-    """For when we don't have the ball and are trying to stop the opponent from scoring."""
-
+<<<<<<< HEAD
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
 
         self._action_client_dict = action_client_dict
@@ -40,10 +39,15 @@ class BasicDefense(play.IPlay):
     ) -> Tuple[
         Dict[Type[tactic.SkillEntry], List[role.RoleRequest]], List[tactic.SkillEntry]
     ]:
+=======
 
-        # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
+class State(Enum):
+    INIT = auto()
+    ACTIVE = auto()
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
+
+<<<<<<< HEAD
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         i = 0
@@ -59,28 +63,33 @@ class BasicDefense(play.IPlay):
             tactic: tactic.get_requests(world_state, None)
             for tactic in self.tactics
         }"""
+=======
+class BasicDefense(stp.play.Play):
+    """Play that consists of:
+    - 1 Goalie
+    - 5 Wallers
+    TODO: add 2 aggressive markers, go down to 3 Wallers
+    """
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
-        # Flatten requests and use role assigner on them
-        flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(
-            flat_requests, world_state, prev_results
-        )
-        role_results = play.unflatten_results(flat_results)
+    def __init__(self):
+        super().__init__()
 
-        # Get list of all SkillEntries from all tactics
-        skills = []
-        for tactic in self.tactics:
-            skills += tactic.tick(world_state, role_results[tactic])
+        self._state = State.INIT
 
-        # Get all role assignments
-        # SkillEntry to (list of?) RoleResult
-        skill_dict = {}
-        for tactic in self.tactics:
-            skill_dict.update(role_results[tactic])
+    def tick(
+        self,
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
 
-        return (skill_dict, skills)
-
-    def is_done(self, world_state):
-        # returns done when all tactics are done
-        # TODO: change all is_done() to use all()?
-        return all([tactic.is_done(world_state) for tactic in self.tactics])
+        if self._state == State.INIT:
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
+            # TODO: add nmark tactic
+            #       and make it go for the ball (rather than stopping in front)
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.ACTIVE:
+            # return robot intents from assigned tactics back to gameplay node
+            return self.get_robot_intents(world_state)

@@ -1,18 +1,31 @@
-import stp.play as play
-import stp.tactic as tactic
+import stp.play
+import stp.tactic
 
-from rj_gameplay.tactic import move_tactic
-import stp.skill as skill
-import stp.role as role
+from rj_gameplay.tactic import line_tactic
+import stp.skill
+import stp.role
+import stp.role.cost
 from stp.role.assignment.naive import NaiveRoleAssignment
+<<<<<<< HEAD
 import stp.rc as rc
 from typing import Dict, Generic, Iterator, List, Optional, Tuple, Type, TypeVar, Any
+=======
+import stp.rc
+from typing import (
+    Dict,
+    List,
+    Tuple,
+    Optional,
+    Type,
+)
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 import numpy as np
+from rj_msgs.msg import RobotIntent
+
+from enum import Enum, auto
 
 
-class LineUp(play.IPlay):
-    """A play which lines up two robots, one on the right the one on the left"""
-
+<<<<<<< HEAD
     def __init__(self, action_client_dict: Dict[Type[Any], List[Any]]):
         self.left_x = 1.0
         self.right_x = -1.5
@@ -25,10 +38,15 @@ class LineUp(play.IPlay):
             action_client_dict, np.array([self.left_x, self.start_y])
         )
         self.role_assigner = NaiveRoleAssignment()
+=======
+class State(Enum):
+    INIT = auto()
+    LINE_UP = auto()
+    DONE = auto()
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
-    def compute_props(self, prev_props):
-        pass
 
+<<<<<<< HEAD
     def tick(
         self,
         world_state: rc.WorldState,
@@ -53,21 +71,30 @@ class LineUp(play.IPlay):
             flat_requests, world_state, prev_results
         )
         role_results = play.unflatten_results(flat_results)
+=======
+class LineUp(stp.play.Play):
+    """Lines up all six robots on the side of the field."""
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
-        # Get list of all skills with assigned roles from tactics
-        skill_dict = {}
-        if self.move_right.is_done(world_state):
-            skills = self.move_left.tick(world_state, role_results[self.move_left])
-            skill_dict.update(role_results[self.move_left])
-        else:
-            skills = self.move_right.tick(world_state, role_results[self.move_right])
-            skill_dict.update(role_results[self.move_right])
-        # skills = self.move_right.tick(role_results[self.move_right]) + self.move_left.tick(role_results[self.move_left])
-        # skill_dict = {}
-        # skill_dict.update(role_results[self.move_right])
-        # skill_dict.update(role_results[self.move_left])
+    def __init__(self):
+        super().__init__()
 
-        return (skill_dict, skills)
+        self._state = State.INIT
 
-    def is_done(self, world_state):
-        return self.move_left.is_done(world_state)
+    def tick(
+        self,
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
+
+        if self._state == State.INIT:
+            self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
+            self.assign_roles(world_state)
+            self._state = State.LINE_UP
+            return self.get_robot_intents(world_state)
+        elif self._state == State.LINE_UP:
+            if self.prioritized_tactics[0].is_done(world_state):
+                self._state = State.DONE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.DONE:
+            # TODO: does this state need to exist?
+            return None

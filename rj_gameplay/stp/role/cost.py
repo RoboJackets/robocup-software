@@ -1,83 +1,62 @@
-"""This module contains a variety of functions that return cost functions for
-convenience."""
+"""This module contains a variety of cost functions for convenience."""
 
-from typing import Optional
+from typing import Any
 
 import numpy as np
-import stp.rc as rc
-import stp.role as role
+import stp.rc
+import stp.role
 
 
-def flat_switch_cost(
-    robot: rc.Robot, prev_robot: Optional[rc.Robot], switch_cost: float
-) -> float:
-    """Returns the cost of switching from prev_robot to robot, ie. switch_cost if
-    robot.id != prev_robot.id, otherwise 0.
-    :param robot: The currently selected robot.
-    :param prev_robot: The previously selected robot.
-    :param switch_cost: The cost of switching to a different robot.
-    :return: switch_cost if robot.id != prev_robot.id, otherwise returns 0.
-    """
-    if prev_robot:
-        return switch_cost * (robot.id != prev_robot.id)
+class PickRobotById(stp.role.CostFn):
+    """Always select robot of robot_id (passed on init)."""
 
-    return 0
+    def __init__(self, robot_id: int):
+        self._robot_id = robot_id
 
+    def __call__(
+        self,
+        robot: stp.rc.Robot,
+        world_state: stp.rc.WorldState,
+    ) -> float:
 
-def distance_to_pt(
-    eval_pt: np.ndarray, saturate_dist: float, switch_cost: float
-) -> role.CostFn:
-    """Creates a cost function that returns the distance from the robot's position to a
-    point, saturating at the passed in distance.
-    :param eval_pt: Point to evaluate robot's position to.
-    :param saturate_dist: Distance at which the cost function saturates.
-    :param switch_cost: Flat cost added for switching to a different robot.
-    :return: Cost function
-    """
+        if robot.id == self._robot_id:
+            return 0.0
 
-    def cost_fn(
-        robot: rc.Robot,
-        prev_result: Optional[role.RoleResult],
-        world_state: rc.WorldState,
-    ):
-        dist: float = np.linalg.norm(robot.pose[:2] - eval_pt)
-        cost: float = min(dist, saturate_dist)
+        # TODO: use max int or float('inf')
+        return 1e9
 
-        # Add the cost for switching robots.
-        if prev_result and prev_result.role.is_filled():
-            cost += flat_switch_cost(robot, prev_result.role.robot, switch_cost)
+    # TODO: rm this as it is not needed in new architecture
+    #       (costFns are linked to Roles, implying that each costFn is the cost
+    #        of a specific robot filling a specific Role -> "unassigned cost" = ??)
+    def unassigned_cost_fn(
+        self, prev_results: Any, world_state: stp.rc.WorldState
+    ) -> float:
+        pass
 
-        return cost
-
-    return cost_fn
+    # TODO: enforce __repr__ for all STP classes?
+    #       using common fmt "clsname(init fields=...)"
+    def __repr__(self):
+        return f"PickRobotById(robot={self._robot_id})"
 
 
-def constant(value: float, switch_cost: float) -> role.CostFn:
-    """Cost function that returns a constant.
-    :param value: Constant value of the cost function.
-    :param switch_cost: Flat cost added for switching to a different robot.
-    :return: Cost function.
+class PickClosestToPoint(stp.role.CostFn):
+    """Always select closest robot to some target_point (passed on init).
+    Can get closest to ball by passing in `world_state.ball.pos`.
     """
 
-    def cost_fn(
-        robot: rc.Robot,
-        prev_result: Optional[role.RoleResult],
-        world_state: rc.WorldState,
-    ):
-        cost = value
+    def __init__(self, target_point):
+        self._target_point = target_point
 
-        # Add the cost for switching robots.
-        if prev_result and prev_result.role.is_filled():
-            cost += flat_switch_cost(robot, prev_result.role.robot, switch_cost)
+    def __call__(
+        self,
+        robot: stp.rc.Robot,
+        world_state: stp.rc.WorldState,
+    ) -> float:
+        if world_state is not None and robot in world_state.our_robots:
+            return np.linalg.norm(robot.pose[:2] - self._target_point)
 
-        return cost
+        # TODO: use max int or float('inf')
+        return 1e9
 
-    return cost_fn
-
-
-def zero(switch_cost: float) -> role.CostFn:
-    """Cost function that returns 0.
-    :param switch_cost: Flat cost added for switching to a different robot.
-    :return: Cost function that returns 0.
-    """
-    return constant(0.0, switch_cost)
+    def __repr__(self):
+        return f"PickClosestRobot(target_point={self._target_point})"

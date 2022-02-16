@@ -19,7 +19,6 @@ from std_msgs.msg import String as StringMsg
 import stp.rc as rc
 import stp.utils.world_state_converter as conv
 import stp.situation as situation
-import stp.coordinator as coordinator
 from stp.gameplay_executor import GameplayExecutor
 import stp
 import stp.skill
@@ -30,8 +29,10 @@ import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 
 import numpy as np
+from rj_gameplay.action.move import Move
 
-from rj_gameplay.play import penalty_defense, basic_defense, basic122
+# ignore "unused import" error
+from rj_gameplay.play import line_up, basic_defense, keepaway  # noqa: F401
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 from rj_gameplay.action import move_action_client, manipulate_action_client
@@ -40,29 +41,6 @@ from rj_gameplay.action.move_action_client import MoveActionClient
 from rj_gameplay.action.manipulate_action_client import ManipulateActionClient
 
 NUM_ROBOTS = 16
-
-
-class TestPlaySelector(situation.IPlaySelector):
-    """
-    Convenience class for testing individual plays in gameplay without
-    having to go through the play selection system.
-
-    Import a new play, then change the select() method's return below to force
-    gameplay to always use the selected type.
-    """
-
-    def __init__(self):
-        self._action_client_dict = None
-
-    def add_action_client_dict(self, action_client_dict: Dict[Type[Any], List[Any]]):
-        self._action_client_dict = action_client_dict
-
-    def select(
-        self, world_state: rc.WorldState
-    ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
-        self.curr_situation = None
-        return (None, basic_defense.BasicDefense(self._action_client_dict))
-
 
 class GameplayNode(Node):
     """
@@ -73,10 +51,15 @@ class GameplayNode(Node):
     def __init__(
         self,
         play_selector: situation.IPlaySelector,
+        test_play: Optional[stp.play.Play] = None,
+        # TODO: see whether or not world_state is ever not None here
         world_state: Optional[rc.WorldState] = None,
     ) -> None:
         rclpy.init()
         super().__init__("gameplay_node")
+
+        self.test_play = test_play
+
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
             "vision_filter/world_state",
@@ -127,6 +110,7 @@ class GameplayNode(Node):
 
         # action client dictionary mapping action clients types to a list of action clients
         # TODO: delete above comment once fixed with mypy
+        # TODO: pass this everywhere again :(
         self.action_client_dict: Dict[Type[Any], List[Any]] = {
             MoveActionClient: self.move_action_clients,
             ManipulateActionClient: self.manipulate_action_clients
@@ -163,9 +147,6 @@ class GameplayNode(Node):
             StringMsg, "/gameplay/debug_text", 10
         )
         self.play_selector: situation.IPlaySelector = play_selector
-        self.coordinator = coordinator.Coordinator(
-            play_selector, self.action_client_dict, self.debug_callback
-        )
 
     def set_play_state(self, play_state: msg.PlayState):
         self.play_state = play_state
@@ -237,13 +218,10 @@ class GameplayNode(Node):
             assert self.world_state is not None
 
     def gameplay_tick(self) -> None:
-        """
-        ticks the gameplay coordinator using recent world_state
-        """
-
         self.update_world_state()
 
         if self.world_state is not None:
+<<<<<<< HEAD
             intents = self.coordinator.tick(self.world_state)
             for i in range(NUM_ROBOTS):
                 server_intent: msg.ServerIntent = self.generate_server_intent(
@@ -255,6 +233,19 @@ class GameplayNode(Node):
                 if self.move_action_clients[i]:
                     self.move_action_clients[i].send_goal(server_intent)
                     #self.manipulate_action_clients[i].send_goal(server_intent)
+=======
+            if self.test_play is None:
+                curr_situation, curr_play = self.play_selector.select(self.world_state)
+                intents = curr_play.tick(self.world_state)
+            else:
+                intents = self.test_play.tick(self.world_state)
+
+            if intents:
+                for i in range(len(self.world_state.our_robots)):
+                    if intents[i] is not None:
+                        rip_i = self.robot_intent_pubs[i]
+                        rip_i.publish(intents[i])
+>>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -489,13 +480,12 @@ class GameplayNode(Node):
 
 
 def main():
-    # uncomment this line to use the test play selector
-    # play_selector = TestPlaySelector()
-
-    # comment out this line when using the test play selector
     play_selector = basic_play_selector.BasicPlaySelector()
 
-    gameplay = GameplayNode(play_selector)
+    # change this line to test different plays (set to None if no desired test play)
+    test_play = keepaway.Keepaway()
+
+    gameplay = GameplayNode(play_selector, test_play)
     executor = GameplayExecutor()
     executor.add_solo_node(node=gameplay)
     executor.add_pool_nodes(gameplay.move_action_clients)
