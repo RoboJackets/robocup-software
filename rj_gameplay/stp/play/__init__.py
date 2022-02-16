@@ -38,6 +38,10 @@ class IPlay(ABC):
     pass
 
 
+class RoleAssignFailure(Exception):
+    pass
+
+
 class Play(ABC):
     """Coordinate full-team behaviors via Tactics. Assumes number of Roles matches number of robots on the field.
     Ends when SituationAnalysis switches the Play, so no is_done() necessary.
@@ -77,7 +81,7 @@ class Play(ABC):
         self,
         world_state: stp.rc.WorldState,
     ) -> None:
-        """Given that all Roles are in sorted order of priority, greedily assign the highest-priority Role to the lowest-cost robot for that Role. Instantiate Tactics with the correct robots post-assignment. (Note that this behavior is largely handled by the init_roles of each Tactic.)
+        """Given that all Roles are in sorted order of priority, greedily assign the highest-priority Role to the lowest-cost robot for that Role. Instantiate Tactics with the correct robots post-assignment. (Note that this behavior is largely handled by the init_roles() of each Tactic.)
         Satisfy constraint that all Roles of a Tactic must all be assigned at once. If a Tactic's Roles cannot all be filled, do not fill any of its Roles.
         """
 
@@ -99,8 +103,10 @@ class Play(ABC):
                         cheapest_robot = robot
 
                 if cheapest_robot is None:
-                    # TODO: properly error handle if cheapest_robot is None
-                    print(f"RoleRequest ({role}, {cost_fn}) was not assigned")
+                    # TODO: consider looping until success?
+                    raise RoleAssignFailure(
+                        f"RoleRequest ({role}, {cost_fn}) was not assigned"
+                    )
 
                 used_robots.add(cheapest_robot)
                 robots_for_tactic.append(cheapest_robot)

@@ -13,10 +13,11 @@ import numpy as np
 
 class State(Enum):
     INIT = auto()
-    SETUP = auto()
-    READY_TO_PASS = auto()
-    SEEKER_SHOOT = auto()
-    ASSIGN_ROLES = auto()
+    WAIT_TO_PASS = auto()
+    INIT_PASS = auto()
+    PASSING = auto()
+    PASSING_ASSIGN_ROLES = auto()
+    INIT_SHOOT = auto()
 
 
 class Basic122(stp.play.Play):
@@ -53,29 +54,22 @@ class Basic122(stp.play.Play):
             ]
 
             self.assign_roles(world_state)
-            self._state = State.SETUP
+
+            self._state = State.WAIT_TO_PASS
             return self.get_robot_intents(world_state)
 
-        elif self._state == State.SETUP:
-            # TODO: this loop's logic is fairly crucial in role assignment
-            #
-            # is there a way I can force this to happen as a precondition to assign_roles?
-            # maybe call assign_roles() every tick but check tactic for needs_assign before assigning it
-            # (this works as the method is in Play superclass)
-            for tactic in self.prioritized_tactics:
-                # TODO: goalie tactic (and all tactics?) need a needs_assign
-                #       build in the logic for needs_assign of pass tactic into superclass
-                if tactic.needs_assign:
-                    self._state = State.ASSIGN_ROLES
+        elif self._state == State.WAIT_TO_PASS:
 
-            seek_1 = self.prioritized_tactics[0]
-            seek_2 = self.prioritized_tactics[1]
+            seek_1 = self.prioritized_tactics[1]
+            seek_2 = self.prioritized_tactics[2]
+
+            # TODO: is one tick delay issue?
             if seek_1.is_done(world_state) and seek_2.is_done(world_state):
-                self._state = State.READY_TO_PASS
+                self._state = State.INIT_PASS
 
             return self.get_robot_intents(world_state)
 
-        elif self._state == State.READY_TO_PASS:
+        elif self._state == State.INIT_PASS:
             init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
             init_receiver_cost = stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc())
             self.prioritized_tactics = [
@@ -86,15 +80,40 @@ class Basic122(stp.play.Play):
             ]
 
             self.assign_roles(world_state)
-            # self._state = State.SEEKER_SHOOT
+            self._state = State.PASSING
             return self.get_robot_intents(world_state)
 
-        elif self._state == State.SEEKER_SHOOT:
-            # TODO: write dummy shoot tactic? or role?
-            pass
+        elif self._state == State.PASSING:
+            # TODO: this logic is fairly crucial in role assignment
+            #
+            # is there a way I can force this to happen as a precondition to assign_roles?
+            # maybe call assign_roles() every tick but check tactic for needs_assign before assigning it
+            # (this works as the method is in Play superclass)
 
-        elif self._state == State.ASSIGN_ROLES:
+            # pass tactic dynamically needs assign, handle here
+            # (think of as an interrupt)
+            for tactic in self.prioritized_tactics:
+                # TODO: goalie tactic (and all tactics?) need a needs_assign
+                #       build in the logic for needs_assign of pass tactic into superclass
+                if tactic.needs_assign:
+                    print(f"{tactic} needs assign, says basic122")
+                    self._state = State.PASSING_ASSIGN_ROLES
+
+            # when pass is complete, go shoot
+            pass_tac = self.prioritized_tactics[1]
+            if pass_tac.is_done(world_state):
+                self._state = State.INIT_SHOOT
+
+            return self.get_robot_intents(world_state)
+
+        elif self._state == State.PASSING_ASSIGN_ROLES:
             # duplicate role assign from init, merge states?
+            # can't bc need to know the state that it came from
+            # TODO: write interrupt-handler style state in play superclass for this behavior, where self._state returns to old state
             self.assign_roles(world_state)
-            # self._state = State.ACTIVE
+            self._state = State.PASSING
             return self.get_robot_intents(world_state)
+
+        elif self._state == State.INIT_SHOOT:
+            print("INIT shoot")
+            pass

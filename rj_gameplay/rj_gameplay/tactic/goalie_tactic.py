@@ -42,6 +42,7 @@ class GoalieTactic(stp.tactic.Tactic):
             robot_intents.append((role.robot.id, role.tick(world_state)))
         return robot_intents
 
+    @property
     def needs_assign(self):
         # never needs assign after init
         # TODO: make this + pass tac part of the superclass
