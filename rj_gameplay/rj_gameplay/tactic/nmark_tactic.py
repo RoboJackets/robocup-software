@@ -1,10 +1,5 @@
 from dataclasses import dataclass
-<<<<<<< HEAD
-from typing import List, Optional, Any, Dict, Type, Any
-=======
-from typing import Any, Dict, List, Optional
->>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
-
+from typing import Any, Dict, List, Optional, Type
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
@@ -94,14 +89,8 @@ class NMarkTactic(tactic.ITactic):
         self.num_markers = n
 
         # create empty mark SkillEntry for each robot
-<<<<<<< HEAD
-        self.mark_list = [
-            tactic.SkillEntry(mark.Mark(action_client_dict))
-            for i in range(self.num_markers)
-=======
         self.mark_list: List[tactic.SkillEntry] = [
             tactic.SkillEntry(skills.mark.Mark()) for i in range(self.num_markers)
->>>>>>> bce13ce53ddb2ecb9696266d980722c34617dc15
         ]
 
         # create cost func for each robot

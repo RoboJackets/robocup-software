@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Dict, Type
 
 import stp.rc
 import stp.role
@@ -21,7 +21,7 @@ class Tactic(ABC):
     """High-level construct that coordinates one or more roles. Creates role requests to be handled by Plays."""
 
     @abstractmethod
-    def __init__(self, world_state: stp.rc.WorldState) -> None:
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState) -> None:
         """Create empty lists for handling role requests. world_state given on init because
         some Tactics need world_state on init.
         """
@@ -31,9 +31,10 @@ class Tactic(ABC):
         # TODO: make these properties too?
         self.assigned_robots = []
         self.assigned_roles = []
+        self.action_client_dict = action_client_dict
 
     @abstractmethod
-    def init_roles(self, world_state: stp.rc.WorldState) -> None:
+    def init_roles(self, action_client_dict: Dict[Type[Any], List[Any]], world_state: stp.rc.WorldState) -> None:
         """Given assigned robots by the Play, initialize each role of role_requests with its assigned robot."""
         ...
 

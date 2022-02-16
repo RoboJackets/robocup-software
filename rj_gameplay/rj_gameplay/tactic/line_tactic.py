@@ -1,6 +1,6 @@
 import stp
 from rj_gameplay.role import dumb_move
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Any, Type
 
 from rj_msgs.msg import RobotIntent
 
@@ -8,8 +8,9 @@ from rj_msgs.msg import RobotIntent
 class LineTactic(stp.tactic.Tactic):
     """Tactic for line up play that puts all six robots in a line on the left of the field."""
 
-    def __init__(self, world_state: stp.rc.WorldState):
-        super().__init__(world_state)
+    def __init__(self, action_client_dict: Dict[Type[Any], List[Any]],
+                 world_state: stp.rc.WorldState):
+        super().__init__(action_client_dict, world_state)
 
         # compute move points
         # TODO: make start on side of the field, so this Tactic is actually useful during penalty situations
@@ -50,10 +51,11 @@ class LineTactic(stp.tactic.Tactic):
 
     def init_roles(
         self,
+        action_client_dict: Dict[Type[Any], List[Any]],
         world_state: stp.rc.WorldState,
     ):
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
             pt = self.move_points[i]
             if role is dumb_move.DumbMove:
-                self.assigned_roles.append(role(robot, pt, world_state.ball.pos))
+                self.assigned_roles.append(role(action_client_dict, robot, pt, world_state.ball.pos))
