@@ -91,7 +91,7 @@ class Play(ABC):
                 min_cost = 1e9
                 cheapest_robot = None
                 for robot in world_state.our_robots:
-                    if robot in used_robots:
+                    if robot in used_robots or robot in robots_for_tactic:
                         continue
                     if not robot.visible:
                         continue
@@ -101,15 +101,19 @@ class Play(ABC):
                         cheapest_robot = robot
 
                 if cheapest_robot is None:
-                    # TODO: properly error handle if cheapest_robot is None
                     print(f"RoleRequest ({role}, {cost_fn}) was not assigned")
-
-                used_robots.add(cheapest_robot)
+                    robots_for_tactic = None
+                    break
                 robots_for_tactic.append(cheapest_robot)
-            tactic.set_assigned_robots(robots_for_tactic)
+
+            if robots_for_tactic is not None:
+                used_robots.update(robots_for_tactic)
+                tactic.set_assigned_robots(robots_for_tactic)
 
         for tactic in self.prioritized_tactics:
             tactic.init_roles(world_state)
+
+        
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent"""
