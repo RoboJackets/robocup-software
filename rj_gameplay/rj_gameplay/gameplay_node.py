@@ -7,6 +7,9 @@ and allows the PlaySelector to be changed between Test and other forms.
 """
 
 from typing import List, Optional, Tuple
+import xml.etree.ElementTree as ET
+import os
+import lxml.etree
 
 import rclpy
 from rclpy.node import Node
@@ -32,6 +35,10 @@ from rj_gameplay.action.move import Move
 # ignore "unused import" error
 from rj_gameplay.play import line_up, basic_defense, keepaway  # noqa: F401
 import rj_gameplay.basic_play_selector as basic_play_selector
+
+from rcl_interfaces.srv import GetParameters, ListParameters
+from rcl_interfaces.msg import ParameterType
+
 
 NUM_ROBOTS = 16
 
@@ -125,6 +132,12 @@ class GameplayNode(Node):
             self, "global_parameter_server"
         )
         local_parameters.register_parameters(self)
+
+        list_of_nodes = self.get_node_names()
+        self.ros_params_to_xml(
+            list_of_nodes,
+            "rj_gameplay/rj_gameplay/ros_param.xml",
+        )
 
         # publish def_area_obstacles, global obstacles
         self.def_area_obstacles_pub = self.create_publisher(
@@ -434,6 +447,75 @@ class GameplayNode(Node):
                             center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8
                         )
                     )
+
+    def ros_params_to_xml(self, list_of_nodes: list, filename: str):
+        self.param_filename = os.path.abspath(filename)
+        root = ET.Element("constants")
+        tree = ET.ElementTree(root)
+        for node in list_of_nodes:
+            list_client = self.create_client(ListParameters, f"{node}/list_parameters")
+            list_param_request = ListParameters.Request()
+            list_future = list_client.call_async(list_param_request)
+            rclpy.spin_until_future_complete(self, list_future, timeout_sec=0.5)
+            while not list_future.done():
+                list_future.cancel()
+                list_future = list_client.call_async(list_param_request)
+                print("Waiting for ListParameters in gameplay_node")
+                print(node)
+                rclpy.spin_until_future_complete(self, list_future, timeout_sec=1.0)
+            param_name = list_future.result().result.names
+
+            get_client = self.create_client(GetParameters, f"{node}/get_parameters")
+            get_parameter_request = GetParameters.Request(names=param_name)
+            get_future = get_client.call_async(get_parameter_request)
+            rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
+            while not get_future.done():
+                get_future.cancel()
+                get_future = get_client.call_async(get_parameter_request)
+                print("Waiting for GetParameters")
+                rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
+            param_values = get_future.result().values
+
+            node_tag = ET.SubElement(root, node)
+            for name, val in zip(param_name, param_values):
+                if val.type == ParameterType.PARAMETER_NOT_SET:
+                    pass
+                elif val.type == ParameterType.PARAMETER_BOOL:
+                    value = val.bool_value
+                elif val.type == ParameterType.PARAMETER_INTEGER:
+                    value = val.integer_value
+                elif val.type == ParameterType.PARAMETER_DOUBLE:
+                    value = val.double_value
+                elif val.type == ParameterType.PARAMETER_BYTE_ARRAY:
+                    value = val.byte_array_value
+                elif val.type == ParameterType.PARAMETER_BOOL_ARRAY:
+                    value = val.bool_array_value
+                elif val.type == ParameterType.PARAMETER_INTEGER_ARRAY:
+                    value = val.integer_array_value
+                elif val.type == ParameterType.PARAMETER_DOUBLE_ARRAY:
+                    value = val.double_array_value
+
+                param_names = name.split(".")
+                curr_tag = node_tag
+                for prefix in param_names[:-1]:
+                    if curr_tag.find(prefix) is None:
+                        curr_tag = ET.SubElement(curr_tag, prefix)
+                    else:
+                        curr_tag = curr_tag.find(prefix)
+                ET.SubElement(curr_tag, param_names[-1]).text = str(value)
+        tree = lxml.etree.fromstring(ET.tostring(root))
+        f = open(self.param_filename, "w")
+        f.write(lxml.etree.tostring(tree, encoding="unicode", pretty_print=True))
+        f.close()
+
+    def get_param(self, param_name):
+        """
+        param_name is namespaced by '/'. eg: get_param('global_parameter_server/soccer/physics/ball_decay_constant').
+        throws run time error if the parameter does not exist.
+        """
+        tree = ET.parse(self.param_filename)
+        curr_elem = tree.getroot().find(param_name)
+        return curr_elem.text
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
