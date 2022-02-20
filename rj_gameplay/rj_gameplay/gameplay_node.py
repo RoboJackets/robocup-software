@@ -134,7 +134,7 @@ class GameplayNode(Node):
         list_of_nodes = self.get_node_names()
         self.ros_params_to_xml(
             list_of_nodes,
-            "rj_gameplay/rj_gameplay/global_param.xml",
+            "rj_gameplay/rj_gameplay/ros_param.xml",
         )
 
         # publish def_area_obstacles, global obstacles
@@ -505,11 +505,10 @@ class GameplayNode(Node):
         f = open(self.param_filename, "w")
         f.write(lxml.etree.tostring(tree, encoding="unicode", pretty_print=True))
         f.close()
-        ##tree.write(self.param_filename)
 
     def get_param(self, param_name):
         """
-        param_name is namespace by '/'. eg: get_param('soccer/physics/ball_decay_constant').
+        param_name is namespaced by '/'. eg: get_param('global_parameter_server/soccer/physics/ball_decay_constant').
         throws run time error if the parameter does not exist.
         """
         tree = ET.parse(self.param_filename)
