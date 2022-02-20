@@ -10,6 +10,7 @@ from typing import List, Optional, Tuple
 import numpy as np
 import xml.etree.ElementTree as ET
 import os
+import lxml.etree
 
 import rclpy
 from rclpy.node import Node
@@ -130,9 +131,10 @@ class GameplayNode(Node):
             self, "global_parameter_server"
         )
         local_parameters.register_parameters(self)
+        list_of_nodes = self.get_node_names()
         self.ros_params_to_xml(
-            "global_parameter_server",
-            "/home/christina/robocup/robocup-software/rj_gameplay/rj_gameplay/global_param.xml",
+            list_of_nodes,
+            "rj_gameplay/rj_gameplay/global_param.xml",
         )
 
         # publish def_area_obstacles, global obstacles
@@ -444,65 +446,66 @@ class GameplayNode(Node):
                         )
                     )
 
-    def ros_params_to_xml(self, global_param_server: str, filename: str):
-        here = os.path.dirname(os.path.abspath(filename))
-        self.param_filename = os.path.join(here, filename)
-        self.global_param_server = global_param_server
-        list_client = self.create_client(
-            ListParameters, f"{global_param_server}/list_parameters"
-        )
-        list_param_request = ListParameters.Request()
-        list_future = list_client.call_async(list_param_request)
-        rclpy.spin_until_future_complete(self, list_future, timeout_sec=0.5)
-        while not list_future.done():
-            list_future.cancel()
-            list_future = list_client.call_async(list_param_request)
-            print("Waiting for ListParameters in gameplay_node")
-            rclpy.spin_until_future_complete(self, list_future, timeout_sec=1.0)
-        param_name = list_future.result().result.names
-
-        get_client = self.create_client(
-            GetParameters, f"{global_param_server}/get_parameters"
-        )
-        get_parameter_request = GetParameters.Request(names=param_name)
-        get_future = get_client.call_async(get_parameter_request)
-        rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
-        while not get_future.done():
-            get_future.cancel()
-            get_future = get_client.call_async(get_parameter_request)
-            print("Waiting for GetParameters")
-            rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
-        param_values = get_future.result().values
-
-        root = ET.Element("global_param")
+    def ros_params_to_xml(self, list_of_nodes: list, filename: str):
+        self.param_filename = os.path.abspath(filename)
+        root = ET.Element("constants")
         tree = ET.ElementTree(root)
-        for name, val in zip(param_name, param_values):
-            if val.type == ParameterType.PARAMETER_NOT_SET:
-                pass
-            elif val.type == ParameterType.PARAMETER_BOOL:
-                value = val.bool_value
-            elif val.type == ParameterType.PARAMETER_INTEGER:
-                value = val.integer_value
-            elif val.type == ParameterType.PARAMETER_DOUBLE:
-                value = val.double_value
-            elif val.type == ParameterType.PARAMETER_BYTE_ARRAY:
-                value = val.byte_array_value
-            elif val.type == ParameterType.PARAMETER_BOOL_ARRAY:
-                value = val.bool_array_value
-            elif val.type == ParameterType.PARAMETER_INTEGER_ARRAY:
-                value = val.integer_array_value
-            elif val.type == ParameterType.PARAMETER_DOUBLE_ARRAY:
-                value = val.double_array_value
+        for node in list_of_nodes:
+            list_client = self.create_client(ListParameters, f"{node}/list_parameters")
+            list_param_request = ListParameters.Request()
+            list_future = list_client.call_async(list_param_request)
+            rclpy.spin_until_future_complete(self, list_future, timeout_sec=0.5)
+            while not list_future.done():
+                list_future.cancel()
+                list_future = list_client.call_async(list_param_request)
+                print("Waiting for ListParameters in gameplay_node")
+                print(node)
+                rclpy.spin_until_future_complete(self, list_future, timeout_sec=1.0)
+            param_name = list_future.result().result.names
 
-            param_names = name.split(".")
-            curr_tag = root
-            for prefix in param_names[:-1]:
-                if curr_tag.find(prefix) is None:
-                    curr_tag = ET.SubElement(curr_tag, prefix)
-                else:
-                    curr_tag = curr_tag.find(prefix)
-            ET.SubElement(curr_tag, param_names[-1]).text = str(value)
-        tree.write(self.param_filename)
+            get_client = self.create_client(GetParameters, f"{node}/get_parameters")
+            get_parameter_request = GetParameters.Request(names=param_name)
+            get_future = get_client.call_async(get_parameter_request)
+            rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
+            while not get_future.done():
+                get_future.cancel()
+                get_future = get_client.call_async(get_parameter_request)
+                print("Waiting for GetParameters")
+                rclpy.spin_until_future_complete(self, get_future, timeout_sec=0.5)
+            param_values = get_future.result().values
+
+            node_tag = ET.SubElement(root, node)
+            for name, val in zip(param_name, param_values):
+                if val.type == ParameterType.PARAMETER_NOT_SET:
+                    pass
+                elif val.type == ParameterType.PARAMETER_BOOL:
+                    value = val.bool_value
+                elif val.type == ParameterType.PARAMETER_INTEGER:
+                    value = val.integer_value
+                elif val.type == ParameterType.PARAMETER_DOUBLE:
+                    value = val.double_value
+                elif val.type == ParameterType.PARAMETER_BYTE_ARRAY:
+                    value = val.byte_array_value
+                elif val.type == ParameterType.PARAMETER_BOOL_ARRAY:
+                    value = val.bool_array_value
+                elif val.type == ParameterType.PARAMETER_INTEGER_ARRAY:
+                    value = val.integer_array_value
+                elif val.type == ParameterType.PARAMETER_DOUBLE_ARRAY:
+                    value = val.double_array_value
+
+                param_names = name.split(".")
+                curr_tag = node_tag
+                for prefix in param_names[:-1]:
+                    if curr_tag.find(prefix) is None:
+                        curr_tag = ET.SubElement(curr_tag, prefix)
+                    else:
+                        curr_tag = curr_tag.find(prefix)
+                ET.SubElement(curr_tag, param_names[-1]).text = str(value)
+        tree = lxml.etree.fromstring(ET.tostring(root))
+        f = open(self.param_filename, "w")
+        f.write(lxml.etree.tostring(tree, encoding="unicode", pretty_print=True))
+        f.close()
+        ##tree.write(self.param_filename)
 
     def get_param(self, param_name):
         """
