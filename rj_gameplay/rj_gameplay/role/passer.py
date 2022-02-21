@@ -9,10 +9,10 @@ from enum import Enum, auto
 
 import numpy as np
 
-# Time for the ball to the get to the target location (seems constant according to ZJUNlict)
-TIME_TO_TARGET = 0.75
+# The final velocity of the ball when it reaches our teammate
+FINAL_VELOCITY = 1
 # Rolling deceleration of the ball after it has been kicked
-BALL_DECELERATION = -0.3
+BALL_DECELERATION = -0.4
 
 
 class State(Enum):
@@ -73,7 +73,7 @@ class PasserRole(stp.role.Role):
                 robot=self.robot,
                 target_point=self._target_point,
                 chip=False,
-                kick_speed=(1.4*(distance + 0.5 * BALL_DECELERATION * (TIME_TO_TARGET ** 2)) / TIME_TO_TARGET),
+                kick_speed=(1.4 * np.sqrt((FINAL_VELOCITY ** 2) - (2 * BALL_DECELERATION * distance))),
             )
             self._state = State.EXECUTE_PASS
         elif self._state == State.EXECUTE_PASS:
