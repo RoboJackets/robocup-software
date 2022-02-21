@@ -8,65 +8,6 @@ import stp.skill as skill
 import numpy as np
 from math import atan2
 
-# TODO: move all of this logic to StrikerRole
-OPPONENT_SPEED = 1.5
-KICK_SPEED = 4.5
-EFF_BLOCK_WIDTH = 0.7
-
-
-def blocker_margin(
-    kick_origin: np.array,
-    kick_target: np.array,
-    kick_speed: float,
-    blocker: rc.Robot,
-):
-    if not blocker.visible:
-        return np.inf
-
-    kick_vector = kick_target - kick_origin
-    kick_dist = np.linalg.norm(kick_vector)
-    kick_vector /= kick_dist
-    kick_perp = np.array([kick_vector[1], -kick_vector[0]])
-
-    blocker_position = blocker.pose[0:2]
-
-    # Calculate blocker intercept
-    blocker_intercept_dist_along_kick = np.dot(
-        blocker_position - kick_origin, kick_vector
-    )
-    blocker_intercept_dist_along_kick = np.clip(
-        blocker_intercept_dist_along_kick, a_min=0, a_max=kick_dist
-    )
-    blocker_intercept = kick_origin + kick_vector * blocker_intercept_dist_along_kick
-
-    blocker_distance = np.clip(
-        np.linalg.norm(blocker_intercept - blocker_position) - EFF_BLOCK_WIDTH,
-        a_min=0.0,
-        a_max=np.inf,
-    )
-
-    blocker_time = np.abs(blocker_distance) / OPPONENT_SPEED
-
-    # Doesn't include friction...oops?
-    ball_time = np.linalg.norm(blocker_intercept - kick_origin) / kick_speed
-
-    return blocker_time - ball_time
-
-
-def kick_cost(
-    point: np.array,
-    kick_speed: float,
-    kick_origin: np.array,
-    world_state: rc.WorldState,
-):
-    margins = [
-        blocker_margin(kick_origin, point, kick_speed, blocker)
-        for blocker in world_state.their_robots
-    ]
-    return -min(margins)
-
-
-# TODO: move imports to top once this file fixed
 from rj_gameplay.role import striker
 import stp
 

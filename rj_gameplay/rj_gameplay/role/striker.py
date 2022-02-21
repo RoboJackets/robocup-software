@@ -49,7 +49,7 @@ class StrikerRole(stp.role.Role):
         elif self._state == State.INIT_SHOOT:
             # TODO: make these params configurable
             shot_kick_speed = 4.0  # TODO: adjust based on dist from target_point
-            best_shot_target_point = self.find_target_point(
+            best_shot_target_point = self._find_target_point(
                 world_state, shot_kick_speed
             )
 
@@ -127,7 +127,7 @@ class StrikerRole(stp.role.Role):
         ]
         return -min(margins)
 
-    def find_target_point(
+    def _find_target_point(
         self, world_state: stp.rc.WorldState, kick_speed: float
     ) -> np.ndarray:
         goal_y = world_state.field.length_m
