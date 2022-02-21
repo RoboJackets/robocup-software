@@ -52,7 +52,6 @@ class Basic122(stp.play.Play):
         DONE: shot taken
         """
 
-        print(f"basic122 state: {self._state}")
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
