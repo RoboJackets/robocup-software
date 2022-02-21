@@ -86,7 +86,8 @@ class StrikerRole(stp.role.Role):
         kick_vector = kick_target - kick_origin
         kick_dist = np.linalg.norm(kick_vector)
         kick_vector /= kick_dist
-        kick_perp = np.array([kick_vector[1], -kick_vector[0]])
+        # unused ??
+        # kick_perp = np.array([kick_vector[1], -kick_vector[0]])
 
         blocker_position = blocker.pose[0:2]
 

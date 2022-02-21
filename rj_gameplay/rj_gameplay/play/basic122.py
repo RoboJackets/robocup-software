@@ -122,7 +122,6 @@ class Basic122(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.INIT_SHOOT:
-            init_striker_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 striker_tactic.StrikerTactic(world_state),

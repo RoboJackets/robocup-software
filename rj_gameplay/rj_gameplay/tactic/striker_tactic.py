@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
