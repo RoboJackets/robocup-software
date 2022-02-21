@@ -7,6 +7,13 @@ from rj_msgs.msg import RobotIntent
 
 from enum import Enum, auto
 
+import numpy as np
+
+# Time for the ball to the get to the target location (seems constant according to ZJUNlict)
+TIME_TO_TARGET = 0.75
+# Rolling deceleration of the ball after it has been kicked
+BALL_DECELERATION = -0.3
+
 
 class State(Enum):
     INIT = auto()
@@ -60,11 +67,13 @@ class PasserRole(stp.role.Role):
         # this state transition is done by the PassTactic, which is not canonical FSM
         elif self._state == State.INIT_EXECUTE_PASS:
             # TODO: make these params configurable
+            # kick_speed is modeled off of the ETDP of ZJUNlict, which can be found in section 5 of https://ssl.robocup.org/wp-content/uploads/2020/03/2020_ETDP_ZJUNlict.pdf
+            distance = np.linalg.norm(self._target_point - self.robot.pose[0:2])
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=self._target_point,
                 chip=False,
-                kick_speed=4.0,  # TODO: adjust based on dist from target_point
+                kick_speed=(1.4*(distance + 0.5 * BALL_DECELERATION * (TIME_TO_TARGET ** 2)) / TIME_TO_TARGET),
             )
             self._state = State.EXECUTE_PASS
         elif self._state == State.EXECUTE_PASS:
