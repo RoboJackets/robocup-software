@@ -94,6 +94,7 @@ class Play(ABC):
             for cost_fn, role in tactic.role_requests:
                 min_cost = 1e9
                 cheapest_robot = None
+
                 for robot in world_state.our_robots:
                     if robot in used_robots or not robot.visible:
                         continue
