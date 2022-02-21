@@ -10,13 +10,30 @@ import stp.global_parameters as global_parameters
 from rj_msgs.msg import RobotIntent
 
 
+from enum import Enum, auto
+
+
+class State(Enum):
+    INIT = auto()
+    ACTIVE = auto()
+    INIT_PASSER_CAPTURE = auto()
+    PASSER_CAPTURE = auto()
+    GET_RECEIVER = auto()
+    INIT_EXECUTE_PASS = auto()
+    EXECUTE_PASS = auto()
+    AWAIT_PASSER_KICK = auto()
+    PASS_IN_TRANSIT = auto()
+    INIT_AWAIT_RECEIVE = auto()
+    EXECUTE_RECEIVE = auto()
+    AWAIT_RECEIVE = auto()
+    DONE = auto()
+
+
 class PassTactic(stp.tactic.Tactic):
     def __init__(self, world_state: stp.rc.WorldState):
         super().__init__(world_state)
 
-        # TODO: make FSM class (or at least use enum instead of str literals)
-        #       - allow FSM class to print state as debug tool
-        self._state = "init"
+        self._state = State.INIT
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         self.assigned_roles = []
@@ -42,65 +59,62 @@ class PassTactic(stp.tactic.Tactic):
 
         role_intents = []
 
-        if self._state == "init":
+        if self._state == State.INIT:
             # TODO: allow Plays to pass in this (and further below) cost fns,
             #       otherwise behavior is not easy to manipulate
             self._role_requests = [
                 (
-                    stp.role.cost.PickClosestRobot(world_state.ball.pos),
+                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
                     passer.PasserRole,
                 )
             ]
             self._needs_assign = True
 
-            self._state = "init_passer_capture"
+            self._state = State.INIT_PASSER_CAPTURE
 
-        elif self._state == "init_passer_capture":
+        elif self._state == State.INIT_PASSER_CAPTURE:
             # assumes play has given new role_requests
             self.init_roles(world_state)
-            self._state = "passer_capture"
+            self._state = State.PASSER_CAPTURE
 
-        elif self._state == "passer_capture":
+        elif self._state == State.PASSER_CAPTURE:
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
-            assert isinstance(passer_role, passer.PasserRole)
             intent = passer_role.tick(world_state)
 
             role_intents = [(passer_role.robot.id, intent)]
 
             if passer_role.pass_ready:
-                self._state = "get_receiver"
+                self._state = State.GET_RECEIVER
 
-        elif self._state == "get_receiver":
+        elif self._state == State.GET_RECEIVER:
             self._role_requests = [
                 (
-                    stp.role.cost.PickClosestRobot(world_state.ball.pos),
+                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
                     passer.PasserRole,
                 ),
                 (
-                    stp.role.cost.PickClosestRobot(world_state.field.their_goal_loc),
+                    stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc),
                     receiver.ReceiverRole,
                 ),
             ]
             self._needs_assign = True
 
-            self._state = "init_execute_pass"
+            self._state = State.INIT_EXECUTE_PASS
             # decided to get receiver early to allow more coordination in theory, currently not written in
             # TODO: evaluate whether this is a dumb idea or not
 
-        elif self._state == "init_execute_pass":
+        elif self._state == State.INIT_EXECUTE_PASS:
             # one tick delay for play role assignment
-            self._state = "execute_pass"
+            self._state = State.EXECUTE_PASS
 
-        elif self._state == "execute_pass":
+        elif self._state == State.EXECUTE_PASS:
             # assumes play has given new role_requests
             self.init_roles(world_state)
 
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
-            assert isinstance(passer_role, passer.PasserRole)
             receiver_role = self.assigned_roles[1]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             # TODO: create func to find good target point
             # TODO: should update receiver_role robot every tick in the role (see skill/capture.py)
@@ -112,14 +126,12 @@ class PassTactic(stp.tactic.Tactic):
                 (receiver_role.robot.id, receiver_role.tick(world_state)),
             ]
 
-            self._state = "await_pass"
+            self._state = State.AWAIT_PASSER_KICK
 
-        elif self._state == "await_pass":
+        elif self._state == State.AWAIT_PASSER_KICK:
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
-            assert isinstance(passer_role, passer.PasserRole)
             receiver_role = self.assigned_roles[1]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             role_intents = [
                 (passer_role.robot.id, passer_role.tick(world_state)),
@@ -127,11 +139,10 @@ class PassTactic(stp.tactic.Tactic):
             ]
 
             if passer_role.is_done(world_state):
-                self._state = "pass_incoming"
+                self._state = State.PASS_IN_TRANSIT
 
-        elif self._state == "pass_incoming":
+        elif self._state == State.PASS_IN_TRANSIT:
             receiver_role = self.assigned_roles[1]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             self._role_requests = [
                 (
@@ -141,33 +152,31 @@ class PassTactic(stp.tactic.Tactic):
             ]
             self._needs_assign = True
 
-            self._state = "init_await_receive"
+            self._state = State.INIT_AWAIT_RECEIVE
 
-        elif self._state == "init_await_receive":
+        elif self._state == State.INIT_AWAIT_RECEIVE:
             # one tick delay for play role assignment
-            self._state = "execute_receive"
+            self._state = State.EXECUTE_RECEIVE
 
-        elif self._state == "execute_receive":
+        elif self._state == State.EXECUTE_RECEIVE:
             # assumes play has given new role_requests
             self.init_roles(world_state)
 
             # TODO: these lines are a little ugly, any fix?
             receiver_role = self.assigned_roles[0]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
             receiver_role.set_receive_pass()
 
             role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
 
-            self._state = "await_receive"
+            self._state = State.AWAIT_RECEIVE
 
-        elif self._state == "await_receive":
+        elif self._state == State.AWAIT_RECEIVE:
             receiver_role = self.assigned_roles[0]
-            assert isinstance(receiver_role, receiver.ReceiverRole)
 
             role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
 
             if receiver_role.is_done(world_state):
-                self._state = "done"
+                self._state = State.DONE
                 # end FSM
 
         return role_intents
@@ -180,4 +189,4 @@ class PassTactic(stp.tactic.Tactic):
         return ret
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
-        return self._state == "done"
+        return self._state == State.DONE

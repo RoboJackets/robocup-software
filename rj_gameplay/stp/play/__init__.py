@@ -91,9 +91,7 @@ class Play(ABC):
                 min_cost = 1e9
                 cheapest_robot = None
                 for robot in world_state.our_robots:
-                    if robot in used_robots:
-                        continue
-                    if not robot.visible:
+                    if robot in used_robots or not robot.visible:
                         continue
                     cost = cost_fn(robot, world_state)
                     if cost < min_cost:

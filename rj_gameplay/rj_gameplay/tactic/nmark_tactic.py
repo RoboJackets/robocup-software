@@ -35,7 +35,7 @@ class NMarkTactic(stp.tactic.Tactic):
             if i == 0:
                 self._role_requests.append(
                     (
-                        stp.role.cost.PickClosestRobot(
+                        stp.role.cost.PickClosestToPoint(
                             self.opponents_to_mark[i].pose[:2]
                         ),
                         capture_role.CaptureRole,
@@ -44,7 +44,7 @@ class NMarkTactic(stp.tactic.Tactic):
             else:
                 self._role_requests.append(
                     (
-                        stp.role.cost.PickClosestRobot(
+                        stp.role.cost.PickClosestToPoint(
                             self.opponents_to_mark[i].pose[:2]
                         ),
                         marker.MarkerRole,

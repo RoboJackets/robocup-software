@@ -5,10 +5,10 @@ from rj_msgs.msg import RobotIntent
 
 
 class CaptureRole(stp.role.Role):
-	"""Role to produce capturing behavior, which gets or steals the ball"""
-	
-	def __init__(self, robot:stp.rc.Robot) -> None:
-		super().__init__(robot)
+    """Role to produce capturing behavior, which gets or steals the ball"""
+
+    def __init__(self, robot: stp.rc.Robot) -> None:
+        super().__init__(robot)
 
         self.capture_skill = None
         self._state = "init"

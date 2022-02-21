@@ -29,6 +29,8 @@ class Receive(skill.Skill):
         self.capture = capture.Capture(robot)
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
+
         # TODO: put an FSM here instead of this obfuscated if-else
         if self.settle.is_done(world_state):
             return self.capture.tick(world_state)
@@ -41,3 +43,6 @@ class Receive(skill.Skill):
 
     def __str__(self):
         return f"Receive(robot={self.robot.id if self.robot is not None else '??'}, ticks={self.capture.ticks_done})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

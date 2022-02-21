@@ -39,8 +39,10 @@ class PickRobotById(stp.role.CostFn):
         return f"PickRobotById(robot={self._robot_id})"
 
 
-class PickClosestRobot(stp.role.CostFn):
-    """Always select closest robot to some target_point (passed on init)."""
+class PickClosestToPoint(stp.role.CostFn):
+    """Always select closest robot to some target_point (passed on init).
+    Can get closest to ball by passing in `world_state.ball.pos`.
+    """
 
     def __init__(self, target_point):
         self._target_point = target_point

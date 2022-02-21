@@ -121,3 +121,6 @@ class Mark(skill.ISkill):
 
     def __str__(self):
         return f"Mark(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_robot.id if self.target_robot is not None else '??'})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
