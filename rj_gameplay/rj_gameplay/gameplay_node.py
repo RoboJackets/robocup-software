@@ -231,16 +231,17 @@ class GameplayNode(Node):
                 intents = self.test_play.tick(self.world_state)
 
             if intents:
-                for i in range(NUM_ROBOTS):
-                    server_intent: msg.ServerIntent = self.generate_server_intent(
-                        intents[i], i
-                    )
-                    # TODO : this logic will be moved to the skills soon
-                    # there they will not need to perform this check
-                    motion_command = server_intent.intent.motion_command
-                    if self.move_action_clients[i]:
-                        self.move_action_clients[i].send_goal(server_intent)
-                        #self.manipulate_action_clients[i].send_goal(server_intent)
+                for i in range(len(self.world_state.our_robots)):
+                    if intents[i]:
+                        server_intent: msg.ServerIntent = self.generate_server_intent(
+                            intents[i], i
+                        )
+                        # TODO : this logic will be moved to the skills soon
+                        # there they will not need to perform this check
+                        motion_command = server_intent.intent.motion_command
+                        if self.move_action_clients[i]:
+                            self.move_action_clients[i].send_goal(server_intent)
+                            #self.manipulate_action_clients[i].send_goal(server_intent)
 
             field = self.world_state.field
             game_info = self.build_game_info()
