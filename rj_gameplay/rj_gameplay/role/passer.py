@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import Enum, auto
 from lzma import is_check_supported
 
 import stp.role
 import stp.rc
-from stp.rc import WorldState
+from stp.rc import Ball, WorldState
 
 from typing import List, TypedDict, Tuple
 
@@ -16,36 +16,38 @@ import numpy as np
 
 class State(Enum):
     # Initialization
-    initializing = 0
+    INIT = auto()
     # Robot is settling ball
-    receiving = 1
+    RECEIVING = auto()
     # Robot has ball and is considering options
-    possessing = 2
+    POSSESSING = auto()
     # Robot has identified pass and is passing
-    passing = 3
+    PASSING = auto()
     # Robot has identified shot on goal and is shooting
-    shooting = 4
+    SHOOTING = auto()
+    # Kick has been completed
+    KICK_DONE = auto()
 
 class BallReleaseState(Enum):
     # Robot does not plan to get rid of ball
-    holding = 0
+    HOLDING = auto()
     # Robot is getting ready to pass or shoot
-    initializing = 1
+    INIT = auto()
     # Robot is executing pass or shoot
-    executing = 2
+    EXECUTING = auto()
     # Robot no longer has the ball
-    finalized = 3
+    FINALIZED = auto()
 
 
 # Constant for how far a robot can be from the pass line before stopping the pass from occuring
-PASS_DISTANCE_CUTOFF = 0.1
+PASS_DISTANCE_CUTOFF = 0.5
 # Constant for how far from the path of the ball the closest enemy robot can be
-SHOOT_DISTANCE_CUTOFF = 0.1
+SHOOT_DISTANCE_CUTOFF = 0.5
 # Number of divisions for finding the best shot on goal
 NUM_DIVISIONS = 15
 # Aggressiveness hyperparameter alters the distance robots are from the robot the farther down the field a robot is (basically aggressiveness weights how
 # much this robot wants to pass down the field)
-AGGRESSIVENESS = 1.0001
+AGGRESSIVENESS = 1.01
 
 class PasserRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
@@ -54,40 +56,24 @@ class PasserRole(stp.role.Role):
         self.receive_skill = None
         self.pivot_kick_skill = None
 
+        self.receive_location = None
+
         # TODO: make FSM class (or at least use enum instead of str literals)
         self._state = State.initializing
         self._ball_state = BallReleaseState.holding
 
         self._target_point = None
 
-        # BEGIN dynamic tendency variables #
-
-        ### TODO: ADD LEFT AND RIGHT GOAL POSTS INTO FILE ###
         self.left_goal_post = None
         
         self.right_goal_post = None
-        
-        # floating point value [0,1] representing how open this robot is, i.e. how much coverage
-        # is the other team placing on this robot and how "at risk" is the ball towards being stolen.
-        # Another way of saying this is how close (in terms of path planning) is the closest robot to the ball.
-        self.robot_openness = 0
-
-        # floating point value [0,1] representing how much of the percieved goal is being covered by the
-        # other teams goalie and players.  Basically, in the line of sight of this robot what percent of the goal is
-        # being occupied by the opposing teams goalie (and players) + a buffer of _____%.
         self.shot_on_goal = (np.zeros((1, 2)), 0)
 
         self.min_rob_dist_pass = []
 
-        # a dictionary mapping robot ids to floating point values [-1,1] representing how much coverege is in the counter-clockwise (-) (with this robot
-        # as the pivot) of another robot and or in the positive direction (+) (again with this robot as the pivot point) dependent
-        # on which direction is closer to the goal.
-        self.teammate_leading_openness = []
-        # END dynamic tendency variables #
-
     @property
     def pass_ready(self):
-        return self._state == "pass_ready"
+        return self._state == State.POSSESSING
 
     def set_execute_pass(self, target_point):
         self._state = "init_execute_pass"
@@ -101,23 +87,31 @@ class PasserRole(stp.role.Role):
          - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
 
-        if self.left_goal_post is None:
-            self.left_goal_post = world_state.field.their_goal_loc
-            self.left_goal_post[0] -= world_state.field.goal_width_m / 2
-            self.right_goal_post = world_state.field.their_goal_loc
-            self.right_goal_post[0] += world_state.field.goal_width_m / 2
-
         intent = None
 
-        if self._state == State.initializing:
+        # Initialization of pass
+        if self._state == State.INIT:
+            # Set up goal_posts
+            if self.left_goal_post is None:
+                self.left_goal_post = world_state.field.their_goal_loc
+                self.left_goal_post[0] -= world_state.field.goal_width_m / 2
+                self.right_goal_post = world_state.field.their_goal_loc
+                self.right_goal_post[0] += world_state.field.goal_width_m / 2
+
+            # Begin receiving ball
             self.receive_skill = receive.Receive(robot=self.robot)
             intent = self.receive_skill.tick(world_state)
             self._state = State.receiving
-        elif self._state == State.receiving:
+
+        # Receive the ball
+        elif self._state == State.RECEIVING:
             intent = self.receive_skill.tick(world_state)
             if self.receive_skill.is_done(world_state):
                 self._state = State.possessing
-        elif self._state == State.possessing:
+                self.receive_location = self.robot.pose[0:2]
+
+        # This Robot has the ball
+        elif self._state == State.POSSESSING:
             # Initialize values
             our_vecs, their_vecs = self.calc_displacement_vecs(world_state)
             self.min_rob_dist_pass = self.calc_min_distance_from_lines(world_state, our_vecs, their_vecs)
@@ -127,30 +121,52 @@ class PasserRole(stp.role.Role):
             
             # Hanlde State Transitions #
             if self.shot_on_goal[1] < SHOOT_DISTANCE_CUTOFF:
-                self._state = State.shooting
-        # this state transition is done by the PassTactic, which is not canonical FSM
-        elif self._state == State.passing:
+                self._state = State.SHOOTING
+            
+        # Robot is in passing state
+        elif self._state == State.PASSING:
             # TODO: make these params configurable
-            self.pivot_kick_skill = pivot_kick.PivotKick(
-                robot=self.robot,
-                target_point=self._target_point,
-                chip=False,
-                kick_speed=4.0,  # TODO: adjust based on dist from target_point
-            )
-            self._ball_state = BallReleaseState.executing
-        elif self._ball_state == BallReleaseState.executing:
-            intent = self.pivot_kick_skill.tick(world_state)
 
-            if self.pivot_kick_skill.is_done(world_state):
-                self._ball_state = BallReleaseState.finalized
-                # end FSM
-        elif self._state == State.shooting:
-            pass
+            # Initialize pass
+            if self._ball_state == BallReleaseState.INIT:
+                self.pivot_kick_skill = pivot_kick.PivotKick(
+                    robot=self.robot,
+                    target_point=self._target_point,
+                    chip=False,
+                    kick_speed=4.0,  # TODO: adjust based on dist from target_point
+                )
+                self._ball_state = BallReleaseState.EXECUTING
+
+            # Executing pass
+            if self._ball_state == BallReleaseState.EXECUTING:
+                intent = self.pivot_kick_skill.tick(world_state)
+
+                if self.pivot_kick_skill.is_done(world_state):
+                    self._ball_state = BallReleaseState.FINALIZED
+
+        # Robot is in shooting state
+        elif self._state == State.SHOOTING:
+            
+            # Initialize shot
+            if self._ball_state == BallReleaseState.INIT:
+                self.pivot_kick_skill = pivot_kick.PivotKick(
+                    robot=self.robot,
+                    target_point=self._target_point,
+                    chip=False,
+                )
+                self._ball_state = BallReleaseState.EXECUTING
+
+            # Executing shot
+            if self._ball_state == BallReleaseState.EXECUTING:
+                intent = self.pivot_kick_skill.tick(world_state)
+
+                if self.pivot_kick_skill.is_done(world_state):
+                    self._ball_state = BallReleaseState.FINALIZED
 
         return intent
 
     def is_done(self, world_state) -> bool:
-        return self._state == "kick_done"
+        return self._ball_state == BallReleaseState.FINALIZED
 
     def calc_displacement_vecs(self, world_state: stp.rc.WorldState) -> Tuple[np.ndarray]:
         """
