@@ -14,12 +14,12 @@ from typing import (
     Type,
     TypeVar,
 )
-from rj_gameplay.rj_gameplay.role.unassigned_role import UnassignedRole
 
 import stp.action
 import stp.skill
 import stp.rc
 import stp.role
+from rj_gameplay.role import unassigned_role
 import stp.role.assignment
 import stp.tactic
 import stp.utils.enum
@@ -113,7 +113,7 @@ class Play(ABC):
             tactic.init_roles(world_state)
         for robot in world_state.our_robots:
             if robot not in used_robots:
-                self.unassigned_roles.append(UnassignedRole(robot))
+                self.unassigned_roles.append(unassigned_role.UnassignedRole(robot))
 
         
 
