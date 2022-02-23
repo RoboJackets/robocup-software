@@ -38,7 +38,16 @@ class Keepaway(stp.play.Play):
         """
 
         if self._state == State.INIT:
-            self.prioritized_tactics = [pass_tactic.PassTactic(world_state)]
+            init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
+            # init_receiver_cost = stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc)
+            init_receiver_cost = stp.role.cost.PickFarthestFromPoint(
+                world_state.ball.pos
+            )
+            self.prioritized_tactics = [
+                pass_tactic.PassTactic(
+                    world_state, init_passer_cost, init_receiver_cost
+                )
+            ]
             # TODO: either add seek tactic(s) or unassigned behavior
 
             self.assign_roles(world_state)
