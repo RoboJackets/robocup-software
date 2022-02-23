@@ -7,7 +7,7 @@ from stp.rc import Ball, WorldState
 
 from typing import List, TypedDict, Tuple
 
-from rj_gameplay.skill import receive, pivot_kick  # , line_kick
+from rj_gameplay.skill import receive, pivot_kick, dribble  # , line_kick
 import rj_gameplay.gameplay_node as gameplay_node
 
 from rj_msgs.msg import RobotIntent
@@ -38,6 +38,12 @@ class BallReleaseState(Enum):
     # Robot no longer has the ball
     FINALIZED = auto()
 
+class DribbleState(Enum):
+    # Robot is not moving
+    CHILLING = auto()
+    # Robot is moving
+    DRIBBLING = auto()
+
 
 # Constant for how far a robot can be from the pass line before stopping the pass from occuring
 PASS_DISTANCE_CUTOFF = 0.5
@@ -48,6 +54,8 @@ NUM_DIVISIONS = 15
 # Aggressiveness hyperparameter alters the distance robots are from the robot the farther down the field a robot is (basically aggressiveness weights how
 # much this robot wants to pass down the field)
 AGGRESSIVENESS = 1.01
+# The amount of distance the robot can move
+MOVE_CUTOFF = 0.8
 
 class PasserRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
@@ -55,12 +63,14 @@ class PasserRole(stp.role.Role):
 
         self.receive_skill = None
         self.pivot_kick_skill = None
+        self.dribble_skill = None
 
         self.receive_location = None
 
         # TODO: make FSM class (or at least use enum instead of str literals)
-        self._state = State.initializing
-        self._ball_state = BallReleaseState.holding
+        self._state = State.INIT
+        self._ball_state = BallReleaseState.HOLDING
+        self.__dribble_state = DribbleState.CHILLING
 
         self._target_point = None
 
@@ -69,7 +79,7 @@ class PasserRole(stp.role.Role):
         self.right_goal_post = None
         self.shot_on_goal = (np.zeros((1, 2)), 0)
 
-        self.min_rob_dist_pass = []
+        self.rob_pass_dists = []
 
     @property
     def pass_ready(self):
@@ -114,14 +124,21 @@ class PasserRole(stp.role.Role):
         elif self._state == State.POSSESSING:
             # Initialize values
             our_vecs, their_vecs = self.calc_displacement_vecs(world_state)
-            self.min_rob_dist_pass = self.calc_min_distance_from_lines(world_state, our_vecs, their_vecs)
+            self.rob_pass_dists = self.calc_min_distance_from_lines(world_state, our_vecs, their_vecs)
             self.shot_on_goal = self.best_goal_shot(world_state, NUM_DIVISIONS, self.left_goal_post, self.right_goal_post)
-
-            # TODO: dribble until the receiver is ready
+            best_shot_index = self.get_best_pass_index(self.shot_on_goal)
+            move_distance = np.linalg.norm(self.robot.pose[0:2] - self.receive_location)
             
             # Hanlde State Transitions #
-            if self.shot_on_goal[1] < SHOOT_DISTANCE_CUTOFF:
+            if self.shot_on_goal[1] > SHOOT_DISTANCE_CUTOFF:
                 self._state = State.SHOOTING
+
+            elif self.rob_pass_dists[best_shot_index, 0] > PASS_DISTANCE_CUTOFF or move_distance > MOVE_CUTOFF:
+                self._state = State.PASSING
+
+            else:
+                pass
+                #TODO dribble and stuff
             
         # Robot is in passing state
         elif self._state == State.PASSING:
@@ -266,3 +283,24 @@ class PasserRole(stp.role.Role):
                 best_shot_location = shot_position
 
         return best_shot_location, largest_gap
+
+    def get_best_pass_index(self, robot_pass_distances: np.ndarray) -> int:
+        """
+        Finds the index of the best robot to pass to.
+
+        :param robot_pass_distances: a np.ndarray of possible robots to pass to and the shortest distance
+        from another robot to the line passing to the robot.
+        :type robot_pass_distances: np.ndarray of shape ((our_robots), 1)
+
+        :return the index of the best pass
+        :type return: int
+        """
+        max_distance = 0
+        max_distance_index = 0
+
+        for i in range(0, robot_pass_distances.size()):
+            if robot_pass_distances[i, 0] > max_distance:
+                max_distance = robot_pass_distances[i, 0]
+                max_distance_index = i
+
+        return max_distance_index
