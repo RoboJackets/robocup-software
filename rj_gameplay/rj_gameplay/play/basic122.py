@@ -52,6 +52,7 @@ class Basic122(stp.play.Play):
         DONE: shot taken
         """
 
+        # TODO: when seeker formation behavior added in, add it in for other 3 robots
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
