@@ -51,6 +51,7 @@ class PasserRole(stp.role.Role):
             self._state = State.CAPTURING
         elif self._state == State.CAPTURING:
             intent = self.receive_skill.tick(world_state)
+
             if self.receive_skill.is_done(world_state):
                 self._state = State.PASS_READY
         elif self._state == State.PASS_READY:
