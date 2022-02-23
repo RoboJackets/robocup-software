@@ -115,8 +115,6 @@ class Play(ABC):
             if robot not in used_robots:
                 self.unassigned_roles.append(unassigned_role.UnassignedRole(robot))
 
-        
-
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent"""
         # TODO: this constant is from gameplay_node, move to a common gameplay params file

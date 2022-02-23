@@ -14,6 +14,15 @@ import stp.rc as rc
 import numpy as np
 from rj_gameplay.MAX_KICK_SPEED import MAX_KICK_SPEED
 
+from enum import Enum, auto
+
+
+class State(Enum):
+    CAPTURE = auto()
+    PIVOT = auto()
+    KICK = auto()
+    DONE = auto()
+
 
 class PivotKick(skill.Skill):  # add ABC if fails
     """
@@ -55,29 +64,32 @@ class PivotKick(skill.Skill):  # add ABC if fails
         )
         self.capture = capture.Capture(robot)
 
-        self._state = "capture"
+        self._state = State.CAPTURE
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
 
         intent = None
-        if self._state == "capture":
+        if self._state == State.CAPTURE:
             intent = self.capture.tick(world_state)
             if self.capture.is_done(world_state):
-                self._state = "pivot"
-        elif self._state == "pivot":
+                self._state = State.PIVOT
+        elif self._state == State.PIVOT:
             intent = self.pivot.tick(world_state)
             if self.pivot.is_done(world_state):
-                self._state = "kick"
-        elif self._state == "kick":
+                self._state = State.KICK
+        elif self._state == State.KICK:
             intent = self.kick.tick(world_state)
             if self.kick.is_done(world_state):
-                self._state = "done"
+                self._state = State.DONE
 
         return intent
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        return self._state == "done"
+        return self._state == State.DONE
 
     def __str__(self):
         return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
