@@ -30,10 +30,18 @@ class State(Enum):
 
 
 class PassTactic(stp.tactic.Tactic):
-    def __init__(self, world_state: stp.rc.WorldState):
+    def __init__(
+        self,
+        world_state: stp.rc.WorldState,
+        init_passer_cost: stp.role.cost,
+        init_receiver_cost: stp.role.cost,
+    ):
         super().__init__(world_state)
 
         self._state = State.INIT
+
+        self._init_passer_cost = init_passer_cost
+        self._init_receiver_cost = init_receiver_cost
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         self.assigned_roles = []
@@ -60,11 +68,9 @@ class PassTactic(stp.tactic.Tactic):
         role_intents = []
 
         if self._state == State.INIT:
-            # TODO: allow Plays to pass in this (and further below) cost fns,
-            #       otherwise behavior is not easy to manipulate
             self._role_requests = [
                 (
-                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
+                    self._init_passer_cost,
                     passer.PasserRole,
                 )
             ]
@@ -88,16 +94,12 @@ class PassTactic(stp.tactic.Tactic):
                 self._state = State.GET_RECEIVER
 
         elif self._state == State.GET_RECEIVER:
-            self._role_requests = [
+            self._role_requests.append(
                 (
-                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
-                    passer.PasserRole,
-                ),
-                (
-                    stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc),
+                    self._init_receiver_cost,
                     receiver.ReceiverRole,
-                ),
-            ]
+                )
+            )
             self._needs_assign = True
 
             self._state = State.INIT_EXECUTE_PASS
@@ -144,6 +146,10 @@ class PassTactic(stp.tactic.Tactic):
         elif self._state == State.PASS_IN_TRANSIT:
             receiver_role = self.assigned_roles[1]
 
+            # TODO: here, we assume the initially picked Receiver is the best one
+            # this may not be true (i.e. when intercept planning is bad and the ball does not get captured by the first receiver)
+            # the receiver then should be reassigned to closest to ball
+            # maybe check some is_done()?
             self._role_requests = [
                 (
                     stp.role.cost.PickRobotById(receiver_role.robot.id),
