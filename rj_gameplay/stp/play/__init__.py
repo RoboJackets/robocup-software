@@ -14,6 +14,7 @@ from typing import (
     Type,
     TypeVar,
 )
+from rj_gameplay.rj_gameplay.role.unassigned_role import UnassignedRole
 
 import stp.action
 import stp.skill
@@ -54,6 +55,7 @@ class Play(ABC):
 
         self.prioritized_tactics: List[stp.tactic.Tactic] = []
         self.prioritized_roles: List[stp.role.Role] = []
+        self.unassigned_roles: List[UnassignedRole] = []
 
     @abstractmethod
     def tick(
@@ -83,9 +85,6 @@ class Play(ABC):
 
         used_robots = set()
         for tactic in self.prioritized_tactics:
-            # TODO: handle if tactic requests more roles than exist
-            #       by not assigning tactic at all!
-            #       and give some default behavior (later)
             robots_for_tactic = []
             for cost_fn, role in tactic.role_requests:
                 min_cost = 1e9
@@ -112,6 +111,9 @@ class Play(ABC):
 
         for tactic in self.prioritized_tactics:
             tactic.init_roles(world_state)
+        for robot in world_state.our_robots:
+            if robot not in used_robots:
+                self.unassigned_roles.append(UnassignedRole(robot))
 
         
 
