@@ -69,7 +69,9 @@ class PasserRole(stp.role.Role):
             # TODO: make these params configurable
             # kick_speed is modeled off of the ETDP of ZJUNlict, which can be found in section 5 of https://ssl.robocup.org/wp-content/uploads/2020/03/2020_ETDP_ZJUNlict.pdf
             distance = np.linalg.norm(self._target_point - self.robot.pose[0:2])
-            initial_velocity = np.sqrt((FINAL_VELOCITY ** 2) - (2 * BALL_DECELERATION * distance))
+            initial_velocity = np.sqrt(
+                (FINAL_VELOCITY**2) - (2 * BALL_DECELERATION * distance)
+            )
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=self._target_point,
