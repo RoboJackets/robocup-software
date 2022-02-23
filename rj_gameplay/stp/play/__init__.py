@@ -113,9 +113,7 @@ class Play(ABC):
             if robots_for_tactic is not None:
                 used_robots.update(robots_for_tactic)
                 tactic.set_assigned_robots(robots_for_tactic)
-
-        for tactic in self.prioritized_tactics:
-            tactic.init_roles(world_state)
+                tactic.init_roles(world_state)
         for robot in world_state.our_robots:
             if robot not in used_robots:
                 self.unassigned_roles.append(unassigned_role.UnassignedRole(robot))
