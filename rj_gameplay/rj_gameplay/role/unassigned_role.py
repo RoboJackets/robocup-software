@@ -1,6 +1,6 @@
 import stp
 from rj_msgs.msg import RobotIntent
-import logging
+
 
 class UnassignedRole(stp.role.Role):
     """Role given to help role assignment correctly handle an unassigned robot"""

@@ -55,7 +55,7 @@ class Play(ABC):
 
         self.prioritized_tactics: List[stp.tactic.Tactic] = []
         self.prioritized_roles: List[stp.role.Role] = []
-        self.unassigned_roles: List[UnassignedRole] = []
+        self.unassigned_roles: List[unassigned_role.UnassignedRole] = []
 
     @abstractmethod
     def tick(
