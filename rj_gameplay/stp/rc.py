@@ -442,7 +442,6 @@ class Field:
         """
         return np.array([self.__field_x_right_coord, 0.0])
 
-
     @property
     def floor_width_m(self) -> float:
         """
