@@ -9,10 +9,11 @@ import stp.rc as rc
 from typing import Optional
 from rj_msgs.msg import RobotIntent, EmptyMotionCommand
 from rj_geometry_msgs.msg import Point
-
-KICK_DOT_THRESHOLD = 0.4
-KICK_BALL_SPEED_THRESHOLD = 0.9
 from rj_gameplay.MAX_KICK_SPEED import *
+from stp.utils.constants import KickConstants
+
+KICK_DOT_THRESHOLD = KickConstants.KICK_DOT_THRESHOLD
+KICK_BALL_SPEED_THRESHOLD = KickConstants.KICK_BALL_SPEED_THRESHOLD
 
 
 class Kick(action.IAction):  # add ABC if needed

@@ -32,11 +32,12 @@ class RobotConstants:
         0.6,
     )  # min and max distance a chip will go over another robot
 
-    class DribblerConstants:
-        MAX_POWER = 127
 
-        # "Normal" Dribbler speed to be used for generic ball capture/movement
-        STANDARD_POWER = 127
+class DribblerConstants:
+    MAX_POWER = 127
+
+    # "Normal" Dribbler speed to be used for generic ball capture/movement
+    STANDARD_POWER = 127
 
 
 class BallConstants:
@@ -46,6 +47,18 @@ class BallConstants:
 
 class EvaluationConstants:
     SLOW_THRESHOLD = 1
+    SETTLE_BALL_SPEED_THRESHOLD = 1.0
+
+
+class KickConstants:
+    KICK_DOT_THRESHOLD = 0.4
+    KICK_BALL_SPEED_THRESHOLD = 0.9
+
+
+class GoalieConstants:
+    MIN_WALL_RAD = 0
+    GOALIE_PCT_TO_BALL = 0.15
+    DIST_TO_FAST_KICK = 7
 
 
 # for field dimensions, use world_state.field (see /stp/rc.py for details)
