@@ -319,17 +319,6 @@ class Field:
     __floor_length_m: float
     __floor_width_m: float
 
-
-    box_w = world_state.field.def_area_long_dist_m
-    box_h = world_state.field.def_area_short_dist_m
-    y_quarter = world_state.floor_length_m/4
-    y_3quarter = world_state.floor_length_m - y_quarter
-    field_y = world_state.floor_length_m
-    box_xright = box_w/2 #the right x cooirdinate at which goalie box starts
-    box_xleft = -(box_xright) #the left x cooirdinate at which goalie box starts
-    field_xleft = -(world_state.floor_width_m/2)
-    field_xright = (world_state.floor_width_m/2)
-
     def __init__(
         self,
         length_m: float,
@@ -409,6 +398,7 @@ class Field:
     def opp_defense_area_coordinates(self) -> List:
         """
         Conveniance function for getting oppenent defense area locations
+        Note: each coordinate starts from top left and continues normal order
         :return: the list of points for opponent defense area locations
         """
         opp_defense_area = [
@@ -423,6 +413,7 @@ class Field:
     def top_left_field_loc(self) -> np.ndarray:
         """
         Conveniance function for getting the top left corner field location
+        Note: each coordinate starts from top left and continues normal order
         :return: the location of the top left corner of the field
         """
         return np.array([self.__field_x_left_coord, self.__floor_length_m])
