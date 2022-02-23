@@ -407,7 +407,7 @@ class Field:
             [self.__def_area_x_left_coord, self.__floor_length_m - self.__def_area_short_dist_m],
             [self.__def_area_x_right_coord, self.__floor_length_m - self.__def_area_short_dist_m]
         ]
-        return op_defense_area
+        return opp_defense_area
     
     @property
     def top_left_field_loc(self) -> np.ndarray:
