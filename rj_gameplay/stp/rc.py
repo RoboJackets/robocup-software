@@ -352,7 +352,7 @@ class Field:
         self.__floor_width_m = floor_width_m
         self.__def_area_x_right_coord = def_area_long_dist_m / 2
         self.__def_area_x_left_coord = -(def_area_long_dist_m / 2)
-        self.__field_x_right_coord = floor_width_m / 2 
+        self.__field_x_right_coord = floor_width_m / 2
         self.__field_x_left_coord = -(floor_width_m / 2)
 
 
@@ -379,7 +379,7 @@ class Field:
         :return: the location of the opponents goal
         """
         return np.array([0.0, self.length_m])
-    
+
     @property
     def our_defense_area_coordinates(self) -> List:
         """
@@ -408,7 +408,7 @@ class Field:
             [self.__def_area_x_right_coord, self.__floor_length_m - self.__def_area_short_dist_m]
         ]
         return opp_defense_area
-    
+
     @property
     def top_left_field_loc(self) -> np.ndarray:
         """
@@ -425,7 +425,7 @@ class Field:
         :return: the location of the top left corner of the field
         """
         return np.array([self.__field_x_right_coord, self.__floor_length_m])
-    
+
     @property
     def bot_left_field_loc(self) -> np.ndarray:
         """
