@@ -319,6 +319,17 @@ class Field:
     __floor_length_m: float
     __floor_width_m: float
 
+
+    box_w = world_state.field.def_area_long_dist_m
+    box_h = world_state.field.def_area_short_dist_m
+    y_quarter = world_state.floor_length_m/4
+    y_3quarter = world_state.floor_length_m - y_quarter
+    field_y = world_state.floor_length_m
+    box_xright = box_w/2 #the right x cooirdinate at which goalie box starts
+    box_xleft = -(box_xright) #the left x cooirdinate at which goalie box starts
+    field_xleft = -(world_state.floor_width_m/2)
+    field_xright = (world_state.floor_width_m/2)
+
     def __init__(
         self,
         length_m: float,
@@ -350,6 +361,11 @@ class Field:
         self.__goal_flat_m = goal_flat_m
         self.__floor_length_m = floor_length_m
         self.__floor_width_m = floor_width_m
+        self.__def_area_x_right_coord = def_area_long_dist_m / 2
+        self.__def_area_x_left_coord = -(def_area_long_dist_m / 2)
+        self.__field_x_right_coord = floor_width_m / 2 
+        self.__field_x_left_coord = -(floor_width_m / 2)
+
 
     @property
     def our_goal_loc(self) -> np.ndarray:
@@ -374,6 +390,67 @@ class Field:
         :return: the location of the opponents goal
         """
         return np.array([0.0, self.length_m])
+    
+    @property
+    def our_defense_area_coordinates(self) -> List:
+        """
+        Conveniance function for getting our defense area locations
+        :return: the list of points for our defense area locations
+        """
+        our_defense_area = [
+            [self.__def_area_x_left_coord, self.__def_area_short_dist_m],
+            [self.__def_area_x_right_coord, self.__def_area_short_dist_m],
+            [self.__def_area_x_left_coord, 0.0],
+            [self.__def_area_x_right_coord, 0.0]
+        ]
+        return our_defense_area
+
+    @property
+    def opp_defense_area_coordinates(self) -> List:
+        """
+        Conveniance function for getting oppenent defense area locations
+        :return: the list of points for opponent defense area locations
+        """
+        opp_defense_area = [
+            [self.__def_area_x_left_coord, self.__floor_length_m],
+            [self.__def_area_x_right_coord, self.__floor_length_m],
+            [self.__def_area_x_left_coord, self.__floor_length_m - self.__def_area_short_dist_m],
+            [self.__def_area_x_right_coord, self.__floor_length_m - self.__def_area_short_dist_m]
+        ]
+        return op_defense_area
+    
+    @property
+    def top_left_field_loc(self) -> np.ndarray:
+        """
+        Conveniance function for getting the top left corner field location
+        :return: the location of the top left corner of the field
+        """
+        return np.array([self.__field_x_left_coord, self.__floor_length_m])
+
+    @property
+    def top_right_field_loc(self) -> np.ndarray:
+        """
+        Conveniance function for getting the top left corner field location
+        :return: the location of the top left corner of the field
+        """
+        return np.array([self.__field_x_right_coord, self.__floor_length_m])
+    
+    @property
+    def bot_left_field_loc(self) -> np.ndarray:
+        """
+        Conveniance function for getting the top left corner field location
+        :return: the location of the top left corner of the field
+        """
+        return np.array([self.__field_x_left_coord, 0.0])
+
+    @property
+    def bot_right_field_loc(self) -> np.ndarray:
+        """
+        Conveniance function for getting the top left corner field location
+        :return: the location of the top left corner of the field
+        """
+        return np.array([self.__field_x_right_coord, 0.0])
+
 
     @property
     def floor_width_m(self) -> float:
@@ -381,6 +458,20 @@ class Field:
         :return: check on this one
         """
         return self.__floor_width_m
+
+    @property
+    def def_area_x_left_coord(self) -> float:
+        """
+        :return: left x coordinate of the defense area
+        """
+        return self.__def_area_x_left_coord
+
+    @property
+    def def_area_x_right_coord(self) -> float:
+        """
+        :return: right x coordinate of the defense area
+        """
+        return self.__def_area_x_left_coord
 
     @property
     def floor_length_m(self) -> float:
