@@ -52,7 +52,7 @@ class GameplayNode(Node):
         rclpy.init()
         super().__init__("gameplay_node")
 
-        self.test_play = test_play
+        self.test_play = basic_defense.BasicDefense()
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
@@ -458,7 +458,8 @@ def main():
     play_selector = basic_play_selector.BasicPlaySelector()
 
     # change this line to test different plays (set to None if no desired test play)
-    test_play = line_up.LineUp()
+
+    test_play = basic122.Basic122()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
