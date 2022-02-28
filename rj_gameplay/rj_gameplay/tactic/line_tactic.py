@@ -16,7 +16,7 @@ class LineTactic(stp.tactic.Tactic):
         start = (3.0, 0.0)
         dy = 0.5
         # TODO: make the # here a param instead of hardcoding for same reason as above TODO
-        self.move_points = [(start[0], start[1] + i * dy) for i in range(int)]
+        self.move_points = [(start[0], start[1] + i * dy) for i in range(num_lined_up)]
 
         # request closest robot every pt
         for pt in self.move_points:
