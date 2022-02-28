@@ -11,10 +11,9 @@ class LineTactic(stp.tactic.Tactic):
         super().__init__(world_state)
 
         # compute move points
-        # TODO: make start on side of the field, so this Tactic is actually useful during penalty situations
-        # access the length and the width of the field (minus border), and starts robots there
+        # access the length and the width of the field (plus the border), and starts robots there
         start = (
-            (world_state.field.width_m - world_state.field.border_m) / 2,
+            (world_state.field.width_m + world_state.field.border_m) / 2,
             (world_state.field.length_m - world_state.field.border_m) / 2,
         )
         dy = 0.5
