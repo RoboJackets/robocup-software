@@ -137,7 +137,9 @@ class PasserRole(stp.role.Role):
             print("posessing")
             # Initialize values
             our_vecs, their_vecs = self.calc_displacement_vecs(world_state)
+            print("OUR VECS:")
             print(our_vecs)
+            print("THEIR VECS:")
             print(their_vecs)
             self.rob_pass_dists = self.calc_min_distance_from_lines(world_state, our_vecs, their_vecs)
             self.shot_on_goal = self.best_goal_shot(world_state, NUM_DIVISIONS, self.left_goal_post, self.right_goal_post)
@@ -233,8 +235,6 @@ class PasserRole(stp.role.Role):
         and the other teams robots
         :type return: 2 np.ndarray of dimension [(NUM_ROBOTS / 2), 3]
         """
-        print('goalie id:' + str(world_state.goalie_id))
-        print('this robot id: ' + str(self.robot.id))
         our_vecs = np.zeros((gameplay_node.NUM_ROBOTS // 2, 2))
         for i in range(0, gameplay_node.NUM_ROBOTS // 2):
             if (world_state.our_robots[i].id != self.robot.id and world_state.our_robots[i].id != world_state.goalie_id):
@@ -258,11 +258,18 @@ class PasserRole(stp.role.Role):
         :type return: np.ndarray of size [(our_robots):1] (distance)
         """
         final_distances = np.zeros((1, gameplay_node.NUM_ROBOTS // 2))
-        for i in range(0, gameplay_node.NUM_ROBOTS // 2):
+        for i in range(1, gameplay_node.NUM_ROBOTS // 2):
             distances = []
             for our_vec in our_vecs:
-                if our_vec.all() == np.zeros((1, 2)).all() or our_vecs[i].all() == our_vec.all():
+                if our_vec[0] == 0 and our_vec[1] == 0:
                     continue
+                if our_vecs[i][0] == our_vec[0] and our_vecs[i][1] == our_vec[1]:
+                    continue
+                if our_vecs[i][0] == 0 and our_vecs[i][1] == 0:
+                    continue
+                print(i)
+                print("1: {}".format(np.linalg.norm(our_vecs[i])))
+                print("2: {}".format(np.linalg.norm(our_vec)))
                 dot_over_mag = np.dot(our_vecs[i], our_vec) / (np.linalg.norm(our_vecs[i]) * np.linalg.norm(our_vec))
                 if dot_over_mag < 0:
                     continue
@@ -275,7 +282,8 @@ class PasserRole(stp.role.Role):
                 dist = np.linalg.norm(np.cross(our_vec, our_vecs[i])) / np.linalg.norm(our_vecs[i])
                 distances.append(dist)
             print(distances)
-            final_distances[0, i] = min(distances) * (world_state.our_robots[i].pose[1] * AGGRESSIVENESS)
+            if len(distances) is not 0:
+                final_distances[0, i] = min(distances) * (world_state.our_robots[i].pose[1] * AGGRESSIVENESS)
         return final_distances
 
     def best_goal_shot(self, world_state: stp.rc.WorldState, divisions: int, left_post: np.ndarray, right_post: np.ndarray) -> Tuple[np.ndarray, float]:
