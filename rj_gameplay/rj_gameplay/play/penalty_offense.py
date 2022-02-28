@@ -1,11 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import (
-    striker_tactic,
-    goalie_tactic,
-    move_tactic,
-)
+from rj_gameplay.tactic import striker_tactic, goalie_tactic, line_tactic
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -17,6 +13,12 @@ from typing import (
     Type,
 )
 import numpy as np
+
+
+class State(Enum):
+    INIT = auto()
+    READY = auto()
+    DONE = auto()
 
 
 class PenaltyOffense(play.IPlay):
