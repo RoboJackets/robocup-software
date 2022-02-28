@@ -2,7 +2,7 @@ from typing import List
 
 import stp
 
-from rj_gameplay.tactic import pass_tactic, basic_seek, goalie_tactic
+from rj_gameplay.tactic import pass_tactic, basic_seek, goalie_tactic, striker_tactic
 
 from rj_msgs.msg import RobotIntent
 
@@ -18,6 +18,8 @@ class State(Enum):
     PASSING = auto()
     PASSING_ASSIGN_ROLES = auto()
     INIT_SHOOT = auto()
+    SHOOTING = auto()
+    DONE = auto()
 
 
 class Basic122(stp.play.Play):
@@ -41,11 +43,17 @@ class Basic122(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
         """
-        init: 1 ball handler, 2 seekers, 1 goalie
-        when seekers make it to hardcoded pt: ball handler passes to seeker
-        when pass to seeker made: seeker shoots
+        INIT: assign goalie, 2 seekers
+        WAIT_TO_PASS: loop until seekers reach pt
+        INIT_PASS: assign goalie, pass tac
+        PASSING: pass to one of two seekers, when pass done, shoot
+        PASSING_ASSIGN_ROLES: when pass tactic needs role assignment while psasing, assign roles for it, then go back to PASSING
+        INIT_SHOOT: assign goalie, striker, seeker
+        SHOOTING: striker shoots
+        DONE: shot taken
         """
 
+        # TODO: when seeker formation behavior added in, add it in for other 3 robots
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
@@ -115,5 +123,18 @@ class Basic122(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.INIT_SHOOT:
-            print("INIT shoot")
-            pass
+            self.prioritized_tactics = [
+                goalie_tactic.GoalieTactic(world_state, 0),
+                striker_tactic.StrikerTactic(world_state),
+            ]
+
+            self.assign_roles(world_state)
+            self._state = State.SHOOTING
+            return self.get_robot_intents(world_state)
+
+        elif self._state == State.SHOOTING:
+            tactic = self.prioritized_tactics[1]
+            if tactic.is_done(world_state):
+                self._state = State.DONE
+
+            return self.get_robot_intents(world_state)

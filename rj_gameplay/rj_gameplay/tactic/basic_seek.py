@@ -41,10 +41,5 @@ class BasicSeek(stp.tactic.Tactic):
     ):
         robot = self.assigned_robots[0]
         role = self._role_requests[0][1]
-        if role is seeker.SeekerRole:
-            self.assigned_roles.append(role(robot))
-
-    def needs_assign(self):
-        # never needs assign after init
-        # TODO: make this + pass tac part of the superclass
-        return False
+        if role is dumb_move.DumbMove:
+            self.assigned_roles.append(role(robot, self._seek_pt, world_state.ball.pos))

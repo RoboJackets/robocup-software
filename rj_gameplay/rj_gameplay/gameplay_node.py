@@ -52,6 +52,7 @@ class GameplayNode(Node):
         rclpy.init()
         super().__init__("gameplay_node")
 
+        # do not change this line, change the test play passed in at bottom of file
         self.test_play = test_play
 
         self.world_state_sub = self.create_subscription(
@@ -458,6 +459,7 @@ def main():
     play_selector = basic_play_selector.BasicPlaySelector()
 
     # change this line to test different plays (set to None if no desired test play)
+
     test_play = basic122.Basic122()
 
     gameplay = GameplayNode(play_selector, test_play)
