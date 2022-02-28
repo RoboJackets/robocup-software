@@ -11,32 +11,37 @@ Stable code for gameplay.
 
 **Implementation - `rj_gameplay/`**
 
-Frequently changing code of gameplay .
+Frequently changing code of gameplay. Subclasses the interfaces and abstract classes in stp/. (Read the docstrings for the relevant superclasses if ever you are confused.)
 
 **Tests - `tests/stp`**
 
 Unit tests for stp/.
 
-## STP Framework
+## SRTP Framework
 
-Our gameplay library adapts the [STP
-framework](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.61.1972&rep=rep1&type=pdf)
-proposed by CMDragons.
+See [design doc](https://docs.google.com/document/d/1gRAF--W7FwGoof0--1l_pyjM-N4RmMiV6FhBvyQIRgM/edit?usp=sharing) for more detail.
 
 **Skill - `rj_gameplay/skill/`**
 
-Atomic robot behavior which consists of a behavior tree and calls a ROS action.
-(Examples: Move, Kick)
+Atomic robot behavior. (e.g. Receive, Move, Kick)
+
+**Role - `rj_gameplay/role/`**
+
+Complex single-robot behavior. (e.g. Goalie, Passer, Receiver)
 
 **Tactic - `rj_gameplay/tactic/`**
 
-Handles complex single robot behavior. Think of as one role in a play.
-(Examples: Goalie Receiver Waller)
+Coordinates one or more Roles at a high level. Generates Role Requests. (e.g. PassTactic, WallTactic)
 
 **Play - `rj_gameplay/play/`**
 
-Handles multi-robot behavior. Gets potential roles from a list of >=6 tactics,
-then assigns them as it sees fit. (Examples: Basic Defense)
+Coordinates all robots on the field for a given situation. Gets role requests from its tactics, then assigns them according to the cost functions of those role requests. (Examples: Basic122, Basic Defense)
+
+The general flow of how a RobotIntent (or specific command for the robot) is created is as follows:
+
+GameplayNode -> SituationAnalyzer -> Play (selected based on situation) -> Tactic(s) -> Role(s) -> Skill(s)
+
+The RobotIntent for a given robot is then passed back up the chain to GameplayNode, and sent via ROS to the C++ stack.
 
 ## Important Files
 
@@ -48,6 +53,8 @@ function will be replaced by ROS Actions soon.)
 
 Uses SituationAnalyzer to select the best play to run, calling tick() on the
 play to get the list of skills, then ticking all of the resulting skills.
+
+All currently working plays are in the import at the top of `gameplay_node.py`. Change the `test_play` variable at the bottom of this file to run a test play.
 
 **Basic Play Selector - `stp/basic_play_selector.py`**
 
