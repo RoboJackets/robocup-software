@@ -45,7 +45,7 @@ Then, within rqt:
 Keep focus on the black window (as in, you should click on that window if you
 can't see it). 
 
-WASD to move the robot, QE to pivot, K to kick and C to chip.
+WASD to move the robot, QE to pivot, K to kick and J to chip.
 
 ## Launching Soccer
 
