@@ -60,6 +60,7 @@ class Play(ABC):
         self.prioritized_tactics: List[stp.tactic.Tactic] = []
         self.prioritized_roles: List[stp.role.Role] = []
         self.unassigned_roles: List[unassigned_role.UnassignedRole] = []
+        self.approved_prioritized_tactics: List[stp.tactic.Tactic] = []
 
     @abstractmethod
     def tick(
@@ -113,17 +114,19 @@ class Play(ABC):
             if robots_for_tactic is not None:
                 used_robots.update(robots_for_tactic)
                 tactic.set_assigned_robots(robots_for_tactic)
+                self.approved_prioritized_tactics.append(tactic)
                 tactic.init_roles(world_state)
         for robot in world_state.our_robots:
             if robot not in used_robots:
                 self.unassigned_roles.append(unassigned_role.UnassignedRole(robot))
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
-        """Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent"""
+        """Has to be called after assigned_roles has been called.
+        Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent"""
         # TODO: this constant is from gameplay_node, move to a common gameplay params file
         NUM_ROBOTS = 16
         robot_intents = [None for _ in range(NUM_ROBOTS)]
-        for tactic in self.prioritized_tactics:
+        for tactic in self.approved_prioritized_tactics:
             role_robot_intents = tactic.tick(world_state)
             for robot_id, robot_intent in role_robot_intents:
                 robot_intents[robot_id] = robot_intent
