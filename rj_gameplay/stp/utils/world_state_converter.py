@@ -265,10 +265,10 @@ def robot_creator(
     else:
         is_ours = True
         robot_id = robot_state.id
-        ball_sense = Optional[robot_status.has_ball_sense]
-        kicker_charged = Optional[robot_status.kicker_charged]
-        kicker_healthy = Optional[robot_status.kicker_healthy]
-        lethal_fault = Optional[robot_status.lethal_fault]
+        ball_sense = False
+        kicker_charged = Optional[bool]
+        kicker_healthy = Optional[bool]
+        lethal_fault = Optional[bool]
     pose = robot_state.pose
     twist = robot_state.twist
     is_visible = robot_state.visible
