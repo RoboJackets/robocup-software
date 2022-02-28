@@ -44,12 +44,6 @@ class GoalieTactic(stp.tactic.Tactic):
                 robot_intents.append((role.robot.id, role.tick(world_state)))
         return robot_intents
 
-    @property
-    def needs_assign(self):
-        # never needs assign after init
-        # TODO: make this + pass tac part of the superclass
-        return False
-
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # special case: we know the only role is Goalie, so we borrow that is_done()
         return self.assigned_roles[0].is_done(world_state)
