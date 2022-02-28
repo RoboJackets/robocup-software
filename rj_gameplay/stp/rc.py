@@ -301,6 +301,10 @@ class Field:
         "__goal_flat_m",
         "__floor_length_m",
         "__floor_width_m",
+        "__def_area_x_right_coord",
+        "__def_area_x_left_coord",
+        "__field_x_right_coord",
+        "__field_x_left_coord",
     ]
 
     __length_m: float
@@ -317,6 +321,10 @@ class Field:
     __goal_flat_m: float
     __floor_length_m: float
     __floor_width_m: float
+    __def_area_x_right_coord: float
+    __def_area_x_left_coord: float
+    __field_x_right_coord: float
+    __field_x_left_coord: float
 
     def __init__(
         self,

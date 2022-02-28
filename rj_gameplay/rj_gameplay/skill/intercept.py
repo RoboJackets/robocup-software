@@ -5,57 +5,82 @@ import argparse
 import py_trees
 import sys
 import time
+import numpy as np
+from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
+from rj_geometry_msgs.msg import Point
 
 import stp.skill as skill
 import stp.role as role
-import stp.action as action
-from rj_gameplay.action import intercept
-from stp.skill.action_behavior import ActionBehavior
 import stp.rc as rc
-import numpy as np
+from typing import Optional
+
+SETTLE_BALL_SPEED_THRESHOLD = 1.0
+INTERCEPT_ANGLE_THRESHOLD = 2*np.pi / 36
 
 
-class IIntercept(skill.ISkill, ABC):
-    ...
+class Intercept(skill.Skill):
+    """First third of a PassReceive Skill. Gets in front of moving ball."""
+    """TODO: Replace with actual intercept planner"""
 
-
-"""
-A skill version of intercept so that actions don't have to be called in tactics
-"""
-
-
-# TODO: discuss collapsing skills/actions
-class Intercept(IIntercept):
-    def __init__(
-        self,
-        robot: rc.Robot = None,
-        target_point: np.ndarray = np.array([0.0, 0.0]),
-    ):
+    def __init__(self, robot: rc.Robot = None):
         self.robot = robot
-        self.target_point = target_point
 
-        self.__name__ = "Intercept Skill"
-        if self.robot is not None:
-            self.intercept = intercept.Intercept(self.robot.id, target_point)
-        else:
-            self.intercept = intercept.Intercept(None, target_point)
-        self.intercept_behavior = ActionBehavior(
-            "Intercept", self.intercept, self.robot
+        self.__name__ = "intercept skill"
+
+    def get_intercept_pt(self, world_state: rc.WorldState, my_robot: np.ndarray) -> np.ndarray:
+        pos = world_state.ball.pos
+        vel = world_state.ball.vel
+
+        ball_dir = vel / (np.linalg.norm(vel) + 1e-6)
+
+        ball_to_bot = pos - my_robot.pose[:1]
+        # ball_to_bot_unt = ball_to_bot / (np.linalg.norm(ball_to_bot) + 1e-6)
+        intercept_pt = np.dot(ball_to_bot, ball_dir)*ball_dir
+
+        return intercept_pt
+
+
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
+        intent = RobotIntent()
+        path_command = PathTargetMotionCommand()
+        target_point = self.get_intercept_pt(world_state, self.robot)
+        target_vel = [0.0, 0.0]
+        path_command.target.position = Point(
+            x=target_point[0], y=target_point[1]
         )
-        self.root = self.intercept_behavior
-        self.root.setup_with_descendants()
+        path_command.target.velocity = Point(x=target_vel[0], y=target_vel[1])
+        path_command.ignore_ball = False
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState):
-        self.robot = robot
-        self.intercept.robot_id = self.robot.id
-        self.intercept.target_point = self.target_point
-        return self.root.tick_once(self.robot, world_state)
+        path_command.override_face_point = [
+            Point(x=world_state.ball.pos[0], y=world_state.ball.pos[1])
+        ]
+
+        intent.motion_command.path_target_command = [path_command]
+        intent.is_active = True
+
+        # TODO: motion planning is a lot more stable when not being spammed with repeat intents, use Action Client/Server to avoid re-requests when the intent is the same
+        return intent
 
     def is_done(self, world_state) -> bool:
-        return self.intercept.is_done(world_state)
+        if self.robot is None:
+            return False
+
+        ball_dir = world_state.ball.vel / (np.linalg.norm(world_state.ball.vel) + 1e-6)
+        ball_to_bot = world_state.ball.pos - self.robot.pose[:1]
+        ball_to_bot_unt = ball_to_bot / (np.linalg.norm(ball_to_bot) + 1e-6)
+        dot_prod = np.dot(ball_to_bot_unt, ball_dir)
+        angle = np.arccos(dot_prod)
+        if (
+            world_state.our_robots[self.robot.id].has_ball_sense
+            or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD
+            or angle < INTERCEPT_ANGLE_THRESHOLD
+        ):
+            return True
+        return False
 
     def __str__(self):
-        return f"Capture(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
+        return f"Intercept(robot={self.robot.id if self.robot is not None else '??'})"
 
     def __repr__(self) -> str:
         return self.__str__()
