@@ -5,7 +5,7 @@ from soupsieve import closest
 
 import stp.role
 import stp.rc
-from stp.rc import Ball, WorldState
+from stp.rc import Ball, Robot, WorldState
 
 from typing import List, TypedDict, Tuple
 
@@ -52,7 +52,7 @@ class DribbleState(Enum):
 # Constant for how far a robot can be from the pass line before stopping the pass from occuring
 PASS_DISTANCE_CUTOFF = 0.5
 # Constant for how far from the path of the ball the closest enemy robot can be
-SHOOT_DISTANCE_CUTOFF = 2
+SHOOT_DISTANCE_CUTOFF = 6
 # Number of divisions for finding the best shot on goal
 NUM_DIVISIONS = 15
 # Aggressiveness hyperparameter alters the distance robots are from the robot the farther down the field a robot is (basically aggressiveness weights how
@@ -77,6 +77,7 @@ class PasserRole(stp.role.Role):
         self._state = State.INIT
         self._ball_state = BallReleaseState.HOLDING
         self.__dribble_state = DribbleState.CHILLING
+        self._target_robot = None
 
         self._target_point = None
 
@@ -105,7 +106,7 @@ class PasserRole(stp.role.Role):
 
         intent = None
         print(self._state)
-        print(gameplay_node.NUM_ROBOTS // 2)
+        print(gameplay_node.NUM_ROBOTS_PER_TEAM)
 
         # Initialization of pass
         if self._state == State.INIT:
@@ -137,13 +138,9 @@ class PasserRole(stp.role.Role):
             print("posessing")
             # Initialize values
             our_vecs, their_vecs = self.calc_displacement_vecs(world_state)
-            print("OUR VECS:")
-            print(our_vecs)
-            print("THEIR VECS:")
-            print(their_vecs)
             self.rob_pass_dists = self.calc_min_distance_from_lines(world_state, our_vecs, their_vecs)
             self.shot_on_goal = self.best_goal_shot(world_state, NUM_DIVISIONS, self.left_goal_post, self.right_goal_post)
-            best_shot_index = self.get_best_pass_index(self.rob_pass_dists)
+            best_pass_index = self.get_best_pass_index(self.rob_pass_dists[0])
             move_distance = np.linalg.norm(self.robot.pose[0:2] - self.receive_location)
             closest_defender_distance = self.get_closest_enemy_dist(their_vecs)
 
@@ -151,27 +148,37 @@ class PasserRole(stp.role.Role):
             print(closest_defender_distance)
             
             # Hanlde State Transitions #
+            print("best shot: {}".format(self.shot_on_goal[1]))
+            print("best pass: {}".format(self.rob_pass_dists[0][best_pass_index]))
             if self.shot_on_goal[1] > SHOOT_DISTANCE_CUTOFF:
                 self._target_point = self.shot_on_goal[0]
                 self._ball_state = BallReleaseState.INIT
                 self._state = State.SHOOTING
 
             elif closest_defender_distance < PRESSURE_CUTOFF_DIST:
-                if self.rob_pass_dists[best_shot_index, 0] > PASS_DISTANCE_CUTOFF or move_distance > MOVE_CUTOFF:
-                    self._target_point = world_state.our_robots[best_shot_index]
+                if self.rob_pass_dists[0][best_pass_index] > PASS_DISTANCE_CUTOFF:
+                    self._target_robot = world_state.our_robots[best_pass_index]
                     self._ball_state = BallReleaseState.INIT
                     self._state = State.PASSING
 
-            elif self.__dribble_state != dribble.Dribble.DRIBBLING:
-                self.dribble_skill = dribble.Dribble(
-                    robot=self.robot,
-                    target_point=(self.left_goal_post + self.right_goal_post) / 2,
-                    target_vel=np.array([0, 1])
-                )
-                self.__dribble_state = DribbleState.DRIBBLING
+            elif move_distance > MOVE_CUTOFF:
+                self._target_robot = world_state.our_robots[best_pass_index]
+                self._ball_state = BallReleaseState.INIT
+                self._state = State.PASSING
+
+            elif self.__dribble_state != DribbleState.DRIBBLING:
+                #print("I do be dribbling")
+                #self.dribble_skill = dribble.Dribble(
+                    #robot=self.robot,
+                    #arget_point=(self.left_goal_post + self.right_goal_post) / 2,
+                    #target_vel=np.array([0, 1])
+                #)
+                #self.__dribble_state = DribbleState.DRIBBLING
+                pass
 
             else:
-                intent = self.dribble_skill.tick(world_state)
+                #intent = self.dribble_skill.tick(world_state, intent)
+                pass
             
         # Robot is in passing state
         elif self._state == State.PASSING:
@@ -181,7 +188,7 @@ class PasserRole(stp.role.Role):
             # Initialize pass
             print(self._ball_state)
             if self._ball_state == BallReleaseState.INIT:
-                print('init passing')
+                self._target_point = self._target_robot.pose[0:2]
                 self.pivot_kick_skill = pivot_kick.PivotKick(
                     robot=self.robot,
                     target_point=self._target_point,
@@ -235,12 +242,12 @@ class PasserRole(stp.role.Role):
         and the other teams robots
         :type return: 2 np.ndarray of dimension [(NUM_ROBOTS / 2), 3]
         """
-        our_vecs = np.zeros((gameplay_node.NUM_ROBOTS // 2, 2))
-        for i in range(0, gameplay_node.NUM_ROBOTS // 2):
+        our_vecs = np.zeros((gameplay_node.NUM_ROBOTS_PER_TEAM, 2))
+        for i in range(0, gameplay_node.NUM_ROBOTS_PER_TEAM):
             if (world_state.our_robots[i].id != self.robot.id and world_state.our_robots[i].id != world_state.goalie_id):
                 our_vecs[i,0:2] = world_state.our_robots[i].pose[0:2] - self.robot.pose[0:2]
-        their_vecs = np.zeros((gameplay_node.NUM_ROBOTS // 2, 2))
-        for j in range(0, gameplay_node.NUM_ROBOTS // 2):
+        their_vecs = np.zeros((gameplay_node.NUM_ROBOTS_PER_TEAM, 2))
+        for j in range(0, gameplay_node.NUM_ROBOTS_PER_TEAM):
             their_vecs[j,0:2] = world_state.their_robots[j].pose[0:2] - self.robot.pose[0:2]
         return our_vecs, their_vecs
 
@@ -257,31 +264,29 @@ class PasserRole(stp.role.Role):
         :return list of distance from robot closest to the linear path of the ball to the path the ball will have to take to make a direct path.
         :type return: np.ndarray of size [(our_robots):1] (distance)
         """
-        final_distances = np.zeros((1, gameplay_node.NUM_ROBOTS // 2))
-        for i in range(1, gameplay_node.NUM_ROBOTS // 2):
+        final_distances = np.zeros((1, gameplay_node.NUM_ROBOTS_PER_TEAM))
+        for i in range(0, gameplay_node.NUM_ROBOTS_PER_TEAM):
             distances = []
+            if our_vecs[i][0] == 0 and our_vecs[i][1] == 0:
+                continue
             for our_vec in our_vecs:
                 if our_vec[0] == 0 and our_vec[1] == 0:
                     continue
                 if our_vecs[i][0] == our_vec[0] and our_vecs[i][1] == our_vec[1]:
                     continue
-                if our_vecs[i][0] == 0 and our_vecs[i][1] == 0:
-                    continue
-                print(i)
-                print("1: {}".format(np.linalg.norm(our_vecs[i])))
-                print("2: {}".format(np.linalg.norm(our_vec)))
                 dot_over_mag = np.dot(our_vecs[i], our_vec) / (np.linalg.norm(our_vecs[i]) * np.linalg.norm(our_vec))
                 if dot_over_mag < 0:
                     continue
                 dist = np.linalg.norm(np.cross(our_vec, our_vecs[i])) / np.linalg.norm(our_vecs[i])
                 distances.append(dist)
+            robot_num = 0
             for their_vec in their_vecs:
+                robot_num += 1
                 dot_over_mag = np.dot(our_vecs[i], their_vec) / (np.linalg.norm(our_vecs[i]) * np.linalg.norm(their_vec))
                 if dot_over_mag < 0:
                     continue
                 dist = np.linalg.norm(np.cross(our_vec, our_vecs[i])) / np.linalg.norm(our_vecs[i])
                 distances.append(dist)
-            print(distances)
             if len(distances) is not 0:
                 final_distances[0, i] = min(distances) * (world_state.our_robots[i].pose[1] * AGGRESSIVENESS)
         return final_distances
@@ -348,8 +353,8 @@ class PasserRole(stp.role.Role):
         max_distance_index = 0
 
         for i in range(0, robot_pass_distances.size):
-            if robot_pass_distances[0, i] > max_distance:
-                max_distance = robot_pass_distances[0, i]
+            if robot_pass_distances[i] > max_distance:
+                max_distance = robot_pass_distances[i]
                 max_distance_index = i
 
         return max_distance_index
