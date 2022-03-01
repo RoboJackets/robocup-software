@@ -43,7 +43,6 @@ class PassTactic(stp.tactic.Tactic):
         self._init_passer_cost = init_passer_cost
         self._init_receiver_cost = init_receiver_cost
 
-
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         self.assigned_roles = []
         for i, robot in enumerate(self.assigned_robots):
@@ -69,7 +68,6 @@ class PassTactic(stp.tactic.Tactic):
         role_intents = []
 
         if self._state == State.INIT:
-
             self._role_requests = [
                 (
                     self._init_passer_cost,
@@ -96,9 +94,7 @@ class PassTactic(stp.tactic.Tactic):
                 self._state = State.GET_RECEIVER
 
         elif self._state == State.GET_RECEIVER:
-
             self._role_requests.append(
-
                 (
                     self._init_receiver_cost,
                     receiver.ReceiverRole,
