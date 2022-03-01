@@ -8,9 +8,11 @@ import stp.skill as skill
 import numpy as np
 from math import atan2
 
-OPPONENT_SPEED = 1.5
-KICK_SPEED = 4.5
-EFF_BLOCK_WIDTH = 0.7
+from stp.utils.constants import StrikerConstants
+
+OPPONENT_SPEED = StrikerConstants.OPPONENT_SPEED
+KICK_SPEED = StrikerConstants.KICK_SPEED
+EFF_BLOCK_WIDTH = StrikerConstants.EFF_BLOCK_WIDTH
 
 
 def blocker_margin(

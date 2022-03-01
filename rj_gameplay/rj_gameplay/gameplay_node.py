@@ -32,8 +32,9 @@ from rj_gameplay.action.move import Move
 # ignore "unused import" error
 from rj_gameplay.play import line_up, basic_defense, keepaway  # noqa: F401
 import rj_gameplay.basic_play_selector as basic_play_selector
+from stp.utils.constants import RobotConstants
 
-NUM_ROBOTS = 16
+NUM_ROBOTS = RobotConstants.NUM_ROBOTS
 
 
 class GameplayNode(Node):

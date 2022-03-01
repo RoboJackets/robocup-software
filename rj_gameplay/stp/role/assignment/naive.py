@@ -10,11 +10,12 @@ import stp.rc
 import stp.role as role
 import stp.role.assignment as assignment
 from stp.role import RoleResult
+from stp.utils.constants import EvaluationConstants
 
 SortedRequests = List[assignment.FlatRoleRequests]
 
 # Define some big constant for "hard constraints".
-INVALID_COST = sys.maxsize
+INVALID_COST = EvaluationConstants.INVALID_COST
 
 
 class NaiveRoleAssignment(assignment.IRoleAssignment):

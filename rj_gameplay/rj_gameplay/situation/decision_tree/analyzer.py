@@ -10,9 +10,11 @@ import stp.situation
 
 import rj_gameplay.situation.decision_tree as dt
 
-POSSESS_MIN_DIST = 0.15
-MIN_PASS_SPEED = 0.9
-MIN_NEAR_BALL_DIST = 0.35
+from stp.utils.constants import SituationConstants
+
+POSSESS_MIN_DIST = SituationConstants.POSSESS_MIN_DIST
+MIN_PASS_SPEED = SituationConstants.MIN_PASS_SPEED
+MIN_NEAR_BALL_DIST = SituationConstants.MIN_NEAR_BALL_DIST
 
 
 class BallPos(Enum):

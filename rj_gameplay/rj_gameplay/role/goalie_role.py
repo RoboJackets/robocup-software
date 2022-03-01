@@ -4,17 +4,18 @@ from rj_gameplay.skill import move, receive, pivot_kick  # , line_kick, intercep
 import numpy as np
 
 # TODO: settle on unified way to define constants in gameplay
-from stp.utils.constants import RobotConstants  # , BallConstants
+from stp.utils.constants import RobotConstants, GoalieConstants  # , BallConstants
 
 # import stp.global_parameters as global_parameters
 # from stp.local_parameters import Param
 
 from rj_msgs.msg import RobotIntent
 
+
 # TODO: move to constants file
-MIN_WALL_RAD = 0
-GOALIE_PCT_TO_BALL = 0.15
-DIST_TO_FAST_KICK = 7
+MIN_WALL_RAD = GoalieConstants.MIN_WALL_RAD
+GOALIE_PCT_TO_BALL = GoalieConstants.GOALIE_PCT_TO_BALL
+DIST_TO_FAST_KICK = GoalieConstants.DIST_TO_FAST_KICK
 
 
 def get_goalie_pt(world_state: stp.rc.WorldState) -> np.ndarray:

@@ -13,7 +13,9 @@ import stp.role as role
 import stp.rc as rc
 from typing import Optional
 
-SETTLE_BALL_SPEED_THRESHOLD = 1.0
+from stp.utils.constants import EvaluationConstants
+
+SETTLE_BALL_SPEED_THRESHOLD = EvaluationConstants.SETTLE_BALL_SPEED_THRESHOLD
 
 
 class Settle(skill.Skill):

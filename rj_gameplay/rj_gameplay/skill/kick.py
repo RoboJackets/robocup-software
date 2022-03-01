@@ -11,8 +11,10 @@ import stp.rc as rc
 from rj_msgs.msg import RobotIntent, EmptyMotionCommand
 import numpy as np
 
-KICK_DOT_THRESHOLD = 0.4
-KICK_BALL_SPEED_THRESHOLD = 0.9
+from stp.utils.constants import KickConstants
+
+KICK_DOT_THRESHOLD = KickConstants.KICK_DOT_THRESHOLD
+KICK_BALL_SPEED_THRESHOLD = KickConstants.KICK_BALL_SPEED_THRESHOLD
 
 
 class Kick(skill.Skill):
