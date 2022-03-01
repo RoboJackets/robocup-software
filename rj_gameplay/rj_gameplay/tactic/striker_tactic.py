@@ -10,14 +10,6 @@ from math import atan2
 from rj_gameplay.role import striker
 import stp
 
-
-from stp.utils.constants import StrikerConstants
-
-OPPONENT_SPEED = StrikerConstants.OPPONENT_SPEED
-KICK_SPEED = StrikerConstants.KICK_SPEED
-EFF_BLOCK_WIDTH = StrikerConstants.EFF_BLOCK_WIDTH
-
-
 from rj_msgs.msg import RobotIntent
 
 
