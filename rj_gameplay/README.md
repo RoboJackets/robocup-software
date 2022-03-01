@@ -13,6 +13,8 @@ Stable code for gameplay.
 
 Frequently changing code of gameplay. Subclasses the interfaces and abstract classes in stp/. (Read the docstrings for the relevant superclasses if ever you are confused.)
 
+NOTE: for now, both the old and new infrastructure are existing simultaneously while we transfer over. To figure out if a file is old or new, look at the superclass in the class definition. Old classes subclass an interface (e.g. IPlay, ITactic, ISkill) and new classes subclass an abstract class (e.g. Play, Tactic, Role, Skill).
+
 **Tests - `tests/stp`**
 
 Unit tests for stp/.
