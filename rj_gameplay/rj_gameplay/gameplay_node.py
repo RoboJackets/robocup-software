@@ -458,7 +458,7 @@ def main():
     play_selector = basic_play_selector.BasicPlaySelector()
 
     # change this line to test different plays (set to None if no desired test play)
-    test_play = keepaway.Keepaway()
+    test_play = penalty_defense.PenaltyDefense()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)

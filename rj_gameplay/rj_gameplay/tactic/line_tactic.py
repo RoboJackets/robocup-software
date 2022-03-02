@@ -8,7 +8,7 @@ from rj_msgs.msg import RobotIntent
 class LineTactic(stp.tactic.Tactic):
     """Tactic for line up play that puts all six robots in a line on the left of the field."""
 
-    def __init__(self, world_state: stp.rc.WorldState):
+    def __init__(self, world_state: stp.rc.WorldState, num_lined_up: int):
         super().__init__(world_state)
 
         # compute move points
@@ -16,7 +16,7 @@ class LineTactic(stp.tactic.Tactic):
         start = (3.0, 0.0)
         dy = 0.5
         # TODO: make the # here a param instead of hardcoding for same reason as above TODO
-        self.move_points = [(start[0], start[1] + i * dy) for i in range(6)]
+        self.move_points = [(start[0], start[1] + i * dy) for i in range(num_lined_up)]
 
         # request closest robot every pt
         for pt in self.move_points:
@@ -40,7 +40,12 @@ class LineTactic(stp.tactic.Tactic):
         if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
 
-        return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
+        # return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
+        robot_intents = []
+        for i in range(len(self.assigned_roles)):
+            role = self.assigned_roles[i]
+            robot_intents.append((role.robot.id, role.tick(world_state)))
+        return robot_intents
 
     def is_done(
         self,
