@@ -66,3 +66,8 @@ class Tactic(ABC):
     # TODO: use @property setter?
     def set_assigned_robots(self, assigned_robots):
         self.assigned_robots = assigned_robots
+
+    @property
+    def needs_assign(self):
+        # never needs assign after init
+        return False
