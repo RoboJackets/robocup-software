@@ -17,6 +17,9 @@ from rj_msgs.msg import RobotIntent
 import numpy as np
 
 #TODO add reward to getting to a better shot down the field
+#TODO add dribbling
+#TODO don't score on us
+#TODO fix passing tactic
 
 class State(Enum):
     # Initialization
@@ -73,7 +76,6 @@ class PasserRole(stp.role.Role):
 
         self.receive_location = None
 
-        # TODO: make FSM class (or at least use enum instead of str literals)
         self._state = State.INIT
         self._ball_state = BallReleaseState.HOLDING
         self.__dribble_state = DribbleState.CHILLING
@@ -167,23 +169,22 @@ class PasserRole(stp.role.Role):
                 self._state = State.PASSING
 
             elif self.__dribble_state != DribbleState.DRIBBLING:
-                #print("I do be dribbling")
-                #self.dribble_skill = dribble.Dribble(
-                    #robot=self.robot,
-                    #arget_point=(self.left_goal_post + self.right_goal_post) / 2,
-                    #target_vel=np.array([0, 1])
-                #)
-                #self.__dribble_state = DribbleState.DRIBBLING
+                print("I do be dribbling")
+                self.dribble_skill = dribble.Dribble(
+                    robot=self.robot,
+                    target_point=(self.left_goal_post + self.right_goal_post) / 2,
+                    target_vel=np.array([0.0, 1.0])
+                )
+                self.__dribble_state = DribbleState.DRIBBLING
                 pass
 
             else:
-                #intent = self.dribble_skill.tick(world_state, intent)
+                intent = self.dribble_skill.tick(world_state=world_state)
                 pass
             
         # Robot is in passing state
         elif self._state == State.PASSING:
             print("passing")
-            # TODO: make these params configurable
 
             # Initialize pass
             print(self._ball_state)
