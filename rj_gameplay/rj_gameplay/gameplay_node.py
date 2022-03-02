@@ -30,7 +30,13 @@ import numpy as np
 from rj_gameplay.action.move import Move
 
 # ignore "unused import" error
-from rj_gameplay.play import line_up, basic_defense, keepaway, basic122  # noqa: F401
+from rj_gameplay.play import (
+    line_up,
+    basic_defense,
+    keepaway,
+    basic122,
+    penalty_offence,
+)  # noqa: F401
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 NUM_ROBOTS = 16
@@ -460,7 +466,7 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = basic122.Basic122()
+    test_play = penalty_offence.PenaltyOffense()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)

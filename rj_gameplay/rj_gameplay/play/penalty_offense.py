@@ -4,8 +4,9 @@ import stp.tactic as tactic
 from rj_gameplay.tactic import striker_tactic, goalie_tactic, line_tactic, basic_seek
 import stp.skill as skill
 import stp.role as role
-from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc as rc
+import stp
+from rj_msgs.msg import RobotIntent
 from typing import (
     Dict,
     List,
@@ -28,11 +29,11 @@ class PenaltyOffense(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
-        self._striker_pos = stp.rc.WorldState.ball.pos[0:2] - [0, 0.2]
+        self._striker_pos = rc.WorldState.ball.pos[0:2] - [0, 0.2]
 
     def tick(
         self,
-        world_state: stp.rc.WorldState,
+        world_state: rc.WorldState,
     ) -> List[RobotIntent]:
         if self._state == state.INIT:
             self.prioritized_tactics = [
@@ -50,7 +51,7 @@ class PenaltyOffense(stp.play.Play):
 
         elif self._state == State.PREP:
             move = self.prioritized_tactics[1]
-            if rc.move.is_done(world_state):
+            if move.is_done(world_state):
                 self._state = State.READY
             return self.get_robot_intents(world_state)
 
