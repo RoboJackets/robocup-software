@@ -40,7 +40,7 @@ def get_opp_inRegion(region: List, world_state: stp.rc.WorldState) -> List:
     return opp_in_region
 
 
-def get_open_point(region: List) -> np.ndarray:
+def get_open_point(region: List, opp_in_region: List) -> np.ndarray:
     # research/ask about algorithm that does this task without a large time complexity
     for x in range(region[0][0], region[0][1], RobotConstants.RADIUS):
         for y in range(region[1][0], region[1][1], RobotConstants.RADIUS):
@@ -50,13 +50,13 @@ def get_open_point(region: List) -> np.ndarray:
                 distvec = pos - point
                 dist = np.linalg.norm(distvec)
                 if dist > SAG_DIST:
-                    self.target_point = point
+                    bestpoint = point
                 else:
                     break
             break
         break
 
-    return point
+    return bestpoint
 
 
 class SeekerRole(stp.role.Role):
@@ -76,8 +76,6 @@ class SeekerRole(stp.role.Role):
         """
 
         # TODO: make Formations class (with local variables below and X formation)
-        box_w = world_state.field.def_area_long_dist_m
-        box_h = world_state.field.def_area_short_dist_m
         y_quarter = world_state.floor_length_m / 4
         y_3quarter = world_state.floor_length_m - y_quarter
         field_y = world_state.floor_length_m
@@ -97,7 +95,6 @@ class SeekerRole(stp.role.Role):
         center_ydown = (
             world_state.field.center_field_loc[0] - world_state.field.center_diameter_m
         )
-        center = world_state.field.center_field_loc
 
         """
         Hard Code the Region Bounds
@@ -129,7 +126,7 @@ class SeekerRole(stp.role.Role):
             )
             self.target_point = point
         else:
-            self.target_point = get_open_point(bounds)
+            self.target_point = get_open_point(bounds, opp_in_region)
 
         self.move_skill = move.Move(
             robot=self.robot,
