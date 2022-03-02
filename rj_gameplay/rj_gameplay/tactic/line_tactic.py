@@ -1,7 +1,6 @@
 import stp
 from rj_gameplay.role import dumb_move
 from typing import List, Tuple
-
 from rj_msgs.msg import RobotIntent
 
 
@@ -12,11 +11,15 @@ class LineTactic(stp.tactic.Tactic):
         super().__init__(world_state)
 
         # compute move points
-        # TODO: make start on side of the field, so this Tactic is actually useful during penalty situations
-        start = (3.0, 0.0)
+        # access the length and the width of the field (plus the border), and starts robots there
+        start = (
+            (world_state.field.width_m + world_state.field.border_m) / 2,
+            (world_state.field.length_m - world_state.field.border_m) / 2,
+        )
         dy = 0.5
         # TODO: make the # here a param instead of hardcoding for same reason as above TODO
-        self.move_points = [(start[0], start[1] + i * dy) for i in range(num_lined_up)]
+
+        self.move_points = [(start[0], start[1] - i * dy) for i in range(6)]
 
         # request closest robot every pt
         for pt in self.move_points:
