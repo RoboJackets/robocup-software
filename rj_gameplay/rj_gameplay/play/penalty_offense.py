@@ -13,6 +13,7 @@ from typing import (
     Type,
 )
 import numpy as np
+from enum import Enum, auto
 
 
 class State(Enum):
