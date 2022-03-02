@@ -349,11 +349,10 @@ class Field:
         self.__goal_flat_m = goal_flat_m
         self.__floor_length_m = floor_length_m
         self.__floor_width_m = floor_width_m
-        self.__def_area_x_right_coord = def_area_long_dist_m / 2
-        self.__def_area_x_left_coord = -(def_area_long_dist_m / 2)
-        self.__field_x_right_coord = floor_width_m / 2
-        self.__field_x_left_coord = -(floor_width_m / 2)
-
+        # self.__def_area_x_right_coord = def_area_long_dist_m / 2
+        # self.__def_area_x_left_coord = -(def_area_long_dist_m / 2)
+        # self.__field_x_right_coord = floor_width_m / 2
+        # self.__field_x_left_coord = -(floor_width_m / 2)
 
     @property
     def our_goal_loc(self) -> np.ndarray:
@@ -389,7 +388,7 @@ class Field:
             [self.__def_area_x_left_coord, self.__def_area_short_dist_m],
             [self.__def_area_x_right_coord, self.__def_area_short_dist_m],
             [self.__def_area_x_left_coord, 0.0],
-            [self.__def_area_x_right_coord, 0.0]
+            [self.__def_area_x_right_coord, 0.0],
         ]
         return our_defense_area
 
@@ -403,8 +402,14 @@ class Field:
         opp_defense_area = [
             [self.__def_area_x_left_coord, self.__floor_length_m],
             [self.__def_area_x_right_coord, self.__floor_length_m],
-            [self.__def_area_x_left_coord, self.__floor_length_m - self.__def_area_short_dist_m],
-            [self.__def_area_x_right_coord, self.__floor_length_m - self.__def_area_short_dist_m]
+            [
+                self.__def_area_x_left_coord,
+                self.__floor_length_m - self.__def_area_short_dist_m,
+            ],
+            [
+                self.__def_area_x_right_coord,
+                self.__floor_length_m - self.__def_area_short_dist_m,
+            ],
         ]
         return opp_defense_area
 

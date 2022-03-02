@@ -29,15 +29,15 @@ class PenaltyOffense(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
-        self._striker_pos = rc.WorldState.ball.pos[0:2] - [0, 0.2]
 
     def tick(
         self,
         world_state: rc.WorldState,
     ) -> List[RobotIntent]:
-        if self._state == state.INIT:
+        striker_pos = world_state.ball.pos[0:2] - [0, 0.2]
+        if self._state == State.INIT:
             self.prioritized_tactics = [
-                basic_seek.BasicSeek(self._striker_pos, world_state),
+                basic_seek.BasicSeek(striker_pos, world_state),
                 # assume line tactic is working
                 # line_tactic.LineTactic(world_state),
                 # line_tactic.LineTactic(world_state),
@@ -50,20 +50,20 @@ class PenaltyOffense(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.PREP:
-            move = self.prioritized_tactics[1]
+            move = self.prioritized_tactics[0]
             if move.is_done(world_state):
                 self._state = State.READY
             return self.get_robot_intents(world_state)
 
-        elif self._state == State.READY:  # TODO: add when it's ready
-            self.prioritized_tactics = [
-                goalie_tactic.GoalieTactic(world_state, 0),
-                striker_tactic.StrikerTactic(world_state),
-            ]
-            shoot = self.prioritized_tactics[1]
-            if shoot.is_done(world_state):
-                self._state = State.DONE
-            return self.get_robot_intents(world_state)
+        # elif self._state == State.READY:  # TODO: add when it's ready
+        #     self.prioritized_tactics = [
+        #         goalie_tactic.GoalieTactic(world_state, 0),
+        #         striker_tactic.StrikerTactic(world_state),
+        #     ]
+        #     shoot = self.prioritized_tactics[1]
+        #     if shoot.is_done(world_state):
+        #         self._state = State.DONE
+        #     return self.get_robot_intents(world_state)
 
 
 # class PenaltyOffense(play.IPlay):
