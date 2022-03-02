@@ -1,7 +1,7 @@
 import stp.play as play
 import stp.tactic as tactic
 
-from rj_gameplay.tactic import striker_tactic, goalie_tactic, line_tactic
+from rj_gameplay.tactic import striker_tactic, goalie_tactic, line_tactic, basic_seek
 import stp.skill as skill
 import stp.role as role
 from stp.role.assignment.naive import NaiveRoleAssignment
@@ -27,6 +27,7 @@ class PenaltyOffense(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
+        self._striker_pos = stp.rc.WorldState.ball.pos[0:2] - [0, 0.2]
 
     def tick(
         self,
@@ -34,28 +35,32 @@ class PenaltyOffense(stp.play.Play):
     ) -> List[RobotIntent]:
         if self._state == state.INIT:
             self.prioritized_tactics = [
-                goalie_tactic.GoalieTactic(world_state, 0),
-                move_tactic.MoveTactic(world_state),
-                line_tactic.LineTactic(world_state),
-                line_tactic.LineTactic(world_state),
-                line_tactic.LineTactic(world_state),
-                line_tactic.LineTactic(world_state),
+                basic_seek.BasicSeek(self._striker_pos, world_state),
+                # assume line tactic is working
+                # line_tactic.LineTactic(world_state),
+                # line_tactic.LineTactic(world_state),
+                # line_tactic.LineTactic(world_state),
+                # line_tactic.LineTactic(world_state),
+                # line_tactic.LineTactic(world_state),
             ]
             self.assign_roles(world_state)
             self._state = State.PREP
             return self.get_robot_intents(world_state)
 
-        if self._state == State.PREP:
-            pass
+        elif self._state == State.PREP:
+            move = self.prioritized_tactics[1]
+            if rc.move.is_done(world_state):
+                self._state = State.READY
+            return self.get_robot_intents(world_state)
 
-        if self._state == State.READY:
+        elif self._state == State.READY:  # TODO: add when it's ready
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 striker_tactic.StrikerTactic(world_state),
             ]
             shoot = self.prioritized_tactics[1]
             if shoot.is_done(world_state):
-                self._state = State.KICK_DONE
+                self._state = State.DONE
             return self.get_robot_intents(world_state)
 
 
