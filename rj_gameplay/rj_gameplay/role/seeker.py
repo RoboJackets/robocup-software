@@ -125,7 +125,7 @@ class SeekerRole(stp.role.Role):
 
         if len(opp_in_region.length) == 0:
             point = np.array(
-                (left_xbound + right_xbound / 2, upper_ybound + lower_ybound / 2)
+                (bounds[0][0] + bounds[0][1] / 2, bounds[1][0] + bounds[1][1] / 2)
             )
             self.target_point = point
         else:
