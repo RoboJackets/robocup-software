@@ -48,7 +48,6 @@ class Keepaway(stp.play.Play):
                     world_state, init_passer_cost, init_receiver_cost
                 )
             ]
-            
             # TODO: either add seek tactic(s) or unassigned behavior
 
             self.assign_roles(world_state)
