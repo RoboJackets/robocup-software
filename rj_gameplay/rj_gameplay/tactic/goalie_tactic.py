@@ -40,8 +40,15 @@ class GoalieTactic(stp.tactic.Tactic):
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
             if role.robot:
+                # TODO: figure out why this prevents sim crash
                 robot_intents.append((role.robot.id, role.tick(world_state)))
         return robot_intents
+
+    @property
+    def needs_assign(self):
+        # never needs assign after init
+        # TODO: make this + pass tac part of the superclass
+        return False
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # special case: we know the only role is Goalie, so we borrow that is_done()
