@@ -39,8 +39,6 @@ class PenaltyDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
         if self._state == State.INIT:
-            # TODO Does line_tactic needs to be called?
-            self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 1))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
@@ -64,7 +62,7 @@ class PreparePenaltyDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
         if self._state == State.INIT:
-            self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
+            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 5))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
