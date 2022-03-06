@@ -39,12 +39,13 @@ class PenaltyDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
         if self._state == State.INIT:
-            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 1))
+            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 6))
+            ##self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
         elif self._state == State.ACTIVE:
-            if self.prioritized_tactics[1].is_done(world_state):
+            if self.prioritized_tactics[-1].is_done(world_state):
                 self._state = State.DONE
             return self.get_robot_intents(world_state)
         elif self._state == State.Done:
@@ -62,7 +63,7 @@ class PreparePenaltyDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
         if self._state == State.INIT:
-            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 5))
+            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 6))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
