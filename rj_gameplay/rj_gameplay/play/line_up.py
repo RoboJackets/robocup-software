@@ -5,7 +5,6 @@ from rj_gameplay.tactic import line_tactic
 import stp.skill
 import stp.role
 import stp.role.cost
-from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc
 from typing import (
     Dict,
