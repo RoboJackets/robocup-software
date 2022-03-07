@@ -33,8 +33,8 @@ class SeekerRole(stp.role.Role):
 
     def get_open_point(self, region: List, opp_in_region: List) -> np.ndarray:
         # TODO: research/ask about algorithm that does this task without a large time complexity
-        for x in range(region[0][0], region[0][1], RobotConstants.RADIUS):
-            for y in range(region[1][0], region[1][1], RobotConstants.RADIUS):
+        for x in range(region[0], region[2], RobotConstants.RADIUS):
+            for y in range(region[1], region[3], RobotConstants.RADIUS):
                 point = np.array((x, y))
                 for pos in opp_in_region:
                     SAG_DIST = RobotConstants.RADIUS * 0.5
@@ -62,13 +62,18 @@ class SeekerRole(stp.role.Role):
         # find target point w/in region
         # (centroid if no opp in region)
         if len(opp_in_region) == 0:
-            centroid = (
-                (self._my_region[0] + self._my_region[2]) / 2,
-                (self._my_region[1] + self._my_region[3]) / 2,
+            centroid = np.array(
+                [
+                    ((self._my_region[0] + self._my_region[2]) / 2),
+                    ((self._my_region[1] + self._my_region[3]) / 2),
+                ]
             )
+            print(centroid)
             self.target_point = centroid
         else:
             self.target_point = self.get_open_point(self._my_region, opp_in_region)
+
+        # print(self.target_point)
 
         # assign move skill
         self.move_skill = move.Move(

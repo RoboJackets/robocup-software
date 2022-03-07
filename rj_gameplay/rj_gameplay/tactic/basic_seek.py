@@ -19,9 +19,11 @@ class BasicSeek(stp.tactic.Tactic):
         for i in range(self._num_seekers):
             my_region = formation[i]
             self._used_regions.append(my_region)
-            centroid = (
-                (my_region[0] + my_region[2]) / 2,
-                (my_region[1] + my_region[3]) / 2,
+            centroid = np.array(
+                [
+                    ((my_region[0] + my_region[2]) / 2),
+                    ((my_region[1] + my_region[3]) / 2),
+                ]
             )
             self._role_requests.append(
                 (stp.role.cost.PickClosestToPoint(centroid), seeker.SeekerRole)
@@ -55,15 +57,15 @@ class BasicSeek(stp.tactic.Tactic):
         """
         X_formation = [
             # Region 1 bounds
-            (field_xleft, field_y, box_xleft, y_3quarter),
+            (field_xleft, field_y - 1, box_xleft, y_3quarter),
             # Region 2 bounds
-            (box_xright, field_y, field_xright, y_3quarter),
+            (box_xright, field_y - 1, field_xright, y_3quarter),
             # Region 3 bounds
             (center_xleft, center_yup, center_xright, center_ydown),
             # Region 4 bounds
-            (field_xleft, y_quarter, box_xleft, 0),
+            (field_xleft, y_quarter, box_xleft, 1),
             # Region 5 bounds
-            (box_xright, y_quarter, field_xright, 0),
+            (box_xright, y_quarter, field_xright, 1),
         ]
 
         return X_formation
