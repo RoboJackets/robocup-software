@@ -25,8 +25,8 @@ class State(Enum):
 class PenaltyDefense(stp.play.Play):
     """
     Play consistas of:
-            -5 wallers
-            -1 goalie
+                    -5 wallers
+                    -1 goalie
     The goalie will defend the opponents penalty kick.
     """
 
@@ -39,12 +39,7 @@ class PenaltyDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
         if self._state == State.INIT:
-            ##self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            self.prioritized_tactics.append(
-                goalie_tactic.GoalieTactic(
-                    world_state, stp.role.cost.PickClosestToPoint()
-                )
-            )
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 5))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
@@ -53,7 +48,7 @@ class PenaltyDefense(stp.play.Play):
             if self.prioritized_tactics[-1].is_done(world_state):
                 self._state = State.DONE
             return self.get_robot_intents(world_state)
-        elif self._state == State.Done:
+        elif self._state == State.DONE:
             # TODO: does this state need to exist?
             return None
 
