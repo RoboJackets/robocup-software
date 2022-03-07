@@ -1,7 +1,4 @@
 from enum import Enum, auto
-from lzma import is_check_supported
-
-from soupsieve import closest
 
 import stp.role
 import stp.rc
@@ -9,8 +6,9 @@ from stp.rc import Ball, Robot, WorldState
 
 from typing import List, TypedDict, Tuple
 
-from rj_gameplay.skill import receive, pivot_kick, dribble  # , line_kick
+from rj_gameplay.skill import receive, pivot_kick  # , line_kick
 import rj_gameplay.gameplay_node as gameplay_node
+from rj_gameplay.action import activate_dribbler, move
 
 from rj_msgs.msg import RobotIntent
 
@@ -72,11 +70,13 @@ class PasserRole(stp.role.Role):
 
         self.receive_skill = None
         self.pivot_kick_skill = None
-        self.dribble_skill = None
+        self.move_skill = None
+        self.dribbler_on_skill = None
 
         self.receive_location = None
 
         self._state = State.INIT
+
         self._ball_state = BallReleaseState.HOLDING
         self._dribble_state = DribbleState.CHILLING
         self._target_robot = None
@@ -91,12 +91,28 @@ class PasserRole(stp.role.Role):
         self.rob_pass_dists = []
         self.dist_closest_enemy = np.inf
 
+        self.dribble_target_point = None
+
+    @property
+    def possessing(self):
+        return self._state == State.POSSESSING
+
     @property
     def pass_ready(self):
-        return self._state == State.POSSESSING
+        return self._state == State.PASSING
+    
+    @property
+    def shoot_ready(self):
+        return self._state == State.SHOOTING
 
     def set_execute_pass(self, target_point):
         pass
+
+    def get_pass_reciever(self) -> int:
+        if self._target_robot is not None:
+            return self._target_robot.id
+        else:
+            return None
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """
@@ -107,6 +123,7 @@ class PasserRole(stp.role.Role):
         """
 
         intent = None
+        intent = RobotIntent()
         print(self._state)
         print(gameplay_node.NUM_ROBOTS_PER_TEAM)
 
@@ -127,6 +144,7 @@ class PasserRole(stp.role.Role):
         # Receive the ball
         elif self._state == State.RECEIVING:
             intent = self.receive_skill.tick(world_state)
+
             if self.receive_skill.is_done(world_state):
                 self._state = State.POSSESSING
                 self.receive_location = self.robot.pose[0:2]
@@ -170,19 +188,23 @@ class PasserRole(stp.role.Role):
 
             elif self._dribble_state != DribbleState.DRIBBLING:
                 print("I do be dribbling")
-                target_point = (self.left_goal_post + self.right_goal_post) / 2
-                self.dribble_skill = dribble.Dribble(
-                    robot=self.robot,
-                    target_point=target_point,
-                    target_vel=target_point / np.linalg.norm(target_point)
+                goal_point = (self.left_goal_post + self.right_goal_post) / 2
+                self.dribble_target_point = (goal_point - self.robot.pose[0:2]) / np.linalg.norm(goal_point - self.robot.pose[0:2])
+                self.dribble_target_point = self.dribble_target_point * 0.5
+                self.dribbler_on_skill = activate_dribbler.ActivateDribbler(self.robot.id)
+                self.move_skill = move.Move(
+                    robot_id=self.robot.id,
+                    target_point=self.dribble_target_point
+                    #target_vel=(self.dribble_target_point - self.robot.pose[0:2]) / np.linalg.norm(self.dribble_target_point - self.robot.pose[0:2])
                 )
                 self._dribble_state = DribbleState.DRIBBLING
 
-            else:
+            elif self._dribble_state == DribbleState.DRIBBLING:
                 print('my position: {}'.format(self.robot.pose[0:2]))
-                print('target_point: {}'.format((self.left_goal_post + self.right_goal_post) / 2))
+                print('target_point: {}'.format(self.dribble_target_point))
                 print('dribble_skill.tick')
-                intent = self.dribble_skill.tick(world_state=world_state, intent=intent)
+                intent = self.dribbler_on_skill.tick(intent=intent)
+                intent = self.move_skill.tick(intent=intent)
             
         # Robot is in passing state
         elif self._state == State.PASSING:

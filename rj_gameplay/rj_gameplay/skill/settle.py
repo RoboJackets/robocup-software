@@ -25,6 +25,7 @@ class Settle(skill.Skill):
         self.__name__ = "settle skill"
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
         intent = RobotIntent()
 
         settle_command = SettleMotionCommand()
@@ -44,4 +45,8 @@ class Settle(skill.Skill):
             return True
         return False
 
-    # TODO: def __repr__
+    def __str__(self):
+        return f"Capture(robot={self.robot.id if self.robot is not None else '??'})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

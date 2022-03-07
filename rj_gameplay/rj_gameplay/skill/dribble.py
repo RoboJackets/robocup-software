@@ -67,6 +67,7 @@ class Dribble(skill.ISkill):
 
         intent.dribbler_speed = 1.0
         intent.is_active = True
+        intent.priority = 1
         return intent
 
     def is_done(self, world_state: rc.WorldState):
@@ -87,4 +88,8 @@ class Dribble(skill.ISkill):
             return False
 
     def __str__(self):
-        return f"Dribble(robot={self.robot.id if self.robot is not None else '??'})"
+        return f"Capture(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}, \
+                target_vel={self.target_vel}, face_angle={self.face_angle}, face_point={self.face_point})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

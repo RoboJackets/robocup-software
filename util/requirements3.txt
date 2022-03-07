@@ -16,6 +16,7 @@ yapf # python checker
 black #python checker
 typing-extensions # For TypedDict
 cmake_format
+pre-commit #hook support
 
 sphinx
 sphinx_rtd_theme

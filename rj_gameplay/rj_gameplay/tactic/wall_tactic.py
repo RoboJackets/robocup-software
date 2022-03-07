@@ -32,7 +32,7 @@ class WallTactic(stp.tactic.Tactic):
         # request closest robot every pt
         for pt in self.wall_pts:
             self._role_requests.append(
-                (stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove)
+                (stp.role.cost.PickClosestToPoint(pt), dumb_move.DumbMove)
             )
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
@@ -55,9 +55,10 @@ class WallTactic(stp.tactic.Tactic):
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
             wall_pt = self.wall_pts[i]
-            robot_intents.append(
-                (role.robot.id, role.tick(world_state, target_point=wall_pt))
-            )
+            if role.robot is not None:
+                robot_intents.append(
+                    (role.robot.id, role.tick(world_state, target_point=wall_pt))
+                )
         return robot_intents
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:

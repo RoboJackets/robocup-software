@@ -72,8 +72,8 @@ class Mark(skill.ISkill):
         self.face_angle = face_angle
         self.ignore_ball = ignore_ball
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
+    def tick(self, world_state: rc.WorldState):
+        intent = RobotIntent()
         if world_state and world_state.ball.visible:
             if self.target_robot is None:
                 mark_point = get_mark_point(1, world_state)
@@ -99,7 +99,7 @@ class Mark(skill.ISkill):
 
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
-        return {self.robot.id: intent}
+        return intent
         # update target point every tick to match movement of ball & target robot
 
     def is_done(self, world_state) -> bool:
@@ -121,3 +121,6 @@ class Mark(skill.ISkill):
 
     def __str__(self):
         return f"Mark(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_robot.id if self.target_robot is not None else '??'})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

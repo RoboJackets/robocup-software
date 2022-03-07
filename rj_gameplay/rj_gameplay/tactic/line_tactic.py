@@ -22,7 +22,7 @@ class LineTactic(stp.tactic.Tactic):
         for pt in self.move_points:
             # for some reason stp.role doesn't need to be imported?
             self._role_requests.append(
-                (stp.role.cost.PickClosestRobot(pt), dumb_move.DumbMove)
+                (stp.role.cost.PickClosestToPoint(pt), dumb_move.DumbMove)
             )
 
         # OR hardcode certain ids to go

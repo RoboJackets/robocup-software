@@ -39,8 +39,10 @@ class PickRobotById(stp.role.CostFn):
         return f"PickRobotById(robot={self._robot_id})"
 
 
-class PickClosestRobot(stp.role.CostFn):
-    """Always select closest robot to some target_point (passed on init)."""
+class PickClosestToPoint(stp.role.CostFn):
+    """Always select closest robot to some target_point (passed on init).
+    Can get closest to ball by passing in `world_state.ball.pos`.
+    """
 
     def __init__(self, target_point):
         self._target_point = target_point
@@ -57,4 +59,26 @@ class PickClosestRobot(stp.role.CostFn):
         return 1e9
 
     def __repr__(self):
-        return f"PickClosestRobot(target_point={self._target_point})"
+        return f"PickClosestToPoint(target_point={self._target_point})"
+
+
+class PickFarthestFromPoint(stp.role.CostFn):
+    """Always select farthest robot to some target_point (passed on init).
+    Can get farthest from ball by passing in `world_state.ball.pos`.
+    """
+
+    def __init__(self, target_point):
+        self.closest_picker = PickClosestToPoint(target_point)
+
+    def __call__(
+        self,
+        robot: stp.rc.Robot,
+        world_state: stp.rc.WorldState,
+    ) -> float:
+        closest_cost = self.closest_picker(robot, world_state)
+        if closest_cost >= 1e9:
+            return 1e9
+        return -closest_cost
+
+    def __repr__(self):
+        return f"PickFarthestFromPoint(target_point={self._target_point})"
