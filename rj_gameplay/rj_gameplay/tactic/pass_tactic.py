@@ -168,8 +168,9 @@ class PassTactic(stp.tactic.Tactic):
 
             if receiver_role.is_done(world_state):
                 self._state = "done"
-                # end FSM
+                # end FS
 
+        print("intent in pass_tactic: {}".format(role_intents))
         return role_intents
 
     @property

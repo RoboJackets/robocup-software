@@ -78,7 +78,7 @@ class PasserRole(stp.role.Role):
 
         self._state = State.INIT
         self._ball_state = BallReleaseState.HOLDING
-        self.__dribble_state = DribbleState.CHILLING
+        self._dribble_state = DribbleState.CHILLING
         self._target_robot = None
 
         self._target_point = None
@@ -112,7 +112,6 @@ class PasserRole(stp.role.Role):
 
         # Initialization of pass
         if self._state == State.INIT:
-            print("initializing")
             # Set up goal_posts
             if self.left_goal_post is None:
                 self.left_goal_post = world_state.field.their_goal_loc
@@ -127,12 +126,9 @@ class PasserRole(stp.role.Role):
 
         # Receive the ball
         elif self._state == State.RECEIVING:
-            print("recieving")
             intent = self.receive_skill.tick(world_state)
             if self.receive_skill.is_done(world_state):
-                print("done receiving")
                 self._state = State.POSSESSING
-                print("possessing pt 1")
                 self.receive_location = self.robot.pose[0:2]
 
         # This Robot has the ball
@@ -145,42 +141,48 @@ class PasserRole(stp.role.Role):
             best_pass_index = self.get_best_pass_index(self.rob_pass_dists[0])
             move_distance = np.linalg.norm(self.robot.pose[0:2] - self.receive_location)
             closest_defender_distance = self.get_closest_enemy_dist(their_vecs)
-
-            print(self.shot_on_goal[1])
-            print(closest_defender_distance)
             
             # Hanlde State Transitions #
             print("best shot: {}".format(self.shot_on_goal[1]))
             print("best pass: {}".format(self.rob_pass_dists[0][best_pass_index]))
             if self.shot_on_goal[1] > SHOOT_DISTANCE_CUTOFF:
+                print("shoot")
                 self._target_point = self.shot_on_goal[0]
                 self._ball_state = BallReleaseState.INIT
                 self._state = State.SHOOTING
+                self._dribble_state = DribbleState.CHILLING
 
             elif closest_defender_distance < PRESSURE_CUTOFF_DIST:
+                print("checking pass")
                 if self.rob_pass_dists[0][best_pass_index] > PASS_DISTANCE_CUTOFF:
+                    print("passing")
                     self._target_robot = world_state.our_robots[best_pass_index]
                     self._ball_state = BallReleaseState.INIT
                     self._state = State.PASSING
+                    self._dribble_state = DribbleState.CHILLING
 
             elif move_distance > MOVE_CUTOFF:
+                print("passing")
                 self._target_robot = world_state.our_robots[best_pass_index]
                 self._ball_state = BallReleaseState.INIT
                 self._state = State.PASSING
+                self._dribble_state = DribbleState.CHILLING
 
-            elif self.__dribble_state != DribbleState.DRIBBLING:
+            elif self._dribble_state != DribbleState.DRIBBLING:
                 print("I do be dribbling")
+                target_point = (self.left_goal_post + self.right_goal_post) / 2
                 self.dribble_skill = dribble.Dribble(
                     robot=self.robot,
-                    target_point=(self.left_goal_post + self.right_goal_post) / 2,
-                    target_vel=np.array([0.0, 1.0])
+                    target_point=target_point,
+                    target_vel=target_point / np.linalg.norm(target_point)
                 )
-                self.__dribble_state = DribbleState.DRIBBLING
-                pass
+                self._dribble_state = DribbleState.DRIBBLING
 
             else:
-                intent = self.dribble_skill.tick(world_state=world_state)
-                pass
+                print('my position: {}'.format(self.robot.pose[0:2]))
+                print('target_point: {}'.format((self.left_goal_post + self.right_goal_post) / 2))
+                print('dribble_skill.tick')
+                intent = self.dribble_skill.tick(world_state=world_state, intent=intent)
             
         # Robot is in passing state
         elif self._state == State.PASSING:
@@ -226,6 +228,7 @@ class PasserRole(stp.role.Role):
                 if self.pivot_kick_skill.is_done(world_state):
                     self._ball_state = BallReleaseState.FINALIZED
 
+        print("intent in passer role: {}".format(intent))
         return intent
 
     def is_done(self, world_state) -> bool:
