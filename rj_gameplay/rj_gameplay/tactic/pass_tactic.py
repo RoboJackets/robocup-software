@@ -108,7 +108,8 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == State.INIT_EXECUTE_PASS:
             # one tick delay for play role assignment
-            self._state = State.EXECUTE_PASS
+            if len(self.assigned_roles) == 2:
+                self._state = State.EXECUTE_PASS
 
         elif self._state == State.EXECUTE_PASS:
             # assumes play has given new role_requests
@@ -162,7 +163,8 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == State.INIT_AWAIT_RECEIVE:
             # one tick delay for play role assignment
-            self._state = State.EXECUTE_RECEIVE
+            if len(self.assigned_roles) == 1:
+                self._state = State.EXECUTE_RECEIVE
 
         elif self._state == State.EXECUTE_RECEIVE:
             # assumes play has given new role_requests

@@ -116,6 +116,8 @@ class Play(ABC):
                 tactic.set_assigned_robots(robots_for_tactic)
                 self.approved_prioritized_tactics.append(tactic)
                 tactic.init_roles(world_state)
+            else:
+                print("Tactic denied")
         for robot in world_state.our_robots:
             if robot not in used_robots:
                 self.unassigned_roles.append(unassigned_role.UnassignedRole(robot))
