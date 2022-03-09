@@ -7,11 +7,9 @@ import stp.rc
 import stp.role.cost
 import stp.skill
 
-from stp.role.assignment.naive import NaiveRoleAssignment
-
 from rj_gameplay.tactic import line_tactic, goalie_tactic
 
-from typing import List, Tuple
+from typing import List
 from enum import Enum, auto
 
 
