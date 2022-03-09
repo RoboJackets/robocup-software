@@ -240,14 +240,13 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
-
-            play = self.play_selector.curr_play
-            if play is not None:
-                self.debug_callback(
-                    self.play_selector.curr_play, play.prioritized_tactics
-                )
         else:
             self.get_logger().warn("World state was none!")
+        play = self.play_selector.curr_play
+        # if play is not None:
+        # self.debug_callback(
+        # 	self.play_selector.curr_play, play.prioritized_tactics
+        # )
 
     def add_def_areas_to_obs(self, def_area_obstacles, game_info) -> None:
         """Creates and publishes rectangles for the defense area in front of both goals.
