@@ -11,6 +11,11 @@ class BasicSeek(stp.tactic.Tactic):
 
     def __init__(self, world_state: stp.rc.WorldState, num_seekers: int):
         super().__init__(world_state)
+        print(f"length_m: {world_state.field.length_m}")
+        print(f"field len m: {world_state.field.length_m}")
+
+        print(f"width_m: {world_state.field.width_m}")
+        print(f"field width m: {world_state.field.width_m}")
 
         formation = self.get_x_formation(world_state)
         self._used_regions = []
@@ -30,9 +35,9 @@ class BasicSeek(stp.tactic.Tactic):
             )
 
     def get_x_formation(self, world_state: stp.rc.WorldState):
-        y_quarter = world_state.field.floor_length_m / 4
-        y_3quarter = world_state.field.floor_length_m - y_quarter
-        field_y = world_state.field.floor_length_m
+        y_quarter = world_state.field.length_m / 4
+        y_3quarter = world_state.field.length_m - y_quarter
+        field_y = world_state.field.length_m
         box_xright = world_state.field.def_area_x_right_coord
         box_xleft = world_state.field.def_area_x_left_coord
         field_xleft = world_state.field.bot_left_field_loc[0]
