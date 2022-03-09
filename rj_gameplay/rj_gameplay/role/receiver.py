@@ -1,7 +1,7 @@
 import stp.role
 import stp.rc
 
-from rj_gameplay.skill import pass_receive, receive
+from rj_gameplay.skill import receive
 
 from rj_msgs.msg import RobotIntent
 
