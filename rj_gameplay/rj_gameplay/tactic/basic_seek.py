@@ -2,7 +2,7 @@ import stp
 from rj_gameplay.role import seeker
 from typing import List, Tuple
 import numpy as np
-
+from stp.utils.constants import RobotConstants
 from rj_msgs.msg import RobotIntent
 
 
@@ -26,8 +26,8 @@ class BasicSeek(stp.tactic.Tactic):
             self._used_regions.append(my_region)
             centroid = np.array(
                 [
-                    ((my_region[0] + my_region[2]) / 2),
-                    ((my_region[1] + my_region[3]) / 2),
+                    ((my_region[0] + my_region[1]) / 2),
+                    ((my_region[2] + my_region[3]) / 2),
                 ]
             )
             self._role_requests.append(
@@ -57,20 +57,45 @@ class BasicSeek(stp.tactic.Tactic):
 
         """
         Hard Code the Region Bounds
-            -starting with the top left region being the first element, top right, center, bottom left, and then bottom right in order
-            - bounds are ccw from bottom left (left_x, top_y, right_x, bottom_y)
+            - starting with the top left region being the first element, top right, center, bottom left, and then bottom right in order
+            - bounds are x min, x max, y min, y max
         """
         X_formation = [
             # Region 1 bounds
-            (field_xleft, field_y - 1, box_xleft, y_3quarter),
+            (
+                field_xleft + 2 * RobotConstants.RADIUS,
+                box_xleft - 2 * RobotConstants.RADIUS,
+                y_3quarter,
+                field_y - 2 * RobotConstants.RADIUS,
+            ),
             # Region 2 bounds
-            (box_xright, field_y - 1, field_xright, y_3quarter),
+            (
+                box_xright + 2 * RobotConstants.RADIUS,
+                field_xright - 2 * RobotConstants.RADIUS,
+                y_3quarter,
+                field_y - 2 * RobotConstants.RADIUS,
+            ),
             # Region 3 bounds
-            (center_xleft, center_yup, center_xright, center_ydown),
+            (
+                center_xleft,
+                center_xright,
+                center_ydown,
+                center_yup,
+            ),
             # Region 4 bounds
-            (field_xleft, y_quarter, box_xleft, 1),
+            (
+                field_xleft + 2 * RobotConstants.RADIUS,
+                box_xleft - 2 * RobotConstants.RADIUS,
+                0 + 2 * RobotConstants.RADIUS,
+                y_quarter,
+            ),
             # Region 5 bounds
-            (box_xright, y_quarter, field_xright, 1),
+            (
+                box_xright + 2 * RobotConstants.RADIUS,
+                field_xright - 2 * RobotConstants.RADIUS,
+                0 + 2 * RobotConstants.RADIUS,
+                y_quarter,
+            ),
         ]
 
         return X_formation

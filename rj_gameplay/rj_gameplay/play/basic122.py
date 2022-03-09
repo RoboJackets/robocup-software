@@ -57,7 +57,7 @@ class Basic122(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
-                basic_seek.BasicSeek(world_state, 3),
+                basic_seek.BasicSeek(world_state, 1),
             ]
 
             self.assign_roles(world_state)
@@ -72,8 +72,11 @@ class Basic122(stp.play.Play):
             seek_tactic = self.prioritized_tactics[1]
 
             # TODO: is one tick delay issue?
+            # TODO: yes, one tick is issue, see Michael's changes to pass_tactic
+            """
             if seek_tactic.is_done(world_state):
                 self._state = State.INIT_PASS
+            """
 
             return self.get_robot_intents(world_state)
 
