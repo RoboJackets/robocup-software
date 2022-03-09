@@ -149,12 +149,12 @@ class GameplayNode(Node):
     def set_match_state(self, match_state: msg.MatchState):
         self.match_state = match_state
 
-    def debug_callback(self, play: stp.play.IPlay, skills):
+    def debug_callback(self, play: stp.play.IPlay, tactics: list):
         debug_text = ""
         debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
         with np.printoptions(precision=3, suppress=True):
-            for skill in skills:
-                debug_text += f"  {skill}\n"
+            for tactic in tactics:
+                debug_text += f"  {tactic}\n"
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
@@ -240,6 +240,7 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
+            ##self.debug_callback(self.play_selector.curr_play, self.play_selector.curr_play.pr
 
         else:
             self.get_logger().warn("World state was none!")
