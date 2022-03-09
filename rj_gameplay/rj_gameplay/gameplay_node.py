@@ -241,7 +241,7 @@ class GameplayNode(Node):
 
             self.global_obstacles_pub.publish(global_obstacles)
 
-            play = self.play_selector.curr_play.prioritized_tactics
+            play = self.play_selector.curr_play
             if play is not None:
                 self.debug_callback(
                     self.play_selector.curr_play, play.prioritized_tactics
