@@ -3,7 +3,7 @@ import stp
 from rj_gameplay.tactic import wall_tactic, goalie_tactic, nmark_tactic
 import stp.role
 import stp.rc
-from typing import Dict, List, Type
+from typing import Dict, List, Type  # noqa: F401
 from rj_gameplay.calculations import wall_calculations
 
 import stp.role.cost
