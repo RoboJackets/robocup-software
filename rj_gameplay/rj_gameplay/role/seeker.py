@@ -13,40 +13,45 @@ class SeekerRole(stp.role.Role):
 
         super().__init__(robot)
         self.move_skill = None
+        self.target_point = None
         self._my_region = my_region
         self._target_point = None
         self._ticks_since_reassign = 0
 
-    def get_opp_in_region(
-        self, region: Tuple[float, float], world_state: stp.rc.WorldState
-    ) -> List[Tuple[float, float]]:
-        opp_in_region = []
-        # check to see if any opp robot in the region called
-        for opp_robot in world_state.their_robots:
-            x, y = opp_robot.pose[0:2]
-            in_x_bounds = x > region[0] and x < region[1]
-            in_y_bounds = y > region[2] and y < region[3]
-            if in_x_bounds and in_y_bounds:
-                opp_in_region.append(opp_robot)
+    def get_open_point(self, world_state, region: List, centroid) -> np.ndarray:
+        """ """
+        # TODO: docstring
 
-        return opp_in_region
-
-    def get_open_point(
-        self, world_state, region: List, opp_in_region: List, centroid
-    ) -> np.ndarray:
         # max dist from robots (hence negative)
-        relevant_pts = [opp_robot.pose[0:2] for opp_robot in opp_in_region]
+        relevant_pts = [opp_robot.pose[0:2] for opp_robot in world_state.their_robots]
         sum_of_dists = lambda x: -sum(np.linalg.norm(x - pt) for pt in relevant_pts)
-        # min dist to centroid
+        # min to center of region
         min_to_centroid = lambda x: np.linalg.norm(x - centroid)
+        # min to ball, goal
         min_to_ball = lambda x: np.linalg.norm(x - world_state.ball.pos)
         min_to_goal = lambda x: np.linalg.norm(x - world_state.field.their_goal_loc)
+
+        # line-of-sight calculations
+        # (LOS is maximized by making dot product of angle between unit vectors as close to 0 as possible)
+        ball_dir = lambda pos: pos - world_state.ball.pos
+        ball_dir_norm = lambda pos: ball_dir(pos) / np.linalg.norm(ball_dir(pos))
+        opps_to_ball = [
+            ball_dir_norm(opp_robot.pose[0:2]) for opp_robot in world_state.their_robots
+        ]
+        # only opponent robot that most blocks matters here
+        # note that this is in radians
+        max_los = lambda pos: max(
+            np.dot(ball_dir_norm(pos), opp_dir) ** 2 for opp_dir in opps_to_ball
+        )
+
         # linearly combine above
         heuristic = (
-            lambda x: 1.5 * sum_of_dists(x)
-            + 1 * min_to_centroid(x)
-            + 2 * min_to_ball(x)
-            + 1 * min_to_goal(x)
+            lambda x: 0
+            # + 1.5 * sum_of_dists(x)
+            # + 1 * min_to_centroid(x)
+            # + 2 * min_to_ball(x)
+            # + 1 * min_to_goal(x)
+            + 100 * max_los(x)
         )
 
         result = minimize(
@@ -58,8 +63,10 @@ class SeekerRole(stp.role.Role):
         )
 
         # add random noise so it moves back and forth
-        x_noise = np.random.normal(scale=RobotConstants.RADIUS)
-        y_noise = np.random.normal(scale=RobotConstants.RADIUS)
+        # x_noise = np.random.normal(scale=RobotConstants.RADIUS)
+        x_noise = 0
+        y_noise = 0
+        # y_noise = np.random.normal(scale=RobotConstants.RADIUS)
         bestpoint = np.array([result.x[0] + x_noise, result.x[1] + y_noise])
 
         return bestpoint
@@ -71,8 +78,6 @@ class SeekerRole(stp.role.Role):
 
         """
 
-        # find pos of opps in region
-        opp_in_region = self.get_opp_in_region(self._my_region, world_state)
         centroid = np.array(
             [
                 ((self._my_region[0] + self._my_region[1]) / 2),
@@ -82,19 +87,17 @@ class SeekerRole(stp.role.Role):
 
         # find target point w/in region
         # (centroid if no opp in region)
-        if len(opp_in_region) == 0:
+        if self.target_point is None:
             self.target_point = centroid
-        else:
-            # only reassign every so often so robot can reach target pt
-            if self._ticks_since_reassign > 10:
-                self.target_point = self.get_open_point(
-                    world_state, self._my_region, opp_in_region, centroid
-                )
-                self._ticks_since_reassign = 0
+
+        # only reassign every so often so robot can reach target pt
+        if self._ticks_since_reassign > 10:
+            self.target_point = self.get_open_point(
+                world_state, self._my_region, centroid
+            )
+            self._ticks_since_reassign = 0
 
         self._ticks_since_reassign += 1
-
-        # print(self.target_point)
 
         # assign move skill
         self.move_skill = move.Move(
