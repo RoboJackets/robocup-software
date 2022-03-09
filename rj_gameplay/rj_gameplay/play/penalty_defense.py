@@ -21,8 +21,8 @@ class State(Enum):
 
 class PenaltyDefense(stp.play.Play):
     """
-    Play consistas of:
-                    -5 wallers
+    Play consists of:
+                    -5 robots lined up on the side
                     -1 goalie
     The goalie will defend the opponents penalty kick.
     """
@@ -53,7 +53,7 @@ class PenaltyDefense(stp.play.Play):
 class PreparePenaltyDefense(stp.play.Play):
     def __init(self):
         super().__init__()
-        self._state = State.Init
+        self._state = State.INIT
 
     def tick(
         self,
