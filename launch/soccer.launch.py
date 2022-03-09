@@ -23,7 +23,7 @@ def generate_launch_description():
     launch_dir = bringup_dir / "launch"
 
     team_flag = LaunchConfiguration("team_flag", default="-b")
-    sim_flag = LaunchConfiguration("sim_flag", default="-sim")
+    sim_flag = LaunchConfiguration("sim_flag", default="")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     direction_flag = LaunchConfiguration("direction_flag", default="plus")
 
