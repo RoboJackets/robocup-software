@@ -10,9 +10,8 @@ import stp.skill
 from stp.role.assignment.naive import NaiveRoleAssignment
 
 from rj_gameplay.tactic import line_tactic, goalie_tactic
-from rj_gameplay.calculations import wall_calculations
 
-from typing import Dict, List, Tuple, Type
+from typing import List, Tuple
 from enum import Enum, auto
 
 
