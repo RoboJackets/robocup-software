@@ -214,13 +214,22 @@ class GameplayNode(Node):
             assert self.world_state is not None
 
     def gameplay_tick(self) -> None:
+        """
+        Get situation, play from self.play_selector and update the currently running play if needed.
+
+        Then, add field and game_info to world_state, and push global obstacles to motion planning.
+        """
         self.update_world_state()
 
         if self.world_state is not None:
             print(self._curr_situation)
             print(self._curr_play)
             new_situation, new_play = self.play_selector.select(self.world_state)
-            if self._curr_play != new_play or self._curr_situation != new_situation:
+            # TODO: situation analysis sucks
+            # should be something like a Situation class that gives stats like team possession, penalty flags, stops, game score, etc. and lets play selector pick what play is best
+            if type(self._curr_play) != type(new_play) or type(
+                self._curr_situation
+            ) != type(new_situation):
                 self._curr_play = new_play
                 self._curr_situation = new_situation
 

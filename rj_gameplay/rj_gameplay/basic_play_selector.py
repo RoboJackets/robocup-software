@@ -42,7 +42,7 @@ PLAY_DICT = {
     # scramble
     situations.OffensiveScramble: basic122.Basic122,
     situations.MidfieldScramble: basic122.Basic122,
-    situations.DefensiveScramble: basic_defense.BasicDefense,
+    situations.DefensiveScramble: basic122.Basic122,
     # ???
     situations.SaveBall: basic_defense.BasicDefense,
     situations.SaveShot: basic_defense.BasicDefense,
