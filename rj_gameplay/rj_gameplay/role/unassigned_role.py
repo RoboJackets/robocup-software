@@ -1,4 +1,4 @@
-import stp
+import stp.rc
 from rj_msgs.msg import RobotIntent
 
 
@@ -7,7 +7,8 @@ class UnassignedRole(stp.role.Role):
 
     def __init__(self, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
-        print(f"UnassignedRole created for {robot}!")
+        if robot.visible:
+            print(f"UnassignedRole created for {robot}!")
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """Send debug message to prove it is setting UnassignedRole"""
