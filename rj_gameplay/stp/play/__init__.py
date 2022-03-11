@@ -131,7 +131,7 @@ class Play(ABC):
                     - numOfInvisibleRobots
                 )
                 print(
-                    f"Tactic denied: {len(tactic.role_requests)} requested roles, but only {numRobotsAvailable} robots available"
+                    f"Tactic {tactic} denied: {len(tactic.role_requests)} requested roles, but only {numRobotsAvailable} robots available"
                 )
 
         for robot in world_state.our_robots:
