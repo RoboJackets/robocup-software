@@ -53,7 +53,8 @@ class GameplayNode(Node):
         super().__init__("gameplay_node")
 
         # do not change this line, change the test play passed in at bottom of file
-        self.test_play = test_play
+        self._curr_play = test_play
+        self._curr_situation = None
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
@@ -216,11 +217,14 @@ class GameplayNode(Node):
         self.update_world_state()
 
         if self.world_state is not None:
-            if self.test_play is None:
-                curr_situation, curr_play = self.play_selector.select(self.world_state)
-                intents = curr_play.tick(self.world_state)
-            else:
-                intents = self.test_play.tick(self.world_state)
+            print(self._curr_situation)
+            print(self._curr_play)
+            new_situation, new_play = self.play_selector.select(self.world_state)
+            if self._curr_play != new_play or self._curr_situation != new_situation:
+                self._curr_play = new_play
+                self._curr_situation = new_situation
+
+            intents = self._curr_play.tick(self.world_state)
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
@@ -460,7 +464,7 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = basic122.Basic122()
+    test_play = None  # basic122.Basic122()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
