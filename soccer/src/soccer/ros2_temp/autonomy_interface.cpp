@@ -24,7 +24,7 @@ AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executo
     }
 
     gameplay_debug_text_sub_ = node_->create_subscription<std_msgs::msg::String>(
-        gameplay::topics::kDebugTextPub, 1, [this](std_msgs::msg::String::SharedPtr message) {
+        gameplay::topics::debug_text, 1, [this](std_msgs::msg::String::SharedPtr message) {
             context_->behavior_tree = message->data;
         });
 }
