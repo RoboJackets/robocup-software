@@ -19,7 +19,7 @@ class State(Enum):
     INIT_PASSER_CAPTURE = auto()
     PASSER_CAPTURE = auto()
     GET_RECEIVER = auto()
-    POSESSING = auto()
+    POSSESSING = auto()
     SHOOTING = auto()
     INIT_EXECUTE_PASS = auto()
     EXECUTE_PASS = auto()
@@ -90,10 +90,10 @@ class PassTactic(stp.tactic.Tactic):
 
             role_intents = [(passer_role.robot.id, intent)]
 
-            if passer_role.posessing:
-                self._state = State.POSESSING
+            if passer_role.is_possessing:
+                self._state = State.POSSESSING
 
-        elif self._state == State.POSESSING:
+        elif self._state == State.POSSESSING:
             passer_role = self.assigned_roles[0]
             intent = passer_role.tick(world_state)
 
@@ -193,6 +193,14 @@ class PassTactic(stp.tactic.Tactic):
             role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
 
             if receiver_role.is_done(world_state):
+                self._state = State.DONE
+                # end FSM
+
+        elif self._state == State.SHOOTING:
+            passer_role = self.assigned_roles[0]
+            intent = passer_role.tick(world_state)
+
+            if passer_role.is_done(world_state):
                 self._state = State.DONE
                 # end FSM
 

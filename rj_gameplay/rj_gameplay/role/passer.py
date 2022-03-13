@@ -14,10 +14,11 @@ from rj_msgs.msg import RobotIntent
 
 import numpy as np
 
-#TODO add reward to getting to a better shot down the field
+#TODO add reward to getting to a better shot down the field/make pass costing metric more intelligent
 #TODO add dribbling
-#TODO don't score on us
-#TODO fix passing tactic
+#TODO don't pass in the direction of our own goal
+#TODO fix pass tactic
+#TODO adjust cutoff values to account for pass/shot distance
 
 class State(Enum):
     # Initialization
@@ -43,26 +44,31 @@ class BallReleaseState(Enum):
     # Robot no longer has the ball
     FINALIZED = auto()
 
-class DribbleState(Enum):
-    # Robot is not moving
-    CHILLING = auto()
-    # Robot is moving
-    DRIBBLING = auto()
+# class DribbleState(Enum):
+#     # Robot is not moving
+#     CHILLING = auto()
+#     # Robot is moving
+#     DRIBBLING = auto()
 
 
 # Constant for how far a robot can be from the pass line before stopping the pass from occuring
 PASS_DISTANCE_CUTOFF = 0.5
 # Constant for how far from the path of the ball the closest enemy robot can be
-SHOOT_DISTANCE_CUTOFF = 6
+SHOOT_DISTANCE_CUTOFF = 4
 # Number of divisions for finding the best shot on goal
 NUM_DIVISIONS = 15
 # Aggressiveness hyperparameter alters the distance robots are from the robot the farther down the field a robot is (basically aggressiveness weights how
 # much this robot wants to pass down the field)
 AGGRESSIVENESS = 1.01
 # The amount of distance the robot can move
-MOVE_CUTOFF = 0.8
+MOVE_CUTOFF = 0.6
 # The robot should pass if there is pressure on it
-PRESSURE_CUTOFF_DIST = 0.5
+PRESSURE_CUTOFF_DIST = 1
+
+# The final velocity of the ball when it reaches our teammate
+FINAL_VELOCITY = 4
+# Rolling deceleration of the ball after it has been kicked
+BALL_DECELERATION = -0.4
 
 class PasserRole(stp.role.Role):
     def __init__(self, robot: stp.rc.Robot) -> None:
@@ -70,15 +76,15 @@ class PasserRole(stp.role.Role):
 
         self.receive_skill = None
         self.pivot_kick_skill = None
-        self.move_skill = None
-        self.dribbler_on_skill = None
+        # self.move_skill = None
+        # self.dribbler_on_skill = None
 
         self.receive_location = None
 
         self._state = State.INIT
 
         self._ball_state = BallReleaseState.HOLDING
-        self._dribble_state = DribbleState.CHILLING
+        # self._dribble_state = DribbleState.CHILLING
         self._target_robot = None
 
         self._target_point = None
@@ -91,10 +97,10 @@ class PasserRole(stp.role.Role):
         self.rob_pass_dists = []
         self.dist_closest_enemy = np.inf
 
-        self.dribble_target_point = None
+        # self.dribble_target_point = None
 
     @property
-    def possessing(self):
+    def is_possessing(self):
         return self._state == State.POSSESSING
 
     @property
@@ -105,14 +111,13 @@ class PasserRole(stp.role.Role):
     def shoot_ready(self):
         return self._state == State.SHOOTING
 
-    def set_execute_pass(self, target_point):
-        pass
 
     def get_pass_reciever(self) -> int:
         if self._target_robot is not None:
             return self._target_robot.id
         else:
             return None
+
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """
@@ -122,10 +127,10 @@ class PasserRole(stp.role.Role):
          - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
 
-        intent = None
         intent = RobotIntent()
-        print(self._state)
-        print(gameplay_node.NUM_ROBOTS_PER_TEAM)
+        print("state: ", self._state)
+        # print("dribble state: ", self._dribble_state)
+        print("ball state: ", self._ball_state)
 
         # Initialization of pass
         if self._state == State.INIT:
@@ -151,7 +156,7 @@ class PasserRole(stp.role.Role):
 
         # This Robot has the ball
         elif self._state == State.POSSESSING:
-            print("posessing")
+            # print("possessing")
             # Initialize values
             our_vecs, their_vecs = self.calc_displacement_vecs(world_state)
             self.rob_pass_dists = self.calc_min_distance_from_lines(world_state, our_vecs, their_vecs)
@@ -160,71 +165,85 @@ class PasserRole(stp.role.Role):
             move_distance = np.linalg.norm(self.robot.pose[0:2] - self.receive_location)
             closest_defender_distance = self.get_closest_enemy_dist(their_vecs)
             
-            # Hanlde State Transitions #
+            # Handle State Transitions #
             print("best shot: {}".format(self.shot_on_goal[1]))
             print("best pass: {}".format(self.rob_pass_dists[0][best_pass_index]))
+
+            # if enemy robot is far enough away from shot interception line
             if self.shot_on_goal[1] > SHOOT_DISTANCE_CUTOFF:
-                print("shoot")
+                print("decide to shoot")
                 self._target_point = self.shot_on_goal[0]
-                self._ball_state = BallReleaseState.INIT
                 self._state = State.SHOOTING
-                self._dribble_state = DribbleState.CHILLING
-
-            elif closest_defender_distance < PRESSURE_CUTOFF_DIST:
-                print("checking pass")
-                if self.rob_pass_dists[0][best_pass_index] > PASS_DISTANCE_CUTOFF:
-                    print("passing")
-                    self._target_robot = world_state.our_robots[best_pass_index]
-                    self._ball_state = BallReleaseState.INIT
-                    self._state = State.PASSING
-                    self._dribble_state = DribbleState.CHILLING
-
-            elif move_distance > MOVE_CUTOFF:
-                print("passing")
-                self._target_robot = world_state.our_robots[best_pass_index]
                 self._ball_state = BallReleaseState.INIT
+                # self._dribble_state = DribbleState.CHILLING
+
+            else:
+                print("decide to pass")
+                self._target_robot = world_state.our_robots[best_pass_index]
                 self._state = State.PASSING
-                self._dribble_state = DribbleState.CHILLING
+                self._ball_state = BallReleaseState.INIT
 
-            elif self._dribble_state != DribbleState.DRIBBLING:
-                print("I do be dribbling")
-                goal_point = (self.left_goal_post + self.right_goal_post) / 2
-                self.dribble_target_point = (goal_point - self.robot.pose[0:2]) / np.linalg.norm(goal_point - self.robot.pose[0:2])
-                self.dribble_target_point = self.dribble_target_point * 0.5
-                self.dribbler_on_skill = activate_dribbler.ActivateDribbler(self.robot.id)
-                self.move_skill = move.Move(
-                    robot_id=self.robot.id,
-                    target_point=self.dribble_target_point
-                    #target_vel=(self.dribble_target_point - self.robot.pose[0:2]) / np.linalg.norm(self.dribble_target_point - self.robot.pose[0:2])
-                )
-                self._dribble_state = DribbleState.DRIBBLING
+            # # if closest defender is closer to the robot than the cutoff distance
+            # elif closest_defender_distance < PRESSURE_CUTOFF_DIST:
+            #     print("checking pass")
+            #     if self.rob_pass_dists[0][best_pass_index] > PASS_DISTANCE_CUTOFF: # check if opponent can intercept pass to best pass target 
+            #         print("passing")
+            #         self._target_robot = world_state.our_robots[best_pass_index]
+            #         self._ball_state = BallReleaseState.INIT
+            #         self._state = State.PASSING
+            #         self._dribble_state = DribbleState.CHILLING
 
-            elif self._dribble_state == DribbleState.DRIBBLING:
-                print('my position: {}'.format(self.robot.pose[0:2]))
-                print('target_point: {}'.format(self.dribble_target_point))
-                print('dribble_skill.tick')
-                intent = self.dribbler_on_skill.tick(intent=intent)
-                intent = self.move_skill.tick(intent=intent)
+            # # if the robot has dribbled past the cutoff distance
+            # elif move_distance > MOVE_CUTOFF:
+            #     print("passing")
+            #     self._target_robot = world_state.our_robots[best_pass_index]
+            #     self._ball_state = BallReleaseState.INIT
+            #     self._state = State.PASSING
+            #     self._dribble_state = DribbleState.CHILLING
+
+            # elif self._dribble_state != DribbleState.DRIBBLING:
+            #     print("I do be dribbling")
+            #     goal_point = world_state.field.their_goal_loc
+            #     self.dribble_target_point = (goal_point - self.robot.pose[0:2]) / np.linalg.norm(goal_point - self.robot.pose[0:2])
+            #     self.dribble_target_point = self.dribble_target_point * 0.5
+            #     self.dribbler_on_skill = activate_dribbler.ActivateDribbler(self.robot.id)
+            #     self.move_skill = move.Move(
+            #         robot_id=self.robot.id,
+            #         target_point=self.dribble_target_point
+            #         #target_vel=(self.dribble_target_point - self.robot.pose[0:2]) / np.linalg.norm(self.dribble_target_point - self.robot.pose[0:2])
+            #     )
+            #     self._dribble_state = DribbleState.DRIBBLING
+
+            # elif self._dribble_state == DribbleState.DRIBBLING:
+            #     print('my position: {}'.format(self.robot.pose[0:2]))
+            #     print('target_point: {}'.format(self.dribble_target_point))
+            #     print('dribble_skill.tick')
+            #     intent = self.dribbler_on_skill.tick(intent=intent)
+            #     intent = self.move_skill.tick(intent=intent)
             
         # Robot is in passing state
         elif self._state == State.PASSING:
             print("passing")
 
             # Initialize pass
-            print(self._ball_state)
             if self._ball_state == BallReleaseState.INIT:
+                print("initializing pass")
                 self._target_point = self._target_robot.pose[0:2]
+                distance = np.linalg.norm(self._target_point - self.robot.pose[0:2])
+                initial_velocity = np.sqrt(
+                    (FINAL_VELOCITY**2) - (2 * BALL_DECELERATION * distance)
+                )
                 self.pivot_kick_skill = pivot_kick.PivotKick(
                     robot=self.robot,
                     target_point=self._target_point,
                     chip=False,
-                    kick_speed=4.0,  # TODO: adjust based on dist from target_point
+                    kick_speed=initial_velocity,
                 )
                 self._ball_state = BallReleaseState.EXECUTING
 
             # Executing pass
             if self._ball_state == BallReleaseState.EXECUTING:
-                print('executing passing')
+                print('executing pass')
                 intent = self.pivot_kick_skill.tick(world_state)
 
                 if self.pivot_kick_skill.is_done(world_state):
@@ -236,10 +255,15 @@ class PasserRole(stp.role.Role):
             
             # Initialize shot
             if self._ball_state == BallReleaseState.INIT:
+                distance = np.linalg.norm(self._target_point - self.robot.pose[0:2])
+                initial_velocity = np.sqrt(
+                    (FINAL_VELOCITY**2) - (2 * BALL_DECELERATION * distance)
+                )
                 self.pivot_kick_skill = pivot_kick.PivotKick(
                     robot=self.robot,
                     target_point=self._target_point,
                     chip=False,
+                    kick_speed=initial_velocity,
                 )
                 self._ball_state = BallReleaseState.EXECUTING
 
