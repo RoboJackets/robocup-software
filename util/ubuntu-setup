@@ -167,6 +167,12 @@ apt-get install $ARGS $PACKAGES
 python3 -m pip install pip==20.2.4
 pip3 install -r $BASE/util/requirements3.txt
 
+# install pre-commit hooks
+echo "-- Installing pre-commit hook"
+pre-commit install
+# runs pre-commit autoupdate periodically to make sure version (rev) is correct
+pre-commit autoupdate
+
 echo "-- Installing grSim default configuration"
 GRSIM_XML_INSTALL_LOCATION="$HOME/.grsim.xml"
 SOURCE_GRSIM_XML_LOCATION="$BASE"/grsim.xml

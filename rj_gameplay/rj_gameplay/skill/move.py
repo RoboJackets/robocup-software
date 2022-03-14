@@ -9,21 +9,16 @@ import math
 import numpy as np
 from typing import Optional
 
-import stp.skill as skill
+import stp.skill
 import stp.role as role
 import stp.action as action
 from rj_gameplay.action import move
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 import stp.rc as rc
-from rj_msgs import msg
-
-"""
-A skill version of move so that actions don't have to be called in tactics
-"""
 
 
-class Move(skill.ISkill):
+class Move(stp.skill.Skill):
     def __init__(
         self,
         robot: Optional[rc.Robot] = None,
@@ -43,10 +38,13 @@ class Move(skill.ISkill):
         self.ignore_ball = ignore_ball
         self.priority = priority
 
+        self.cached_intent = None
+
         self.__name__ = "Move"
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
+        intent = RobotIntent()
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(
             x=self.target_point[0], y=self.target_point[1]
@@ -64,9 +62,11 @@ class Move(skill.ISkill):
 
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
-        return {self.robot.id: intent}
 
-    def is_done(self, world_state):
+        # TODO: motion planning is a lot more stable when not being spammed with repeat intents, use Action Client/Server to avoid re-requests when the intent is the same
+        return intent
+
+    def is_done(self, world_state: rc.WorldState) -> bool:
         threshold = 0.3
         if self.robot.id is None or world_state is None:
             return False
@@ -86,3 +86,6 @@ class Move(skill.ISkill):
     def __str__(self):
         ignore_ball_str = ", ignoring ball" if self.ignore_ball else ""
         return f"Move(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}{ignore_ball_str})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

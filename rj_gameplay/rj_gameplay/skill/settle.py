@@ -16,27 +16,24 @@ from typing import Optional
 SETTLE_BALL_SPEED_THRESHOLD = 1.0
 
 
-class Settle(skill.ISkill):
-
-    """
-    Robot settles the ball as a receiver
-    """
-
-    # TODO: add move functionality so that robot can move to where the ball is going.
+class Settle(skill.Skill):
+    """First half of a Receive Skill. Slows the ball down to allow Capture planner to work."""
 
     def __init__(self, robot: rc.Robot = None):
         self.robot = robot
 
         self.__name__ = "settle skill"
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
+        intent = RobotIntent()
+
         settle_command = SettleMotionCommand()
         intent.motion_command.settle_command = [settle_command]
         intent.dribbler_speed = 1.0
         intent.is_active = True
 
-        return {self.robot.id: intent}
+        return intent
 
     def is_done(self, world_state) -> bool:
         if self.robot is None:
@@ -48,4 +45,8 @@ class Settle(skill.ISkill):
             return True
         return False
 
-    # TODO: def __str__
+    def __str__(self):
+        return f"Capture(robot={self.robot.id if self.robot is not None else '??'})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Tuple
 import stp.rc as rc
 import stp.tactic as tactic
 import stp.role as role
@@ -8,213 +8,60 @@ import stp.skill as skill
 import numpy as np
 from math import atan2
 
-OPPONENT_SPEED = 1.5
-KICK_SPEED = 4.5
-EFF_BLOCK_WIDTH = 0.7
+from rj_gameplay.role import striker
+import stp
+
+from rj_msgs.msg import RobotIntent
 
 
-def blocker_margin(
-    kick_origin: np.array,
-    kick_target: np.array,
-    kick_speed: float,
-    blocker: rc.Robot,
-):
-    if not blocker.visible:
-        return np.inf
+class StrikerTactic(stp.tactic.Tactic):
+    """
+    Captures ball and shoots. This Tactic merely holds the StrikerRole and handles its assignment for the Play level.
+    """
 
-    kick_vector = kick_target - kick_origin
-    kick_dist = np.linalg.norm(kick_vector)
-    kick_vector /= kick_dist
-    kick_perp = np.array([kick_vector[1], -kick_vector[0]])
+    def __init__(self, world_state: stp.rc.WorldState):
+        super().__init__(world_state)
 
-    blocker_position = blocker.pose[0:2]
-
-    # Calculate blocker intercept
-    blocker_intercept_dist_along_kick = np.dot(
-        blocker_position - kick_origin, kick_vector
-    )
-    blocker_intercept_dist_along_kick = np.clip(
-        blocker_intercept_dist_along_kick, a_min=0, a_max=kick_dist
-    )
-    blocker_intercept = kick_origin + kick_vector * blocker_intercept_dist_along_kick
-
-    blocker_distance = np.clip(
-        np.linalg.norm(blocker_intercept - blocker_position) - EFF_BLOCK_WIDTH,
-        a_min=0.0,
-        a_max=np.inf,
-    )
-
-    blocker_time = np.abs(blocker_distance) / OPPONENT_SPEED
-
-    # Doesn't include friction...oops?
-    ball_time = np.linalg.norm(blocker_intercept - kick_origin) / kick_speed
-
-    return blocker_time - ball_time
-
-
-def kick_cost(
-    point: np.array,
-    kick_speed: float,
-    kick_origin: np.array,
-    world_state: rc.WorldState,
-):
-    margins = [
-        blocker_margin(kick_origin, point, kick_speed, blocker)
-        for blocker in world_state.their_robots
-    ]
-    return -min(margins)
-
-
-def find_target_point(world_state: rc.WorldState, kick_speed) -> np.ndarray:
-    goal_y = world_state.field.length_m
-    cost = 0
-
-    ball_pos = world_state.ball.pos
-
-    # Heuristic: limit where we kick if we're very wide
-    xmin = -0.43
-    xmax = 0.43
-    if abs(ball_pos[0]) > 1:
-        kick_extent = -1 / ball_pos[0]
-        if kick_extent < 0:
-            xmin = np.clip(kick_extent, a_min=xmin, a_max=0)
-        elif kick_extent > 0:
-            xmax = np.clip(kick_extent, a_min=0, a_max=xmax)
-
-    try_points = [np.array([x, goal_y]) for x in np.arange(xmin, xmax, step=0.05)]
-
-    cost, point = min(
-        [
+        self._role_requests.append(
             (
-                kick_cost(point, kick_speed, world_state.ball.pos, world_state),
-                point,
-            )
-            for point in try_points
-        ],
-        key=lambda x: x[0],
-    )
-
-    return point
-
-
-class CaptureCost(role.CostFn):
-    """
-    A cost function for how to choose a robot that will pass
-    """
-
-    def __call__(
-        self,
-        robot: rc.Robot,
-        prev_result: Optional[role.RoleResult],
-        world_state: rc.WorldState,
-    ) -> float:
-        if robot.has_ball_sense:
-            return 0
-        else:
-            robot_pos = robot.pose[0:2]
-            ball_pos = world_state.ball.pos[0:2]
-
-            goal_y = world_state.field.length_m
-            goal_pos = np.array([0.0, goal_y])
-            robot_to_ball = ball_pos - robot_pos
-            # robot_to_ball /= np.linalg.norm(robot_to_ball) + 1e-6
-            ball_to_goal = goal_pos - ball_pos
-            ball_to_goal /= np.linalg.norm(ball_to_goal) + 1e-6
-
-            LINE_KICK_APPROACH_DISTANCE = 0.2
-            target_pos = ball_pos - ball_to_goal * LINE_KICK_APPROACH_DISTANCE
-            dist_to_ball = np.linalg.norm(target_pos - robot_pos)
-
-            switch_cost = 0.0
-            if prev_result is not None and prev_result.is_filled():
-                switch_cost += 1.0 * (prev_result.role.robot.id != robot.id)
-
-            return 10 * dist_to_ball + 0.5 * switch_cost
-
-    def unassigned_cost_fn(
-        self,
-        prev_result: Optional[role.RoleResult],
-        world_state: rc.WorldState,
-    ) -> float:
-
-        # TODO: Implement real unassigned cost function
-        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
-
-
-class StrikerTactic(tactic.ITactic):
-    """
-    A striker tactic which receives then shoots the ball
-    """
-
-    def __init__(self, target_point: np.ndarray, cost: role.CostFn = None):
-        self.cost = cost  # unused
-        self.target_point = target_point
-        self.capture = tactic.SkillEntry(capture.Capture())
-        self.capture_cost = CaptureCost()
-        self.shoot = tactic.SkillEntry(
-            pivot_kick.PivotKick(
-                robot=None,
-                chip=False,
-                kick_speed=KICK_SPEED,
-                target_point=target_point,
-                threshold=0.05,
+                stp.role.cost.PickClosestToPoint(world_state.ball.pos),
+                striker.StrikerRole,
             )
         )
-
-    def compute_props(self):
-        pass
-
-    def create_request(self, **kwargs) -> role.RoleRequest:
-        """
-        Creates a sane default RoleRequest.
-        :return: A list of size 1 of a sane default RoleRequest.
-        """
-        pass
-
-    def get_requests(
-        self, world_state: rc.WorldState, props
-    ) -> List[tactic.RoleRequests]:
-
-        striker_request = role.RoleRequest(
-            role.Priority.MEDIUM, True, self.capture_cost
-        )
-        role_requests: tactic.RoleRequests = {}
-
-        striker = [robot for robot in world_state.our_robots if robot.has_ball_sense]
-
-        if striker:
-            role_requests[self.capture] = []
-            role_requests[self.shoot] = [striker_request]
-        else:
-            role_requests[self.capture] = [striker_request]
-            role_requests[self.shoot] = []
-
-        return role_requests
 
     def tick(
         self,
-        world_state: rc.WorldState,
-        role_results: tactic.RoleResults,
-    ) -> List[tactic.SkillEntry]:
-        """
-        :return: list of skills
-        """
+        world_state: stp.rc.WorldState,
+    ) -> List[Tuple[int, RobotIntent]]:
+        # returns list of (robot_id, robot_intent)
 
-        capture_result = role_results[self.capture]
-        shoot_result = role_results[self.shoot]
+        # assumes all roles requested are filled, because tactic is one unit
+        if len(self.assigned_roles) != len(self._role_requests):
+            self.init_roles(world_state)
 
-        if capture_result and capture_result[0].is_filled():
-            return [self.capture]
-        if shoot_result and shoot_result[0].is_filled():
-            self.shoot.skill.target_point = find_target_point(
-                world_state, kick_speed=KICK_SPEED
-            )
-            return [self.shoot]
+        # if low performance, make this not a for loop since it's only one tactic
+        return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
 
-        return []
+    def is_done(
+        self,
+        world_state: stp.rc.WorldState,
+    ) -> bool:
+        return all([role.is_done(world_state) for role in self.assigned_roles])
 
-    def is_done(self, world_state) -> bool:
-        return self.shoot.skill.is_done(world_state)
+    def init_roles(
+        self,
+        world_state: stp.rc.WorldState,
+    ):
+        robot = self.assigned_robots[0]
+        role = self._role_requests[0][1]
+        if role is striker.StrikerRole:
+            self.assigned_roles.append(role(robot))
+
+    @property
+    def needs_assign(self):
+        # never needs assign after init
+        # TODO: make this + pass tac part of the superclass
+        return False
 
 
 class LineKickStrikerTactic(tactic.ITactic):

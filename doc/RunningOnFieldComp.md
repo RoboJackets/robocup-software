@@ -45,7 +45,7 @@ Then, within rqt:
 Keep focus on the black window (as in, you should click on that window if you
 can't see it). 
 
-WASD to move the robot, QE to pivot, K to kick and C to chip.
+WASD to move the robot, QE to pivot, K to kick and J to chip.
 
 ## Launching Soccer
 
@@ -93,4 +93,6 @@ If our system isn't picking up on vision's input, try:
 
 If the graphical client doesn't show any robots, vision is broken and something
 is terribly wrong. Give an experienced software member a shout.
+
+If you are the experienced member or there is not an experienced member to help, you can try using [this guide](https://github.com/RoboJackets/robocup-computer-config/blob/main/ssl-vision/config-howto.md) in our computer-config repo to fix vision.
 
