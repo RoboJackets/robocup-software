@@ -1,6 +1,18 @@
-#Run pre-commit autoupdate periodically to make sure version (rev) is correct
 repos:
--   repo: https://github.com/psf/black
-    rev: 22.1.0
-    hooks:
-    -   id: black
+- repo: https://github.com/pycqa/isort
+  rev: 5.10.1
+  hooks:
+  - id: isort
+    name: isort (python)
+    args: ["--profile","black"]
+- repo: https://github.com/psf/black
+  rev: 22.1.0
+  hooks:
+  -   id: black
+- repo: local
+  hooks:
+  -   id: pretty-lines
+      name: pretty-lines
+      entry: make pretty-lines #root makefile pretty-lines
+      language: system
+      types: [c++]
