@@ -265,7 +265,6 @@ def robot_creator(
     else:
         is_ours = True
         robot_id = robot_state.id
-        seeker_role
         ball_sense = robot_status.has_ball_sense
         kicker_charged = robot_status.kicker_charged
         kicker_healthy = robot_status.kicker_healthy
