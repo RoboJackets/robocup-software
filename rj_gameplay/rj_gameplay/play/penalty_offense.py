@@ -1,16 +1,13 @@
 from enum import Enum, auto
-from typing import Dict, List, Tuple, Type
+from typing import List
 
-import numpy as np
+from rj_gameplay.tactic import prep_move
+from rj_msgs.msg import RobotIntent
+
 import stp
 import stp.play as play
 import stp.rc as rc
-import stp.role as role
-import stp.skill as skill
 import stp.tactic as tactic
-from rj_msgs.msg import RobotIntent
-
-from rj_gameplay.tactic import goalie_tactic, line_tactic, prep_move, striker_tactic
 
 
 class State(Enum):

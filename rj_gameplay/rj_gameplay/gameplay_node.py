@@ -8,36 +8,29 @@ and allows the PlaySelector to be changed between Test and other forms.
 
 from typing import List, Optional, Tuple
 
-import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSProfile, QoSDurabilityPolicy
-
-from rj_msgs import msg
-from rj_geometry_msgs import msg as geo_msg
-from std_msgs.msg import String as StringMsg
-
-import stp.rc as rc
-import stp.utils.world_state_converter as conv
-import stp.situation as situation
-import stp.skill
-import stp.play
-from stp.action import IAction
-
-import stp.local_parameters as local_parameters
-from stp.global_parameters import GlobalParameterClient
-
 import numpy as np
+import rclpy
+import rj_gameplay.basic_play_selector as basic_play_selector
+from rclpy.node import Node
+from rclpy.qos import QoSDurabilityPolicy, QoSProfile
 from rj_gameplay.action.move import Move
 
 # ignore "unused import" error
-from rj_gameplay.play import (
-    line_up,
-    basic_defense,
-    keepaway,
-    basic122,
+from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,; noqa: F401
     penalty_offense,
-)  # noqa: F401
-import rj_gameplay.basic_play_selector as basic_play_selector
+)
+from rj_geometry_msgs import msg as geo_msg
+from rj_msgs import msg
+from std_msgs.msg import String as StringMsg
+
+import stp.local_parameters as local_parameters
+import stp.play
+import stp.rc as rc
+import stp.situation as situation
+import stp.skill
+import stp.utils.world_state_converter as conv
+from stp.action import IAction
+from stp.global_parameters import GlobalParameterClient
 
 NUM_ROBOTS = 16
 
