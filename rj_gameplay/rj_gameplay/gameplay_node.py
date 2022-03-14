@@ -226,6 +226,7 @@ class GameplayNode(Node):
                 intents = curr_play.tick(self.world_state)
             else:
                 intents = self.test_play.tick(self.world_state)
+                curr_play = test_play
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
@@ -245,7 +246,6 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
-
         else:
             self.get_logger().warn("World state was none!")
 
