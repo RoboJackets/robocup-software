@@ -10,27 +10,27 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 import rclpy
-import rj_gameplay.basic_play_selector as basic_play_selector
-from rclpy.node import Node
-from rclpy.qos import QoSDurabilityPolicy, QoSProfile
-from rj_gameplay.action.move import Move
-
-# ignore "unused import" error
-from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,; noqa: F401
-    penalty_offense,
-)
-from rj_geometry_msgs import msg as geo_msg
-from rj_msgs import msg
-from std_msgs.msg import String as StringMsg
-
 import stp.local_parameters as local_parameters
 import stp.play
 import stp.rc as rc
 import stp.situation as situation
 import stp.skill
 import stp.utils.world_state_converter as conv
+from rclpy.node import Node
+from rclpy.qos import QoSDurabilityPolicy, QoSProfile
+from rj_geometry_msgs import msg as geo_msg
+from rj_msgs import msg
+from std_msgs.msg import String as StringMsg
 from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
+
+import rj_gameplay.basic_play_selector as basic_play_selector
+from rj_gameplay.action.move import Move
+
+# ignore "unused import" error
+from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,; noqa: F401
+    penalty_offense,
+)
 
 NUM_ROBOTS = 16
 

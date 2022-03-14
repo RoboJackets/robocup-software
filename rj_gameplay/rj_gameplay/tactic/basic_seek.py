@@ -1,11 +1,11 @@
 from typing import List, Tuple
 
 import numpy as np
-from rj_gameplay.role import dumb_move, seeker
-from rj_msgs.msg import RobotIntent
-
 import stp
+from rj_msgs.msg import RobotIntent
 from stp.utils.constants import RobotConstants
+
+from rj_gameplay.role import dumb_move, seeker
 
 
 class BasicSeek(stp.tactic.Tactic):

@@ -1,13 +1,13 @@
 from enum import Enum, auto
 from typing import List
 
-from rj_gameplay.tactic import prep_move
-from rj_msgs.msg import RobotIntent
-
 import stp
 import stp.play as play
 import stp.rc as rc
 import stp.tactic as tactic
+from rj_msgs.msg import RobotIntent
+
+from rj_gameplay.tactic import prep_move
 
 
 class State(Enum):
