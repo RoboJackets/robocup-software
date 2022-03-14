@@ -46,7 +46,7 @@ class PenaltyDefense(stp.play.Play):
 
 
 class PreparePenaltyDefense(stp.play.Play):
-    def __init(self):
+    def __init__(self):
         super().__init__()
         self._state = State.INIT
 
