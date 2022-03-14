@@ -154,7 +154,8 @@ class GameplayNode(Node):
         debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
         with np.printoptions(precision=3, suppress=True):
             for tactic in tactics:
-                debug_text += f"  {tactic}\n"
+                debug_text += f"  {type(tactic).__name__}\n"
+        print(debug_text)
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
@@ -221,6 +222,7 @@ class GameplayNode(Node):
                 intents = curr_play.tick(self.world_state)
             else:
                 intents = self.test_play.tick(self.world_state)
+                curr_play = self.test_play
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
@@ -240,13 +242,9 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
+            self.debug_callback(curr_play, curr_play.prioritized_tactics)
         else:
             self.get_logger().warn("World state was none!")
-        play = self.play_selector.curr_play
-        # if play is not None:
-        # self.debug_callback(
-        # 	self.play_selector.curr_play, play.prioritized_tactics
-        # )
 
     def add_def_areas_to_obs(self, def_area_obstacles, game_info) -> None:
         """Creates and publishes rectangles for the defense area in front of both goals.
