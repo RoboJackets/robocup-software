@@ -459,7 +459,7 @@ class Field:
         """
         :return: width of full field (including borders)
         """
-        return self.__width_m + 2 * self__border_m
+        return self.__width_m + 2 * self.__border_m
 
     @property
     def def_area_x_left_coord(self) -> float:

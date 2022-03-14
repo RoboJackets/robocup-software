@@ -1,9 +1,8 @@
 import stp
 import numpy as np
-from typing import List, Tuple
+from typing import List
 from rj_gameplay.skill import move
 from rj_msgs.msg import RobotIntent
-from stp.utils.constants import RobotConstants
 from scipy.optimize import minimize
 
 
@@ -23,9 +22,9 @@ class SeekerRole(stp.role.Role):
         # TODO: docstring
 
         # Heuristics to add complexity to minimize function
-        min_to_centroid = lambda x: np.linalg.norm(x - centroid)
-        min_to_ball = lambda x: np.linalg.norm(x - world_state.ball.pos)
-        min_to_goal = lambda x: np.linalg.norm(x - world_state.field.their_goal_loc)
+        # min_to_centroid = lambda x: np.linalg.norm(x - centroid)
+        # min_to_ball = lambda x: np.linalg.norm(x - world_state.ball.pos)
+        # min_to_goal = lambda x: np.linalg.norm(x - world_state.field.their_goal_loc)
 
         # line-of-sight calculations
         # (LOS is maximized by making dot product of angle between unit vectors as close to 0 as possible)

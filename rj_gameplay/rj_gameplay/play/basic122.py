@@ -69,7 +69,7 @@ class Basic122(stp.play.Play):
 
             # TODO: seekers should be getting open all the time, how fix?
             # should be some time-based method
-            seek_tactic = self.prioritized_tactics[1]
+            # seek_tactic = self.prioritized_tactics[1]
 
             # TODO: is one tick delay issue?
             # TODO: yes, one tick is issue, see Michael's changes to pass_tactic
