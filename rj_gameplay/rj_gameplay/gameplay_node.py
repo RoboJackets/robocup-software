@@ -155,7 +155,6 @@ class GameplayNode(Node):
         with np.printoptions(precision=3, suppress=True):
             for tactic in tactics:
                 debug_text += f"  {type(tactic).__name__}\n"
-        print(debug_text)
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
