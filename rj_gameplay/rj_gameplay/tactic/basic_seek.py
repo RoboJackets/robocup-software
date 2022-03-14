@@ -5,7 +5,7 @@ import stp
 from rj_msgs.msg import RobotIntent
 from stp.utils.constants import RobotConstants
 
-from rj_gameplay.role import dumb_move, seeker
+from rj_gameplay.role import seeker
 
 
 class BasicSeek(stp.tactic.Tactic):
