@@ -42,12 +42,7 @@ class PenaltyDefense(stp.play.Play):
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
         elif self._state == State.ACTIVE:
-            if self.prioritized_tactics[-1].is_done(world_state):
-                self._state = State.DONE
             return self.get_robot_intents(world_state)
-        elif self._state == State.DONE:
-            # TODO: does this state need to exist?
-            return None
 
 
 class PreparePenaltyDefense(stp.play.Play):
@@ -68,6 +63,6 @@ class PreparePenaltyDefense(stp.play.Play):
             if self.prioritized_tactics[-1].is_done(world_state):
                 self._state = State.DONE
             return self.get_robot_intents(world_state)
-        elif self._state == State.Done:
+        elif self._state == State.DONE:
             # TODO: does this state need to exist?
             return None
