@@ -57,7 +57,7 @@ class Basic122(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
-                basic_seek.BasicSeek(world_state, 1),
+                basic_seek.BasicSeek(world_state, 3),
             ]
 
             self.assign_roles(world_state)

@@ -473,7 +473,7 @@ class Field:
         """
         :return: right x coordinate of the defense area
         """
-        return self.__def_area_x_left_coord
+        return self.__def_area_x_right_coord
 
     @property
     def floor_length_m(self) -> float:

@@ -22,12 +22,8 @@ class SeekerRole(stp.role.Role):
         """ """
         # TODO: docstring
 
-        # max dist from robots (hence negative)
-        relevant_pts = [opp_robot.pose[0:2] for opp_robot in world_state.their_robots]
-        sum_of_dists = lambda x: -sum(np.linalg.norm(x - pt) for pt in relevant_pts)
-        # min to center of region
+        # Heuristics to add complexity to minimize function
         min_to_centroid = lambda x: np.linalg.norm(x - centroid)
-        # min to ball, goal
         min_to_ball = lambda x: np.linalg.norm(x - world_state.ball.pos)
         min_to_goal = lambda x: np.linalg.norm(x - world_state.field.their_goal_loc)
 
@@ -45,14 +41,7 @@ class SeekerRole(stp.role.Role):
         )
 
         # linearly combine above
-        heuristic = (
-            lambda x: 0
-            # + 1.5 * sum_of_dists(x)
-            # + 1 * min_to_centroid(x)
-            # + 2 * min_to_ball(x)
-            # + 1 * min_to_goal(x)
-            + 100 * max_los(x)
-        )
+        heuristic = lambda x: 0 + 100 * max_los(x)
 
         result = minimize(
             heuristic,
@@ -62,11 +51,10 @@ class SeekerRole(stp.role.Role):
             options={"maxiter": 1000, "disp": False},
         )
 
-        # add random noise so it moves back and forth
-        # x_noise = np.random.normal(scale=RobotConstants.RADIUS)
+        # noise to add randomness to resultant point if needed
         x_noise = 0
         y_noise = 0
-        # y_noise = np.random.normal(scale=RobotConstants.RADIUS)
+
         bestpoint = np.array([result.x[0] + x_noise, result.x[1] + y_noise])
 
         return bestpoint
@@ -86,7 +74,6 @@ class SeekerRole(stp.role.Role):
         )
 
         # find target point w/in region
-        # (centroid if no opp in region)
         if self.target_point is None:
             self.target_point = centroid
 
