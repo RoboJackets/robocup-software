@@ -31,11 +31,12 @@ class Basic122(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
-
+        """
         self._seek_pts = [
             np.array((2.0, 7.0)),
             np.array((-2.0, 7.0)),
         ]
+        """
 
     def tick(
         self,
@@ -56,8 +57,7 @@ class Basic122(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
-                basic_seek.BasicSeek(self._seek_pts[0], world_state),
-                basic_seek.BasicSeek(self._seek_pts[1], world_state),
+                basic_seek.BasicSeek(world_state, 3),
             ]
 
             self.assign_roles(world_state)
@@ -67,18 +67,24 @@ class Basic122(stp.play.Play):
 
         elif self._state == State.WAIT_TO_PASS:
 
-            seek_1 = self.prioritized_tactics[1]
-            seek_2 = self.prioritized_tactics[2]
+            # TODO: seekers should be getting open all the time, how fix?
+            # should be some time-based method
+            # seek_tactic = self.prioritized_tactics[1]
 
             # TODO: is one tick delay issue?
-            if seek_1.is_done(world_state) and seek_2.is_done(world_state):
+            # TODO: yes, one tick is issue, see Michael's changes to pass_tactic
+            """
+            if seek_tactic.is_done(world_state):
                 self._state = State.INIT_PASS
+            """
 
             return self.get_robot_intents(world_state)
 
         elif self._state == State.INIT_PASS:
             init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
-            init_receiver_cost = stp.role.cost.PickClosestToPoint(self._seek_pts[0])
+            init_receiver_cost = stp.role.cost.PickClosestToPoint(
+                world_state.field.their_goal_loc
+            )
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 pass_tactic.PassTactic(

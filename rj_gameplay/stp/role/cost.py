@@ -44,7 +44,7 @@ class PickClosestToPoint(stp.role.CostFn):
     Can get closest to ball by passing in `world_state.ball.pos`.
     """
 
-    def __init__(self, target_point):
+    def __init__(self, target_point: np.ndarray):
         self._target_point = target_point
 
     def __call__(
