@@ -37,7 +37,7 @@ class BasicDefense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
             self.prioritized_tactics.append(nmark_tactic.NMarkTactic(world_state, 2))
             self.assign_roles(world_state)
             self._state = State.ACTIVE

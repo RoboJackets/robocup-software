@@ -1,11 +1,11 @@
 """This module contains data structures that are robocup specific, ie. Robot, Ball,
 WorldState"""
 
+import warnings
 from enum import Enum
 from typing import List, Optional
 
 import numpy as np
-import warnings
 
 RobotId = Optional[int]
 
@@ -301,6 +301,10 @@ class Field:
         "__goal_flat_m",
         "__floor_length_m",
         "__floor_width_m",
+        "__def_area_x_right_coord",
+        "__def_area_x_left_coord",
+        "__field_x_right_coord",
+        "__field_x_left_coord",
     ]
 
     __length_m: float
@@ -317,6 +321,10 @@ class Field:
     __goal_flat_m: float
     __floor_length_m: float
     __floor_width_m: float
+    __def_area_x_right_coord: float
+    __def_area_x_left_coord: float
+    __field_x_right_coord: float
+    __field_x_left_coord: float
 
     def __init__(
         self,
@@ -349,10 +357,10 @@ class Field:
         self.__goal_flat_m = goal_flat_m
         self.__floor_length_m = floor_length_m
         self.__floor_width_m = floor_width_m
-        # self.__def_area_x_right_coord = def_area_long_dist_m / 2
-        # self.__def_area_x_left_coord = -(def_area_long_dist_m / 2)
-        # self.__field_x_right_coord = floor_width_m / 2
-        # self.__field_x_left_coord = -(floor_width_m / 2)
+        self.__def_area_x_right_coord = def_area_long_dist_m / 2
+        self.__def_area_x_left_coord = -(def_area_long_dist_m / 2)
+        self.__field_x_right_coord = floor_width_m / 2
+        self.__field_x_left_coord = -(floor_width_m / 2)
 
     @property
     def our_goal_loc(self) -> np.ndarray:
