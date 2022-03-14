@@ -226,8 +226,6 @@ class GameplayNode(Node):
                 intents = curr_play.tick(self.world_state)
             else:
                 intents = self.test_play.tick(self.world_state)
-                curr_play = test_play
-
             if intents:
                 for i in range(len(self.world_state.our_robots)):
                     if intents[i] is not None:
