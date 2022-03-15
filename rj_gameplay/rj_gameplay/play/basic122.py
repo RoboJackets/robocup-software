@@ -1,14 +1,12 @@
+import time
+from enum import Enum, auto
 from typing import List
 
+import numpy as np
 import stp
-
-from rj_gameplay.tactic import pass_tactic, basic_seek, goalie_tactic, striker_tactic
-
 from rj_msgs.msg import RobotIntent
 
-from enum import Enum, auto
-
-import numpy as np
+from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
 
 
 class State(Enum):
@@ -31,12 +29,7 @@ class Basic122(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
-        """
-        self._seek_pts = [
-            np.array((2.0, 7.0)),
-            np.array((-2.0, 7.0)),
-        ]
-        """
+        self._st_time = time.time()
 
     def tick(
         self,
@@ -73,10 +66,9 @@ class Basic122(stp.play.Play):
 
             # TODO: is one tick delay issue?
             # TODO: yes, one tick is issue, see Michael's changes to pass_tactic
-            """
-            if seek_tactic.is_done(world_state):
+            # after x seconds, pass
+            if time.time() - self._st_time >= 5:
                 self._state = State.INIT_PASS
-            """
 
             return self.get_robot_intents(world_state)
 
