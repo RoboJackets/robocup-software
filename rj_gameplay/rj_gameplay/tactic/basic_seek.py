@@ -1,9 +1,11 @@
-import stp
-from rj_gameplay.role import seeker
 from typing import List, Tuple
+
 import numpy as np
-from stp.utils.constants import RobotConstants
+import stp
 from rj_msgs.msg import RobotIntent
+from stp.utils.constants import RobotConstants
+
+from rj_gameplay.role import seeker
 
 
 class BasicSeek(stp.tactic.Tactic):
@@ -112,7 +114,10 @@ class BasicSeek(stp.tactic.Tactic):
         # returns list of (robot_id, robot_intent)
 
         # assumes all roles requested are filled, because tactic is one unit
-        if len(self.assigned_roles) != len(self._role_requests):
+        if (
+            len(self.assigned_roles) != len(self._role_requests)
+            and self.assigned_robots
+        ):
             self.init_roles(world_state)
 
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]

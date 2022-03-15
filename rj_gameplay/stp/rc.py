@@ -1,11 +1,11 @@
 """This module contains data structures that are robocup specific, ie. Robot, Ball,
 WorldState"""
 
+import warnings
 from enum import Enum
 from typing import List, Optional
 
 import numpy as np
-import warnings
 
 RobotId = Optional[int]
 
