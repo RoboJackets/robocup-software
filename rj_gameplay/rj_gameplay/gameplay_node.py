@@ -191,7 +191,8 @@ class GameplayNode(Node):
         """
         Create game info object from Game State message
         """
-        if self.play_state is not None and self.match_state is not None:
+        if self.play_state is not None and self.match_state is not None \
+            and self.our_team_info is not None and self.their_team_info is not None:
             return conv.build_game_info(self.play_state, self.match_state,
                                         self.our_team_info, self.their_team_info)
         return None

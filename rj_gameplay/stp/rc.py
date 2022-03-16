@@ -490,7 +490,7 @@ class GameInfo:
     __restart: GameRestart
     __our_restart: bool
     __ball_placement: np.array
-    __game_score: np.array[int]
+    __game_score: np.array
 
     def __init__(
         self,
@@ -499,7 +499,7 @@ class GameInfo:
         restart: GameRestart,
         our_restart: bool,
         ball_placement: np.array,
-        game_score: np.array[int]
+        game_score: np.array
     ):
         self.__period = period
         self.__state = state
@@ -558,7 +558,7 @@ class GameInfo:
         return not self.__our_restart
     
     @property
-    def game_score(self) -> np.array[int]:
+    def game_score(self) -> np.array:
         """
         :return: The game score
         """
