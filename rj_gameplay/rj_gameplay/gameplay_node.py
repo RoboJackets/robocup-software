@@ -8,30 +8,29 @@ and allows the PlaySelector to be changed between Test and other forms.
 
 from typing import List, Optional, Tuple
 
+import numpy as np
 import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSProfile, QoSDurabilityPolicy
-
-from rj_msgs import msg
-from rj_geometry_msgs import msg as geo_msg
-from std_msgs.msg import String as StringMsg
-
+import stp.local_parameters as local_parameters
+import stp.play
 import stp.rc as rc
-import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.skill
-import stp.play
+import stp.utils.world_state_converter as conv
+from rclpy.node import Node
+from rclpy.qos import QoSProfile
+from rj_geometry_msgs import msg as geo_msg
+from rj_msgs import msg
+from std_msgs.msg import String as StringMsg
 from stp.action import IAction
-
-import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 
-import numpy as np
+import rj_gameplay.basic_play_selector as basic_play_selector
 from rj_gameplay.action.move import Move
 
 # ignore "unused import" error
-from rj_gameplay.play import line_up, basic_defense, keepaway, basic122  # noqa: F401
-import rj_gameplay.basic_play_selector as basic_play_selector
+from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,; noqa: F401
+    penalty_offense,
+)
 
 NUM_ROBOTS = 16
 
@@ -149,12 +148,15 @@ class GameplayNode(Node):
     def set_match_state(self, match_state: msg.MatchState):
         self.match_state = match_state
 
-    def debug_callback(self, play: stp.play.IPlay, tactics: list):
+    def debug_callback(self, play: stp.play.IPlay, skills):
+        """
+        Publishes information about the current play to the /gameplay/debug_text topic which prints to the behavior tree UI
+        """
         debug_text = ""
         debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
         with np.printoptions(precision=3, suppress=True):
-            for tactic in tactics:
-                debug_text += f"  {type(tactic).__name__}\n"
+            for skill in skills:
+                debug_text += f"  {skill}\n"
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
@@ -221,7 +223,6 @@ class GameplayNode(Node):
                 intents = curr_play.tick(self.world_state)
             else:
                 intents = self.test_play.tick(self.world_state)
-                curr_play = self.test_play
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
@@ -241,7 +242,7 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
-            self.debug_callback(curr_play, curr_play.prioritized_tactics)
+
         else:
             self.get_logger().warn("World state was none!")
 
@@ -461,7 +462,7 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = basic122.Basic122()
+    test_play = penalty_offense.PenaltyOffense()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
