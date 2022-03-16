@@ -71,8 +71,8 @@ class Tactic(ABC):
         # never needs assign after init
         return False
 
-    def __repr__():
+    def __repr__(self):
         text = ""
-        text += f"{self.__class__.__name}\n"
+        text += f"{self.__class__.__name__}\n"
         text += f"\tRoles Requested: {' ,'.join(_role_requests)}\n"
         text += f"\tRoles Assigned: {' ,'.join(assigned_roles)}"
