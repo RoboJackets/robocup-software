@@ -1,18 +1,17 @@
-from abc import ABC, abstractmethod
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
 import sys
 import time
+from abc import ABC, abstractmethod
 
-import stp.skill as skill
-import stp.role as role
-import stp.action as action
-from rj_gameplay.action import intercept
-from stp.skill.action_behavior import ActionBehavior
-import stp.rc as rc
 import numpy as np
+import py_trees
+import stp.action as action
+import stp.rc as rc
+import stp.role as role
+import stp.skill as skill
+from stp.skill.action_behavior import ActionBehavior
+
+import rj_gameplay.eval as eval
 
 
 class IIntercept(skill.ISkill, ABC):
