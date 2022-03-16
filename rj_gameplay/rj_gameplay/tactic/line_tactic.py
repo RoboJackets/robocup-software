@@ -8,7 +8,7 @@ from rj_gameplay.role import dumb_move
 
 
 class LineTactic(stp.tactic.Tactic):
-    """Tactic for line up play that puts all six robots in a line on the left of the field.
+    """Tactic for line up play that puts chosen robots in a line from start point to end point selected.
     Assuming that the liners are more than 2"""
 
     def __init__(
@@ -34,22 +34,6 @@ class LineTactic(stp.tactic.Tactic):
                 (stp.role.cost.PickClosestToPoint(target), dumb_move.DumbMove)
             )
 
-        print(self.target_points)
-
-        # TODO: make the # here a param instead of hardcoding for same reason as above TODO
-        # self.move_points = [(start[0], start[1] + i * dy) for i in range(6)]
-
-        # # request closest robot every pt
-        # for pt in self.move_points:
-        #     # for some reason stp.role doesn't need to be imported?
-        #     self._role_requests.append(
-        #         (stp.role.cost.PickClosestToPoint(pt), dumb_move.DumbMove)
-        #     )
-
-        # OR hardcode certain ids to go
-        # for i, pt in enumerate(self.move_points):
-        #     self._role_requests.append((stp.role.cost.PickRobotById(5-i), dumb_move.DumbMove))
-
     def tick(
         self,
         world_state: stp.rc.WorldState,
@@ -67,7 +51,8 @@ class LineTactic(stp.tactic.Tactic):
         self,
         world_state: stp.rc.WorldState,
     ) -> bool:
-        return all([role.is_done(world_state) for role in self.assigned_roles])
+        return False
+        # return all([role.is_done(world_state) for role in self.assigned_roles])
 
     def init_roles(
         self,
