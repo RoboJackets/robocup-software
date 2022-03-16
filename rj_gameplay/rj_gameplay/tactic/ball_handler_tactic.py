@@ -1,0 +1,244 @@
+from ast import Pass
+from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from rj_gameplay.role import ball_move, striker, passer
+from rj_gameplay.skill.receive import Receive
+
+import stp
+
+from rj_gameplay.role import receiver, passer
+import numpy as np
+
+import stp.global_parameters as global_parameters
+
+from rj_msgs.msg import RobotIntent
+
+
+from enum import Enum, auto
+
+
+class State(Enum):
+    INIT = auto()
+    INIT_TICK = auto()
+    BALL_SECURE = auto()
+    POSSESSING = auto()
+    INIT_PASS = auto()
+    INIT_PASS_TICK = auto()
+    PASS = auto()
+    AWAIT_PASSER_KICK = auto()
+    PASS_IN_TRANSIT = auto()
+    PASS_IN_TRANSIT_TICK = auto()
+    INIT_RECEIVE = auto()
+    INIT_RECEIVE_TICK = auto()
+    RECEIVE = auto()
+    INIT_SHOOT = auto()
+    INIT_SHOOT_TICK = auto()
+    SHOOT = auto()
+    DONE = auto()
+
+
+class BallHandlerTactic(stp.tactic.Tactic):
+    def __init__(
+        self,
+        world_state: stp.rc.WorldState,
+        init_cost: stp.role.cost,
+        init_receiver_cost: stp.role.cost,
+    ):
+        super().__init__(world_state)
+
+        self._state = State.INIT
+
+        self._init_cost = init_cost
+        self._init_receiver_cost = init_receiver_cost
+
+    def init_roles(self, world_state: stp.rc.WorldState) -> None:
+        self.assigned_roles = []
+        for i, robot in enumerate(self.assigned_robots):
+            role = self._role_requests[i][1]
+            if role is passer.PasserRole:
+                self.assigned_roles.append(role(robot))
+            elif role is receiver.ReceiverRole:
+                self.assigned_roles.append(role(robot))
+            elif role is striker.StrikerRole:
+                self.assigned_roles.append(role(robot))
+            elif role is ball_move.BallMoveRole:
+                self.assigned_roles.append(role(robot))
+
+    def tick(
+        self, world_state: stp.rc.WorldState
+    ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
+        """
+        FSM
+         - init: request passer
+         - on filled req: init_roles > tick passer's capture
+         - when passer ready to pass: request receiver
+         - on filled req: init_roles > tick passer pass
+         - on ball passed: tick receiver, release passer role
+         - when receiver done: done
+        """
+
+        role_intents = []
+
+        if self._state == State.INIT:
+            self._role_requests = [
+                (
+                    self._init_cost,
+                    ball_move.BallMoveRole,
+                )
+            ]
+            self._needs_assign = True
+            self._state = State.INIT_TICK
+
+        elif self._state == State.INIT_TICK:
+            if len(self.assigned_roles) == 1:
+                self.init_roles(world_state)
+                self._state = State.BALL_SECURE
+
+        elif self._state == State.BALL_SECURE:
+            # TODO: these lines are a little ugly, any fix?
+            ball_move_role = self.assigned_roles[0]
+            intent = ball_move_role.tick(world_state)
+
+            role_intents = [(ball_move_role.robot.id, intent)]
+
+            if ball_move_role.ready:
+                self._state = State.POSSESSING
+
+        elif self._state == State.POSSESSING:
+            # ball_move_role = self.assigned_roles[0]
+            # intent = ball_move_role.tick(world_state)
+
+            # role_intents = [(ball_move_role.robot.id, intent)]
+
+            rand_num = np.random.randint(2)
+            print("random num: {}".format(rand_num))
+            if rand_num == 0:
+                self._state = State.INIT_PASS
+            else:
+                print("SHOOOOOOOOOOOOOTTTTTTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                self._state = State.INIT_SHOOT
+        
+        elif self._state == State.INIT_SHOOT:
+            self._role_requests = [
+                (
+                    self._init_cost, 
+                    striker.StrikerRole
+                )
+            ]
+
+            self._needs_assign = True
+            self._state = State.INIT_SHOOT_TICK
+
+        elif self._state == State.INIT_SHOOT_TICK:
+            if len(self.assigned_roles) == 1:
+                self.init_roles(world_state)
+                self._state = State.SHOOT
+
+        elif self._state == State.INIT_PASS:
+
+            self._role_requests = [
+                (self._init_cost, passer.PasserRole),
+                (self._init_receiver_cost, receiver.ReceiverRole)
+            ]
+            self._needs_assign = True
+            self._state = State.INIT_PASS_TICK
+            # decided to get receiver early to allow more coordination in theory, currently not written in
+            # TODO: evaluate whether this is a dumb idea or not
+
+        elif self._state == State.INIT_PASS_TICK:
+            # Wait until play assignment assigns the needed 2 roles
+            if len(self.assigned_roles) == 2:
+                self.init_roles(world_state)
+                self._state = State.PASS
+
+        elif self._state == State.PASS:
+            # TODO: these lines are a little ugly, any fix?
+            passer_role = self.assigned_roles[0]
+            receiver_role = self.assigned_roles[1]
+
+            # TODO: create func to find good target point
+            # TODO: should update receiver_role robot every tick in the role (see skill/capture.py)
+            target_point = world_state.our_robots[receiver_role.robot.id].pose[0:2]
+            passer_role.set_execute_pass(target_point)
+
+            role_intents = [
+                (passer_role.robot.id, passer_role.tick(world_state)),
+                (receiver_role.robot.id, receiver_role.tick(world_state)),
+            ]
+
+            self._state = State.AWAIT_PASSER_KICK
+
+        elif self._state == State.AWAIT_PASSER_KICK:
+            # TODO: these lines are a little ugly, any fix?
+            passer_role = self.assigned_roles[0]
+            receiver_role = self.assigned_roles[1]
+
+            role_intents = [
+                (passer_role.robot.id, passer_role.tick(world_state)),
+                (receiver_role.robot.id, receiver_role.tick(world_state)),
+            ]
+
+            if passer_role.is_done(world_state):
+                self._state = State.PASS_IN_TRANSIT
+
+        elif self._state == State.PASS_IN_TRANSIT:
+            receiver_role = self.assigned_roles[1]
+            print(receiver_role.robot.id)
+
+            # TODO: here, we assume the initially picked Receiver is the best one
+            # this may not be true (i.e. when intercept planning is bad and the ball does not get captured by the first receiver)
+            # the receiver then should be reassigned to closest to ball
+            # maybe check some is_done()?
+            self._role_requests = [
+                (
+                    stp.role.cost.PickRobotById(receiver_role.robot.id),
+                    receiver.ReceiverRole,
+                )
+            ]
+            self._needs_assign = True
+            self._state = State.PASS_IN_TRANSIT_TICK
+
+        elif self._state == State.PASS_IN_TRANSIT_TICK:
+            # Wait until play assignment assigns the needed 1 roles
+            if len(self.assigned_roles) == 1:
+                self.init_roles(world_state)
+                self._state = State.INIT_RECEIVE
+
+        elif self._state == State.INIT_RECEIVE:
+
+            # TODO: these lines are a little ugly, any fix?
+            receiver_role = self.assigned_roles[0]
+            receiver_role.set_receive_pass()
+
+            role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
+
+            self._state = State.RECEIVE
+
+        elif self._state == State.RECEIVE:
+            receiver_role = self.assigned_roles[0]
+
+            role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
+
+            if receiver_role.is_done(world_state):
+                self._state = State.DONE
+                # end FSM
+
+        elif self._state == State.SHOOT:
+            striker_role = self.assigned_roles[0]
+
+            role_intents = [(striker_role.robot.id, striker_role.tick(world_state))]
+
+            if striker_role.is_done:
+                self._state = State.DONE
+
+
+        return role_intents
+
+    @property
+    def needs_assign(self):
+        # style is wrong here: this convoluted way of returning self._needs_assign is necessary because we want to set it to False after the call, always
+        ret = self._needs_assign == True  # noqa: E712
+        self._needs_assign = False
+        return ret
+
+    def is_done(self, world_state: stp.rc.WorldState) -> bool:
+        return self._state == State.DONE

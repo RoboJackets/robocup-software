@@ -103,6 +103,7 @@ class Play(ABC):
                 # Checking to see if any robot can fullfill a specific role request in a specific tactic
                 for robot in world_state.our_robots:
                     if robot in used_robots or robot in robots_for_tactic:
+                        print("robot is being used: {}".format(robot.id))
                         continue
                     if not robot.visible:
                         numOfInvisibleRobots += 1
@@ -114,7 +115,7 @@ class Play(ABC):
 
                 # Occurs if all other visible robots already have a role
                 if cheapest_robot is None:
-                    print(f"RoleRequest ({role}, {cost_fn}) was not assigned")
+                    #print(f"RoleRequest ({role}, {cost_fn}) was not assigned")
                     robots_for_tactic = None
                     break
                 robots_for_tactic.append(cheapest_robot)

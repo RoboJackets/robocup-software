@@ -9,7 +9,8 @@ class UnassignedRole(stp.role.Role):
         """Send debug message to prove it is setting UnassignedRole"""
         super().__init__(robot)
         if robot.visible:
-            print(f"UnassignedRole created for {robot}!")
+            #print(f"UnassignedRole created for {robot}!")
+            pass
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         return None
