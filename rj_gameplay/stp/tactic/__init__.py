@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Any
+from typing import Any, List, Tuple
 
 import stp.rc
 import stp.role
-
 from rj_msgs.msg import RobotIntent
 
 
@@ -71,3 +70,9 @@ class Tactic(ABC):
     def needs_assign(self):
         # never needs assign after init
         return False
+
+    def __repr__():
+        text = ""
+        text += f"{self.__class__.__name}\n"
+        text += f"\tRoles Requested: {' ,'.join(_role_requests)}\n"
+        text += f"\tRoles Assigned: {' ,'.join(assigned_roles)}"
