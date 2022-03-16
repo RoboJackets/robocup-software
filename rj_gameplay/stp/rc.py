@@ -482,6 +482,7 @@ class GameInfo:
         "__restart",
         "__our_restart",
         "__ball_placement",
+        "__game_score"
     ]
 
     __period: GamePeriod
@@ -489,6 +490,7 @@ class GameInfo:
     __restart: GameRestart
     __our_restart: bool
     __ball_placement: np.array
+    __game_score: np.array[int]
 
     def __init__(
         self,
@@ -497,12 +499,14 @@ class GameInfo:
         restart: GameRestart,
         our_restart: bool,
         ball_placement: np.array,
+        game_score: np.array[int]
     ):
         self.__period = period
         self.__state = state
         self.__restart = restart
         self.__our_restart = our_restart
         self.__ball_placement = ball_placement
+        self.__game_score = game_score
 
     @property
     def period(self) -> GamePeriod:
@@ -552,6 +556,13 @@ class GameInfo:
             return False  # Is returning this dangerous?
 
         return not self.__our_restart
+    
+    @property
+    def game_score(self) -> np.array[int]:
+        """
+        :return: The game score
+        """
+        return self.__game_score  # 0 for our score, 1 for opponent score
 
     def is_stopped(self) -> bool:
         """

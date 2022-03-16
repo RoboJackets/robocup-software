@@ -69,12 +69,21 @@ class GameplayNode(Node):
 
         self.play_state = None
         self.match_state = None
+        self.our_team_info = None
+        self.their_team_info = None
         self.play_state_sub = self.create_subscription(
             msg.PlayState, "referee/play_state", self.set_play_state, 10
         )
         self.match_state_sub = self.create_subscription(
             msg.MatchState, "referee/match_state", self.set_match_state, 10
         )
+        self.our_team_info_sub = self.create_subscription(
+            msg.TeamInfo, "referee/our_team", self.set_our_team_info, 10
+        )
+        self.their_team_info_sub = self.create_subscription(
+            msg.TeamInfo, "referee/their_team", self.set_their_team_info, 10
+        )
+
 
         keep_latest = QoSProfile(
             depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL
@@ -147,6 +156,12 @@ class GameplayNode(Node):
 
     def set_match_state(self, match_state: msg.MatchState):
         self.match_state = match_state
+    
+    def set_our_team_info(self, our_team_info: msg.TeamInfo):
+        self.our_team_info = our_team_info
+    
+    def set_their_team_info(self, their_team_info: msg.TeamInfo):
+        self.their_team_info = their_team_info
 
     def debug_callback(self, play: stp.play.IPlay, skills):
         debug_text = ""
@@ -177,7 +192,8 @@ class GameplayNode(Node):
         Create game info object from Game State message
         """
         if self.play_state is not None and self.match_state is not None:
-            return conv.build_game_info(self.play_state, self.match_state)
+            return conv.build_game_info(self.play_state, self.match_state,
+                                        self.our_team_info, self.their_team_info)
         return None
 
     def create_field(self, msg: msg.FieldDimensions) -> None:
