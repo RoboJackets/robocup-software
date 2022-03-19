@@ -94,6 +94,16 @@ class Play(ABC):
         for tactic in self.prioritized_tactics:
             # Will temporarily hold tactic roles. If any roles cannot be filled, the list will be emptied and an error debug message appears
             robots_for_tactic = []
+            # temp
+            # get robot 0 and assign to only tactic
+            robot_0 = world_state.our_robots[0]
+            while not robot_0.visible:
+                print(world_state.our_robots)
+            tactic.set_assigned_robots([robot_0])
+            self.approved_prioritized_tactics.append(tactic)
+            tactic.init_roles(world_state)
+            return
+
             for cost_fn, role in tactic.role_requests:
                 min_cost = 1e9
                 cheapest_robot = None
@@ -119,6 +129,7 @@ class Play(ABC):
                     break
                 robots_for_tactic.append(cheapest_robot)
 
+            print(world_state.our_robots)
             if robots_for_tactic is not None:
                 used_robots.update(robots_for_tactic)
                 tactic.set_assigned_robots(robots_for_tactic)

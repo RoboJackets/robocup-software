@@ -52,7 +52,7 @@ def generate_launch_description():
             DeclareLaunchArgument("headless_flag", default_value=""),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             stdout_linebuf_envvar,
-            grsim,
+            #grsim,
             soccer,
         ]
     )
