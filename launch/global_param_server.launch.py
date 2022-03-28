@@ -8,7 +8,7 @@ import launch_ros.actions
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+        get_package_share_directory("rj_robocup"), "config", "soccer-real.cfg"
     )
     return LaunchDescription(
         [

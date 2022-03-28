@@ -6,7 +6,7 @@
 //
 // Vision:  Shared or simulated.
 //    Shared vision is the system used in competition.  It sends multicast data
-//    to 224.5.20.2 port 10002.
+//    to 224.5.23.2 port 10002.
 //    Simulated vision is sent by our simulator to 127.0.0.1 ports 10000 and
 //    10001.
 //      The data sent to the two simulated vision ports is identical
