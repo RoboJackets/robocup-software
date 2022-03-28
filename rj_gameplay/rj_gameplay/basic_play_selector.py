@@ -7,7 +7,6 @@ import stp.rc as rc
 import stp.situation as situation
 
 import rj_gameplay.play as plays
-import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 from rj_gameplay.play import (
     basic_defense,
@@ -168,31 +167,19 @@ class HeuristicInformation:
 
 
 class BasicPlaySelector(situation.IPlaySelector):
-    """Play selector that returns a play based on the situation from analyzer.
-
-    Currently configured to take in only one play per situation. Situation to play mapping is determined in PLAY_DICT constant above. (This means using this class requires importing the whole file, rather than just the class.)
+    """Play selector that returns a play and situation based on world state
+    (see select method)
     """
 
     def __init__(self):
         self.curr_situation = None
         self.curr_play = None
 
-    """    def select(
-        self, world_state: rc.WorldState
-    ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
-
-
-        elif analyzer.__calc_ball_pos()
-        if world_state.game_info is not None:
-            self.curr_situation = self.analyzer.analyze_situation(world_state)
-
-
-        return (self.curr_situation, self.curr_play)"""
-
     def select(
         self, world_state: stp.rc.WorldState
     ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
-        """Returns the best situation for the current world state based on a hardcoded
+        """Returns the best situation and play
+        for the current world state based on a hardcoded
         decision tree.
         :param world_state: The current state of the world.
         :param game_info: The information about the state of the game.
@@ -201,8 +188,10 @@ class BasicPlaySelector(situation.IPlaySelector):
         game_info = world_state.game_info
         heuristics = HeuristicInformation(world_state, game_info)
 
+        # TODO: add new plays here as created,
+        #  for now will be commented out
         """if game_info.state == stp.rc.GameState.STOP:
-            return dt.plays.Stop()
+            return situations.Stop()
         elif game_info.is_restart():
             return self.__analyze_restart(world_state, heuristics)"""
         if world_state.game_info is None and self.curr_play is None:
@@ -214,3 +203,69 @@ class BasicPlaySelector(situation.IPlaySelector):
             return (situations.BasicOffense, basic_offense.BasicOffense())
         elif heuristics.ball_pos == BallPos.THEIR_BALL:
             return (situations.BasicDefense, basic_defense.BasicDefense())
+
+    @staticmethod
+    def __analyze_restart(
+        world_state: stp.rc.WorldState,
+        heuristics: HeuristicInformation,
+    ) -> stp.situation.ISituation:
+        game_info = world_state.game_info
+        if game_info.is_kickoff():
+            if game_info.our_restart:
+                if game_info.is_setup():
+                    return situations.PrepareKickoff()
+                elif game_info.is_ready():
+                    return situations.Kickoff()
+            else:
+                return situations.DefendKickoff()
+
+        elif game_info.is_penalty():
+            if game_info.our_restart:
+                if game_info.is_setup():
+                    return situations.PreparePenalty()
+                else:
+                    return situations.Penalty()
+            else:
+                if game_info.is_setup() or game_info.is_ready():
+                    return situations.PrepareDefendPenalty()
+                else:
+                    return situations.DefendPenalty()
+
+        elif game_info.is_direct():
+            if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
+                if game_info.our_restart:
+                    return situations.OffensiveKickDirect()
+                else:
+                    return situations.DefendRestartOffensiveDirect()
+            elif heuristics.field_loc == FieldLoc.MIDFIELD:
+                if game_info.our_restart:
+                    return situations.MidfieldKickDirect()
+                else:
+                    return situations.DefendRestartMidfieldDirect()
+            elif heuristics.field_loc == FieldLoc.DEFEND_SIDE:
+                if game_info.our_restart:
+                    return situations.Restart()
+            else:
+                raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
+
+        elif game_info.is_indirect():
+            if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
+                if game_info.our_restart:
+                    return situations.OffensiveKick()
+                else:
+                    return situations.DefendRestartOffensive()
+            elif heuristics.field_loc == FieldLoc.MIDFIELD:
+                if game_info.our_restart:
+                    return situations.MidfieldKick()
+                else:
+                    return situations.DefendRestartMidfield()
+            elif heuristics.field_loc == FieldLoc.DEFEND_SIDE:
+                if game_info.our_restart:
+                    return situations.DefensiveKick()
+                else:
+                    return situations.DefendRestartDefensive()
+            else:
+                raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
+
+        elif game_info.is_free_placement():
+            return situations.Stop()
