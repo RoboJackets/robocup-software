@@ -27,13 +27,16 @@ class Intercept(skill.Skill):
         self.__name__ = "intercept skill"
 
     def get_intercept_pt(self, world_state: rc.WorldState, my_robot: np.ndarray) -> np.ndarray:
+        """
+        Gets the closest point on the linear trajectory of the ball to the intercepting robot
+        Does this by projecting the ball to robot vector onto the subspace spanned by the ball's velocity vector
+        """
         pos = world_state.ball.pos
         vel = world_state.ball.vel
 
         ball_dir = vel / (np.linalg.norm(vel) + 1e-6)
 
         ball_to_bot = pos - my_robot.pose[:1]
-        # ball_to_bot_unt = ball_to_bot / (np.linalg.norm(ball_to_bot) + 1e-6)
         intercept_pt = np.dot(ball_to_bot, ball_dir)*ball_dir
 
         return intercept_pt
