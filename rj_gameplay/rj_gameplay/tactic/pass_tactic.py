@@ -1,16 +1,13 @@
+from enum import Enum, auto
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
-import stp
-
-from rj_gameplay.role import receiver, passer
 import numpy as np
-
+import stp
 import stp.global_parameters as global_parameters
-
+import stp.role.cost
 from rj_msgs.msg import RobotIntent
 
-
-from enum import Enum, auto
+from rj_gameplay.role import passer, receiver
 
 
 class State(Enum):
