@@ -118,6 +118,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 self._state = State.INIT_SHOOT
         
         elif self._state == State.INIT_SHOOT:
+            print('init shoot')
             self._role_requests = [
                 (
                     self._init_cost, 
@@ -129,6 +130,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
             self._state = State.INIT_SHOOT_TICK
 
         elif self._state == State.INIT_SHOOT_TICK:
+            print('init shoot tick')
             if len(self.assigned_roles) == 1:
                 self.init_roles(world_state)
                 self._state = State.SHOOT
@@ -151,6 +153,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 self._state = State.PASS
 
         elif self._state == State.PASS:
+            print('passing')
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
             receiver_role = self.assigned_roles[1]
@@ -223,11 +226,12 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 # end FSM
 
         elif self._state == State.SHOOT:
+            print('shooting')
             striker_role = self.assigned_roles[0]
 
             role_intents = [(striker_role.robot.id, striker_role.tick(world_state))]
 
-            if striker_role.is_done:
+            if striker_role.is_done(world_state):
                 self._state = State.DONE
 
 
