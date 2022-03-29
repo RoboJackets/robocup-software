@@ -12,7 +12,6 @@ from rj_geometry_msgs.msg import Point
 import stp.skill as skill
 import stp.role as role
 import stp.rc as rc
-from typing import Optional
 
 SETTLE_BALL_SPEED_THRESHOLD = 1.0
 INTERCEPT_ANGLE_THRESHOLD = 2*np.pi / 36
@@ -39,7 +38,6 @@ class Intercept(skill.Skill):
 
         return intercept_pt
 
-
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
         intent = RobotIntent()
@@ -63,6 +61,9 @@ class Intercept(skill.Skill):
         return intent
 
     def is_done(self, world_state) -> bool:
+        """
+        Check if the intercepting robot has the ball, or the ball is slow and the robot is on the path of the ball.
+        """
         if self.robot is None:
             return False
 
@@ -73,8 +74,8 @@ class Intercept(skill.Skill):
         angle = np.arccos(dot_prod)
         if (
             world_state.our_robots[self.robot.id].has_ball_sense
-            or np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD
-            or angle < INTERCEPT_ANGLE_THRESHOLD
+            or (np.linalg.norm(world_state.ball.vel) < SETTLE_BALL_SPEED_THRESHOLD
+            and angle < INTERCEPT_ANGLE_THRESHOLD)
         ):
             return True
         return False
