@@ -225,7 +225,7 @@ class GameplayNode(Node):
         if self.world_state is not None:
             new_situation, new_play = self.play_selector.select(self.world_state)
 
-            if type(self._curr_play) != type(new_play) or type(
+            if type(self._curr_play) is not type(new_play) or type(
                 self._curr_situation
             ) != type(new_situation):
                 self._curr_play = new_play

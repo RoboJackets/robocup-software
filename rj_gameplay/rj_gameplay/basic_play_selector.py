@@ -31,6 +31,7 @@ class BallPos(Enum):
     OUR_BALL = 1
     FREE_BALL = 2
     THEIR_BALL = 3
+    CONTEST_BALL = 4
 
 
 class FieldLoc(Enum):
@@ -54,8 +55,10 @@ class HeuristicInformation:
 
     def __init__(self, world_state: stp.rc.WorldState, game_info: stp.rc.GameInfo):
         self.field_loc = self.__calc_field_loc(world_state, game_info)
-        self.ball_pos = self.__calc_ball_pos(world_state, game_info)
+        self.ball_pos = self.__calc_ball_poss(world_state, game_info)
         self.is_pileup = self.__calc_pileup(world_state, game_info)
+        if self.is_pileup:
+            self.ball_pos = BallPos.CONTEST_BALL
 
     @staticmethod
     def __calc_field_loc(
@@ -79,7 +82,7 @@ class HeuristicInformation:
             return FieldLoc.MIDFIELD
 
     @staticmethod
-    def __calc_ball_pos(
+    def __calc_ball_poss(
         world_state: stp.rc.WorldState, game_info: stp.rc.GameInfo
     ) -> BallPos:
         """Computes the current ball possession.
@@ -87,6 +90,7 @@ class HeuristicInformation:
         :param game_info:
         :return: The current BallPos.
         """
+
         for our_bot in world_state.our_robots:
             if (
                 our_bot.has_ball_sense
@@ -203,6 +207,14 @@ class BasicPlaySelector(situation.IPlaySelector):
             return (situations.BasicOffense, basic_offense.BasicOffense())
         elif heuristics.ball_pos == BallPos.THEIR_BALL:
             return (situations.BasicDefense, basic_defense.BasicDefense())
+        elif heuristics.ball_pos == BallPos.CONTEST_BALL:
+            if (
+                heuristics.ball_pos == BallPos.CONTEST_BALL
+                and heuristics.field_loc == FieldLoc.ATTACK_SIDE
+            ):
+                return (situations.OffensiveScramble, basic_offense.BasicOffense())
+            else:
+                return (situations.DefensiveScramble, basic_defense.BasicDefense())
 
     @staticmethod
     def __analyze_restart(
@@ -245,25 +257,6 @@ class BasicPlaySelector(situation.IPlaySelector):
             elif heuristics.field_loc == FieldLoc.DEFEND_SIDE:
                 if game_info.our_restart:
                     return situations.Restart()
-            else:
-                raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
-
-        elif game_info.is_indirect():
-            if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
-                if game_info.our_restart:
-                    return situations.OffensiveKick()
-                else:
-                    return situations.DefendRestartOffensive()
-            elif heuristics.field_loc == FieldLoc.MIDFIELD:
-                if game_info.our_restart:
-                    return situations.MidfieldKick()
-                else:
-                    return situations.DefendRestartMidfield()
-            elif heuristics.field_loc == FieldLoc.DEFEND_SIDE:
-                if game_info.our_restart:
-                    return situations.DefensiveKick()
-                else:
-                    return situations.DefendRestartDefensive()
             else:
                 raise RuntimeError("Unknown field_loc {}".format(heuristics.field_loc))
 
