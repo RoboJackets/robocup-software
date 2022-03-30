@@ -2,19 +2,14 @@ import argparse
 import math
 import sys
 import time
-from abc import ABC, abstractmethod
 from typing import Optional
 
 import numpy as np
-import py_trees
 import stp.action as action
 import stp.rc as rc
-import stp.role as role
 import stp.skill
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import PathTargetMotionCommand, RobotIntent
-
-import rj_gameplay.eval as eval
 
 
 class Move(stp.skill.Skill):

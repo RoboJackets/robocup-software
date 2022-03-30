@@ -1,8 +1,6 @@
 # import robocup
 import math
 
-import stp.rc as rc
-
 # for degrees->rad or reverse, use np.deg2rad or np.rad2deg)
 OUR_CHIP_ROLL = 3  # Average distance at which a ball is slow enough to capture
 THEIR_CHIPPING = (0.1, 0.8)

@@ -1,18 +1,14 @@
 import argparse
 import sys
 import time
-from abc import ABC, abstractmethod
 from enum import Enum, auto
 
 import numpy as np
-import py_trees
 import stp.rc as rc
-import stp.role as role
 import stp.skill as skill
 from rj_msgs.msg import RobotIntent
 from stp.utils.constants import RobotConstants
 
-import rj_gameplay.eval as eval
 from rj_gameplay.skill import capture, kick, pivot
 
 

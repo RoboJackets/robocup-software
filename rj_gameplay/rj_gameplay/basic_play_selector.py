@@ -4,7 +4,6 @@ import stp
 import stp.rc as rc
 import stp.situation as situation
 
-import rj_gameplay.play as plays
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
 from rj_gameplay.play import (
