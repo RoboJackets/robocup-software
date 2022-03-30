@@ -8,6 +8,7 @@ and allows the PlaySelector to be changed between Test and other forms.
 
 from typing import List, Optional, Tuple
 
+import numpy as np
 import rclpy
 import stp.local_parameters as local_parameters
 import stp.play

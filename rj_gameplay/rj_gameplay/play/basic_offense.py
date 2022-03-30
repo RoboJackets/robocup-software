@@ -1,7 +1,6 @@
 from enum import Enum, auto
 from typing import List
 
-import numpy as np
 import stp
 from rj_msgs.msg import RobotIntent
 
