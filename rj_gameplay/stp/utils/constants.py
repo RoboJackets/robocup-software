@@ -1,6 +1,7 @@
 # import robocup
-import stp.rc as rc
 import math
+
+import stp.rc as rc
 
 # for degrees->rad or reverse, use np.deg2rad or np.rad2deg)
 OUR_CHIP_ROLL = 3  # Average distance at which a ball is slow enough to capture
@@ -47,18 +48,6 @@ class BallConstants:
 
 class EvaluationConstants:
     SLOW_THRESHOLD = 1
-    SETTLE_BALL_SPEED_THRESHOLD = 1.0
-
-
-class KickConstants:
-    KICK_DOT_THRESHOLD = 0.4
-    KICK_BALL_SPEED_THRESHOLD = 0.9
-
-
-class GoalieConstants:
-    MIN_WALL_RAD = 0
-    GOALIE_PCT_TO_BALL = 0.15
-    DIST_TO_FAST_KICK = 7
 
 
 # for field dimensions, use world_state.field (see /stp/rc.py for details)

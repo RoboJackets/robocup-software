@@ -1,19 +1,18 @@
 """This module contains the interface and action for kick."""
 
 from abc import ABC, abstractmethod
-
-import stp.role as role
-import stp.action as action
-import numpy as np
-import stp.rc as rc
 from typing import Optional
-from rj_msgs.msg import RobotIntent, EmptyMotionCommand
-from rj_geometry_msgs.msg import Point
-from rj_gameplay.MAX_KICK_SPEED import *
-from stp.utils.constants import KickConstants
 
-KICK_DOT_THRESHOLD = KickConstants.KICK_DOT_THRESHOLD
-KICK_BALL_SPEED_THRESHOLD = KickConstants.KICK_BALL_SPEED_THRESHOLD
+import numpy as np
+import stp.action as action
+import stp.rc as rc
+import stp.role as role
+from rj_geometry_msgs.msg import Point
+from rj_msgs.msg import EmptyMotionCommand, RobotIntent
+
+KICK_DOT_THRESHOLD = 0.4
+KICK_BALL_SPEED_THRESHOLD = 0.9
+from rj_gameplay.MAX_KICK_SPEED import *
 
 
 class Kick(action.IAction):  # add ABC if needed
