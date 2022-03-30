@@ -1,14 +1,10 @@
+from enum import Enum, auto
 from typing import List
 
 import stp
-
-from rj_gameplay.tactic import pass_tactic, basic_seek, goalie_tactic, striker_tactic
-
 from rj_msgs.msg import RobotIntent
 
-from enum import Enum, auto
-
-import numpy as np
+from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
 
 
 class State(Enum):
@@ -22,7 +18,7 @@ class State(Enum):
     DONE = auto()
 
 
-class Basic122(stp.play.Play):
+class BasicOffense(stp.play.Play):
     """Basic play to score goals. Set up two flank and one center handler. Pass ball as needed.
     See tick() for more details.
     """
