@@ -1,21 +1,23 @@
-import stp.situation as situation
+from typing import Optional, Tuple
+
 import stp
 import stp.rc as rc
+import stp.situation as situation
+
+import rj_gameplay.play as plays
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
-import rj_gameplay.play as plays
 from rj_gameplay.play import (
     basic122,
     basic_defense,
-    defensive_clear,
     defend_restart,
-    restart,
+    defensive_clear,
     kickoff_play,
     penalty_defense,
     penalty_offense,
     prep_penalty_offense,
+    restart,
 )
-from typing import Tuple, Optional
 
 # TODO: Put new plays into the dict properly
 # TODO: Create different dictionaries for different playbooks
@@ -23,12 +25,12 @@ PLAY_DICT = {
     situations.PrepareKickoff: kickoff_play.PrepareKickoffPlay,
     situations.Kickoff: basic122.Basic122,
     situations.DefendKickoff: kickoff_play.DefendKickoffPlay,
-    situations.DefendRestartOffensive: defend_restart.DefendRestart,
-    situations.DefendRestartMidfield: defend_restart.DefendRestart,
-    situations.DefendRestartDefensive: defend_restart.DefendRestart,
-    situations.DefendRestartOffensiveDirect: defend_restart.DefendRestart,
-    situations.DefendRestartMidfieldDirect: defend_restart.DefendRestart,
-    situations.DefendRestartDefensiveDirect: defend_restart.DefendRestart,
+    situations.DefendRestartOffensive: basic_defense.BasicDefense,
+    situations.DefendRestartMidfield: basic_defense.BasicDefense,
+    situations.DefendRestartDefensive: basic_defense.BasicDefense,
+    situations.DefendRestartOffensiveDirect: basic_defense.BasicDefense,
+    situations.DefendRestartMidfieldDirect: basic_defense.BasicDefense,
+    situations.DefendRestartDefensiveDirect: basic_defense.BasicDefense,
     situations.Clear: defensive_clear.DefensiveClear,
     situations.DefendClear: defensive_clear.DefensiveClear,
     situations.DefendGoal: basic_defense.BasicDefense,
@@ -51,14 +53,14 @@ PLAY_DICT = {
     situations.PreparePenalty: prep_penalty_offense.PreparePenaltyOffense,
     situations.DefendPenalty: penalty_defense.PenaltyDefense,
     situations.PrepareDefendPenalty: penalty_defense.PreparePenaltyDefense,
-    situations.OffensiveKick: restart.RestartPlay,
-    situations.DefensiveKick: restart.RestartPlay,
-    situations.MidfieldKick: restart.RestartPlay,
-    situations.OffensiveKickDirect: restart.DirectRestartPlay,
-    situations.DefensiveKickDirect: restart.DirectRestartPlay,
-    situations.MidfieldKickDirect: restart.DirectRestartPlay,
+    situations.OffensiveKick: basic_defense.BasicDefense,
+    situations.DefensiveKick: basic_defense.BasicDefense,
+    situations.MidfieldKick: basic_defense.BasicDefense,
+    situations.OffensiveKickDirect: basic_defense.BasicDefense,
+    situations.DefensiveKickDirect: basic_defense.BasicDefense,
+    situations.MidfieldKickDirect: basic_defense.BasicDefense,
     situations.GoalieClear: defensive_clear.DefensiveClear,
-    situations.Stop: defend_restart.DefendRestart,
+    situations.Stop: basic_defense.BasicDefense,
 }
 
 
