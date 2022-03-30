@@ -359,8 +359,8 @@ class Field:
         self.__floor_width_m = floor_width_m
         self.__def_area_x_right_coord = def_area_long_dist_m / 2
         self.__def_area_x_left_coord = -(def_area_long_dist_m / 2)
-        self.__field_x_right_coord = floor_width_m / 2
-        self.__field_x_left_coord = -(floor_width_m / 2)
+        self.__field_x_right_coord = width_m / 2
+        self.__field_x_left_coord = -(width_m / 2)
 
     @property
     def our_goal_loc(self) -> np.ndarray:
@@ -408,15 +408,15 @@ class Field:
         :return: the list of points for opponent defense area locations
         """
         opp_defense_area = [
-            [self.__def_area_x_left_coord, self.__floor_length_m],
-            [self.__def_area_x_right_coord, self.__floor_length_m],
+            [self.__def_area_x_left_coord, self.__length_m],
+            [self.__def_area_x_right_coord, self.__length_m],
             [
                 self.__def_area_x_left_coord,
-                self.__floor_length_m - self.__def_area_short_dist_m,
+                self.__length_m - self.__def_area_short_dist_m,
             ],
             [
                 self.__def_area_x_right_coord,
-                self.__floor_length_m - self.__def_area_short_dist_m,
+                self.__length_m - self.__def_area_short_dist_m,
             ],
         ]
         return opp_defense_area
@@ -428,7 +428,7 @@ class Field:
         Note: each coordinate starts from top left and continues normal order
         :return: the location of the top left corner of the field
         """
-        return np.array([self.__field_x_left_coord, self.__floor_length_m])
+        return np.array([self.__field_x_left_coord, self.__length_m])
 
     @property
     def top_right_field_loc(self) -> np.ndarray:
@@ -436,7 +436,7 @@ class Field:
         Conveniance function for getting the top left corner field location
         :return: the location of the top left corner of the field
         """
-        return np.array([self.__field_x_right_coord, self.__floor_length_m])
+        return np.array([self.__field_x_right_coord, self.__length_m])
 
     @property
     def bot_left_field_loc(self) -> np.ndarray:
@@ -457,9 +457,9 @@ class Field:
     @property
     def floor_width_m(self) -> float:
         """
-        :return: check on this one
+        :return: width of full field (including borders)
         """
-        return self.__floor_width_m
+        return self.__width_m + 2 * self.__border_m
 
     @property
     def def_area_x_left_coord(self) -> float:
@@ -473,14 +473,14 @@ class Field:
         """
         :return: right x coordinate of the defense area
         """
-        return self.__def_area_x_left_coord
+        return self.__def_area_x_right_coord
 
     @property
     def floor_length_m(self) -> float:
         """
-        :return: check on this one
+        :return: length of full field (including borders)
         """
-        return self.__floor_length_m
+        return self.__length_m + 2 * self.__border_m
 
     @property
     def goal_flat_m(self) -> float:
