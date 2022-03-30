@@ -1,19 +1,18 @@
-from abc import ABC, abstractmethod
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
 import sys
 import time
-import numpy as np
+from abc import ABC, abstractmethod
 
-import stp.skill as skill
-import stp.role as role
+import numpy as np
+import py_trees
 import stp.action as action
-from rj_geometry_msgs.msg import Point
-from rj_msgs.msg import RobotIntent, LineKickMotionCommand
 import stp.rc as rc
-from rj_gameplay.MAX_KICK_SPEED import *
+import stp.role as role
+import stp.skill as skill
+from rj_geometry_msgs.msg import Point
+from rj_msgs.msg import LineKickMotionCommand, RobotIntent
+
+import rj_gameplay.eval as eval
 
 
 class ILineKickSkill(skill.ISkill, ABC):
