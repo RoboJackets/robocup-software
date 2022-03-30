@@ -59,10 +59,7 @@ class LineKickSkill(ILineKickSkill):
             else RobotIntent.SHOOT_MODE_CHIP
         )
         intent.trigger_mode = RobotIntent.TRIGGER_MODE_ON_BREAK_BEAM
-        if self.kick_speed <= MAX_KICK_SPEED:
-            intent.kick_speed = self.kick_speed
-        else:
-            intent.kick_speed = MAX_KICK_SPEED
+        intent.kick_speed = self.kick_speed
 
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True
