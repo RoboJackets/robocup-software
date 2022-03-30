@@ -27,7 +27,7 @@ from stp.global_parameters import GlobalParameterClient
 import rj_gameplay.basic_play_selector as basic_play_selector
 
 # ignore "unused import" error
-from rj_gameplay.play import basic122, basic_defense, keepaway, line_up  # noqa: F401
+from rj_gameplay.play import basic122, basic_defense, keepaway  # noqa: F401
 
 NUM_ROBOTS = 16
 
