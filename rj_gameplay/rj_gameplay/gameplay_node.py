@@ -8,7 +8,6 @@ and allows the PlaySelector to be changed between Test and other forms.
 
 from typing import List, Optional, Tuple
 
-import numpy as np
 import rclpy
 import stp.local_parameters as local_parameters
 import stp.play
@@ -17,7 +16,7 @@ import stp.situation as situation
 import stp.skill
 import stp.utils.world_state_converter as conv
 from rclpy.node import Node
-from rclpy.qos import QoSDurabilityPolicy, QoSProfile
+from rclpy.qos import QoSProfile
 from rj_geometry_msgs import msg as geo_msg
 from rj_msgs import msg
 from std_msgs.msg import String as StringMsg
