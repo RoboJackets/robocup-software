@@ -148,10 +148,13 @@ class GameplayNode(Node):
 
     def debug_callback(self, play: stp.play.IPlay, tactics: list):
         debug_text = ""
-        debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
+        debug_text += (
+            f"PLay Selector: {type(self.play_selector.curr_situation).__name__}\n"
+        )
+        debug_text += f"Play: {type(play).__name__}({play._state.name})\n\n"
         with np.printoptions(precision=3, suppress=True):
-            for tactic in tactics:
-                debug_text += f"  {tactic}\n"
+            for i, tactic in enumerate(tactics):
+                debug_text += f"{i+1}. {tactic}\n\n"
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:

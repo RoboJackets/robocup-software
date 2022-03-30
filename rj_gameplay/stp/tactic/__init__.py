@@ -1,3 +1,4 @@
+import itertools
 from abc import ABC, abstractmethod
 from typing import Any, List, Tuple
 
@@ -73,6 +74,22 @@ class Tactic(ABC):
 
     def __repr__(self):
         text = ""
-        text += f"{self.__class__.__name__}\n"
-        text += f"\tRoles Requested: {' ,'.join(_role_requests)}\n"
-        text += f"\tRoles Assigned: {' ,'.join(assigned_roles)}"
+        text += f"{self.__class__.__name__}:\n"
+        text += f"Role Requested: "
+        if self._role_requests:
+            temp = [
+                f"({cost.__class__.__name__}, {role.__name__})"
+                for cost, role in self._role_requests
+            ]
+            text += str(temp)
+        text += f"\nRoles Assigned: "
+        if self.assigned_roles:
+            text += str(
+                [
+                    f"({role.__class__.__name__}, {robot.id})"
+                    for role, robot in itertools.zip_longest(
+                        self.assigned_roles, self.assigned_robots
+                    )
+                ]
+            )
+        return text

@@ -13,7 +13,7 @@ pylint # static checker for python
 mypy == 0.770 # static arugment checker. Pinned to 0.770 because something is broken with 0.780
 
 yapf # python checker
-black # python style autoformatter
+black == 21.12b0 # python style autoformatter
 isort # python import sorted
 typing-extensions # For TypedDict
 cmake_format
