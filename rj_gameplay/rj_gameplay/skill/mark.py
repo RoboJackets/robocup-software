@@ -1,22 +1,21 @@
+import argparse
+import math
+import sys
+import time
 from abc import ABC, abstractmethod
 from typing import Callable, Optional
 
-import rj_gameplay.eval as eval
-import argparse
-import py_trees
-import sys
-import time
 import numpy as np
-import math
-
-import stp.skill as skill
-import stp.role as role
+import py_trees
 import stp.action as action
 import stp.rc as rc
+import stp.role as role
+import stp.skill as skill
 from stp.utils.constants import RobotConstants
-from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
 
+import rj_gameplay.eval as eval
 from rj_geometry_msgs.msg import Point, Segment
+from rj_msgs.msg import PathTargetMotionCommand, RobotIntent
 
 
 def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
@@ -74,6 +73,7 @@ class Mark(skill.ISkill):
 
     def tick(self, world_state: rc.WorldState):
         intent = RobotIntent()
+        mark_point = np.array([0.0, 0.0])
         if world_state and world_state.ball.visible:
             if self.target_robot is None:
                 mark_point = get_mark_point(1, world_state)
@@ -97,7 +97,6 @@ class Mark(skill.ISkill):
                 Point(x=self.face_point[0], y=self.face_point[1])
             ]
 
-        intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
         return intent
         # update target point every tick to match movement of ball & target robot
