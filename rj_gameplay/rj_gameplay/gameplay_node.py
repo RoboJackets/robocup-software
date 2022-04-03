@@ -471,7 +471,7 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = line_up.LineUp()
+    test_play = basic_offense.BasicOffense()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)

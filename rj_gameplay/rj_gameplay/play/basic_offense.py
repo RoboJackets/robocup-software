@@ -1,8 +1,10 @@
 from enum import Enum, auto
 from typing import List
 
+import numpy as np
 import stp
 from rj_msgs.msg import RobotIntent
+from stp.utils.formations import Formations
 
 from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
 
@@ -53,7 +55,9 @@ class BasicOffense(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
-                basic_seek.BasicSeek(world_state, 3),
+                basic_seek.BasicSeek(
+                    world_state, 3, Formations(world_state).get_x_formation
+                ),
             ]
 
             self.assign_roles(world_state)

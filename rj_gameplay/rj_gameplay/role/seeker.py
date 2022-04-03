@@ -1,9 +1,12 @@
-import stp
-import numpy as np
 from typing import List
-from rj_gameplay.skill import move
+
+import numpy as np
+import stp
 from rj_msgs.msg import RobotIntent
 from scipy.optimize import minimize
+from stp.utils.formations import Formations
+
+from rj_gameplay.skill import move
 
 
 class SeekerRole(stp.role.Role):
@@ -65,12 +68,7 @@ class SeekerRole(stp.role.Role):
 
         """
 
-        centroid = np.array(
-            [
-                ((self._my_region[0] + self._my_region[1]) / 2),
-                ((self._my_region[2] + self._my_region[3]) / 2),
-            ]
-        )
+        centroid = Formations(world_state).get_centroid(self._my_region)
 
         # find target point w/in region
         if self.target_point is None:
