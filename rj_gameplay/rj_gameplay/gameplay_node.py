@@ -56,6 +56,8 @@ class GameplayNode(Node):
         # do not change this line, change the test play passed in at bottom of file
         self._curr_play = test_play
         self._curr_situation = None
+        # force test play to overwrite play selector if given
+        self._using_test_play = test_play is not None
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
@@ -222,13 +224,15 @@ class GameplayNode(Node):
         self.update_world_state()
 
         if self.world_state is not None:
-            new_situation, new_play = self.play_selector.select(self.world_state)
+            if not self._using_test_play:
+                new_situation, new_play = self.play_selector.select(self.world_state)
 
-            if type(self._curr_play) is not type(new_play) or type(
-                self._curr_situation
-            ) != type(new_situation):
-                self._curr_play = new_play
-                self._curr_situation = new_situation
+                # if play/situation hasn't changed, keep old play
+                if type(self._curr_play) is not type(new_play) or type(
+                    self._curr_situation
+                ) != type(new_situation):
+                    self._curr_play = new_play
+                    self._curr_situation = new_situation
 
             intents = self._curr_play.tick(self.world_state)
 
