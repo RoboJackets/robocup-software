@@ -37,11 +37,11 @@ Coordinates one or more Roles at a high level. Generates Role Requests. (e.g. Pa
 
 **Play - `rj_gameplay/play/`**
 
-Coordinates all robots on the field for a given situation. Gets role requests from its tactics, then assigns them according to the cost functions of those role requests. (Examples: Basic122, Basic Defense)
+Coordinates all robots on the field for a given situation. Gets role requests from its tactics, then assigns them according to the cost functions of those role requests. (Examples: Basic Offense, Basic Defense)
 
 The general flow of how a RobotIntent (or specific command for the robot) is created as follows:
 
-GameplayNode -> SituationAnalyzer -> Play (selected based on situation) -> Tactic(s) -> Role(s) -> Skill(s)
+GameplayNode -> Play Analysis/Selector -> Play (selected based on situation) -> Tactic(s) -> Role(s) -> Skill(s)
 
 The RobotIntent for a given robot is then passed back up the chain to GameplayNode, and sent via ROS to the C++ stack.
 
@@ -53,7 +53,7 @@ ROS node that links gameplay to the C++ side of our codebase. Gets world\_state
 and status of all robots, and sends motion commands to ROS.  (This second
 function will be replaced by ROS Actions soon.)
 
-Uses SituationAnalyzer to select the best play to run, calling tick() on the
+Uses basic_play_selector to select the best play to run, calling tick() on the
 play to get the list of skills, then ticking all of the resulting skills.
 
 All currently working plays are in the import at the top of `gameplay_node.py`. Change the `test_play` variable at the bottom of this file to run a test play.
