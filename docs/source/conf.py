@@ -17,12 +17,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'RoboJackets RoboCup SSL'
-copyright = '2022, Michael Rodyushkin'
-author = 'Michael Rodyushkin'
+project = "RoboJackets RoboCup SSL"
+copyright = "2022, Michael Rodyushkin"
+author = "Michael Rodyushkin"
 
 # The full version, including alpha/beta/rc tags
-release = '1.0'
+release = "1.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -33,7 +33,7 @@ release = '1.0'
 extensions = ["breathe"]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -74,4 +74,3 @@ html_logo = "_static/RoboBuzz.svg"
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
-

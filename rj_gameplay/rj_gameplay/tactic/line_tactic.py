@@ -1,6 +1,8 @@
-import stp
-from rj_gameplay.role import dumb_move
 from typing import List, Tuple
+
+import stp
+
+from rj_gameplay.role import dumb_move
 from rj_msgs.msg import RobotIntent
 
 
@@ -19,7 +21,6 @@ class LineTactic(stp.tactic.Tactic):
         dy = 0.5
         # TODO: make the # here a param instead of hardcoding for same reason as above TODO
         self.move_points = [(start[0], start[1] + i * dy) for i in range(num_lined_up)]
-
 
         # request closest robot every pt
         for pt in self.move_points:
