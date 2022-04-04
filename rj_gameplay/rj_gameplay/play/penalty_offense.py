@@ -8,7 +8,7 @@ import stp.rc as rc
 import stp.tactic as tactic
 from rj_msgs.msg import RobotIntent
 
-from rj_gameplay.tactic import line_tactic, prep_move
+from rj_gameplay.tactic import line_tactic, prep_move, striker_tactic
 
 
 class State(Enum):
