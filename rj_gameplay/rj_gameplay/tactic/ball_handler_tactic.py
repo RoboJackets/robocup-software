@@ -44,6 +44,8 @@ AGGRESSIVENESS = 1.01
 # the angle cutoff for people intersepting passes or shots
 CUTOFF_ANGLE = math.cos(math.pi / 10)
 
+# NOTE: Change number on line 50 of capture.py back to 1.3
+
 class BallHandlerTactic(stp.tactic.Tactic):
     def __init__(
         self,
@@ -84,6 +86,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
          - on ball passed: tick receiver, release passer role
          - when receiver done: done
         """
+        print(self._state)
 
         role_intents = []
 
@@ -119,10 +122,12 @@ class BallHandlerTactic(stp.tactic.Tactic):
             role_intents = [(ball_move_role.robot.id, intent)]
 
             # Calculate best shot and find nearest robot to the path and compare to threshold
-            best_shot = striker.StrikerRole._find_target_point(world_state = world_state, kick_speed = 4.0)
+            fake_striker = striker.StrikerRole(ball_move_role.robot)
+            best_shot = fake_striker._find_target_point(world_state = world_state, kick_speed = 4.0)
+            del(fake_striker)
 
             if self.check_kick(world_state, best_shot, ball_move_role.robot_id):
-                print("SHOOOOOOOOOOOOOTTTTTTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                #print("SHOOOOOOOOOOOOOTTTTTTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 self._state = State.INIT_SHOOT
 
             elif ball_move_role.is_done(world_state):
@@ -131,14 +136,14 @@ class BallHandlerTactic(stp.tactic.Tactic):
             else:
                 #pass ball to most forward person that can be passed to
                 pass_targets = self.get_pass_order(world_state, ball_move_role.robot_id)
-                for robot in pass_targets:
-                    if self.check_kick(world_state, robot.pose[0:2], ball_move_role.robot_id):
+                for robot_id in pass_targets:
+                    if self.check_kick(world_state, world_state.robots[robot_id].pose[0:2], ball_move_role.robot_id):
                         self._state = State.INIT_PASS
-                        self.target_pass_robot = robot
+                        self.target_pass_robot = world_state.robots[robot_id]
                         break
         
         elif self._state == State.INIT_SHOOT:
-            print('init shoot')
+            #print('init shoot')
             self._role_requests = [
                 (
                     self._init_cost, 
@@ -150,7 +155,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
             self._state = State.INIT_SHOOT_TICK
 
         elif self._state == State.INIT_SHOOT_TICK:
-            print('init shoot tick')
+            #print('init shoot tick')
             if len(self.assigned_roles) == 1:
                 self.init_roles(world_state)
                 self._state = State.SHOOT
@@ -173,14 +178,14 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 self._state = State.PASS
 
         elif self._state == State.PASS:
-            print('passing')
+            #print('passing')
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
             receiver_role = self.assigned_roles[1]
 
             # TODO: create func to find good target point
             # TODO: should update receiver_role robot every tick in the role (see skill/capture.py)
-            target_point = world_state.our_robots[receiver_role.robot.id].pose[0:2]
+            target_point = world_state.robots[receiver_role.robot.id].pose[0:2]
             passer_role.set_execute_pass(target_point)
 
             role_intents = [
@@ -246,7 +251,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 # end FSM
 
         elif self._state == State.SHOOT:
-            print('shooting')
+            #print('shooting')
             striker_role = self.assigned_roles[0]
 
             role_intents = [(striker_role.robot.id, striker_role.tick(world_state))]
@@ -272,10 +277,10 @@ class BallHandlerTactic(stp.tactic.Tactic):
         True -> Good Shot/Pass
         False -> Bad Shot/Pass
         """
-        relatate_vector = lambda target_pos: target_pos - world_state.our_robots[robot_id].pose[0:2]
+        relatate_vector = lambda target_pos: target_pos - world_state.robots[robot_id].pose[0:2]
         relative_vectors = [relatate_vector(robot.pose[0:2]) for robot in world_state.robots]
 
-        cosine = lambda robot_pos: (np.dot(robot_pos, target)) / (np.linalg.norm(robot_pos) * np.linalg.norm(target))
+        cosine = lambda robot_pos: (np.dot(robot_pos, target)) / (np.linalg.norm(robot_pos) * np.linalg.norm(target)) if (np.linalg.norm(robot_pos) != 0 and np.linalg.norm(target) != 0) else 1
         if max([cosine(relative_vector) for relative_vector in relative_vectors]) > CUTOFF_ANGLE:
             return False
         return True
@@ -287,8 +292,8 @@ class BallHandlerTactic(stp.tactic.Tactic):
         dist_from_goal = lambda robot: np.linalg.norm(robot.pose[0:2] - world_state.field.their_goal_loc)
         robot_distances = {robot.id : dist_from_goal(robot) for robot in world_state.our_robots}
 
-        robot_distances.pop(world_state.our_robots[robot_id])
-        robot_distances.pop(world_state.our_robots[world_state.goalie_id])
+        robot_distances.pop(robot_id)
+        robot_distances.pop(world_state.goalie_id)
 
         robot_distances = {robot : distance for robot, distance in sorted(robot_distances.items(), key=lambda item: item[1])}
 
@@ -306,8 +311,8 @@ class BallHandlerTactic(stp.tactic.Tactic):
         """
         our_vecs = np.zeros((gameplay_node.NUM_ROBOTS_PER_TEAM, 2))
         for i in range(0, gameplay_node.NUM_ROBOTS_PER_TEAM):
-            if (world_state.our_robots[i].id != self.robot.id and world_state.our_robots[i].id != world_state.goalie_id):
-                our_vecs[i,0:2] = world_state.our_robots[i].pose[0:2] - self.robot.pose[0:2]
+            if (world_state.robots[i].id != self.robot.id and world_state.robots[i].id != world_state.goalie_id):
+                our_vecs[i,0:2] = world_state.robots[i].pose[0:2] - self.robot.pose[0:2]
         their_vecs = np.zeros((gameplay_node.NUM_ROBOTS_PER_TEAM, 2))
         for j in range(0, gameplay_node.NUM_ROBOTS_PER_TEAM):
             their_vecs[j,0:2] = world_state.their_robots[j].pose[0:2] - self.robot.pose[0:2]
@@ -348,7 +353,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 dist = np.linalg.norm(np.cross(our_vec, our_vecs[i])) / np.linalg.norm(our_vecs[i])
                 distances.append(dist)
             if len(distances) is not 0:
-                final_distances[0, i] = min(distances) * (world_state.our_robots[i].pose[1] * AGGRESSIVENESS)
+                final_distances[0, i] = min(distances) * (world_state.robots[i].pose[1] * AGGRESSIVENESS)
         return final_distances
 
     def get_best_pass_index(self, robot_pass_distances: np.ndarray) -> int:
