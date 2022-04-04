@@ -39,7 +39,7 @@ Coordinates one or more Roles at a high level. Generates Role Requests. (e.g. Pa
 
 Coordinates all robots on the field for a given situation. Gets role requests from its tactics, then assigns them according to the cost functions of those role requests. (Examples: Basic122, Basic Defense)
 
-The general flow of how a RobotIntent (or specific command for the robot) is created is as follows:
+The general flow of how a RobotIntent (or specific command for the robot) is created as follows:
 
 GameplayNode -> SituationAnalyzer -> Play (selected based on situation) -> Tactic(s) -> Role(s) -> Skill(s)
 
