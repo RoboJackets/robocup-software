@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 import numpy as np
 import stp
+import stp.utils.constants as const
 from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.role import dumb_move
@@ -23,6 +24,12 @@ class LineTactic(stp.tactic.Tactic):
         # compute move points
         self.start = start
         self.end = end
+        gap = np.linalg.norm(self.end - self.start)
+        if gap <= 2 * (num_liners - 1) * const.RobotConstants.RADIUS:
+            raise ValueError(
+                "Start and end point is not valid for the number of robots assigned."
+            )
+
         xpts = np.linspace(self.start[0], self.end[0], num_liners)
         ypts = np.linspace(self.start[1], self.end[1], num_liners)
         self.target_points = []
@@ -52,7 +59,6 @@ class LineTactic(stp.tactic.Tactic):
         world_state: stp.rc.WorldState,
     ) -> bool:
         return False
-        # return all([role.is_done(world_state) for role in self.assigned_roles])
 
     def init_roles(
         self,

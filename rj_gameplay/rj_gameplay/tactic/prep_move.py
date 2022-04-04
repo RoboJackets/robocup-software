@@ -40,7 +40,6 @@ class PrepMove(stp.tactic.Tactic):
         world_state: stp.rc.WorldState,
     ) -> bool:
         return False
-        # return all([role.is_done(world_state) for role in self.assigned_roles])
 
     def init_roles(
         self,
