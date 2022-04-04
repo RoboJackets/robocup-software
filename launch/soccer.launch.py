@@ -1,17 +1,17 @@
 import os
 from pathlib import Path
-from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
 
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node
+
+from launch import LaunchDescription
 from launch.actions import (
+    DeclareLaunchArgument,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
     Shutdown,
-    DeclareLaunchArgument,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-
 from launch.substitutions import LaunchConfiguration
 
 
@@ -25,7 +25,9 @@ def generate_launch_description():
     team_flag = LaunchConfiguration("team_flag", default="-b")
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
+    ref_rec_flag = LaunchConfiguration("ref_rec_flag", default="internal_referee_node")
     direction_flag = LaunchConfiguration("direction_flag", default="plus")
+    radio_flag = LaunchConfiguration("radio_flag", default="sim_radio_node")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
@@ -51,7 +53,7 @@ def generate_launch_description():
 
     radio = Node(
         package="rj_robocup",
-        executable="sim_radio_node",
+        executable=radio_flag,
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
@@ -82,22 +84,28 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
-    vision_receiver = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(vision_receiver_launch_path)
-    )
-
-    ref_receiver = Node(
+    vision_receiver = Node(
         package="rj_robocup",
-        executable="internal_referee_node",
+        executable="vision_receiver",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
     )
 
-    vision_filter_launch_path = str(launch_dir / "vision_filter.launch.py")
-    vision_filter = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(vision_filter_launch_path)
+    ref_receiver = Node(
+        package="rj_robocup",
+        executable=ref_rec_flag,
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    vision_filter = Node(
+        package="rj_robocup",
+        executable="rj_vision_filter",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
     )
 
     global_param_server = IncludeLaunchDescription(
