@@ -56,7 +56,7 @@ class BasicOffense(stp.play.Play):
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 basic_seek.BasicSeek(
-                    world_state, 3, Formations(world_state).get_x_formation
+                    world_state, 4, Formations(world_state).get_diamond_formation
                 ),
             ]
 

@@ -1,11 +1,11 @@
 """This module contains data structures that are robocup specific, ie. Robot, Ball,
 WorldState"""
 
+import warnings
 from enum import Enum
 from typing import List, Optional
 
 import numpy as np
-import warnings
 
 RobotId = Optional[int]
 
@@ -420,6 +420,30 @@ class Field:
             ],
         ]
         return opp_defense_area
+
+    @property
+    def our_goal_post_coordinates(self) -> List:
+        """
+        Conveniance function for getting our goal post coordinates
+        :return: the list of points for our goal post locations
+        """
+        our_goal_post_coord = [
+            [-self.__goal_width_m / 2, 0],
+            [self.__goal_width_m / 2, 0],
+        ]
+        return our_goal_post_coord
+
+    @property
+    def their_goal_post_coordinates(self) -> List:
+        """
+        Conveniance function for getting their goal post coordinates
+        :return: the list of points for their goal post locations
+        """
+        their_goal_post_coord = [
+            [-self.__goal_width_m / 2, self.__length_m],
+            [self.__goal_width_m / 2, self.__length_m],
+        ]
+        return their_goal_post_coord
 
     @property
     def top_left_field_loc(self) -> np.ndarray:
