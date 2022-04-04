@@ -2,7 +2,7 @@ import argparse
 import math
 import sys
 import time
-from typing import Callable
+from typing import Optional
 
 import numpy as np
 import stp.action as action
