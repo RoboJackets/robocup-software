@@ -3,7 +3,6 @@ from typing import List, Tuple
 import numpy as np
 import stp
 from rj_msgs.msg import RobotIntent
-from stp.utils.constants import RobotConstants
 from stp.utils.formations import Formations
 
 from rj_gameplay.role import seeker
