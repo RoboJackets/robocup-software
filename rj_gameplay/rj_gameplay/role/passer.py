@@ -10,9 +10,9 @@ from enum import Enum, auto
 import numpy as np
 
 # The final velocity of the ball when it reaches our teammate
-FINAL_VELOCITY = 4
+FINAL_VELOCITY = 5
 # Rolling deceleration of the ball after it has been kicked
-BALL_DECELERATION = -0.4
+BALL_DECELERATION = -0.2
 
 
 class State(Enum):
