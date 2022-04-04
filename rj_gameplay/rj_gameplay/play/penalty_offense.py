@@ -14,7 +14,7 @@ class State(Enum):
     INIT = auto()
     PREP = auto()
     READY = auto()
-    # DONE = auto()
+    DONE = auto()
 
 
 class PenaltyOffense(stp.play.Play):
@@ -30,32 +30,35 @@ class PenaltyOffense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics = [
-                prep_move.PrepMove(world_state)
-                # assume line tactic is working
-                # line_tactic.LineTactic(world_state),
-                # line_tactic.LineTactic(world_state),
-                # line_tactic.LineTactic(world_state),
-                # line_tactic.LineTactic(world_state),
-                # line_tactic.LineTactic(world_state),
+                prep_move.PrepMove(world_state),
+                # line_tactic.LineTactic(
+                #     world_state, 5, np.array([2.0, 2.0]), np.array([-2.0, 2.0])
+                #     )
             ]
             self.assign_roles(world_state)
             self._state = State.PREP
             return self.get_robot_intents(world_state)
 
         elif self._state == State.PREP:
-            self.prioritized_tactics[0].tick(world_state)
+            for t in self.prioritized_tactics:
+                t.tick(world_state)
             move = self.prioritized_tactics[0]
             self.assign_roles(world_state)
             if move.is_done(world_state):
                 self._state = State.READY
             return self.get_robot_intents(world_state)
 
-        # elif self._state == State.READY:  # TODO: add when it's ready
-        #     self.prioritized_tactics = [
-        #         goalie_tactic.GoalieTactic(world_state, 0),
-        #         striker_tactic.StrikerTactic(world_state),
-        #     ]
-        #     shoot = self.prioritized_tactics[1]
-        #     if shoot.is_done(world_state):
-        #         self._state = State.DONE
-        #     return self.get_robot_intents(world_state)
+        elif (
+            self._state == State.READY
+        ):  # TODO add if statement that checks if the penalty play is ready
+            self.prioritized_tactics = [
+                striker_tactic.StrikerTactic(world_state),
+                # line_tactic.LineTactic(
+                #     world_state, 5, np.array([2.0, 2.0]), np.array([-2.0, 2.0])
+                #     )
+            ]
+            shoot = self.prioritized_tactics[0]
+            self.assign_roles(world_state)
+            if shoot.is_done(world_state):
+                self._state = State.DONE
+            return self.get_robot_intents(world_state)
