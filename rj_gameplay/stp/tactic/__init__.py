@@ -2,9 +2,10 @@ import itertools
 from abc import ABC, abstractmethod
 from typing import Any, List, Tuple
 
+from rj_msgs.msg import RobotIntent
+
 import stp.rc
 import stp.role
-from rj_msgs.msg import RobotIntent
 
 
 # TODO: delete this once all tactics have been switched over
@@ -81,10 +82,9 @@ class Tactic(ABC):
         text += f"Roles Requested: "
         if self._role_requests:
             temp = [
-                (cost.__class__.__name__, role.__name__)
+                f"({role.__name__}, {cost.__class__.__name__})"
                 for cost, role in self._role_requests
             ]
-            temp = [f"({role}, {cost})" for cost, role in temp]
             text += ", ".join(temp)
         text += f"\nRoles Assigned: "
         if self.assigned_roles:

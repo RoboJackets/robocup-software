@@ -15,6 +15,9 @@ from typing import (
     TypeVar,
 )
 
+from rj_gameplay.role import unassigned_role
+from rj_msgs.msg import RobotIntent
+
 import stp.action
 import stp.rc
 import stp.role
@@ -23,9 +26,6 @@ import stp.skill
 import stp.tactic
 import stp.utils.enum
 import stp.utils.typed_key_dict
-from rj_msgs.msg import RobotIntent
-
-from rj_gameplay.role import unassigned_role
 
 PropT = TypeVar("PropT")
 
@@ -152,7 +152,7 @@ class Play(ABC):
 
     def __repr__(self):
         """
-        returns the string with current play and the current state of the play.
+        returns the string with the current play and the current state of the play.
         """
         text = ""
         text += f"{self.__class__.__name__}({self._state})"
