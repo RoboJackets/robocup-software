@@ -74,16 +74,17 @@ class Tactic(ABC):
 
     def __repr__(self):
         """
-        returns a string with all of roles requested and all the roles assigned.
+        returns a string with all the roles requested and all the roles assigned.
         """
         text = ""
         text += f"{self.__class__.__name__}:\n"
-        text += f"Role Requested: "
+        text += f"Roles Requested: "
         if self._role_requests:
             temp = [
-                f"({cost.__class__.__name__}, {role.__name__})"
+                (cost.__class__.__name__, role.__name__)
                 for cost, role in self._role_requests
             ]
+            temp = [f"({role}, {cost})" for cost, role in temp]
             text += ", ".join(temp)
         text += f"\nRoles Assigned: "
         if self.assigned_roles:

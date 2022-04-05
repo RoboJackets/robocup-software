@@ -152,7 +152,7 @@ class Play(ABC):
 
     def __repr__(self):
         """
-        returns the string with current play and the current state of the play
+        returns the string with current play and the current state of the play.
         """
         text = ""
         text += f"{self.__class__.__name__}({self._state})"
