@@ -147,11 +147,12 @@ class GameplayNode(Node):
         self.match_state = match_state
 
     def debug_callback(self, play: stp.play.IPlay, tactics: list):
+        """
+        Publishes the string that shows up the behavior tree in the Soccer UI.
+        """
         debug_text = ""
-        debug_text += (
-            f"Play Selector: {type(self.play_selector.curr_situation).__name__}\n"
-        )
-        debug_text += f"Play: {type(play).__name__}({play._state.name})\n\n"
+        debug_text += f"Play Selector: {self.play_selector}\n"
+        debug_text += f"Play: {play}\n\n"
         with np.printoptions(precision=3, suppress=True):
             for i, tactic in enumerate(tactics):
                 debug_text += f"{i+1}. {tactic}\n\n"

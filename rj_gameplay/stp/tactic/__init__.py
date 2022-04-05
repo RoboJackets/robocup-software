@@ -73,6 +73,9 @@ class Tactic(ABC):
         return False
 
     def __repr__(self):
+        """
+        returns a string with all of roles requested and all the roles assigned.
+        """
         text = ""
         text += f"{self.__class__.__name__}:\n"
         text += f"Role Requested: "

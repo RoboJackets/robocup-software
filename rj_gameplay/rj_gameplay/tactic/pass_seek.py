@@ -1,24 +1,18 @@
 from dataclasses import dataclass
-from typing import (
-    List,
-    Optional,
-    Tuple,
-    Callable,
-)
+from typing import Callable, List, Optional, Tuple
 
+import numpy as np
 import stp.action as action
+import stp.global_parameters as global_parameters
 import stp.rc as rc
-import stp.tactic as tactic
 import stp.role as role
+import stp.skill as skill
+import stp.tactic as tactic
 import stp.utils.pass_seeker_optimizer as optimizer
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
 from rj_gameplay.skill import move
-import stp.skill as skill
-import numpy as np
-
-import stp.global_parameters as global_parameters
 
 
 def seek_heuristic(

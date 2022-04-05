@@ -1,21 +1,23 @@
-import stp.situation as situation
+from typing import Optional, Tuple
+
 import stp
 import stp.rc as rc
+import stp.situation as situation
+
+import rj_gameplay.play as plays
 import rj_gameplay.situation.decision_tree.analyzer as analyzer
 import rj_gameplay.situation.decision_tree.plays as situations
-import rj_gameplay.play as plays
 from rj_gameplay.play import (
     basic122,
     basic_defense,
-    defensive_clear,
     defend_restart,
-    restart,
+    defensive_clear,
     kickoff_play,
     penalty_defense,
     penalty_offense,
     prep_penalty_offense,
+    restart,
 )
-from typing import Tuple, Optional
 
 # TODO: Put new plays into the dict properly
 # TODO: Create different dictionaries for different playbooks
@@ -87,3 +89,11 @@ class BasicPlaySelector(situation.IPlaySelector):
                     self.curr_play = play()
 
         return (self.curr_situation, self.curr_play)
+
+    def __repr__(self):
+        """
+        returns the string with the current situation.
+        """
+        text = ""
+        text += self.curr_situation.__class__.__name__
+        return text
