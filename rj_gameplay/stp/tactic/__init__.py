@@ -81,10 +81,10 @@ class Tactic(ABC):
                 f"({cost.__class__.__name__}, {role.__name__})"
                 for cost, role in self._role_requests
             ]
-            text += str(temp)
+            text += ", ".join(temp)
         text += f"\nRoles Assigned: "
         if self.assigned_roles:
-            text += str(
+            text += ", ".join(
                 [
                     f"({role.__class__.__name__}, {robot.id})"
                     for role, robot in itertools.zip_longest(

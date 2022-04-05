@@ -149,7 +149,7 @@ class GameplayNode(Node):
     def debug_callback(self, play: stp.play.IPlay, tactics: list):
         debug_text = ""
         debug_text += (
-            f"PLay Selector: {type(self.play_selector.curr_situation).__name__}\n"
+            f"Play Selector: {type(self.play_selector.curr_situation).__name__}\n"
         )
         debug_text += f"Play: {type(play).__name__}({play._state.name})\n\n"
         with np.printoptions(precision=3, suppress=True):
