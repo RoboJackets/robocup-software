@@ -1,7 +1,9 @@
-import stp
-from rj_gameplay.role import dumb_move
 from typing import List, Tuple
+
+import stp
 from rj_msgs.msg import RobotIntent
+
+from rj_gameplay.role import dumb_move
 
 
 class LineTactic(stp.tactic.Tactic):
