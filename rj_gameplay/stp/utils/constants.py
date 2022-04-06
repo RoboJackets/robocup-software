@@ -1,5 +1,4 @@
 # import robocup
-import stp.rc as rc
 import math
 
 # for degrees->rad or reverse, use np.deg2rad or np.rad2deg)
@@ -26,7 +25,7 @@ class ColorConstants:
 
 class RobotConstants:
     RADIUS = 0.09
-    MAX_KICK_SPEED = 8  # m/s
+    MAX_KICK_SPEED = 5.0  # m/s
     CHIP_CLEARANCE = (
         0.1,
         0.6,
