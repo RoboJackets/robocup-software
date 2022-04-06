@@ -79,14 +79,14 @@ class Tactic(ABC):
         """
         text = ""
         text += f"{self.__class__.__name__}:\n"
-        text += f"Roles Requested: "
+        text += "Roles Requested: "
         if self._role_requests:
             temp = [
                 f"({role.__name__}, {cost.__class__.__name__})"
                 for cost, role in self._role_requests
             ]
             text += ", ".join(temp)
-        text += f"\nRoles Assigned: "
+        text += "\nRoles Assigned: "
         if self.assigned_roles:
             text += ", ".join(
                 [
