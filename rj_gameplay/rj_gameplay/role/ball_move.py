@@ -1,13 +1,11 @@
-import stp.role
-import stp.rc
-
-from rj_gameplay.skill import receive, pivot_kick  # , line_kick
-
-from rj_msgs.msg import RobotIntent
-
 from enum import Enum, auto
 
 import numpy as np
+import stp.rc
+import stp.role
+from rj_msgs.msg import RobotIntent
+
+from rj_gameplay.skill import pivot_kick, receive  # , line_kick
 
 # The final velocity of the ball when it reaches our teammate
 FINAL_VELOCITY = 4
@@ -67,7 +65,9 @@ class BallMoveRole(stp.role.Role):
             if self.receive_skill.is_done(world_state):
                 self._state = State.READY
         elif self._state == State.READY:
-            self.move_distance = np.linalg.norm(world_state.our_robots[self.robot_id].pose[0:2] - self.initial_position)
+            # self._state = State.DONE
+            # self.move_distance = np.linalg.norm(world_state.our_robots[self.robot_id].pose[0:2] - self.initial_position)
+            self.move_distance += 0.5
             # TODO: dribble until the receiver is ready
             if self.move_distance > MAXIMUM_MOVEMENT:
                 self._state = State.DONE

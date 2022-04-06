@@ -1,20 +1,17 @@
 import math
+from enum import Enum, auto
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
-from rj_gameplay import gameplay_node
-from rj_gameplay.role import ball_move, striker, passer, receiver
-from rj_gameplay.skill.receive import Receive
+
+import numpy as np
+import stp
+import stp.global_parameters as global_parameters
+from rj_msgs.msg import RobotIntent
 from stp.rc import Robot, WorldState
 from stp.role.cost import PickRobotById
 
-import stp
-
-import numpy as np
-
-import stp.global_parameters as global_parameters
-
-from rj_msgs.msg import RobotIntent
-
-from enum import Enum, auto
+from rj_gameplay import gameplay_node
+from rj_gameplay.role import ball_move, passer, receiver, striker
+from rj_gameplay.skill.receive import Receive
 
 
 class State(Enum):
@@ -36,12 +33,14 @@ class State(Enum):
     SHOOT = auto()
     DONE = auto()
 
+
 AGGRESSIVENESS = 1.01
 
 # the angle cutoff for people intersepting passes or shots
 CUTOFF_ANGLE = math.cos(math.pi / 10)
 
 # NOTE: Change number on line 50 of capture.py back to 1.3
+
 
 class BallHandlerTactic(stp.tactic.Tactic):
     def __init__(
@@ -86,6 +85,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
         print(self._state)
 
         role_intents = []
+        self._init_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
 
         if self._state == State.INIT:
             self._role_requests = [
@@ -114,45 +114,50 @@ class BallHandlerTactic(stp.tactic.Tactic):
 
         elif self._state == State.POSSESSING:
             ball_move_role = self.assigned_roles[0]
+
+            # TODO: Fix pass/shoot/dribble logic
+
+            # Calculate best shot and find nearest robot to the path and compare to threshold
+            fake_striker = striker.StrikerRole(ball_move_role.robot)
+            best_shot = fake_striker._find_target_point(
+                world_state=world_state, kick_speed=5.0
+            )
+            del fake_striker
+
+            if self.check_kick(world_state, best_shot, ball_move_role.robot_id):
+                print("Checking Shot")
+                self._state = State.INIT_SHOOT
+
+            elif ball_move_role.is_done(world_state):
+                print("Can't dribble anymore")
+                self._state = State.INIT_SHOOT
+
+            else:
+                # pass ball to most forward person that can be passed to
+                pass_targets = self.get_pass_order(world_state, ball_move_role.robot_id)
+                for robot_id in pass_targets:
+                    if self.check_kick(
+                        world_state,
+                        world_state.robots[robot_id].pose[0:2],
+                        ball_move_role.robot_id,
+                    ):
+                        self._state = State.INIT_PASS
+                        self.target_pass_robot = world_state.robots[robot_id]
+                        break
+
             intent = ball_move_role.tick(world_state)
 
             role_intents = [(ball_move_role.robot.id, intent)]
 
-            # Calculate best shot and find nearest robot to the path and compare to threshold
-            fake_striker = striker.StrikerRole(ball_move_role.robot)
-            best_shot = fake_striker._find_target_point(world_state = world_state, kick_speed = 4.0)
-            del(fake_striker)
-
-            if self.check_kick(world_state, best_shot, ball_move_role.robot_id):
-                #print("SHOOOOOOOOOOOOOTTTTTTING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                self._state = State.INIT_SHOOT
-
-            elif ball_move_role.is_done(world_state):
-                self._state = State.INIT_SHOOT
-
-            else:
-                #pass ball to most forward person that can be passed to
-                pass_targets = self.get_pass_order(world_state, ball_move_role.robot_id)
-                for robot_id in pass_targets:
-                    if self.check_kick(world_state, world_state.robots[robot_id].pose[0:2], ball_move_role.robot_id):
-                        self._state = State.INIT_PASS
-                        self.target_pass_robot = world_state.robots[robot_id]
-                        break
-        
         elif self._state == State.INIT_SHOOT:
-            #print('init shoot')
-            self._role_requests = [
-                (
-                    self._init_cost, 
-                    striker.StrikerRole
-                )
-            ]
+            # print('init shoot')
+            self._role_requests = [(self._init_cost, striker.StrikerRole)]
 
             self._needs_assign = True
             self._state = State.INIT_SHOOT_TICK
 
         elif self._state == State.INIT_SHOOT_TICK:
-            #print('init shoot tick')
+            # print('init shoot tick')
             if len(self.assigned_roles) == 1:
                 self.init_roles(world_state)
                 self._state = State.SHOOT
@@ -161,7 +166,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
 
             self._role_requests = [
                 (self._init_cost, passer.PasserRole),
-                (PickRobotById(self.target_pass_robot.id), receiver.ReceiverRole)
+                (PickRobotById(self.target_pass_robot.id), receiver.ReceiverRole),
             ]
             self._needs_assign = True
             self._state = State.INIT_PASS_TICK
@@ -175,7 +180,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 self._state = State.PASS
 
         elif self._state == State.PASS:
-            #print('passing')
+            # print('passing')
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
             receiver_role = self.assigned_roles[1]
@@ -248,14 +253,13 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 # end FSM
 
         elif self._state == State.SHOOT:
-            #print('shooting')
+            # print('shooting')
             striker_role = self.assigned_roles[0]
 
             role_intents = [(striker_role.robot.id, striker_role.tick(world_state))]
 
             if striker_role.is_done(world_state):
                 self._state = State.DONE
-
 
         return role_intents
 
@@ -269,29 +273,50 @@ class BallHandlerTactic(stp.tactic.Tactic):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return self._state == State.DONE
 
-    def check_kick(self, world_state: stp.rc.WorldState, target: np.ndarray, robot_id: int) -> bool:
+    def check_kick(
+        self, world_state: stp.rc.WorldState, target: np.ndarray, robot_id: int
+    ) -> bool:
         """
         True -> Good Shot/Pass
         False -> Bad Shot/Pass
         """
-        relatate_vector = lambda target_pos: target_pos - world_state.robots[robot_id].pose[0:2]
-        relative_vectors = [relatate_vector(robot.pose[0:2]) for robot in world_state.robots]
+        relatate_vector = (
+            lambda target_pos: target_pos - world_state.robots[robot_id].pose[0:2]
+        )
+        relative_vectors = [
+            relatate_vector(robot.pose[0:2]) for robot in world_state.robots
+        ]
 
-        cosine = lambda robot_pos: (np.dot(robot_pos, target)) / (np.linalg.norm(robot_pos) * np.linalg.norm(target)) if (np.linalg.norm(robot_pos) != 0 and np.linalg.norm(target) != 0) else 1
-        if max([cosine(relative_vector) for relative_vector in relative_vectors]) > CUTOFF_ANGLE:
+        cosine = (
+            lambda robot_pos: (np.dot(robot_pos, target))
+            / (np.linalg.norm(robot_pos) * np.linalg.norm(target))
+            if (np.linalg.norm(robot_pos) != 0 and np.linalg.norm(target) != 0)
+            else 1
+        )
+        if (
+            max([cosine(relative_vector) for relative_vector in relative_vectors])
+            > CUTOFF_ANGLE
+        ):
             return False
         return True
 
     def get_pass_order(self, world_state: stp.rc.WorldState, robot_id) -> List[Robot]:
-        """
-        
-        """
-        dist_from_goal = lambda robot: np.linalg.norm(robot.pose[0:2] - world_state.field.their_goal_loc)
-        robot_distances = {robot.id : dist_from_goal(robot) for robot in world_state.our_robots}
+        """ """
+        dist_from_goal = lambda robot: np.linalg.norm(
+            robot.pose[0:2] - world_state.field.their_goal_loc
+        )
+        robot_distances = {
+            robot.id: dist_from_goal(robot) for robot in world_state.our_robots
+        }
 
         robot_distances.pop(robot_id)
         robot_distances.pop(world_state.goalie_id)
 
-        robot_distances = {robot : distance for robot, distance in sorted(robot_distances.items(), key=lambda item: item[1])}
+        robot_distances = {
+            robot: distance
+            for robot, distance in sorted(
+                robot_distances.items(), key=lambda item: item[1]
+            )
+        }
 
         return robot_distances.keys()
