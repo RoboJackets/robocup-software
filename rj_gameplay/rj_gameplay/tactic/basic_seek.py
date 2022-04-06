@@ -3,7 +3,6 @@ from typing import List, Tuple
 import numpy as np
 import stp
 from rj_msgs.msg import RobotIntent
-from stp.utils.formations import Formations
 
 from rj_gameplay.role import seeker
 
@@ -12,18 +11,25 @@ class BasicSeek(stp.tactic.Tactic):
     """Seeks to a single point, passed in on init."""
 
     def __init__(
-        self, world_state: stp.rc.WorldState, num_seekers: int, formations: List
+        self,
+        world_state: stp.rc.WorldState,
+        num_seekers: int,
+        formations: List,
+        centroids: List,
     ):
         super().__init__(world_state)
 
         formation = formations
+        centroid_list = centroids
         self._used_regions = []
+        self._used_centroids = []
         self._num_seekers = num_seekers
 
         for i in range(self._num_seekers):
             my_region = formation[i]
             self._used_regions.append(my_region)
-            centroid = Formations(world_state).get_centroid(my_region)
+            centroid = centroid_list[i]
+            self._used_centroids.append(centroid)
             self._role_requests.append(
                 (stp.role.cost.PickClosestToPoint(centroid), seeker.SeekerRole)
             )
@@ -35,8 +41,9 @@ class BasicSeek(stp.tactic.Tactic):
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]  # TODO: make this an actual type
             my_region = self._used_regions[i]
+            centroid = self._used_centroids[i]
             if role is seeker.SeekerRole:
-                self.assigned_roles.append(role(robot, my_region))
+                self.assigned_roles.append(role(robot, my_region, centroid))
 
     def tick(
         self,
