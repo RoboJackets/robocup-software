@@ -1,10 +1,9 @@
+from typing import List, Tuple
+
 import stp
-
-from rj_gameplay.role import goalie_role
-
 from rj_msgs.msg import RobotIntent
 
-from typing import List, Tuple
+from rj_gameplay.role import goalie_role
 
 
 class GoalieTactic(stp.tactic.Tactic):
@@ -39,8 +38,8 @@ class GoalieTactic(stp.tactic.Tactic):
         robot_intents = []
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
-            if role.robot:
-                # TODO: figure out why this prevents sim crash
+            # TODO: figure out why this prevents sim crash
+            if role.robot is not None:
                 robot_intents.append((role.robot.id, role.tick(world_state)))
         return robot_intents
 
