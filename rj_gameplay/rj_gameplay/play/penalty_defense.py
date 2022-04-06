@@ -15,7 +15,6 @@ from rj_gameplay.tactic import goalie_tactic, line_tactic
 class State(Enum):
     INIT = auto()
     ACTIVE = auto()
-    DONE = auto()
 
 
 class PenaltyDefense(stp.play.Play):
