@@ -1,16 +1,15 @@
-from rj_msgs.msg import RobotIntent
+from enum import Enum, auto
+from typing import List
 
 import stp
-import stp.tactic
-import stp.role
 import stp.rc
+import stp.role
 import stp.role.cost
 import stp.skill
+import stp.tactic
+from rj_msgs.msg import RobotIntent
 
-from rj_gameplay.tactic import line_tactic, goalie_tactic
-
-from typing import List
-from enum import Enum, auto
+from rj_gameplay.tactic import goalie_tactic, line_tactic
 
 
 class State(Enum):
@@ -55,6 +54,7 @@ class PreparePenaltyDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
         if self._state == State.INIT:
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 5))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
