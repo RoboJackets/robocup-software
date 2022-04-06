@@ -1,6 +1,7 @@
 from typing import List
 
 import numpy as np
+
 import stp
 from stp.utils.constants import RobotConstants
 
@@ -59,7 +60,7 @@ class Diamond_formation(stp.formations.Formations):
     @property
     def get_centroid(self) -> List:
         """
-        Conveniance function for getting center of each region in get_regions()
+        Convenience function for getting center of each region in get_regions()
         :return: list of region centroids for X_formation
         """
         centroids = []

@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-import numpy as np
 import stp
-from stp.utils.constants import RobotConstants
 
 
 class Formations(ABC):
