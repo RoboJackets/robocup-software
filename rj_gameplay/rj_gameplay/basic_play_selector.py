@@ -18,7 +18,6 @@ from rj_gameplay.play import (
     penalty_offense,
     prep_penalty_offense,
     restart,
-    ros2,
 )
 
 POSSESS_MIN_DIST = 0.15
