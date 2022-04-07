@@ -67,6 +67,7 @@ class Keepaway(stp.play.Play):
             # only one tactic in this play
             tactic = self.prioritized_tactics[0]
             if tactic.is_done(world_state):
+                print("Tactic Done!")
                 self._state = State.INIT
 
             return self.get_robot_intents(world_state)

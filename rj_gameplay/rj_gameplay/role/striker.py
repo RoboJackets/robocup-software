@@ -37,6 +37,10 @@ class StrikerRole(stp.role.Role):
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         intent = None
+
+        if self._state != State.KICK_DONE:
+            print("Striker State: ", self._state)
+
         if self._state == State.INIT:
             # taken from role/passer.py
             self.receive_skill = receive.Receive(robot=self.robot)

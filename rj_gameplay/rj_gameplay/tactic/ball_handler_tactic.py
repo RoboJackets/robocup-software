@@ -82,7 +82,8 @@ class BallHandlerTactic(stp.tactic.Tactic):
          - on ball passed: tick receiver, release passer role
          - when receiver done: done
         """
-        print(self._state)
+        if self._state != State.DONE:
+            print(self._state)
 
         role_intents = []
         self._init_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
@@ -115,8 +116,6 @@ class BallHandlerTactic(stp.tactic.Tactic):
         elif self._state == State.POSSESSING:
             ball_move_role = self.assigned_roles[0]
 
-            # TODO: Fix pass/shoot/dribble logic
-
             # Calculate best shot and find nearest robot to the path and compare to threshold
             fake_striker = striker.StrikerRole(ball_move_role.robot)
             best_shot = fake_striker._find_target_point(
@@ -124,30 +123,21 @@ class BallHandlerTactic(stp.tactic.Tactic):
             )
             del fake_striker
 
+            print("Checking Shot")
             if self.check_kick(world_state, best_shot, ball_move_role.robot_id):
-                print("Checking Shot")
                 self._state = State.INIT_SHOOT
+
+            elif self.get_best_pass(world_state, ball_move_role.robot_id):
+                self._state = State.INIT_PASS
 
             elif ball_move_role.is_done(world_state):
                 print("Can't dribble anymore")
                 self._state = State.INIT_SHOOT
 
             else:
-                # pass ball to most forward person that can be passed to
-                pass_targets = self.get_pass_order(world_state, ball_move_role.robot_id)
-                for robot_id in pass_targets:
-                    if self.check_kick(
-                        world_state,
-                        world_state.robots[robot_id].pose[0:2],
-                        ball_move_role.robot_id,
-                    ):
-                        self._state = State.INIT_PASS
-                        self.target_pass_robot = world_state.robots[robot_id]
-                        break
-
-            intent = ball_move_role.tick(world_state)
-
-            role_intents = [(ball_move_role.robot.id, intent)]
+                print("Dribbling")
+                intent = ball_move_role.tick(world_state)
+                role_intents = [(ball_move_role.robot.id, intent)]
 
         elif self._state == State.INIT_SHOOT:
             # print('init shoot')
@@ -212,7 +202,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
 
         elif self._state == State.PASS_IN_TRANSIT:
             receiver_role = self.assigned_roles[1]
-            print(receiver_role.robot.id)
+            # print(receiver_role.robot.id)
 
             # TODO: here, we assume the initially picked Receiver is the best one
             # this may not be true (i.e. when intercept planning is bad and the ball does not get captured by the first receiver)
@@ -253,11 +243,8 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 # end FSM
 
         elif self._state == State.SHOOT:
-            # print('shooting')
             striker_role = self.assigned_roles[0]
-
             role_intents = [(striker_role.robot.id, striker_role.tick(world_state))]
-
             if striker_role.is_done(world_state):
                 self._state = State.DONE
 
@@ -273,9 +260,22 @@ class BallHandlerTactic(stp.tactic.Tactic):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return self._state == State.DONE
 
+    def get_best_pass(self, world_state: stp.rc.WorldState, passer_robot_id: int) -> bool:
+        print("Checking Passes")
+        pass_targets = self.get_pass_order(world_state, passer_robot_id)
+        for robot_id in pass_targets:
+            if self.check_kick(
+                world_state,
+                world_state.robots[robot_id].pose[0:2],
+                passer_robot_id,
+            ):
+                self.target_pass_robot = world_state.robots[robot_id]
+                return True
+
+        return False
+
     def check_kick(
-        self, world_state: stp.rc.WorldState, target: np.ndarray, robot_id: int
-    ) -> bool:
+        self, world_state: stp.rc.WorldState, target: np.ndarray, robot_id: int) -> bool:
         """
         True -> Good Shot/Pass
         False -> Bad Shot/Pass
@@ -300,7 +300,7 @@ class BallHandlerTactic(stp.tactic.Tactic):
             return False
         return True
 
-    def get_pass_order(self, world_state: stp.rc.WorldState, robot_id) -> List[Robot]:
+    def get_pass_order(self, world_state: stp.rc.WorldState, robot_id: int) -> List[Robot]:
         """ """
         dist_from_goal = lambda robot: np.linalg.norm(
             robot.pose[0:2] - world_state.field.their_goal_loc

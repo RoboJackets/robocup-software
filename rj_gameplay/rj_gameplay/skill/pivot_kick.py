@@ -69,6 +69,9 @@ class PivotKick(skill.Skill):  # add ABC if fails
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
 
+        if self._state != State.DONE:
+            print("Pivot Kick State: ", self._state)
+
         intent = None
         if self._state == State.CAPTURE:
             intent = self.capture.tick(world_state)
