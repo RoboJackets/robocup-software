@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-
 import stp
 from stp.utils.constants import RobotConstants
 
@@ -58,7 +57,7 @@ class XFormation(stp.formations.Formations):
         return X_formation
 
     @property
-    def get_centroid(self) -> List:
+    def get_centroids(self) -> List:
         """
         Convenience function for getting center of each region in get_regions()
         :return: list of region centroids for X_formation

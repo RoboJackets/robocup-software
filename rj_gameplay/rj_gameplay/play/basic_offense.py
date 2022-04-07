@@ -1,11 +1,11 @@
 from enum import Enum, auto
 from typing import List
 
-from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
-from rj_msgs.msg import RobotIntent
-
 import stp
-from stp.formations.diamond_formation import Diamond_formation
+from rj_msgs.msg import RobotIntent
+from stp.formations.diamond_formation import DiamondFormation
+
+from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
 
 
 class State(Enum):
