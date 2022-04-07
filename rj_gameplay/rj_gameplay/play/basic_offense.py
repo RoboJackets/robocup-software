@@ -1,11 +1,11 @@
 from enum import Enum, auto
 from typing import List
 
-import stp
-from rj_msgs.msg import RobotIntent
-from stp.formations.diamond_formation import Diamond_formation
-
 from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
+from rj_msgs.msg import RobotIntent
+
+import stp
+from stp.formations.diamond_formation import Diamond_formation
 
 
 class State(Enum):
@@ -57,8 +57,8 @@ class BasicOffense(stp.play.Play):
                 basic_seek.BasicSeek(
                     world_state,
                     4,
-                    Diamond_formation(world_state).get_regions,
-                    Diamond_formation(world_state).get_centroid,
+                    DiamondFormation(world_state).get_regions,
+                    DiamondFormation(world_state).get_centroids,
                 ),
             ]
 

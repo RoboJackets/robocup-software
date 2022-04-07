@@ -6,7 +6,7 @@ import stp
 from stp.utils.constants import RobotConstants
 
 
-class X_formation(stp.formations.Formations):
+class XFormation(stp.formations.Formations):
     def __init__(self, world_state: stp.rc.WorldState):
         super().__init__(world_state)
 

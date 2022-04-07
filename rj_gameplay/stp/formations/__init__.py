@@ -34,7 +34,7 @@ class Formations(ABC):
 
     @property
     @abstractmethod
-    def get_centroid(self) -> List:
+    def get_centroids(self) -> List:
         "Get the centroid associated with the called region"
 
     @property
