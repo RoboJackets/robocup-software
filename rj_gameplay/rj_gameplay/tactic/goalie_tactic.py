@@ -24,8 +24,10 @@ class GoalieTactic(stp.tactic.Tactic):
         # only has one role, but it's easier to copy-paste the structure
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
+
             if role is goalie_role.GoalieRole:
                 self.assigned_roles.append(role(robot))
+
 
     def tick(
         self, world_state: stp.rc.WorldState
@@ -39,9 +41,15 @@ class GoalieTactic(stp.tactic.Tactic):
         robot_intents = []
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
+
+            print("assigned role:", role, role.robot)
+
             # TODO: figure out why this prevents sim crash
             if role.robot is not None:
                 robot_intents.append((role.robot.id, role.tick(world_state)))
+
+        # print("robot intents")
+        # print(robot_intents)
         return robot_intents
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:

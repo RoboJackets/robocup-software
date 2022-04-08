@@ -8,7 +8,7 @@ from launch.actions import Shutdown
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+        get_package_share_directory("rj_robocup"), "config", "real.yaml"
     )
 
     return LaunchDescription(

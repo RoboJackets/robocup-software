@@ -187,7 +187,7 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // set control values
     setpoint->xvelocity = target_vel.linear().x();
     setpoint->yvelocity = target_vel.linear().y();
-    setpoint->avelocity = target_vel.angular();
+    setpoint->avelocity = 0.0; // target_vel.angular();
 }
 
 void MotionControl::update_params() {

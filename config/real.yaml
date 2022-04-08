@@ -1,0 +1,162 @@
+/config_server:
+  ros__parameters:
+    use_sim_time: false
+
+/control:
+  ros__parameters:
+    max_acceleration: 1.5
+    max_velocity: 2.0
+    rotation_kd: 0.0
+    rotation_ki: 0.0
+    rotation_kp: 8.0
+    rotation_windup: 0
+    translation_kd: 0.0
+    translation_ki: 0.0
+    translation_kp: 4.0
+    translation_windup: 0
+    use_sim_time: false
+
+/gameplay_node:
+  ros__parameters:
+    use_sim_time: false
+
+/global_parameter_server:
+  ros__parameters:
+    soccer:
+      physics:
+        ball_decay_constant: 0.18
+      robot:
+        chip_angle: 40.0
+        max_acceleration: 2.0
+        max_chip_speed: 4.0
+        max_dribbler_speed: 2000.0
+        max_kick_speed: 7.0
+        max_speed: 2.0
+        min_chip_speed: 0.5
+        min_kick_speed: 1.0
+        min_safe_kick_power: 64
+        robot_radius: 0.09
+    use_sim_time: false
+
+/internal_referee:
+  ros__parameters:
+    team_name: RoboJackets
+    use_sim_time: false
+
+/planner:
+  ros__parameters:
+    collect:
+      approach_accel_scale: 0.7
+      approach_dist_target: 0.04
+      ball_speed_approach_direction_cutoff: 0.1
+      control_accel_scale: 0.5
+      dist_cutoff_to_approach: 1.0
+      dist_cutoff_to_control: 0.0285
+      stop_dist_scale: 0.5
+      target_point_lowpass_gain: 0.8
+      touch_delta_speed: 0.05
+      vel_cutoff_to_control: 0.3
+      velocity_control_scale: 0.5
+    constraints:
+      max_rotational_accel: 3.0
+      max_rotational_speed: 3.0
+      max_translational_accel: 3.0
+      max_translational_speed: 2.0
+    escape:
+      goal_change_threshold: 0.9
+      step_size: 0.1
+    pivot:
+      radius_multiplier: 1.0
+    replanner:
+      off_path_threshold: 0.1
+      partial_replan_lead_time: 0.1
+      pos_change_threshold: 0.025
+      vel_change_threshold: 0.025
+    rrt:
+      enable_debug_drawing: false
+      goal_bias: 0.3
+      max_iterations: 250
+      min_iterations: 0
+      step_size: 0.15
+      waypoint_bias: 0.5
+    settle:
+      ball_speed_percent_for_dampen: 0.1
+      ball_vel_gain: 0.9
+      intercept_buffer_time: 0.3
+      max_ball_angle_for_reset: 20.0
+      max_ball_vel_for_path_reset: 2.0
+      max_bounce_angle: 45.0
+      search_end_dist: 6.0
+      search_inc_dist: 0.2
+      search_start_dist: 0.0
+      shortcut_dist: 0.09
+      target_point_gain: 0.5
+    timeout: 0.1
+    use_sim_time: false
+
+/radio:
+  ros__parameters:
+    timeout: 0.25
+    use_sim_time: false
+
+/vision_receiver:
+  ros__parameters:
+    port: 10006 # 10020 comp setup 
+    hz: 120.0
+    use_sim_time: false
+
+/vision_filter:
+  ros__parameters:
+    ball:
+      init_covariance: 100.0
+      observation_noise: 2.0
+      process_noise: 0.1
+    camera:
+      max_num_kalman_balls: 10
+      max_num_kalman_robots: 10
+      mhkf_radius_cutoff: 0.5
+      use_mhkf: true
+    filter:
+      health:
+        dec: 1
+        inc: 2
+        init: 2
+        max: 20
+        min: 1
+    kalman_ball:
+      max_time_outside_vision: 0.2
+    kalman_robot:
+      max_time_outside_vision: 0.5
+    kick:
+      detector:
+        fast_acceleration_trigger: 750.0
+        fast_kick_hist_length: 3
+        fast_kick_timeout: 1.0
+        same_kick_timeout: 0.5
+        slow_any_robot_past_dist: 0.16
+        slow_kick_hist_length: 5
+        slow_kick_timeout: 0.5
+        slow_max_kick_angle: 0.34
+        slow_min_ball_speed: 0.6
+        slow_one_robot_within_dist: 0.15
+        slow_robot_dist_filter_cutoff: 3.0
+    max_num_cameras: 12
+    publish_hz: 120.0
+    robot:
+      init_covariance: 100.0
+      observation_noise: 2.0
+      orientation_scale: 1.0
+      process_noise: 0.5
+    use_sim_time: false
+    vision_filter:
+      bounce:
+        robot_body_angle_dampen: 0.0
+        robot_body_lin_dampen: 0.9
+        robot_mouth_angle_dampen: 0.0
+        robot_mouth_lin_dampen: 0.3
+    vision_loop_dt: 0.016666666666666666
+    world_ball:
+      ball_merger_power: 1.5
+    world_robot:
+      robot_merger_power: 1.5
+
