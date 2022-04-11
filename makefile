@@ -30,48 +30,40 @@ define cmake_build_target_perf
  	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
+# used in GH Actions build-and-test
 all:
 	$(call cmake_build_target, all)
+# debug: slow executable, but many debug symbols (e.g. for GDB)
+debug: all
 
+# NOT used in build-and-test
 all_including_tests:
 	$(call cmake_build_target, all)
 	$(call cmake_build_target, test-soccer)
 
 all-release:
 	$(call cmake_build_target_release, all)
+# release: fast executable, no debug symbols
+release: all-release
 
 all-perf:
 	$(call cmake_build_target_perf, all)
+# perf (or "RelWithDebInfo"): almost as fast as release, some debug symbols
 perf: all-perf
 
-run: all
+# run once build-release-debug/ exists from a previous build
+again:
+	(cd build-release-debug/ && ninja install)
+
+run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
-run-comp:
-	./runcomp.sh
-r:	run
-rs: run-sim
-run-sim: all backend-headless-simulator-soccer
-run-headmore: all backend-simulator-soccer
 
-run-sim2play: all
-	ros2 launch rj_robocup sim2play.launch.py
-
-run-release: all-release
-	ros2 launch rj_robocup soccer.launch.py
-run-sim-release: all-release backend-headless-simulator-soccer
-rsr: run-sim-release
-rrs: rsr
-rr: run-release
-
-# backend targets to launch soccer with grSim in headless
-backend-headless-simulator-soccer:
-	ros2 launch rj_robocup sim.launch.py headless_flag:=--headless
-
-# backend targets to launch soccer with a grSim window
-backend-simulator-soccer:
+run-sim:
 	ros2 launch rj_robocup sim.launch.py
 
-debug: all
+run-sim2play:
+	ros2 launch rj_robocup sim2play.launch.py
+run-sim2: run-sim2play
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
@@ -84,10 +76,14 @@ test-soccer-nobuild:
 
 test-python: perf
 	python3 -m pytest --cov rj_gameplay --cov stp rj_gameplay --cov-report xml
+
+# could be useful in mypy GH Actions but unused
 pylint:
-	pylint -j8 --reports=n rj_gameplay/rj_gameplay rj_gameplay/stp
+	pylint -j0 rj_gameplay/rj_gameplay rj_gameplay/stp
+
+# could be useful in mypy GH Actions but unused
 mypy:
-	mypy --ignore-missing-imports rj_gameplay
+	mypy --ignore-missing-imports rj_gameplay/rj_gameplay rj_gameplay/stp
 
 COV_BUILD_DIR=build/coverage
 coverage:
@@ -166,6 +162,7 @@ checkstyle-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
+# used in GH Actions - build-and-test
 checktidy-lines:
 	@echo "Removing GCC precompiled headers from compile_commands.json so that clang-tidy will work"
 	@sed -i 's/-include [^ ]*cmake_pch\.hxx//' $(COMPILE_COMMANDS_DIR)/compile_commands.json
