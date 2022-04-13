@@ -11,7 +11,6 @@ from rj_gameplay.role import passer, receiver
 
 class State(Enum):
     INIT = auto()
-    ACTIVE = auto()
     INIT_PASSER_CAPTURE = auto()
     PASSER_CAPTURE = auto()
     GET_RECEIVER = auto()
@@ -118,6 +117,7 @@ class PassTactic(stp.tactic.Tactic):
             # TODO: create func to find good target point
             # TODO: should update receiver_role robot every tick in the role (see skill/capture.py)
             target_point = world_state.our_robots[receiver_role.robot.id].pose[0:2]
+            print("********************Selected Pass Location**************************")
             passer_role.set_execute_pass(target_point)
 
             role_intents = [

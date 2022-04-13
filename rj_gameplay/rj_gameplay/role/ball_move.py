@@ -20,7 +20,6 @@ class State(Enum):
     INIT = auto()
     CAPTURING = auto()
     READY = auto()
-    DONE = auto()
 
 
 class BallMoveRole(stp.role.Role):
@@ -29,14 +28,8 @@ class BallMoveRole(stp.role.Role):
         self.robot_id = robot.id
 
         self.receive_skill = None
-        self.pivot_kick_skill = None
 
         self._state = State.INIT
-
-        self._target_point = None
-
-        self.move_distance = 0.0
-        self.initial_position = robot.pose[0:2]
 
     @property
     def ready(self):
@@ -59,20 +52,18 @@ class BallMoveRole(stp.role.Role):
             self.receive_skill = receive.Receive(robot=self.robot)
             intent = self.receive_skill.tick(world_state)
             self._state = State.CAPTURING
+
         elif self._state == State.CAPTURING:
             intent = self.receive_skill.tick(world_state)
 
             if self.receive_skill.is_done(world_state):
                 self._state = State.READY
-        elif self._state == State.READY:
+                
+        # elif self._state == State.READY:
             # self._state = State.DONE
             # self.move_distance = np.linalg.norm(world_state.our_robots[self.robot_id].pose[0:2] - self.initial_position)
-            self.move_distance += 0.5
-            # TODO: dribble until the receiver is ready
-            if self.move_distance > MAXIMUM_MOVEMENT:
-                self._state = State.DONE
 
         return intent
 
     def is_done(self, world_state) -> bool:
-        return self._state == State.DONE
+        return self._state == State.READY

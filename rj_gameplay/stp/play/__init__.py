@@ -103,7 +103,7 @@ class Play(ABC):
                 # Checking to see if any robot can fullfill a specific role request in a specific tactic
                 for robot in world_state.our_robots:
                     if robot in used_robots or robot in robots_for_tactic:
-                        print("robot is being used: {}".format(robot.id))
+                        # print("robot is being used: {}".format(robot.id))
                         continue
                     if not robot.visible:
                         numOfInvisibleRobots += 1

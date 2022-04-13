@@ -47,7 +47,7 @@ class StrikerRole(stp.role.Role):
                 self._state = State.INIT_SHOOT
         elif self._state == State.INIT_SHOOT:
             # TODO: make these params configurable
-            shot_kick_speed = 4.0  # TODO: adjust based on dist from target_point
+            shot_kick_speed = 4.5  # TODO: adjust based on dist from target_point
             best_shot_target_point = self._find_target_point(
                 world_state, shot_kick_speed
             )

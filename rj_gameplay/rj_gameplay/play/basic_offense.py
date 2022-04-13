@@ -2,15 +2,16 @@ from enum import Enum, auto
 from typing import List
 
 import stp
+import numpy as np
 from rj_msgs.msg import RobotIntent
 from stp.formations.diamond_formation import DiamondFormation
+from rj_gameplay.tactic import basic_seek, ball_move_tactic, goalie_tactic, pass_tactic, striker_tactic
 
-from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
 
 
 class State(Enum):
     INIT = auto()
-    WAIT_TO_PASS = auto()
+    CHECK_SHOT = auto()
     INIT_PASS = auto()
     PASSING = auto()
     PASSING_ASSIGN_ROLES = auto()
@@ -50,24 +51,30 @@ class BasicOffense(stp.play.Play):
         DONE: shot taken
         """
 
+        dist_from_goal = lambda pos: np.linalg.norm(pos - world_state.field.their_goal_loc)
+        dist_from_ball = lambda pos: np.linalg.norm(pos - world_state.ball.pos)
+
+        print(self._state)
+
         # TODO: when seeker formation behavior added in, add it in for other 3 robots
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
+                ball_move_tactic.BallMoveTactic(world_state),
                 basic_seek.BasicSeek(
                     world_state,
                     4,
                     DiamondFormation(world_state).get_regions,
                     DiamondFormation(world_state).get_centroids,
-                ),
+                )
             ]
 
             self.assign_roles(world_state)
 
-            self._state = State.WAIT_TO_PASS
+            self._state = State.CHECK_SHOT
             return self.get_robot_intents(world_state)
 
-        elif self._state == State.WAIT_TO_PASS:
+        elif self._state == State.CHECK_SHOT:
 
             # TODO: seekers should be getting open all the time, how fix?
             # should be some time-based method
@@ -79,14 +86,19 @@ class BasicOffense(stp.play.Play):
             if seek_tactic.is_done(world_state):
                 self._state = State.INIT_PASS
             """
+            ball_move_tac = self.prioritized_tactics[1]
+            if ball_move_tac.is_done(world_state):
+                print("Dist from goal: ", dist_from_goal(world_state.ball.pos))
+                if dist_from_goal(world_state.ball.pos) < 4:
+                    self._state = State.INIT_SHOOT
+                else:
+                    self._state = State.INIT_PASS
 
             return self.get_robot_intents(world_state)
 
         elif self._state == State.INIT_PASS:
             init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
-            init_receiver_cost = stp.role.cost.PickClosestToPoint(
-                world_state.field.their_goal_loc
-            )
+            init_receiver_cost = stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc)
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 pass_tactic.PassTactic(
@@ -111,13 +123,13 @@ class BasicOffense(stp.play.Play):
                 # TODO: goalie tactic (and all tactics?) need a needs_assign
                 #       build in the logic for needs_assign of pass tactic into superclass
                 if tactic.needs_assign:
-                    print(f"{tactic} needs assign, says basic122")
+                    print(f"{tactic} needs assign, says basic_offense")
                     self._state = State.PASSING_ASSIGN_ROLES
 
             # when pass is complete, go shoot
             pass_tac = self.prioritized_tactics[1]
             if pass_tac.is_done(world_state):
-                self._state = State.INIT_SHOOT
+                self._state = State.INIT
 
             return self.get_robot_intents(world_state)
 
@@ -140,8 +152,8 @@ class BasicOffense(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.SHOOTING:
-            tactic = self.prioritized_tactics[1]
-            if tactic.is_done(world_state):
+            striker_tac = self.prioritized_tactics[1]
+            if striker_tac.is_done(world_state):
                 self._state = State.DONE
 
             return self.get_robot_intents(world_state)
