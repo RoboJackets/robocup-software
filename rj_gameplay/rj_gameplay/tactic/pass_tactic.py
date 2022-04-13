@@ -1,16 +1,12 @@
+from enum import Enum, auto
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
-import stp
-
-from rj_gameplay.role import receiver, passer
 import numpy as np
-
+import stp
 import stp.global_parameters as global_parameters
-
 from rj_msgs.msg import RobotIntent
 
-
-from enum import Enum, auto
+from rj_gameplay.role import passer, receiver
 
 
 class State(Enum):
@@ -30,10 +26,18 @@ class State(Enum):
 
 
 class PassTactic(stp.tactic.Tactic):
-    def __init__(self, world_state: stp.rc.WorldState):
+    def __init__(
+        self,
+        world_state: stp.rc.WorldState,
+        init_passer_cost: stp.role.CostFn,
+        init_receiver_cost: stp.role.CostFn,
+    ):
         super().__init__(world_state)
 
         self._state = State.INIT
+
+        self._init_passer_cost = init_passer_cost
+        self._init_receiver_cost = init_receiver_cost
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         self.assigned_roles = []
@@ -60,11 +64,9 @@ class PassTactic(stp.tactic.Tactic):
         role_intents = []
 
         if self._state == State.INIT:
-            # TODO: allow Plays to pass in this (and further below) cost fns,
-            #       otherwise behavior is not easy to manipulate
             self._role_requests = [
                 (
-                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
+                    self._init_passer_cost,
                     passer.PasserRole,
                 )
             ]
@@ -88,16 +90,12 @@ class PassTactic(stp.tactic.Tactic):
                 self._state = State.GET_RECEIVER
 
         elif self._state == State.GET_RECEIVER:
-            self._role_requests = [
+            self._role_requests.append(
                 (
-                    stp.role.cost.PickClosestToPoint(world_state.ball.pos),
-                    passer.PasserRole,
-                ),
-                (
-                    stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc),
+                    self._init_receiver_cost,
                     receiver.ReceiverRole,
-                ),
-            ]
+                )
+            )
             self._needs_assign = True
 
             self._state = State.INIT_EXECUTE_PASS
@@ -105,8 +103,9 @@ class PassTactic(stp.tactic.Tactic):
             # TODO: evaluate whether this is a dumb idea or not
 
         elif self._state == State.INIT_EXECUTE_PASS:
-            # one tick delay for play role assignment
-            self._state = State.EXECUTE_PASS
+            # Wait until play assignment assigns the needed 2 roles
+            if len(self.assigned_roles) == 2:
+                self._state = State.EXECUTE_PASS
 
         elif self._state == State.EXECUTE_PASS:
             # assumes play has given new role_requests
@@ -144,6 +143,10 @@ class PassTactic(stp.tactic.Tactic):
         elif self._state == State.PASS_IN_TRANSIT:
             receiver_role = self.assigned_roles[1]
 
+            # TODO: here, we assume the initially picked Receiver is the best one
+            # this may not be true (i.e. when intercept planning is bad and the ball does not get captured by the first receiver)
+            # the receiver then should be reassigned to closest to ball
+            # maybe check some is_done()?
             self._role_requests = [
                 (
                     stp.role.cost.PickRobotById(receiver_role.robot.id),
@@ -155,8 +158,9 @@ class PassTactic(stp.tactic.Tactic):
             self._state = State.INIT_AWAIT_RECEIVE
 
         elif self._state == State.INIT_AWAIT_RECEIVE:
-            # one tick delay for play role assignment
-            self._state = State.EXECUTE_RECEIVE
+            # Wait until play assignment assigns the needed 1 roles
+            if len(self.assigned_roles) == 1:
+                self._state = State.EXECUTE_RECEIVE
 
         elif self._state == State.EXECUTE_RECEIVE:
             # assumes play has given new role_requests

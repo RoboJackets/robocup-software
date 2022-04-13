@@ -1,20 +1,15 @@
-from abc import ABC, abstractmethod
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
 import sys
 import time
-
-import stp.skill as skill
-import stp.role as role
-from rj_gameplay.skill import kick, pivot, capture
-from rj_msgs.msg import RobotIntent
-import stp.rc as rc
-import numpy as np
-from rj_gameplay.MAX_KICK_SPEED import MAX_KICK_SPEED
-
 from enum import Enum, auto
+
+import numpy as np
+import stp.rc as rc
+import stp.skill as skill
+from rj_msgs.msg import RobotIntent
+from stp.utils.constants import RobotConstants
+
+from rj_gameplay.skill import capture, kick, pivot
 
 
 class State(Enum):
@@ -38,7 +33,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
         target_point: np.ndarray = None,
         dribble_speed: float = 1.0,
         chip: bool = False,
-        kick_speed: float = MAX_KICK_SPEED,
+        kick_speed: float = RobotConstants.MAX_KICK_SPEED,
         threshold: float = 0.02,
         priority: int = 1,
     ) -> None:

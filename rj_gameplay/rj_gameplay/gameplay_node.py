@@ -8,30 +8,31 @@ and allows the PlaySelector to be changed between Test and other forms.
 
 from typing import List, Optional, Tuple
 
+import numpy as np
 import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSProfile, QoSDurabilityPolicy
-
-from rj_msgs import msg
-from rj_geometry_msgs import msg as geo_msg
-from std_msgs.msg import String as StringMsg
-
+import stp.local_parameters as local_parameters
+import stp.play
 import stp.rc as rc
-import stp.utils.world_state_converter as conv
 import stp.situation as situation
 import stp.skill
-import stp.play
+import stp.utils.world_state_converter as conv
+from rclpy.node import Node
+from rclpy.qos import QoSProfile
+from rj_geometry_msgs import msg as geo_msg
+from rj_msgs import msg
+from std_msgs.msg import String as StringMsg
 from stp.action import IAction
-
-import stp.local_parameters as local_parameters
 from stp.global_parameters import GlobalParameterClient
 
-import numpy as np
-from rj_gameplay.action.move import Move
+import rj_gameplay.basic_play_selector as basic_play_selector
 
 # ignore "unused import" error
-from rj_gameplay.play import line_up, basic_defense, keepaway  # noqa: F401
-import rj_gameplay.basic_play_selector as basic_play_selector
+from rj_gameplay.play import (  # noqa: F401
+    basic_defense,
+    basic_offense,
+    keepaway,
+    line_up,
+)
 
 NUM_ROBOTS = 16
 
@@ -52,7 +53,11 @@ class GameplayNode(Node):
         rclpy.init()
         super().__init__("gameplay_node")
 
-        self.test_play = test_play
+        # do not change this line, change the test play passed in at bottom of file
+        self._curr_play = test_play
+        self._curr_situation = None
+        # force test play to overwrite play selector if given
+        self._using_test_play = test_play is not None
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
@@ -163,12 +168,12 @@ class GameplayNode(Node):
     def set_their_team_info(self, their_team_info: msg.TeamInfo):
         self.their_team_info = their_team_info
 
-    def debug_callback(self, play: stp.play.IPlay, skills):
+    def debug_callback(self, play: stp.play.IPlay, tactics: list):
         debug_text = ""
         debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
         with np.printoptions(precision=3, suppress=True):
-            for skill in skills:
-                debug_text += f"  {skill}\n"
+            for tactic in tactics:
+                debug_text += f"  {type(tactic).__name__}\n"
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
@@ -229,14 +234,24 @@ class GameplayNode(Node):
             assert self.world_state is not None
 
     def gameplay_tick(self) -> None:
+        """
+        Get situation, play from self.play_selector and update the currently running play if needed.
+        Then, add field and game_info to world_state, and push global obstacles to motion planning.
+        """
         self.update_world_state()
 
         if self.world_state is not None:
-            if self.test_play is None:
-                curr_situation, curr_play = self.play_selector.select(self.world_state)
-                intents = curr_play.tick(self.world_state)
-            else:
-                intents = self.test_play.tick(self.world_state)
+            if not self._using_test_play:
+                new_situation, new_play = self.play_selector.select(self.world_state)
+
+                # if play/situation hasn't changed, keep old play
+                if type(self._curr_play) is not type(new_play) or type(
+                    self._curr_situation
+                ) != type(new_situation):
+                    self._curr_play = new_play
+                    self._curr_situation = new_situation
+
+            intents = self._curr_play.tick(self.world_state)
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
@@ -256,7 +271,7 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
-
+            self.debug_callback(self._curr_play, self._curr_play.prioritized_tactics)
         else:
             self.get_logger().warn("World state was none!")
 
@@ -475,7 +490,8 @@ def main():
     play_selector = basic_play_selector.BasicPlaySelector()
 
     # change this line to test different plays (set to None if no desired test play)
-    test_play = keepaway.Keepaway()
+
+    test_play = basic_offense.BasicOffense()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
