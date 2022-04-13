@@ -31,6 +31,7 @@ from rj_gameplay.play import (  # noqa: F401
     basic_defense,
     basic_offense,
     keepaway,
+    kickoff_play,
     line_up,
 )
 
@@ -474,7 +475,7 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = basic_defense.BasicDefense()
+    test_play = kickoff_play.Kickoff()
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
