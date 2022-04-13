@@ -13,9 +13,11 @@ from stp.role.assignment.naive import NaiveRoleAssignment
 
 from rj_gameplay.calculations import wall_calculations
 from rj_gameplay.tactic import (
+    dumb_tactic,
     goalie_tactic,
     move_tactic,
     nmark_tactic,
+    pass_tactic,
     striker_tactic,
     wall_tactic,
 )
@@ -38,9 +40,20 @@ class PrepareKickoff(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self._state == State.INIT:
+            pts = []
+            pts.append(
+                (
+                    0.0,
+                    (world_state.field.length_m - world_state.field.center_radius_m)
+                    / 2,
+                )
+            )
+            dx = 0.5
+            dy = -0.5
+            pts.append((pts[0][0] + dx, pts[0][1] + dy))
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            # TODO robot needs to go to pt in circle
-            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 4))
+            self.prioritized_tactics.append(dumb_tactic.DumbTactic(world_state, pts))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
@@ -67,9 +80,23 @@ class Kickoff(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self._state == State.INIT:
+            pts = []
+            pts.append(
+                (
+                    0.0,
+                    (world_state.field.length_m - world_state.field.center_radius_m)
+                    / 2,
+                )
+            )
+            dx = 0.5
+            dy = -0.5
+            pts.append((pts[0][0] + dx, pts[0][1] + dy))
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            self.prioritized_tactics.append(striker_tactic.StrikerTactic(world_state))
-            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 4))
+            self.prioritized_tactics.append(
+                dumb_tactic.DumbTactic(world_state, [pts[1]])
+            )
+            self.prioritized_tactics.append(pass_tactic.PassTactic(world_state))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
