@@ -89,10 +89,10 @@ Running Again
 
 Now that you know how to source dependencies, build, and run our code, you can
 take advantage of some neat shortcuts. These shortcuts all depend on the
-following knowledge::
+following knowledge:
 
-    Sourcing only needs to happen every time a new terminal is opened, and
-    building only needs to happen when C++ or launch.py files are changed. 
+Sourcing only needs to happen every time a new terminal is opened, and
+building only needs to happen when C++ or launch.py files are changed. 
 
 (Python is not a compiled language; thus, those files do not need to be built
 when changed.)
