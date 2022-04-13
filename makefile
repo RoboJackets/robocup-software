@@ -30,6 +30,11 @@ define cmake_build_target_perf
  	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
+all-perf:
+	$(call cmake_build_target_perf, all)
+# perf (or "RelWithDebInfo"): almost as fast as release, some debug symbols
+perf: all-perf
+
 # used in GH Actions build-and-test
 all:
 	$(call cmake_build_target, all)
@@ -45,11 +50,6 @@ all-release:
 	$(call cmake_build_target_release, all)
 # release: fast executable, no debug symbols
 release: all-release
-
-all-perf:
-	$(call cmake_build_target_perf, all)
-# perf (or "RelWithDebInfo"): almost as fast as release, some debug symbols
-perf: all-perf
 
 # run once build-release-debug/ exists from a previous build
 again:
@@ -116,6 +116,11 @@ modernize:
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build/modernize -include=common,logging,soccer
 
+# build new docs
+docs:
+	(cd docs/ && make html)
+
+# build docs (old)
 apidocs:
 	doxygen doc/Doxyfile
 	cp doc/doxygen.css api_docs/html/
