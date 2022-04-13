@@ -116,9 +116,12 @@ modernize:
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build/modernize -include=common,logging,soccer
 
-# build new docs
+# build docs
 docs:
-	(cd docs/ && make html)
+	(cd docs/ && make html) 
+# open docs
+open-docs:
+	xdg-open docs/build/html/index.html
 
 # build docs (old)
 apidocs:
