@@ -37,7 +37,7 @@ class State(Enum):
 AGGRESSIVENESS = 1.01
 
 # the angle cutoff for people intersepting passes or shots
-CUTOFF_ANGLE = math.cos(math.pi / 10)
+CUTOFF_VALUE = 0.9
 
 # NOTE: Change number on line 50 of capture.py back to 1.3
 
@@ -152,6 +152,13 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 self.init_roles(world_state)
                 self._state = State.SHOOT
 
+        elif self._state == State.SHOOT:
+            striker_role = self.assigned_roles[0]
+            role_intents = [(striker_role.robot.id, striker_role.tick(world_state))]
+            if striker_role.is_done(world_state):
+                self._state = State.DONE
+                # end FSM
+
         elif self._state == State.INIT_PASS:
 
             self._role_requests = [
@@ -242,12 +249,6 @@ class BallHandlerTactic(stp.tactic.Tactic):
                 self._state = State.DONE
                 # end FSM
 
-        elif self._state == State.SHOOT:
-            striker_role = self.assigned_roles[0]
-            role_intents = [(striker_role.robot.id, striker_role.tick(world_state))]
-            if striker_role.is_done(world_state):
-                self._state = State.DONE
-
         return role_intents
 
     @property
@@ -260,7 +261,9 @@ class BallHandlerTactic(stp.tactic.Tactic):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return self._state == State.DONE
 
-    def get_best_pass(self, world_state: stp.rc.WorldState, passer_robot_id: int) -> bool:
+    def get_best_pass(
+        self, world_state: stp.rc.WorldState, passer_robot_id: int
+    ) -> bool:
         print("Checking Passes")
         pass_targets = self.get_pass_order(world_state, passer_robot_id)
         for robot_id in pass_targets:
@@ -275,32 +278,37 @@ class BallHandlerTactic(stp.tactic.Tactic):
         return False
 
     def check_kick(
-        self, world_state: stp.rc.WorldState, target: np.ndarray, robot_id: int) -> bool:
+        self, world_state: stp.rc.WorldState, target: np.ndarray, robot_id: int
+    ) -> bool:
         """
         True -> Good Shot/Pass
         False -> Bad Shot/Pass
         """
-        relatate_vector = (
-            lambda target_pos: target_pos - world_state.robots[robot_id].pose[0:2]
-        )
+        ball_dir = lambda pos: pos - world_state.ball.pos
+        ball_dir_norm = lambda pos: ball_dir(pos) / np.linalg.norm(ball_dir(pos))
         relative_vectors = [
-            relatate_vector(robot.pose[0:2]) for robot in world_state.robots
+            ball_dir_norm(robot.pose[0:2])
+            for robot in world_state.their_robots
+            if robot.visible
         ]
 
-        cosine = (
-            lambda robot_pos: (np.dot(robot_pos, target))
-            / (np.linalg.norm(robot_pos) * np.linalg.norm(target))
-            if (np.linalg.norm(robot_pos) != 0 and np.linalg.norm(target) != 0)
-            else 1
-        )
-        if (
-            max([cosine(relative_vector) for relative_vector in relative_vectors])
-            > CUTOFF_ANGLE
-        ):
+        print("Target Position: ", target)
+        target = ball_dir_norm(target)
+        print("Normalized Target Position: ", target)
+
+        kick_values = [np.dot(vector, target) for vector in relative_vectors]
+        kick_values_dict = {
+            str(vector): np.dot(vector, target) for vector in relative_vectors
+        }
+        print("Kick Values:", kick_values_dict)
+
+        if max(kick_values) > CUTOFF_VALUE:
             return False
         return True
 
-    def get_pass_order(self, world_state: stp.rc.WorldState, robot_id: int) -> List[Robot]:
+    def get_pass_order(
+        self, world_state: stp.rc.WorldState, robot_id: int
+    ) -> List[Robot]:
         """ """
         dist_from_goal = lambda robot: np.linalg.norm(
             robot.pose[0:2] - world_state.field.their_goal_loc
@@ -319,4 +327,4 @@ class BallHandlerTactic(stp.tactic.Tactic):
             )
         }
 
-        return robot_distances.keys()
+        return list(robot_distances.keys())

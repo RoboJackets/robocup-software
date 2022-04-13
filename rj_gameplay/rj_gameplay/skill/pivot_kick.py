@@ -1,20 +1,19 @@
-from abc import ABC, abstractmethod
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
 import sys
 import time
-
-import stp.skill as skill
-import stp.role as role
-from rj_gameplay.skill import kick, pivot, capture
-from rj_msgs.msg import RobotIntent
-import stp.rc as rc
-import numpy as np
-from rj_gameplay.MAX_KICK_SPEED import MAX_KICK_SPEED
-
+from abc import ABC, abstractmethod
 from enum import Enum, auto
+
+import numpy as np
+import py_trees
+import stp.rc as rc
+import stp.role as role
+import stp.skill as skill
+from rj_msgs.msg import RobotIntent
+
+import rj_gameplay.eval as eval
+from rj_gameplay.MAX_KICK_SPEED import MAX_KICK_SPEED
+from rj_gameplay.skill import capture, kick, pivot
 
 
 class State(Enum):
@@ -68,9 +67,6 @@ class PivotKick(skill.Skill):  # add ABC if fails
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
-
-        if self._state != State.DONE:
-            print("Pivot Kick State: ", self._state)
 
         intent = None
         if self._state == State.CAPTURE:

@@ -1,13 +1,11 @@
-import stp.role
-import stp.rc
-
-from rj_gameplay.skill import receive, pivot_kick
-
-from rj_msgs.msg import RobotIntent
-
 from enum import Enum, auto
 
 import numpy as np
+import stp.rc
+import stp.role
+from rj_msgs.msg import RobotIntent
+
+from rj_gameplay.skill import pivot_kick, receive
 
 
 class State(Enum):
@@ -37,9 +35,6 @@ class StrikerRole(stp.role.Role):
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         intent = None
-
-        if self._state != State.KICK_DONE:
-            print("Striker State: ", self._state)
 
         if self._state == State.INIT:
             # taken from role/passer.py
