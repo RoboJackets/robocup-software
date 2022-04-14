@@ -70,7 +70,6 @@ class BasicOffense(stp.play.Play):
             ]
 
             self.assign_roles(world_state)
-
             self._state = State.CHECK_SHOT
             return self.get_robot_intents(world_state)
 
@@ -88,8 +87,8 @@ class BasicOffense(stp.play.Play):
             """
             ball_move_tac = self.prioritized_tactics[1]
             if ball_move_tac.is_done(world_state):
-                print("Dist from goal: ", dist_from_goal(world_state.ball.pos))
-                if dist_from_goal(world_state.ball.pos) < 4:
+                # print("Dist from goal: ", dist_from_goal(world_state.ball.pos))
+                if dist_from_goal(world_state.ball.pos) < 3 and world_state.ball.pos[1] < 8:
                     self._state = State.INIT_SHOOT
                 else:
                     self._state = State.INIT_PASS
@@ -119,17 +118,20 @@ class BasicOffense(stp.play.Play):
 
             # pass tactic dynamically needs assign, handle here
             # (think of as an interrupt)
+            needs_assign = False
             for tactic in self.prioritized_tactics:
                 # TODO: goalie tactic (and all tactics?) need a needs_assign
                 #       build in the logic for needs_assign of pass tactic into superclass
                 if tactic.needs_assign:
                     print(f"{tactic} needs assign, says basic_offense")
                     self._state = State.PASSING_ASSIGN_ROLES
+                    needs_assign = True
 
             # when pass is complete, go shoot
-            pass_tac = self.prioritized_tactics[1]
-            if pass_tac.is_done(world_state):
-                self._state = State.INIT
+            if not needs_assign:
+                pass_tac = self.prioritized_tactics[1]
+                if pass_tac.is_done(world_state):
+                    self._state = State.INIT
 
             return self.get_robot_intents(world_state)
 

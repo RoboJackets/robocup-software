@@ -10,9 +10,9 @@ from enum import Enum, auto
 import numpy as np
 
 # The final velocity of the ball when it reaches our teammate
-FINAL_VELOCITY = 5
+FINAL_VELOCITY = 4
 # Rolling deceleration of the ball after it has been kicked
-BALL_DECELERATION = -0.2
+BALL_DECELERATION = -0.4
 
 
 class State(Enum):
@@ -39,9 +39,12 @@ class PasserRole(stp.role.Role):
     def pass_ready(self):
         return self._state == State.PASS_READY
 
-    def set_execute_pass(self, target_point):
+    def set_execute_pass(self):
         self._state = State.INIT_EXECUTE_PASS
+
+    def update_target_point(self, target_point):
         self._target_point = target_point
+        print("Updated target point: ", target_point)
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """
@@ -50,6 +53,9 @@ class PasserRole(stp.role.Role):
          - when got ball: mark pass ready for Tactic, dribble, wait
          - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
+
+        if self._state != State.KICK_DONE:
+            print("Passer State: ", self._state)
 
         intent = None
         if self._state == State.INIT:
@@ -68,6 +74,7 @@ class PasserRole(stp.role.Role):
         elif self._state == State.INIT_EXECUTE_PASS:
             # TODO: make these params configurable
             # kick_speed is modeled off of the ETDP of ZJUNlict, which can be found in section 5 of https://ssl.robocup.org/wp-content/uploads/2020/03/2020_ETDP_ZJUNlict.pdf
+            
             distance = np.linalg.norm(self._target_point - self.robot.pose[0:2])
             initial_velocity = np.sqrt(
                 (FINAL_VELOCITY**2) - (2 * BALL_DECELERATION * distance)

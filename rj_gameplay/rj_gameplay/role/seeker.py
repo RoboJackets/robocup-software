@@ -93,4 +93,6 @@ class SeekerRole(stp.role.Role):
         return intent
 
     def is_done(self, world_state) -> bool:
-        return self.move_skill.is_done(world_state)
+        if self.move_skill:
+            return self.move_skill.is_done(world_state)
+        return False

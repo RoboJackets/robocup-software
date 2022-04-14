@@ -72,6 +72,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
         elif self._state == State.PIVOT:
             intent = self.pivot.tick(world_state)
             if self.pivot.is_done(world_state):
+                print("KICKING!!!!!!!!!!!!!!!!!!!")
                 self._state = State.KICK
         elif self._state == State.KICK:
             intent = self.kick.tick(world_state)

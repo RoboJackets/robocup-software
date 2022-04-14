@@ -55,6 +55,10 @@ class BasicSeek(stp.tactic.Tactic):
         if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
 
+        for role in self.assigned_roles:
+            if not role.is_done(world_state):
+                print("Seek: ", role.robot.id)
+
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
 
     def is_done(

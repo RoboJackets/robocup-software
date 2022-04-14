@@ -62,6 +62,11 @@ class PassTactic(stp.tactic.Tactic):
 
         role_intents = []
 
+        for role in self.assigned_roles:
+            if not role.is_done(world_state):
+                print("Passer/Receiver: ", role.robot.id)
+                
+
         if self._state == State.INIT:
             self._role_requests = [
                 (
@@ -117,8 +122,8 @@ class PassTactic(stp.tactic.Tactic):
             # TODO: create func to find good target point
             # TODO: should update receiver_role robot every tick in the role (see skill/capture.py)
             target_point = world_state.our_robots[receiver_role.robot.id].pose[0:2]
-            print("********************Selected Pass Location**************************")
-            passer_role.set_execute_pass(target_point)
+            passer_role.update_target_point(target_point)
+            passer_role.set_execute_pass()
 
             role_intents = [
                 (passer_role.robot.id, passer_role.tick(world_state)),
@@ -131,6 +136,11 @@ class PassTactic(stp.tactic.Tactic):
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
             receiver_role = self.assigned_roles[1]
+
+            # target_point = world_state.our_robots[receiver_role.robot.id].pose[0:2]
+            # passer_role.update_target_point(target_point)
+
+            # print("Target Point: ", target_point)
 
             role_intents = [
                 (passer_role.robot.id, passer_role.tick(world_state)),
