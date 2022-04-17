@@ -27,6 +27,7 @@ from rj_gameplay.tactic import (
 class State(Enum):
     INIT = auto()
     ACTIVE = auto()
+    ASSIGN_ROLES = auto()
     DONE = auto()
 
 
@@ -106,11 +107,20 @@ class Kickoff(stp.play.Play):
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
-        if self._state == State.ACTIVE:
-            if self.prioritized_tactics[-2].is_done(world_state):
-                self._state = State.DONE
+        elif self._state == State.ASSIGN_ROLES:
+            # duplicate code from init
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
-        if self._state == State.DONE:
+        elif self._state == State.ACTIVE:
+            for tactic in self.prioritized_tactics:
+                if tactic.needs_assign:
+                    self._state = State.ASSIGN_ROLES
+
+            # if self.prioritized_tactics[-2].is_done(world_state):
+            #     self._state = State.DONE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.DONE:
             return None
 
 
