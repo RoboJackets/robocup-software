@@ -1,19 +1,22 @@
-import stp
-import numpy as np
 from typing import List
-from rj_gameplay.skill import move
+
+import numpy as np
+import stp
 from rj_msgs.msg import RobotIntent
 from scipy.optimize import minimize
 
+from rj_gameplay.skill import move
+
 
 class SeekerRole(stp.role.Role):
-    def __init__(self, robot: stp.rc.Robot, my_region) -> None:
+    def __init__(self, robot: stp.rc.Robot, my_region, centroid) -> None:
         # TODO: type this header
 
         super().__init__(robot)
         self.move_skill = None
         self.target_point = None
         self._my_region = my_region
+        self._centroid = centroid
         self._target_point = None
         self._ticks_since_reassign = 0
 
@@ -65,21 +68,14 @@ class SeekerRole(stp.role.Role):
 
         """
 
-        centroid = np.array(
-            [
-                ((self._my_region[0] + self._my_region[1]) / 2),
-                ((self._my_region[2] + self._my_region[3]) / 2),
-            ]
-        )
-
         # find target point w/in region
         if self.target_point is None:
-            self.target_point = centroid
+            self.target_point = self._centroid
 
         # only reassign every so often so robot can reach target pt
         if self._ticks_since_reassign > 10:
             self.target_point = self.get_open_point(
-                world_state, self._my_region, centroid
+                world_state, self._my_region, self._centroid
             )
             self._ticks_since_reassign = 0
 
