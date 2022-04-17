@@ -18,7 +18,14 @@ Run the setup script to install all required dependencies:
 
     cd robocup-software
     ./util/ubuntu-setup
+    
+And setup git submodules:
 
+.. code-block:: sh
+
+    git submodule init
+    git submodule update
+    
 CLion Setup
 -----------
 We strongly recommend that users use CLion_, which Jetbrains offers for free through their university programs.
