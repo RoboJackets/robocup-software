@@ -153,15 +153,21 @@ class GameplayNode(Node):
     def set_match_state(self, match_state: msg.MatchState):
         self.match_state = match_state
 
-    def debug_callback(self, play: stp.play.IPlay, tactics: list):
+    def debug_callback(self):
         """
         Publishes the string that shows up in the behavior tree in the Soccer UI.
         """
         debug_text = ""
-        debug_text += f"Play: {play}\n\n"
-        debug_text += f"Play Selector: {self.play_selector}\n"
+        debug_text += f"WorldState: {self.world_state}\n\n"
+        debug_text += f"Play: {self._curr_play}\n\n"
+
+        # situation is a long, ugly type: shorten before printing
+        short_situation = f"{self._curr_situation}"
+        short_situation = short_situation[short_situation.rfind(".") + 1 : -2]
+        debug_text += f"Situation: {short_situation}\n\n"
+
         with np.printoptions(precision=3, suppress=True):
-            for i, tactic in enumerate(tactics):
+            for i, tactic in enumerate(self._curr_play.prioritized_tactics):
                 debug_text += f"{i+1}. {tactic}\n\n"
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
@@ -258,7 +264,7 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
-            self.debug_callback(self._curr_play, self._curr_play.prioritized_tactics)
+            self.debug_callback()
         else:
             self.get_logger().warn("World state was none!")
 
@@ -478,7 +484,8 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = basic_defense.BasicDefense()
+    # test_play = basic_defense.BasicDefense()
+    test_play = None
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
