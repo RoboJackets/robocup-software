@@ -6,6 +6,7 @@ import stp
 import stp.play as play
 import stp.rc as rc
 import stp.role as role
+import stp.role.cost as cost
 import stp.skill as skill
 import stp.tactic as tactic
 from rj_msgs.msg import RobotIntent
@@ -81,6 +82,8 @@ class Kickoff(stp.play.Play):
 
         if self._state == State.INIT:
             pts = []
+            # pts[0] is the passer
+            # pts[1] is the receiver
             pts.append(
                 (
                     0.0,
@@ -93,9 +96,12 @@ class Kickoff(stp.play.Play):
             pts.append((pts[0][0] + dx, pts[0][1] + dy))
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.prioritized_tactics.append(
-                dumb_tactic.DumbTactic(world_state, [pts[1]])
+                pass_tactic.PassTactic(
+                    world_state,
+                    cost.PickClosestToPoint(pts[0]),
+                    cost.PickClosestToPoint(pts[1]),
+                )
             )
-            self.prioritized_tactics.append(pass_tactic.PassTactic(world_state))
             self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
