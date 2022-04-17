@@ -1,23 +1,15 @@
-import stp.play
-import stp.tactic
+from enum import Enum, auto
+from typing import List
 
-from rj_gameplay.tactic import line_tactic
-import stp.skill
+import stp.play
+import stp.rc
 import stp.role
 import stp.role.cost
-from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc
-from typing import (
-    Dict,
-    List,
-    Tuple,
-    Optional,
-    Type,
-)
-import numpy as np
+import stp.skill
+import stp.tactic
 from rj_msgs.msg import RobotIntent
 
-from enum import Enum, auto
+from rj_gameplay.tactic import line_tactic
 
 
 class State(Enum):
@@ -40,7 +32,7 @@ class LineUp(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self._state == State.INIT:
-            self.prioritized_tactics.append(line_tactic.LineTactic(world_state))
+            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 6))
             self.assign_roles(world_state)
             self._state = State.LINE_UP
             return self.get_robot_intents(world_state)

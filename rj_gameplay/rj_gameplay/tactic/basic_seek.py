@@ -1,22 +1,49 @@
-import stp
-from rj_gameplay.role import dumb_move
 from typing import List, Tuple
-import numpy as np
 
+import numpy as np
+import stp
 from rj_msgs.msg import RobotIntent
+
+from rj_gameplay.role import seeker
 
 
 class BasicSeek(stp.tactic.Tactic):
     """Seeks to a single point, passed in on init."""
 
-    def __init__(self, seek_pt: np.ndarray, world_state: stp.rc.WorldState):
+    def __init__(
+        self,
+        world_state: stp.rc.WorldState,
+        num_seekers: int,
+        formations: List,
+        centroids: List,
+    ):
         super().__init__(world_state)
 
-        self._seek_pt = seek_pt
+        formation = formations
+        centroid_list = centroids
+        self._used_regions = []
+        self._used_centroids = []
+        self._num_seekers = num_seekers
 
-        self._role_requests.append(
-            (stp.role.cost.PickClosestToPoint(seek_pt), dumb_move.DumbMove)
-        )
+        for i in range(self._num_seekers):
+            my_region = formation[i]
+            self._used_regions.append(my_region)
+            centroid = centroid_list[i]
+            self._used_centroids.append(centroid)
+            self._role_requests.append(
+                (stp.role.cost.PickClosestToPoint(centroid), seeker.SeekerRole)
+            )
+
+    def init_roles(
+        self,
+        world_state: stp.rc.WorldState,
+    ):
+        for i, robot in enumerate(self.assigned_robots):
+            role = self._role_requests[i][1]  # TODO: make this an actual type
+            my_region = self._used_regions[i]
+            centroid = self._used_centroids[i]
+            if role is seeker.SeekerRole:
+                self.assigned_roles.append(role(robot, my_region, centroid))
 
     def tick(
         self,
@@ -35,12 +62,3 @@ class BasicSeek(stp.tactic.Tactic):
         world_state: stp.rc.WorldState,
     ) -> bool:
         return all([role.is_done(world_state) for role in self.assigned_roles])
-
-    def init_roles(
-        self,
-        world_state: stp.rc.WorldState,
-    ):
-        robot = self.assigned_robots[0]
-        role = self._role_requests[0][1]
-        if role is dumb_move.DumbMove:
-            self.assigned_roles.append(role(robot, self._seek_pt, world_state.ball.pos))

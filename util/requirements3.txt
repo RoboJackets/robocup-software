@@ -13,10 +13,11 @@ pylint # static checker for python
 mypy == 0.770 # static arugment checker. Pinned to 0.770 because something is broken with 0.780
 
 yapf # python checker
-black #python checker
+black == 21.12b0 # python style autoformatter, pinned to last stable release because current version (3/29/21) has a bug
+isort # python import sorted
 typing-extensions # For TypedDict
 cmake_format
-pre-commit #hook support
+pre-commit # hook support
 
 sphinx
 sphinx_rtd_theme

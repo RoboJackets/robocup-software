@@ -1,16 +1,12 @@
+from enum import Enum, auto
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
-import stp
-
-from rj_gameplay.role import receiver, passer
 import numpy as np
-
+import stp
 import stp.global_parameters as global_parameters
-
 from rj_msgs.msg import RobotIntent
 
-
-from enum import Enum, auto
+from rj_gameplay.role import passer, receiver
 
 
 class State(Enum):
@@ -33,8 +29,8 @@ class PassTactic(stp.tactic.Tactic):
     def __init__(
         self,
         world_state: stp.rc.WorldState,
-        init_passer_cost: stp.role.cost,
-        init_receiver_cost: stp.role.cost,
+        init_passer_cost: stp.role.CostFn,
+        init_receiver_cost: stp.role.CostFn,
     ):
         super().__init__(world_state)
 
@@ -107,8 +103,9 @@ class PassTactic(stp.tactic.Tactic):
             # TODO: evaluate whether this is a dumb idea or not
 
         elif self._state == State.INIT_EXECUTE_PASS:
-            # one tick delay for play role assignment
-            self._state = State.EXECUTE_PASS
+            # Wait until play assignment assigns the needed 2 roles
+            if len(self.assigned_roles) == 2:
+                self._state = State.EXECUTE_PASS
 
         elif self._state == State.EXECUTE_PASS:
             # assumes play has given new role_requests
@@ -161,8 +158,9 @@ class PassTactic(stp.tactic.Tactic):
             self._state = State.INIT_AWAIT_RECEIVE
 
         elif self._state == State.INIT_AWAIT_RECEIVE:
-            # one tick delay for play role assignment
-            self._state = State.EXECUTE_RECEIVE
+            # Wait until play assignment assigns the needed 1 roles
+            if len(self.assigned_roles) == 1:
+                self._state = State.EXECUTE_RECEIVE
 
         elif self._state == State.EXECUTE_RECEIVE:
             # assumes play has given new role_requests
