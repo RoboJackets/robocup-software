@@ -101,7 +101,7 @@ class BasicOffense(stp.play.Play):
 
         elif self._state == State.INIT_PASS:
             init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
-            init_receiver_cost = stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc)
+            init_receiver_cost = stp.role.cost.PickShortestPositiveReceiver()
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 pass_tactic.PassTactic(

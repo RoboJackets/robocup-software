@@ -82,3 +82,24 @@ class PickFarthestFromPoint(stp.role.CostFn):
 
     def __repr__(self):
         return f"PickFarthestFromPoint(target_point={self._target_point})"
+
+class PickShortestPositiveReceiver(stp.role.CostFn):
+    """
+    
+    """
+
+    def __init__(self):
+        pass
+
+    def __call__(self, robot: stp.rc.Robot, world_state: stp.rc.WorldState) -> float:
+        dist_from_goal = lambda pos: np.linalg.norm(pos - world_state.field.their_goal_loc)
+        dist_from_ball = lambda pos: np.linalg.norm(pos - world_state.ball.pos)
+
+        robot_to_goal_dist = dist_from_goal(robot.pose[0:2])
+        robot_to_ball_dist = dist_from_ball(robot.pose[0:2])
+        ball_to_goal_dist = dist_from_goal(world_state.ball.pos)
+
+        if robot_to_goal_dist < ball_to_goal_dist:
+            return robot_to_ball_dist
+        else:
+            return 1e9
