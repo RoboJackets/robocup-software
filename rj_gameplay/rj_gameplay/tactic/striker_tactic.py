@@ -39,9 +39,9 @@ class StrikerTactic(stp.tactic.Tactic):
         if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
 
-        for role in self.assigned_roles:
-            if not role.is_done(world_state):
-                print("Striker: ", role.robot.id)
+        # for role in self.assigned_roles:
+        #     if not role.is_done(world_state):
+        #         print("Striker: ", role.robot.id)
 
         # if low performance, make this not a for loop since it's only one tactic
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
@@ -60,6 +60,7 @@ class StrikerTactic(stp.tactic.Tactic):
         role = self._role_requests[0][1]
         if role is striker.StrikerRole:
             self.assigned_roles.append(role(robot))
+            print("Striker: ", robot.id)
 
     @property
     def needs_assign(self):

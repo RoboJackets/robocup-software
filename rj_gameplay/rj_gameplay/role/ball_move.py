@@ -35,10 +35,6 @@ class BallMoveRole(stp.role.Role):
     def ready(self):
         return self._state == State.READY
 
-    def set_execute_pass(self, target_point):
-        self._state = State.INIT_EXECUTE_PASS
-        self._target_point = target_point
-
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """
         Assume robot does not have ball on init. Then:

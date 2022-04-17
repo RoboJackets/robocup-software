@@ -59,6 +59,7 @@ class SeekerRole(stp.role.Role):
 
         bestpoint = np.array([result.x[0] + x_noise, result.x[1] + y_noise])
 
+        print(self.robot.id, " open Point: ", bestpoint)
         return bestpoint
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:

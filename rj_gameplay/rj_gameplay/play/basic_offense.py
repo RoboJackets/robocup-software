@@ -55,6 +55,7 @@ class BasicOffense(stp.play.Play):
         dist_from_ball = lambda pos: np.linalg.norm(pos - world_state.ball.pos)
 
         print(self._state)
+        # print(self.prioritized_tactics)
 
         # TODO: when seeker formation behavior added in, add it in for other 3 robots
         if self._state == State.INIT:
@@ -86,12 +87,15 @@ class BasicOffense(stp.play.Play):
                 self._state = State.INIT_PASS
             """
             ball_move_tac = self.prioritized_tactics[1]
+            basic_seek_tac = self.prioritized_tactics[2]
+
             if ball_move_tac.is_done(world_state):
-                # print("Dist from goal: ", dist_from_goal(world_state.ball.pos))
-                if dist_from_goal(world_state.ball.pos) < 3 and world_state.ball.pos[1] < 8:
-                    self._state = State.INIT_SHOOT
-                else:
-                    self._state = State.INIT_PASS
+                basic_seek_tac.start_timer()
+                if basic_seek_tac.is_done(world_state):
+                    if dist_from_goal(world_state.ball.pos) < 3 and world_state.ball.pos[1] < 8:
+                        self._state = State.INIT_SHOOT
+                    else:
+                        self._state = State.INIT_PASS
 
             return self.get_robot_intents(world_state)
 
@@ -102,7 +106,7 @@ class BasicOffense(stp.play.Play):
                 goalie_tactic.GoalieTactic(world_state, 0),
                 pass_tactic.PassTactic(
                     world_state, init_passer_cost, init_receiver_cost
-                ),
+                )
             ]
 
             self.assign_roles(world_state)
@@ -127,7 +131,6 @@ class BasicOffense(stp.play.Play):
                     self._state = State.PASSING_ASSIGN_ROLES
                     needs_assign = True
 
-            # when pass is complete, go shoot
             if not needs_assign:
                 pass_tac = self.prioritized_tactics[1]
                 if pass_tac.is_done(world_state):
