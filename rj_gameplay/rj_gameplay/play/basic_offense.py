@@ -6,6 +6,7 @@ import numpy as np
 from rj_msgs.msg import RobotIntent
 from stp.formations.diamond_formation import DiamondFormation
 from rj_gameplay.tactic import basic_seek, ball_move_tactic, goalie_tactic, pass_tactic, striker_tactic
+from stp.formations.x_formation import XFormation
 
 
 
@@ -65,8 +66,8 @@ class BasicOffense(stp.play.Play):
                 basic_seek.BasicSeek(
                     world_state,
                     4,
-                    DiamondFormation(world_state).get_regions,
-                    DiamondFormation(world_state).get_centroids,
+                    XFormation(world_state).get_regions,
+                    XFormation(world_state).get_centroids,
                 )
             ]
 
