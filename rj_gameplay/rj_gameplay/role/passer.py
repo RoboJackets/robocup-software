@@ -44,7 +44,7 @@ class PasserRole(stp.role.Role):
 
     def update_target_point(self, target_point):
         self._target_point = target_point
-        print("Updated target point: ", target_point)
+        # print("Updated target point: ", target_point)
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """

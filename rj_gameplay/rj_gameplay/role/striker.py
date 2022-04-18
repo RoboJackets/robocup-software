@@ -52,6 +52,8 @@ class StrikerRole(stp.role.Role):
                 world_state, shot_kick_speed
             )
 
+            print("Shot target point: ", best_shot_target_point)
+
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=best_shot_target_point,
@@ -130,14 +132,14 @@ class StrikerRole(stp.role.Role):
     def _find_target_point(
         self, world_state: stp.rc.WorldState, kick_speed: float
     ) -> np.ndarray:
-        goal_y = world_state.field.length_m
+        goal_y = world_state.field.length_m - 0.1
         cost = 0
 
         ball_pos = world_state.ball.pos
 
         # Heuristic: limit where we kick if we're very wide
-        xmin = -0.43
-        xmax = 0.43
+        xmin = -0.4
+        xmax = 0.4
         if abs(ball_pos[0]) > 1:
             kick_extent = -1 / ball_pos[0]
             if kick_extent < 0:

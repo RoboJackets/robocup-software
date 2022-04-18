@@ -99,7 +99,10 @@ class PickShortestPositiveReceiver(stp.role.CostFn):
         robot_to_ball_dist = dist_from_ball(robot.pose[0:2])
         ball_to_goal_dist = dist_from_goal(world_state.ball.pos)
 
+        return_val = 1e9
+
         if robot_to_goal_dist < ball_to_goal_dist:
-            return robot_to_ball_dist
-        else:
-            return 1e9
+            return_val = robot_to_ball_dist
+        
+        print("Receiver Cost - ", robot.id, " : ", return_val)
+        return return_val

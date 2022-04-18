@@ -45,10 +45,10 @@ class PassTactic(stp.tactic.Tactic):
             role = self._role_requests[i][1]
             if role is passer.PasserRole:
                 self.assigned_roles.append(role(robot))
-                print("Passer: ", robot.id)
+                # print("Passer: ", robot.id)
             elif role is receiver.ReceiverRole:
                 self.assigned_roles.append(role(robot))
-                print("Receiver: ", robot.id)
+                # print("Receiver: ", robot.id)
 
     def tick(
         self, world_state: stp.rc.WorldState
@@ -63,11 +63,7 @@ class PassTactic(stp.tactic.Tactic):
          - when receiver done: done
         """
 
-        role_intents = []
-
-        # for role in self.assigned_roles:
-        #     if not role.is_done(world_state):
-        #         print("Passer/Receiver: ", role.robot.id)                
+        role_intents = []             
 
         if self._state == State.INIT:
             self._role_requests = [
@@ -93,7 +89,7 @@ class PassTactic(stp.tactic.Tactic):
                 self._state = State.GET_RECEIVER
 
         elif self._state == State.GET_RECEIVER:
-            self._receiver_cost = stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc)
+            self._receiver_cost = stp.role.cost.PickShortestPositiveReceiver()
             self._role_requests.append(
                 (self._receiver_cost, receiver.ReceiverRole)
             )

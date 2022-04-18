@@ -59,7 +59,6 @@ class SeekerRole(stp.role.Role):
 
         bestpoint = np.array([result.x[0] + x_noise, result.x[1] + y_noise])
 
-        print(self.robot.id, " open Point: ", bestpoint)
         return bestpoint
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
@@ -75,6 +74,7 @@ class SeekerRole(stp.role.Role):
 
         # only reassign every so often so robot can reach target pt
         if self._ticks_since_reassign > 10:
+            # print("Finding new target point")
             self.target_point = self.get_open_point(
                 world_state, self._my_region, self._centroid
             )

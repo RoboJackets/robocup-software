@@ -53,7 +53,7 @@ class BasicSeek(stp.tactic.Tactic):
             centroid = self._used_centroids[i]
             if role is seeker.SeekerRole:
                 self.assigned_roles.append(role(robot, my_region, centroid))
-                print("Seeker: ", robot.id)
+                # print("Seeker: ", robot.id)
 
     def start_timer(self):
         self._timer_started = True
@@ -70,10 +70,6 @@ class BasicSeek(stp.tactic.Tactic):
             # assumes all roles requested are filled, because tactic is one unit
             if len(self.assigned_roles) != len(self._role_requests):
                 self.init_roles(world_state)
-
-            # for role in self.assigned_roles:
-            #     if not role.is_done(world_state):
-            #         print("Seek: ", role.robot.id)
 
             if self._timer_started:
                 self._ticks_left -= 1

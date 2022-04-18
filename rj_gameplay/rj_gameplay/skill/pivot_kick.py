@@ -34,7 +34,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
         dribble_speed: float = 1.0,
         chip: bool = False,
         kick_speed: float = RobotConstants.MAX_KICK_SPEED,
-        threshold: float = 0.02,
+        threshold: float = 0.1,
         priority: int = 1,
     ) -> None:
 
@@ -58,14 +58,14 @@ class PivotKick(skill.Skill):  # add ABC if fails
             priority,
         )
         self.capture = capture.Capture(robot)
-        print("**********RECORDED PASS LOCATION: ", self.target_point)
+        # print("**********RECORDED PASS LOCATION: ", self.target_point)
         self._state = State.CAPTURE
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
 
-        if self._state != State.DONE:
-            print("Pivot Kick State: ", self._state)
+        # if self._state != State.DONE:
+            # print("Pivot Kick State: ", self._state)
 
         intent = None
         if self._state == State.CAPTURE:
@@ -75,7 +75,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
         elif self._state == State.PIVOT:
             intent = self.pivot.tick(world_state)
             if self.pivot.is_done(world_state):
-                print("KICKING!!!!!!!!!!!!!!!!!!!")
+                # print("KICKING!!!!!!!!!!!!!!!!!!!")
                 self._state = State.KICK
         elif self._state == State.KICK:
             intent = self.kick.tick(world_state)
