@@ -12,13 +12,20 @@ Clone the repository:
 
    git clone git://github.com/RoboJackets/robocup-software
 
-Run the setup script:
+Run the setup script to install all required dependencies:
 
 .. code-block:: sh
 
     cd robocup-software
-    util/ubuntu-setup
+    ./util/ubuntu-setup
+    
+And setup git submodules:
 
+.. code-block:: sh
+
+    git submodule init
+    git submodule update
+    
 CLion Setup
 -----------
 We strongly recommend that users use CLion_, which Jetbrains offers for free through their university programs.

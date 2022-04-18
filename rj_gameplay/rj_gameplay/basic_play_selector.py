@@ -262,3 +262,11 @@ class BasicPlaySelector(situation.IPlaySelector):
 
         elif game_info.is_free_placement():
             return situations.Stop()
+
+    def __repr__(self):
+        """
+        returns the string with the current situation.
+        """
+        text = ""
+        text += self.curr_situation.__class__.__name__
+        return text

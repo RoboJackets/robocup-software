@@ -3,6 +3,7 @@ from typing import List
 
 import stp
 from rj_msgs.msg import RobotIntent
+from stp.formations.diamond_formation import DiamondFormation
 
 from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
 
@@ -53,7 +54,12 @@ class BasicOffense(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
-                basic_seek.BasicSeek(world_state, 3),
+                basic_seek.BasicSeek(
+                    world_state,
+                    4,
+                    DiamondFormation(world_state).get_regions,
+                    DiamondFormation(world_state).get_centroids,
+                ),
             ]
 
             self.assign_roles(world_state)

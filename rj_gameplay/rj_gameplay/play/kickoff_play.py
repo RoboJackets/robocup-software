@@ -103,7 +103,7 @@ class Kickoff(stp.play.Play):
                     cost.PickClosestToPoint(pts[1]),
                 )
             )
-            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
+            # self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
