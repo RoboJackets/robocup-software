@@ -21,6 +21,11 @@ OPPONENT_SPEED = 1.5
 KICK_SPEED = 4.5
 EFF_BLOCK_WIDTH = 0.7
 
+# The final velocity of the ball when it reaches our teammate
+FINAL_VELOCITY = 4
+# Rolling deceleration of the ball after it has been kicked
+BALL_DECELERATION = -0.4
+
 
 class StrikerRole(stp.role.Role):
     """Grabs ball and shoots on goal. Should eventually be merged with some hybrid PassOrShoot role."""
@@ -47,18 +52,22 @@ class StrikerRole(stp.role.Role):
                 self._state = State.INIT_SHOOT
         elif self._state == State.INIT_SHOOT:
             # TODO: make these params configurable
-            shot_kick_speed = 4.5  # TODO: adjust based on dist from target_point
-            best_shot_target_point = self._find_target_point(
-                world_state, shot_kick_speed
-            )
+            # best_shot_target_point = self._find_target_point(
+            #     world_state, shot_kick_speed
+            # )
 
-            print("Shot target point: ", best_shot_target_point)
+            # print("Shot target point: ", best_shot_target_point)
+
+            distance = np.linalg.norm(world_state.field.their_goal_loc - self.robot.pose[0:2])
+            initial_velocity = np.sqrt(
+                (FINAL_VELOCITY**2) - (2 * BALL_DECELERATION * distance)
+            )
 
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=world_state.field.their_goal_loc,
                 chip=False,
-                kick_speed=shot_kick_speed,
+                kick_speed=initial_velocity,
             )
             self._state = State.SHOOTING
         elif self._state == State.SHOOTING:

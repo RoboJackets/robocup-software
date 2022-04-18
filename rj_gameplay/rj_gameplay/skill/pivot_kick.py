@@ -34,7 +34,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
         dribble_speed: float = 1.0,
         chip: bool = False,
         kick_speed: float = RobotConstants.MAX_KICK_SPEED,
-        threshold: float = 0.05,
+        threshold: float = 0.02,
         priority: int = 1,
     ) -> None:
 

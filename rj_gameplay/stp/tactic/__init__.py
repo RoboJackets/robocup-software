@@ -94,6 +94,7 @@ class Tactic(ABC):
                     for role, robot in itertools.zip_longest(
                         self.assigned_roles, self.assigned_robots
                     )
+                    if robot is not None
                 ]
             )
         return text
