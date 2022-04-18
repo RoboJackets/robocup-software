@@ -13,7 +13,7 @@ class PrepMove(stp.tactic.Tactic):
     def __init__(self, world_state: stp.rc.WorldState):
         super().__init__(world_state)
 
-        self._target_pt = np.array([0.0, 0.0])
+        self._target_pt = np.array([0.0, 7.0])
 
         self._role_requests.append(
             (stp.role.cost.PickClosestToPoint(self._target_pt), dumb_move.DumbMove)

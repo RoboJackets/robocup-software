@@ -52,8 +52,9 @@ class PickClosestToPoint(stp.role.CostFn):
         robot: stp.rc.Robot,
         world_state: stp.rc.WorldState,
     ) -> float:
-        if world_state is not None and robot in world_state.our_robots:
-            return np.linalg.norm(robot.pose[:2] - self._target_point)
+        if world_state is not None:
+            for robot in world_state.our_robots:
+                return np.linalg.norm(robot.pose[:2] - self._target_point)
 
         # TODO: use max int or float('inf')
         return 1e9
