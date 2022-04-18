@@ -2,20 +2,25 @@ import argparse
 import sys
 import time
 from abc import ABC
+from enum import Enum, auto
 
 import numpy as np
 import stp.action as action
 import stp.rc as rc
 import stp.skill as skill
+
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import LineKickMotionCommand, RobotIntent
 
 
-class ILineKickSkill(skill.ISkill, ABC):
-    ...
+class State(Enum):
+    CAPTURE = auto()
+    PIVOT = auto()
+    KICK = auto()
+    DONE = auto()
 
 
-class LineKickSkill(ILineKickSkill):
+class LineKickSkill(skill.Skill):
     """
     A skill version of line kick so that actions don't have to be called in tactics
     """
@@ -40,8 +45,9 @@ class LineKickSkill(ILineKickSkill):
         self.kick_speed = kick_speed
         # self.kick_speed = 5.5
 
-    def tick(self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent):
-        self.robot = robot
+    def tick(self, world_state: rc.WorldState) -> RobotIntent:
+        super().tick(world_state)
+        intent = None
 
         ball_to_target = self.target_point - world_state.ball.pos
         ball_to_target /= np.linalg.norm(ball_to_target)
@@ -64,8 +70,7 @@ class LineKickSkill(ILineKickSkill):
         intent.motion_command.line_kick_command = [line_kick_command]
         intent.is_active = True
 
-        return {self.robot.id: intent}
-        # TODO: change so this properly returns the actions intent messages
+        return intent
 
     def is_done(self, world_state: rc.WorldState):
         # skill is done after move + kick

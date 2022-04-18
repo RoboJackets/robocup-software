@@ -92,6 +92,10 @@ void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
 
     std::string out;
     sim_packet.SerializeToString(&out);
+    if (sim_robot->kick_speed() > 0) {
+        SPDLOG_ERROR("sim_robot: {} {} {} \n", sim_robot->id(), sim_robot->kick_speed(),
+                     sim_robot->dribbler_speed());
+    }
 
     socket_.send_to(buffer(out), robot_control_endpoint_);
 }

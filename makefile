@@ -153,7 +153,7 @@ endif
 # Restyles all C++ (Clang formatter) and Python files (Black formatter) excluding files in the external and build folders
 pretty-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
-	@git diff -U0 --no-color $(DIFFBASE) | black .
+	# @git diff -U0 --no-color $(DIFFBASE) | black .
 
 tidy-lines:
 ifeq ("$(wildcard $(COMPILE_COMMANDS_DIR)/compile_commands.json)","")

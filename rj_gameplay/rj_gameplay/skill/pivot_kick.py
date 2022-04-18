@@ -6,10 +6,10 @@ from enum import Enum, auto
 import numpy as np
 import stp.rc as rc
 import stp.skill as skill
-from rj_msgs.msg import RobotIntent
 from stp.utils.constants import RobotConstants
 
 from rj_gameplay.skill import capture, kick, pivot
+from rj_msgs.msg import RobotIntent
 
 
 class State(Enum):
@@ -19,7 +19,7 @@ class State(Enum):
     DONE = auto()
 
 
-class PivotKick(skill.Skill):  # add ABC if fails
+class PivotKick(skill.Skill):
     """
     A pivot kick skill
     capture -> pivot -> kick
@@ -63,6 +63,7 @@ class PivotKick(skill.Skill):  # add ABC if fails
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
+        # print(f"pivot kick: {self._state}")
 
         intent = None
         if self._state == State.CAPTURE:

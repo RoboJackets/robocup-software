@@ -18,8 +18,6 @@ import stp.skill
 import stp.utils.world_state_converter as conv
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
-from rj_geometry_msgs import msg as geo_msg
-from rj_msgs import msg
 from std_msgs.msg import String as StringMsg
 from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
@@ -33,6 +31,9 @@ from rj_gameplay.play import (  # noqa: F401
     keepaway,
     line_up,
 )
+from rj_geometry_msgs import msg as geo_msg
+from rj_msgs import msg
+from rj_msgs.msg import EmptyMotionCommand, RobotIntent
 
 NUM_ROBOTS = 16
 
@@ -249,8 +250,14 @@ class GameplayNode(Node):
             if intents:
                 for i in range(len(self.world_state.our_robots)):
                     if intents[i] is not None:
-                        rip_i = self.robot_intent_pubs[i]
-                        rip_i.publish(intents[i])
+                        # if intent given by gameplay, publish it
+                        self.robot_intent_pubs[i].publish(intents[i])
+                    else:
+                        # otherwise, send empty (to stop previous intents)
+                        empty_intent = RobotIntent()
+                        empty_command = EmptyMotionCommand()
+                        empty_intent.motion_command.empty_command = [empty_command]
+                        self.robot_intent_pubs[i].publish(empty_intent)
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -484,8 +491,8 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    # test_play = basic_defense.BasicDefense()
-    test_play = None
+    test_play = keepaway.Keepaway()
+    # test_play = None
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)

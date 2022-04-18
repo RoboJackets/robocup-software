@@ -1,17 +1,17 @@
 import os
 from pathlib import Path
-from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
 
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node
+
+from launch import LaunchDescription
 from launch.actions import (
+    DeclareLaunchArgument,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
     Shutdown,
-    DeclareLaunchArgument,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-
 from launch.substitutions import LaunchConfiguration
 
 
@@ -52,7 +52,7 @@ def generate_launch_description():
             DeclareLaunchArgument("headless_flag", default_value=""),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             stdout_linebuf_envvar,
-            grsim,
+            # grsim,
             soccer,
         ]
     )
