@@ -1,4 +1,5 @@
 import stp.rc
+import stp.role
 from rj_msgs.msg import RobotIntent
 
 

@@ -12,12 +12,12 @@ Clone the repository:
 
    git clone git://github.com/RoboJackets/robocup-software
 
-Run the setup script:
+Run the setup script to install all required dependencies:
 
 .. code-block:: sh
 
     cd robocup-software
-    util/ubuntu-setup
+    ./util/ubuntu-setup
 
 CLion Setup
 -----------
