@@ -30,6 +30,7 @@ class BasicOffense(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
+        self._init_counter = 0
         """
         self._seek_pts = [
             np.array((2.0, 7.0)),
@@ -60,19 +61,32 @@ class BasicOffense(stp.play.Play):
 
         # TODO: when seeker formation behavior added in, add it in for other 3 robots
         if self._state == State.INIT:
-            self.prioritized_tactics = [
-                goalie_tactic.GoalieTactic(world_state, 0),
-                ball_move_tactic.BallMoveTactic(world_state),
-                basic_seek.BasicSeek(
-                    world_state,
-                    4,
-                    XFormation(world_state).get_regions,
-                    XFormation(world_state).get_centroids,
-                )
-            ]
+            if self._init_counter % 2 == 0:
+                self.prioritized_tactics = [
+                    goalie_tactic.GoalieTactic(world_state, 0),
+                    ball_move_tactic.BallMoveTactic(world_state),
+                    basic_seek.BasicSeek(
+                        world_state,
+                        4,
+                        XFormation(world_state).get_regions,
+                        XFormation(world_state).get_centroids,
+                    )
+                ]
+            else:
+                self.prioritized_tactics = [
+                    goalie_tactic.GoalieTactic(world_state, 0),
+                    ball_move_tactic.BallMoveTactic(world_state),
+                    basic_seek.BasicSeek(
+                        world_state,
+                        4,
+                        DiamondFormation(world_state).get_regions,
+                        DiamondFormation(world_state).get_centroids,
+                    )
+                ]
 
             self.assign_roles(world_state)
             self._state = State.CHECK_SHOT
+            self._init_counter += 1
             return self.get_robot_intents(world_state)
 
         elif self._state == State.CHECK_SHOT:
@@ -93,7 +107,7 @@ class BasicOffense(stp.play.Play):
             if ball_move_tac.is_done(world_state):
                 basic_seek_tac.start_timer()
                 if basic_seek_tac.is_done(world_state):
-                    if dist_from_goal(world_state.ball.pos) < 3.5 and world_state.ball.pos[1] < 8:
+                    if dist_from_goal(world_state.ball.pos) < 3.5 and world_state.ball.pos[1] < 8.5:
                         self._state = State.INIT_SHOOT
                     else:
                         self._state = State.INIT_PASS
