@@ -44,3 +44,4 @@ class DumbMove(stp.role.Role):
     def is_done(self, world_state) -> bool:
         if self.move_skill is not None:
             return self.move_skill.is_done(world_state)
+        return False

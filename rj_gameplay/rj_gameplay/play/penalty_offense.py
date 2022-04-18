@@ -15,6 +15,7 @@ class State(Enum):
     INIT = auto()
     PREP = auto()
     READY = auto()
+    SHOOTING = auto()
     DONE = auto()
 
 
@@ -44,7 +45,6 @@ class PenaltyOffense(stp.play.Play):
             for t in self.prioritized_tactics:
                 t.tick(world_state)
             move = self.prioritized_tactics[0]
-            self.assign_roles(world_state)
             if move.is_done(world_state):
                 self._state = State.READY
             return self.get_robot_intents(world_state)
@@ -57,8 +57,12 @@ class PenaltyOffense(stp.play.Play):
                     world_state, 5, np.array([2.0, 2.0]), np.array([-2.0, 2.0])
                 ),
             ]
-            shoot = self.prioritized_tactics[0]
             self.assign_roles(world_state)
+            self._state = State.SHOOTING
+            return self.get_robot_intents(world_state)
+
+        elif self._state == State.READY:
+            shoot = self.prioritized_tactics[0]
             if shoot.is_done(world_state):
                 self._state = State.DONE
             return self.get_robot_intents(world_state)

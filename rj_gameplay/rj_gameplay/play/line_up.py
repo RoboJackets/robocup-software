@@ -1,22 +1,15 @@
-import stp.play
-import stp.tactic
+from enum import Enum, auto
+from typing import List
 
-from rj_gameplay.tactic import line_tactic
-import stp.skill
+import stp.play
+import stp.rc
 import stp.role
 import stp.role.cost
-import stp.rc
-from typing import (
-    Dict,
-    List,
-    Tuple,
-    Optional,
-    Type,
-)
-import numpy as np
+import stp.skill
+import stp.tactic
 from rj_msgs.msg import RobotIntent
 
-from enum import Enum, auto
+from rj_gameplay.tactic import line_tactic
 
 
 class State(Enum):

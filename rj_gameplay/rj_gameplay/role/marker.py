@@ -1,7 +1,8 @@
 import stp
-from rj_gameplay.skill import mark
-
 from rj_msgs.msg import RobotIntent
+
+# TODO: mark skill has not been updated, how is it working here (see basicDefense)?
+from rj_gameplay.skill import mark
 
 
 class MarkerRole(stp.role.Role):

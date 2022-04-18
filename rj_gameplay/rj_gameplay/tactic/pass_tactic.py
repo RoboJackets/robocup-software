@@ -30,8 +30,8 @@ class PassTactic(stp.tactic.Tactic):
     def __init__(
         self,
         world_state: stp.rc.WorldState,
-        init_passer_cost: stp.role.cost,
-        init_receiver_cost: stp.role.cost,
+        init_passer_cost: stp.role.CostFn,
+        init_receiver_cost: stp.role.CostFn,
     ):
         super().__init__(world_state)
 
