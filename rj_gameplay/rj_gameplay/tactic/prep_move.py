@@ -16,7 +16,7 @@ class PrepMove(stp.tactic.Tactic):
         self._target_pt = np.array([0.0, 7.0])
 
         self._role_requests.append(
-            (stp.role.cost.PickClosestToPoint(self._target_pt), dumb_move.DumbMove)
+            (stp.role.cost.PickRobotById(self._target_pt), dumb_move.DumbMove)
         )
 
     def tick(
