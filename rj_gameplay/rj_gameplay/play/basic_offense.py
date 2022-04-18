@@ -93,7 +93,7 @@ class BasicOffense(stp.play.Play):
             if ball_move_tac.is_done(world_state):
                 basic_seek_tac.start_timer()
                 if basic_seek_tac.is_done(world_state):
-                    if dist_from_goal(world_state.ball.pos) < 3 and world_state.ball.pos[1] < 8:
+                    if dist_from_goal(world_state.ball.pos) < 3.5 and world_state.ball.pos[1] < 8:
                         self._state = State.INIT_SHOOT
                     else:
                         self._state = State.INIT_PASS

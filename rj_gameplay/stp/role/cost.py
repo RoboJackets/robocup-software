@@ -101,7 +101,10 @@ class PickShortestPositiveReceiver(stp.role.CostFn):
 
         return_val = 1e9
 
-        if robot_to_goal_dist < ball_to_goal_dist:
+        if world_state.ball.pos[1] > 8:
+            if robot_to_goal_dist < 3.5:
+                return_val = np.abs(robot.pose[0])
+        elif robot_to_goal_dist < ball_to_goal_dist:
             return_val = robot_to_ball_dist
         
         print("Receiver Cost - ", robot.id, " : ", return_val)

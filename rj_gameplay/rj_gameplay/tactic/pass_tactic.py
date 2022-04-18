@@ -198,7 +198,7 @@ class PassTactic(stp.tactic.Tactic):
         return ret
 
     @property
-    def stop_seeking():
+    def stop_seeking(self):
         return self._stop_seeking
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
