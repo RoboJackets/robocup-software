@@ -62,7 +62,7 @@ SimRadio::SimRadio(bool blue_team)
       blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
-    for (int i = 0; i < 16; ++i) {
+    for (int i = 0; i < kNumShells; ++i) {
         last_sent_diff.emplace_back(RJ::now());
     }
     auto address = boost::asio::ip::make_address(PARAM_interface).to_v4();
