@@ -8,7 +8,6 @@ import numpy as np
 import stp.action as action
 import stp.rc as rc
 import stp.skill as skill
-
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import LineKickMotionCommand, RobotIntent
 
@@ -20,7 +19,7 @@ class State(Enum):
     DONE = auto()
 
 
-class LineKickSkill(skill.Skill):
+class LineKick(skill.Skill):
     """
     A skill version of line kick so that actions don't have to be called in tactics
     """
@@ -43,15 +42,15 @@ class LineKickSkill(skill.Skill):
         self.priority = priority
         self.chip = chip
         self.kick_speed = kick_speed
-        # self.kick_speed = 5.5
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
-        intent = None
+
+        intent = RobotIntent()
 
         ball_to_target = self.target_point - world_state.ball.pos
         ball_to_target /= np.linalg.norm(ball_to_target)
-        robot_dir = np.array([np.cos(robot.pose[2]), np.sin(robot.pose[2])])
+        robot_dir = np.array([np.cos(self.robot.pose[2]), np.sin(self.robot.pose[2])])
 
         right_direction = np.dot(ball_to_target, robot_dir) > 0.9
         if not right_direction:
@@ -73,8 +72,25 @@ class LineKickSkill(skill.Skill):
         return intent
 
     def is_done(self, world_state: rc.WorldState):
-        # skill is done after move + kick
-        return np.linalg.norm(world_state.ball.vel) > 1.0
+        # copy-pasted from kick skill
+        KICK_DOT_THRESHOLD = 0.4
+        KICK_BALL_SPEED_THRESHOLD = 0.9
+
+        # TODO: make pivot kick and line kick inherit from some common kick superclass to make this cleaner
+        if self.robot is None:
+            return False
+        ball_vel_unit = world_state.ball.vel / np.linalg.norm(world_state.ball.vel)
+        heading_angle = world_state.our_robots[self.robot.id].pose[2]
+        heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
+        dot_product = np.dot(heading_vect, ball_vel_unit)
+        # TODO: Make this threshold a local param
+        ball_too_far = np.linalg.norm(world_state.ball.pos - self.robot.pose[0:2]) > 0.5
+        if ball_too_far or (
+            dot_product > KICK_DOT_THRESHOLD
+            and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD
+        ):
+            return True
+        return False
 
     def __str__(self):
         return f"LineKick(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}, chip={self.chip}, kick_speed={self.kick_speed})"

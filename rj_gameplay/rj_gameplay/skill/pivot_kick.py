@@ -6,16 +6,18 @@ from enum import Enum, auto
 import numpy as np
 import stp.rc as rc
 import stp.skill as skill
+from rj_geometry_msgs.msg import Point
+from rj_msgs.msg import LineKickMotionCommand, RobotIntent
 from stp.utils.constants import RobotConstants
 
-from rj_gameplay.skill import capture, kick, pivot
-from rj_msgs.msg import RobotIntent
+from rj_gameplay.skill import capture, line_kick, pivot  # kick, pivot
 
 
 class State(Enum):
     CAPTURE = auto()
     PIVOT = auto()
-    KICK = auto()
+    LINE_KICK = auto()
+    # KICK = auto()
     DONE = auto()
 
 
@@ -48,7 +50,11 @@ class PivotKick(skill.Skill):
         self.kick_speed = kick_speed
         self.threshold = threshold
 
-        self.kick = kick.Kick(robot, chip, kick_speed, threshold)
+        # TODO: make target point reassignable on tick in some intelligent way (so robot can figure out a new target point mid-pivot)?
+        # self.kick = kick.Kick(robot, chip, kick_speed, threshold)
+        self.line_kick = line_kick.LineKick(
+            robot, target_point, priority=0, chip=chip, kick_speed=kick_speed
+        )
         self.pivot = pivot.Pivot(
             robot,
             pivot_point,
@@ -73,11 +79,17 @@ class PivotKick(skill.Skill):
         elif self._state == State.PIVOT:
             intent = self.pivot.tick(world_state)
             if self.pivot.is_done(world_state):
-                self._state = State.KICK
-        elif self._state == State.KICK:
-            intent = self.kick.tick(world_state)
-            if self.kick.is_done(world_state):
+                self._state = State.LINE_KICK
+        elif self._state == State.LINE_KICK:
+            intent = self.line_kick.tick(world_state)
+            if self.line_kick.is_done(world_state):
                 self._state = State.DONE
+
+        # commented out for ER-Force (4/19)
+        # elif self._state == State.KICK:
+        #     intent = self.kick.tick(world_state)
+        #     if self.kick.is_done(world_state):
+        #         self._state = State.DONE
 
         return intent
 
