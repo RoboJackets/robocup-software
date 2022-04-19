@@ -89,7 +89,6 @@ class GameplayNode(Node):
             msg.TeamInfo, "referee/their_team", self.set_their_team_info, 10
         )
 
-
         keep_latest = QoSProfile(
             depth=1, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL
         )
@@ -161,14 +160,18 @@ class GameplayNode(Node):
 
     def set_match_state(self, match_state: msg.MatchState):
         self.match_state = match_state
-    '''
+
+    """
     Subscription callback for setting information for our team
-    ''' 
+    """
+
     def set_our_team_info(self, our_team_info: msg.TeamInfo):
         self.our_team_info = our_team_info
-    '''
+
+    """
     Subscription callback for setting information for enemy team
-    ''' 
+    """
+
     def set_their_team_info(self, their_team_info: msg.TeamInfo):
         self.their_team_info = their_team_info
 
@@ -200,10 +203,18 @@ class GameplayNode(Node):
         """
         Create game info object from Game State message
         """
-        if self.play_state is not None and self.match_state is not None \
-            and self.our_team_info is not None and self.their_team_info is not None:
-            return conv.build_game_info(self.play_state, self.match_state,
-                                        self.our_team_info, self.their_team_info)
+        if (
+            self.play_state is not None
+            and self.match_state is not None
+            and self.our_team_info is not None
+            and self.their_team_info is not None
+        ):
+            return conv.build_game_info(
+                self.play_state,
+                self.match_state,
+                self.our_team_info,
+                self.their_team_info,
+            )
         return None
 
     def create_field(self, msg: msg.FieldDimensions) -> None:

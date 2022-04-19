@@ -154,8 +154,10 @@ def ballstate_to_ball(ball_msg: msg.BallState) -> rc.Ball:
 
 
 def build_game_info(
-    play_state_msg: msg.PlayState, match_state_msg: msg.MatchState,
-    our_team_msg: msg.TeamInfo, their_team_msg: msg.TeamInfo
+    play_state_msg: msg.PlayState,
+    match_state_msg: msg.MatchState,
+    our_team_msg: msg.TeamInfo,
+    their_team_msg: msg.TeamInfo,
 ) -> rc.GameInfo:
     """
     :return: GameInfo class from rc.py
@@ -180,12 +182,7 @@ def build_game_info(
                 play_state_msg.placement_point.y,
             ]
         ),
-        np.array(
-            [
-                our_team_msg.score,
-                their_team_msg.score
-            ]
-        )
+        np.array([our_team_msg.score, their_team_msg.score]),
     )
 
     return game_info

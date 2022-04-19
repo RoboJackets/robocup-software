@@ -600,7 +600,7 @@ class GameInfo:
         "__restart",
         "__our_restart",
         "__ball_placement",
-        "__game_score"
+        "__game_score",
     ]
 
     __period: GamePeriod
@@ -617,7 +617,7 @@ class GameInfo:
         restart: GameRestart,
         our_restart: bool,
         ball_placement: np.array,
-        game_score: np.array
+        game_score: np.array,
     ):
         self.__period = period
         self.__state = state
@@ -674,7 +674,7 @@ class GameInfo:
             return False  # Is returning this dangerous?
 
         return not self.__our_restart
-    
+
     @property
     def game_score(self) -> np.array:
         """
