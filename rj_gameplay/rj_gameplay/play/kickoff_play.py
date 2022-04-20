@@ -34,6 +34,7 @@ class State(Enum):
 class PrepareKickoff(stp.play.Play):
     def __init__(self):
         super().__init__()
+        self.pts = []
         self._state = State.INIT
 
     def tick(
@@ -42,19 +43,12 @@ class PrepareKickoff(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self._state == State.INIT:
-            pts = []
-            pts.append(
-                (
-                    0.0,
-                    (world_state.field.length_m - world_state.field.center_radius_m)
-                    / 2,
-                )
-            )
-            dx = 0.5
-            dy = -0.5
-            pts.append((pts[0][0] + dx, pts[0][1] + dy))
+            if len(self.pts) == 0:
+                self.create_pts(world_state)
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            self.prioritized_tactics.append(dumb_tactic.DumbTactic(world_state, pts))
+            self.prioritized_tactics.append(
+                dumb_tactic.DumbTactic(world_state, self.pts)
+            )
             self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
@@ -68,12 +62,25 @@ class PrepareKickoff(stp.play.Play):
                 self._state = State.DONE
             return self.get_robot_intents(world_state)
         if self._state == State.DONE:
-            return None
+            return self.get_robot_intents(world_state)
+
+    def create_pts(self, world_state):
+        self.pts = []
+        self.pts.append(
+            (
+                0.0,
+                (world_state.field.length_m - world_state.field.center_radius_m) / 2,
+            )
+        )
+        dx = 0.5
+        dy = -0.5
+        self.pts.append((self.pts[0][0] + dx, self.pts[0][1] + dy))
 
 
 class Kickoff(stp.play.Play):
     def __init__(self):
         super().__init__()
+        self.pts = []
         self._state = State.INIT
 
     def tick(
@@ -82,33 +89,18 @@ class Kickoff(stp.play.Play):
     ) -> List[RobotIntent]:
 
         if self._state == State.INIT:
-            pts = []
-            # pts[0] is the passer
-            # pts[1] is the receiver
-            pts.append(
-                (
-                    0.0,
-                    (world_state.field.length_m - world_state.field.center_radius_m)
-                    / 2,
-                )
-            )
-            dx = 0.5
-            dy = -0.5
-            pts.append((pts[0][0] + dx, pts[0][1] + dy))
+            if len(self.pts) == 0:
+                self.create_pts(world_state)
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
             self.prioritized_tactics.append(
                 pass_tactic.PassTactic(
                     world_state,
-                    cost.PickClosestToPoint(pts[0]),
-                    cost.PickClosestToPoint(pts[1]),
+                    cost.PickClosestToPoint(self.pts[0]),
+                    cost.PickClosestToPoint(self.pts[1]),
                 )
             )
-            # self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
-            self.assign_roles(world_state)
-            self._state = State.ACTIVE
-            return self.get_robot_intents(world_state)
-        elif self._state == State.ASSIGN_ROLES:
-            # duplicate code from init
+            # self.prioritized_tactics.append(dumb_tactic.DumbTactic(world_state, [self.pts[1]]))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
@@ -116,12 +108,24 @@ class Kickoff(stp.play.Play):
             for tactic in self.prioritized_tactics:
                 if tactic.needs_assign:
                     self._state = State.ASSIGN_ROLES
-
-            # if self.prioritized_tactics[-2].is_done(world_state):
-            #     self._state = State.DONE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.ASSIGN_ROLES:
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
         elif self._state == State.DONE:
-            return None
+            return self.get_robot_intents(world_state)
+
+    def create_pts(self, world_state):
+        # pts[0] is near the midpoint of the field
+        # pts[1] is diagonal to pts[0]
+        self.pts = []
+        self.pts.append(
+            (0.0, (world_state.field.length_m - world_state.field.center_radius_m) / 2)
+        )
+        dx = 0.5
+        dy = -0.5
+        self.pts.append((self.pts[0][0] + dx, self.pts[0][1] + dy))
 
 
 class DefendKickoff(stp.play.Play):
@@ -141,5 +145,4 @@ class DefendKickoff(stp.play.Play):
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
         elif self._state == State.ACTIVE:
-            # return robot intents from assigned tactics back to gameplay node
             return self.get_robot_intents(world_state)

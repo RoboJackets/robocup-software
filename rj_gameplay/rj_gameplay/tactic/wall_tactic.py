@@ -1,22 +1,21 @@
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
-from rj_gameplay.role import dumb_move
-
-import stp
-import rj_gameplay.eval
-import rj_gameplay.skill as skills
-from rj_gameplay.skill import move
-import stp.skill as skill
 import numpy as np
+import stp
+import stp.global_parameters as global_parameters
+import stp.skill as skill
+from rj_msgs.msg import RobotIntent
 
 # TODO: replace w/ global param server
-from stp.utils.constants import RobotConstants, BallConstants
-import stp.global_parameters as global_parameters
+from stp.utils.constants import BallConstants, RobotConstants
 
-from rj_msgs.msg import RobotIntent
+import rj_gameplay.eval
+import rj_gameplay.skill as skills
 
 # TODO: move this out of calculations file and into this tactic
 from rj_gameplay.calculations import wall_calculations
+from rj_gameplay.role import dumb_move
+from rj_gameplay.skill import move
 
 MIN_WALL_RAD = None
 
@@ -52,7 +51,8 @@ class WallTactic(stp.tactic.Tactic):
             self.init_roles(world_state)
 
         robot_intents = []
-        for i in range(len(self.assigned_roles)):
+        # for i in range(len(self.assigned_roles)):
+        for i in range(self.num_wallers):
             role = self.assigned_roles[i]
             wall_pt = self.wall_pts[i]
             if role.robot is not None:
