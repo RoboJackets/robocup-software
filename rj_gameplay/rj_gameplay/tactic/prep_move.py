@@ -14,7 +14,7 @@ class PrepMove(stp.tactic.Tactic):
         super().__init__(world_state)
 
         self._target_pt = np.array([0.0, 7.0])
-
+        self.robot = None
         self._role_requests.append(
             (stp.role.cost.PickClosestToPoint(self._target_pt), dumb_move.DumbMove)
         )
@@ -27,8 +27,15 @@ class PrepMove(stp.tactic.Tactic):
 
         # assumes all roles requested are filled, because tactic is one unit
         self._target_pt = world_state.ball.pos[0:2] - [0, 0.5]
-        if len(self.assigned_roles) != len(self._role_requests) or self.assigned_robots:
+        if (
+            len(self.assigned_roles) != len(self._role_requests)
+            and self.assigned_robots
+        ):
             self.init_roles(world_state)
+        else:
+            self.assigned_roles.append(
+                role(self.robot, self._target_pt, world_state.ball.pos)
+            )
 
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
 
@@ -44,9 +51,9 @@ class PrepMove(stp.tactic.Tactic):
         self,
         world_state: stp.rc.WorldState,
     ):
-        robot = self.assigned_robots[0]
+        self.robot = self.assigned_robots[0]
         role = self._role_requests[0][1]
         if role is dumb_move.DumbMove:
             self.assigned_roles.append(
-                role(robot, self._target_pt, world_state.ball.pos)
+                role(self.robot, self._target_pt, world_state.ball.pos)
             )
