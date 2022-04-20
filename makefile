@@ -58,8 +58,20 @@ again:
 run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 
-run-sim:
+run-sim-grsim:
 	ros2 launch rj_robocup sim.launch.py
+
+run-sim:
+	ros2 launch rj_robocup sim.launch.py use_grsim:=False
+
+run-external-grsim:
+	ros2 launch rj_robocup external_sim.launch.py
+	
+run-external:
+	ros2 launch rj_robocup external_sim.launch.py use_grsim:=False
+	
+run-real:
+	ros2 launch rj_robocup real_soccer.launch.py
 
 run-sim2play:
 	ros2 launch rj_robocup sim2play.launch.py
@@ -118,7 +130,7 @@ modernize:
 
 # build docs
 docs:
-	(cd docs/ && make html) 
+	(cd docs/ && make html)
 # open docs
 open-docs:
 	xdg-open docs/build/html/index.html
