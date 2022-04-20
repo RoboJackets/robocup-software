@@ -27,10 +27,7 @@ class PrepMove(stp.tactic.Tactic):
 
         # assumes all roles requested are filled, because tactic is one unit
         self._target_pt = world_state.ball.pos[0:2] - [0, 0.5]
-        if (
-            len(self.assigned_roles) != len(self._role_requests)
-            and self.assigned_robots
-        ):
+        if len(self.assigned_roles) != len(self._role_requests) or self.assigned_robots:
             self.init_roles(world_state)
 
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
