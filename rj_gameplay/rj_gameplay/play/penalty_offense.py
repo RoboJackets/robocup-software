@@ -62,6 +62,8 @@ class PenaltyOffense(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.READY:
+            for t in self.prioritized_tactics:
+                t.tick(world_state)
             shoot = self.prioritized_tactics[0]
             if shoot.is_done(world_state):
                 self._state = State.DONE
