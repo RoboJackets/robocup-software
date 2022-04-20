@@ -58,12 +58,18 @@ again:
 run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 
-run-sim:
+run-sim-grsim:
 	ros2 launch rj_robocup sim.launch.py
 
-run-external:
-	ros2 launch rj_robocup external_sim.launch.py
+run-sim:
+	ros2 launch rj_robocup external_sim.launch.py use_grsim:=False
 
+run-external-grsim:
+	ros2 launch rj_robocup external_sim.launch.py
+	
+run-external:
+	ros2 launch rj_robocup external_sim.launch.py use_grsim:=False
+	
 run-real:
 	ros2 launch rj_robocup real_soccer.launch.py
 
