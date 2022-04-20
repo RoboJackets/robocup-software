@@ -37,7 +37,6 @@ class PassTactic(stp.tactic.Tactic):
 
         self._passer_cost = init_passer_cost
         self._receiver_cost = init_receiver_cost
-        self._stop_seeking = False
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         self.assigned_roles = []
@@ -45,10 +44,8 @@ class PassTactic(stp.tactic.Tactic):
             role = self._role_requests[i][1]
             if role is passer.PasserRole:
                 self.assigned_roles.append(role(robot))
-                # print("Passer: ", robot.id)
             elif role is receiver.ReceiverRole:
                 self.assigned_roles.append(role(robot))
-                # print("Receiver: ", robot.id)
 
     def tick(
         self, world_state: stp.rc.WorldState
@@ -107,7 +104,7 @@ class PassTactic(stp.tactic.Tactic):
 
         elif self._state == State.EXECUTE_PASS:
             # assumes play has given new role_requests
-            # self.init_roles(world_state)
+            self.init_roles(world_state)
 
             # TODO: these lines are a little ugly, any fix?
             passer_role = self.assigned_roles[0]
@@ -132,55 +129,51 @@ class PassTactic(stp.tactic.Tactic):
             passer_role = self.assigned_roles[0]
             receiver_role = self.assigned_roles[1]
 
-            # target_point = world_state.our_robots[receiver_role.robot.id].pose[0:2]
-            # passer_role.update_target_point(target_point)
-
-            # print("Target Point: ", target_point)
-
             role_intents = [
                 (passer_role.robot.id, passer_role.tick(world_state)),
                 (receiver_role.robot.id, receiver_role.tick(world_state)),
             ]
 
             if passer_role.is_done(world_state):
-                receiver_role.set_receive_pass()
+                self._state = State.PASS_IN_TRANSIT
+
+        elif self._state == State.PASS_IN_TRANSIT:
+            receiver_role = self.assigned_roles[1]
+
+            # TODO: here, we assume the initially picked Receiver is the best one
+            # this may not be true (i.e. when intercept planning is bad and the ball does not get captured by the first receiver)
+            # the receiver then should be reassigned to closest to ball
+            # maybe check some is_done()?
+
+            self._role_requests = [
+                (
+                    stp.role.cost.PickRobotById(receiver_role.robot.id),
+                    receiver.ReceiverRole,
+                )
+            ]
+            self._needs_assign = True
+
+            self._state = State.INIT_AWAIT_RECEIVE
+
+        elif self._state == State.INIT_AWAIT_RECEIVE:
+            # Wait until play assignment assigns the needed 1 roles
+            if len(self.assigned_roles) == 1:
                 self._state = State.EXECUTE_RECEIVE
 
-        # elif self._state == State.PASS_IN_TRANSIT:
-        #     receiver_role = self.assigned_roles[1]
-
-        #     # TODO: here, we assume the initially picked Receiver is the best one
-        #     # this may not be true (i.e. when intercept planning is bad and the ball does not get captured by the first receiver)
-        #     # the receiver then should be reassigned to closest to ball
-        #     # maybe check some is_done()?
-        #     self._role_requests = [
-        #         (
-        #             self._receiver_cost,
-        #             receiver.ReceiverRole,
-        #         )
-        #     ]
-        #     self._needs_assign = True
-
-        #     self._state = State.INIT_AWAIT_RECEIVE
-
-        # elif self._state == State.INIT_AWAIT_RECEIVE:
-        #     # Wait until play assignment assigns the needed 1 roles
-        #     if len(self.assigned_roles) == 1:
-        #         self._state = State.EXECUTE_RECEIVE
-
-        # elif self._state == State.EXECUTE_RECEIVE:
-        #     # assumes play has given new role_requests
-        #     self.init_roles(world_state)
-
-        #     # TODO: these lines are a little ugly, any fix?
-        #     receiver_role = self.assigned_roles[1]
-
-        #     role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
-
-        #     self._state = State.AWAIT_RECEIVE
-
         elif self._state == State.EXECUTE_RECEIVE:
-            receiver_role = self.assigned_roles[1]
+            # assumes play has given new role_requests
+            self.init_roles(world_state)
+
+            # TODO: these lines are a little ugly, any fix?
+            receiver_role = self.assigned_roles[0]
+            receiver_role.set_receive_pass()
+
+            role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
+
+            self._state = State.AWAIT_RECEIVE
+
+        elif self._state == State.AWAIT_RECEIVE:
+            receiver_role = self.assigned_roles[0]
 
             role_intents = [(receiver_role.robot.id, receiver_role.tick(world_state))]
 
@@ -196,10 +189,6 @@ class PassTactic(stp.tactic.Tactic):
         ret = self._needs_assign == True  # noqa: E712
         self._needs_assign = False
         return ret
-
-    @property
-    def stop_seeking(self):
-        return self._stop_seeking
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return self._state == State.DONE

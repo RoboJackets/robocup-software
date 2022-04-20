@@ -8,7 +8,7 @@ from rj_msgs.msg import RobotIntent
 from rj_gameplay.skill import pivot_kick, receive  # , line_kick
 
 # The final velocity of the ball when it reaches our teammate
-FINAL_VELOCITY = 2.75
+FINAL_VELOCITY = 3
 # Rolling deceleration of the ball after it has been kicked
 BALL_DECELERATION = -0.4
 
@@ -42,7 +42,6 @@ class PasserRole(stp.role.Role):
 
     def update_target_point(self, target_point):
         self._target_point = target_point
-        # print("Updated target point: ", target_point)
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         """
@@ -51,9 +50,6 @@ class PasserRole(stp.role.Role):
          - when got ball: mark pass ready for Tactic, dribble, wait
          - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
-
-        if self._state != State.KICK_DONE:
-            print("Passer State: ", self._state)
 
         intent = None
         if self._state == State.INIT:

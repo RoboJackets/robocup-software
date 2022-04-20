@@ -52,11 +52,10 @@ class StrikerRole(stp.role.Role):
                 self._state = State.INIT_SHOOT
         elif self._state == State.INIT_SHOOT:
             # TODO: make these params configurable
+
             # best_shot_target_point = self._find_target_point(
             #     world_state, shot_kick_speed
             # )
-
-            # print("Shot target point: ", best_shot_target_point)
 
             distance = np.linalg.norm(world_state.field.their_goal_loc - self.robot.pose[0:2])
             initial_velocity = np.sqrt(
@@ -71,7 +70,6 @@ class StrikerRole(stp.role.Role):
             )
             self._state = State.SHOOTING
         elif self._state == State.SHOOTING:
-            # taken from role/passer.py
             intent = self.pivot_kick_skill.tick(world_state)
 
             if self.pivot_kick_skill.is_done(world_state):

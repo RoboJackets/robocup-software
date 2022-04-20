@@ -107,5 +107,4 @@ class PickShortestPositiveReceiver(stp.role.CostFn):
         elif robot_to_goal_dist < ball_to_goal_dist:
             return_val = robot_to_ball_dist
         
-        print("Receiver Cost - ", robot.id, " : ", return_val)
         return return_val

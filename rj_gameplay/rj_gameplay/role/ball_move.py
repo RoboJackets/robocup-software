@@ -40,7 +40,6 @@ class BallMoveRole(stp.role.Role):
         Assume robot does not have ball on init. Then:
          - on init: get ball
          - when got ball: mark pass ready for Tactic, dribble, wait
-         - on pass signal from Tactic: pivot_kick to point, let receiver get ball, done
         """
 
         intent = None
@@ -54,7 +53,8 @@ class BallMoveRole(stp.role.Role):
 
             if self.receive_skill.is_done(world_state):
                 self._state = State.READY
-                
+
+        # Maybe where we can add dribbling?
         # elif self._state == State.READY:
             # self._state = State.DONE
             # self.move_distance = np.linalg.norm(world_state.our_robots[self.robot_id].pose[0:2] - self.initial_position)

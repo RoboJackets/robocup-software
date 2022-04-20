@@ -52,7 +52,6 @@ class BallMoveTactic(stp.tactic.Tactic):
         role = self._role_requests[0][1]
         if role is ball_move.BallMoveRole:
             self.assigned_roles.append(role(robot))
-            # print("Ball Move: ", robot.id)
 
     @property
     def needs_assign(self):

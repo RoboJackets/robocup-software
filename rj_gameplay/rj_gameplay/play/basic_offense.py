@@ -56,10 +56,6 @@ class BasicOffense(stp.play.Play):
         dist_from_goal = lambda pos: np.linalg.norm(pos - world_state.field.their_goal_loc)
         dist_from_ball = lambda pos: np.linalg.norm(pos - world_state.ball.pos)
 
-        print(self._state)
-        # print(self.prioritized_tactics)
-
-        # TODO: when seeker formation behavior added in, add it in for other 3 robots
         if self._state == State.INIT:
             if self._init_counter % 2 == 0:
                 self.prioritized_tactics = [
@@ -93,14 +89,10 @@ class BasicOffense(stp.play.Play):
 
             # TODO: seekers should be getting open all the time, how fix?
             # should be some time-based method
-            # seek_tactic = self.prioritized_tactics[1]
 
             # TODO: is one tick delay issue?
             # TODO: yes, one tick is issue, see Michael's changes to pass_tactic
-            """
-            if seek_tactic.is_done(world_state):
-                self._state = State.INIT_PASS
-            """
+
             ball_move_tac = self.prioritized_tactics[1]
             basic_seek_tac = self.prioritized_tactics[2]
 
@@ -157,6 +149,7 @@ class BasicOffense(stp.play.Play):
             # duplicate role assign from init, merge states?
             # can't bc need to know the state that it came from
             # TODO: write interrupt-handler style state in play superclass for this behavior, where self._state returns to old state
+            
             self.assign_roles(world_state)
             self._state = State.PASSING
             return self.get_robot_intents(world_state)

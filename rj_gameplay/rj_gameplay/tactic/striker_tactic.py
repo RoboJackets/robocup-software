@@ -56,7 +56,6 @@ class StrikerTactic(stp.tactic.Tactic):
         role = self._role_requests[0][1]
         if role is striker.StrikerRole:
             self.assigned_roles.append(role(robot))
-            # print("Striker: ", robot.id)
 
     @property
     def needs_assign(self):
