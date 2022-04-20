@@ -57,6 +57,10 @@ class BasicSeek(stp.tactic.Tactic):
 
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
 
+    @property
+    def needs_assign(self):
+        return False
+
     def is_done(
         self,
         world_state: stp.rc.WorldState,

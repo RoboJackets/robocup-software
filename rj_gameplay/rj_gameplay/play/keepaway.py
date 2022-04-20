@@ -3,8 +3,9 @@ from typing import List
 
 import stp
 from rj_msgs.msg import RobotIntent
+from stp.formations.diamond_formation import DiamondFormation
 
-from rj_gameplay.tactic import goalie_tactic, pass_tactic
+from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic
 
 
 class State(Enum):
@@ -46,6 +47,12 @@ class Keepaway(stp.play.Play):
                 pass_tactic.PassTactic(
                     world_state, init_passer_cost, init_receiver_cost
                 ),
+                # basic_seek.BasicSeek(
+                #     world_state,
+                #     4,
+                #     DiamondFormation(world_state).get_regions,
+                #     DiamondFormation(world_state).get_centroids,
+                # ),
             ]
             # TODO: either add seek tactic(s) or unassigned behavior
 
