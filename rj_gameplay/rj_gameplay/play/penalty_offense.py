@@ -42,9 +42,9 @@ class PenaltyOffense(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.PREP:
-            for t in self.prioritized_tactics:
-                t.tick(world_state)
             move = self.prioritized_tactics[0]
+            move.tick(world_state)
+            self.assign_roles(world_state)
             if move.is_done(world_state):
                 self._state = State.READY
             return self.get_robot_intents(world_state)
@@ -62,9 +62,9 @@ class PenaltyOffense(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.READY:
-            for t in self.prioritized_tactics:
-                t.tick(world_state)
             shoot = self.prioritized_tactics[0]
+            shoot.tick(world_state)
+            self.assign_roles(world_state)
             if shoot.is_done(world_state):
                 self._state = State.DONE
             return self.get_robot_intents(world_state)
