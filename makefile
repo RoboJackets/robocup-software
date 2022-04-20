@@ -62,7 +62,7 @@ run-sim-grsim:
 	ros2 launch rj_robocup sim.launch.py
 
 run-sim:
-	ros2 launch rj_robocup external_sim.launch.py use_grsim:=False
+	ros2 launch rj_robocup sim.launch.py use_grsim:=False
 
 run-external-grsim:
 	ros2 launch rj_robocup external_sim.launch.py
