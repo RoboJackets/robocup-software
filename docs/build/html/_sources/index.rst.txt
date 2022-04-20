@@ -13,6 +13,7 @@ Welcome to RoboJackets RoboCup SSL's documentation!
    self
    installation/index
    getting_started/index
+   er-force-sim/index
 
 
 .. note::
