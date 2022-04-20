@@ -2,20 +2,15 @@ import argparse
 import math
 import sys
 import time
-from abc import ABC, abstractmethod
-from typing import Callable, Optional
+from typing import Optional
 
 import numpy as np
-import py_trees
 import stp.action as action
 import stp.rc as rc
-import stp.role as role
 import stp.skill as skill
-from stp.utils.constants import RobotConstants
-
-import rj_gameplay.eval as eval
-from rj_geometry_msgs.msg import Point, Segment
+from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import PathTargetMotionCommand, RobotIntent
+from stp.utils.constants import RobotConstants
 
 
 def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
