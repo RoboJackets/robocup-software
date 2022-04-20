@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ER-Force Simulation Installation &mdash; RoboJackets RoboCup SSL 1.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> RoboJackets RoboCup SSL
+            <img src="../../_static/RoboBuzz.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome to RoboJackets RoboCup SSL’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#codebase">Codebase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#clion-setup">CLion Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#getting-clion">Getting CLion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#opening-the-project-in-clion">Opening the project in CLion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#building-the-project">Building the project</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/index.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/index.html#running-the-first-time">Running The First Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/index.html#running-again">Running Again</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/index.html#troubleshooting-build-run-issues">Troubleshooting Build/Run Issues</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">RoboJackets RoboCup SSL</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>ER-Force Simulation Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/installation/er-force-sim/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="er-force-simulation-installation">
+<h1>ER-Force Simulation Installation<a class="headerlink" href="#er-force-simulation-installation" title="Permalink to this headline"></a></h1>
+<div class="section" id="download-er-force-sim">
+<h2>Download ER-Force Sim<a class="headerlink" href="#download-er-force-sim" title="Permalink to this headline"></a></h2>
+<p>First git clone the ER-Force Simulator from the following repo:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/robotics-erlangen/framework.git
+</pre></div>
+</div>
+<p>Change directory into the recently cloned repo</p>
+</div>
+<div class="section" id="building-the-framework">
+<h2>Building the framework<a class="headerlink" href="#building-the-framework" title="Permalink to this headline"></a></h2>
+<p>Run the following code line by line</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
+cmake ..
+make simulator-cli
+</pre></div>
+</div>
+<p>This builds an executable in framework/build/bin</p>
+</div>
+<div class="section" id="setting-internal-referee-executable-to-external-referee">
+<h2>Setting Internal Referee Executable to External Referee<a class="headerlink" href="#setting-internal-referee-executable-to-external-referee" title="Permalink to this headline"></a></h2>
+<p>Go to robocup-software/launch/soccer.launch.py</p>
+<p>Go to the section that states</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ref_receiver</span> <span class="o">=</span> Node<span class="o">(</span>
+
+    <span class="nv">package</span><span class="o">=</span><span class="s2">&quot;rj_robocup&quot;</span>,
+    <span class="nv">executable</span><span class="o">=</span><span class="s2">&quot;internal_referee_node&quot;</span>,
+    <span class="nv">output</span><span class="o">=</span><span class="s2">&quot;screen&quot;</span>,
+    <span class="nv">parameters</span><span class="o">=[</span>config<span class="o">]</span>,
+    <span class="nv">on_exit</span><span class="o">=</span>Shutdown<span class="o">()</span>,
+
+<span class="o">)</span>
+</pre></div>
+</div>
+<p>Change the “exceutable” line to</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">executable</span><span class="o">=</span><span class="s2">&quot;external_referee_node&quot;</span>,
+</pre></div>
+</div>
+</div>
+<div class="section" id="commenting-out-grsim">
+<h2>Commenting Out GrSim<a class="headerlink" href="#commenting-out-grsim" title="Permalink to this headline"></a></h2>
+<p>Got to robocup-software/launch/sim.launch.py</p>
+<p>Go to the section that states</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>    <span class="k">return</span> LaunchDescription<span class="o">(</span>
+    <span class="o">[</span>
+
+        stdout_linebuf_envvar,
+        DeclareLaunchArgument<span class="o">(</span><span class="s2">&quot;team_flag&quot;</span>, <span class="nv">default_value</span><span class="o">=</span><span class="s2">&quot;-y&quot;</span><span class="o">)</span>,
+        DeclareLaunchArgument<span class="o">(</span><span class="s2">&quot;ref_flag&quot;</span>, <span class="nv">default_value</span><span class="o">=</span><span class="s2">&quot;-noref&quot;</span><span class="o">)</span>,
+        DeclareLaunchArgument<span class="o">(</span><span class="s2">&quot;headless_flag&quot;</span>, <span class="nv">default_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">)</span>,
+        DeclareLaunchArgument<span class="o">(</span><span class="s2">&quot;direction_flag&quot;</span>, <span class="nv">default_value</span><span class="o">=</span><span class="s2">&quot;plus&quot;</span><span class="o">)</span>,
+        stdout_linebuf_envvar,
+        grsim,
+        soccer,
+
+    <span class="o">]</span>
+
+<span class="o">)</span>
+</pre></div>
+</div>
+<p>Comment out the line that says “grsim”</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Michael Rodyushkin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

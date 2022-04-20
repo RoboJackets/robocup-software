@@ -1,5 +1,5 @@
 ER-Force Simulation Installation
-============
+================================
 
 Download ER-Force Sim
 ----------------------
@@ -16,10 +16,13 @@ Building the framework
 ----------------------
 
 Run the following code line by line
+
 .. code-block:: sh
+
     mkdir build && cd build
     cmake ..
     make simulator-cli
+
 This builds an executable in framework/build/bin
 
 Setting Internal Referee Executable to External Referee
@@ -28,17 +31,23 @@ Setting Internal Referee Executable to External Referee
 Go to robocup-software/launch/soccer.launch.py
 
 Go to the section that states
+
 .. code-block:: sh
+
     ref_receiver = Node(
+
         package="rj_robocup",
         executable="internal_referee_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
+
     )
-Change the "exceutable" line to 
+
+Change the "exceutable" line to
 
 .. code-block:: sh
+
     executable="external_referee_node",
 
 Commenting Out GrSim
@@ -46,9 +55,12 @@ Commenting Out GrSim
 Got to robocup-software/launch/sim.launch.py
 
 Go to the section that states
+
 .. code-block:: sh
+
         return LaunchDescription(
         [
+
             stdout_linebuf_envvar,
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
@@ -57,8 +69,11 @@ Go to the section that states
             stdout_linebuf_envvar,
             grsim,
             soccer,
+
         ]
+
     )
+
 Comment out the line that says "grsim"
 
 
