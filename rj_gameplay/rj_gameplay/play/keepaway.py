@@ -1,12 +1,10 @@
+from enum import Enum, auto
 from typing import List
 
 import stp
-
-from rj_gameplay.tactic import pass_tactic
-
 from rj_msgs.msg import RobotIntent
 
-from enum import Enum, auto
+from rj_gameplay.tactic import pass_tactic
 
 
 class State(Enum):
@@ -40,9 +38,7 @@ class Keepaway(stp.play.Play):
         if self._state == State.INIT:
             init_passer_cost = stp.role.cost.PickClosestToPoint(world_state.ball.pos)
             # init_receiver_cost = stp.role.cost.PickClosestToPoint(world_state.field.their_goal_loc)
-            init_receiver_cost = stp.role.cost.PickFarthestFromPoint(
-                world_state.ball.pos
-            )
+            init_receiver_cost = stp.role.cost.PickClosestInFront(world_state.ball.pos)
             self.prioritized_tactics = [
                 pass_tactic.PassTactic(
                     world_state, init_passer_cost, init_receiver_cost
