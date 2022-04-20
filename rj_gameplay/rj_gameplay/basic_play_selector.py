@@ -13,6 +13,7 @@ from rj_gameplay.play import (
     basic_offense,
     defend_restart,
     defensive_clear,
+    keepaway,
     kickoff_play,
     penalty_defense,
     penalty_offense,
@@ -198,13 +199,17 @@ class BasicPlaySelector(situation.IPlaySelector):
             return situations.Stop()
         elif game_info.is_restart():
             return self.__analyze_restart(world_state, heuristics)"""
+
         if world_state.game_info is None and self.curr_play is None:
             return (situations.BasicDefense, basic_defense.BasicDefense())
         elif (
             heuristics.ball_pos == BallPos.OUR_BALL
             or heuristics.ball_pos == BallPos.FREE_BALL
         ):
-            return (situations.BasicOffense, basic_offense.BasicOffense())
+            if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
+                return (situations.BasicOffense, basic_offense.BasicOffense())
+            else:
+                return (situations.Keepaway, keepaway.Keepaway())
         elif heuristics.ball_pos == BallPos.THEIR_BALL:
             return (situations.BasicDefense, basic_defense.BasicDefense())
         elif heuristics.ball_pos == BallPos.CONTEST_BALL:

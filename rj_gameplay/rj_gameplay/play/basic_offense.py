@@ -28,12 +28,6 @@ class BasicOffense(stp.play.Play):
         super().__init__()
 
         self._state = State.INIT
-        """
-        self._seek_pts = [
-            np.array((2.0, 7.0)),
-            np.array((-2.0, 7.0)),
-        ]
-        """
 
     def tick(
         self,
@@ -51,9 +45,11 @@ class BasicOffense(stp.play.Play):
         """
 
         # TODO: when seeker formation behavior added in, add it in for other 3 robots
+        # SHOOT ONLY!
         if self._state == State.INIT:
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
+                striker_tactic.StrikerTactic(world_state),
                 basic_seek.BasicSeek(
                     world_state,
                     4,

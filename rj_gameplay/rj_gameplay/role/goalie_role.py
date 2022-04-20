@@ -1,15 +1,15 @@
-import stp
-
-from rj_gameplay.skill import move, receive, pivot_kick  # , line_kick, intercept
 import numpy as np
+import stp
+from rj_msgs.msg import RobotIntent
 
 # TODO: settle on unified way to define constants in gameplay
 from stp.utils.constants import RobotConstants  # , BallConstants
 
+from rj_gameplay.skill import intercept, line_kick, move, pivot_kick, receive
+
 # import stp.global_parameters as global_parameters
 # from stp.local_parameters import Param
 
-from rj_msgs.msg import RobotIntent
 
 # TODO: move to constants file
 MIN_WALL_RAD = 0
@@ -113,7 +113,7 @@ class GoalieRole(stp.role.Role):
                 return self.receive_skill.tick(world_state)
             else:
                 # if ball has been stopped already, chip toward center field
-                self.pivot_kick_skill = pivot_kick.PivotKick(
+                self.pivot_kick_skill = line_kick.LineKick(
                     robot=self.robot, target_point=np.array([0.0, 6.0])
                 )
                 return self.pivot_kick_skill.tick(world_state)

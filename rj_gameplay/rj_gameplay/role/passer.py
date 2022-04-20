@@ -3,12 +3,12 @@ from enum import Enum, auto
 import numpy as np
 import stp.rc
 import stp.role
-
-from rj_gameplay.skill import pivot_kick, receive  # , line_kick
 from rj_msgs.msg import RobotIntent
 
+from rj_gameplay.skill import pivot_kick, receive  # , line_kick
+
 # The final velocity of the ball when it reaches our teammate
-FINAL_VELOCITY = 4
+FINAL_VELOCITY = 2
 # Rolling deceleration of the ball after it has been kicked
 BALL_DECELERATION = -0.4
 

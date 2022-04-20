@@ -18,6 +18,9 @@ import stp.skill
 import stp.utils.world_state_converter as conv
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
+from rj_geometry_msgs import msg as geo_msg
+from rj_msgs import msg
+from rj_msgs.msg import EmptyMotionCommand, RobotIntent
 from std_msgs.msg import String as StringMsg
 from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
@@ -31,9 +34,6 @@ from rj_gameplay.play import (  # noqa: F401
     keepaway,
     line_up,
 )
-from rj_geometry_msgs import msg as geo_msg
-from rj_msgs import msg
-from rj_msgs.msg import EmptyMotionCommand, RobotIntent
 
 NUM_ROBOTS = 16
 
@@ -491,8 +491,8 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = keepaway.Keepaway()
-    # test_play = None
+    # test_play = keepaway.Keepaway()
+    test_play = None
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)

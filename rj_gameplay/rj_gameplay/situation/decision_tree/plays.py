@@ -138,6 +138,10 @@ class BasicOffense(stp.situation.ISituation):
     ...
 
 
+class Keepaway(stp.situation.ISituation):
+    ...
+
+
 class BasicDefense(stp.situation.ISituation):
     """Basic Defense."""
 
