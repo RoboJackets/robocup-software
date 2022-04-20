@@ -92,7 +92,7 @@ def generate_launch_description():
 
     ref_receiver = Node(
         package="rj_robocup",
-        executable="internal_referee_node",
+        executable="external_referee_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
