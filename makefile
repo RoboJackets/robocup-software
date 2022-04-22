@@ -11,7 +11,7 @@ endif
 
 # Tell CMake to create compile_commands.json for debug builds for clang-tidy
 DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)

@@ -14,9 +14,9 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
+DEFINE_INT64(kVisionReceiverParamModule, port, 10006,
              "The port used for the vision receiver.")
-DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "", "The hardware interface to use.")
+DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "172.19.0.12", "The hardware interface to use.")
 
 namespace vision_receiver {
 using boost::asio::ip::udp;
