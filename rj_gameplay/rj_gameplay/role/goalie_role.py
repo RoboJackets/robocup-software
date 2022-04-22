@@ -85,7 +85,7 @@ class GoalieRole(stp.role.Role):
         if not world_state.ball.visible:
             return None
 
-        ball_speed = np.linalg.norm(world_state.ball.vel)
+        ball_speed = np.linalg.norm(world_state.ball.vel) + 1e-6
         ball_pos = world_state.ball.pos
         # ball_dist = np.linalg.norm(world_state.field.our_goal_loc - ball_pos)
         goal_pos = world_state.field.our_goal_loc

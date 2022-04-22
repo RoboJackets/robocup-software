@@ -71,7 +71,7 @@ class Keepaway(stp.play.Play):
                     self._state = State.ASSIGN_ROLES
 
             # only one tactic in this play
-            tactic = self.prioritized_tactics[0]
+            tactic = self.prioritized_tactics[1]
             if tactic.is_done(world_state):
                 self._state = State.INIT
 
