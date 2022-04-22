@@ -27,6 +27,9 @@ import stp.tactic
 import stp.utils.enum
 import stp.utils.typed_key_dict
 
+from stp.formations.diamond_formation import DiamondFormation
+from rj_gameplay.tactic import basic_seek
+
 PropT = TypeVar("PropT")
 
 # TODO: move to stp.role and delete old RoleRequest definition
@@ -124,6 +127,7 @@ class Play(ABC):
                 tactic.set_assigned_robots(robots_for_tactic)
                 self.approved_prioritized_tactics.append(tactic)
                 tactic.init_roles(world_state)
+                print("INIT", tactic)
             else:
                 numRobotsAvailable = (
                     len(world_state.our_robots)
@@ -134,9 +138,29 @@ class Play(ABC):
                     f"Tactic {tactic} denied: {len(tactic.role_requests)} requested roles, but only {numRobotsAvailable} robots available"
                 )
 
+        print("p tactics")
+        print(self.prioritized_tactics)
+        print("used")
+        print(used_robots)
+        # TODO: this is dumb, calculate in loop above
+        unused_robots = []
         for robot in world_state.our_robots:
-            if robot not in used_robots:
-                self.unassigned_roles.append(unassigned_role.UnassignedRole(robot))
+            if not robot.visible:
+                continue
+            if robot in used_robots:
+                continue
+            unused_robots.append(robot)
+        print("unused")
+        print(unused_robots)
+
+        formation = DiamondFormation(world_state)  # TODO: make seek tactic take in the whole formation object, this is dumb
+        # for unassigned robots, make a seek tactic and put them there
+        seek_tactic = basic_seek.BasicSeek(world_state, len(unused_robots), formation.get_regions, formation.get_centroids)
+        seek_tactic.set_assigned_robots(unused_robots)
+        seek_tactic.init_roles(world_state)
+        self.approved_prioritized_tactics.append(seek_tactic) # for use in get_robot_intents
+        print("seek_tactic")
+        print(seek_tactic)
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Has to be called after assigned_roles has been called.

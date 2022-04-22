@@ -5,6 +5,7 @@ import numpy as np
 import stp
 import stp.rc as rc
 import stp.situation as situation
+import time
 
 import rj_gameplay.play as plays
 import rj_gameplay.situation.decision_tree.plays as situations
@@ -177,11 +178,12 @@ class BasicPlaySelector(situation.IPlaySelector):
     """
 
     def __init__(self):
-        self.curr_situation = None
-        self.curr_play = None
+        self.curr_situation = situations.BasicDefense
+        self.curr_play = basic_defense.BasicDefense()
+        self._midpoint_latency = None
 
     def select(
-        self, world_state: stp.rc.WorldState
+        self, world_state: stp.rc.WorldState,
     ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         """Returns the best situation and play
         for the current world state based on a hardcoded
@@ -201,25 +203,35 @@ class BasicPlaySelector(situation.IPlaySelector):
             return self.__analyze_restart(world_state, heuristics)"""
 
         if world_state.game_info is None and self.curr_play is None:
-            return (situations.BasicDefense, basic_defense.BasicDefense())
+            self.curr_situation = situations.BasicDefense
+            self.curr_play = basic_defense.BasicDefense()
+        elif world_state.game_info.state == stp.rc.GameState.STOP:
+            self.curr_situation = situations.Stop()
+            self.curr_play = basic_defense.BasicDefense()
         elif (
             heuristics.ball_pos == BallPos.OUR_BALL
-            or heuristics.ball_pos == BallPos.FREE_BALL
         ):
             if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
-                return (situations.BasicOffense, basic_offense.BasicOffense())
+                self.curr_situation = situations.BasicOffense
+                self.curr_play = basic_offense.BasicOffense()
             else:
-                return (situations.Keepaway, keepaway.Keepaway())
+                self.curr_situation = situations.Keepaway
+                self.curr_play = keepaway.Keepaway()
         elif heuristics.ball_pos == BallPos.THEIR_BALL:
-            return (situations.BasicDefense, basic_defense.BasicDefense())
+            self.curr_situation = situations.BasicDefense
+            self.curr_play = basic_defense.BasicDefense()
         elif heuristics.ball_pos == BallPos.CONTEST_BALL:
             if (
                 heuristics.ball_pos == BallPos.CONTEST_BALL
                 and heuristics.field_loc == FieldLoc.ATTACK_SIDE
             ):
-                return (situations.OffensiveScramble, basic_offense.BasicOffense())
+                self.curr_situation = situations.OffensiveScramble
+                self.curr_play = basic_offense.BasicOffense()
             else:
-                return (situations.DefensiveScramble, basic_defense.BasicDefense())
+                self.curr_situation = situations.DefensiveScramble
+                self.curr_play = basic_offense.BasicOffense()
+
+        return self.curr_situation, self.curr_play
 
     @staticmethod
     def __analyze_restart(

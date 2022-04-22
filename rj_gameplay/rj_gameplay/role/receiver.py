@@ -22,6 +22,7 @@ class ReceiverRole(stp.role.Role):
         self.receive_skill = None
 
         self._state = State.INIT
+        # self._state = State.RECEIVE_PASS
 
         self._target_point = None
 
