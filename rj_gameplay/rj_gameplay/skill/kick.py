@@ -64,8 +64,10 @@ class Kick(skill.Skill):
         heading_angle = world_state.our_robots[self.robot.id].pose[2]
         heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
         dot_product = np.dot(heading_vect, ball_vel_unit)
+
         # TODO: Make this threshold a local param
-        ball_too_far = np.linalg.norm(world_state.ball.pos - self.robot.pose[0:2]) > 0.5
+        ball_too_far = np.linalg.norm(world_state.ball.pos - self.robot.pose[0:2]) > 0.15
+
         if ball_too_far or (
             dot_product > KICK_DOT_THRESHOLD
             and np.linalg.norm(world_state.ball.vel) > KICK_BALL_SPEED_THRESHOLD

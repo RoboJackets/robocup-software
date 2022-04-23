@@ -69,7 +69,7 @@ class PivotKick(skill.Skill):
 
     def tick(self, world_state: rc.WorldState) -> RobotIntent:
         super().tick(world_state)
-        # print(f"pivot kick: {self._state}")
+        print(f"pivot kick: {self._state}")
 
         intent = None
         if self._state == State.CAPTURE:

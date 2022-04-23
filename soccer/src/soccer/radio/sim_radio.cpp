@@ -18,7 +18,7 @@ using namespace boost::asio;
 
 namespace radio {
 
-DEFINE_STRING(kRadioParamModule, interface, "172.19.0.5", "The interface for sim radio operation");
+DEFINE_STRING(kRadioParamModule, interface, "172.25.0.10", "The interface for sim radio operation");
 
 static SimulatorCommand convert_placement_to_proto(
     const rj_msgs::srv::SimPlacement::Request& placement) {
@@ -176,7 +176,7 @@ void SimRadio::switch_team(bool blue_team) {
     int status_port = blue_team ? kSimBlueStatusPort : kSimYellowStatusPort;
 
     // Let them throw exceptions
-    socket_.bind(ip::udp::endpoint(ip::make_address("172.19.0.5").to_v4(), status_port));
+    socket_.bind(ip::udp::endpoint(ip::make_address("172.25.0.11").to_v4(), status_port));
 
     auto address = boost::asio::ip::make_address(PARAM_interface).to_v4();
     robot_control_endpoint_ =

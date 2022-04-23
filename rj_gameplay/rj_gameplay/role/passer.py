@@ -8,7 +8,7 @@ from rj_msgs.msg import RobotIntent
 from rj_gameplay.skill import pivot_kick, receive  # , line_kick
 
 # The final velocity of the ball when it reaches our teammate
-FINAL_VELOCITY = 2
+FINAL_VELOCITY = 3
 # Rolling deceleration of the ball after it has been kicked
 BALL_DECELERATION = -0.4
 

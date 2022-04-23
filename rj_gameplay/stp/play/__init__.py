@@ -153,6 +153,7 @@ class Play(ABC):
         print("unused")
         print(unused_robots)
 
+        """
         formation = DiamondFormation(world_state)  # TODO: make seek tactic take in the whole formation object, this is dumb
         # for unassigned robots, make a seek tactic and put them there
         seek_tactic = basic_seek.BasicSeek(world_state, len(unused_robots), formation.get_regions, formation.get_centroids)
@@ -161,6 +162,7 @@ class Play(ABC):
         self.approved_prioritized_tactics.append(seek_tactic) # for use in get_robot_intents
         print("seek_tactic")
         print(seek_tactic)
+        """
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Has to be called after assigned_roles has been called.

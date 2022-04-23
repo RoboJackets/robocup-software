@@ -20,6 +20,7 @@ from rj_gameplay.play import (
     penalty_offense,
     prep_penalty_offense,
     restart,
+    kickoff_play,
 )
 
 POSSESS_MIN_DIST = 0.15
@@ -202,7 +203,43 @@ class BasicPlaySelector(situation.IPlaySelector):
         elif game_info.is_restart():
             return self.__analyze_restart(world_state, heuristics)"""
 
-        if world_state.game_info is None and self.curr_play is None:
+        if game_info.is_kickoff():
+            if game_info.our_restart:
+                if game_info.is_setup():
+                    self.situation = situations.PrepareKickoff()
+                    self.curr_play = kickoff_play.PrepareKickoff()
+                elif game_info.is_ready():
+                    self.situation = situations.Kickoff()
+                    self.curr_play = kickoff_play.Kickoff()
+            else:
+                self.situation = situations.DefendKickoff()
+                self.curr_play = kickoff_play.DefenseKickoff()
+
+        elif game_info.is_penalty():
+            pass
+            """
+            if game_info.our_restart:
+                if game_info.is_setup():
+                    return situations.PreparePenalty()
+                else:
+                    return situations.Penalty()
+            else:
+                if game_info.is_setup() or game_info.is_ready():
+                    return situations.PrepareDefendPenalty()
+                else:
+                    return situations.DefendPenalty()
+            """
+
+        elif game_info.is_direct():
+            if game_info.our_restart:
+                self.situation = situations.OffensiveKickDirect()
+                self.curr_play = basic_offense.BasicOffense()
+            else:
+                self.situation = situations.DefendRestartOffensiveDirect()
+                self.curr_play = basic_defense.BasicDefense()
+
+
+        elif world_state.game_info is None and self.curr_play is None:
             self.curr_situation = situations.BasicDefense
             self.curr_play = basic_defense.BasicDefense()
         elif world_state.game_info.state == stp.rc.GameState.STOP:
@@ -211,12 +248,8 @@ class BasicPlaySelector(situation.IPlaySelector):
         elif (
             heuristics.ball_pos == BallPos.OUR_BALL
         ):
-            if heuristics.field_loc == FieldLoc.ATTACK_SIDE:
-                self.curr_situation = situations.BasicOffense
-                self.curr_play = basic_offense.BasicOffense()
-            else:
-                self.curr_situation = situations.Keepaway
-                self.curr_play = keepaway.Keepaway()
+            self.curr_situation = situations.BasicOffense
+            self.curr_play = basic_offense.BasicOffense()
         elif heuristics.ball_pos == BallPos.THEIR_BALL:
             self.curr_situation = situations.BasicDefense
             self.curr_play = basic_defense.BasicDefense()

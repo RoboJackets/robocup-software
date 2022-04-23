@@ -83,6 +83,7 @@ class Tactic(ABC):
             temp = [
                 f"({role.__name__}, {cost.__class__.__name__})"
                 for cost, role in self._role_requests
+                if role != None and cost != None
             ]
             text += ", ".join(temp)
         text += "\nRoles Assigned: "
@@ -93,7 +94,7 @@ class Tactic(ABC):
                     for role, robot in itertools.zip_longest(
                         self.assigned_roles, self.assigned_robots
                     )
-                    if robot is not None
+                    if robot != None and role != None
                 ]
             )
         return text

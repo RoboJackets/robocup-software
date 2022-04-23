@@ -32,6 +32,7 @@ from rj_gameplay.play import (  # noqa: F401
     basic_defense,
     basic_offense,
     keepaway,
+    kickoff_play,
     line_up,
 )
 
