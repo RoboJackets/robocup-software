@@ -19,12 +19,6 @@ class State(Enum):
 
 
 class PenaltyDefense(stp.play.Play):
-    """Play that consists of:
-    - 1 Goalie
-    - 5 Wallers
-    TODO: add 2 aggressive markers, go down to 3 Wallers
-    """
-
     def __init__(self):
         super().__init__()
 
@@ -37,7 +31,8 @@ class PenaltyDefense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 4))
+            num_liners = len(world_state.our_visible_robots) - 1
+            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, num_liners))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)

@@ -23,6 +23,7 @@ from rj_gameplay.play import (
     kickoff_play,
     dumb_defense,
     penalty_defense,
+    penalty_offense,
 )
 
 POSSESS_MIN_DIST = 0.15
@@ -220,20 +221,17 @@ class BasicPlaySelector(situation.IPlaySelector):
                 self.curr_play = dumb_defense.DumbDefense()
 
         elif game_info.is_penalty():
-            self.situation = situations.PrepareKickoff()
-            self.curr_play = penalty_defense.PenaltyDefense()
-            """
             if game_info.our_restart:
                 if game_info.is_setup():
-                    return situations.PreparePenalty()
+                    self.situation = situations.PrepareKickoff() # TODO wrong situation
+                    self.curr_play = penalty_offense.PrepPenaltyOff()
                 else:
-                    return situations.Penalty()
+                    self.situation = situations.PrepareKickoff() # TODO wrong situation
+                    self.curr_play = penalty_offense.PenaltyOffense()
             else:
-                if game_info.is_setup() or game_info.is_ready():
-                    return situations.PrepareDefendPenalty()
-                else:
-                    return situations.DefendPenalty()
-            """
+                # I believe penalty defense can just have goalie in box to start, no prep play necessary
+                self.situation = situations.PrepareKickoff() # TODO wrong situation
+                self.curr_play = penalty_defense.PenaltyDefense()
 
         elif game_info.is_direct():
             if game_info.our_restart:

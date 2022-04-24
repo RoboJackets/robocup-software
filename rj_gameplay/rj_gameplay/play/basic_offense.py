@@ -49,14 +49,11 @@ class BasicOffense(stp.play.Play):
         # TODO: when seeker formation behavior added in, add it in for other 3 robots
         # SHOOT ONLY!
         if self._state == State.INIT:
-            vis_robs = 0
-            for robot in world_state.our_robots:
-                if robot.visible:
-                    vis_robs += 1
+            num_wallers = len(world_state.our_visible_robots) - 2
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 striker_tactic.StrikerTactic(world_state),
-                wall_tactic.WallTactic(world_state, vis_robs - 2),
+                wall_tactic.WallTactic(world_state, num_wallers),
                 # basic_seek.BasicSeek(
                 #     world_state,
                 #     4,
