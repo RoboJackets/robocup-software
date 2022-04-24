@@ -1,6 +1,6 @@
 import stp
 
-from rj_gameplay.tactic import wall_tactic, goalie_tactic, nmark_tactic, line_tactic
+from rj_gameplay.tactic import wall_tactic, goalie_tactic, nmark_tactic
 import stp.role
 from stp.role.assignment.naive import NaiveRoleAssignment
 import stp.rc
@@ -18,7 +18,7 @@ class State(Enum):
     ACTIVE = auto()
 
 
-class PenaltyDefense(stp.play.Play):
+class DumbDefense(stp.play.Play):
     """Play that consists of:
     - 1 Goalie
     - 5 Wallers
@@ -37,7 +37,8 @@ class PenaltyDefense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            self.prioritized_tactics.append(line_tactic.LineTactic(world_state, 4))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
+            # self.prioritized_tactics.append(nmark_tactic.NMarkTactic(world_state, 2))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)

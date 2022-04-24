@@ -21,6 +21,8 @@ from rj_gameplay.play import (
     prep_penalty_offense,
     restart,
     kickoff_play,
+    dumb_defense,
+    penalty_defense,
 )
 
 POSSESS_MIN_DIST = 0.15
@@ -213,10 +215,11 @@ class BasicPlaySelector(situation.IPlaySelector):
                     self.curr_play = kickoff_play.Kickoff()
             else:
                 self.situation = situations.DefendKickoff()
-                self.curr_play = kickoff_play.DefenseKickoff()
+                self.curr_play = dumb_defense.DumbDefense()
 
         elif game_info.is_penalty():
-            pass
+            self.situation = situations.PrepareKickoff()
+            self.curr_play = penalty_defense.PenaltyDefense()
             """
             if game_info.our_restart:
                 if game_info.is_setup():

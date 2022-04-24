@@ -56,7 +56,7 @@ class StrikerRole(stp.role.Role):
             self.pivot_kick_skill = pivot_kick.PivotKick(
                 robot=self.robot,
                 target_point=best_shot_target_point,
-                chip=False,
+                chip=True,
                 kick_speed=shot_kick_speed,
             )
             self._state = State.SHOOTING
