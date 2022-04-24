@@ -26,6 +26,7 @@ class BasicSeek(stp.tactic.Tactic):
         self._num_seekers = num_seekers
 
         for i in range(self._num_seekers):
+            if i not in range(len(formation)): break
             my_region = formation[i]
             self._used_regions.append(my_region)
             centroid = centroid_list[i]

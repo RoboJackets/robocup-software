@@ -2,7 +2,7 @@ import argparse
 import math
 import sys
 import time
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import stp.action as action
@@ -13,29 +13,23 @@ from rj_msgs.msg import PathTargetMotionCommand, RobotIntent
 from stp.utils.constants import RobotConstants
 
 
-def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
-    # workaround for non-working CostBehavior:
-    # initialize move action, update target point every tick (target point being opponent robot pos)
-
-    # TODO: use mark_heuristic & CostBehavior to handle marking
-    # argument: mark_heuristic: Callable[[np.array], float]
-    # > self.mark_heuristic = mark_heuristic
+def get_mark_point(face_point: np.ndarray, block_point: np.ndarray):
+    """
+    face_point and block_point are the two points robot will mark between
+    face_point: robot faces this way
+    block_point: robot blocks this point from face_point
+    """
 
     # dist away from target_robot to mark
     # TODO: add to global param server
     SAG_DIST = RobotConstants.RADIUS * 0.5
 
-    # find point between ball and target robot that leaves SAG_DIST between edges of robots
-    # this will be mark point
-    ball_pos = world_state.ball.pos
-    opp_pos = world_state.their_robots[target_robot_id].pose[0:2]
-
-    mark_dir = (ball_pos - opp_pos) / np.linalg.norm(ball_pos - opp_pos)
-    mark_pos = opp_pos + mark_dir * (2 * RobotConstants.RADIUS + SAG_DIST)
+    mark_dir = (face_point - block_point) / np.linalg.norm(face_point - block_point)
+    mark_pos = block_point + mark_dir * (2 * RobotConstants.RADIUS + SAG_DIST)
 
     # if ball inside robot radius of mark_pos, can't mark normally
-    if np.linalg.norm(mark_pos - ball_pos) < RobotConstants.RADIUS:
-        # instead, get in front of opp robot holding ball
+    if np.linalg.norm(mark_pos - face_point) < RobotConstants.RADIUS:
+        # instead, get in the way of mark pos
         mark_pos += mark_dir * 2 * RobotConstants.RADIUS
 
     return mark_pos
@@ -46,51 +40,37 @@ A skill which marks a given opponent robot according to some heuristic cost func
 """
 
 
-# TODO: delete mark skill -> change to tactic
-class Mark(skill.ISkill):
+class Mark(skill.Skill):
     def __init__(
         self,
-        robot: rc.Robot = None,
-        target_robot: rc.Robot = None,
-        face_point: np.ndarray = None,
-        face_angle: Optional[float] = None,
-        target_vel: np.ndarray = np.array([0.0, 0.0]),
+        robot: rc.Robot,
+        face_point: np.ndarray,
+        block_point: np.ndarray,
         ignore_ball: bool = False,
+        world_state: rc.WorldState, # this skill needs world_state
     ):
-
         self.__name__ = "Mark"
         self.robot = robot
-        self.target_robot = target_robot
-        self.target_vel = target_vel
         self.face_point = face_point
-        self.face_angle = face_angle
+        self.block_point = block_point
         self.ignore_ball = ignore_ball
 
     def tick(self, world_state: rc.WorldState):
+        super().tick(world_state)
+
         intent = RobotIntent()
-        mark_point = np.array([0.0, 0.0])
-        if world_state and world_state.ball.visible:
-            if self.target_robot is None:
-                mark_point = get_mark_point(1, world_state)
-            else:
-                mark_point = get_mark_point(self.target_robot.id, world_state)
-        self.target_point = mark_point
-        self.face_point = world_state.ball.pos
+        self.target_point = get_mark_point(self.face_point, self.block_point)
 
         path_command = PathTargetMotionCommand()
         path_command.target.position = Point(
             x=self.target_point[0], y=self.target_point[1]
         )
-        path_command.target.velocity = Point(x=self.target_vel[0], y=self.target_vel[1])
+        path_command.target.velocity = Point(x=0.0, y=0.0)
         path_command.ignore_ball = self.ignore_ball
+        path_command.override_face_point = [
+            Point(x=self.face_point[0], y=self.face_point[1])
+        ]
 
-        if self.face_angle is not None:
-            path_command.override_angle = [self.face_angle]
-
-        if self.face_point is not None:
-            path_command.override_face_point = [
-                Point(x=self.face_point[0], y=self.face_point[1])
-            ]
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
         return intent
@@ -113,8 +93,5 @@ class Mark(skill.ISkill):
         else:
             return False
 
-    def __str__(self):
-        return f"Mark(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_robot.id if self.target_robot is not None else '??'})"
-
-    def __repr__(self) -> str:
-        return self.__str__()
+    def __repr__(self):
+        return f"MarkSkill(face_point: {self.face_point}, block_point: {self.block_point})"
