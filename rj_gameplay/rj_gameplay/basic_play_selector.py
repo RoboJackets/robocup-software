@@ -212,7 +212,9 @@ class BasicPlaySelector(situation.IPlaySelector):
                     self.curr_play = kickoff_play.PrepareKickoff()
                 elif game_info.is_ready():
                     self.situation = situations.Kickoff()
-                    self.curr_play = kickoff_play.Kickoff()
+                    # passing is bad
+                    # self.curr_play = kickoff_play.Kickoff()
+                    self.curr_play = basic_offense.BasicOffense()
             else:
                 self.situation = situations.DefendKickoff()
                 self.curr_play = dumb_defense.DumbDefense()

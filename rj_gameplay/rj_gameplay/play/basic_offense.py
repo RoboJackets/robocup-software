@@ -6,7 +6,7 @@ import stp
 from rj_msgs.msg import RobotIntent
 from stp.formations.diamond_formation import DiamondFormation
 
-from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
+from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic, wall_tactic
 
 
 class State(Enum):
@@ -49,15 +49,20 @@ class BasicOffense(stp.play.Play):
         # TODO: when seeker formation behavior added in, add it in for other 3 robots
         # SHOOT ONLY!
         if self._state == State.INIT:
+            vis_robs = 0
+            for robot in world_state.our_robots:
+                if robot.visible:
+                    vis_robs += 1
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 striker_tactic.StrikerTactic(world_state),
-                basic_seek.BasicSeek(
-                    world_state,
-                    4,
-                    DiamondFormation(world_state).get_regions,
-                    DiamondFormation(world_state).get_centroids,
-                ),
+                wall_tactic.WallTactic(world_state, vis_robs - 2),
+                # basic_seek.BasicSeek(
+                #     world_state,
+                #     4,
+                #     DiamondFormation(world_state).get_regions,
+                #     DiamondFormation(world_state).get_centroids,
+                # ),
             ]
 
             self.assign_roles(world_state)
