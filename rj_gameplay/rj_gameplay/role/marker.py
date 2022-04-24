@@ -9,58 +9,6 @@ class MarkerRole(stp.role.Role):
     """Role to produce marking behavior"""
 
     def __init__(self, robot: stp.rc.Robot, face_point, block_point, world_state) -> None:
-        """
-        face/block point of format:
-        {
-            "ball", None
-        }
-        where key is type of point, and val is specifier if needed
-
-        Dict should only have 1 item in it
-
-        options are "ball", "goal", "robot", "pt"
-        where robot requires an ID and pt requires an np.ndarray
-        """
-
-        super().__init__(robot)
-
-        # convert both Dicts to actual points
-        self.face_point = world_state.ball.pos # default
-        if "ball" in face_point:
-            pass # done by default
-        elif "goal" in face_point:
-            self.face_point = world_state.field.our_goal_loc
-        elif "robot" in face_point:
-            robot_id = face_point["robot"]
-            their_robot = world_state.their_robots[robot_id]
-            if not their_robot.visible:
-                print("Mark skill asked to mark invisible robot; defaulting to face ball")
-            self.face_point = their_robot.pose[0:2]
-        elif "pt" in face_point:
-            self.face_point = face_point["pt"]
-        else:
-            print("Invalid face_point given to mark role, defaulting to face ball")
-
-        # convert both Dicts to actual points
-        self.block_point = world_state.field.our_goal_loc # default
-        if "ball" in block_point:
-            self.block_point = world_state.ball.pos
-        elif "goal" in block_point:
-            pass # done by default
-        elif "robot" in block_point:
-            robot_id = block_point["robot"]
-            their_robot = world_state.their_robots[robot_id]
-            if not their_robot.visible:
-                print("Mark skill asked to mark invisible robot; defaulting to block goal")
-            self.block_point = their_robot.pose[0:2]
-        elif "pt" in block_point:
-            self.block_point = block_point["pt"]
-        else:
-            print("Invalid block_point given to mark role, defaulting to block goal")
-
-        print("marker role conversion")
-        print(self.face_point)
-        print(self.block_point)
 
         self.mark_skill = None
 
@@ -68,8 +16,16 @@ class MarkerRole(stp.role.Role):
         self, world_state: stp.rc.WorldState
     ) -> RobotIntent:
         if self.mark_skill is None:
+            min_robot = None
+            min_dist = float('inf')
+            for robot in world_state.their_robots:
+                dist = np.linalg.norm(robot.pose[:2] - world_state.field.our_goal_loc)
+                if dist < min_dist:
+                    min_dist = dist
+                    min_robot = robot
+
             self.mark_skill = mark.Mark(
-                self.robot, self.face_point, self.block_point
+                self.robot, min_robot.pose[:2], world_state.field.our_goal_loc
             )
 
         intent = self.mark_skill.tick(world_state)
