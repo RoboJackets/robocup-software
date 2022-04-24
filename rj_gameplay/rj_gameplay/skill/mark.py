@@ -24,7 +24,7 @@ def get_mark_point(face_point: np.ndarray, block_point: np.ndarray):
     # TODO: add to global param server
     SAG_DIST = RobotConstants.RADIUS * 0.5
 
-    mark_dir = (face_point - block_point) / np.linalg.norm(face_point - block_point)
+    mark_dir = (face_point - block_point) / (np.linalg.norm(face_point - block_point) + 1e-6)
     mark_pos = block_point + mark_dir * (2 * RobotConstants.RADIUS + SAG_DIST)
 
     # if ball inside robot radius of mark_pos, can't mark normally
@@ -47,7 +47,6 @@ class Mark(skill.Skill):
         face_point: np.ndarray,
         block_point: np.ndarray,
         ignore_ball: bool = False,
-        world_state: rc.WorldState, # this skill needs world_state
     ):
         self.__name__ = "Mark"
         self.robot = robot

@@ -8,7 +8,7 @@ from rj_gameplay.skill import mark
 class MarkerRole(stp.role.Role):
     """Role to produce marking behavior"""
 
-    def __init__(self, robot: stp.rc.Robot, face_point: Dict[str, Optional[Any]], block_point: Dict[str, Optional[Any]]) -> None:
+    def __init__(self, robot: stp.rc.Robot, face_point, block_point, world_state) -> None:
         """
         face/block point of format:
         {
@@ -58,6 +58,10 @@ class MarkerRole(stp.role.Role):
         else:
             print("Invalid block_point given to mark role, defaulting to block goal")
 
+        print("marker role conversion")
+        print(self.face_point)
+        print(self.block_point)
+
         self.mark_skill = None
 
     def tick(
@@ -65,7 +69,7 @@ class MarkerRole(stp.role.Role):
     ) -> RobotIntent:
         if self.mark_skill is None:
             self.mark_skill = mark.Mark(
-                self.face_point, self.block_point
+                self.robot, self.face_point, self.block_point
             )
 
         intent = self.mark_skill.tick(world_state)

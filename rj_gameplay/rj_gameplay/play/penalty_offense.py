@@ -18,6 +18,7 @@ class State(Enum):
     ACTIVE = auto()
 
 
+# TODO: add a shared state between these two classes somehow
 class PenaltyOffense(stp.play.Play):
     """ striker + line up rest of robots """
     def __init__(self):

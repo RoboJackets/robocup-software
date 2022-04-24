@@ -250,6 +250,7 @@ class BasicPlaySelector(situation.IPlaySelector):
             self.curr_play = basic_defense.BasicDefense()
         elif (
             heuristics.ball_pos == BallPos.OUR_BALL
+            or heuristics.ball_pos == BallPos.FREE_BALL
         ):
             self.curr_situation = situations.BasicOffense
             self.curr_play = basic_offense.BasicOffense()
