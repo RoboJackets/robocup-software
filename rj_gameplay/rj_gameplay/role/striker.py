@@ -66,6 +66,7 @@ class StrikerRole(stp.role.Role):
 
             if self.pivot_kick_skill.is_done(world_state):
                 self._state = State.KICK_DONE
+                intent = None
                 # end FSM
 
         return intent
