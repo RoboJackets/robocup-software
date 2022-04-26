@@ -32,6 +32,7 @@ from rj_gameplay.play import (  # noqa: F401
     basic_offense,
     keepaway,
     line_up,
+    planning_test_play,
 )
 
 NUM_ROBOTS = 16
@@ -484,8 +485,8 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    # test_play = basic_defense.BasicDefense()
-    test_play = None
+    test_play = planning_test_play.PlanningTestPlay()
+    # test_play = None
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
