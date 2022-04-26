@@ -1,5 +1,7 @@
 #include "create_path.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <rj_constants/constants.hpp>
 
 #include "planning/primitives/rrt_util.hpp"
@@ -33,6 +35,10 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
     }
+
+    // debug output
+    SPDLOG_INFO("into RRT @ create_path.cpp");
+
     // maybe we don't need an RRT
     Trajectory straight_trajectory =
         CreatePath::simple(start, goal, motion_constraints, start_time);
@@ -41,19 +47,38 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // TODO: do this for dynamic path breaks
     auto static_path_breaks =
         trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr);
-    bool static_obs_collision = (static_path_breaks.size() == 0);
+    bool static_obs_collision_found = (static_path_breaks.size() != 0);
+
+    // debug output
+    for (const auto& pt : static_path_breaks) {
+        SPDLOG_INFO("Path break: ({}, {})", pt.x(), pt.y());
+    }
+    SPDLOG_INFO("path break ct: {}", static_path_breaks.size());
+    if (static_obs_collision_found) {
+        SPDLOG_INFO("static obstacle collision found");
+    }
+    if (trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
+                                nullptr)) {
+        SPDLOG_INFO("dynamic obstacle collision found");
+    }
 
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        (static_obs_collision && !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles,
-                                                          start_time, nullptr, nullptr))) {
+        (!static_obs_collision_found &&
+         !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
+                                  nullptr))) {
+        // not an error but this makes it stand out from my other debug output
+        SPDLOG_ERROR("\nRETURNING STRAIGHT TRAJ\n");
         return straight_trajectory;
     }
 
+    // not an error but this makes it stand out from my other debug output
+    SPDLOG_ERROR("\nBUILDING FANCY TRAJ\n");
+
     // otherwise, construct a point trajectory, running RRT to get across the
     // path_breaks
-    // TODO: do this for dynamic path breaks
+    // TODO: do this for dynamic obs too
     ShapeSet obstacles = static_obstacles;
     std::vector<Point> path_points;
     path_points.push_back(start.position);
@@ -68,6 +93,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         }
     }
     path_points.push_back(goal.position);
+    SPDLOG_INFO("Path points len: {}", path_points.size());
 
     Trajectory path{{}};
     constexpr int kAttemptsToAvoidDynamics = 10;

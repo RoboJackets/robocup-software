@@ -142,6 +142,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (now - previous_created_time > kCheckBetterDeltaTime &&
         time_remaining > partial_replan_lead_time() * 2) {
+        SPDLOG_ERROR("check better called");
         return check_better(params, previous_trajectory);
     }
 
