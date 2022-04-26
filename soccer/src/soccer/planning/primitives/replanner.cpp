@@ -116,7 +116,9 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     // Use short-circuiting to only check dynamic trajectories if necessary.
     // TODO: reenable partial replanning
-    bool should_partial_replan = false;
+    bool should_partial_replan =
+        (trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time, &hit_time)
+             .size() != 0);
     /* trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time, */
     /*                        &hit_time) || */
     /* trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
@@ -127,6 +129,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
             return full_replan(params);
         }
+        SPDLOG_ERROR("replanner: partial_replan called");
         return partial_replan(params, previous_trajectory);
     }
 
@@ -142,7 +145,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (now - previous_created_time > kCheckBetterDeltaTime &&
         time_remaining > partial_replan_lead_time() * 2) {
-        SPDLOG_ERROR("check better called");
+        SPDLOG_ERROR("replanner: check_better called");
         return check_better(params, previous_trajectory);
     }
 

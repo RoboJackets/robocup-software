@@ -14,7 +14,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         const auto& robot = in.world_state->their_robots.at(shell);
         if (robot.visible) {
             out_static->add(
-                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius * 1.0));
+                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius * 1.1));
         }
     }
 
