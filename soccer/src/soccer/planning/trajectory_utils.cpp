@@ -1,13 +1,22 @@
 #include "trajectory_utils.hpp"
 
 #include <rj_constants/constants.hpp>
+#include <rj_geometry/point.hpp>
 
 namespace planning {
 
-bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::ShapeSet& obstacles,
-                            RJ::Time start_time, RJ::Time* hit_time) {
+// TODO: if this works, change the comment in corresponding .hpp
+// TODO: also change the dynamic version below
+std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& trajectory,
+                                                       const rj_geometry::ShapeSet& obstacles,
+                                                       RJ::Time start_time, RJ::Time* hit_time) {
+    // construct path_breaks, a list of points where the straight path must be
+    // broken to account for an obstacle
+    // (list will solely contain points outside obstacles)
+    std::vector<rj_geometry::Point> path_breaks;
+
     if (trajectory.empty()) {
-        return false;
+        return path_breaks;
     }
 
     if (start_time < trajectory.begin_time()) {
@@ -20,7 +29,7 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
 
     // If the trajectory has already ended, we don't need to check it.
     if (!cursor.has_value()) {
-        return false;
+        return path_breaks;
     }
 
     // Limit iterations to 100. This will continue to operate at dt = 0.05 until
@@ -34,26 +43,55 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
     RJ::Seconds time_left{trajectory.end_time() - start_time};
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
 
+    // set of obstacles that hit the cursor's start position
+    // (cursor is an iterator over the trajectory)
     const auto& start_hits = obstacles.hit_set(cursor.value().position());
+
+    // last hit obstacle on cursor's path
+    rj_geometry::Point last_pos;
+    bool last_pt_was_hit = false;
+
     while (cursor.has_value()) {
         RobotInstant instant = cursor.value();
+        auto position = instant.position();
 
-        // Only count hits that we didn't start in.
+        // find all collisions along path
+        bool hit_found = false;
         for (const auto& obstacle : obstacles.shapes()) {
-            if (obstacle->hit(instant.position()) &&
-                start_hits.find(obstacle) == start_hits.end()) {
+            if (obstacle->hit(position) && start_hits.find(obstacle) == start_hits.end()) {
+                // Only count hits that we didn't start in.
+
+                // save hit_time if ptr given
+                // (is given nowhere as far as I can tell -Kevin)
                 if (hit_time != nullptr) {
                     *hit_time = instant.stamp;
                 }
-                return true;
+
+                // mark hit found if found
+                // (hit is at cursor's current position)
+                hit_found = true;
             }
         }
 
+        // save the points just outside obstacles on the line by
+        // detecting transition from hit to not hit (or vice versa)
+        if (hit_found && !last_pt_was_hit) {
+            // this is first pos inside a new obstacle, so save last pos outside it
+            path_breaks.push_back(last_pos);
+        } else if (!hit_found && last_pt_was_hit) {
+            // this is first pos outside the obstacle, so save this pos
+            path_breaks.push_back(position);
+        }
+
+        // update last_pos, last_pt_was_hit, cursor
+        last_pos = position;
+        if (hit_found) {
+            last_pt_was_hit = true;
+        }
         cursor.advance(dt);
     }
 
-    // No obstacles were hit, and we're through the whole trajectory.
-    return false;
+    return path_breaks;
 }
 
 bool trajectory_hits_dynamic(const Trajectory& trajectory,

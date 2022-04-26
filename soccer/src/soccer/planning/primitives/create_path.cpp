@@ -37,23 +37,45 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     Trajectory straight_trajectory =
         CreatePath::simple(start, goal, motion_constraints, start_time);
 
+    // find static path_breaks in the straight trajectory
+    // TODO: do this for dynamic path breaks
+    auto static_path_breaks =
+        trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr);
+    bool static_obs_collision = (static_path_breaks.size() == 0);
+
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr) &&
-         !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
-                                  nullptr))) {
+        (static_obs_collision && !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles,
+                                                          start_time, nullptr, nullptr))) {
         return straight_trajectory;
     }
 
+    // otherwise, construct a point trajectory, running RRT to get across the
+    // path_breaks
+    // TODO: do this for dynamic path breaks
     ShapeSet obstacles = static_obstacles;
+    std::vector<Point> path_points;
+    path_points.push_back(start.position);
+    for (std::size_t i = 0; i < static_path_breaks.size(); i += 2) {
+        // path breaks will be found in pairs of (enter obstacle, exit obstacle)
+        auto enter_pt = static_path_breaks[i];
+        auto exit_pt = static_path_breaks[i + 1];
+        std::vector<Point> path_jump = generate_rrt(enter_pt, exit_pt, obstacles, bias_waypoints);
+
+        for (const auto& pt : path_jump) {
+            path_points.push_back(pt);
+        }
+    }
+    path_points.push_back(goal.position);
+
     Trajectory path{{}};
     constexpr int kAttemptsToAvoidDynamics = 10;
     for (int i = 0; i < kAttemptsToAvoidDynamics; i++) {
-        std::vector<Point> points =
-            generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
+        /* std::vector<Point> points = */
+        /*     generate_rrt(start.position, goal.position, obstacles, bias_waypoints); */
 
-        BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
+        BezierPath post_bezier(path_points, start.velocity, goal.velocity, motion_constraints);
 
         path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
                                 motion_constraints, start_time);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <rj_geometry/point.hpp>
+
 #include "trajectory.hpp"
 
 namespace planning {
@@ -18,9 +20,9 @@ namespace planning {
  * @param hit_time   The time of the collision (output parameter).
  * @return           Whether or not there is a collision.
  */
-bool trajectory_hits_static(const Trajectory& trajectory,
-                          const rj_geometry::ShapeSet& obstacles,
-                          RJ::Time start_time, RJ::Time* hit_time);
+std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& trajectory,
+                                                       const rj_geometry::ShapeSet& obstacles,
+                                                       RJ::Time start_time, RJ::Time* hit_time);
 
 /**
  * @brief Whether the given trajectory intersects any of the dynamic obstacles
