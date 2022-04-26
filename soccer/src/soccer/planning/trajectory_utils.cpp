@@ -85,9 +85,7 @@ std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& traject
 
         // update last_pos, last_pt_was_hit, cursor
         last_pos = position;
-        if (hit_found) {
-            last_pt_was_hit = true;
-        }
+        last_pt_was_hit = hit_found;
         cursor.advance(dt);
     }
 
