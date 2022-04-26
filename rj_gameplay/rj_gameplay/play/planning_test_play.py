@@ -41,6 +41,7 @@ class PlanningTestPlay(stp.play.Play):
     ) -> List[RobotIntent]:
 
         self.robot = world_state.our_robots[self.robot_id]
+        intents = [None for _ in range(16)]
 
         if self._state == State.NEAR:
             self.target_point = np.array([2.0, 0.5])
@@ -65,7 +66,6 @@ class PlanningTestPlay(stp.play.Play):
                 target_point=self.target_point,
                 face_point=self.face_point,
             )
+            intents[0] = self.move_skill.tick(world_state)
 
-        intent = self.move_skill.tick(world_state)
-        intents = [intent] + [None for _ in range(15)]
         return intents
