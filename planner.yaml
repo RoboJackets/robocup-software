@@ -1,0 +1,52 @@
+# set params with:
+# ros2 param load planner planner.yaml
+/planner:
+  ros__parameters:
+    collect:
+      approach_accel_scale: 0.7
+      approach_dist_target: 0.04
+      ball_speed_approach_direction_cutoff: 0.1
+      control_accel_scale: 0.5
+      dist_cutoff_to_approach: 1.0
+      dist_cutoff_to_control: 0.0285
+      stop_dist_scale: 0.5
+      target_point_lowpass_gain: 0.8
+      touch_delta_speed: 0.05
+      vel_cutoff_to_control: 0.3
+      velocity_control_scale: 0.5
+    constraints:
+      max_rotational_accel: 3.0
+      max_rotational_speed: 3.0
+      max_translational_accel: 3.0
+      max_translational_speed: 2.0
+    escape:
+      goal_change_threshold: 0.9
+      step_size: 0.1
+    pivot:
+      radius_multiplier: 1.0
+    replanner:
+      off_path_threshold: 0.1
+      partial_replan_lead_time: 0.1
+      pos_change_threshold: 0.025
+      vel_change_threshold: 0.025
+    rrt:
+      enable_debug_drawing: false
+      goal_bias: 0.3
+      max_iterations: 500
+      min_iterations: 250
+      step_size: 0.045
+      waypoint_bias: 0.5
+    settle:
+      ball_speed_percent_for_dampen: 0.1
+      ball_vel_gain: 0.9
+      intercept_buffer_time: 0.3
+      max_ball_angle_for_reset: 20.0
+      max_ball_vel_for_path_reset: 2.0
+      max_bounce_angle: 45.0
+      search_end_dist: 6.0
+      search_inc_dist: 0.2
+      search_start_dist: 0.0
+      shortcut_dist: 0.09
+      target_point_gain: 0.5
+    timeout: 0.1
+    use_sim_time: false

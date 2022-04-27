@@ -1,0 +1,16 @@
+# set params with:
+# ros2 param load control control.yaml
+/control:
+  ros__parameters:
+    max_acceleration: 5.5
+    max_angular_velocity: 15.0
+    max_velocity: 2.0
+    rotation_kd: 0.0
+    rotation_ki: 0.0
+    rotation_kp: 8.0
+    rotation_windup: 0
+    translation_kd: 0.0
+    translation_ki: 0.0
+    translation_kp: 4.0
+    translation_windup: 0
+    use_sim_time: false
