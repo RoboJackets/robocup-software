@@ -89,6 +89,25 @@ std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& traject
         cursor.advance(dt);
     }
 
+    // merge obstacles that are too close together by removing the intermediate path_breaks
+    // (path_smoothing can't handle points too close together)
+    std::set<int> skip_list;
+    if (path_breaks.size() > 2) {
+        // only run if there are multiple obstacles
+        for (std::size_t i = 1; i < path_breaks.size(); i += 2) {
+            auto exit_pt_a = path_breaks[i];
+            auto entry_pt_b = path_breaks[i + 1];
+            float closeness_cutoff = 2.0 * kRobotRadius;
+            if (exit_pt_a.dist_to(entry_pt_b) < closeness_cutoff) {
+                skip_list.insert(i);
+                skip_list.insert(i + 1);
+            }
+        }
+        for (const auto& indx : skip_list) {
+            path_breaks.erase(path_breaks.begin() + indx);
+        }
+    }
+
     return path_breaks;
 }
 
