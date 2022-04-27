@@ -15,7 +15,7 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 1.5,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.5,
                "Maximum acceleration limit (motion control) (m/s^2)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 3.5,
                "Maximum velocity limit (motion control) (m/s)");
@@ -31,7 +31,7 @@ DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
              "Windup limit for rotation (unknown units)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 6.0,
                "Kp for translation ((m/s)/m)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 1.0,
                "Ki for translation ((m/s)/(m*s))");
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 3.0,
                "Kd for translation ((m/s)/(m/s))");
