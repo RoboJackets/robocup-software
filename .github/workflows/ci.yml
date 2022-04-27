@@ -139,6 +139,7 @@ jobs:
       - name: Run clang-format
         run: |
           echo "::add-matcher::ci/clang-format.json"
+          git status
           git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
           echo "::remove-matcher owner=clang-format::"
 
