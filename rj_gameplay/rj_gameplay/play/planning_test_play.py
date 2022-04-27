@@ -66,6 +66,9 @@ class PlanningTestPlay(stp.play.Play):
                 target_point=self.target_point,
                 face_point=self.face_point,
             )
-            intents[0] = self.move_skill.tick(world_state)
+
+        # TODO: only making this intent change when the move skill is reinitialized produces much smoother behavior, but makes our planning unable to respond to moving obstacles
+        # I think skills should be in C++, so we can actually use the replanner (currently all planning is from scratch because we send fresh move intents every tick)
+        intents[0] = self.move_skill.tick(world_state)
 
         return intents
