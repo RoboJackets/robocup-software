@@ -24,6 +24,7 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
     BezierPath bezier(points, start.velocity, goal.velocity, motion_constraints);
     Trajectory path = profile_velocity(bezier, start.velocity.mag(), goal.velocity.mag(),
                                        motion_constraints, start_time);
+
     return path;
 }
 
@@ -50,10 +51,11 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     bool static_obs_collision_found = (static_path_breaks.size() != 0);
 
     // debug output
-    for (const auto& pt : static_path_breaks) {
-        SPDLOG_INFO("Path break: ({}, {})", pt.x(), pt.y());
-    }
+    /* for (const auto& pt : static_path_breaks) { */
+    /*     SPDLOG_INFO("path break: ({0:.3f}, {0:.3f})", pt.x(), pt.y()); */
+    /* } */
     SPDLOG_INFO("path break ct: {}", static_path_breaks.size());
+
     if (static_obs_collision_found) {
         SPDLOG_INFO("static obstacle collision found");
     }
@@ -70,37 +72,50 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
                                   nullptr))) {
         // not an error but this makes it stand out from my other debug output
         SPDLOG_ERROR("\nRETURNING STRAIGHT TRAJ\n");
+        // TODO (Kevin): max acceleration on straight line with no obstacles should be higher than
+        // curvy path around obstacles
         return straight_trajectory;
     }
 
-    // not an error but this makes it stand out from my other debug output
-    SPDLOG_ERROR("\nBUILDING FANCY TRAJ\n");
-
-    // otherwise, construct a point trajectory, running RRT to get across the
-    // path_breaks
-    // TODO: do this for dynamic obs too
-    ShapeSet obstacles = static_obstacles;
+    // fill in points to define path, geometrically
     std::vector<Point> path_points;
-    path_points.push_back(start.position);
-    for (std::size_t i = 0; i < static_path_breaks.size(); i += 2) {
-        // path breaks will be found in pairs of (enter obstacle, exit obstacle)
-        auto enter_pt = static_path_breaks[i];
-        auto exit_pt = static_path_breaks[i + 1];
-        std::vector<Point> path_jump = generate_rrt(enter_pt, exit_pt, obstacles, bias_waypoints);
+    ShapeSet obstacles = static_obstacles;
 
-        for (const auto& pt : path_jump) {
-            path_points.push_back(pt);
+    if (start.position.dist_to(static_path_breaks[0]) < kRobotRadius * 1.2) {
+        SPDLOG_INFO("FULL RRT");
+        // full rrt if robot too close to first break
+        path_points = generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
+    } else {
+        SPDLOG_INFO("PARTIAL RRT");
+        // otherwise, construct a point trajectory, running RRT to get across the
+        // path_breaks
+
+        // TODO: do this for dynamic obs too
+        path_points.push_back(start.position);
+        for (std::size_t i = 0; i < static_path_breaks.size(); i += 2) {
+            // path breaks will be found in pairs of (enter obstacle, exit obstacle)
+            auto enter_pt = static_path_breaks[i];
+            auto exit_pt = static_path_breaks[i + 1];
+            std::vector<Point> path_jump =
+                generate_rrt(enter_pt, exit_pt, obstacles, bias_waypoints);
+
+            for (const auto& pt : path_jump) {
+                path_points.push_back(pt);
+            }
         }
+        path_points.push_back(goal.position);
     }
-    path_points.push_back(goal.position);
-    SPDLOG_INFO("Path points len: {}", path_points.size());
 
+    // debug prints
+    /* for (const auto& pt : path_points) { */
+    /*     SPDLOG_INFO("pt: ({0:.3f}, {0:.3f})", pt.x(), pt.y()); */
+    /* } */
+    /* SPDLOG_INFO("Path points len: {}", path_points.size()); */
+
+    // fill in velocities along path to get Trajectory
     Trajectory path{{}};
     constexpr int kAttemptsToAvoidDynamics = 10;
     for (int i = 0; i < kAttemptsToAvoidDynamics; i++) {
-        /* std::vector<Point> points = */
-        /*     generate_rrt(start.position, goal.position, obstacles, bias_waypoints); */
-
         BezierPath post_bezier(path_points, start.velocity, goal.velocity, motion_constraints);
 
         path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
@@ -114,7 +129,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
         // Inflate the radius slightly so we don't try going super close to
         // it and hitting it again.
-        hit_circle.radius(hit_circle.radius() * 1.5f);
+        hit_circle.radius(hit_circle.radius() * 1.0f);
         obstacles.add(std::make_shared<Circle>(hit_circle));
     }
 
