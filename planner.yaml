@@ -31,9 +31,9 @@
       vel_change_threshold: 0.025
     rrt:
       enable_debug_drawing: false
-      goal_bias: 0.3
-      max_iterations: 500
-      min_iterations: 250
+      goal_bias: 0.5
+      max_iterations: 1000
+      min_iterations: 500
       step_size: 0.045
       waypoint_bias: 0.5
     settle:
