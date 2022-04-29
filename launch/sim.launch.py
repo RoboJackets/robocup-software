@@ -11,30 +11,23 @@ from launch.actions import (
     SetEnvironmentVariable,
     Shutdown,
 )
-from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
+    config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
+    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
+    use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-b")
-    use_grsim = LaunchConfiguration("use_grsim", default="True")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     headless_flag = LaunchConfiguration("headless_flag", default="")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
-    )
-
-    grsim = Node(
-        condition=IfCondition(PythonExpression([use_grsim])),
-        package="rj_robocup",
-        executable="grSim",
-        arguments=[headless_flag],
-        on_exit=Shutdown(),
     )
 
     soccer_launch_path = str(launch_dir / "soccer.launch.py")
@@ -54,8 +47,10 @@ def generate_launch_description():
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("headless_flag", default_value=""),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
+            DeclareLaunchArgument("use_internal_ref", default_value="True"),
+            DeclareLaunchArgument("use_sim_radio", default_value="True"),
+            DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
-            grsim,
             soccer,
         ]
     )

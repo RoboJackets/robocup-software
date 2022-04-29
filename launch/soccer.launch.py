@@ -11,17 +11,22 @@ from launch.actions import (
     SetEnvironmentVariable,
     Shutdown,
 )
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 
 def generate_launch_description():
+    config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
+
     config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+        get_package_share_directory("rj_robocup"), "config", str(config_yaml)
     )
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
+    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
+    use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-b")
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
@@ -49,9 +54,19 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    radio = Node(
+    sim_radio = Node(
+        condition=IfCondition(PythonExpression([use_sim_radio])),
         package="rj_robocup",
         executable="sim_radio_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    network_radio = Node(
+        condition=IfCondition(PythonExpression([str(not use_sim_radio)])),
+        package="rj_robocup",
+        executable="network_radio_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
@@ -90,9 +105,19 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    ref_receiver = Node(
+    internal_ref_receiver = Node(
+        condition=IfCondition(PythonExpression([use_internal_ref])),
         package="rj_robocup",
         executable="internal_referee_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    external_ref_receiver = Node(
+        condition=IfCondition(PythonExpression([str(not use_internal_ref)])),
+        package="rj_robocup",
+        executable="external_referee_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
@@ -120,12 +145,14 @@ def generate_launch_description():
             config_server,
             global_param_server,
             soccer,
-            radio,
+            sim_radio,
+            network_radio,
             control,
             planner,
             vision_receiver,
             vision_filter,
-            ref_receiver,
+            internal_ref_receiver,
+            external_ref_receiver,
             gameplay,
         ]
     )
