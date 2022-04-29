@@ -19,12 +19,13 @@ def generate_launch_description():
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
-    config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
-    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
-    use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
+    config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")  # noqa: F841
+    use_internal_ref = LaunchConfiguration(
+        "use_internal_ref", default="True"
+    )  # noqa: F841
+    use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")  # noqa: F841
     team_flag = LaunchConfiguration("team_flag", default="-b")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
-    headless_flag = LaunchConfiguration("headless_flag", default="")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
@@ -45,7 +46,6 @@ def generate_launch_description():
             stdout_linebuf_envvar,
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
-            DeclareLaunchArgument("headless_flag", default_value=""),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
