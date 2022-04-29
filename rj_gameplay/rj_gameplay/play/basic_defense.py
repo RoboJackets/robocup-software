@@ -1,16 +1,15 @@
-import stp
-
-from rj_gameplay.tactic import wall_tactic, goalie_tactic, nmark_tactic
-import stp.role
-from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc
+from enum import Enum, auto
 from typing import Dict, List, Tuple, Type
-from rj_gameplay.calculations import wall_calculations
 
+import stp
+import stp.rc
+import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
+from stp.role.assignment.naive import NaiveRoleAssignment
 
-from enum import Enum, auto
+from rj_gameplay.calculations import wall_calculations
+from rj_gameplay.tactic import goalie_tactic, nmark_tactic, wall_tactic
 
 
 class State(Enum):
@@ -37,8 +36,8 @@ class BasicDefense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
-            self.prioritized_tactics.append(nmark_tactic.NMarkTactic(world_state, 2))
+            # self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
+            # self.prioritized_tactics.append(nmark_tactic.NMarkTactic(world_state, 2))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)

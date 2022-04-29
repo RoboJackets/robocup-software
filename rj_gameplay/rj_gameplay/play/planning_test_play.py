@@ -33,7 +33,7 @@ class PlanningTestPlay(stp.play.Play):
         self.robot_id = 0
         self.robot = None
 
-        self.face_point = np.array([0.0, 0.0])
+        # self.face_point = np.array([0.0, 0.0])
 
     def tick(
         self,
@@ -45,7 +45,7 @@ class PlanningTestPlay(stp.play.Play):
 
         if self._state == State.NEAR:
             self.target_point = np.array([2.0, 0.5])
-            # self.face_point = self.target_point
+            self.face_point = self.target_point
 
             if self.move_skill is not None and self.move_skill.is_done(world_state):
                 self._state = State.FAR
@@ -53,7 +53,7 @@ class PlanningTestPlay(stp.play.Play):
 
         elif self._state == State.FAR:
             self.target_point = np.array([2.0, 8.5])
-            # self.face_point = self.target_point
+            self.face_point = self.target_point
 
             if self.move_skill is not None and self.move_skill.is_done(world_state):
                 self._state = State.NEAR
