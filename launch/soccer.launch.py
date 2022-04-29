@@ -4,7 +4,7 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 
-from launch import LaunchDescription
+from launch import LaunchContext, LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
@@ -13,14 +13,20 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import (
+    LaunchConfiguration,
+    PythonExpression,
+    TextSubstitution,
+)
 
 
 def generate_launch_description():
+    lc = LaunchContext()
     config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
-
     config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", str(config_yaml)
+        get_package_share_directory("rj_robocup"),
+        "config",
+        (TextSubstitution(text=str(config_yaml)).text),
     )
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
@@ -64,7 +70,7 @@ def generate_launch_description():
     )
 
     network_radio = Node(
-        condition=IfCondition(PythonExpression([str(not use_sim_radio)])),
+        condition=IfCondition(PythonExpression(["not ", use_internal_ref])),
         package="rj_robocup",
         executable="network_radio_node",
         output="screen",
@@ -115,7 +121,7 @@ def generate_launch_description():
     )
 
     external_ref_receiver = Node(
-        condition=IfCondition(PythonExpression([str(not use_internal_ref)])),
+        condition=IfCondition(PythonExpression(["not ", use_internal_ref])),
         package="rj_robocup",
         executable="external_referee_node",
         output="screen",
@@ -137,10 +143,12 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            DeclareLaunchArgument("team_flag", default_value=""),
-            DeclareLaunchArgument("sim_flag", default_value=""),
-            DeclareLaunchArgument("ref_flag", default_value=""),
+            DeclareLaunchArgument("team_flag", default_value="-y"),
+            DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
+            DeclareLaunchArgument("use_internal_ref", default_value="True"),
+            DeclareLaunchArgument("use_sim_radio", default_value="True"),
+            DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,
