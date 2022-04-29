@@ -26,6 +26,7 @@ def generate_launch_description():
     use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")  # noqa: F841
     team_flag = LaunchConfiguration("team_flag", default="-b")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
+    direction_flag = LaunchConfiguration("direction_flag", default="plus")  # noqa: F841
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
@@ -49,6 +50,7 @@ def generate_launch_description():
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
+            DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
             soccer,
