@@ -31,10 +31,10 @@
       vel_change_threshold: 0.025
     rrt:
       enable_debug_drawing: false
-      goal_bias: 0.5
+      goal_bias: 0.2
       max_iterations: 1000
-      min_iterations: 500
-      step_size: 0.045
+      min_iterations: 100
+      step_size: 0.01
       waypoint_bias: 0.5
     settle:
       ball_speed_percent_for_dampen: 0.1

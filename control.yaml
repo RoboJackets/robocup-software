@@ -4,7 +4,7 @@
   ros__parameters:
     max_acceleration: 5.5
     max_angular_velocity: 15.0
-    max_velocity: 2.0
+    max_velocity: 5.0
     rotation_kd: 0.0
     rotation_ki: 0.0
     rotation_kp: 8.0
