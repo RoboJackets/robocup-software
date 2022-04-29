@@ -10,8 +10,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     out_static->add(in.virtual_obstacles);
 
     // Add opponent robots as static obstacles.
-    float obsRadius =
-        kRobotRadius * 2.1;  // path planning treats our bot as point mass + 0.1 extra cushion
+    float obsRadius = kRobotRadius * 1.1;  // 0.1 extra cushion to avoid crash fouls
     for (int shell = 0; shell < kNumShells; shell++) {
         const auto& robot = in.world_state->their_robots.at(shell);
         if (robot.visible) {
