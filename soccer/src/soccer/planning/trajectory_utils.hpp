@@ -11,18 +11,23 @@ namespace planning {
 //  obstacles.
 
 /**
- * @brief Whether the given trajectory intersects any of the static obstacles at
- *  any point along its path after a specified starting time.
+ * @brief Given an initial trajectory (most likely a straight line), find
+ *  discontinuities (or "breaks") on that path based on the static obstacles on
+ *  the field. Return array of those discontinuities.
  *
  * @param trajectory The trajectory to check.
  * @param obstacles  A set of obstacles to check against.
  * @param start_time A start time to the entire check.
- * @param hit_time   The time of the collision (output parameter).
- * @return           Whether or not there is a collision.
+ * @return           Vector of points, where each point is a gap in the
+ *                   trajectory created by an obstacle.
  */
-std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& trajectory,
+std::vector<rj_geometry::Point> get_path_breaks_static(const Trajectory& trajectory,
                                                        const rj_geometry::ShapeSet& obstacles,
-                                                       RJ::Time start_time, RJ::Time* hit_time);
+                                                       RJ::Time start_time);
+
+// TODO(Kevin): replace all planners with new method above
+bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::ShapeSet& obstacles,
+                            RJ::Time start_time, RJ::Time* hit_time);
 
 /**
  * @brief Whether the given trajectory intersects any of the dynamic obstacles

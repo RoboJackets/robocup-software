@@ -47,7 +47,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // find static path_breaks in the straight trajectory
     // TODO: do this for dynamic path breaks
     auto static_path_breaks =
-        trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr);
+        get_path_breaks_static(straight_trajectory, static_obstacles, start_time);
     bool static_obs_collision_found = (static_path_breaks.size() != 0);
 
     // debug output
@@ -89,8 +89,6 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         SPDLOG_INFO("PARTIAL RRT");
         // otherwise, construct a point trajectory, running RRT to get across the
         // path_breaks
-
-        // TODO: do this for dynamic obs too
         path_points.push_back(start.position);
         for (std::size_t i = 0; i < static_path_breaks.size(); i += 2) {
             // path breaks will be found in pairs of (enter obstacle, exit obstacle)
@@ -129,7 +127,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
         // Inflate the radius slightly so we don't try going super close to
         // it and hitting it again.
-        hit_circle.radius(hit_circle.radius() * 1.0f);
+        hit_circle.radius(hit_circle.radius() * 1.2f);
         obstacles.add(std::make_shared<Circle>(hit_circle));
     }
 

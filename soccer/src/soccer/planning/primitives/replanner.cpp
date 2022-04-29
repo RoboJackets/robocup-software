@@ -117,8 +117,8 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     // Use short-circuiting to only check dynamic trajectories if necessary.
     // TODO: reenable partial replanning
     bool should_partial_replan =
-        (trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time, &hit_time)
-             .size() != 0);
+        (get_path_breaks_static(previous_trajectory, params.static_obstacles, start_time).size() !=
+         0);
     /* trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time, */
     /*                        &hit_time) || */
     /* trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,

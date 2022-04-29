@@ -5,14 +5,11 @@
 
 namespace planning {
 
-// TODO: if this works, change the comment in corresponding .hpp
-// TODO: also change the dynamic version below
-std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& trajectory,
+// TODO(Kevin): also change the dynamic version below
+std::vector<rj_geometry::Point> get_path_breaks_static(const Trajectory& trajectory,
                                                        const rj_geometry::ShapeSet& obstacles,
-                                                       RJ::Time start_time, RJ::Time* hit_time) {
-    // construct path_breaks, a list of points where the straight path must be
-    // broken to account for an obstacle
-    // (list will solely contain points outside obstacles)
+                                                       RJ::Time start_time) {
+    // list to return breaks in the trajectory (see .hpp)
     std::vector<rj_geometry::Point> path_breaks;
 
     if (trajectory.empty()) {
@@ -25,6 +22,7 @@ std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& traject
             "be before trajectory begin");
     }
 
+    // create pointer for Trajectory that can be manipulated with time
     Trajectory::Cursor cursor = trajectory.cursor(start_time);
 
     // If the trajectory has already ended, we don't need to check it.
@@ -43,62 +41,54 @@ std::vector<rj_geometry::Point> trajectory_hits_static(const Trajectory& traject
     RJ::Seconds time_left{trajectory.end_time() - start_time};
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
 
-    // set of obstacles that hit the cursor's start position
-    // (cursor is an iterator over the trajectory)
+    // get set of obstacles that hit the start position
     const auto& start_hits = obstacles.hit_set(cursor.value().position());
 
-    // last hit obstacle on cursor's path
+    // store last position on cursor's path & if the last pos was in an obstacle
     rj_geometry::Point last_pos;
-    bool last_pt_was_hit = false;
+    bool last_pos_in_obs = false;
 
+    // iterate over Trajectory to find all collisions along path
     while (cursor.has_value()) {
         RobotInstant instant = cursor.value();
         auto position = instant.position();
 
-        // find all collisions along path
         bool hit_found = false;
         for (const auto& obstacle : obstacles.shapes()) {
             if (obstacle->hit(position) && start_hits.find(obstacle) == start_hits.end()) {
-                // Only count hits that we didn't start in.
-
-                // save hit_time if ptr given
-                // (is given nowhere as far as I can tell -Kevin)
-                if (hit_time != nullptr) {
-                    *hit_time = instant.stamp;
-                }
-
-                // mark hit found if found
-                // (hit is at cursor's current position)
+                // (Only count hits that we didn't start in.)
                 hit_found = true;
             }
         }
 
         // save the points just outside obstacles on the line by
         // detecting transition from hit to not hit (or vice versa)
-        if (hit_found && !last_pt_was_hit) {
-            // this is first pos inside a new obstacle, so save last pos outside it
-            path_breaks.push_back(last_pos);
-        } else if (!hit_found && last_pt_was_hit) {
-            // this is first pos outside the obstacle, so save this pos
-            path_breaks.push_back(position);
+        if (hit_found && !last_pos_in_obs) {
+            // = first pos inside a new obstacle, so save last pos outside it
+            auto path_break = last_pos;
+            path_breaks.push_back(path_break);
+        } else if (!hit_found && last_pos_in_obs) {
+            // = first pos outside the obstacle, so save this pos
+            auto path_break = position;
+            path_breaks.push_back(path_break);
         }
 
-        // update last_pos, last_pt_was_hit, cursor
+        // update last_pos, last_pos_in_obs, cursor
         last_pos = position;
-        last_pt_was_hit = hit_found;
+        last_pos_in_obs = hit_found;
         cursor.advance(dt);
     }
 
-    // merge obstacles that are too close together by removing the intermediate path_breaks
+    // merge obstacles that are close together by removing the intermediate path_breaks
     // (path_smoothing can't handle points too close together)
     std::set<int> skip_list;
+    float CLOSENESS_CUTOFF = 2.0 * kRobotRadius;  // 1 robot wide
+    // only run if there are multiple obstacles
     if (path_breaks.size() > 2) {
-        // only run if there are multiple obstacles
         for (std::size_t i = 1; i < path_breaks.size(); i += 2) {
             auto exit_pt_a = path_breaks[i];
             auto entry_pt_b = path_breaks[i + 1];
-            float closeness_cutoff = 2.0 * kRobotRadius;
-            if (exit_pt_a.dist_to(entry_pt_b) < closeness_cutoff) {
+            if (exit_pt_a.dist_to(entry_pt_b) < CLOSENESS_CUTOFF) {
                 skip_list.insert(i);
                 skip_list.insert(i + 1);
             }
