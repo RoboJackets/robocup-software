@@ -50,7 +50,6 @@ def generate_launch_description():
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
-            DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
             soccer,
