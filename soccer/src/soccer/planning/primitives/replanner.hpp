@@ -7,6 +7,7 @@
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
+#include "ros_debug_drawer.hpp"
 #include "velocity_profiling.hpp"
 
 namespace planning {
@@ -15,6 +16,7 @@ namespace planning {
  * @brief Handles the replanning strategy for an RRT plan generator.
  *
  * This is used to avoid constantly replanning.
+ * TODO(Kevin): gameplay doesn't use replanner correctly, fix that
  */
 class Replanner {
 public:
@@ -41,7 +43,8 @@ public:
      *
      * @return A planned trajectory.
      */
-    static Trajectory create_plan(PlanParams params, Trajectory previous);
+    static Trajectory create_plan(PlanParams params, Trajectory previous,
+                                  rj_drawing::RosDebugDrawer* debug_drawer = nullptr);
 
     /**
      * @brief The threshold by which the goal needs to change before we require
@@ -71,11 +74,12 @@ private:
 
     // Replan part of the trajectory, re-using the first
     // `partial_replan_lead_time()` of the previous trajectory.
-    static Trajectory partial_replan(const PlanParams& params,
-                                    const Trajectory& previous);
+    static Trajectory partial_replan(const PlanParams& params, const Trajectory& previous,
+                                     rj_drawing::RosDebugDrawer* debug_drawer = nullptr);
 
     // Replan from the start without a previous trajectory.
-    static Trajectory full_replan(const PlanParams& params);
+    static Trajectory full_replan(const PlanParams& params,
+                                  rj_drawing::RosDebugDrawer* debug_drawer = nullptr);
 
     // Whether the trajectory has deviated from the path and requires a replan.
     static bool veered_off_path(const Trajectory& trajectory, RobotInstant actual,

@@ -13,7 +13,7 @@ namespace planning {
 
 Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
-    rj_geometry::ShapeSet static_obstacles;
+    ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     auto command = std::get<PathTargetCommand>(request.motion_command);
@@ -32,6 +32,8 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
+        // TODO(Kevin): delete debug_drawer.hpp and see what happens, since we use
+        // ros_debug_drawer.hpp and that's incredibly confusing
         request.debug_drawer->draw_circle(Circle(goal_point, static_cast<float>(draw_radius)),
                                           draw_color);
         // TODO: DELETE ME!
@@ -46,7 +48,7 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{request.start, goal_instant, static_obstacles, dynamic_obstacles,
                               request.constraints, angle_function, RJ::Seconds(3.0)},
-        std::move(previous_));
+        std::move(previous_), request.debug_drawer);
 
     previous_ = trajectory;
     return trajectory;

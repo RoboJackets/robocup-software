@@ -1,5 +1,6 @@
 #include "create_path.hpp"
 
+#define _USE_MATH_DEFINES
 #include <spdlog/spdlog.h>
 
 #include <rj_constants/constants.hpp>
@@ -14,7 +15,10 @@ namespace planning::CreatePath {
 
 Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                   const MotionConstraints& motion_constraints, RJ::Time start_time,
-                  const std::vector<Point>& intermediate_points) {
+                  const std::vector<Point>& intermediate_points,
+                  rj_drawing::RosDebugDrawer* debug_drawer) {
+    // TODO(Kevin): sometimes motion planning crashes somewhere in here when
+    // you put an obstacle on its goal pos, why?
     std::vector<Point> points;
     points.push_back(start.position);
     for (const Point& pt : intermediate_points) {
@@ -28,11 +32,13 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
     return path;
 }
 
+// TODO(Kevin) change to "hybrid"
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles,
-               const std::vector<Point>& bias_waypoints) {
+               const std::vector<Point>& bias_waypoints, rj_drawing::RosDebugDrawer* debug_drawer) {
+    // if at goal, return current pose as trajectory
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
     }
@@ -81,34 +87,65 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     std::vector<Point> path_points;
     ShapeSet obstacles = static_obstacles;
 
-    if (start.position.dist_to(static_path_breaks[0]) < kRobotRadius * 1.2) {
-        SPDLOG_INFO("FULL RRT");
-        // full rrt if robot too close to first break
-        path_points = generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
-    } else {
-        SPDLOG_INFO("PARTIAL RRT");
-        // otherwise, construct a point trajectory, running RRT to get across the
-        // path_breaks
-        path_points.push_back(start.position);
-        for (std::size_t i = 0; i < static_path_breaks.size(); i += 2) {
-            // path breaks will be found in pairs of (enter obstacle, exit obstacle)
-            auto enter_pt = static_path_breaks[i];
-            auto exit_pt = static_path_breaks[i + 1];
-            std::vector<Point> path_jump =
-                generate_rrt(enter_pt, exit_pt, obstacles, bias_waypoints);
+    // check if robot is not right on an obstacle
+    if (start.position.dist_to(static_path_breaks[0]) > kRobotRadius * 2.0) {
+        // then, iteratively create a two-line-segment path around the
+        // first obstacle, with a certain STEP_SIZE and MAX_ITERATIONS
+        // and greedily pick first traj that works (in a given max range)
+        SPDLOG_INFO("ITERATIVE SEARCH");
 
-            for (const auto& pt : path_jump) {
-                path_points.push_back(pt);
+        path_points.push_back(start.position);
+        Point first_obs_center = (static_path_breaks[1] + static_path_breaks[0]) / 2;
+        Point dir = (first_obs_center - start.position).normalized();
+
+        // TODO(Kevin): ros param this
+        float STEP_SIZE = kRobotRadius;
+        Point ccw_offset = dir.perp_ccw().normalized(STEP_SIZE);
+        Point cw_offset = dir.perp_cw().normalized(STEP_SIZE);
+
+        // if we can't find a piecewise trajectory X robot widths away, give up and use RRT
+        // TODO(Kevin): ros param this
+        int MAX_ITERATIONS = (10 * kRobotRadius) / STEP_SIZE;
+
+        // TODO(Kevin): why debug_drawer not always non-null??
+        if (debug_drawer != nullptr) {
+            // show the max bounds of the iterative search
+            Point ccw_max = first_obs_center + MAX_ITERATIONS * ccw_offset;
+            Point cw_max = first_obs_center + MAX_ITERATIONS * cw_offset;
+            debug_drawer->draw_segment(Segment(ccw_max, cw_max));
+        }
+
+        // setup data structures for iterative search
+        std::vector<Point> intermediate_points;
+        intermediate_points.push_back(first_obs_center);
+        Trajectory maybe_traj;
+        Point points_to_check[] = {first_obs_center, first_obs_center};
+
+        // iteratively search as described above
+        for (int i = 0; i < MAX_ITERATIONS; i++) {
+            points_to_check[0] = first_obs_center + i * ccw_offset;
+            points_to_check[1] = first_obs_center + i * cw_offset;
+
+            for (int j = 0; j < 2; j++) {
+                Point pt = points_to_check[j];
+                intermediate_points[0] = pt;
+                maybe_traj = CreatePath::simple(start, goal, motion_constraints, start_time,
+                                                intermediate_points);
+
+                bool static_obs_collision_found =
+                    (get_path_breaks_static(maybe_traj, static_obstacles, start_time).size() != 0);
+                if (!static_obs_collision_found) {
+                    // TODO(Kevin): dynamic obstacles need to be accounted for
+                    // return first path that works
+                    return maybe_traj;
+                }
             }
         }
-        path_points.push_back(goal.position);
     }
 
-    // debug prints
-    /* for (const auto& pt : path_points) { */
-    /*     SPDLOG_INFO("pt: ({0:.3f}, {0:.3f})", pt.x(), pt.y()); */
-    /* } */
-    /* SPDLOG_INFO("Path points len: {}", path_points.size()); */
+    // if iterative search can't find a good path, use RRT
+    SPDLOG_INFO("FULL RRT AGAIN");
+    path_points = generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
 
     // fill in velocities along path to get Trajectory
     Trajectory path{{}};
@@ -127,7 +164,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
         // Inflate the radius slightly so we don't try going super close to
         // it and hitting it again.
-        hit_circle.radius(hit_circle.radius() * 1.2f);
+        hit_circle.radius(hit_circle.radius() * 1.5f);
         obstacles.add(std::make_shared<Circle>(hit_circle));
     }
 

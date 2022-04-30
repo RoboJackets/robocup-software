@@ -20,7 +20,8 @@ void apply_hold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
     }
 }
 
-Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory& previous) {
+Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory& previous,
+                                     rj_drawing::RosDebugDrawer* debug_drawer) {
     std::vector<Point> bias_waypoints;
     for (auto cursor = previous.cursor(params.start.stamp); cursor.has_value();
          cursor.advance(100ms)) {
@@ -31,14 +32,14 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     Trajectory post_trajectory =
         CreatePath::rrt(pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
                         pre_trajectory.end_time(), params.static_obstacles,
-                        params.dynamic_obstacles, bias_waypoints);
+                        params.dynamic_obstacles, bias_waypoints, debug_drawer);
 
     // If we couldn't profile such that velocity at the end of the partial replan period is valid,
     // do a full replan.
     if (post_trajectory.empty() ||
         !Pose::nearly_equals(pre_trajectory.last().pose, post_trajectory.first().pose) ||
         !Twist::nearly_equals(pre_trajectory.last().velocity, post_trajectory.first().velocity)) {
-        return full_replan(params);
+        return full_replan(params, debug_drawer);
     }
 
     Trajectory combined = Trajectory(std::move(pre_trajectory), post_trajectory);
@@ -52,10 +53,12 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     return combined;
 }
 
-Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
+Trajectory Replanner::full_replan(const Replanner::PlanParams& params,
+                                  rj_drawing::RosDebugDrawer* debug_drawer) {
     Trajectory path =
         CreatePath::rrt(params.start.linear_motion(), params.goal, params.constraints.mot,
-                        params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
+                        params.start.stamp, params.static_obstacles, params.dynamic_obstacles, {},
+                        debug_drawer);  // TODO(Kevin): reorder params
 
     if (!path.empty()) {
         if (path.begin_time() > path.end_time()) {
@@ -86,8 +89,9 @@ Trajectory Replanner::check_better(const Replanner::PlanParams& params, Trajecto
     return previous;
 }
 
-Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous) {
-    rj_geometry::Point goal_point = params.goal.position;
+Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous,
+                                  rj_drawing::RosDebugDrawer* debug_drawer) {
+    Point goal_point = params.goal.position;
 
     if (!previous.empty() && !previous.time_created().has_value()) {
         throw std::invalid_argument(
@@ -99,7 +103,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (previous.empty() || veered_off_path(previous, params.start, now) ||
         goal_changed(previous.last().linear_motion(), params.goal)) {
-        return full_replan(params);
+        return full_replan(params, debug_drawer);
     }
 
     // If we get here, we definitely should have a valid previous trajectory
@@ -127,7 +131,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
-            return full_replan(params);
+            return full_replan(params, debug_drawer);
         }
         SPDLOG_ERROR("replanner: partial_replan called");
         return partial_replan(params, previous_trajectory);
@@ -139,7 +143,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         std::optional<RobotInstant> now_instant = previous_trajectory.evaluate(now);
         if (now_instant) {
             params.start = *now_instant;
-            return full_replan(params);
+            return full_replan(params, debug_drawer);
         }
     }
 
