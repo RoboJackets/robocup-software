@@ -5,15 +5,11 @@
 
 namespace planning {
 
-// TODO(Kevin): also change the dynamic version below
-std::vector<rj_geometry::Point> get_path_breaks_static(const Trajectory& trajectory,
-                                                       const rj_geometry::ShapeSet& obstacles,
-                                                       RJ::Time start_time) {
-    // list to return breaks in the trajectory (see .hpp)
-    std::vector<rj_geometry::Point> path_breaks;
-
+bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::ShapeSet& obstacles,
+                            RJ::Time start_time, RJ::Time* out_hit_time,
+                            rj_geometry::Point* out_hit_pt) {
     if (trajectory.empty()) {
-        return path_breaks;
+        return false;
     }
 
     if (start_time < trajectory.begin_time()) {
@@ -27,7 +23,7 @@ std::vector<rj_geometry::Point> get_path_breaks_static(const Trajectory& traject
 
     // If the trajectory has already ended, we don't need to check it.
     if (!cursor.has_value()) {
-        return path_breaks;
+        return false;
     }
 
     // Limit iterations to 100. This will continue to operate at dt = 0.05 until
@@ -42,6 +38,7 @@ std::vector<rj_geometry::Point> get_path_breaks_static(const Trajectory& traject
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
 
     // get set of obstacles that hit the start position
+    // TODO(Kevin): make sure Replanner doesn't start paths in obstacles
     const auto& start_hits = obstacles.hit_set(cursor.value().position());
 
     // store last position on cursor's path & if the last pos was in an obstacle
@@ -53,52 +50,24 @@ std::vector<rj_geometry::Point> get_path_breaks_static(const Trajectory& traject
         RobotInstant instant = cursor.value();
         auto position = instant.position();
 
-        bool hit_found = false;
         for (const auto& obstacle : obstacles.shapes()) {
             if (obstacle->hit(position) && start_hits.find(obstacle) == start_hits.end()) {
+                // hit detected
                 // (Only count hits that we didn't start in.)
-                hit_found = true;
+                if (out_hit_time != nullptr) {
+                    *out_hit_time = cursor.time();
+                }
+                if (out_hit_pt != nullptr) {
+                    *out_hit_pt = position;
+                }
+                return true;
             }
         }
 
-        // save the points just outside obstacles on the line by
-        // detecting transition from hit to not hit (or vice versa)
-        if (hit_found && !last_pos_in_obs) {
-            // = first pos inside a new obstacle, so save last pos outside it
-            auto path_break = last_pos;
-            path_breaks.push_back(path_break);
-        } else if (!hit_found && last_pos_in_obs) {
-            // = first pos outside the obstacle, so save this pos
-            auto path_break = position;
-            path_breaks.push_back(path_break);
-        }
-
-        // update last_pos, last_pos_in_obs, cursor
-        last_pos = position;
-        last_pos_in_obs = hit_found;
         cursor.advance(dt);
     }
 
-    // merge obstacles that are close together by removing the intermediate path_breaks
-    // (path_smoothing can't handle points too close together)
-    std::set<int> skip_list;
-    float CLOSENESS_CUTOFF = 2.0 * kRobotRadius;  // 1 robot wide
-    // only run if there are multiple obstacles
-    if (path_breaks.size() > 2) {
-        for (std::size_t i = 1; i < path_breaks.size(); i += 2) {
-            auto exit_pt_a = path_breaks[i];
-            auto entry_pt_b = path_breaks[i + 1];
-            if (exit_pt_a.dist_to(entry_pt_b) < CLOSENESS_CUTOFF) {
-                skip_list.insert(i);
-                skip_list.insert(i + 1);
-            }
-        }
-        for (const auto& indx : skip_list) {
-            path_breaks.erase(path_breaks.begin() + indx);
-        }
-    }
-
-    return path_breaks;
+    return false;
 }
 
 bool trajectory_hits_dynamic(const Trajectory& trajectory,

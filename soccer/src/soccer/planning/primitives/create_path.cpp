@@ -32,7 +32,7 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
     return path;
 }
 
-// TODO(Kevin) change to "hybrid"
+// TODO(Kevin) change name to "hybrid"
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ShapeSet& static_obstacles,
@@ -43,24 +43,15 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
     }
 
-    // debug output
-    SPDLOG_INFO("into RRT @ create_path.cpp");
-
     // maybe we don't need an RRT
     Trajectory straight_trajectory =
         CreatePath::simple(start, goal, motion_constraints, start_time);
 
-    // find static path_breaks in the straight trajectory
-    // TODO: do this for dynamic path breaks
-    auto static_path_breaks =
-        get_path_breaks_static(straight_trajectory, static_obstacles, start_time);
-    bool static_obs_collision_found = (static_path_breaks.size() != 0);
+    RJ::Time hit_time = RJ::Time::max();
+    rj_geometry::Point hit_pt;
 
-    // debug output
-    /* for (const auto& pt : static_path_breaks) { */
-    /*     SPDLOG_INFO("path break: ({0:.3f}, {0:.3f})", pt.x(), pt.y()); */
-    /* } */
-    SPDLOG_INFO("path break ct: {}", static_path_breaks.size());
+    bool static_obs_collision_found = trajectory_hits_static(straight_trajectory, static_obstacles,
+                                                             start_time, &hit_time, &hit_pt);
 
     if (static_obs_collision_found) {
         SPDLOG_INFO("static obstacle collision found");
@@ -88,15 +79,14 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     ShapeSet obstacles = static_obstacles;
 
     // check if robot is not right on an obstacle
-    if (start.position.dist_to(static_path_breaks[0]) > kRobotRadius * 2.0) {
+    if (start.position.dist_to(hit_pt) > 2.0 * kRobotRadius) {
         // then, iteratively create a two-line-segment path around the
         // first obstacle, with a certain STEP_SIZE and MAX_ITERATIONS
         // and greedily pick first traj that works (in a given max range)
         SPDLOG_INFO("ITERATIVE SEARCH");
 
         path_points.push_back(start.position);
-        Point first_obs_center = (static_path_breaks[1] + static_path_breaks[0]) / 2;
-        Point dir = (first_obs_center - start.position).normalized();
+        Point dir = (hit_pt - start.position).normalized();
 
         // TODO(Kevin): ros param this
         float STEP_SIZE = kRobotRadius;
@@ -110,21 +100,21 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         // TODO(Kevin): why debug_drawer not always non-null??
         if (debug_drawer != nullptr) {
             // show the max bounds of the iterative search
-            Point ccw_max = first_obs_center + MAX_ITERATIONS * ccw_offset;
-            Point cw_max = first_obs_center + MAX_ITERATIONS * cw_offset;
+            Point ccw_max = hit_pt + MAX_ITERATIONS * ccw_offset;
+            Point cw_max = hit_pt + MAX_ITERATIONS * cw_offset;
             debug_drawer->draw_segment(Segment(ccw_max, cw_max));
         }
 
         // setup data structures for iterative search
         std::vector<Point> intermediate_points;
-        intermediate_points.push_back(first_obs_center);
+        intermediate_points.push_back(hit_pt);
         Trajectory maybe_traj;
-        Point points_to_check[] = {first_obs_center, first_obs_center};
+        Point points_to_check[] = {hit_pt, hit_pt};
 
         // iteratively search as described above
         for (int i = 0; i < MAX_ITERATIONS; i++) {
-            points_to_check[0] = first_obs_center + i * ccw_offset;
-            points_to_check[1] = first_obs_center + i * cw_offset;
+            points_to_check[0] = hit_pt + i * ccw_offset;
+            points_to_check[1] = hit_pt + i * cw_offset;
 
             for (int j = 0; j < 2; j++) {
                 Point pt = points_to_check[j];
@@ -133,7 +123,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
                                                 intermediate_points);
 
                 bool static_obs_collision_found =
-                    (get_path_breaks_static(maybe_traj, static_obstacles, start_time).size() != 0);
+                    trajectory_hits_static(straight_trajectory, static_obstacles, start_time);
                 if (!static_obs_collision_found) {
                     // TODO(Kevin): dynamic obstacles need to be accounted for
                     // return first path that works
