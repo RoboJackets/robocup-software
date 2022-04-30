@@ -9,6 +9,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
+    SetLaunchConfiguration,
     Shutdown,
 )
 from launch.conditions import IfCondition
@@ -21,13 +22,20 @@ from launch.substitutions import (
 
 
 def generate_launch_description():
-    lc = LaunchContext()
+    # see ros2/launch source code to see how this works
+    # right now, it doesn't work, lc never adds config_yaml
+    # thus it always returns default, see source code
     config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
+    lc = LaunchContext(noninteractive=True)
+    slc = SetLaunchConfiguration(config_yaml, config_yaml)
+    slc.execute(lc)
+
     config = os.path.join(
         get_package_share_directory("rj_robocup"),
         "config",
-        (TextSubstitution(text=str(config_yaml)).text),
+        (lc.perform_substitution(config_yaml)),
     )
+
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
