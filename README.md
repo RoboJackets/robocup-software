@@ -4,11 +4,22 @@
 [![Riot](https://img.shields.io/badge/matrix-riot%20chat-blue.svg)](https://riot.im/app/#/room/%23robocup-software:matrix.org) [![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  More information on how our software works can be found on our [documentation page](http://robojackets.github.io/robocup-software/), our [wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our [website](http://www.robojackets.org/).
-Also, check out our [2014 qualification video](https://www.youtube.com/watch?v=H3F9HexPLT0) to see our robots in action!
+The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  
+
+NEW: More information can be found by cloning our repo, then opening
+`./docs/build/html/index.html` in your browser of choice.
+
+OLD: More information on how our software works can be found on our [documentation
+page](http://robojackets.github.io/robocup-software/), our
+[wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our
+[website](http://www.robojackets.org/). Also, check out our [2014 qualification
+video](https://www.youtube.com/watch?v=H3F9HexPLT0) to see our robots in
+action!
 
 Here is a screenshot of our 'soccer' program:
 ![Screenshot of the 'soccer' program](doc/images/soccer.png "Soccer")
+
+TODO: fix above^
 
 
 ## The Competition

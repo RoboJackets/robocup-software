@@ -164,23 +164,32 @@ class GameplayNode(Node):
     """
     Subscription callback for setting information for our team
     """
-
     def set_our_team_info(self, our_team_info: msg.TeamInfo):
         self.our_team_info = our_team_info
 
     """
     Subscription callback for setting information for enemy team
     """
-
     def set_their_team_info(self, their_team_info: msg.TeamInfo):
         self.their_team_info = their_team_info
 
-    def debug_callback(self, play: stp.play.IPlay, tactics: list):
+    def debug_callback(self):
+        """
+        Publishes the string that shows up in the behavior tree in the Soccer UI.
+        """
+
         debug_text = ""
-        debug_text += f"{type(play).__name__}({type(self.play_selector.curr_situation).__name__})\n"
+        debug_text += f"WorldState: {self.world_state}\n\n"
+        debug_text += f"Play: {self._curr_play}\n\n"
+
+        # situation is a long, ugly type: shorten before printing
+        short_situation = f"{self._curr_situation}"
+        short_situation = short_situation[short_situation.rfind(".") + 1 : -2]
+        debug_text += f"Situation: {short_situation}\n\n"
+
         with np.printoptions(precision=3, suppress=True):
-            for tactic in tactics:
-                debug_text += f"  {type(tactic).__name__}\n"
+            for i, tactic in enumerate(self._curr_play.prioritized_tactics):
+                debug_text += f"{i+1}. {tactic}\n\n"
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
@@ -286,7 +295,7 @@ class GameplayNode(Node):
             self.add_ball_to_global_obs(global_obstacles, game_info)
 
             self.global_obstacles_pub.publish(global_obstacles)
-            self.debug_callback(self._curr_play, self._curr_play.prioritized_tactics)
+            self.debug_callback()
         else:
             self.get_logger().warn("World state was none!")
 
@@ -506,7 +515,8 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = basic_offense.BasicOffense()
+    # test_play = basic_defense.BasicDefense()
+    test_play = None
 
     gameplay = GameplayNode(play_selector, test_play)
     rclpy.spin(gameplay)
