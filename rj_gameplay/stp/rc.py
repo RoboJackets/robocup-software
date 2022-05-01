@@ -608,7 +608,7 @@ class GameInfo:
     __restart: GameRestart
     __our_restart: bool
     __ball_placement: np.array
-    __game_score: np.array
+    __game_score: List[int]
 
     def __init__(
         self,
@@ -617,7 +617,7 @@ class GameInfo:
         restart: GameRestart,
         our_restart: bool,
         ball_placement: np.array,
-        game_score: np.array,
+        game_score: List[int],
     ):
         self.__period = period
         self.__state = state
@@ -676,11 +676,18 @@ class GameInfo:
         return not self.__our_restart
 
     @property
-    def game_score(self) -> np.array:
+    def our_score(self) -> int:
         """
-        :return: The game score
+        :return: Score of our team
         """
-        return self.__game_score  # 0 for our score, 1 for opponent score
+        return self.__game_score[0]
+
+    @property
+    def their_score(self) -> int:
+        """
+        :return: Score of enemy team
+        """
+        return self.__game_score[1]
 
     def is_stopped(self) -> bool:
         """

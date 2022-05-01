@@ -161,16 +161,16 @@ class GameplayNode(Node):
     def set_match_state(self, match_state: msg.MatchState):
         self.match_state = match_state
 
-    """
-    Subscription callback for setting information for our team
-    """
     def set_our_team_info(self, our_team_info: msg.TeamInfo):
+        """
+        Subscription callback for setting information for our team
+        """
         self.our_team_info = our_team_info
 
-    """
-    Subscription callback for setting information for enemy team
-    """
     def set_their_team_info(self, their_team_info: msg.TeamInfo):
+        """
+        Subscription callback for setting information for enemy team
+        """
         self.their_team_info = their_team_info
 
     def debug_callback(self):

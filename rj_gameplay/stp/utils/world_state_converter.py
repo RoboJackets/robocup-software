@@ -182,7 +182,7 @@ def build_game_info(
                 play_state_msg.placement_point.y,
             ]
         ),
-        np.array([our_team_msg.score, their_team_msg.score]),
+        [our_team_msg.score, their_team_msg.score],
     )
 
     return game_info
