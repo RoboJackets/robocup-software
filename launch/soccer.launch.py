@@ -78,7 +78,7 @@ def generate_launch_description():
     )
 
     network_radio = Node(
-        condition=IfCondition(PythonExpression(["not ", use_internal_ref])),
+        condition=IfCondition(PythonExpression(["not ", use_sim_radio])),
         package="rj_robocup",
         executable="network_radio_node",
         output="screen",

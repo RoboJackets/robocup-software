@@ -60,6 +60,15 @@ def generate_launch_description():
 
     blue = GroupAction([PushRosNamespace("blue"), soccer_blue])
 
+    """
+    Force blue to wait an arbitrary number of seconds,
+    since there is a race condition in sim radio node.
+
+    If problems re-emerge, implement better solution:
+    - using boost inter-process locks in that node
+    - or alternatively use some sort of launch file action
+    that starts blue as soon as yellow done launching.
+    """
     return LaunchDescription(
         [
             stdout_linebuf_envvar,
