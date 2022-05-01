@@ -25,56 +25,22 @@ Run the following code line by line
 
 This builds an executable in framework/build/bin
 
-Setting Internal Referee Executable to External Referee
---------------------------------------------------------
+Running the Simulation
+----------------------
 
-Go to robocup-software/launch/soccer.launch.py
+Open a new terminal window and change directory into framework/build/bin
 
-Go to the section that states
+In this folder, the file named "simulator-cli"
 
-.. code-block:: sh
-
-    ref_receiver = Node(
-
-        package="rj_robocup",
-        executable="internal_referee_node",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-
-    )
-
-Change the "exceutable" line to
+Run this file by doing the following
 
 .. code-block:: sh
 
-    executable="external_referee_node",
+    ./simulator-cli
 
-Commenting Out GrSim
---------------------
-Got to robocup-software/launch/sim.launch.py
+This will run the ER-Force Simulator to test your code
 
-Go to the section that states
-
-.. code-block:: sh
-
-        return LaunchDescription(
-        [
-
-            stdout_linebuf_envvar,
-            DeclareLaunchArgument("team_flag", default_value="-y"),
-            DeclareLaunchArgument("ref_flag", default_value="-noref"),
-            DeclareLaunchArgument("headless_flag", default_value=""),
-            DeclareLaunchArgument("direction_flag", default_value="plus"),
-            stdout_linebuf_envvar,
-            grsim,
-            soccer,
-
-        ]
-
-    )
-
-Comment out the line that says "grsim"
+Then, source the ROS setup file and source your local setup.
 
 
 
