@@ -1,21 +1,24 @@
 import os
 from pathlib import Path
-from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
 
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node
+
+from launch import LaunchDescription
 from launch.actions import (
+    DeclareLaunchArgument,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
     Shutdown,
-    DeclareLaunchArgument,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-
 from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
+    config = os.path.join(
+        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+    )
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
@@ -61,11 +64,6 @@ def generate_launch_description():
 
     grsim = Node(package="rj_robocup", executable="grSim", arguments=[headless_flag])
 
-    vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
-    vision_receiver = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(vision_receiver_launch_path)
-    )
-
     ref_receiver = Node(
         package="rj_robocup",
         executable="internal_referee_node",
@@ -73,9 +71,20 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    vision_filter_launch_path = str(launch_dir / "vision_filter.launch.py")
-    vision_filter = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(vision_filter_launch_path)
+    vision_receiver = Node(
+        package="rj_robocup",
+        executable="vision_receiver",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    vision_filter = Node(
+        package="rj_robocup",
+        executable="rj_vision_filter",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
     )
 
     return LaunchDescription(

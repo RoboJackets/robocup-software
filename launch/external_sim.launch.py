@@ -37,7 +37,7 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    soccer_launch_path = str(launch_dir / "soccer.launch.py")
+    soccer_launch_path = str(launch_dir / "external_soccer.launch.py")
     soccer = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(soccer_launch_path),
         launch_arguments={

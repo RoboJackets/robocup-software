@@ -74,7 +74,6 @@ class Mark(skill.ISkill):
                 mark_point = get_mark_point(1, world_state)
             else:
                 mark_point = get_mark_point(self.target_robot.id, world_state)
-
         self.target_point = mark_point
         self.face_point = world_state.ball.pos
 
@@ -92,7 +91,6 @@ class Mark(skill.ISkill):
             path_command.override_face_point = [
                 Point(x=self.face_point[0], y=self.face_point[1])
             ]
-
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
         return intent
