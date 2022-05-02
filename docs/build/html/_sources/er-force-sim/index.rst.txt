@@ -30,7 +30,7 @@ Running the Simulation
 
 Open a new terminal window and change directory into framework/build/bin
 
-In this folder, the file named "simulator-cli"
+In this folder, there shoudl be a file named "simulator-cli"
 
 Run this file by doing the following
 
