@@ -3,9 +3,6 @@ from typing import List, Tuple
 import numpy as np
 import stp
 from rj_msgs.msg import RobotIntent
-from stp.utils.constants import RobotConstants
-
-from rj_gameplay.role import seeker
 
 from rj_gameplay.role import seeker
 
@@ -29,6 +26,8 @@ class BasicSeek(stp.tactic.Tactic):
         self._num_seekers = num_seekers
 
         for i in range(self._num_seekers):
+            if i not in range(len(formation)):
+                break
             my_region = formation[i]
             self._used_regions.append(my_region)
             centroid = centroid_list[i]
@@ -55,13 +54,14 @@ class BasicSeek(stp.tactic.Tactic):
         # returns list of (robot_id, robot_intent)
 
         # assumes all roles requested are filled, because tactic is one unit
-        if (
-            len(self.assigned_roles) != len(self._role_requests)
-            and self.assigned_robots
-        ):
+        if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
 
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
+
+    @property
+    def needs_assign(self):
+        return False
 
     def is_done(
         self,
