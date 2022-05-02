@@ -1,18 +1,19 @@
 import os
 from pathlib import Path
-from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
 
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node
+
+from launch import LaunchDescription
 from launch.actions import (
+    DeclareLaunchArgument,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
     Shutdown,
-    DeclareLaunchArgument,
 )
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 
 def generate_launch_description():
@@ -20,6 +21,7 @@ def generate_launch_description():
     launch_dir = bringup_dir / "launch"
 
     team_flag = LaunchConfiguration("team_flag", default="-b")
+    use_grsim = LaunchConfiguration("use_grsim", default="True")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     headless_flag = LaunchConfiguration("headless_flag", default="")
 
@@ -28,6 +30,7 @@ def generate_launch_description():
     )
 
     grsim = Node(
+        condition=IfCondition(PythonExpression([use_grsim])),
         package="rj_robocup",
         executable="grSim",
         arguments=[headless_flag],

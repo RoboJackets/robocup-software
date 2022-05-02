@@ -1,10 +1,9 @@
+from typing import List, Tuple
+
 import stp
-
-from rj_gameplay.role import goalie_role
-
 from rj_msgs.msg import RobotIntent
 
-from typing import List, Tuple
+from rj_gameplay.role import goalie_role
 
 
 class GoalieTactic(stp.tactic.Tactic):

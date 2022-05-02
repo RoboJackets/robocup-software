@@ -1,10 +1,11 @@
+import itertools
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Any
+from typing import Any, List, Tuple
+
+from rj_msgs.msg import RobotIntent
 
 import stp.rc
 import stp.role
-
-from rj_msgs.msg import RobotIntent
 
 
 # TODO: delete this once all tactics have been switched over
@@ -71,3 +72,28 @@ class Tactic(ABC):
     def needs_assign(self):
         # never needs assign after init
         return False
+
+    def __repr__(self):
+        """
+        returns a string with all the roles requested and all the roles assigned.
+        """
+        text = ""
+        text += f"{self.__class__.__name__}:\n"
+        text += "Roles Requested: "
+        if self._role_requests:
+            temp = [
+                f"({role.__name__}, {cost.__class__.__name__})"
+                for cost, role in self._role_requests
+            ]
+            text += ", ".join(temp)
+        text += "\nRoles Assigned: "
+        if self.assigned_roles:
+            text += ", ".join(
+                [
+                    f"({role.__class__.__name__}, {robot.id})"
+                    for role, robot in itertools.zip_longest(
+                        self.assigned_roles, self.assigned_robots
+                    )
+                ]
+            )
+        return text
