@@ -1,9 +1,8 @@
-import stp.role
 import stp.rc
+import stp.role
+from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.skill import move
-
-from rj_msgs.msg import RobotIntent
 
 
 class DumbMove(stp.role.Role):
@@ -43,4 +42,5 @@ class DumbMove(stp.role.Role):
         return intent
 
     def is_done(self, world_state) -> bool:
-        return self.move_skill.is_done(world_state)
+        if self.move_skill is not None:
+            return self.move_skill.is_done(world_state)

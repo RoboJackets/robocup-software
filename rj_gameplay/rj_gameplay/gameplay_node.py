@@ -25,9 +25,11 @@ from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
 
 import rj_gameplay.basic_play_selector as basic_play_selector
+from rj_gameplay.action.move import Move
 
 # ignore "unused import" error
-from rj_gameplay.play import (  # noqa: F401
+from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,; noqa: F401
+    penalty_offense,
     basic_defense,
     basic_offense,
     keepaway,
