@@ -41,6 +41,3 @@ Run this file by doing the following
 This will run the ER-Force Simulator to test your code
 
 Then, source the ROS setup file and source your local setup.
-
-
-
