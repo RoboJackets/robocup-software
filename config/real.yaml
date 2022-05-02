@@ -38,9 +38,10 @@
         robot_radius: 0.09
     use_sim_time: false
 
-/internal_referee:
+/external_referee:
   ros__parameters:
     team_name: RoboJackets
+    interface: "172.19.0.0"
     use_sim_time: false
 
 /planner:
@@ -97,6 +98,7 @@
 /radio:
   ros__parameters:
     timeout: 0.25
+    interface: "172.19.0.0"
     use_sim_time: false
 
 /vision_receiver:
@@ -104,6 +106,7 @@
     port: 10006 # 10020 comp setup
     hz: 120.0
     use_sim_time: false
+    vision_interface: "172.19.0.0"
 
 /vision_filter:
   ros__parameters:
