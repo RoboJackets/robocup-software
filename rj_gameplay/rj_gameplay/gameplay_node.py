@@ -33,6 +33,7 @@ from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,
     basic_defense,
     basic_offense,
     keepaway,
+    kickoff_play,
     line_up,
     penalty_defense,
 )

@@ -1,192 +1,148 @@
-import stp.play as play
-import stp.tactic as tactic
+from enum import Enum, auto
+from typing import Dict, List, Optional, Tuple
 
-from rj_gameplay.tactic import move_tactic, goalie_tactic, wall_tactic
-import stp.skill as skill
-import stp.role as role
-from stp.role.assignment.naive import NaiveRoleAssignment
-import stp.rc as rc
-from typing import (
-    Dict,
-    List,
-    Optional,
-    Tuple,
-)
 import numpy as np
+import stp
+import stp.play as play
+import stp.rc as rc
+import stp.role as role
+import stp.role.cost as cost
+import stp.skill as skill
+import stp.tactic as tactic
+from rj_msgs.msg import RobotIntent
+from stp.role.assignment.naive import NaiveRoleAssignment
+
 from rj_gameplay.calculations import wall_calculations
+from rj_gameplay.tactic import (
+    dumb_tactic,
+    goalie_tactic,
+    move_tactic,
+    nmark_tactic,
+    pass_tactic,
+    striker_tactic,
+    wall_tactic,
+)
 
 
-class kickoff_cost(role.CostFn):
-    def __call__(
-        self,
-        robot: rc.Robot,
-        prev_result: Optional[role.RoleResult],
-        world_state: rc.WorldState,
-    ) -> float:
-        return 0.0
-
-    def unassigned_cost_fn(
-        self,
-        prev_result: Optional[role.RoleResult],
-        world_state: rc.WorldState,
-    ) -> float:
-
-        # TODO: Implement real unassigned cost function
-        return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
+class State(Enum):
+    INIT = auto()
+    ACTIVE = auto()
+    ASSIGN_ROLES = auto()
+    DONE = auto()
 
 
-class PrepareKickoffPlay(play.IPlay):
-    """Hardcoded points to stand in for kickoff"""
-
+class PrepareKickoff(stp.play.Play):
     def __init__(self):
-        self.points = [
-            (0.0, 4.25),
-            (0.6, 4.25),
-            (-0.6, 4.25),
-        ]
-        self.tactics = [
-            move_tactic.Move(target_point=np.array(pt), face_point=(0.0, 4.5))
-            for pt in self.points
-        ]
-        self.tactics.append(goalie_tactic.GoalieTactic())
-        self.tactics.append(wall_tactic.WallTactic())
-        self.tactics.append(wall_tactic.WallTactic())
-
-        self.num_wallers = 2
-
-        # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
-        self.role_assigner = NaiveRoleAssignment()
-
-    def compute_props(self, prev_props):
-        pass
+        super().__init__()
+        self.pts = []
+        self._state = State.INIT
 
     def tick(
         self,
-        world_state: rc.WorldState,
-        prev_results: role.assignment.FlatRoleResults,
-        props,
-    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
 
-        # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
-
-        # Get role requests from all tactics and put them into a dictionary
-
-        role_requests: play.RoleRequests = {}
-        i = 0
-        for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic()):
-                # if wall tactic, also pass in a wall point
-                role_requests[tactic] = tactic.get_requests(
-                    world_state, wall_pts[i], None
-                )
-                i += 1
-            else:
-                role_requests[tactic] = tactic.get_requests(world_state, None)
-
-        # Flatten requests and use role assigner on them
-        flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(
-            flat_requests, world_state, prev_results
-        )
-        role_results = play.unflatten_results(flat_results)
-
-        # Get list of all SkillEntries from all tactics
-        skills = []
-        for tactic in self.tactics:
-            skills += tactic.tick(world_state, role_results[tactic])
-
-        # Get all role assignments
-        # SkillEntry to (list of?) RoleResult
-        skill_dict = {}
-        for tactic in self.tactics:
-            skill_dict.update(role_results[tactic])
-
-        return (skill_dict, skills)
-
-    def is_done(self, world_state):
-        # last tactic done (HACK)
-        return self.tactics[-1].is_done(world_state)
-
-
-class DefendKickoffPlay(play.IPlay):
-    """Hardcoded points to stand in for kickoff"""
-
-    def __init__(self):
-        self.points = [
-            (0.0, 3.9),
-            (0.8, 4.25),
-            (-0.8, 4.25),
-        ]
-        self.priorities = [
-            role.Priority.LOW,
-            role.Priority.MEDIUM,
-            role.Priority.LOW,
-        ]
-        self.tactics = [
-            move_tactic.Move(
-                target_point=np.array(pt),
-                face_point=(0.0, 4.5),
-                priority=priority,
+        if self._state == State.INIT:
+            if len(self.pts) == 0:
+                self.create_pts(world_state)
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+            self.prioritized_tactics.append(
+                dumb_tactic.DumbTactic(world_state, self.pts)
             )
-            for pt, priority in zip(self.points, self.priorities)
-        ]
-        self.tactics.append(goalie_tactic.GoalieTactic())
-        self.tactics.append(wall_tactic.WallTactic())
-        self.tactics.append(wall_tactic.WallTactic())
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)
+        if self._state == State.ACTIVE:
+            done = True
+            for tactic in self.prioritized_tactics:
+                if not tactic.is_done(world_state):
+                    done = False
+            if done:
+                self._state = State.DONE
+            return self.get_robot_intents(world_state)
+        if self._state == State.DONE:
+            return self.get_robot_intents(world_state)
 
-        self.num_wallers = 2
+    def create_pts(self, world_state):
+        self.pts = []
+        self.pts.append(
+            (
+                0.0,
+                (world_state.field.length_m - world_state.field.center_radius_m) / 2,
+            )
+        )
+        dx = 0.5
+        dy = -0.5
+        self.pts.append((self.pts[0][0] + dx, self.pts[0][1] + dy))
 
-        # self.move_left = move_tactic.Move(np.array([self.left_x, self.start_y]))
-        self.role_assigner = NaiveRoleAssignment()
 
-    def compute_props(self, prev_props):
-        pass
+class Kickoff(stp.play.Play):
+    def __init__(self):
+        super().__init__()
+        self.pts = []
+        self._state = State.INIT
 
     def tick(
         self,
-        world_state: rc.WorldState,
-        prev_results: role.assignment.FlatRoleResults,
-        props,
-    ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
 
-        # pre-calculate wall points and store in numpy array
-        wall_pts = wall_calculations.find_wall_pts(self.num_wallers, world_state)
-
-        # Get role requests from all tactics and put them into a dictionary
-
-        role_requests: play.RoleRequests = {}
-        i = 0
-        for tactic in self.tactics:
-            if type(tactic) == type(wall_tactic.WallTactic()):
-                # TODO : change to choose closest one
-                role_requests[tactic] = tactic.get_requests(
-                    world_state, wall_pts[i], None
+        if self._state == State.INIT:
+            if len(self.pts) == 0:
+                self.create_pts(world_state)
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 3))
+            self.prioritized_tactics.append(
+                pass_tactic.PassTactic(
+                    world_state,
+                    cost.PickClosestToPoint(self.pts[0]),
+                    cost.PickClosestToPoint(self.pts[1]),
                 )
-                i += 1
-            else:
-                role_requests[tactic] = tactic.get_requests(world_state, None)
+            )
+            # self.prioritized_tactics.append(dumb_tactic.DumbTactic(world_state, [self.pts[1]]))
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.ACTIVE:
+            for tactic in self.prioritized_tactics:
+                if tactic.needs_assign:
+                    self._state = State.ASSIGN_ROLES
+            return self.get_robot_intents(world_state)
+        elif self._state == State.ASSIGN_ROLES:
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.DONE:
+            return self.get_robot_intents(world_state)
 
-        # Flatten requests and use role assigner on them
-        flat_requests = play.flatten_requests(role_requests)
-        flat_results = self.role_assigner.assign_roles(
-            flat_requests, world_state, prev_results
+    def create_pts(self, world_state):
+        # pts[0] is near the midpoint of the field
+        # pts[1] is diagonal to pts[0]
+        self.pts = []
+        self.pts.append(
+            (0.0, (world_state.field.length_m - world_state.field.center_radius_m) / 2)
         )
-        role_results = play.unflatten_results(flat_results)
+        dx = 0.5
+        dy = -0.5
+        self.pts.append((self.pts[0][0] + dx, self.pts[0][1] + dy))
 
-        # Get list of all SkillEntries from all tactics
-        skills = []
-        for tactic in self.tactics:
-            skills += tactic.tick(world_state, role_results[tactic])
 
-        # Get all role assignments
-        # SkillEntry to (list of?) RoleResult
-        skill_dict = {}
-        for tactic in self.tactics:
-            skill_dict.update(role_results[tactic])
+class DefendKickoff(stp.play.Play):
+    def __init__(self):
+        super().__init__()
+        self._state = State.INIT
 
-        return (skill_dict, skills)
+    def tick(
+        self,
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
 
-    def is_done(self, world_state):
-        # last tactic done (HACK)
-        return self.tactics[-1].is_done(world_state)
+        if self._state == State.INIT:
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.ACTIVE:
+            return self.get_robot_intents(world_state)
