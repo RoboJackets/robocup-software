@@ -4,7 +4,6 @@ import time
 
 import numpy as np
 import stp.rc as rc
-import stp.role as role
 import stp.skill as skill
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import PivotMotionCommand, RobotIntent
