@@ -6,8 +6,7 @@ from enum import Enum, auto
 import numpy as np
 import stp.rc as rc
 import stp.skill as skill
-from rj_geometry_msgs.msg import Point
-from rj_msgs.msg import LineKickMotionCommand, RobotIntent
+from rj_msgs.msg import RobotIntent
 from stp.utils.constants import RobotConstants
 
 from rj_gameplay.skill import capture, line_kick, pivot  # kick, pivot

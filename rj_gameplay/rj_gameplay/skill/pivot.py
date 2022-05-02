@@ -1,17 +1,13 @@
 import argparse
 import sys
 import time
-from abc import ABC, abstractmethod
 
 import numpy as np
-import py_trees
 import stp.rc as rc
 import stp.role as role
 import stp.skill as skill
 from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import PivotMotionCommand, RobotIntent
-
-import rj_gameplay.eval as eval
 
 
 class Pivot(skill.Skill):

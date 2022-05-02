@@ -1,14 +1,12 @@
 from enum import Enum, auto
-from typing import Dict, List, Tuple, Type
+from typing import List
 
 import stp
 import stp.rc
 import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
-from stp.role.assignment.naive import NaiveRoleAssignment
 
-from rj_gameplay.calculations import wall_calculations
 from rj_gameplay.tactic import goalie_tactic, nmark_tactic, wall_tactic
 
 

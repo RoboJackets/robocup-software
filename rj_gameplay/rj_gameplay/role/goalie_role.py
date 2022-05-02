@@ -5,7 +5,7 @@ from rj_msgs.msg import RobotIntent
 # TODO: settle on unified way to define constants in gameplay
 from stp.utils.constants import RobotConstants  # , BallConstants
 
-from rj_gameplay.skill import intercept, line_kick, move, pivot_kick, receive
+from rj_gameplay.skill import line_kick, move, pivot_kick, receive
 
 # import stp.global_parameters as global_parameters
 # from stp.local_parameters import Param

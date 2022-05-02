@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from typing import Dict, List, Tuple, Type
+from typing import List
 
 import numpy as np
 import stp
@@ -7,17 +7,8 @@ import stp.rc
 import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
-from stp.role.assignment.naive import NaiveRoleAssignment
 
-from rj_gameplay.calculations import wall_calculations
-from rj_gameplay.tactic import (
-    goalie_tactic,
-    line_tactic,
-    nmark_tactic,
-    prep_move,
-    striker_tactic,
-    wall_tactic,
-)
+from rj_gameplay.tactic import line_tactic, prep_move, striker_tactic
 
 
 class State(Enum):

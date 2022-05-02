@@ -6,8 +6,7 @@ import stp
 from rj_msgs.msg import RobotIntent
 from stp.formations.diamond_formation import DiamondFormation
 
-from rj_gameplay.tactic import (
-    basic_seek,
+from rj_gameplay.tactic import (  # basic_seek,
     goalie_tactic,
     pass_tactic,
     striker_tactic,

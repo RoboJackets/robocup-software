@@ -1,15 +1,11 @@
 import argparse
 import sys
 import time
-from abc import ABC, abstractmethod
 
 import numpy as np
-import py_trees
 import stp.rc as rc
 import stp.skill as skill
 from rj_msgs.msg import EmptyMotionCommand, RobotIntent
-
-import rj_gameplay.eval as eval
 
 KICK_DOT_THRESHOLD = 0.4
 KICK_BALL_SPEED_THRESHOLD = 0.9
