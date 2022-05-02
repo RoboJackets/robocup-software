@@ -1,6 +1,7 @@
 from enum import Enum, auto
 from typing import Dict, List, Tuple, Type
 
+import numpy as np
 import stp
 import stp.rc
 import stp.role
@@ -41,8 +42,10 @@ class PenaltyOffense(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics.append(striker_tactic.StrikerTactic(world_state))
             num_liners = len(world_state.our_visible_robots) - 1
+            start_pt = np.array([-2.0, 1.5])
+            end_pt = np.array([2.0, 1.5])
             self.prioritized_tactics.append(
-                line_tactic.LineTactic(world_state, num_liners)
+                line_tactic.LineTactic(world_state, num_liners, start_pt, end_pt)
             )
             self.assign_roles(world_state)
             self._state = State.ACTIVE
@@ -68,8 +71,10 @@ class PrepPenaltyOff(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics.append(prep_move.PrepMove(world_state))
             num_liners = len(world_state.our_visible_robots) - 1
+            start_pt = np.array([-2.0, 1.5])
+            end_pt = np.array([2.0, 1.5])
             self.prioritized_tactics.append(
-                line_tactic.LineTactic(world_state, num_liners)
+                line_tactic.LineTactic(world_state, num_liners, start_pt, end_pt)
             )
             self.assign_roles(world_state)
             self._state = State.ACTIVE
