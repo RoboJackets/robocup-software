@@ -1,16 +1,16 @@
 import os
 from pathlib import Path
-from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
 
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node, PushRosNamespace
+
+from launch import LaunchDescription
 from launch.actions import (
+    GroupAction,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
-    GroupAction,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import PushRosNamespace, Node
-
 from launch.substitutions import LaunchConfiguration
 
 
@@ -24,8 +24,6 @@ def generate_launch_description():
 
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     # headless_flag = LaunchConfiguration("headless_flag", default="")
-
-    grsim = Node(package="rj_robocup", executable="grSim", arguments=["--headless"])
 
     soccer_launch_path = str(launch_dir / "soccer.launch.py")
 
@@ -53,4 +51,4 @@ def generate_launch_description():
 
     blue = GroupAction([PushRosNamespace("blue"), soccer_blue])
 
-    return LaunchDescription([stdout_linebuf_envvar, grsim, yellow, blue])
+    return LaunchDescription([stdout_linebuf_envvar, yellow, blue])

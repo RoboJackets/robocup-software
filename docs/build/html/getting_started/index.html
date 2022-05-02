@@ -50,7 +50,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-first-time">Running The First Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-again">Running Again</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-build-run-issues">Troubleshooting Build/Run Issues</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -79,46 +84,143 @@
              
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
-<p>If you have a clean Ubuntu VM, run the following to install all required dependencies first:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./util/ubuntu-setup
+<div class="section" id="running-the-first-time">
+<h2>Running The First Time<a class="headerlink" href="#running-the-first-time" title="Permalink to this headline"></a></h2>
+<p>After cloning the repo and changing directory (<code class="docutils literal notranslate"><span class="pre">cd</span></code>) to
+<code class="docutils literal notranslate"><span class="pre">robocup-software/</span></code>, make sure you’ve run the setup script to install all
+required dependencies. (See the “Installation” doc.)</p>
+<p>Let’s run the stack on the <a class="reference external" href="https://github.com/RoboCup-SSL/grSim">GrSim</a> simulation.</p>
+<p>First, make sure you’re on the most updated version of <code class="docutils literal notranslate"><span class="pre">ros2</span></code> branch. This is
+where the latest working version of our codebase exists. (See “Github” doc.
+–TODO: transfer this over here–)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git pull
+git checkout ros2
 </pre></div>
 </div>
-<p>Then, let’s run the stack on the <a class="reference external" href="https://github.com/RoboCup-SSL/grSim">GrSim</a> simulation.</p>
-<p>Make sure you have sourced the ROS stack if you haven’t already:</p>
+<p>Then, source the ROS setup file. This ensures your shell can use ROS commands.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> /opt/ros/foxy/setup.bash
 </pre></div>
 </div>
-<p>If you’re on zsh, source the <code class="docutils literal notranslate"><span class="pre">.zsh</span></code> version instead:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> /opt/ros/foxy/setup.zsh
+<p>If you’re on zsh, source the <code class="docutils literal notranslate"><span class="pre">.zsh</span></code> version instead. (If you don’t know what
+zsh is, you’re not on zsh.)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> /opt/ros/foxy/setup.zsh
 </pre></div>
 </div>
-<p>Then build the codebase (this compiles all of our code) with:</p>
+<p>Then build the codebase. This compiles all of our code.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make perf
 </pre></div>
 </div>
 <p>(This step will take upwards of 15 minutes on a VM.)</p>
-<p>In case the above command fails, try the following command to clean all build files, then re-run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">perf</span></code>:</p>
+<p>If the build fails, try the following command to clean all build
+files:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make clean
 </pre></div>
 </div>
-<p>Afterwards, we need to source our local setup. Run the following in the <strong>robocup-software</strong> directory:</p>
+<p>then try the build again.</p>
+<p>After building, we need to source our local setup. Run the following in the
+<code class="docutils literal notranslate"><span class="pre">robocup-software</span></code> directory:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.bash
 </pre></div>
 </div>
-<p>If you’re on zsh, source the <code class="docutils literal notranslate"><span class="pre">.zsh</span></code> version instead:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.zsh
+<p>Again, if you’re on zsh, source the <code class="docutils literal notranslate"><span class="pre">.zsh</span></code> version instead:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.zsh
 </pre></div>
 </div>
-<p>Now we are good to go. As a sanity check, the following command should print out <code class="docutils literal notranslate"><span class="pre">rj_robocup</span></code>:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ros2 pkg list <span class="p">|</span> grep rj_robocup
+<p>Now we are good to go. As a sanity check, the following command should print
+out <code class="docutils literal notranslate"><span class="pre">rj_robocup</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 pkg list <span class="p">|</span> grep rj_robocup
 </pre></div>
 </div>
 <p>To run sim, run the following:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ros2 launch rj_robocup sim.launch.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch rj_robocup sim.launch.py
 </pre></div>
 </div>
 <p>If everything is working properly, you should see the following window show up.</p>
 <img alt="../_images/soccer.png" src="../_images/soccer.png" />
+<p>(Note: when using actual (not simulated) vision data, swap <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">run-sim</span></code>
+for <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">run-soccer</span></code>.)</p>
+</div>
+<div class="section" id="running-again">
+<h2>Running Again<a class="headerlink" href="#running-again" title="Permalink to this headline"></a></h2>
+<p>Now that you know how to source dependencies, build, and run our code, you can
+take advantage of some neat shortcuts. These shortcuts all depend on the
+following knowledge:</p>
+<p>Sourcing only needs to happen every time a new terminal is opened, and
+building only needs to happen when C++ or launch.py files are changed.</p>
+<p>(Python is not a compiled language; thus, those files do not need to be built
+when changed.)</p>
+<p>So, after you’ve built once, the <code class="docutils literal notranslate"><span class="pre">install/setup.bash</span></code> script will exist in
+your version of the repo, and you won’t have to build again until you make
+changes to C++ or launch files. That means the next time you open up a new
+terminal, you can launch sim with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>. ./source.bash
+make run-sim
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">source.bash</span></code> is an alias for the two source commands above, and <code class="docutils literal notranslate"><span class="pre">make</span>
+<span class="pre">run-sim</span></code> is an alias for <code class="docutils literal notranslate"><span class="pre">ros2</span> <span class="pre">launch</span> <span class="pre">rj_robocup</span> <span class="pre">sim.launch.py</span></code>.</p>
+<p>Since Python is not compiled, if you’re working on gameplay exclusively, it’s
+likely that after the first build, you’ll only need to run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make run-sim
+</pre></div>
+</div>
+<p>However, if you’re working on C++ or launch files (or if someone else changes
+them on a different branch), you’ll need to build every time to see your
+changes. If you’ve already built once, though, you can build again more quickly
+with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make again
+. ./source.bash
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">source.bash</span></code> line is necessary to source the file in <code class="docutils literal notranslate"><span class="pre">install/</span></code>, which
+is refreshed on each build. (Note: this does not build any CMake-related files,
+so if you’re editing those, use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">perf</span></code> as usual.)</p>
+<p>There are a few different ways to build our code. See the makefile for more
+details, but in sum:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make all         <span class="c1"># builds with full debugging symbols</span>
+make debug       <span class="c1"># alias for make all</span>
+make all-release <span class="c1"># builds with 0 debugging symbols</span>
+make perf        <span class="c1"># builds with some debugging symbols; preferred method</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="troubleshooting-build-run-issues">
+<h2>Troubleshooting Build/Run Issues<a class="headerlink" href="#troubleshooting-build-run-issues" title="Permalink to this headline"></a></h2>
+<p>The most common issue when running our code is forgetting to source after
+opening a new terminal. For that, try either</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> /opt/ros/foxy/setup.bash <span class="c1"># explicit</span>
+<span class="nb">source</span> install/setup.bash
+
+. ./source.bash                 <span class="c1"># shortcut</span>
+</pre></div>
+</div>
+<p>(Note: <code class="docutils literal notranslate"><span class="pre">install/setup.bash</span></code> will only exist after your first build.)</p>
+<p>The next most common thing is forgetting to build after changing a C++ file or
+launch script. Resolve that by building to see your changes. Again, the default
+is</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make perf
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">perf</span></code> fails, your build system may be corrupted. Clean out your
+build files with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make clean
+</pre></div>
+</div>
+<p>then build again. (Note: you will have to manually re-source the install/ file
+after building: see above.)</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code> fails, it may be something wrong with your branch or machine.
+Checkout ros2 (the default branch) and try building there. If that succeeds,
+the problem must be with your branch’s code.</p>
+<p>If ros2 fails to build and run, there is an issue with your machine, since
+ros2’s build-ability is checked by GitHub Actions on every commit. Try running</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./util/ubuntu-setup
+</pre></div>
+</div>
+<p>so that your machine has all the required dependencies. Check to see if it
+outputs any errors when you do so and Google them if needed.</p>
+<p>As a final sanity check, if you’ve tried all of the above, delete your copy of
+the robocup-software/ repo, and re-clone it from GitHub.</p>
+</div>
 </div>
 
 
