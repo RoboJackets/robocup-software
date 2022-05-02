@@ -7,9 +7,6 @@
 [submodule "external/rrt"]
 	path = external/rrt
 	url = https://github.com/robojackets/rrt
-[submodule "external/grSim"]
-	path = external/grSim
-	url = https://github.com/RoboCup-SSL/grSim
 [submodule "external/robocup-fshare"]
 	path = external/robocup-fshare
 	url = https://github.com/robojackets/robocup-fshare

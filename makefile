@@ -58,23 +58,24 @@ again:
 run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 
-run-sim-grsim:
+run-sim:
 	ros2 launch rj_robocup sim.launch.py
 
-run-sim:
-	ros2 launch rj_robocup sim.launch.py use_grsim:=False
+run-sim-external:
+	ros2 launch rj_robocup sim.launch.py use_internal_ref:=False
 
-run-external-grsim:
-	ros2 launch rj_robocup external_sim.launch.py
-	
-run-external:
-	ros2 launch rj_robocup external_sim.launch.py use_grsim:=False
-	
+run-sim-ex: run-sim-external
+
+# actually, config must be changed manually
+run-real-sim:
+	ros2 launch rj_robocup sim.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
+
 run-real:
-	ros2 launch rj_robocup real_soccer.launch.py
+	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
 
 run-sim2play:
 	ros2 launch rj_robocup sim2play.launch.py
+
 run-sim2: run-sim2play
 
 # Run both C++ and python unit tests

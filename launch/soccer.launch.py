@@ -4,24 +4,42 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 
-from launch import LaunchDescription
+from launch import LaunchContext, LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
+    SetLaunchConfiguration,
     Shutdown,
 )
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import (
+    LaunchConfiguration,
+    PythonExpression,
+)
 
 
 def generate_launch_description():
+    # see ros2/launch source code to see how this works
+    # right now, it doesn't work, lc never adds config_yaml
+    # thus it always returns default, see source code
+    config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
+    lc = LaunchContext(noninteractive=True)
+    slc = SetLaunchConfiguration(config_yaml, config_yaml)
+    slc.execute(lc)
+
     config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+        get_package_share_directory("rj_robocup"),
+        "config",
+        (lc.perform_substitution(config_yaml)),
     )
+
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
+    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
+    use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-b")
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
@@ -49,9 +67,19 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    radio = Node(
+    sim_radio = Node(
+        condition=IfCondition(PythonExpression([use_sim_radio])),
         package="rj_robocup",
         executable="sim_radio_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    network_radio = Node(
+        condition=IfCondition(PythonExpression(["not ", use_sim_radio])),
+        package="rj_robocup",
+        executable="network_radio_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
@@ -90,9 +118,19 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    ref_receiver = Node(
+    internal_ref_receiver = Node(
+        condition=IfCondition(PythonExpression([use_internal_ref])),
         package="rj_robocup",
         executable="internal_referee_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    external_ref_receiver = Node(
+        condition=IfCondition(PythonExpression(["not ", use_internal_ref])),
+        package="rj_robocup",
+        executable="external_referee_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
@@ -112,20 +150,24 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            DeclareLaunchArgument("team_flag", default_value=""),
-            DeclareLaunchArgument("sim_flag", default_value=""),
-            DeclareLaunchArgument("ref_flag", default_value=""),
+            DeclareLaunchArgument("team_flag", default_value="-y"),
+            DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
+            DeclareLaunchArgument("use_internal_ref", default_value="True"),
+            DeclareLaunchArgument("use_sim_radio", default_value="True"),
+            DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,
             soccer,
-            radio,
+            sim_radio,
+            network_radio,
             control,
             planner,
             vision_receiver,
             vision_filter,
-            ref_receiver,
+            internal_ref_receiver,
+            external_ref_receiver,
             gameplay,
         ]
     )
