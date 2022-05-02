@@ -31,11 +31,12 @@ class RobotConstants:
         0.6,
     )  # min and max distance a chip will go over another robot
 
-    class DribblerConstants:
-        MAX_POWER = 127
 
-        # "Normal" Dribbler speed to be used for generic ball capture/movement
-        STANDARD_POWER = 127
+class DribblerConstants:
+    MAX_POWER = 127
+
+    # "Normal" Dribbler speed to be used for generic ball capture/movement
+    STANDARD_POWER = 127
 
 
 class BallConstants:

@@ -2,9 +2,11 @@ from typing import List, Tuple
 
 import numpy as np
 import stp
+from rj_msgs.msg import RobotIntent
+
+from rj_gameplay.role import dumb_move
 import stp.utils.constants as const
 
-from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.role import dumb_move
 
@@ -53,7 +55,13 @@ class LineTactic(stp.tactic.Tactic):
         if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
 
-        return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
+        # return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
+        robot_intents = []
+        for i in range(len(self.assigned_roles)):
+            role = self.assigned_roles[i]
+            if role.robot:
+                robot_intents.append((role.robot.id, role.tick(world_state)))
+        return robot_intents
 
     def is_done(
         self,

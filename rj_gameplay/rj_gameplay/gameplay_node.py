@@ -34,6 +34,7 @@ from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,
     basic_offense,
     keepaway,
     line_up,
+    penalty_defense,
 )
 
 NUM_ROBOTS = 16
