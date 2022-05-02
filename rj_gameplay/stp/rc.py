@@ -365,7 +365,7 @@ class Field:
     @property
     def our_goal_loc(self) -> np.ndarray:
         """
-        Conveniance function for getting our goal location
+        Convenience function for getting our goal location
         :return: the location of our goal - its always (0,0)
         """
         return np.array([0.0, 0.0])
@@ -373,7 +373,7 @@ class Field:
     @property
     def center_field_loc(self) -> np.ndarray:
         """
-        Conveniance function for getting the center field location
+        Convenience function for getting the center field location
         :return: the location of the center of the field
         """
         return np.array([0.0, self.length_m / 2])
@@ -381,7 +381,7 @@ class Field:
     @property
     def their_goal_loc(self) -> np.ndarray:
         """
-        Conveniance function for getting the opponents field location
+        Convenience function for getting the opponents field location
         :return: the location of the opponents goal
         """
         return np.array([0.0, self.length_m])
@@ -389,7 +389,7 @@ class Field:
     @property
     def our_defense_area_coordinates(self) -> List:
         """
-        Conveniance function for getting our defense area locations
+        Convenience function for getting our defense area locations
         :return: the list of points for our defense area locations
         """
         our_defense_area = [
@@ -403,7 +403,7 @@ class Field:
     @property
     def opp_defense_area_coordinates(self) -> List:
         """
-        Conveniance function for getting oppenent defense area locations
+        Convenience function for getting oppenent defense area locations
         Note: each coordinate starts from top left and continues normal order
         :return: the list of points for opponent defense area locations
         """
@@ -422,9 +422,33 @@ class Field:
         return opp_defense_area
 
     @property
+    def our_goal_post_coordinates(self) -> List:
+        """
+        Convenience function for getting our goal post coordinates
+        :return: the list of points for our goal post locations
+        """
+        our_goal_post_coord = [
+            [-self.__goal_width_m / 2, 0],
+            [self.__goal_width_m / 2, 0],
+        ]
+        return our_goal_post_coord
+
+    @property
+    def their_goal_post_coordinates(self) -> List:
+        """
+        Convenience function for getting their goal post coordinates
+        :return: the list of points for their goal post locations
+        """
+        their_goal_post_coord = [
+            [-self.__goal_width_m / 2, self.__length_m],
+            [self.__goal_width_m / 2, self.__length_m],
+        ]
+        return their_goal_post_coord
+
+    @property
     def top_left_field_loc(self) -> np.ndarray:
         """
-        Conveniance function for getting the top left corner field location
+        Convenience function for getting the top left corner field location
         Note: each coordinate starts from top left and continues normal order
         :return: the location of the top left corner of the field
         """
@@ -433,7 +457,7 @@ class Field:
     @property
     def top_right_field_loc(self) -> np.ndarray:
         """
-        Conveniance function for getting the top left corner field location
+        Convenience function for getting the top left corner field location
         :return: the location of the top left corner of the field
         """
         return np.array([self.__field_x_right_coord, self.__length_m])
@@ -441,7 +465,7 @@ class Field:
     @property
     def bot_left_field_loc(self) -> np.ndarray:
         """
-        Conveniance function for getting the top left corner field location
+        Convenience function for getting the top left corner field location
         :return: the location of the top left corner of the field
         """
         return np.array([self.__field_x_left_coord, 0.0])
@@ -449,7 +473,7 @@ class Field:
     @property
     def bot_right_field_loc(self) -> np.ndarray:
         """
-        Conveniance function for getting the top left corner field location
+        Convenience function for getting the top left corner field location
         :return: the location of the top left corner of the field
         """
         return np.array([self.__field_x_right_coord, 0.0])

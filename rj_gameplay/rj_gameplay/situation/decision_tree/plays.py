@@ -132,6 +132,18 @@ class OffensivePileup(stp.situation.ISituation):
     ...
 
 
+class BasicOffense(stp.situation.ISituation):
+    """Basic Offense."""
+
+    ...
+
+
+class BasicDefense(stp.situation.ISituation):
+    """Basic Defense."""
+
+    ...
+
+
 class MidfieldPileup(stp.situation.ISituation):
     """Plays to handle a pile up in the midfield."""
 

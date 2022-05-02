@@ -5,6 +5,7 @@ import numpy as np
 import stp
 import stp.global_parameters as global_parameters
 import stp.role.cost
+
 from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.role import passer, receiver
@@ -30,8 +31,8 @@ class PassTactic(stp.tactic.Tactic):
     def __init__(
         self,
         world_state: stp.rc.WorldState,
-        init_passer_cost: stp.role.cost,
-        init_receiver_cost: stp.role.cost,
+        init_passer_cost: stp.role.CostFn,
+        init_receiver_cost: stp.role.CostFn,
     ):
         super().__init__(world_state)
 

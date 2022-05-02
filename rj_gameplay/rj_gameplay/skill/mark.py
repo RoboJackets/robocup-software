@@ -1,22 +1,16 @@
-from abc import ABC, abstractmethod
-from typing import Callable, Optional
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
+import math
 import sys
 import time
-import numpy as np
-import math
+from typing import Optional
 
-import stp.skill as skill
-import stp.role as role
+import numpy as np
 import stp.action as action
 import stp.rc as rc
+import stp.skill as skill
+from rj_geometry_msgs.msg import Point
+from rj_msgs.msg import PathTargetMotionCommand, RobotIntent
 from stp.utils.constants import RobotConstants
-from rj_msgs.msg import RobotIntent, PathTargetMotionCommand
-
-from rj_geometry_msgs.msg import Point, Segment
 
 
 def get_mark_point(target_robot_id: int, world_state: rc.WorldState):
@@ -74,6 +68,7 @@ class Mark(skill.ISkill):
 
     def tick(self, world_state: rc.WorldState):
         intent = RobotIntent()
+        mark_point = np.array([0.0, 0.0])
         if world_state and world_state.ball.visible:
             if self.target_robot is None:
                 mark_point = get_mark_point(1, world_state)
@@ -96,7 +91,6 @@ class Mark(skill.ISkill):
             path_command.override_face_point = [
                 Point(x=self.face_point[0], y=self.face_point[1])
             ]
-
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
         return intent

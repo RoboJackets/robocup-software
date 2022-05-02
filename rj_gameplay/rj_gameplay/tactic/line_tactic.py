@@ -3,6 +3,7 @@ from typing import List, Tuple
 import numpy as np
 import stp
 import stp.utils.constants as const
+
 from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.role import dumb_move
