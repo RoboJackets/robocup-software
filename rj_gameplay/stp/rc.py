@@ -812,15 +812,27 @@ class WorldState:
     @property
     def goalie_id(self) -> int:
         """
-        :return: The Field object
+        :return: The goalie id (int)
         """
         return self.__goalie_id
 
-    # def get_visible_robots(self) -> List[Robot]:
-    #    pass
+    @property
+    def visible_robots(self) -> List[Robot]:
+        """
+        :return: List of all visible robots
+        """
+        return [robot for robot in self.robots if robot.visible]
 
-    # def get_our_visible_robots(self) -> List[Robot]:
-    #    pass
+    @property
+    def our_visible_robots(self) -> List[Robot]:
+        """
+        :return: List of all our visible robots
+        """
+        return [robot for robot in self.our_robots if robot.visible]
 
-    # def get_their_visible_robots(self) -> List[Robot]:
-    #    pass
+    @property
+    def their_visible_robots(self) -> List[Robot]:
+        """
+        :return: List of all their visible robots
+        """
+        return [robot for robot in self.their_robots if robot.visible]

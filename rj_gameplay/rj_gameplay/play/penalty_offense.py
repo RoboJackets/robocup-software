@@ -1,24 +1,33 @@
 from enum import Enum, auto
-from typing import List
+from typing import Dict, List, Tuple, Type
 
-import numpy as np
 import stp
-import stp.play as play
-import stp.rc as rc
-import stp.tactic as tactic
+import stp.rc
+import stp.role
+import stp.role.cost
 from rj_msgs.msg import RobotIntent
+from stp.role.assignment.naive import NaiveRoleAssignment
 
-from rj_gameplay.tactic import line_tactic, prep_move
+from rj_gameplay.calculations import wall_calculations
+from rj_gameplay.tactic import (
+    goalie_tactic,
+    line_tactic,
+    nmark_tactic,
+    prep_move,
+    striker_tactic,
+    wall_tactic,
+)
 
 
 class State(Enum):
     INIT = auto()
-    PREP = auto()
-    READY = auto()
-    # DONE = auto()
+    ACTIVE = auto()
 
 
+# TODO: add a shared state between these two classes somehow
 class PenaltyOffense(stp.play.Play):
+    """striker + line up rest of robots"""
+
     def __init__(self):
         super().__init__()
 
@@ -26,32 +35,45 @@ class PenaltyOffense(stp.play.Play):
 
     def tick(
         self,
-        world_state: rc.WorldState,
+        world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
 
         if self._state == State.INIT:
-            self.prioritized_tactics = [
-                prep_move.PrepMove(world_state),
-                line_tactic.LineTactic(
-                    world_state, 5, np.array([2.0, 2.0]), np.array([-2.0, 2.0])
-                ),
-            ]
+            self.prioritized_tactics.append(striker_tactic.StrikerTactic(world_state))
+            num_liners = len(world_state.our_visible_robots) - 1
+            self.prioritized_tactics.append(
+                line_tactic.LineTactic(world_state, num_liners)
+            )
             self.assign_roles(world_state)
-            self._state = State.PREP
+            self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.ACTIVE:
+            # return robot intents from assigned tactics back to gameplay node
             return self.get_robot_intents(world_state)
 
-        elif self._state == State.PREP:
-            for t in self.prioritized_tactics:
-                t.tick(world_state)
-            self.assign_roles(world_state)
-            return self.get_robot_intents(world_state)
 
-        # elif self._state == State.READY:  # TODO: add when it's ready
-        #     self.prioritized_tactics = [
-        #         goalie_tactic.GoalieTactic(world_state, 0),
-        #         striker_tactic.StrikerTactic(world_state),
-        #     ]
-        #     shoot = self.prioritized_tactics[1]
-        #     if shoot.is_done(world_state):
-        #         self._state = State.DONE
-        #     return self.get_robot_intents(world_state)
+class PrepPenaltyOff(stp.play.Play):
+    """prepare striker + line up all robots"""
+
+    def __init__(self):
+        super().__init__()
+
+        self._state = State.INIT
+
+    def tick(
+        self,
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
+
+        if self._state == State.INIT:
+            self.prioritized_tactics.append(prep_move.PrepMove(world_state))
+            num_liners = len(world_state.our_visible_robots) - 1
+            self.prioritized_tactics.append(
+                line_tactic.LineTactic(world_state, num_liners)
+            )
+            self.assign_roles(world_state)
+            self._state = State.ACTIVE
+            return self.get_robot_intents(world_state)
+        elif self._state == State.ACTIVE:
+            # return robot intents from assigned tactics back to gameplay node
+            return self.get_robot_intents(world_state)

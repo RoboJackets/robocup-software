@@ -1,3 +1,4 @@
+import time
 from enum import Enum, auto
 from typing import List
 
@@ -5,7 +6,13 @@ import stp
 from rj_msgs.msg import RobotIntent
 from stp.formations.diamond_formation import DiamondFormation
 
-from rj_gameplay.tactic import basic_seek, goalie_tactic, pass_tactic, striker_tactic
+from rj_gameplay.tactic import (
+    basic_seek,
+    goalie_tactic,
+    pass_tactic,
+    striker_tactic,
+    wall_tactic,
+)
 
 
 class State(Enum):
@@ -27,13 +34,8 @@ class BasicOffense(stp.play.Play):
     def __init__(self):
         super().__init__()
 
+        self._striker_st_time = None
         self._state = State.INIT
-        """
-        self._seek_pts = [
-            np.array((2.0, 7.0)),
-            np.array((-2.0, 7.0)),
-        ]
-        """
 
     def tick(
         self,
@@ -51,15 +53,19 @@ class BasicOffense(stp.play.Play):
         """
 
         # TODO: when seeker formation behavior added in, add it in for other 3 robots
+        # SHOOT ONLY!
         if self._state == State.INIT:
+            num_wallers = len(world_state.our_visible_robots) - 2
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
-                basic_seek.BasicSeek(
-                    world_state,
-                    4,
-                    DiamondFormation(world_state).get_regions,
-                    DiamondFormation(world_state).get_centroids,
-                ),
+                striker_tactic.StrikerTactic(world_state),
+                wall_tactic.WallTactic(world_state, num_wallers),
+                # basic_seek.BasicSeek(
+                #     world_state,
+                #     4,
+                #     DiamondFormation(world_state).get_regions,
+                #     DiamondFormation(world_state).get_centroids,
+                # ),
             ]
 
             self.assign_roles(world_state)
@@ -79,6 +85,12 @@ class BasicOffense(stp.play.Play):
             if seek_tactic.is_done(world_state):
                 self._state = State.INIT_PASS
             """
+            if self._striker_st_time is None:
+                self._striker_st_time = time.time()
+            if (time.time() - self._striker_st_time) > 5:
+                print("striker failed, reassigning")
+                self._striker_st_time = None
+                self._state = State.INIT
 
             return self.get_robot_intents(world_state)
 
