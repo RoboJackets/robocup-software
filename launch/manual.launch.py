@@ -25,7 +25,6 @@ def generate_launch_description():
     team_flag = LaunchConfiguration("team_flag", default="-b")
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
-    headless_flag = LaunchConfiguration("headless_flag", default="")
     direction_flag = LaunchConfiguration("direction_flag", default="plus")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
@@ -61,8 +60,6 @@ def generate_launch_description():
         output="screen",
         on_exit=Shutdown(),
     )
-
-    grsim = Node(package="rj_robocup", executable="grSim", arguments=[headless_flag])
 
     ref_receiver = Node(
         package="rj_robocup",
@@ -101,6 +98,5 @@ def generate_launch_description():
             vision_receiver,
             vision_filter,
             ref_receiver,
-            grsim,
         ]
     )
