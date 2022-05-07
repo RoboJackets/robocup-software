@@ -198,7 +198,7 @@ the steps in Installation (above) to make sure your machine has all the
 required dependencies. If it outputs any errors when you do so, Google them!
 
 As a final sanity check, if you've tried all of the above, delete your copy of
-the robocup-software/ repo, and re-clone it from GitHub.
+the robocup-software/ repo, and start over completely.
 
 If you've gotten to this point and you're still unable to build and run the
 stack, ask an older member.
