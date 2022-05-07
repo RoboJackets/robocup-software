@@ -24,7 +24,7 @@ on your adblocker to support their free documentation hosting.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Contents
 
    self
    getting_started.rst
