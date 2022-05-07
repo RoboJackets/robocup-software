@@ -3,8 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to RoboJackets RoboCup SSL's documentation!
+Welcome
 ===================================================
+
+This is the documentation for RoboJackets' RoboCup Software team. We are a
+primarily undergraduate robotics team affiliated with Georgia Tech who compete in the RoboCup Small Size League. See `their website <https://ssl.robocup.org/>`_ for more details.
 
 .. toctree::
    :maxdepth: 2
