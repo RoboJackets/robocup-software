@@ -1,20 +1,46 @@
 Getting Started
 ===============
 
+Installation
+------------
+
+We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
+are an Ubuntu 20.04 machine before continuing.
+
+First, clone the repository from GitHub:
+
+.. code-block:: bash
+
+   git clone git://github.com/RoboJackets/robocup-software
+
+Then change directories (``cd``) to the repository you just cloned, and run the
+setup script to install all required dependencies:
+
+.. code-block:: bash
+
+    cd robocup-software
+    ./util/ubuntu-setup
+    
+And setup git submodules:
+
+.. code-block:: bash
+
+    git submodule init
+    git submodule update
+    
+
 Running The First Time
 ----------------------
 
-After cloning the repo and changing directory (``cd``) to
-``robocup-software/``, make sure you've run the setup script to install all
-required dependencies. (See the "Installation" doc.)
+Let's run the stack! We'll use the ER-Force simulator to simulate the vision
+data we'd get from a real field camera setup. (Read the "Welcome" page if that
+sentence made no sense to you.)
 
-Let's run the stack on the GrSim_ simulation.
-
-.. _GrSim: https://github.com/RoboCup-SSL/grSim
+TODO(Prahbanjan): add instructions for ER-force sim launch here
 
 First, make sure you're on the most updated version of ``ros2`` branch. This is
 where the latest working version of our codebase exists. (See "Github" doc.
---TODO: transfer this over here--)
+--TODO(Kevin): transfer this to docs--)
 
 .. code-block:: bash
 
@@ -41,15 +67,6 @@ Then build the codebase. This compiles all of our code.
    make perf
 
 (This step will take upwards of 15 minutes on a VM.)
-
-If the build fails, try the following command to clean all build
-files:
-
-.. code-block:: bash
-
-   make clean
-
-then try the build again.
 
 After building, we need to source our local setup. Run the following in the
 ``robocup-software`` directory:
@@ -81,8 +98,6 @@ If everything is working properly, you should see the following window show up.
 
 .. image:: soccer.png
 
-(Note: when using actual (not simulated) vision data, swap ``make run-sim``
-for ``make run-soccer``.)
 
 Running Again
 -------------
@@ -107,19 +122,19 @@ terminal, you can launch sim with:
    . ./source.bash
    make run-sim
 
-``source.bash`` is an alias for the two source commands above, and ``make
-run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``. 
+``source.bash`` is an alias for the two source commands in the above section,
+and ``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``. 
 
-Since Python is not compiled, if you're working on gameplay exclusively, it's
-likely that after the first build, you'll only need to run:
+Since Python is not compiled, if you're exclusively working on Python files,
+and staying in one terminal, it's likely that you'll mostly only need:
 
 .. code-block:: bash
 
    make run-sim
 
 However, if you're working on C++ or launch files (or if someone else changes
-them on a different branch), you'll need to build every time to see your
-changes. If you've already built once, though, you can build again more quickly
+them on a different branch and you want their changes), you'll need to build
+again. If you've already built once, though, you can build again more quickly
 with:
 
 .. code-block:: bash
@@ -132,7 +147,7 @@ is refreshed on each build. (Note: this does not build any CMake-related files,
 so if you're editing those, use ``make perf`` as usual.)
 
 There are a few different ways to build our code. See the makefile for more
-details, but in sum:
+details, but in short:
 
 .. code-block:: bash
 
@@ -141,22 +156,21 @@ details, but in sum:
    make all-release # builds with 0 debugging symbols
    make perf        # builds with some debugging symbols; preferred method
 
-Troubleshooting Build/Run Issues
---------------------------------
+TODO(Kevin): add description of running on field comp (move that md file over too)
+
+
+Troubleshooting
+---------------
 
 The most common issue when running our code is forgetting to source after
-opening a new terminal. For that, try either
+opening a new terminal. For that, run the source commands in "Running the First
+Time" above, or use the shortcut
 
 .. code-block:: bash
 
-   source /opt/ros/foxy/setup.bash # explicit
-   source install/setup.bash
+   . ./source.bash
 
-   . ./source.bash                 # shortcut
-
-(Note: ``install/setup.bash`` will only exist after your first build.)
-
-The next most common thing is forgetting to build after changing a C++ file or
+The next most common issue is forgetting to build after changing a C++ file or
 launch script. Resolve that by building to see your changes. Again, the default
 is
 
@@ -176,17 +190,15 @@ after building: see above.)
 
 If ``make clean`` fails, it may be something wrong with your branch or machine.
 Checkout ros2 (the default branch) and try building there. If that succeeds,
-the problem must be with your branch's code.
+your machine is fine, so the problem must be with your branch's code.
 
 If ros2 fails to build and run, there is an issue with your machine, since
-ros2's build-ability is checked by GitHub Actions on every commit. Try running
-
-.. code-block:: bash
-
-   ./util/ubuntu-setup
-
-so that your machine has all the required dependencies. Check to see if it
-outputs any errors when you do so and Google them if needed.
+ros2's build-ability is checked by GitHub Actions on every commit. Try re-doing
+the steps in Installation (above) to make sure your machine has all the
+required dependencies. If it outputs any errors when you do so, Google them!
 
 As a final sanity check, if you've tried all of the above, delete your copy of
 the robocup-software/ repo, and re-clone it from GitHub.
+
+If you've gotten to this point and you're still unable to build and run the
+stack, ask an older member.

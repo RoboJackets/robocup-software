@@ -1,31 +1,14 @@
 Installation
 ============
 
+.. note::
+
+   It's been mentioned (as of 5/17/2022) that this section is no longer
+   up-to-date. Use these instructions as a rough guide.
+
 Codebase
 --------
 
-We only provide official support for Ubuntu 20.04 due to ROS2.
-
-Clone the repository:
-
-.. code-block:: sh
-
-   git clone git://github.com/RoboJackets/robocup-software
-
-Run the setup script to install all required dependencies:
-
-.. code-block:: sh
-
-    cd robocup-software
-    ./util/ubuntu-setup
-    
-And setup git submodules:
-
-.. code-block:: sh
-
-    git submodule init
-    git submodule update
-    
 CLion Setup
 -----------
 We strongly recommend that users use CLion_, which Jetbrains offers for free through their university programs.
@@ -57,34 +40,3 @@ Next, on the same page, paste the below in the **CMake Options** textbox::
 
 Close the settings menu, and click the **CMake** tab on the bottom.
 On the left, there should be a “refresh” symbol. There should now be no errors.
-
-Building the project
-^^^^^^^^^^^^^^^^^^^^
-To build the code, open a new terminal window. Navigate to the **robocup-software** folder.
-
-First, create the build directory:
-
-.. code-block:: sh
-
-   mkdir build && cd build
-
-Then, we need to source the ROS2 stuff so that ``cmake`` knows where the ROS2 specific things are:
-
-.. code-block:: sh
-
-    source /opt/ros/foxy/setup.sh
-    export CMAKE_PREFIX_PATH=/opt/ros/foxy
-
-Then, run ``cmake`` with a custom install directory:
-
-.. code-block:: sh
-
-   cmake -GNinja -DBUILD_TESTING=ON -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELWITHDEBINFO ..
-
-Finally, build the project:
-
-.. code-block:: sh
-
-    ninja install
-
-This will build and install the project under **robocup-software/install**.
