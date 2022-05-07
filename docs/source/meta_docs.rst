@@ -1,14 +1,14 @@
 Meta-Docs
 =========
 
-Documentation on how this documentation was set up. Documentation for how to
-write documentation is under "Contributing".
+Documentation on how this documentation was set up.
+
+Documentation for how to write documentation is under "Contributing".
 
 Log
 ---
 
-Kevin Fu
-5/7/2022 
+Kevin Fu, 5/7/2022 
 
 First, big thanks to Oswin So, who wrote `this PR <https://github.com/RoboJackets/robocup-software/pull/1574>`_ 
 setting up most of the framework for these docs. That said, I've made some

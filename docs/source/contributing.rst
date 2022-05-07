@@ -41,13 +41,13 @@ Finally, if you look at the source files for these docs, you'll notice they are
 nicely formatted to have a max line length of 80 chars. With Vim you can do
 that with a simple
 
-.. code-block::vim
+.. code-block::
 
    gq<motion>
 
 For instance: ``gqq`` formats the current line. The above paragraph was
-formatted with ``gqap`` ("around paragraph"). Be careful of breaking links when you do
-this. (I'm sure modern IDEs have a similar feature, but I don't use an IDE, so
-I wouldn't know. -Kevin Fu)
+formatted with ``gqap`` ("around paragraph"). Be careful of breaking links when
+you do this. (Modern IDEs should also have a similar feature, but clearly the
+author of these docs is a Vim user.)
 
 For more detail, read "Meta Docs", or use Google.
