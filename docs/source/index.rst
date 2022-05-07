@@ -30,7 +30,8 @@ on your adblocker so that we can continue to host our documentation for free.
 
    self
    getting_started.rst
-   *
+   contributing.rst
+   meta_docs.rst
 
 .. note::
 
