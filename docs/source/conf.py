@@ -6,7 +6,7 @@ import pathlib
 
 # -- Project information -----------------------------------------------------
 
-project = "rj_robocup"
+project = "RJ RC Software"
 copyright = "2022, Kevin Fu"
 author = "Oswin So"
 
