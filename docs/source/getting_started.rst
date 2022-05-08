@@ -5,7 +5,7 @@ Installation
 ------------
 
 We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
-are an Ubuntu 20.04 machine before continuing.
+are on an Ubuntu 20.04 machine before continuing.
 
 First, clone the repository from GitHub:
 

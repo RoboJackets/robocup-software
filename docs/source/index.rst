@@ -6,17 +6,17 @@
 Welcome
 ===================================================
 
-This is the documentation for RoboJackets' RoboCup Software team. We are a
-primarily undergraduate robotics team affiliated with Georgia Tech who compete
-in Division B of the RoboCup Small Size League. See 
-`their website <https://ssl.robocup.org/about/>`_ for 
+This is the documentation for `RoboJackets' <https://robojackets.org/>`_ 
+RoboCup Software team. We are a primarily undergraduate robotics team from
+Georgia Tech who compete in Division B of the RoboCup Small Size League. See 
+the `RoboCup SSL website <https://ssl.robocup.org/about/>`_ for 
 more details on the competition.
 
 .. note::
 
    This project is under active development.
 
-This page is hosted for free by ReadTheDocs, who use 
+This page is hosted for free by ReadTheDocs thanks to
 `ethical ads, <https://docs.readthedocs.io/en/stable/advertising/ethical-advertising.html>`_
 which are non-obtrusive and don't save or track user data. If you have a spare
 minute, `whitelist ReadTheDocs <https://docs.readthedocs.io/en/stable/advertising/ad-blocking.html>`_
