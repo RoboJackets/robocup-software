@@ -13,3 +13,6 @@
 [submodule "external/sdlcontrollerdb"]
 	path = external/sdlcontrollerdb
 	url = https://github.com/gabomdq/SDL_GameControllerDB
+[submodule "external/joystick_ros2"]
+	path = external/joystick_ros2
+	url = https://github.com/kasohrab/joystick_ros2
