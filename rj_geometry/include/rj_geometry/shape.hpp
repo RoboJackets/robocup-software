@@ -11,7 +11,7 @@ class Segment;
  * The shape class provides the interface to all shapes that are subclasses.
  *
  * TODO(Kevin): do we use boost python anymore? more likely this docstring
- * was never updated (4/29/21 at time of reading)
+ * was never updated (4/29/22 at time of reading)
  *
  * We expose this class and its subclasses to python through boost python, which
  * unfortunately handles abstract base classes very strangely.  The only way I
