@@ -36,7 +36,7 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
         // ros_debug_drawer.hpp and that's incredibly confusing
         request.debug_drawer->draw_circle(Circle(goal_point, static_cast<float>(draw_radius)),
                                           draw_color);
-        // TODO: DELETE ME!
+        // TODO(Kevin): DELETE ME!
         Point pt_a = Point(2.0, 0.5);
         Point pt_b = Point(2.0, 8.5);
         request.debug_drawer->draw_segment(Segment(pt_a, pt_b));
