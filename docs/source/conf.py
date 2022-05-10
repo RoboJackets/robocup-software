@@ -225,7 +225,7 @@ def generate_doxygen_xml(app: sphinx.application.Sphinx) -> None:
     """
     # Define all the paths.
     cwd = pathlib.Path().resolve()
-    project_dir = cwd.parent.parent
+    project_dir = cwd.parent
 
     input_dir = (project_dir / "soccer").resolve()
     output_dir = (cwd / "build").resolve()
