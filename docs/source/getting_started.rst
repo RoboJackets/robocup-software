@@ -20,14 +20,14 @@ setup script to install all required dependencies:
 
     cd robocup-software
     ./util/ubuntu-setup
-    
+
 And setup git submodules:
 
 .. code-block:: bash
 
     git submodule init
     git submodule update
-    
+
 
 Running The First Time
 ----------------------
@@ -36,9 +36,35 @@ Let's run the stack! We'll use the ER-Force simulator to simulate the vision
 data we'd get from a real field camera setup. (Read the "Welcome" page if that
 sentence made no sense to you.)
 
-TODO(Prahbanjan): add instructions for ER-force sim launch here
+To download the ER-Force Simulator, git clone from the following repo:
 
-First, make sure you're on the most updated version of ``ros2`` branch. This is
+.. code-block:: sh
+
+   git clone https://github.com/robotics-erlangen/framework.git
+
+Change directory into the recently cloned repo
+
+Run the following code line by line
+
+.. code-block:: sh
+
+    mkdir build && cd build
+    cmake ..
+    make simulator-cli
+
+This builds an executable in ``framework/build/bin``.
+
+Open a new terminal window and change directory into ``framework/build/bin``. In this folder, there should be a file named ``simulator-cli``.
+
+Run this file by doing the following
+
+.. code-block:: sh
+
+    ./simulator-cli
+
+This will run the ER-Force Simulator to test your code
+
+Now, make sure you're on the most updated version of ``ros2`` branch. This is
 where the latest working version of our codebase exists. (See "Github" doc.
 --TODO(Kevin): transfer this to docs--)
 
@@ -107,7 +133,7 @@ take advantage of some neat shortcuts. These shortcuts all depend on the
 following knowledge:
 
 Sourcing only needs to happen every time a new terminal is opened, and
-building only needs to happen when C++ or launch.py files are changed. 
+building only needs to happen when C++ or launch.py files are changed.
 
 (Python is not a compiled language; thus, those files do not need to be built
 when changed.)
@@ -123,7 +149,7 @@ terminal, you can launch sim with:
    make run-sim
 
 ``source.bash`` is an alias for the two source commands in the above section,
-and ``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``. 
+and ``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
 
 Since Python is not compiled, if you're exclusively working on Python files,
 and staying in one terminal, it's likely that you'll mostly only need:
