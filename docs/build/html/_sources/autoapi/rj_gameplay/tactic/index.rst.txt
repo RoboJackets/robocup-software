@@ -1,0 +1,25 @@
+:py:mod:`rj_gameplay.tactic`
+============================
+
+.. py:module:: rj_gameplay.tactic
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   basic_seek/index.rst
+   clear_tactic/index.rst
+   dumb_tactic/index.rst
+   goalie_tactic/index.rst
+   line_tactic/index.rst
+   move_tactic/index.rst
+   nmark_tactic/index.rst
+   pass_tactic/index.rst
+   prep_move/index.rst
+   striker_tactic/index.rst
+   wall_tactic/index.rst
+
+

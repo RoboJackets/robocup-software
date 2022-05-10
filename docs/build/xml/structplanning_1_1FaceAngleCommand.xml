@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1FaceAngleCommand" kind="struct" language="C++" prot="public">
+    <compoundname>planning::FaceAngleCommand</compoundname>
+    <basecompoundref refid="structplanning_1_1RotationCommand" prot="public" virt="non-virtual">planning::RotationCommand</basecompoundref>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1FaceAngleCommand_1af200285c4b9d284d28fc1dac3a7b863b" prot="public" static="no" mutable="no">
+        <type>const float</type>
+        <definition>const float planning::FaceAngleCommand::target_angle</definition>
+        <argsstring></argsstring>
+        <name>target_angle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" line="49" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structplanning_1_1FaceAngleCommand_1acbe73eeddfbbadc405dd3981fc0c2910" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::FaceAngleCommand::FaceAngleCommand</definition>
+        <argsstring>(float radians)</argsstring>
+        <name>FaceAngleCommand</name>
+        <param>
+          <type>float</type>
+          <declname>radians</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" line="46" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" bodystart="46" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="structplanning_1_1FaceAngleCommand_1a844ac34f31fc5a3b8614d5dcbd9576d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::string</type>
+        <definition>std::string planning::FaceAngleCommand::print</definition>
+        <argsstring>() const override</argsstring>
+        <name>print</name>
+        <reimplements refid="structplanning_1_1RotationCommand_1a6b99729ebc36dec076ee2d3896708613">print</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" line="51" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" bodystart="51" bodyend="55"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>planning::FaceAngleCommand</label>
+        <link refid="structplanning_1_1FaceAngleCommand"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>planning::RotationCommand</label>
+        <link refid="structplanning_1_1RotationCommand"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>planning::FaceAngleCommand</label>
+        <link refid="structplanning_1_1FaceAngleCommand"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>planning::RotationCommand</label>
+        <link refid="structplanning_1_1RotationCommand"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" line="45" column="46" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/rotation_command.hpp" bodystart="45" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1RotationCommand_1ac8856ebe4df2bcfac6b6669f8ef4627b" prot="public" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>CommandType</name></member>
+      <member refid="structplanning_1_1RotationCommand_1ac8856ebe4df2bcfac6b6669f8ef4627baff50948843334c56b642472f5b269872" prot="public" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>FaceAngle</name></member>
+      <member refid="structplanning_1_1FaceAngleCommand_1acbe73eeddfbbadc405dd3981fc0c2910" prot="public" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>FaceAngleCommand</name></member>
+      <member refid="structplanning_1_1RotationCommand_1ac8856ebe4df2bcfac6b6669f8ef4627ba141c809952d95d1a34d98ef780fa9bb8" prot="public" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>FacePoint</name></member>
+      <member refid="structplanning_1_1RotationCommand_1abbbbf1b6098ac0cca72ae00f7136f970" prot="public" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>get_command_type</name></member>
+      <member refid="structplanning_1_1RotationCommand_1ac8856ebe4df2bcfac6b6669f8ef4627bae43a07f6b04f39857a25baee85c0e30c" prot="public" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>None</name></member>
+      <member refid="structplanning_1_1FaceAngleCommand_1a844ac34f31fc5a3b8614d5dcbd9576d6" prot="public" virt="virtual"><scope>planning::FaceAngleCommand</scope><name>print</name></member>
+      <member refid="structplanning_1_1RotationCommand_1a79f35212d98bb0eb51b15b52ed1b8dde" prot="protected" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>RotationCommand</name></member>
+      <member refid="structplanning_1_1FaceAngleCommand_1af200285c4b9d284d28fc1dac3a7b863b" prot="public" virt="non-virtual"><scope>planning::FaceAngleCommand</scope><name>target_angle</name></member>
+      <member refid="structplanning_1_1RotationCommand_1ac38d7930519a50e5b092f02672c3d7f1" prot="public" virt="virtual"><scope>planning::FaceAngleCommand</scope><name>~RotationCommand</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceplanning_1_1testing" kind="namespace" language="C++">
+    <compoundname>planning::testing</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="conversion__tests_8cpp_1a1f1a8e3dca97a07aa7e4d39d5ca141b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, EmptyMotionCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type>EmptyMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="56" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="56" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1aad72191e932a9e34c40a5620b5f0eb82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, PathTargetCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1PathTargetCommand" kindref="compound">PathTargetCommand</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="59" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="59" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a0ad2196c84470443b71e6c4218c6717a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, WorldVelCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1WorldVelCommand" kindref="compound">WorldVelCommand</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="66" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="66" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a619dc1b3e004342298af3069bd7c5194" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, PivotCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1PivotCommand" kindref="compound">PivotCommand</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="71" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="71" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a771dfcdd30d736abcb314dc054cadabd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, SettleCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1SettleCommand" kindref="compound">SettleCommand</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="76" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="76" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a88b2468df7c6d10b41614603a694124c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, CollectCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1CollectCommand" kindref="compound">CollectCommand</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="81" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1afbd4b532bbf0970a355f5ecf9636bb14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, LineKickCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1LineKickCommand" kindref="compound">LineKickCommand</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="84" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="84" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a485795ed535ad17ba234406bd512e0ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, InterceptCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1InterceptCommand" kindref="compound">InterceptCommand</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="89" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="89" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a0a8244bc89f644c33546df992ef27ed2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, MotionCommand)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type>MotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="94" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="94" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1ab3d998db40fa70dcf844be5523c9126d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::testing::TEST</definition>
+        <argsstring>(RosConversions, Trajectory)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>RosConversions</type>
+        </param>
+        <param>
+          <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="105" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="105" bodyend="121"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="53" column="17"/>
+  </compounddef>
+</doxygen>

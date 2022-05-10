@@ -1,0 +1,25 @@
+:py:mod:`rj_gameplay.play`
+==========================
+
+.. py:module:: rj_gameplay.play
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   basic_defense/index.rst
+   basic_offense/index.rst
+   defend_restart/index.rst
+   defensive_clear/index.rst
+   keepaway/index.rst
+   kickoff_play/index.rst
+   line_up/index.rst
+   penalty_defense/index.rst
+   penalty_offense/index.rst
+   prep_penalty_offense/index.rst
+   restart/index.rst
+
+

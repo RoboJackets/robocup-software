@@ -1,0 +1,49 @@
+:py:mod:`rj_gameplay.skill.kick`
+================================
+
+.. py:module:: rj_gameplay.skill.kick
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.skill.kick.Kick
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.skill.kick.KICK_DOT_THRESHOLD
+   rj_gameplay.skill.kick.KICK_BALL_SPEED_THRESHOLD
+
+
+.. py:data:: KICK_DOT_THRESHOLD
+   :annotation: = 0.4
+
+   
+
+.. py:data:: KICK_BALL_SPEED_THRESHOLD
+   :annotation: = 0.9
+
+   
+
+.. py:class:: Kick(robot: stp.rc.Robot, chip: bool, kick_speed: float, threshold: float = 0.02)
+
+   Bases: :py:obj:`stp.skill.Skill`
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> rj_msgs.msg.RobotIntent
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01planning_1_1CollectCommand_00_01rj__msgs_1_1msg_1_1CollectMotionCommand_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; planning::CollectCommand, rj_msgs::msg::CollectMotionCommand &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1CollectCommand_00_01rj__msgs_1_1msg_1_1CollectMotionCommand_01_4_1a89ce49c34de395b083ac888d1e3c4df2" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::CollectMotionCommand</type>
+        <definition>static rj_msgs::msg::CollectMotionCommand rj_convert::RosConverter&lt; planning::CollectCommand, rj_msgs::msg::CollectMotionCommand &gt;::to_ros</definition>
+        <argsstring>([[maybe_unused]] const planning::CollectCommand &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1CollectCommand" kindref="compound">planning::CollectCommand</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="200" column="47" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="200" bodyend="203"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1CollectCommand_00_01rj__msgs_1_1msg_1_1CollectMotionCommand_01_4_1acd43b6e0465d122932ce5ae6af4e4698" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structplanning_1_1CollectCommand" kindref="compound">planning::CollectCommand</ref></type>
+        <definition>static planning::CollectCommand rj_convert::RosConverter&lt; planning::CollectCommand, rj_msgs::msg::CollectMotionCommand &gt;::from_ros</definition>
+        <argsstring>([[maybe_unused]] const rj_msgs::msg::CollectMotionCommand &amp;from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const rj_msgs::msg::CollectMotionCommand &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="205" column="37" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="205" bodyend="208"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="199" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="199" bodyend="209"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1CollectCommand_00_01rj__msgs_1_1msg_1_1CollectMotionCommand_01_4_1acd43b6e0465d122932ce5ae6af4e4698" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::CollectCommand, rj_msgs::msg::CollectMotionCommand &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1CollectCommand_00_01rj__msgs_1_1msg_1_1CollectMotionCommand_01_4_1a89ce49c34de395b083ac888d1e3c4df2" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::CollectCommand, rj_msgs::msg::CollectMotionCommand &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

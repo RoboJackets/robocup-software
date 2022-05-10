@@ -1,0 +1,436 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespacerj__convert" kind="namespace" language="C++">
+    <compoundname>rj_convert</compoundname>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01BallState_00_01BallState_1_1Msg_01_4" prot="public">rj_convert::RosConverter&lt; BallState, BallState::Msg &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01GameSettings_00_01GameSettings_1_1Msg_01_4" prot="public">rj_convert::RosConverter&lt; GameSettings, GameSettings::Msg &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01MatchState_00_01rj__msgs_1_1msg_1_1MatchState_01_4" prot="public">rj_convert::RosConverter&lt; MatchState, rj_msgs::msg::MatchState &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01MatchState_1_1Period_00_01uint8__t_01_4" prot="public">rj_convert::RosConverter&lt; MatchState::Period, uint8_t &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01MotionSetpoint_00_01MotionSetpoint_1_1Msg_01_4" prot="public">rj_convert::RosConverter&lt; MotionSetpoint, MotionSetpoint::Msg &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1CollectCommand_00_01rj__msgs_1_1msg_1_1CollectMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::CollectCommand, rj_msgs::msg::CollectMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1EmptyCommand_00_01rj__msgs_1_1msg_1_1EmptyMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::EmptyCommand, rj_msgs::msg::EmptyMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1InterceptCommand_00_01rj__msgs_1_1msg_1_1InterceptMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::InterceptCommand, rj_msgs::msg::InterceptMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1LinearMotionInstant_00_01rj__msgs_1_1msg_1_1LinearMotionInstant_01_4" prot="public">rj_convert::RosConverter&lt; planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1LineKickCommand_00_01rj__msgs_1_1msg_1_1LineKickMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1MotionCommand_00_01rj__msgs_1_1msg_1_1MotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::MotionCommand, rj_msgs::msg::MotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1PathTargetCommand_00_01rj__msgs_1_1msg_1_1PathTargetMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1PivotCommand_00_01rj__msgs_1_1msg_1_1PivotMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::PivotCommand, rj_msgs::msg::PivotMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1RobotInstant_00_01rj__msgs_1_1msg_1_1RobotInstant_01_4" prot="public">rj_convert::RosConverter&lt; planning::RobotInstant, rj_msgs::msg::RobotInstant &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1SettleCommand_00_01rj__msgs_1_1msg_1_1SettleMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::SettleCommand, rj_msgs::msg::SettleMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1Trajectory_00_01rj__msgs_1_1msg_1_1Trajectory_01_4" prot="public">rj_convert::RosConverter&lt; planning::Trajectory, rj_msgs::msg::Trajectory &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1WorldVelCommand_00_01rj__msgs_1_1msg_1_1WorldVelMotionCommand_01_4" prot="public">rj_convert::RosConverter&lt; planning::WorldVelCommand, rj_msgs::msg::WorldVelMotionCommand &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01PlayState_00_01rj__msgs_1_1msg_1_1PlayState_01_4" prot="public">rj_convert::RosConverter&lt; PlayState, rj_msgs::msg::PlayState &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01PlayState_1_1Restart_00_01uint8__t_01_4" prot="public">rj_convert::RosConverter&lt; PlayState::Restart, uint8_t &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01PlayState_1_1State_00_01uint8__t_01_4" prot="public">rj_convert::RosConverter&lt; PlayState::State, uint8_t &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01RobotIntent_00_01rj__msgs_1_1msg_1_1RobotIntent_01_4" prot="public">rj_convert::RosConverter&lt; RobotIntent, rj_msgs::msg::RobotIntent &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01RobotState_00_01RobotState_1_1Msg_01_4" prot="public">rj_convert::RosConverter&lt; RobotState, RobotState::Msg &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01TeamInfo_00_01rj__msgs_1_1msg_1_1TeamInfo_01_4" prot="public">rj_convert::RosConverter&lt; TeamInfo, rj_msgs::msg::TeamInfo &gt;</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01WorldState_00_01WorldState_1_1Msg_01_4" prot="public">rj_convert::RosConverter&lt; WorldState, WorldState::Msg &gt;</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="motion__setpoint_8hpp_1a36b9daa4a4944c7c353dec8472cee6cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(MotionSetpoint, MotionSetpoint::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref></type>
+        </param>
+        <param>
+          <type>MotionSetpoint::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="44" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" declline="44" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="game__settings_8hpp_1a27b3ecd05ffb5b4875313a49aa386ddc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(GameSettings, GameSettings::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structGameSettings" kindref="compound">GameSettings</ref></type>
+        </param>
+        <param>
+          <type>GameSettings::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="71" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" declline="71" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="game__state_8hpp_1a14523c268390afd0cfa914fc80187731" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(MatchState, MatchState::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structMatchState" kindref="compound">MatchState</ref></type>
+        </param>
+        <param>
+          <type>MatchState::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="260" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" declline="260" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="game__state_8hpp_1ad561abf1af95d55929a41f10df417a2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(PlayState, PlayState::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structPlayState" kindref="compound">PlayState</ref></type>
+        </param>
+        <param>
+          <type>PlayState::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="302" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" declline="302" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="instant_8hpp_1ab8873016fd046ba1658a9b2d2729b2d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::LinearMotionInstant, planning::LinearMotionInstant::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">planning::LinearMotionInstant</ref></type>
+        </param>
+        <param>
+          <type>planning::LinearMotionInstant::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="118" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" declline="118" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="instant_8hpp_1a35981c146af2c49402a747411b607044" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::RobotInstant, planning::RobotInstant::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1RobotInstant" kindref="compound">planning::RobotInstant</ref></type>
+        </param>
+        <param>
+          <type>planning::RobotInstant::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="135" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" declline="135" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1af40856a0ec821c40465519805a19b59c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::EmptyCommand, rj_msgs::msg::EmptyMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1EmptyCommand" kindref="compound">planning::EmptyCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::EmptyMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="106" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="106" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1ab355f02ced73488c2fad59db119c864c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1PathTargetCommand" kindref="compound">planning::PathTargetCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::PathTargetMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="145" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="145" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1aaf4cd1c99cac6acc536c5f73b8a54457" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::WorldVelCommand, rj_msgs::msg::WorldVelMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1WorldVelCommand" kindref="compound">planning::WorldVelCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::WorldVelMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="159" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="159" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1aafe9d35d502fe4310870bb822731038c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::PivotCommand, rj_msgs::msg::PivotMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1PivotCommand" kindref="compound">planning::PivotCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::PivotMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="175" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="175" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1a68136590c8a2a50382c3e9d5ef9018be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::SettleCommand, rj_msgs::msg::SettleMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1SettleCommand" kindref="compound">planning::SettleCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::SettleMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="196" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="196" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1acaf6e23fcc77c1036a113ba3cf17ea1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::CollectCommand, rj_msgs::msg::CollectMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1CollectCommand" kindref="compound">planning::CollectCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::CollectMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="211" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="211" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1adcaf6a4b795c5aa8bd592a23f35a0f3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1LineKickCommand" kindref="compound">planning::LineKickCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::LineKickMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="227" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="227" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1ae3dde12af24c4f2fb5e8d6ecd9ab861c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::InterceptCommand, rj_msgs::msg::InterceptMotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structplanning_1_1InterceptCommand" kindref="compound">planning::InterceptCommand</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::InterceptMotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="243" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="243" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__command_8hpp_1a7a809264e7cc070e0b6eeeab970bfd15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::MotionCommand, rj_msgs::msg::MotionCommand)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type>planning::MotionCommand</type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::MotionCommand</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="296" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" declline="296" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="trajectory_8hpp_1a1568e828872a38ea6da7247e017e8ee0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(planning::Trajectory, planning::Trajectory::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref></type>
+        </param>
+        <param>
+          <type>planning::Trajectory::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp" line="462" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp" declline="462" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="robot__intent_8hpp_1a7f105d96d20b521e4bea655824b1cde2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(RobotIntent, rj_msgs::msg::RobotIntent)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structRobotIntent" kindref="compound">RobotIntent</ref></type>
+        </param>
+        <param>
+          <type>rj_msgs::msg::RobotIntent</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="61" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" declline="61" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="team__info_8hpp_1a5631bc0db2274cd458f6cd6f72f6c299" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(TeamInfo, TeamInfo::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="classTeamInfo" kindref="compound">TeamInfo</ref></type>
+        </param>
+        <param>
+          <type>TeamInfo::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/team_info.hpp" line="98" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/team_info.hpp" declline="98" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="world__state_8hpp_1afe9641f64edd3812399323ee7dfaea71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(RobotState, RobotState::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structRobotState" kindref="compound">RobotState</ref></type>
+        </param>
+        <param>
+          <type>RobotState::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="209" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" declline="209" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="world__state_8hpp_1acc5a1f591530a69bfefc2181662bb505" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(BallState, BallState::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structBallState" kindref="compound">BallState</ref></type>
+        </param>
+        <param>
+          <type>BallState::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="232" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" declline="232" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="world__state_8hpp_1a59fcbc145f839194308c4f67e6df0826" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>rj_convert::ASSOCIATE_CPP_ROS</definition>
+        <argsstring>(WorldState, WorldState::Msg)</argsstring>
+        <name>ASSOCIATE_CPP_ROS</name>
+        <param>
+          <type><ref refid="structWorldState" kindref="compound">WorldState</ref></type>
+        </param>
+        <param>
+          <type>WorldState::Msg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="255" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" declline="255" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="28" column="20"/>
+  </compounddef>
+</doxygen>

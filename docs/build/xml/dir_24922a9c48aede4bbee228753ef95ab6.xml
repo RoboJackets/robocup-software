@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_24922a9c48aede4bbee228753ef95ab6" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src/soccer/control</compoundname>
+    <innerfile refid="control__node__main_8cpp">control_node_main.cpp</innerfile>
+    <innerfile refid="manipulator__control_8cpp">manipulator_control.cpp</innerfile>
+    <innerfile refid="manipulator__control_8hpp">manipulator_control.hpp</innerfile>
+    <innerfile refid="motion__control_8cpp">motion_control.cpp</innerfile>
+    <innerfile refid="motion__control_8hpp">motion_control.hpp</innerfile>
+    <innerfile refid="motion__control__node_8cpp">motion_control_node.cpp</innerfile>
+    <innerfile refid="motion__control__node_8hpp">motion_control_node.hpp</innerfile>
+    <innerfile refid="motion__control__test_8cpp">motion_control_test.cpp</innerfile>
+    <innerfile refid="motion__setpoint_8hpp">motion_setpoint.hpp</innerfile>
+    <innerfile refid="control_2trapezoidal__motion_8cpp">trapezoidal_motion.cpp</innerfile>
+    <innerfile refid="control_2trapezoidal__motion_8hpp">trapezoidal_motion.hpp</innerfile>
+    <innerfile refid="control_2trapezoidal__motion__test_8cpp">trapezoidal_motion_test.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/"/>
+  </compounddef>
+</doxygen>

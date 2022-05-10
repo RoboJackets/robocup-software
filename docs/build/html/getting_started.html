@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; RJ RC Software  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Our Stack" href="our_stack.html" />
+    <link rel="prev" title="Welcome" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> RJ RC Software
+            <img src="_static/RoboBuzz.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-first-time">Running The First Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-again">Running Again</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="our_stack.html">Our Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#ros2">ROS2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#vision">Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#gameplay">Gameplay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#motion-planning">Motion Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#radio">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#referee">Referee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#ui">UI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#code">Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#docs">Docs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="meta_docs.html">Meta-Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="meta_docs.html#log">Log</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/setup/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">setup</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/setup/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/setup/index.html#setup.PACKAGE_NAME">PACKAGE_NAME</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_rc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_rc</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_rc/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_rc/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_pass_or_shoot/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_pass_or_shoot</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_pass_or_shoot/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_pass_or_shoot/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_tactic</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_tactic/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_tactic/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_tactic/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_play</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_play/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_play/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_play/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_skill</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_skill/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_skill/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_skill/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_cost/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_cost</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_cost/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_cost/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_naive_assignment/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_naive_assignment</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_naive_assignment/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_naive_assignment/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_naive_assignment/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_typed_key_dict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/rj_gameplay/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/rj_gameplay/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/eval/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.eval</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.play</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/role/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/situation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.situation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.skill</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.tactic</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/rj_gameplay/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/basic_play_selector/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.basic_play_selector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/gameplay_node/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.gameplay_node</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/wall_calculations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">wall_calculations</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/wall_calculations/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/wall_calculations/index.html#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/wall_calculations/index.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/ball_classifier/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ball_classifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ball_classifier/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/ball_classifier/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/ball_classifier/index.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/stp/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/stp/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/action/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.action</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/formations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.formations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.play</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/role/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/situation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.situation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.skill</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.tactic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/stp/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/global_parameters/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.global_parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/local_parameters/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.local_parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/pylint_stp/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.pylint_stp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/rc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.rc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/testing/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.testing</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RJ RC Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<p>We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
+are on an Ubuntu 20.04 machine before continuing.</p>
+<p>First, clone the repository from GitHub:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git://github.com/RoboJackets/robocup-software
+</pre></div>
+</div>
+<p>Then change directories (<code class="docutils literal notranslate"><span class="pre">cd</span></code>) to the repository you just cloned, and run the
+setup script to install all required dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> robocup-software
+./util/ubuntu-setup
+</pre></div>
+</div>
+<p>And setup git submodules:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git submodule init
+git submodule update
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-the-first-time">
+<h2>Running The First Time<a class="headerlink" href="#running-the-first-time" title="Permalink to this headline"></a></h2>
+<p>Let’s run the stack! We’ll use the ER-Force simulator to simulate the vision
+data we’d get from a real field camera setup. (Read the “Welcome” page if that
+sentence made no sense to you.)</p>
+<p>To download the ER-Force Simulator, git clone from the following repo:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/robotics-erlangen/framework.git
+</pre></div>
+</div>
+<p>Change directory into the recently cloned repo.</p>
+<p>To build the framework, run the following code line by line</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
+cmake ..
+make simulator-cli
+</pre></div>
+</div>
+<p>This builds an executable in <code class="docutils literal notranslate"><span class="pre">framework/build/bin</span></code>.</p>
+<p>Open a new terminal window and change directory into <code class="docutils literal notranslate"><span class="pre">framework/build/bin</span></code>. In this folder, there should be a file named <code class="docutils literal notranslate"><span class="pre">simulator-cli</span></code>.</p>
+<p>Run this file by doing the following:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./simulator-cli
+</pre></div>
+</div>
+<p>This will run the ER-Force Simulator to test your code.</p>
+<p>Now, make sure you’re on the most updated version of <code class="docutils literal notranslate"><span class="pre">ros2</span></code> branch. This is
+where the latest working version of our codebase exists. (See “Github” doc.
+–TODO(Kevin): transfer this to docs–)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git pull
+git checkout ros2
+</pre></div>
+</div>
+<p>Then, source the ROS setup file. This ensures your shell can use ROS commands.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> /opt/ros/foxy/setup.bash
+</pre></div>
+</div>
+<p>If you’re on zsh, source the <code class="docutils literal notranslate"><span class="pre">.zsh</span></code> version instead. (If you don’t know what
+zsh is, you’re not on zsh.)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> /opt/ros/foxy/setup.zsh
+</pre></div>
+</div>
+<p>Then build the codebase. This compiles all of our code.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make perf
+</pre></div>
+</div>
+<p>(This step will take upwards of 15 minutes on a VM.)</p>
+<p>After building, we need to source our local setup. Run the following in the
+<code class="docutils literal notranslate"><span class="pre">robocup-software</span></code> directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.bash
+</pre></div>
+</div>
+<p>Again, if you’re on zsh, source the <code class="docutils literal notranslate"><span class="pre">.zsh</span></code> version instead:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> install/setup.zsh
+</pre></div>
+</div>
+<p>Now we are good to go. As a sanity check, the following command should print
+out <code class="docutils literal notranslate"><span class="pre">rj_robocup</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 pkg list <span class="p">|</span> grep rj_robocup
+</pre></div>
+</div>
+<p>To run sim, run the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2 launch rj_robocup sim.launch.py
+</pre></div>
+</div>
+<p>If everything is working properly, you should see the following window show up.</p>
+<img alt="soccer.png" src="soccer.png" />
+</div>
+<div class="section" id="running-again">
+<h2>Running Again<a class="headerlink" href="#running-again" title="Permalink to this headline"></a></h2>
+<p>Now that you know how to source dependencies, build, and run our code, you can
+take advantage of some neat shortcuts. These shortcuts all depend on the
+following knowledge:</p>
+<p>Sourcing only needs to happen every time a new terminal is opened, and
+building only needs to happen when C++ or launch.py files are changed.</p>
+<p>(Python is not a compiled language; thus, those files do not need to be built
+when changed.)</p>
+<p>So, after you’ve built once, the <code class="docutils literal notranslate"><span class="pre">install/setup.bash</span></code> script will exist in
+your version of the repo, and you won’t have to build again until you make
+changes to C++ or launch files. That means the next time you open up a new
+terminal, you can launch sim with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>. ./source.bash
+make run-sim
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">source.bash</span></code> is an alias for the two source commands in the above section,
+and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">run-sim</span></code> is an alias for <code class="docutils literal notranslate"><span class="pre">ros2</span> <span class="pre">launch</span> <span class="pre">rj_robocup</span> <span class="pre">sim.launch.py</span></code>.</p>
+<p>Since Python is not compiled, if you’re exclusively working on Python files,
+and staying in one terminal, it’s likely that you’ll mostly only need:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make run-sim
+</pre></div>
+</div>
+<p>However, if you’re working on C++ or launch files (or if someone else changes
+them on a different branch and you want their changes), you’ll need to build
+again. If you’ve already built once, though, you can build again more quickly
+with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make again
+. ./source.bash
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">source.bash</span></code> line is necessary to source the file in <code class="docutils literal notranslate"><span class="pre">install/</span></code>, which
+is refreshed on each build. (Note: this does not build any CMake-related files,
+so if you’re editing those, use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">perf</span></code> as usual.)</p>
+<p>There are a few different ways to build our code. See the makefile for more
+details, but in short:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make all         <span class="c1"># builds with full debugging symbols</span>
+make debug       <span class="c1"># alias for make all</span>
+make all-release <span class="c1"># builds with 0 debugging symbols</span>
+make perf        <span class="c1"># builds with some debugging symbols; preferred method</span>
+</pre></div>
+</div>
+<p>TODO(Kevin): add description of running on field comp (move that md file over too)</p>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
+<p>The most common issue when running our code is forgetting to source after
+opening a new terminal. For that, run the source commands in “Running the First
+Time” above, or use the shortcut</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>. ./source.bash
+</pre></div>
+</div>
+<p>The next most common issue is forgetting to build after changing a C++ file or
+launch script. Resolve that by building to see your changes. Again, the default
+is</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make perf
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">perf</span></code> fails, your build system may be corrupted. Clean out your
+build files with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make clean
+</pre></div>
+</div>
+<p>then build again. (Note: you will have to manually re-source the install/ file
+after building: see above.)</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code> fails, it may be something wrong with your branch or machine.
+Checkout ros2 (the default branch) and try building there. If that succeeds,
+your machine is fine, so the problem must be with your branch’s code.</p>
+<p>If ros2 fails to build and run, there is an issue with your machine, since
+ros2’s build-ability is checked by GitHub Actions on every commit. Try re-doing
+the steps in Installation (above) to make sure your machine has all the
+required dependencies. If it outputs any errors when you do so, Google them!</p>
+<p>As a final sanity check, if you’ve tried all of the above, delete your copy of
+the robocup-software/ repo, and start over completely.</p>
+<p>If you’ve gotten to this point and you’re still unable to build and run the
+stack, ask an older member.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="our_stack.html" class="btn btn-neutral float-right" title="Our Stack" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Kevin Fu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

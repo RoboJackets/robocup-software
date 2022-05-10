@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="testing_2rj__vision__filter_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="testing_2rj__vision__filter_2CMakeLists_8txt_1a4a8246b12f0f51a895d515746c2fab4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(RJ_VISION_FILTER_TESTING_SRC camera_ball_test.cpp kalman_ball_test.cpp world_ball_test.cpp camera_robot_test.cpp kalman_robot_test.cpp world_robot_test.cpp ball_bounce_test.cpp camera_test.cpp) target_sources(test-soccer PRIVATE $</argsstring>
+        <name>set</name>
+        <param>
+          <type>RJ_VISION_FILTER_TESTING_SRC camera_ball_test.cpp kalman_ball_test.cpp world_ball_test.cpp camera_robot_test.cpp kalman_robot_test.cpp world_robot_test.cpp ball_bounce_test.cpp camera_test.</type>
+          <declname>cpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/testing/rj_vision_filter/CMakeLists.txt" line="4" column="1" bodyfile="/home/pnayak/robocup-software/soccer/testing/rj_vision_filter/CMakeLists.txt" bodystart="4" bodyend="17"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Set<sp/>Sources</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">set(RJ_VISION_FILTER_TESTING_SRC</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/>camera_ball_test.cpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/>kalman_ball_test.cpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/>world_ball_test.cpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>camera_robot_test.cpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>kalman_robot_test.cpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>world_robot_test.cpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>ball_bounce_test.cpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>camera_test.cpp)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>sources</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">target_sources(test-soccer<sp/>PRIVATE<sp/>${RJ_VISION_FILTER_TESTING_SRC})</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/testing/rj_vision_filter/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

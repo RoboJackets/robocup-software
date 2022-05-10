@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="manipulator__control_8hpp" kind="file" language="C++">
+    <compoundname>manipulator_control.hpp</compoundname>
+    <includes local="no">rclcpp/rclcpp.hpp</includes>
+    <includes local="no">rj_constants/topic_names.hpp</includes>
+    <includes local="no">rj_msgs/msg/manipulator_setpoint.hpp</includes>
+    <includes local="no">rj_msgs/msg/robot_intent.hpp</includes>
+    <includes local="no">rj_param_utils/param.hpp</includes>
+    <includedby refid="motion__control__node_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp</includedby>
+    <includedby refid="manipulator__control_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/control/manipulator_control.cpp</includedby>
+    <incdepgraph>
+      <node id="6">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/manipulator_control.hpp</label>
+        <link refid="manipulator__control_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>rclcpp/rclcpp.hpp</label>
+      </node>
+      <node id="3">
+        <label>rj_constants/topic_names.hpp</label>
+      </node>
+      <node id="4">
+        <label>rj_msgs/msg/manipulator_setpoint.hpp</label>
+      </node>
+      <node id="5">
+        <label>rj_msgs/msg/robot_intent.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/manipulator_control.hpp</label>
+        <link refid="manipulator__control_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp</label>
+        <link refid="motion__control__node_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classcontrol_1_1ManipulatorControl" prot="public">control::ManipulatorControl</innerclass>
+    <innernamespace refid="namespacecontrol">control</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rclcpp/rclcpp.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_constants/topic_names.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_msgs/msg/manipulator_setpoint.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_msgs/msg/robot_intent.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_param_utils/param.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">control<sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="classcontrol_1_1ManipulatorControl" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref><sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>shell_id,<sp/>rclcpp::Node*<sp/>node);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>~<ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>(<ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>&amp;&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>&amp;<sp/>operator=(<ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>&amp;&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>&amp;<sp/>operator=(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>shell_id_;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>rclcpp::Publisher&lt;rj_msgs::msg::ManipulatorSetpoint&gt;::SharedPtr<sp/>manipulator_pub_;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>rclcpp::Subscription&lt;rj_msgs::msg::RobotIntent&gt;::SharedPtr<sp/>intent_sub_;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>control</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/manipulator_control.hpp"/>
+  </compounddef>
+</doxygen>

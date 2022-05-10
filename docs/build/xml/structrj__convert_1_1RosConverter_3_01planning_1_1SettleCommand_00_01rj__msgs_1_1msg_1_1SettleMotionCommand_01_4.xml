@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01planning_1_1SettleCommand_00_01rj__msgs_1_1msg_1_1SettleMotionCommand_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; planning::SettleCommand, rj_msgs::msg::SettleMotionCommand &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1SettleCommand_00_01rj__msgs_1_1msg_1_1SettleMotionCommand_01_4_1ad5f8685c14458242015af11de71a6016" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::SettleMotionCommand</type>
+        <definition>static rj_msgs::msg::SettleMotionCommand rj_convert::RosConverter&lt; planning::SettleCommand, rj_msgs::msg::SettleMotionCommand &gt;::to_ros</definition>
+        <argsstring>(const planning::SettleCommand &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1SettleCommand" kindref="compound">planning::SettleCommand</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="179" column="46" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="179" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1SettleCommand_00_01rj__msgs_1_1msg_1_1SettleMotionCommand_01_4_1aa742e19bb4dfc148b6e58eaef343d432" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structplanning_1_1SettleCommand" kindref="compound">planning::SettleCommand</ref></type>
+        <definition>static planning::SettleCommand rj_convert::RosConverter&lt; planning::SettleCommand, rj_msgs::msg::SettleMotionCommand &gt;::from_ros</definition>
+        <argsstring>(const rj_msgs::msg::SettleMotionCommand &amp;from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <type>const rj_msgs::msg::SettleMotionCommand &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="187" column="36" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="187" bodyend="193"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="178" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="178" bodyend="194"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1SettleCommand_00_01rj__msgs_1_1msg_1_1SettleMotionCommand_01_4_1aa742e19bb4dfc148b6e58eaef343d432" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::SettleCommand, rj_msgs::msg::SettleMotionCommand &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1SettleCommand_00_01rj__msgs_1_1msg_1_1SettleMotionCommand_01_4_1ad5f8685c14458242015af11de71a6016" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::SettleCommand, rj_msgs::msg::SettleMotionCommand &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

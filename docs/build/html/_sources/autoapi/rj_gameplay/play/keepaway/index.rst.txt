@@ -1,0 +1,61 @@
+:py:mod:`rj_gameplay.play.keepaway`
+===================================
+
+.. py:module:: rj_gameplay.play.keepaway
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.play.keepaway.State
+   rj_gameplay.play.keepaway.Keepaway
+
+
+
+
+.. py:class:: State
+
+   Bases: :py:obj:`enum.Enum`
+
+   Generic enumeration.
+
+   Derive from this class to define new enumerations.
+
+   .. py:attribute:: INIT
+      
+
+      
+
+   .. py:attribute:: ACTIVE
+      
+
+      
+
+   .. py:attribute:: ASSIGN_ROLES
+      
+
+      
+
+
+.. py:class:: Keepaway
+
+   Bases: :py:obj:`stp.play.Play`
+
+   Play that passes repeatedly, effectively playing keepaway.
+   See tick() for more details.
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> List[rj_msgs.msg.RobotIntent]
+
+      init: assign one pass tactic, several seekers
+      pass_active: execute that one pass
+      when tactic needs new roles: assign_roles -> active
+      when pass_done: return to init
+      (the effect is to pass indefinitely)
+
+
+

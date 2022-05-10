@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classStyleSheetManager" kind="class" language="C++" prot="public">
+    <compoundname>StyleSheetManager</compoundname>
+    <includes refid="style__sheet__manager_8hpp" local="no">style_sheet_manager.hpp</includes>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classStyleSheetManager_1a5fbff84a4b547f1d1619ff68c4042ce3" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StyleSheetManager::setStyleSheet</definition>
+        <argsstring>(QMainWindow *window, const QString &amp;path)</argsstring>
+        <name>setStyleSheet</name>
+        <param>
+          <type>QMainWindow *</type>
+          <declname>window</declname>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the style sheet to the qt style file specified by path</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>window</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the QMainWindow to apply the style to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>path</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The path to the style file to apply Should be relative to the run directory.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classStyleSheetManager_1a5b686f7d944d1d56bb2af008fe2f7b31" kindref="member">changeStyleSheet()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.hpp" line="19" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.cpp" bodystart="26" bodyend="33"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classStyleSheetManager_1a5b686f7d944d1d56bb2af008fe2f7b31" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StyleSheetManager::changeStyleSheet</definition>
+        <argsstring>(QMainWindow *window, const QString &amp;name)</argsstring>
+        <name>changeStyleSheet</name>
+        <param>
+          <type>QMainWindow *</type>
+          <declname>window</declname>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Changes the style sheet to the style specified by name</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>window</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the window to apply the style to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the name of the style to apply. We must know about this style To add new styles, add them to the hashmap in <ref refid="classStyleSheetManager" kindref="compound">StyleSheetManager</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.hpp" line="29" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.cpp" bodystart="16" bodyend="24"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A static class to help manage stylesheets for soccer </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.hpp" line="8" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.hpp" bodystart="8" bodyend="30"/>
+    <listofallmembers>
+      <member refid="classStyleSheetManager_1a5b686f7d944d1d56bb2af008fe2f7b31" prot="public" virt="non-virtual"><scope>StyleSheetManager</scope><name>changeStyleSheet</name></member>
+      <member refid="classStyleSheetManager_1a5fbff84a4b547f1d1619ff68c4042ce3" prot="private" virt="non-virtual"><scope>StyleSheetManager</scope><name>setStyleSheet</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

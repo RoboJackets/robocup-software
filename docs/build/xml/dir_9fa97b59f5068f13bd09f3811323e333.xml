@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_9fa97b59f5068f13bd09f3811323e333" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp</compoundname>
+    <innerfile refid="autonomy__interface_8cpp">autonomy_interface.cpp</innerfile>
+    <innerfile refid="autonomy__interface_8hpp">autonomy_interface.hpp</innerfile>
+    <innerfile refid="debug__draw__interface_8cpp">debug_draw_interface.cpp</innerfile>
+    <innerfile refid="debug__draw__interface_8hpp">debug_draw_interface.hpp</innerfile>
+    <innerfile refid="raw__vision__packet__sub_8cpp">raw_vision_packet_sub.cpp</innerfile>
+    <innerfile refid="raw__vision__packet__sub_8hpp">raw_vision_packet_sub.hpp</innerfile>
+    <innerfile refid="referee__sub_8cpp">referee_sub.cpp</innerfile>
+    <innerfile refid="referee__sub_8hpp">referee_sub.hpp</innerfile>
+    <innerfile refid="soccer__config__client_8cpp">soccer_config_client.cpp</innerfile>
+    <innerfile refid="soccer__config__client_8hpp">soccer_config_client.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/"/>
+  </compounddef>
+</doxygen>

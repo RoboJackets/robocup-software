@@ -1,0 +1,96 @@
+:py:mod:`stp.role.assignment.naive`
+===================================
+
+.. py:module:: stp.role.assignment.naive
+
+.. autoapi-nested-parse::
+
+   Module that contains NaiveRoleAssignment. 
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.role.assignment.naive.NaiveRoleAssignment
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   stp.role.assignment.naive.SortedRequests
+   stp.role.assignment.naive.INVALID_COST
+
+
+.. py:data:: SortedRequests
+   
+
+   
+
+.. py:data:: INVALID_COST
+   
+
+   
+
+.. py:class:: NaiveRoleAssignment
+
+   Bases: :py:obj:`stp.role.assignment.IRoleAssignment`
+
+   Naive implementation of role assignment that simply performs the Hungarian
+   Algorithm (from scipy.optimize) on HIGH, then MEDIUM, then LOW priority in that
+   order.
+
+   .. py:method:: get_sorted_requests(requests: stp.role.assignment.FlatRoleRequests) -> SortedRequests
+      :staticmethod:
+
+      Returns a list of FlatRoleRequests sorted in ascending priority order.
+      :param requests: Flat list of requests.
+      :return: List of FlatRoleRequests in sorted ascending priority order, ie.
+      [LOW, MEDIUM, HIGH].
+
+
+   .. py:method:: compute_costs_matrix(free_robots: numpy.ndarray, flat_requests: stp.role.assignment.FlatRoleRequests, world_state: stp.rc.WorldState, prev_results: stp.role.assignment.FlatRoleResults) -> numpy.ndarray
+      :staticmethod:
+
+      Computes the n_free_robots x n_requests cost matrix corresponding to the
+      passed in free robots and role requests.
+      :param flat_requests: Role requests to compute cost matrix for.
+      :param free_robots: Free robots to compute cost matrix for.
+      :param world_state: Current world state.
+      :param prev_results: The previous results.
+      :return: The m x n cost matrix corresponding to the passed in free robots and
+      role requests.
+
+
+   .. py:method:: assign_prioritized_roles(flat_requests: stp.role.assignment.FlatRoleRequests, world_state: stp.rc.WorldState, free_robots: numpy.ndarray, prev_results: stp.role.assignment.FlatRoleResults) -> Tuple[stp.role.assignment.FlatRoleResults, numpy.ndarray]
+      :staticmethod:
+
+      Assigns roles using the Hungarian algorithm.
+      :param flat_requests: The role requests.
+      :param world_state: The current state of the game.
+      :param free_robots: The array of free robots that haven't been assigned yet.
+      This list will be mutated. Array of stp.rc.Robot.
+      :param prev_results: The previous results.
+      :return: The results of the role assignment and the new free_robots after
+      assignment.
+
+
+   .. py:method:: assign_roles(self, flat_requests: stp.role.assignment.FlatRoleRequests, world_state: stp.rc.WorldState, prev_results: stp.role.assignment.FlatRoleResults) -> stp.role.assignment.FlatRoleResults
+
+      Assigns roles.
+      :param flat_requests: The role requests.
+      :param world_state: The current state of the game.
+      :param prev_results: The previous results.
+      :return: The results of the role assignment.
+
+
+

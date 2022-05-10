@@ -1,0 +1,5 @@
+<map id="referee::InternalReferee" name="referee::InternalReferee">
+<area shape="rect" id="node1" title="Responsible for handling &quot;quick actions&quot; (UI start/stop/restart buttons) for fake matches." alt="" coords="5,155,184,181"/>
+<area shape="rect" id="node2" href="$classreferee_1_1RefereeBase.html" title="Base class for both types of referee. Handles sending ROS messages to the relevant channels (when nec..." alt="" coords="15,80,175,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="67,5,123,32"/>
+</map>

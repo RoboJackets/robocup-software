@@ -1,0 +1,35 @@
+:py:mod:`rj_gameplay.tactic.goalie_tactic`
+==========================================
+
+.. py:module:: rj_gameplay.tactic.goalie_tactic
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.tactic.goalie_tactic.GoalieTactic
+
+
+
+
+.. py:class:: GoalieTactic(world_state: stp.rc.WorldState, goalie_id: int)
+
+   Bases: :py:obj:`stp.tactic.Tactic`
+
+   Wrapper for the Goalie Role that handles assigning said role to whichever Robot is our goalie.
+
+   .. py:method:: init_roles(self, world_state: stp.rc.WorldState) -> None
+
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, rj_msgs.msg.RobotIntent]]
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

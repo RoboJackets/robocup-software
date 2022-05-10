@@ -1,0 +1,313 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classplanning_1_1EscapeObstaclesPathPlanner" kind="class" language="C++" prot="public">
+    <compoundname>planning::EscapeObstaclesPathPlanner</compoundname>
+    <basecompoundref refid="classplanning_1_1Planner" prot="public" virt="non-virtual">planning::Planner</basecompoundref>
+    <includes refid="escape__obstacles__path__planner_8hpp" local="no">escape_obstacles_path_planner.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classplanning_1_1EscapeObstaclesPathPlanner_1a4be1f3c0f7b294ccee15b40a3468fb2b" prot="private" static="no" mutable="no">
+        <type><ref refid="classplanning_1_1PathTargetPlanner" kindref="compound">PathTargetPlanner</ref></type>
+        <definition>PathTargetPlanner planning::EscapeObstaclesPathPlanner::planner_</definition>
+        <argsstring></argsstring>
+        <name>planner_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="53" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1EscapeObstaclesPathPlanner_1a324ee0bdda74fbee785e618eace40ead" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; rj_geometry::Point &gt;</type>
+        <definition>std::optional&lt;rj_geometry::Point&gt; planning::EscapeObstaclesPathPlanner::previous_target_</definition>
+        <argsstring></argsstring>
+        <name>previous_target_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="54" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a88b5d57ca9a8023180d42766868467cf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner</definition>
+        <argsstring>()</argsstring>
+        <name>EscapeObstaclesPathPlanner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="23" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" bodystart="23" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1aee084af1d94ba46f11def8a15e3d5964" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::EscapeObstaclesPathPlanner::~EscapeObstaclesPathPlanner</definition>
+        <argsstring>() override=default</argsstring>
+        <name>~EscapeObstaclesPathPlanner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="24" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a26cb0893252b792bb60dc2ca312b80e7" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner</definition>
+        <argsstring>(EscapeObstaclesPathPlanner &amp;&amp;) noexcept=default</argsstring>
+        <name>EscapeObstaclesPathPlanner</name>
+        <param>
+          <type><ref refid="classplanning_1_1EscapeObstaclesPathPlanner" kindref="compound">EscapeObstaclesPathPlanner</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="26" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a6a13f1624286fd95f06a2030a3274416" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classplanning_1_1EscapeObstaclesPathPlanner" kindref="compound">EscapeObstaclesPathPlanner</ref> &amp;</type>
+        <definition>EscapeObstaclesPathPlanner&amp; planning::EscapeObstaclesPathPlanner::operator=</definition>
+        <argsstring>(EscapeObstaclesPathPlanner &amp;&amp;) noexcept=default</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classplanning_1_1EscapeObstaclesPathPlanner" kindref="compound">EscapeObstaclesPathPlanner</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="27" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1ae7af1f4ba9674f20ce79f14a159c3cf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner</definition>
+        <argsstring>(const EscapeObstaclesPathPlanner &amp;)=default</argsstring>
+        <name>EscapeObstaclesPathPlanner</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1EscapeObstaclesPathPlanner" kindref="compound">EscapeObstaclesPathPlanner</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="29" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a1ad1d1dc615eab8a10d868812a1b7296" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1EscapeObstaclesPathPlanner" kindref="compound">EscapeObstaclesPathPlanner</ref> &amp;</type>
+        <definition>EscapeObstaclesPathPlanner&amp; planning::EscapeObstaclesPathPlanner::operator=</definition>
+        <argsstring>(const EscapeObstaclesPathPlanner &amp;)=default</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1EscapeObstaclesPathPlanner" kindref="compound">EscapeObstaclesPathPlanner</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="30" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1ab718d94a97a01f55c3972a752bc8d658" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::EscapeObstaclesPathPlanner::plan</definition>
+        <argsstring>(const PlanRequest &amp;plan_request) override</argsstring>
+        <name>plan</name>
+        <reimplements refid="classplanning_1_1Planner_1ad199c20bdcb712ccd1580e5ec602437b">plan</reimplements>
+        <param>
+          <type>const <ref refid="structplanning_1_1PlanRequest" kindref="compound">PlanRequest</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Plan a trajectory for this request. This is guaranteed to be a request that this planner is able to handle (according to <ref refid="classplanning_1_1EscapeObstaclesPathPlanner_1a3e8045c3b7d60b5a1d61f13f75bab5d2" kindref="member">is_applicable</ref>)</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request to plan. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A trajectory for the robot to follow. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="33" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.cpp" bodystart="15" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a3e8045c3b7d60b5a1d61f13f75bab5d2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool planning::EscapeObstaclesPathPlanner::is_applicable</definition>
+        <argsstring>(const MotionCommand &amp;) const override</argsstring>
+        <name>is_applicable</name>
+        <reimplements refid="classplanning_1_1Planner_1a86c8ab838ec899e817bb7027072263f7">is_applicable</reimplements>
+        <param>
+          <type>const MotionCommand &amp;</type>
+          <declname>command</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether or not this command can be planned by this planner.</para>
+<para>Implemented by PlannerForCommandType&lt;T&gt;</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>command</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The command to check. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Whether or not this planner can plan that type of command. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="35" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" bodystart="35" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a94f7b096dd419e42f43373176861135c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void planning::EscapeObstaclesPathPlanner::reset</definition>
+        <argsstring>() override</argsstring>
+        <name>reset</name>
+        <reimplements refid="classplanning_1_1Planner_1a3801e1037f332cfb6abda304eec7c094">reset</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reset this planner. Called after the planner is <emphasis>not</emphasis> used to handle a given command for the robot. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="50" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a7b20823ebdc6b8c463c8654aa7e246bf" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>Point planning::EscapeObstaclesPathPlanner::find_non_blocked_goal</definition>
+        <argsstring>(rj_geometry::Point pt, std::optional&lt; rj_geometry::Point &gt; prev_pt, const rj_geometry::ShapeSet &amp;obstacles, int max_itr=300)</argsstring>
+        <name>find_non_blocked_goal</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>pt</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; rj_geometry::Point &gt;</type>
+          <declname>prev_pt</declname>
+        </param>
+        <param>
+          <type>const rj_geometry::ShapeSet &amp;</type>
+          <declname>obstacles</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>max_itr</declname>
+          <defval>300</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Uses an RRT to find a point near to @pt that isn&apos;t blocked by obstacles. If @prev_pt is give, only uses a newly-found point if it is closer to @pt by a configurable threshold. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rrt_logger</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional callback to log the rrt tree after it&apos;s built </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="44" column="31" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.cpp" bodystart="53" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1EscapeObstaclesPathPlanner_1a257c0059e799afb2dc060a2ab40ae7f6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double planning::EscapeObstaclesPathPlanner::step_size</definition>
+        <argsstring>()</argsstring>
+        <name>step_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="48" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" bodystart="48" bodyend="48"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This planner finds a path to quickly get out of an obstacle. If the start point isn&apos;t in an obstacle, returns a path containing only the start point. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>planning::Planner</label>
+        <link refid="classplanning_1_1Planner"/>
+      </node>
+      <node id="1">
+        <label>planning::EscapeObstaclesPathPlanner</label>
+        <link refid="classplanning_1_1EscapeObstaclesPathPlanner"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>planning::Planner</label>
+        <link refid="classplanning_1_1Planner"/>
+      </node>
+      <node id="1">
+        <label>planning::EscapeObstaclesPathPlanner</label>
+        <link refid="classplanning_1_1EscapeObstaclesPathPlanner"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" line="21" column="48" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp" bodystart="21" bodyend="55"/>
+    <listofallmembers>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a88b5d57ca9a8023180d42766868467cf" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>EscapeObstaclesPathPlanner</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a26cb0893252b792bb60dc2ca312b80e7" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>EscapeObstaclesPathPlanner</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1ae7af1f4ba9674f20ce79f14a159c3cf1" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>EscapeObstaclesPathPlanner</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a7b20823ebdc6b8c463c8654aa7e246bf" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>find_non_blocked_goal</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a3e8045c3b7d60b5a1d61f13f75bab5d2" prot="public" virt="virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>is_applicable</name></member>
+      <member refid="classplanning_1_1Planner_1a1de466640407759489cc9f74ac1e3aba" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>name</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a6a13f1624286fd95f06a2030a3274416" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a1ad1d1dc615eab8a10d868812a1b7296" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1Planner_1a5d25e229f428de27c7ab72fc2e5a1a5e" prot="public" virt="non-virtual" ambiguityscope="planning::Planner::"><scope>planning::EscapeObstaclesPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1Planner_1ad0a51fdbb90de2f370b9dbf08f9850c2" prot="public" virt="non-virtual" ambiguityscope="planning::Planner::"><scope>planning::EscapeObstaclesPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1ab718d94a97a01f55c3972a752bc8d658" prot="public" virt="virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>plan</name></member>
+      <member refid="classplanning_1_1Planner_1ade63e8fe5919753dddcdfce60289a4db" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1Planner_1a32a25b3aa79b38f3a40a3835444bb655" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1Planner_1a896421dcf5ec7cde31bfa1e66786dfe7" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a4be1f3c0f7b294ccee15b40a3468fb2b" prot="private" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>planner_</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a324ee0bdda74fbee785e618eace40ead" prot="private" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>previous_target_</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a94f7b096dd419e42f43373176861135c" prot="public" virt="virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>reset</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1a257c0059e799afb2dc060a2ab40ae7f6" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>step_size</name></member>
+      <member refid="classplanning_1_1EscapeObstaclesPathPlanner_1aee084af1d94ba46f11def8a15e3d5964" prot="public" virt="non-virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>~EscapeObstaclesPathPlanner</name></member>
+      <member refid="classplanning_1_1Planner_1aa3f85157362f54234fe961add1a0c2ee" prot="public" virt="virtual"><scope>planning::EscapeObstaclesPathPlanner</scope><name>~Planner</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

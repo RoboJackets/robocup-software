@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespacerj__drawing" kind="namespace" language="C++">
+    <compoundname>rj_drawing</compoundname>
+    <innerclass refid="classrj__drawing_1_1RosDebugDrawer" prot="public">rj_drawing::RosDebugDrawer</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros_debug_drawer.hpp" line="17" column="20"/>
+  </compounddef>
+</doxygen>

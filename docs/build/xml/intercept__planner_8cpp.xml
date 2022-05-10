@@ -1,0 +1,758 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="intercept__planner_8cpp" kind="file" language="C++">
+    <compoundname>intercept_planner.cpp</compoundname>
+    <includes refid="intercept__planner_8hpp" local="yes">intercept_planner.hpp</includes>
+    <includes local="no">rj_constants/constants.hpp</includes>
+    <includes refid="instant_8hpp" local="yes">planning/instant.hpp</includes>
+    <includes refid="angle__planning_8hpp" local="yes">planning/primitives/angle_planning.hpp</includes>
+    <includes refid="create__path_8hpp" local="yes">planning/primitives/create_path.hpp</includes>
+    <incdepgraph>
+      <node id="43">
+        <label>QMap</label>
+      </node>
+      <node id="19">
+        <label>rj_msgs/msg/world_vel_motion_command.hpp</label>
+      </node>
+      <node id="54">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>rj_constants/constants.hpp</label>
+      </node>
+      <node id="13">
+        <label>rj_msgs/msg/line_kick_motion_command.hpp</label>
+      </node>
+      <node id="14">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="3">
+        <label>planner.hpp</label>
+        <link refid="planner_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>fmt/format.h</label>
+      </node>
+      <node id="10">
+        <label>rj_msgs/msg/collect_motion_command.hpp</label>
+      </node>
+      <node id="49">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="26">
+        <label>rj_msgs/msg/world_state.hpp</label>
+      </node>
+      <node id="36">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="81">
+        <label>rotation_constraints.hpp</label>
+        <link refid="rotation__constraints_8hpp_source"/>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="92">
+        <label>planning/primitives/angle_planning.hpp</label>
+        <link refid="angle__planning_8hpp_source"/>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>game_state.hpp</label>
+        <link refid="game__state_8hpp_source"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>context.hpp</label>
+        <link refid="context_8hpp_source"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>variant</label>
+      </node>
+      <node id="24">
+        <label>rj_msgs/msg/ball_state.hpp</label>
+      </node>
+      <node id="88">
+        <label>rj_drawing_msgs/msg/draw_pose.hpp</label>
+      </node>
+      <node id="30">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="60">
+        <label>rj_msgs/msg/motion_setpoint.hpp</label>
+      </node>
+      <node id="41">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="79">
+        <label>gtest/gtest_prod.h</label>
+      </node>
+      <node id="61">
+        <label>game_settings.hpp</label>
+        <link refid="game__settings_8hpp_source"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>intercept_planner.hpp</label>
+        <link refid="intercept__planner_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="20">
+        <label>world_state.hpp</label>
+        <link refid="world__state_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>rj_common/field_dimensions.hpp</label>
+      </node>
+      <node id="87">
+        <label>rj_drawing_msgs/msg/draw_path.hpp</label>
+      </node>
+      <node id="84">
+        <label>ros_debug_drawer.hpp</label>
+        <link refid="ros__debug__drawer_8hpp_source"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>string</label>
+      </node>
+      <node id="57">
+        <label>rj_protos/referee.pb.h</label>
+      </node>
+      <node id="73">
+        <label>radio/robot_status.hpp</label>
+        <link refid="robot__status_8hpp_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="51">
+        <label>map</label>
+      </node>
+      <node id="68">
+        <label>rj_msgs/msg/match_state.hpp</label>
+      </node>
+      <node id="29">
+        <label>rclcpp/rclcpp.hpp</label>
+      </node>
+      <node id="11">
+        <label>rj_msgs/msg/empty_motion_command.hpp</label>
+      </node>
+      <node id="69">
+        <label>rj_msgs/msg/play_state.hpp</label>
+      </node>
+      <node id="72">
+        <label>fstream</label>
+      </node>
+      <node id="59">
+        <label>ostream</label>
+      </node>
+      <node id="7">
+        <label>rj_convert/ros_convert.hpp</label>
+      </node>
+      <node id="8">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="21">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="91">
+        <label>rj_drawing_msgs/msg/draw_text.hpp</label>
+      </node>
+      <node id="9">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="32">
+        <label>planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>rj_geometry/transform_matrix.hpp</label>
+      </node>
+      <node id="4">
+        <label>motion_command.hpp</label>
+        <link refid="motion__command_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>rj_msgs/msg/intercept_motion_command.hpp</label>
+      </node>
+      <node id="65">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="18">
+        <label>rj_msgs/msg/settle_motion_command.hpp</label>
+      </node>
+      <node id="46">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/intercept_planner.cpp</label>
+        <link refid="intercept__planner_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>plan_request.hpp</label>
+        <link refid="plan__request_8hpp_source"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>rj_common/referee_enums.hpp</label>
+      </node>
+      <node id="27">
+        <label>global_params.hpp</label>
+        <link refid="global__params_8hpp_source"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>optional</label>
+      </node>
+      <node id="74">
+        <label>node.hpp</label>
+        <link refid="node_8hpp_source"/>
+      </node>
+      <node id="58">
+        <label>control/motion_setpoint.hpp</label>
+        <link refid="motion__setpoint_8hpp_source"/>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>vector</label>
+      </node>
+      <node id="17">
+        <label>rj_msgs/msg/pivot_motion_command.hpp</label>
+      </node>
+      <node id="89">
+        <label>rj_drawing_msgs/msg/draw_segment.hpp</label>
+      </node>
+      <node id="53">
+        <label>planning/motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="93">
+        <label>rj_common/utils.hpp</label>
+      </node>
+      <node id="52">
+        <label>utility</label>
+      </node>
+      <node id="78">
+        <label>sstream</label>
+      </node>
+      <node id="42">
+        <label>QColor</label>
+      </node>
+      <node id="77">
+        <label>planning/rotation_command.hpp</label>
+        <link refid="rotation__command_8hpp_source"/>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>rj_msgs/msg/game_settings.hpp</label>
+      </node>
+      <node id="35">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="94">
+        <label>planning/primitives/create_path.hpp</label>
+        <link refid="create__path_8hpp_source"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>rj_param_utils/ros2_global_param_provider.hpp</label>
+      </node>
+      <node id="15">
+        <label>rj_msgs/msg/motion_command.hpp</label>
+      </node>
+      <node id="71">
+        <label>deque</label>
+      </node>
+      <node id="86">
+        <label>rj_drawing_msgs/msg/draw_color.hpp</label>
+      </node>
+      <node id="76">
+        <label>rj_msgs/msg/robot_intent.hpp</label>
+      </node>
+      <node id="47">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="16">
+        <label>rj_msgs/msg/path_target_motion_command.hpp</label>
+      </node>
+      <node id="56">
+        <label>set</label>
+      </node>
+      <node id="83">
+        <label>rj_msgs/msg/team_info.hpp</label>
+      </node>
+      <node id="95">
+        <label>planning/primitives/path_smoothing.hpp</label>
+        <link refid="path__smoothing_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>robot_intent.hpp</label>
+        <link refid="robot__intent_8hpp_source"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="90">
+        <label>rj_drawing_msgs/msg/draw_shapes.hpp</label>
+      </node>
+      <node id="25">
+        <label>rj_msgs/msg/robot_state.hpp</label>
+      </node>
+      <node id="82">
+        <label>team_info.hpp</label>
+        <link refid="team__info_8hpp_source"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>memory</label>
+      </node>
+      <node id="80">
+        <label>planning/robot_constraints.hpp</label>
+        <link refid="robot__constraints_8hpp_source"/>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="85">
+        <label>rj_drawing_msgs/msg/debug_draw.hpp</label>
+      </node>
+      <node id="70">
+        <label>logger.hpp</label>
+        <link refid="logger_8hpp_source"/>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="34">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespaceplanning">planning</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;intercept_planner.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_constants/constants.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/instant.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/primitives/angle_planning.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/primitives/create_path.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">planning<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">Trajectory<sp/><ref refid="classplanning_1_1InterceptPlanner_1aa3d56a12247cf518b9b22c84f0f88014" kindref="member">InterceptPlanner::plan</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PlanRequest&amp;<sp/>plan_request)<sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>InterceptCommand<sp/>command<sp/>=<sp/>std::get&lt;InterceptCommand&gt;(plan_request.motion_command);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Start<sp/>state<sp/>for<sp/>the<sp/>specified<sp/>robot</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>RobotInstant<sp/>start_instant<sp/>=<sp/>plan_request.start;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>All<sp/>the<sp/>max<sp/>velocity<sp/>/<sp/>acceleration<sp/>constraints<sp/>for<sp/>translation<sp/>/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>rotation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MotionConstraints&amp;<sp/>motion_constraints<sp/>=<sp/>plan_request.constraints.mot;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structBallState" kindref="compound">BallState</ref><sp/>ball<sp/>=<sp/>plan_request.world_state-&gt;ball;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Time<sp/>for<sp/>ball<sp/>to<sp/>hit<sp/>target<sp/>point</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Target<sp/>point<sp/>is<sp/>projected<sp/>into<sp/>ball<sp/>velocity<sp/>line</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>target_pos_on_line;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Seconds<sp/>ball_to_point_time<sp/>=<sp/>ball.query_seconds_near(command.target,<sp/>&amp;target_pos_on_line);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>vector<sp/>from<sp/>robot<sp/>to<sp/>target</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>bot_to_target<sp/>=<sp/>(target_pos_on_line<sp/>-<sp/>start_instant.position());</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Max<sp/>speed<sp/>we<sp/>can<sp/>reach<sp/>given<sp/>the<sp/>distance<sp/>to<sp/>target<sp/>and<sp/>constant</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>acceleration<sp/>If<sp/>we<sp/>don&apos;t<sp/>constrain<sp/>the<sp/>speed,<sp/>there<sp/>is<sp/>a<sp/>velocity</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>discontinuity<sp/>in<sp/>the<sp/>middle<sp/>of<sp/>the<sp/>path</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>max_speed<sp/>=</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::min(start_instant.linear_velocity().mag()<sp/>+</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sqrt(2<sp/>*<sp/>motion_constraints.max_acceleration<sp/>*<sp/>bot_to_target.mag()),</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>motion_constraints.max_speed);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Scale<sp/>the<sp/>end<sp/>velocity<sp/>by<sp/>%<sp/>of<sp/>max<sp/>velocity<sp/>to<sp/>see<sp/>if<sp/>we<sp/>can<sp/>reach<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>target<sp/>at<sp/>the<sp/>same<sp/>time<sp/>as<sp/>the<sp/>ball</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>Trajectory<sp/>trajectory;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_iterations<sp/>=<sp/>20;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;=<sp/>num_iterations;<sp/>i++)<sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mag<sp/>=<sp/>i<sp/>*<sp/>0.05;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LinearMotionInstant<sp/>final_stopping_motion{target_pos_on_line,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mag<sp/>*<sp/>max_speed<sp/>*<sp/>bot_to_target.normalized()};</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>trajectory<sp/>=<sp/>CreatePath::simple(start_instant.linear_motion(),<sp/>final_stopping_motion,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>plan_request.constraints.mot,<sp/>start_instant.stamp);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>path<sp/>where<sp/>we<sp/>can<sp/>reach<sp/>the<sp/>point<sp/>at<sp/>or<sp/>before<sp/>the<sp/>ball</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>end<sp/>velocity<sp/>is<sp/>not<sp/>0,<sp/>you<sp/>should<sp/>reach<sp/>the<sp/>point<sp/>as<sp/>close</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>to<sp/>the<sp/>ball<sp/>time<sp/>as<sp/>possible<sp/>to<sp/>just<sp/>ram<sp/>it</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(trajectory.duration()<sp/>&lt;=<sp/>ball_to_point_time)<sp/>{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::ostringstream<sp/>debug_text_out;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>debug_text_out.precision(2);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>debug_text_out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>trajectory.duration().count();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>trajectory.set_debug_text(debug_text_out.str());</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>plan_angles(&amp;trajectory,<sp/>start_instant,<sp/>AngleFns::face_point(ball.position),</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>plan_request.constraints.rot);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>trajectory.stamp(RJ::now());</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trajectory;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>couldn&apos;t<sp/>get<sp/>to<sp/>the<sp/>target<sp/>point<sp/>in<sp/>time</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Just<sp/>give<sp/>up<sp/>and<sp/>do<sp/>the<sp/>max<sp/>velocity<sp/>across<sp/>ball<sp/>velocity</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Which<sp/>ends<sp/>up<sp/>being<sp/>the<sp/>path<sp/>after<sp/>the<sp/>final<sp/>loop</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>trajectory.set_debug_text(</highlight><highlight class="stringliteral">&quot;GivingUp&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>plan_angles(&amp;trajectory,<sp/>start_instant,<sp/>AngleFns::face_point(ball.position),</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>plan_request.constraints.rot);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>trajectory.stamp(RJ::now());</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trajectory;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>planning</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/intercept_planner.cpp"/>
+  </compounddef>
+</doxygen>

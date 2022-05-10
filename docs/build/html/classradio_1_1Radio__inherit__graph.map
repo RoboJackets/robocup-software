@@ -1,0 +1,6 @@
+<map id="radio::Radio" name="radio::Radio">
+<area shape="rect" id="node1" title="Sends and receives information to/from our robots." alt="" coords="114,80,214,107"/>
+<area shape="rect" id="node3" href="$classradio_1_1NetworkRadio.html" title="Interface for the radio over regular network interface." alt="" coords="5,155,160,181"/>
+<area shape="rect" id="node4" href="$classradio_1_1SimRadio.html" title="Radio IO with robots in the simulator." alt="" coords="184,155,309,181"/>
+<area shape="rect" id="node2" title=" " alt="" coords="136,5,192,32"/>
+</map>

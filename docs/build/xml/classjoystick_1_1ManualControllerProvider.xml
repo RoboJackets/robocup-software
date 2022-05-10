@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classjoystick_1_1ManualControllerProvider" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>joystick::ManualControllerProvider</compoundname>
+    <derivedcompoundref refid="classjoystick_1_1SDLControllerProvider" prot="public" virt="non-virtual">joystick::SDLControllerProvider</derivedcompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classjoystick_1_1ManualControllerProvider_1aba0536e55ddff18c02ab893ef851a1f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>joystick::ManualControllerProvider::ManualControllerProvider</definition>
+        <argsstring>()=default</argsstring>
+        <name>ManualControllerProvider</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="43" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControllerProvider_1a9c6ad61ebec92039466bab95e14a0c94" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual joystick::ManualControllerProvider::~ManualControllerProvider</definition>
+        <argsstring>()=default</argsstring>
+        <name>~ManualControllerProvider</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="44" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControllerProvider_1a2821cc787727178be4be02c3d060f9fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>joystick::ManualControllerProvider::ManualControllerProvider</definition>
+        <argsstring>(const ManualControllerProvider &amp;)=delete</argsstring>
+        <name>ManualControllerProvider</name>
+        <param>
+          <type>const <ref refid="classjoystick_1_1ManualControllerProvider" kindref="compound">ManualControllerProvider</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="46" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControllerProvider_1ac32815c38f7d7c2090a684c0fc3347c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjoystick_1_1ManualControllerProvider" kindref="compound">ManualControllerProvider</ref> &amp;</type>
+        <definition>ManualControllerProvider&amp; joystick::ManualControllerProvider::operator=</definition>
+        <argsstring>(const ManualControllerProvider &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classjoystick_1_1ManualControllerProvider" kindref="compound">ManualControllerProvider</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="47" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControllerProvider_1aae39b44bca2261d8b801301bdd2c8748" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>joystick::ManualControllerProvider::ManualControllerProvider</definition>
+        <argsstring>(ManualControllerProvider &amp;&amp;)=delete</argsstring>
+        <name>ManualControllerProvider</name>
+        <param>
+          <type><ref refid="classjoystick_1_1ManualControllerProvider" kindref="compound">ManualControllerProvider</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="48" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControllerProvider_1a0ee47392d1935860bb0e6dc88b9b19b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjoystick_1_1ManualControllerProvider" kindref="compound">ManualControllerProvider</ref> &amp;</type>
+        <definition>ManualControllerProvider&amp; joystick::ManualControllerProvider::operator=</definition>
+        <argsstring>(const ManualControllerProvider &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classjoystick_1_1ManualControllerProvider" kindref="compound">ManualControllerProvider</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="49" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControllerProvider_1a4fc5134aa53ada7f5fc1a1fe18f7527b" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void joystick::ManualControllerProvider::update</definition>
+        <argsstring>()=0</argsstring>
+        <name>update</name>
+        <reimplementedby refid="classjoystick_1_1SDLControllerProvider_1a7a2ab5c4bffd507872d85b54c0a8077f">update</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="51" column="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>joystick::SDLControllerProvider</label>
+        <link refid="classjoystick_1_1SDLControllerProvider"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>joystick::ManualControllerProvider</label>
+        <link refid="classjoystick_1_1ManualControllerProvider"/>
+      </node>
+    </inheritancegraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" line="41" column="31" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control.hpp" bodystart="41" bodyend="52"/>
+    <listofallmembers>
+      <member refid="classjoystick_1_1ManualControllerProvider_1aba0536e55ddff18c02ab893ef851a1f5" prot="public" virt="non-virtual"><scope>joystick::ManualControllerProvider</scope><name>ManualControllerProvider</name></member>
+      <member refid="classjoystick_1_1ManualControllerProvider_1a2821cc787727178be4be02c3d060f9fa" prot="public" virt="non-virtual"><scope>joystick::ManualControllerProvider</scope><name>ManualControllerProvider</name></member>
+      <member refid="classjoystick_1_1ManualControllerProvider_1aae39b44bca2261d8b801301bdd2c8748" prot="public" virt="non-virtual"><scope>joystick::ManualControllerProvider</scope><name>ManualControllerProvider</name></member>
+      <member refid="classjoystick_1_1ManualControllerProvider_1ac32815c38f7d7c2090a684c0fc3347c7" prot="public" virt="non-virtual"><scope>joystick::ManualControllerProvider</scope><name>operator=</name></member>
+      <member refid="classjoystick_1_1ManualControllerProvider_1a0ee47392d1935860bb0e6dc88b9b19b8" prot="public" virt="non-virtual"><scope>joystick::ManualControllerProvider</scope><name>operator=</name></member>
+      <member refid="classjoystick_1_1ManualControllerProvider_1a4fc5134aa53ada7f5fc1a1fe18f7527b" prot="public" virt="pure-virtual"><scope>joystick::ManualControllerProvider</scope><name>update</name></member>
+      <member refid="classjoystick_1_1ManualControllerProvider_1a9c6ad61ebec92039466bab95e14a0c94" prot="public" virt="virtual"><scope>joystick::ManualControllerProvider</scope><name>~ManualControllerProvider</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

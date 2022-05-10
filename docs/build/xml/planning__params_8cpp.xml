@@ -1,0 +1,230 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="planning__params_8cpp" kind="file" language="C++">
+    <compoundname>planning_params.cpp</compoundname>
+    <includes refid="planning__params_8hpp" local="yes">planning_params.hpp</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp</label>
+        <link refid="planning__params_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespaceplanning">planning</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;planning_params.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">planning<sp/>{</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal">DEFINE_FLOAT64(kPlanningParamModule,<sp/>timeout,<sp/>0.1,<sp/></highlight><highlight class="stringliteral">&quot;Timeout<sp/>for<sp/>vision<sp/>data<sp/>to<sp/>reach<sp/>planning<sp/>(s)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>constraints,<sp/>max_translational_speed,<sp/>3.0,</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Maximum<sp/>translational<sp/>speed<sp/>for<sp/>planning<sp/>(m/s)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="9"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>constraints,<sp/>max_translational_accel,<sp/>3.0,</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Maximum<sp/>translational<sp/>acceleration<sp/>for<sp/>planning<sp/>(m/s^2)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>constraints,<sp/>max_rotational_speed,<sp/>10.0,</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Maximum<sp/>rotational<sp/>speed<sp/>for<sp/>planning<sp/>(rad/s)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>constraints,<sp/>max_rotational_accel,<sp/>10.0,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Maximum<sp/>rotational<sp/>acceleration<sp/>for<sp/>planning<sp/>(rad/s^2)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>replanner,<sp/>pos_change_threshold,<sp/>0.025,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Position<sp/>target<sp/>threshold<sp/>(m);<sp/>if<sp/>the<sp/>change<sp/>in<sp/>position<sp/>from<sp/>the<sp/>originally<sp/>planned<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;target<sp/>is<sp/>smaller<sp/>than<sp/>this<sp/>amount<sp/>no<sp/>replanning<sp/>will<sp/>occur.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>replanner,<sp/>vel_change_threshold,<sp/>0.025,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Velocity<sp/>target<sp/>threshold<sp/>(m/s);<sp/>if<sp/>the<sp/>change<sp/>in<sp/>velocity<sp/>from<sp/>the<sp/>originally<sp/>planned<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;target<sp/>is<sp/>smaller<sp/>than<sp/>this<sp/>amount<sp/>no<sp/>replanning<sp/>will<sp/>occur.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>replanner,<sp/>partial_replan_lead_time,<sp/>0.1,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Portion<sp/>of<sp/>the<sp/>path<sp/>(seconds)<sp/>that<sp/>will<sp/>not<sp/>be<sp/>changed<sp/>in<sp/>the<sp/>case<sp/>of<sp/>a<sp/>partial<sp/>replan&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>replanner,<sp/>off_path_threshold,<sp/>0.1,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Position<sp/>error<sp/>threshold<sp/>(m),<sp/>a<sp/>partial<sp/>replan<sp/>will<sp/>be<sp/>forced<sp/>if<sp/>we<sp/>are<sp/>not<sp/>within<sp/>this<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;amount<sp/>of<sp/>the<sp/>planned<sp/>trajectory.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">DEFINE_NS_BOOL(kPlanningParamModule,<sp/>rrt,<sp/>enable_debug_drawing,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Whether<sp/>to<sp/>enable<sp/>RRT<sp/>debug<sp/>drawing&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>rrt,<sp/>step_size,<sp/>0.15,<sp/></highlight><highlight class="stringliteral">&quot;Step<sp/>size<sp/>for<sp/>RRT<sp/>(m)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>rrt,<sp/>goal_bias,<sp/>0.3,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Chance<sp/>that<sp/>the<sp/>RRT<sp/>will<sp/>extend<sp/>directly<sp/>towards<sp/>the<sp/>goal<sp/>(unitless)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>rrt,<sp/>waypoint_bias,<sp/>0.5,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Chance<sp/>that<sp/>the<sp/>RRT<sp/>will<sp/>extend<sp/>directly<sp/>towards<sp/>a<sp/>waypoint<sp/>(unitless)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">DEFINE_NS_INT64(kPlanningParamModule,<sp/>rrt,<sp/>min_iterations,<sp/>0,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Minimum<sp/>number<sp/>of<sp/>RRT<sp/>iterations<sp/>to<sp/>run<sp/>(unused<sp/>without<sp/>RRT*<sp/>enabled)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">DEFINE_NS_INT64(kPlanningParamModule,<sp/>rrt,<sp/>max_iterations,<sp/>250,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Maximum<sp/>number<sp/>of<sp/>RRT<sp/>iterations<sp/>to<sp/>run<sp/>before<sp/>giving<sp/>up&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>escape,<sp/>step_size,<sp/>0.1,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Step<sp/>size<sp/>for<sp/>the<sp/>RRT<sp/>used<sp/>to<sp/>find<sp/>an<sp/>unblocked<sp/>point<sp/>in<sp/>find_non_blocked_goal()&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>escape,<sp/>goal_change_threshold,<sp/>0.9,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;A<sp/>newly-found<sp/>unblocked<sp/>goal<sp/>must<sp/>be<sp/>this<sp/>much<sp/>closer<sp/>to<sp/>the<sp/>start<sp/>position<sp/>than<sp/>the<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;previous<sp/>point<sp/>in<sp/>order<sp/>to<sp/>be<sp/>used<sp/>(m).&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>pivot,<sp/>radius_multiplier,<sp/>1.0,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;A<sp/>newly-found<sp/>unblocked<sp/>goal<sp/>must<sp/>be<sp/>this<sp/>much<sp/>closer<sp/>to<sp/>the<sp/>start<sp/>position<sp/>than<sp/>the<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;previous<sp/>point<sp/>in<sp/>order<sp/>to<sp/>be<sp/>used<sp/>(m).&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Controls<sp/>at<sp/>which<sp/>ball<sp/>speed<sp/>we<sp/>should<sp/>try<sp/>to<sp/>go<sp/>directly<sp/>to<sp/>the<sp/>ball</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/>or<sp/>to<sp/>move<sp/>behind<sp/>it<sp/>and<sp/>in<sp/>the<sp/>same<sp/>direction<sp/>as<sp/>it</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Low<sp/>number<sp/>indicates<sp/>that<sp/>it<sp/>will<sp/>always<sp/>try<sp/>to<sp/>choose<sp/>a<sp/>point<sp/>for<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//<sp/>robot<sp/>behind<sp/>the<sp/>velocity<sp/>vector</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/>High<sp/>number<sp/>indicates<sp/>that<sp/>it<sp/>will<sp/>always<sp/>try<sp/>to<sp/>choose<sp/>a<sp/>point<sp/>nearest</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/>to<sp/>the<sp/>current<sp/>robot<sp/>position</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>collect,<sp/>ball_speed_approach_direction_cutoff,<sp/>0.1,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Controls<sp/>at<sp/>which<sp/>ball<sp/>speed<sp/>we<sp/>should<sp/>try<sp/>to<sp/>go<sp/>directly<sp/>to<sp/>the<sp/>ball<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;or<sp/>to<sp/>move<sp/>behind<sp/>it<sp/>and<sp/>in<sp/>the<sp/>same<sp/>direction<sp/>as<sp/>it<sp/>(m/s)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>much<sp/>to<sp/>scale<sp/>the<sp/>accelerations<sp/>by<sp/>as<sp/>a<sp/>percent<sp/>of<sp/>the<sp/>normal</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/>acceleration</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Approach<sp/>acceleration<sp/>controls<sp/>all<sp/>the<sp/>movement<sp/>from<sp/>the<sp/>start<sp/>location</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/>to<sp/>right<sp/>before<sp/>touching<sp/>the<sp/>ball</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>collect,<sp/>approach_accel_scale,<sp/>0.7,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;How<sp/>much<sp/>to<sp/>scale<sp/>the<sp/>accelerations<sp/>by<sp/>as<sp/>a<sp/>percent<sp/>of<sp/>the<sp/>normal<sp/>acceleration<sp/>(unitless)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Control<sp/>acceleration<sp/>controls<sp/>the<sp/>touch<sp/>to<sp/>stop</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Lower<sp/>this<sp/>if<sp/>we<sp/>decelerate<sp/>too<sp/>quickly<sp/>for<sp/>the<sp/>dribbler<sp/>to<sp/>keep<sp/>a<sp/>back</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//<sp/>spin<sp/>on</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>collect,<sp/>control_accel_scale,<sp/>0.4,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Control<sp/>acceleration<sp/>controls<sp/>the<sp/>touch<sp/>to<sp/>stop<sp/>(unitless)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>far<sp/>away<sp/>from<sp/>the<sp/>ball<sp/>to<sp/>target<sp/>for<sp/>the<sp/>approach</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>should<sp/>be<sp/>tuned<sp/>so<sp/>that<sp/>the<sp/>end<sp/>of<sp/>approach<sp/>places<sp/>the<sp/>dribbler</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/>touching<sp/>the<sp/>ball<sp/>Increase<sp/>the<sp/>distance<sp/>so<sp/>that<sp/>when<sp/>we<sp/>overshoot,<sp/>it</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/>doesn&apos;t<sp/>hit<sp/>the<sp/>ball<sp/>Ideally<sp/>this<sp/>is<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>collect,<sp/>approach_dist_target,<sp/>0.04,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;How<sp/>far<sp/>away<sp/>from<sp/>the<sp/>ball<sp/>to<sp/>target<sp/>for<sp/>the<sp/>approach<sp/>(m)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">//<sp/>At<sp/>what<sp/>speed<sp/>should<sp/>we<sp/>be<sp/>when<sp/>we<sp/>touch<sp/>the<sp/>ball<sp/>(Well,<sp/>the<sp/>difference</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/>in<sp/>speed<sp/>between<sp/>the<sp/>ball<sp/>and<sp/>robot)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Should<sp/>be<sp/>as<sp/>low<sp/>as<sp/>possible<sp/>where</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>still<sp/>are<sp/>able<sp/>to<sp/>touch<sp/>the<sp/>ball<sp/>and<sp/>control<sp/>it<sp/>If<sp/>we<sp/>are<sp/>slamming</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/>into<sp/>the<sp/>ball<sp/>decrease<sp/>this<sp/>number<sp/>If<sp/>we<sp/>aren&apos;t<sp/>even<sp/>touching<sp/>it<sp/>to<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="comment">//<sp/>dribbler,<sp/>increase<sp/>this<sp/>number<sp/>(And<sp/>check<sp/>the<sp/>approach_dist_target)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>collect,<sp/>touch_delta_speed,<sp/>0.15,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;At<sp/>what<sp/>speed<sp/>should<sp/>we<sp/>be<sp/>when<sp/>we<sp/>touch<sp/>the<sp/>ball<sp/>(m/s)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>collect,<sp/>velocity_control_scale,<sp/>1.0,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;The<sp/>amount<sp/><sp/>(unitless)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>close<sp/>to<sp/>the<sp/>ball<sp/>do<sp/>we<sp/>have<sp/>to<sp/>be<sp/>before<sp/>transferring<sp/>to<sp/>the<sp/>control<sp/>state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>should<sp/>be<sp/>almost<sp/>zero.<sp/>Increase<sp/>if<sp/>the<sp/>noise<sp/>on<sp/>vision<sp/>causes<sp/>problems<sp/>and<sp/>we<sp/>never</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/>transition.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>collect,<sp/>dist_cutoff_to_control,<sp/>0.0285,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;How<sp/>close<sp/>to<sp/>the<sp/>ball<sp/>do<sp/>we<sp/>have<sp/>to<sp/>be<sp/>before<sp/>transferring<sp/>to<sp/>the<sp/>control<sp/>state<sp/>(m)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>close<sp/>to<sp/>the<sp/>ball<sp/>do<sp/>we<sp/>need<sp/>to<sp/>be<sp/>before<sp/>transferring<sp/>back<sp/>to<sp/>the<sp/>approach<sp/>state<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/>restarting.<sp/>This<sp/>should<sp/>be<sp/>just<sp/>above<sp/>zero<sp/>to<sp/>account<sp/>for<sp/>noise<sp/>in<sp/>vision.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>collect,<sp/>dist_cutoff_to_approach,<sp/>1,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;How<sp/>close<sp/>to<sp/>the<sp/>ball<sp/>do<sp/>we<sp/>need<sp/>to<sp/>be<sp/>before<sp/>transferring<sp/>back<sp/>to<sp/>the<sp/>approach<sp/>state<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;and<sp/>restarting<sp/>(m)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>close<sp/>to<sp/>the<sp/>target<sp/>velocity<sp/>do<sp/>we<sp/>have<sp/>to<sp/>be<sp/>before<sp/>transferring<sp/>to<sp/>the<sp/>control<sp/>state.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>doesn&apos;t<sp/>matter<sp/>as<sp/>much<sp/>right<sp/>now.<sp/>It&apos;s<sp/>good<sp/>to<sp/>be<sp/>close,<sp/>but<sp/>it&apos;s<sp/>not<sp/>too<sp/>big<sp/>of<sp/>deal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">//<sp/>If<sp/>we<sp/>are<sp/>trying<sp/>to<sp/>transition<sp/>with<sp/>a<sp/>large<sp/>delta<sp/>velocity<sp/>between<sp/>the<sp/>robot<sp/>and<sp/>the<sp/>ball</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/>decrease<sp/>this<sp/>number.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>collect,<sp/>vel_cutoff_to_control,<sp/>0.3,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;How<sp/>close<sp/>to<sp/>the<sp/>target<sp/>velocity<sp/>do<sp/>we<sp/>have<sp/>to<sp/>be<sp/>before<sp/>transferring<sp/>to<sp/>the<sp/>control<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;state<sp/>(m/s)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>much<sp/>extra<sp/>room<sp/>should<sp/>we<sp/>stay<sp/>at<sp/>the<sp/>delta<sp/>speed<sp/>before<sp/>slowing<sp/>down.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>really<sp/>a<sp/>percent<sp/>of<sp/>the<sp/>minimum<sp/>stop<sp/>distance<sp/>to<sp/>fully<sp/>stop<sp/>given</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>current<sp/>velocity.<sp/>This<sp/>should<sp/>be<sp/>tuned<sp/>such<sp/>that<sp/>we<sp/>dont<sp/>drive<sp/>too<sp/>far</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="comment">//<sp/>through<sp/>the<sp/>ball.<sp/>A<sp/>number<sp/>of<sp/>1<sp/>should<sp/>mean<sp/>a<sp/>constant<sp/>acceleration</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="comment">//<sp/>through<sp/>the<sp/>entire<sp/>sequence.<sp/>Increasing<sp/>this<sp/>number<sp/>makes<sp/>the<sp/>robot<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">//<sp/>at<sp/>delta<sp/>velocity<sp/>longer.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>collect,<sp/>stop_dist_scale,<sp/>1,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Portion<sp/>of<sp/>maximum<sp/>stopping<sp/>distance<sp/>for<sp/>which<sp/>we<sp/>stay<sp/>at<sp/>the<sp/>delta<sp/>speed<sp/>(unitless)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Gain<sp/>on<sp/>the<sp/>averaging<sp/>function<sp/>to<sp/>smooth<sp/>the<sp/>target<sp/>point<sp/>to<sp/>intercept</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>due<sp/>to<sp/>the<sp/>high<sp/>flucations<sp/>in<sp/>the<sp/>ball<sp/>velocity<sp/>frame<sp/>to<sp/>frame</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//<sp/>a*new_point<sp/>+<sp/>(1-a)*old_point</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>lower<sp/>the<sp/>number,<sp/>the<sp/>less<sp/>noise<sp/>affects<sp/>the<sp/>system,<sp/>but<sp/>the<sp/>slower</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>it<sp/>responds<sp/>to<sp/>changes<sp/>The<sp/>higher<sp/>the<sp/>number,<sp/>the<sp/>more<sp/>noise<sp/>affects<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>system,<sp/>but<sp/>the<sp/>faster<sp/>it<sp/>responds<sp/>to<sp/>changes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>collect,<sp/>target_point_lowpass_gain,<sp/>0.8,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Gain<sp/>on<sp/>the<sp/>averaging<sp/>function<sp/>to<sp/>smooth<sp/>the<sp/>target<sp/>point<sp/>to<sp/>intercept<sp/>(unitless)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>much<sp/>of<sp/>the<sp/>ball<sp/>seed<sp/>to<sp/>contact<sp/>the<sp/>ball<sp/>with</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//<sp/>before<sp/>slowing<sp/>down<sp/>to<sp/>dampen<sp/>the<sp/>initial<sp/>hit</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>ball_speed_percent_for_dampen,<sp/>0.1,</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;How<sp/>much<sp/>of<sp/>the<sp/>ball<sp/>seed<sp/>to<sp/>contact<sp/>the<sp/>ball<sp/>with<sp/>before<sp/>slowing<sp/>down<sp/>to<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;dampen<sp/>the<sp/>initial<sp/>hit<sp/>(unitless)&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Closest<sp/>dist<sp/>to<sp/>start<sp/>searching<sp/>for<sp/>intercept<sp/>points</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>search_start_dist,<sp/>0.0,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Closest<sp/>dist<sp/>to<sp/>start<sp/>searching<sp/>for<sp/>intercept<sp/>points<sp/>(m)&quot;)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Furthest<sp/>dist<sp/>to<sp/>search<sp/>for<sp/>intercept<sp/>points</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>search_end_dist,<sp/>6.0,</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Furthest<sp/>dist<sp/>to<sp/>start<sp/>searching<sp/>for<sp/>intercept<sp/>points<sp/>(m)&quot;)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="comment">//<sp/>What<sp/>dist<sp/>increment<sp/>to<sp/>search<sp/>for<sp/>intercepts</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>search_inc_dist,<sp/>0.2,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Search<sp/>increment<sp/>for<sp/>intercept<sp/>points<sp/>(m)&quot;)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>much<sp/>sooner<sp/>should<sp/>we<sp/>reach<sp/>the<sp/>intercept<sp/>point<sp/>than<sp/>we<sp/>need<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>a<sp/>percent<sp/>of<sp/>the<sp/>calculated<sp/>intercept<sp/>time</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Numbers<sp/>greater<sp/>than<sp/>1<sp/>mean<sp/>we<sp/>increase<sp/>intercept<sp/>time<sp/>needed<sp/>by<sp/>X%<sp/>over</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/>actual<sp/>Numbers<sp/>less<sp/>than<sp/>1<sp/>mean<sp/>we<sp/>get<sp/>there<sp/>X%<sp/>faster<sp/>than<sp/>we<sp/>plan</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(Shouldn&apos;t<sp/>ever<sp/>happen)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>settle,<sp/>intercept_buffer_time,<sp/>0.3,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;How<sp/>much<sp/>sooner<sp/>we<sp/>should<sp/>reach<sp/>the<sp/>intercept<sp/>point,<sp/>compared<sp/>to<sp/>the<sp/>total<sp/>time<sp/>(unitless)&quot;)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Gain<sp/>on<sp/>the<sp/>averaging<sp/>function<sp/>to<sp/>smooth<sp/>the<sp/>target<sp/>point<sp/>to<sp/>intercept</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>due<sp/>to<sp/>the<sp/>high<sp/>flucations<sp/>in<sp/>the<sp/>ball<sp/>velocity<sp/>frame<sp/>to<sp/>frame</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="comment">//<sp/>a*new_point<sp/>+<sp/>(1-a)*old_point</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>lower<sp/>the<sp/>number,<sp/>the<sp/>less<sp/>noise<sp/>affects<sp/>the<sp/>system,<sp/>but<sp/>the<sp/>slower</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="comment">//<sp/>it<sp/>responds<sp/>to<sp/>changes<sp/>The<sp/>higher<sp/>the<sp/>number,<sp/>the<sp/>more<sp/>noise<sp/>affects<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="comment">//<sp/>system,<sp/>but<sp/>the<sp/>faster<sp/>it<sp/>responds<sp/>to<sp/>changes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>target_point_gain,<sp/>0.5,</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Gain<sp/>for<sp/>LPF<sp/>for<sp/>ball<sp/>target<sp/>position<sp/>(unitless)&quot;)</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Gain<sp/>on<sp/>the<sp/>averaging<sp/>function<sp/>to<sp/>smooth<sp/>the<sp/>ball<sp/>velocity<sp/>to<sp/>for<sp/>any</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="comment">//<sp/>motion<sp/>commands<sp/>This<sp/>is<sp/>due<sp/>to<sp/>the<sp/>high<sp/>flucations<sp/>in<sp/>the<sp/>ball<sp/>velocity</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight><highlight class="comment">//<sp/>frame<sp/>to<sp/>frame<sp/>a*new_point<sp/>+<sp/>(1-a)*old_point<sp/>The<sp/>lower<sp/>the<sp/>number,<sp/>the<sp/>less</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="comment">//<sp/>noise<sp/>affects<sp/>the<sp/>system,<sp/>but<sp/>the<sp/>slower<sp/>it<sp/>responds<sp/>to<sp/>changes<sp/>The</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="comment">//<sp/>higher<sp/>the<sp/>number,<sp/>the<sp/>more<sp/>noise<sp/>affects<sp/>the<sp/>system,<sp/>but<sp/>the<sp/>faster<sp/>it</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="comment">//<sp/>responds<sp/>to<sp/>changes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>ball_vel_gain,<sp/>0.9,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Gain<sp/>for<sp/>LPF<sp/>to<sp/>smooth<sp/>ball<sp/>velocity<sp/>(unitless)&quot;)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Distance<sp/>between<sp/>robot<sp/>and<sp/>closest<sp/>point<sp/>on<sp/>ball<sp/>line<sp/>such<sp/>that<sp/>we<sp/>move</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/>directly<sp/>into<sp/>the<sp/>ball<sp/>line<sp/>instead<sp/>of<sp/>trying<sp/>to<sp/>find<sp/>the<sp/>point<sp/>we<sp/>hit</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/>first<sp/>This<sp/>does<sp/>take<sp/>into<sp/>account<sp/>slow<sp/>moving<sp/>balls<sp/>in<sp/>which<sp/>we<sp/>should</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="comment">//<sp/>move<sp/>onto<sp/>the<sp/>ball<sp/>to<sp/>capture<sp/>it</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>settle,<sp/>shortcut_dist,<sp/>0.09,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;Distance<sp/>between<sp/>robot<sp/>and<sp/>closest<sp/>point<sp/>on<sp/>ball<sp/>line<sp/>to<sp/>move<sp/>directly<sp/>to<sp/>the<sp/>line<sp/>(m)&quot;)</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>ball<sp/>velocity<sp/>angle<sp/>changes<sp/>by<sp/>a<sp/>large<sp/>amount</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>want<sp/>to<sp/>quickly<sp/>react<sp/>and<sp/>clear<sp/>all<sp/>the<sp/>smoothing<sp/>filters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Lower<sp/>numbers<sp/>means<sp/>it<sp/>reacts<sp/>faster,<sp/>but<sp/>more<sp/>chance<sp/>for<sp/>false<sp/>positives</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Higher<sp/>numbers<sp/>means<sp/>slower<sp/>reaction,<sp/>but<sp/>less<sp/>false<sp/>positives</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal">DEFINE_NS_FLOAT64(</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>kPlanningParamModule,<sp/>settle,<sp/>max_ball_angle_for_reset,<sp/>20,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;Distance<sp/>between<sp/>robot<sp/>and<sp/>closest<sp/>point<sp/>on<sp/>ball<sp/>line<sp/>to<sp/>move<sp/>directly<sp/>to<sp/>the<sp/>line<sp/>(deg)&quot;)</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>ball<sp/>velocity<sp/>itself<sp/>changes<sp/>by<sp/>a<sp/>large<sp/>amount</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>want<sp/>to<sp/>quickly<sp/>react<sp/>and<sp/>clear<sp/>all<sp/>the<sp/>smoothing<sp/>filters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Lower<sp/>numbers<sp/>means<sp/>it<sp/>reacts<sp/>faster,<sp/>but<sp/>more<sp/>chance<sp/>for<sp/>false<sp/>positives</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Higher<sp/>numbers<sp/>means<sp/>slower<sp/>reaction,<sp/>but<sp/>less<sp/>false<sp/>positives</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>max_ball_vel_for_path_reset,<sp/>2.0,</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Change<sp/>in<sp/>ball<sp/>velocity<sp/>required<sp/>to<sp/>reset<sp/>all<sp/>filters<sp/>(m/s)&quot;)</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Max<sp/>angle<sp/>between<sp/>ball<sp/>and<sp/>target<sp/>bounce<sp/>direction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal">DEFINE_NS_FLOAT64(kPlanningParamModule,<sp/>settle,<sp/>max_bounce_angle,<sp/>45,</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;Max<sp/>angle<sp/>between<sp/>ball<sp/>and<sp/>target<sp/>bounce<sp/>direction<sp/>(deg)&quot;)</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>planning</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp"/>
+  </compounddef>
+</doxygen>

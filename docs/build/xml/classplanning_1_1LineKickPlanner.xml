@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classplanning_1_1LineKickPlanner" kind="class" language="C++" prot="public">
+    <compoundname>planning::LineKickPlanner</compoundname>
+    <basecompoundref refid="classplanning_1_1PlannerForCommandType" prot="public" virt="non-virtual">planning::PlannerForCommandType&lt; planning::LineKickCommand &gt;</basecompoundref>
+    <includes refid="line__kick__planner_8hpp" local="no">line_kick_planner.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classplanning_1_1LineKickPlanner_1a1aed7b39f05efd72d908fabe20ac1165" prot="private" static="no" mutable="no">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::LineKickPlanner::prev_path_</definition>
+        <argsstring></argsstring>
+        <name>prev_path_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="35" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1LineKickPlanner_1a827481f2b4d293d324f91220bca682a2" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool planning::LineKickPlanner::final_approach_</definition>
+        <argsstring></argsstring>
+        <name>final_approach_</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="36" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1LineKickPlanner_1aa389850b1536ca7ea1a89d8890082ef9" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; rj_geometry::Point &gt;</type>
+        <definition>std::optional&lt;rj_geometry::Point&gt; planning::LineKickPlanner::target_kick_pos_</definition>
+        <argsstring></argsstring>
+        <name>target_kick_pos_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="37" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1LineKickPlanner_1a74c68155f9cf6872b16c93c68b76e8a2" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int planning::LineKickPlanner::reuse_path_count_</definition>
+        <argsstring></argsstring>
+        <name>reuse_path_count_</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="38" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classplanning_1_1LineKickPlanner_1ad1f6341b631a238ca497c988a0fcad04" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::LineKickPlanner::LineKickPlanner</definition>
+        <argsstring>()</argsstring>
+        <name>LineKickPlanner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="24" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" bodystart="24" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1LineKickPlanner_1a4b6526c6fbe26788456286d565620922" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::LineKickPlanner::plan</definition>
+        <argsstring>(const PlanRequest &amp;plan_request) override</argsstring>
+        <name>plan</name>
+        <reimplements refid="classplanning_1_1Planner_1ad199c20bdcb712ccd1580e5ec602437b">plan</reimplements>
+        <param>
+          <type>const <ref refid="structplanning_1_1PlanRequest" kindref="compound">PlanRequest</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Plan a trajectory for this request. This is guaranteed to be a request that this planner is able to handle (according to <ref refid="classplanning_1_1PlannerForCommandType_1a15adefc5f4fc9687dafe6b8014914365" kindref="member">is_applicable</ref>)</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request to plan. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A trajectory for the robot to follow. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="25" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.cpp" bodystart="15" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1LineKickPlanner_1ac6b62640e9d19e4b75f5940d9a1b7454" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void planning::LineKickPlanner::reset</definition>
+        <argsstring>() override</argsstring>
+        <name>reset</name>
+        <reimplements refid="classplanning_1_1Planner_1a3801e1037f332cfb6abda304eec7c094">reset</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reset this planner. Called after the planner is <emphasis>not</emphasis> used to handle a given command for the robot. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="27" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" bodystart="27" bodyend="32"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classplanning_1_1Planner" kindref="compound">Planner</ref> which plans a path to line kick a ball. Uses the System State object to get the position of the ball and predict its Path. It chooses the closest intersection point with the ball Path it can reach in time and plans a Path so the ball and robot intersect at the same time.</para>
+<para>TODO(Kyle): Overhaul this entire planner. It&apos;s sketchy right now. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>planning::Planner</label>
+        <link refid="classplanning_1_1Planner"/>
+      </node>
+      <node id="1">
+        <label>planning::LineKickPlanner</label>
+        <link refid="classplanning_1_1LineKickPlanner"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>planning::PlannerForCommandType&lt; planning::LineKickCommand &gt;</label>
+        <link refid="classplanning_1_1PlannerForCommandType"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>planning::Planner</label>
+        <link refid="classplanning_1_1Planner"/>
+      </node>
+      <node id="1">
+        <label>planning::LineKickPlanner</label>
+        <link refid="classplanning_1_1LineKickPlanner"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>planning::PlannerForCommandType&lt; planning::LineKickCommand &gt;</label>
+        <link refid="classplanning_1_1PlannerForCommandType"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" line="22" column="52" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp" bodystart="22" bodyend="39"/>
+    <listofallmembers>
+      <member refid="classplanning_1_1LineKickPlanner_1a827481f2b4d293d324f91220bca682a2" prot="private" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>final_approach_</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a15adefc5f4fc9687dafe6b8014914365" prot="public" virt="virtual"><scope>planning::LineKickPlanner</scope><name>is_applicable</name></member>
+      <member refid="classplanning_1_1LineKickPlanner_1ad1f6341b631a238ca497c988a0fcad04" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>LineKickPlanner</name></member>
+      <member refid="classplanning_1_1Planner_1a1de466640407759489cc9f74ac1e3aba" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>name</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a955be0ec4e67379ce9b5949fe1d2efe4" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1aa0a3846baecac12398ddd7a9f0d52e18" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1Planner_1a5d25e229f428de27c7ab72fc2e5a1a5e" prot="public" virt="non-virtual" ambiguityscope="planning::Planner::"><scope>planning::LineKickPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1Planner_1ad0a51fdbb90de2f370b9dbf08f9850c2" prot="public" virt="non-virtual" ambiguityscope="planning::Planner::"><scope>planning::LineKickPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1LineKickPlanner_1a4b6526c6fbe26788456286d565620922" prot="public" virt="virtual"><scope>planning::LineKickPlanner</scope><name>plan</name></member>
+      <member refid="classplanning_1_1Planner_1ade63e8fe5919753dddcdfce60289a4db" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1Planner_1a32a25b3aa79b38f3a40a3835444bb655" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1Planner_1a896421dcf5ec7cde31bfa1e66786dfe7" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a4acd90731e313c29f531ae7e6c7a5522" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>PlannerForCommandType</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a0052d11e437b1bcd71b4dff931da307c" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>PlannerForCommandType</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a2b572cc2412b56620ab3bc9d4cd12e70" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>PlannerForCommandType</name></member>
+      <member refid="classplanning_1_1LineKickPlanner_1a1aed7b39f05efd72d908fabe20ac1165" prot="private" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>prev_path_</name></member>
+      <member refid="classplanning_1_1LineKickPlanner_1ac6b62640e9d19e4b75f5940d9a1b7454" prot="public" virt="virtual"><scope>planning::LineKickPlanner</scope><name>reset</name></member>
+      <member refid="classplanning_1_1LineKickPlanner_1a74c68155f9cf6872b16c93c68b76e8a2" prot="private" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>reuse_path_count_</name></member>
+      <member refid="classplanning_1_1LineKickPlanner_1aa389850b1536ca7ea1a89d8890082ef9" prot="private" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>target_kick_pos_</name></member>
+      <member refid="classplanning_1_1Planner_1aa3f85157362f54234fe961add1a0c2ee" prot="public" virt="virtual"><scope>planning::LineKickPlanner</scope><name>~Planner</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1ac5c9a5077f11bb5d39eb9fff5d63c055" prot="public" virt="non-virtual"><scope>planning::LineKickPlanner</scope><name>~PlannerForCommandType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

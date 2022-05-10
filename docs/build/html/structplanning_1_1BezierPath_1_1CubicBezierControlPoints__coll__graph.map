@@ -1,0 +1,4 @@
+<map id="planning::BezierPath::CubicBezierControlPoints" name="planning::BezierPath::CubicBezierControlPoints">
+<area shape="rect" id="node1" title="Control points for a Bezier curve." alt="" coords="5,139,200,180"/>
+<area shape="rect" id="node2" title=" " alt="" coords="75,5,130,32"/>
+</map>

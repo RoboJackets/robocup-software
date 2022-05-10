@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_3aeee2bc37ae4f07d5b55054e0b3cc2a" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src/soccer/planning</compoundname>
+    <innerdir refid="dir_a38aaca9a7fb4dd142e39e4fed131c84">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner</innerdir>
+    <innerdir refid="dir_b75f9f4e7611301c32e450ae45ed83a7">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives</innerdir>
+    <innerdir refid="dir_11d261a114c96293da95e486dd1377db">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests</innerdir>
+    <innerfile refid="dynamic__obstacle_8hpp">dynamic_obstacle.hpp</innerfile>
+    <innerfile refid="instant_8hpp">instant.hpp</innerfile>
+    <innerfile refid="motion__constraints_8hpp">motion_constraints.hpp</innerfile>
+    <innerfile refid="planner__node_8cpp">planner_node.cpp</innerfile>
+    <innerfile refid="planner__node_8hpp">planner_node.hpp</innerfile>
+    <innerfile refid="planner__node__main_8cpp">planner_node_main.cpp</innerfile>
+    <innerfile refid="planning__params_8cpp">planning_params.cpp</innerfile>
+    <innerfile refid="planning__params_8hpp">planning_params.hpp</innerfile>
+    <innerfile refid="robot__constraints_8hpp">robot_constraints.hpp</innerfile>
+    <innerfile refid="rotation__command_8hpp">rotation_command.hpp</innerfile>
+    <innerfile refid="rotation__constraints_8hpp">rotation_constraints.hpp</innerfile>
+    <innerfile refid="trajectory_8cpp">trajectory.cpp</innerfile>
+    <innerfile refid="trajectory_8hpp">trajectory.hpp</innerfile>
+    <innerfile refid="trajectory__utils_8cpp">trajectory_utils.cpp</innerfile>
+    <innerfile refid="trajectory__utils_8hpp">trajectory_utils.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/"/>
+  </compounddef>
+</doxygen>

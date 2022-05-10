@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classProtobufTree" kind="class" language="C++" prot="public">
+    <compoundname>ProtobufTree</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">QTreeWidget</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classProtobufTree_1aa14929bd519566f13d832d8f555deb65" prot="public" static="no" strong="no">
+        <type></type>
+        <name>@1</name>
+        <enumvalue id="classProtobufTree_1aa14929bd519566f13d832d8f555deb65a374cd495e33e3694036d7829fae70144" prot="public">
+          <name>Column_Field</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classProtobufTree_1aa14929bd519566f13d832d8f555deb65a8748c0e0fb524378d15578035a3d9a58" prot="public">
+          <name>Column_Value</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classProtobufTree_1aa14929bd519566f13d832d8f555deb65ab37a4bcc987a1fe311c47f611dac6a3c" prot="public">
+          <name>Column_Tag</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="22" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" bodystart="22" bodyend="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classProtobufTree_1abe77ca17d0f883790effb87325785268" prot="public" static="no" mutable="no">
+        <type>QMainWindow *</type>
+        <definition>QMainWindow* ProtobufTree::mainWindow</definition>
+        <argsstring></argsstring>
+        <name>mainWindow</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="44" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classProtobufTree_1a67fe5e1e71e9b38e6f1775e8caade8d6" prot="public" static="no" mutable="no">
+        <type>QTimer *</type>
+        <definition>QTimer* ProtobufTree::updateTimer</definition>
+        <argsstring></argsstring>
+        <name>updateTimer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="45" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classProtobufTree_1a67b368e5e7c42899cbdeb6330836675f" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ProtobufTree::_first</definition>
+        <argsstring></argsstring>
+        <name>_first</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="57" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classProtobufTree_1aae4425d3aa59423eda14c1f17f8ea24c" prot="protected" static="no" mutable="no">
+        <type>const std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; *</type>
+        <definition>const std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt;* ProtobufTree::_history</definition>
+        <argsstring></argsstring>
+        <name>_history</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="58" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classProtobufTree_1a60b791a5bd78b874a86abc381cadd6c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ProtobufTree::ProtobufTree</definition>
+        <argsstring>(QWidget *parent=nullptr)</argsstring>
+        <name>ProtobufTree</name>
+        <param>
+          <type>QWidget *</type>
+          <declname>parent</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="19" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="31" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classProtobufTree_1afc70888b103e3e0fc1826946a22eeb48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ProtobufTree::message</definition>
+        <argsstring>(const google::protobuf::Message &amp;msg)</argsstring>
+        <name>message</name>
+        <param>
+          <type>const google::protobuf::Message &amp;</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="29" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="38" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classProtobufTree_1a1e537a7fdbab9801c0ffe37ce688771d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ProtobufTree::expandMessages</definition>
+        <argsstring>(QTreeWidgetItem *item=nullptr)</argsstring>
+        <name>expandMessages</name>
+        <param>
+          <type>QTreeWidgetItem *</type>
+          <declname>item</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="31" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="335" bodyend="349"/>
+      </memberdef>
+      <memberdef kind="function" id="classProtobufTree_1a29da0e5b97ce3e54aa1bda940acfe350" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ProtobufTree::expandSubtree</definition>
+        <argsstring>(QTreeWidgetItem *item)</argsstring>
+        <name>expandSubtree</name>
+        <param>
+          <type>QTreeWidgetItem *</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="34" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="351" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="classProtobufTree_1a3b7a0dc73483ee9e5574f399a7820d80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ProtobufTree::collapseSubtree</definition>
+        <argsstring>(QTreeWidgetItem *item)</argsstring>
+        <name>collapseSubtree</name>
+        <param>
+          <type>QTreeWidgetItem *</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="37" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="359" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="classProtobufTree_1a0892f32928cb9ca9595587f8e909bc00" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ProtobufTree::history</definition>
+        <argsstring>(const std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; *value)</argsstring>
+        <name>history</name>
+        <param>
+          <type>const std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="40" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" bodystart="40" bodyend="42"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classProtobufTree_1a7862704ed47d96e87d162177c7197c0a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ProtobufTree::addTreeData</definition>
+        <argsstring>(QTreeWidgetItem *parent, const google::protobuf::Message &amp;msg)</argsstring>
+        <name>addTreeData</name>
+        <param>
+          <type>QTreeWidgetItem *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>const google::protobuf::Message &amp;</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="50" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="56" bodyend="303"/>
+      </memberdef>
+      <memberdef kind="function" id="classProtobufTree_1a7894ad40102884f36aac11bfac8eccb0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ProtobufTree::contextMenuEvent</definition>
+        <argsstring>(QContextMenuEvent *e) override</argsstring>
+        <name>contextMenuEvent</name>
+        <param>
+          <type>QContextMenuEvent *</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="55" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="367" bodyend="521"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-static-func">
+      <memberdef kind="function" id="classProtobufTree_1ac78fd033bbd6f3576ed966bfab2db3b0" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ProtobufTree::addBytes</definition>
+        <argsstring>(QTreeWidgetItem *parent, const std::string &amp;bytes)</argsstring>
+        <name>addBytes</name>
+        <param>
+          <type>QTreeWidgetItem *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bytes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="53" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.cpp" bodystart="305" bodyend="333"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>ProtobufTree</label>
+        <link refid="classProtobufTree"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>QTreeWidget</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>ProtobufTree</label>
+        <link refid="classProtobufTree"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>QTreeWidget</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" line="15" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/protobuf_tree.hpp" bodystart="15" bodyend="59"/>
+    <listofallmembers>
+      <member refid="classProtobufTree_1a67b368e5e7c42899cbdeb6330836675f" prot="protected" virt="non-virtual"><scope>ProtobufTree</scope><name>_first</name></member>
+      <member refid="classProtobufTree_1aae4425d3aa59423eda14c1f17f8ea24c" prot="protected" virt="non-virtual"><scope>ProtobufTree</scope><name>_history</name></member>
+      <member refid="classProtobufTree_1ac78fd033bbd6f3576ed966bfab2db3b0" prot="protected" virt="non-virtual"><scope>ProtobufTree</scope><name>addBytes</name></member>
+      <member refid="classProtobufTree_1a7862704ed47d96e87d162177c7197c0a" prot="protected" virt="non-virtual"><scope>ProtobufTree</scope><name>addTreeData</name></member>
+      <member refid="classProtobufTree_1a3b7a0dc73483ee9e5574f399a7820d80" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>collapseSubtree</name></member>
+      <member refid="classProtobufTree_1aa14929bd519566f13d832d8f555deb65a374cd495e33e3694036d7829fae70144" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>Column_Field</name></member>
+      <member refid="classProtobufTree_1aa14929bd519566f13d832d8f555deb65ab37a4bcc987a1fe311c47f611dac6a3c" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>Column_Tag</name></member>
+      <member refid="classProtobufTree_1aa14929bd519566f13d832d8f555deb65a8748c0e0fb524378d15578035a3d9a58" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>Column_Value</name></member>
+      <member refid="classProtobufTree_1a7894ad40102884f36aac11bfac8eccb0" prot="protected" virt="virtual"><scope>ProtobufTree</scope><name>contextMenuEvent</name></member>
+      <member refid="classProtobufTree_1a1e537a7fdbab9801c0ffe37ce688771d" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>expandMessages</name></member>
+      <member refid="classProtobufTree_1a29da0e5b97ce3e54aa1bda940acfe350" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>expandSubtree</name></member>
+      <member refid="classProtobufTree_1a0892f32928cb9ca9595587f8e909bc00" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>history</name></member>
+      <member refid="classProtobufTree_1abe77ca17d0f883790effb87325785268" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>mainWindow</name></member>
+      <member refid="classProtobufTree_1afc70888b103e3e0fc1826946a22eeb48" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>message</name></member>
+      <member refid="classProtobufTree_1a60b791a5bd78b874a86abc381cadd6c4" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>ProtobufTree</name></member>
+      <member refid="classProtobufTree_1a67fe5e1e71e9b38e6f1775e8caade8d6" prot="public" virt="non-virtual"><scope>ProtobufTree</scope><name>updateTimer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

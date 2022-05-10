@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classvision__filter_1_1CameraBall" kind="class" language="C++" prot="public">
+    <compoundname>vision_filter::CameraBall</compoundname>
+    <includes refid="camera__ball_8hpp" local="no">camera_ball.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classvision__filter_1_1CameraBall_1ae3dba2265bd3665ec2a8be524c805434" prot="private" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::CameraBall::time_captured_</definition>
+        <argsstring></argsstring>
+        <name>time_captured_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="50" column="14" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1CameraBall_1a36c42c58a01834affee2104ce109ba57" prot="private" static="no" mutable="no">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point vision_filter::CameraBall::pos_</definition>
+        <argsstring></argsstring>
+        <name>pos_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="51" column="24" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::CameraBall::CameraBall</definition>
+        <argsstring>(RJ::Time time_captured, rj_geometry::Point pos)</argsstring>
+        <name>CameraBall</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>time_captured</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>time_captured</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time that the picture was taken </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pos</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Position of the ball at that time </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="21" column="5" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" bodystart="21" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraBall_1a47a046bc37c8f348545db4d7dd7d72b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::CameraBall::CameraBall</definition>
+        <argsstring>(RJ::Time time_captured, const DetectionBallMsg &amp;msg, const rj_geometry::TransformMatrix &amp;world_to_team)</argsstring>
+        <name>CameraBall</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>time_captured</declname>
+        </param>
+        <param>
+          <type>const DetectionBallMsg &amp;</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>const rj_geometry::TransformMatrix &amp;</type>
+          <declname>world_to_team</declname>
+        </param>
+        <briefdescription>
+<para>Constructor from DetectionBallMsg. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="28" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/camera_ball.cpp" bodystart="6" bodyend="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraBall_1ab7dd304ebb5db70df10338c2130341c2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::CameraBall::get_time_captured</definition>
+        <argsstring>() const</argsstring>
+        <name>get_time_captured</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Time this measurement was captured </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="34" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/camera_ball.cpp" bodystart="11" bodyend="11"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraBall_1aac796936cb292b8a305c5affd099f5ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point vision_filter::CameraBall::get_pos</definition>
+        <argsstring>() const</argsstring>
+        <name>get_pos</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Position of the measurement </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="39" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/camera_ball.cpp" bodystart="13" bodyend="13"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classvision__filter_1_1CameraBall_1a2212d7c24c76cf3fcc80e83b9dc3a45e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classvision__filter_1_1CameraBall" kindref="compound">CameraBall</ref></type>
+        <definition>CameraBall vision_filter::CameraBall::combine_balls</definition>
+        <argsstring>(const std::vector&lt; CameraBall &gt; &amp;balls)</argsstring>
+        <name>combine_balls</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="classvision__filter_1_1CameraBall" kindref="compound">CameraBall</ref> &gt; &amp;</type>
+          <declname>balls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Combines all the balls in the list and returns a ball with the average pos and time</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>balls</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of balls to combine </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="47" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/camera_ball.cpp" bodystart="15" bodyend="38"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Wrapper for the protobuf observation </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" line="15" column="17" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp" bodystart="15" bodyend="52"/>
+    <listofallmembers>
+      <member refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" prot="public" virt="non-virtual"><scope>vision_filter::CameraBall</scope><name>CameraBall</name></member>
+      <member refid="classvision__filter_1_1CameraBall_1a47a046bc37c8f348545db4d7dd7d72b3" prot="public" virt="non-virtual"><scope>vision_filter::CameraBall</scope><name>CameraBall</name></member>
+      <member refid="classvision__filter_1_1CameraBall_1a2212d7c24c76cf3fcc80e83b9dc3a45e" prot="public" virt="non-virtual"><scope>vision_filter::CameraBall</scope><name>combine_balls</name></member>
+      <member refid="classvision__filter_1_1CameraBall_1aac796936cb292b8a305c5affd099f5ee" prot="public" virt="non-virtual"><scope>vision_filter::CameraBall</scope><name>get_pos</name></member>
+      <member refid="classvision__filter_1_1CameraBall_1ab7dd304ebb5db70df10338c2130341c2" prot="public" virt="non-virtual"><scope>vision_filter::CameraBall</scope><name>get_time_captured</name></member>
+      <member refid="classvision__filter_1_1CameraBall_1a36c42c58a01834affee2104ce109ba57" prot="private" virt="non-virtual"><scope>vision_filter::CameraBall</scope><name>pos_</name></member>
+      <member refid="classvision__filter_1_1CameraBall_1ae3dba2265bd3665ec2a8be524c805434" prot="private" virt="non-virtual"><scope>vision_filter::CameraBall</scope><name>time_captured_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,483 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classSimFieldView" kind="class" language="C++" prot="public">
+    <compoundname>SimFieldView</compoundname>
+    <basecompoundref refid="classFieldView" prot="public" virt="non-virtual">FieldView</basecompoundref>
+      <sectiondef kind="private-type">
+      <memberdef kind="enum" id="classSimFieldView_1a27ecc6e7743e5d7003a7eca693198b66" prot="private" static="no" strong="no">
+        <type></type>
+        <name>@2</name>
+        <enumvalue id="classSimFieldView_1a27ecc6e7743e5d7003a7eca693198b66a2268bea5aa0e367c24d5f8fdb486a2c2" prot="private">
+          <name>DRAG_NONE</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classSimFieldView_1a27ecc6e7743e5d7003a7eca693198b66aaade5075bbf10d5431ccae9d04e55589" prot="private">
+          <name>DRAG_PLACE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classSimFieldView_1a27ecc6e7743e5d7003a7eca693198b66aaaec6988b6c54b832acea4fead01ddeb" prot="private">
+          <name>DRAG_SHOOT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="48" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="48" bodyend="48"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classSimFieldView_1abfb79f2162b34f478cd72721836e6289" prot="private" static="no" mutable="no">
+        <type>enum SimFieldView::@2</type>
+        <definition>enum SimFieldView::@2 SimFieldView::drag_mode_</definition>
+        <argsstring></argsstring>
+        <name>drag_mode_</name>
+        <initializer>= DRAG_NONE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="48" column="22"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSimFieldView_1aee97a30ed2eb790d1cefe7698125c5c5" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int SimFieldView::drag_robot_</definition>
+        <argsstring></argsstring>
+        <name>drag_robot_</name>
+        <initializer>= -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="49" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSimFieldView_1a6148e95cb910bc39cdc69ccf3d5b5467" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SimFieldView::drag_robot_blue_</definition>
+        <argsstring></argsstring>
+        <name>drag_robot_blue_</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="50" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSimFieldView_1a5f018808106283e2118776a0555c8551" prot="private" static="no" mutable="no">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point SimFieldView::drag_point_</definition>
+        <argsstring></argsstring>
+        <name>drag_point_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="52" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSimFieldView_1a835c01778cd3ef086f3c105736eb067f" prot="private" static="no" mutable="no">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point SimFieldView::shot_</definition>
+        <argsstring></argsstring>
+        <name>shot_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="53" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSimFieldView_1a2b279b21677a845552dd5e6253ff55cd" prot="private" static="no" mutable="no">
+        <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+        <definition>Context* SimFieldView::context_</definition>
+        <argsstring></argsstring>
+        <name>context_</name>
+        <initializer>{}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="54" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSimFieldView_1a010d55d5ef3b1e98abdab07ae145fdbe" prot="private" static="no" mutable="no">
+        <type>rclcpp::Node *</type>
+        <definition>rclcpp::Node* SimFieldView::node_</definition>
+        <argsstring></argsstring>
+        <name>node_</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="55" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSimFieldView_1abd47f84068c9da7168fe134605f478e6" prot="private" static="no" mutable="no">
+        <type>rclcpp::Client&lt; rj_msgs::srv::SimPlacement &gt;::SharedPtr</type>
+        <definition>rclcpp::Client&lt;rj_msgs::srv::SimPlacement&gt;::SharedPtr SimFieldView::sim_placement_</definition>
+        <argsstring></argsstring>
+        <name>sim_placement_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="56" column="32" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSimFieldView_1a895c3be2df63233601715dea7c080e90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SimFieldView::SimFieldView</definition>
+        <argsstring>(QWidget *parent)</argsstring>
+        <name>SimFieldView</name>
+        <param>
+          <type>QWidget *</type>
+          <declname>parent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="18" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="19" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1a9cac952e0234de045fe0fd5c41c51a37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::setup</definition>
+        <argsstring>(Context *context, rclcpp::Node *node)</argsstring>
+        <name>setup</name>
+        <param>
+          <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+          <declname>context</declname>
+        </param>
+        <param>
+          <type>rclcpp::Node *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="19" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="25" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1af9f9f4edf798505cd36fb2aeaea6a219" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::set_ball_position</definition>
+        <argsstring>(const rj_geometry::Point &amp;field_pos)</argsstring>
+        <name>set_ball_position</name>
+        <param>
+          <type>const rj_geometry::Point &amp;</type>
+          <declname>field_pos</declname>
+        </param>
+        <briefdescription>
+<para>Set the ball&apos;s position, in world coordinates. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="22" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="111" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1a26aed1463df782f23dba56aae4aa5473" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::set_ball_velocity</definition>
+        <argsstring>(const rj_geometry::Point &amp;shot)</argsstring>
+        <name>set_ball_velocity</name>
+        <param>
+          <type>const rj_geometry::Point &amp;</type>
+          <declname>shot</declname>
+        </param>
+        <briefdescription>
+<para>Set the ball&apos;s velocity, in world coordinates. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="24" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="117" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1a4d124e3a0e820c0519eb043d0ed260c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::set_robot_pose</definition>
+        <argsstring>(const rj_geometry::Pose &amp;field_pose, int robot_id, bool is_blue)</argsstring>
+        <name>set_robot_pose</name>
+        <param>
+          <type>const rj_geometry::Pose &amp;</type>
+          <declname>field_pose</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>robot_id</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>is_blue</declname>
+        </param>
+        <briefdescription>
+<para>Set a robot&apos;s pose, in world coordinates. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="26" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="128" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1ad7a6722106f2f8e38c16a6878dcb71f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::drag_ball</definition>
+        <argsstring>(const QPoint &amp;screen_pos)</argsstring>
+        <name>drag_ball</name>
+        <param>
+          <type>const QPoint &amp;</type>
+          <declname>screen_pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="29" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="107" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1a01ca3f4d84d21f0bdcb95724915a255f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::drag_robot</definition>
+        <argsstring>(const QPoint &amp;screen_pos, int robot_id, bool is_blue)</argsstring>
+        <name>drag_robot</name>
+        <param>
+          <type>const QPoint &amp;</type>
+          <declname>screen_pos</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>robot_id</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>is_blue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="31" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="124" bodyend="126"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="signal">
+      <memberdef kind="signal" id="classSimFieldView_1a016e53aa048a97b8510ef9c801983424" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::robotSelected</definition>
+        <argsstring>(int shell)</argsstring>
+        <name>robotSelected</name>
+        <param>
+          <type>int</type>
+          <declname>shell</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="37" column="10"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classSimFieldView_1a9aa308c7639119bb8c3359cd5bf09513" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::mouseReleaseEvent</definition>
+        <argsstring>(QMouseEvent *event) override</argsstring>
+        <name>mouseReleaseEvent</name>
+        <param>
+          <type>QMouseEvent *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="40" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="138" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1a68c5caecdd2abe24b39369839a0fa07c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SimFieldView::mousePressEvent</definition>
+        <argsstring>(QMouseEvent *event) override</argsstring>
+        <name>mousePressEvent</name>
+        <param>
+          <type>QMouseEvent *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="41" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="33" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1a6b99fd93ecfec239c40c9a1beb40dd0b" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SimFieldView::mouseMoveEvent</definition>
+        <argsstring>(QMouseEvent *event) override</argsstring>
+        <name>mouseMoveEvent</name>
+        <reimplements refid="classFieldView_1a2ca082b8f5d3c12aa826ccfdb7011161">mouseMoveEvent</reimplements>
+        <param>
+          <type>QMouseEvent *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="42" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="86" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classSimFieldView_1a9912216ea68b82c7303d7e794d0a9be9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SimFieldView::drawTeamSpace</definition>
+        <argsstring>(QPainter &amp;p) override</argsstring>
+        <name>drawTeamSpace</name>
+        <reimplements refid="classFieldView_1aaabad424c361d3c3e090c0967f785a41">drawTeamSpace</reimplements>
+        <param>
+          <type>QPainter &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="44" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="147" bodyend="173"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>FieldView</label>
+        <link refid="classFieldView"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SimFieldView</label>
+        <link refid="classSimFieldView"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>QWidget</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>FieldView</label>
+        <link refid="classFieldView"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SimFieldView</label>
+        <link refid="classSimFieldView"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>QWidget</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" line="14" column="36" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp" bodystart="14" bodyend="57"/>
+    <listofallmembers>
+      <member refid="classFieldView_1a02ac341069431d73c15618263fbb9e12" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_history</name></member>
+      <member refid="classFieldView_1a82a5b13f5cf34be68d365814ad74df0e" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_layerVisible</name></member>
+      <member refid="classFieldView_1acb39f611d55b4f6f6903dc366c114b2c" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_posLabel</name></member>
+      <member refid="classFieldView_1a3c100c4854441cd5dba38d95debc05e5" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_rotate</name></member>
+      <member refid="classFieldView_1a49297f71e5f2e0ee24b007dbdcb5d6b2" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_screenToWorld</name></member>
+      <member refid="classFieldView_1a026e8e2f38e83b02b538ffc3a5636060" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_teamToWorld</name></member>
+      <member refid="classFieldView_1ab983b7d5ea8f349998dac1c06af5b93f" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_textRotation</name></member>
+      <member refid="classFieldView_1adbd929d8b91b31d23795e4c4cc53c31f" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>_worldToTeam</name></member>
+      <member refid="classSimFieldView_1a2b279b21677a845552dd5e6253ff55cd" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>context_</name></member>
+      <member refid="classFieldView_1a719010ed6b8cdfcf20e2d7ddc57c4a00" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>currentFrame</name></member>
+      <member refid="classSimFieldView_1ad7a6722106f2f8e38c16a6878dcb71f5" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>drag_ball</name></member>
+      <member refid="classSimFieldView_1abfb79f2162b34f478cd72721836e6289" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>drag_mode_</name></member>
+      <member refid="classSimFieldView_1a27ecc6e7743e5d7003a7eca693198b66a2268bea5aa0e367c24d5f8fdb486a2c2" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>DRAG_NONE</name></member>
+      <member refid="classSimFieldView_1a27ecc6e7743e5d7003a7eca693198b66aaade5075bbf10d5431ccae9d04e55589" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>DRAG_PLACE</name></member>
+      <member refid="classSimFieldView_1a5f018808106283e2118776a0555c8551" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>drag_point_</name></member>
+      <member refid="classSimFieldView_1a01ca3f4d84d21f0bdcb95724915a255f" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>drag_robot</name></member>
+      <member refid="classSimFieldView_1aee97a30ed2eb790d1cefe7698125c5c5" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>drag_robot_</name></member>
+      <member refid="classSimFieldView_1a6148e95cb910bc39cdc69ccf3d5b5467" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>drag_robot_blue_</name></member>
+      <member refid="classSimFieldView_1a27ecc6e7743e5d7003a7eca693198b66aaaec6988b6c54b832acea4fead01ddeb" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>DRAG_SHOOT</name></member>
+      <member refid="classFieldView_1ae73cf2c49d7ee4084a059d64a9d1c40d" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>drawCoords</name></member>
+      <member refid="classFieldView_1abb9fe0e90365ffd140802c830776ce69" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>drawField</name></member>
+      <member refid="classFieldView_1a5a884cc630d6ec8e58d164065d4799a2" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>drawRobot</name></member>
+      <member refid="classFieldView_1af8cd6bb758dca7893cd798d65dc98467" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>drawRobotHeading</name></member>
+      <member refid="classSimFieldView_1a9912216ea68b82c7303d7e794d0a9be9" prot="protected" virt="virtual"><scope>SimFieldView</scope><name>drawTeamSpace</name></member>
+      <member refid="classFieldView_1a486eeda79a3087766b65f1384bf54d0d" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>drawText</name></member>
+      <member refid="classFieldView_1a460a442ebb106e12d137c3eca53c9244" prot="protected" virt="virtual"><scope>SimFieldView</scope><name>drawWorldSpace</name></member>
+      <member refid="classFieldView_1a1e26dcc40568d5f3d5c4d3403cc1e074" prot="protected" virt="virtual"><scope>SimFieldView</scope><name>enterEvent</name></member>
+      <member refid="classFieldView_1af112f353884fa4a27fd6abd08e8954a4" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>FieldView</name></member>
+      <member refid="classFieldView_1ab753978e46bc624be35a95ca2c263249" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>getTeamToWorld</name></member>
+      <member refid="classFieldView_1a0797e949abe9d6464495b3c918dbfb39" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>history</name></member>
+      <member refid="classFieldView_1a80052d77279a1fcec907e943213b18e7" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>layerVisible</name></member>
+      <member refid="classFieldView_1a3f4ba101746943994de42532e50eb9a3" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>layerVisible</name></member>
+      <member refid="classFieldView_1ab6070725b9393e3d8d919dcb98c0b4cc" prot="protected" virt="virtual"><scope>SimFieldView</scope><name>leaveEvent</name></member>
+      <member refid="classFieldView_1a43bb5b8a92b53b37c4e813658965f85d" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>live</name></member>
+      <member refid="classSimFieldView_1a6b99fd93ecfec239c40c9a1beb40dd0b" prot="protected" virt="virtual"><scope>SimFieldView</scope><name>mouseMoveEvent</name></member>
+      <member refid="classSimFieldView_1a68c5caecdd2abe24b39369839a0fa07c" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>mousePressEvent</name></member>
+      <member refid="classSimFieldView_1a9aa308c7639119bb8c3359cd5bf09513" prot="protected" virt="non-virtual"><scope>SimFieldView</scope><name>mouseReleaseEvent</name></member>
+      <member refid="classSimFieldView_1a010d55d5ef3b1e98abdab07ae145fdbe" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>node_</name></member>
+      <member refid="classFieldView_1a6826a48cade24e5c3be4beaf436c8c4e" prot="protected" virt="virtual"><scope>SimFieldView</scope><name>paintEvent</name></member>
+      <member refid="classFieldView_1ae9c6e6f3cbf896b9cb79c42e5ddd320c" prot="protected" virt="virtual"><scope>SimFieldView</scope><name>resizeEvent</name></member>
+      <member refid="classSimFieldView_1a016e53aa048a97b8510ef9c801983424" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>robotSelected</name></member>
+      <member refid="classFieldView_1ae5ea42046a11bc6adfa2ba36fc014092" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>rotate</name></member>
+      <member refid="classSimFieldView_1af9f9f4edf798505cd36fb2aeaea6a219" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>set_ball_position</name></member>
+      <member refid="classSimFieldView_1a26aed1463df782f23dba56aae4aa5473" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>set_ball_velocity</name></member>
+      <member refid="classSimFieldView_1a4d124e3a0e820c0519eb043d0ed260c5" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>set_robot_pose</name></member>
+      <member refid="classSimFieldView_1a9cac952e0234de045fe0fd5c41c51a37" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>setup</name></member>
+      <member refid="classSimFieldView_1a835c01778cd3ef086f3c105736eb067f" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>shot_</name></member>
+      <member refid="classFieldView_1af5f6678044e8e6b38094f86b5f9835b1" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>showCoords</name></member>
+      <member refid="classFieldView_1abf3aaf3bbc45d41d081372e8664d38be" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>showDotPatterns</name></member>
+      <member refid="classFieldView_1a979a0acca8230b40c1e1126aa2d26a9a" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>showRawBalls</name></member>
+      <member refid="classFieldView_1a69c96ac8aac9db9bf17c9fe43d5e1aef" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>showRawRobots</name></member>
+      <member refid="classFieldView_1a6450014de9bfcc6b7f80217bc752cccb" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>showTeamNames</name></member>
+      <member refid="classSimFieldView_1abd47f84068c9da7168fe134605f478e6" prot="private" virt="non-virtual"><scope>SimFieldView</scope><name>sim_placement_</name></member>
+      <member refid="classSimFieldView_1a895c3be2df63233601715dea7c080e90" prot="public" virt="non-virtual"><scope>SimFieldView</scope><name>SimFieldView</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

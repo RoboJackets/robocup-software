@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structGameSettings" kind="struct" language="C++" prot="public">
+    <compoundname>GameSettings</compoundname>
+    <includes refid="game__settings_8hpp" local="no">game_settings.hpp</includes>
+    <innerclass refid="structGameSettings_1_1JoystickConfig" prot="public">GameSettings::JoystickConfig</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structGameSettings_1aa574dc7975e3052a98d09a4e9b935189" prot="public" static="no">
+        <type>rj_msgs::msg::GameSettings</type>
+        <definition>using GameSettings::Msg =  rj_msgs::msg::GameSettings</definition>
+        <argsstring></argsstring>
+        <name>Msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="14" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structGameSettings_1ac67e32e4a134df2254b62bc16fb7ce88" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::simulation</definition>
+        <argsstring></argsstring>
+        <name>simulation</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="19" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1a5b863a4ad6ff515f2e904cefa32a385e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::request_blue_team</definition>
+        <argsstring></argsstring>
+        <name>request_blue_team</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="22" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1ac96a83487dc3eb1442f2f07957332894" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int GameSettings::request_goalie_id</definition>
+        <argsstring></argsstring>
+        <name>request_goalie_id</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="23" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1ad54f6901ceb7c0fb9f09382e64149604" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::defend_plus_x</definition>
+        <argsstring></argsstring>
+        <name>defend_plus_x</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="26" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1adf09790b17603fefafab847d28f1d40b" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::use_our_half</definition>
+        <argsstring></argsstring>
+        <name>use_our_half</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="28" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1a22efaff193ac219e3c6420961c3b7055" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::use_their_half</definition>
+        <argsstring></argsstring>
+        <name>use_their_half</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="29" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1af0edf6015b8ec714ae5fe4068dbb19d0" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::paused</definition>
+        <argsstring></argsstring>
+        <name>paused</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="31" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1a1ddae9bd7d3ea543190c3bfb18843065" prot="public" static="no" mutable="no">
+        <type><ref refid="structGameSettings_1_1JoystickConfig" kindref="compound">JoystickConfig</ref></type>
+        <definition>JoystickConfig GameSettings::joystick_config</definition>
+        <argsstring></argsstring>
+        <name>joystick_config</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="41" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structGameSettings_1af20886968442a74f745ddd7e45456fcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GameSettings::GameSettings</definition>
+        <argsstring>()=default</argsstring>
+        <name>GameSettings</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="16" column="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Settings for the game, set by <ref refid="classMainWindow" kindref="compound">MainWindow</ref> to be consumed by the rest of the soccer program. This includes playbooks and general settings. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>GameSettings</label>
+        <link refid="structGameSettings"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>joystick_config</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GameSettings::JoystickConfig</label>
+        <link refid="structGameSettings_1_1JoystickConfig"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="13" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="13" bodyend="42"/>
+    <listofallmembers>
+      <member refid="structGameSettings_1ad54f6901ceb7c0fb9f09382e64149604" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>defend_plus_x</name></member>
+      <member refid="structGameSettings_1af20886968442a74f745ddd7e45456fcf" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>GameSettings</name></member>
+      <member refid="structGameSettings_1a1ddae9bd7d3ea543190c3bfb18843065" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>joystick_config</name></member>
+      <member refid="structGameSettings_1aa574dc7975e3052a98d09a4e9b935189" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>Msg</name></member>
+      <member refid="structGameSettings_1af0edf6015b8ec714ae5fe4068dbb19d0" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>paused</name></member>
+      <member refid="structGameSettings_1a5b863a4ad6ff515f2e904cefa32a385e" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>request_blue_team</name></member>
+      <member refid="structGameSettings_1ac96a83487dc3eb1442f2f07957332894" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>request_goalie_id</name></member>
+      <member refid="structGameSettings_1ac67e32e4a134df2254b62bc16fb7ce88" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>simulation</name></member>
+      <member refid="structGameSettings_1adf09790b17603fefafab847d28f1d40b" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>use_our_half</name></member>
+      <member refid="structGameSettings_1a22efaff193ac219e3c6420961c3b7055" prot="public" virt="non-virtual"><scope>GameSettings</scope><name>use_their_half</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

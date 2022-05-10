@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classplanning_1_1Replanner" kind="class" language="C++" prot="public">
+    <compoundname>planning::Replanner</compoundname>
+    <includes refid="replanner_8hpp" local="no">replanner.hpp</includes>
+    <innerclass refid="structplanning_1_1Replanner_1_1PlanParams" prot="public">planning::Replanner::PlanParams</innerclass>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classplanning_1_1Replanner_1aa359daf28e0d65e3d2c94b93080f3766" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr RJ::Seconds</type>
+        <definition>constexpr RJ::Seconds planning::Replanner::kCheckBetterDeltaTime</definition>
+        <argsstring></argsstring>
+        <name>kCheckBetterDeltaTime</name>
+        <initializer>= 0.2s</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="97" column="34" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classplanning_1_1Replanner_1adf3d6c590a09bb5cd762a4f1ad9e905c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::Replanner::create_plan</definition>
+        <argsstring>(PlanParams params, Trajectory previous)</argsstring>
+        <name>create_plan</name>
+        <param>
+          <type><ref refid="structplanning_1_1Replanner_1_1PlanParams" kindref="compound">PlanParams</ref></type>
+          <declname>params</declname>
+        </param>
+        <param>
+          <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+          <declname>previous</declname>
+        </param>
+        <briefdescription>
+<para>Top-level function to create a plan, possibly using part or all of the previous trajectory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters (start and goal) to use to make a plan. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>previous</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The previous trajectory. Can be moved into this function if it is no longer needed.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A planned trajectory. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="44" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" bodystart="89" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1acb97ecd3a783512794c7b5413284b7a5" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double planning::Replanner::goal_pos_change_threshold</definition>
+        <argsstring>()</argsstring>
+        <name>goal_pos_change_threshold</name>
+        <briefdescription>
+<para>The threshold by which the goal needs to change before we require a replan. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="50" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1a454713f7c48a0414abf5689ac773730a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double planning::Replanner::goal_vel_change_threshold</definition>
+        <argsstring>()</argsstring>
+        <name>goal_vel_change_threshold</name>
+        <briefdescription>
+<para>The threshold by which the goal velocity needs to change before we require a replan. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="56" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="56" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1a48db7148854765d0ed21684d1c5ce131" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>RJ::Seconds</type>
+        <definition>static RJ::Seconds planning::Replanner::partial_replan_lead_time</definition>
+        <argsstring>()</argsstring>
+        <name>partial_replan_lead_time</name>
+        <briefdescription>
+<para>The duration of the previous path to reuse (from the beginning) in a partial replan. This will be used if possible, although in some cases a full replan will be required. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="63" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="63" bodyend="65"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classplanning_1_1Replanner_1ac3aa0f625044837ba29826d51663a003" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::Replanner::check_better</definition>
+        <argsstring>(const PlanParams &amp;params, Trajectory previous)</argsstring>
+        <name>check_better</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1Replanner_1_1PlanParams" kindref="compound">PlanParams</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <param>
+          <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+          <declname>previous</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="69" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" bodystart="79" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1a7a4c322cc8b0e2d2fbf9b62d20dd7c10" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::Replanner::partial_replan</definition>
+        <argsstring>(const PlanParams &amp;params, const Trajectory &amp;previous)</argsstring>
+        <name>partial_replan</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1Replanner_1_1PlanParams" kindref="compound">PlanParams</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>previous</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="74" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" bodystart="23" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1aa6e15ef25168053c3a7798ea99920e63" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::Replanner::full_replan</definition>
+        <argsstring>(const PlanParams &amp;params)</argsstring>
+        <name>full_replan</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1Replanner_1_1PlanParams" kindref="compound">PlanParams</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="78" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" bodystart="55" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1a5c34caf96c67ef70415446c0800ab4e3" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::Replanner::veered_off_path</definition>
+        <argsstring>(const Trajectory &amp;trajectory, RobotInstant actual, RJ::Time now)</argsstring>
+        <name>veered_off_path</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>trajectory</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref></type>
+          <declname>actual</declname>
+        </param>
+        <param>
+          <type>RJ::Time</type>
+          <declname>now</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="81" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" bodystart="150" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1a5788707a778de848fe571d6b022072c1" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::Replanner::goal_changed</definition>
+        <argsstring>(const LinearMotionInstant &amp;prev_goal, const LinearMotionInstant &amp;goal)</argsstring>
+        <name>goal_changed</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref> &amp;</type>
+          <declname>prev_goal</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref> &amp;</type>
+          <declname>goal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="85" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" bodystart="163" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1Replanner_1a1eb87f7a07611c0b9e1f10dde0c46681" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>static Trajectory planning::Replanner::partial_path</definition>
+        <argsstring>(const Trajectory &amp;prev_trajectory, RJ::Time now)</argsstring>
+        <name>partial_path</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>prev_trajectory</declname>
+        </param>
+        <param>
+          <type>RJ::Time</type>
+          <declname>now</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="90" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="90" bodyend="95"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Handles the replanning strategy for an RRT plan generator. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This is used to avoid constantly replanning. </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="19" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="19" bodyend="98"/>
+    <listofallmembers>
+      <member refid="classplanning_1_1Replanner_1ac3aa0f625044837ba29826d51663a003" prot="private" virt="non-virtual"><scope>planning::Replanner</scope><name>check_better</name></member>
+      <member refid="classplanning_1_1Replanner_1adf3d6c590a09bb5cd762a4f1ad9e905c" prot="public" virt="non-virtual"><scope>planning::Replanner</scope><name>create_plan</name></member>
+      <member refid="classplanning_1_1Replanner_1aa6e15ef25168053c3a7798ea99920e63" prot="private" virt="non-virtual"><scope>planning::Replanner</scope><name>full_replan</name></member>
+      <member refid="classplanning_1_1Replanner_1a5788707a778de848fe571d6b022072c1" prot="private" virt="non-virtual"><scope>planning::Replanner</scope><name>goal_changed</name></member>
+      <member refid="classplanning_1_1Replanner_1acb97ecd3a783512794c7b5413284b7a5" prot="public" virt="non-virtual"><scope>planning::Replanner</scope><name>goal_pos_change_threshold</name></member>
+      <member refid="classplanning_1_1Replanner_1a454713f7c48a0414abf5689ac773730a" prot="public" virt="non-virtual"><scope>planning::Replanner</scope><name>goal_vel_change_threshold</name></member>
+      <member refid="classplanning_1_1Replanner_1aa359daf28e0d65e3d2c94b93080f3766" prot="private" virt="non-virtual"><scope>planning::Replanner</scope><name>kCheckBetterDeltaTime</name></member>
+      <member refid="classplanning_1_1Replanner_1a1eb87f7a07611c0b9e1f10dde0c46681" prot="private" virt="non-virtual"><scope>planning::Replanner</scope><name>partial_path</name></member>
+      <member refid="classplanning_1_1Replanner_1a7a4c322cc8b0e2d2fbf9b62d20dd7c10" prot="private" virt="non-virtual"><scope>planning::Replanner</scope><name>partial_replan</name></member>
+      <member refid="classplanning_1_1Replanner_1a48db7148854765d0ed21684d1c5ce131" prot="public" virt="non-virtual"><scope>planning::Replanner</scope><name>partial_replan_lead_time</name></member>
+      <member refid="classplanning_1_1Replanner_1a5c34caf96c67ef70415446c0800ab4e3" prot="private" virt="non-virtual"><scope>planning::Replanner</scope><name>veered_off_path</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

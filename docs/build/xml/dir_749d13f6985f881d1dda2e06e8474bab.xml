@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_749d13f6985f881d1dda2e06e8474bab" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src/rj_vision_filter/filter</compoundname>
+    <innerfile refid="kalman__filter_8cpp">kalman_filter.cpp</innerfile>
+    <innerfile refid="kalman__filter3__d_8cpp">kalman_filter3_d.cpp</innerfile>
+    <innerfile refid="kalman__filter__2d_8cpp">kalman_filter_2d.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/filter/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+:py:mod:`rj_gameplay.situation`
+===============================
+
+.. py:module:: rj_gameplay.situation
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   decision_tree/index.rst
+
+

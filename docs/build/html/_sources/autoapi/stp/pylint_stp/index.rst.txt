@@ -1,0 +1,101 @@
+:py:mod:`stp.pylint_stp`
+========================
+
+.. py:module:: stp.pylint_stp
+
+.. autoapi-nested-parse::
+
+   This file contains custom checkers for pylint.
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.pylint_stp.NoFromImportChecker
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   stp.pylint_stp.register
+
+
+
+.. py:class:: NoFromImportChecker(linter: pylint.lint.pylinter.PyLinter)
+
+   Bases: :py:obj:`pylint.checkers.BaseChecker`
+
+   This checker checks that from * import * isn't used for any modules in the stp
+   package.
+
+   .. py:attribute:: __implements__
+      
+
+      
+
+   .. py:attribute:: DISPLAYED_MSG
+      :annotation: = Don't use 'from ... import ...' for any modules from the stp package.
+
+      
+
+   .. py:attribute:: MSG_ID
+      :annotation: = stp-from-import
+
+      
+
+   .. py:attribute:: MESSAGE_HELP
+      :annotation: = 'from ... import ...' shouldn't be used for importing any modules / symbols from the stp package...
+
+      
+
+   .. py:attribute:: name
+      :annotation: = stp-from-import
+
+      
+
+   .. py:attribute:: priority
+      
+
+      
+
+   .. py:attribute:: msgs
+      
+
+      
+
+   .. py:method:: visit_module(self, node: astroid.nodes.Module) -> None
+
+      Visit method for astroid.nodes.Module.
+
+
+   .. py:method:: leave_module(self, node: astroid.nodes.Module) -> None
+
+      Leave method for astroid.nodes.Module.
+
+
+   .. py:method:: visit_importfrom(self, node: astroid.nodes.ImportFrom) -> None
+
+      Visit method for astroid.nodes.ImportFrom.
+
+
+   .. py:method:: __is_testing_module(self) -> bool
+
+      Returns whether the current module is for tests.
+      :return: True if the current module is for tests,
+
+
+
+.. py:function:: register(linter: pylint.lint.pylinter.PyLinter)
+
+   Registers the linter for pylint.
+
+

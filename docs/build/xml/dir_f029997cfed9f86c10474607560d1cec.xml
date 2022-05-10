@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_f029997cfed9f86c10474607560d1cec" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src/soccer</compoundname>
+    <innerdir refid="dir_24922a9c48aede4bbee228753ef95ab6">/home/pnayak/robocup-software/soccer/src/soccer/control</innerdir>
+    <innerdir refid="dir_9ea098b40a1797f93811778a6f06a414">/home/pnayak/robocup-software/soccer/src/soccer/joystick</innerdir>
+    <innerdir refid="dir_2caa5cf02d349dd3469fdf7b47329c0e">/home/pnayak/robocup-software/soccer/src/soccer/optimization</innerdir>
+    <innerdir refid="dir_3aeee2bc37ae4f07d5b55054e0b3cc2a">/home/pnayak/robocup-software/soccer/src/soccer/planning</innerdir>
+    <innerdir refid="dir_20a0834ff0be1029d34c4963e70bbcb6">/home/pnayak/robocup-software/soccer/src/soccer/radio</innerdir>
+    <innerdir refid="dir_a0174c9c24b7e7ed21979e2a06ecd440">/home/pnayak/robocup-software/soccer/src/soccer/referee</innerdir>
+    <innerdir refid="dir_9fa97b59f5068f13bd09f3811323e333">/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp</innerdir>
+    <innerdir refid="dir_99c5e3439e21558128dd45cb5e5c3c4f">/home/pnayak/robocup-software/soccer/src/soccer/ui</innerdir>
+    <innerfile refid="ball__test_8cpp">ball_test.cpp</innerfile>
+    <innerfile refid="battery__profile_8cpp">battery_profile.cpp</innerfile>
+    <innerfile refid="battery__profile_8hpp">battery_profile.hpp</innerfile>
+    <innerfile refid="battery__profile__test_8cpp">battery_profile_test.cpp</innerfile>
+    <innerfile refid="context_8hpp">context.hpp</innerfile>
+    <innerfile refid="debug__drawer_8cpp">debug_drawer.cpp</innerfile>
+    <innerfile refid="debug__drawer_8hpp">debug_drawer.hpp</innerfile>
+    <innerfile refid="game__settings_8hpp">game_settings.hpp</innerfile>
+    <innerfile refid="game__state_8hpp">game_state.hpp</innerfile>
+    <innerfile refid="global__param__server_8cpp">global_param_server.cpp</innerfile>
+    <innerfile refid="global__params_8cpp">global_params.cpp</innerfile>
+    <innerfile refid="global__params_8hpp">global_params.hpp</innerfile>
+    <innerfile refid="log__utils_8hpp">log_utils.hpp</innerfile>
+    <innerfile refid="log__viewer_8cpp">log_viewer.cpp</innerfile>
+    <innerfile refid="log__viewer_8hpp">log_viewer.hpp</innerfile>
+    <innerfile refid="logger_8cpp">logger.cpp</innerfile>
+    <innerfile refid="logger_8hpp">logger.hpp</innerfile>
+    <innerfile refid="logger__test_8cpp">logger_test.cpp</innerfile>
+    <innerfile refid="soccer_2main_8cpp">main.cpp</innerfile>
+    <innerfile refid="node_8hpp">node.hpp</innerfile>
+    <innerfile refid="processor_8cpp">processor.cpp</innerfile>
+    <innerfile refid="processor_8hpp">processor.hpp</innerfile>
+    <innerfile refid="robot__intent_8hpp">robot_intent.hpp</innerfile>
+    <innerfile refid="ros__debug__drawer_8hpp">ros_debug_drawer.hpp</innerfile>
+    <innerfile refid="team__info_8hpp">team_info.hpp</innerfile>
+    <innerfile refid="test__main_8cpp">test_main.cpp</innerfile>
+    <innerfile refid="world__state_8cpp">world_state.cpp</innerfile>
+    <innerfile refid="world__state_8hpp">world_state.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/"/>
+  </compounddef>
+</doxygen>

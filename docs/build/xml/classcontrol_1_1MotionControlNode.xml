@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classcontrol_1_1MotionControlNode" kind="class" language="C++" prot="public">
+    <compoundname>control::MotionControlNode</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Node</basecompoundref>
+    <includes refid="motion__control__node_8hpp" local="no">motion_control_node.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcontrol_1_1MotionControlNode_1a19599d4a1c04084408e5dce20728d38b" prot="private" static="no" mutable="no">
+        <type>::params::LocalROS2ParamProvider</type>
+        <definition>::params::LocalROS2ParamProvider control::MotionControlNode::param_provider_</definition>
+        <argsstring></argsstring>
+        <name>param_provider_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" line="26" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControlNode_1a3630877d7c6812eeaadee36fb7e127c8" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classcontrol_1_1MotionControl" kindref="compound">MotionControl</ref> &gt;</type>
+        <definition>std::vector&lt;MotionControl&gt; control::MotionControlNode::controllers_</definition>
+        <argsstring></argsstring>
+        <name>controllers_</name>
+        <initializer>{}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" line="27" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControlNode_1a023198873b8e6778d0644bd93f35d573" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classcontrol_1_1ManipulatorControl" kindref="compound">ManipulatorControl</ref> &gt;</type>
+        <definition>std::vector&lt;ManipulatorControl&gt; control::MotionControlNode::manipulators_</definition>
+        <argsstring></argsstring>
+        <name>manipulators_</name>
+        <initializer>{}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" line="28" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcontrol_1_1MotionControlNode_1af009f02da44dd12d7f781fa760b5f173" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::MotionControlNode::MotionControlNode</definition>
+        <argsstring>()</argsstring>
+        <name>MotionControlNode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" line="23" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.cpp" bodystart="5" bodyend="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Handles control control for all robots. Calling this once will run control control on all robots. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>control::MotionControlNode</label>
+        <link refid="classcontrol_1_1MotionControlNode"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>rclcpp::Node</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>control::MotionControlNode</label>
+        <link refid="classcontrol_1_1MotionControlNode"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>rclcpp::Node</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" line="21" column="44" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp" bodystart="21" bodyend="29"/>
+    <listofallmembers>
+      <member refid="classcontrol_1_1MotionControlNode_1a3630877d7c6812eeaadee36fb7e127c8" prot="private" virt="non-virtual"><scope>control::MotionControlNode</scope><name>controllers_</name></member>
+      <member refid="classcontrol_1_1MotionControlNode_1a023198873b8e6778d0644bd93f35d573" prot="private" virt="non-virtual"><scope>control::MotionControlNode</scope><name>manipulators_</name></member>
+      <member refid="classcontrol_1_1MotionControlNode_1af009f02da44dd12d7f781fa760b5f173" prot="public" virt="non-virtual"><scope>control::MotionControlNode</scope><name>MotionControlNode</name></member>
+      <member refid="classcontrol_1_1MotionControlNode_1a19599d4a1c04084408e5dce20728d38b" prot="private" virt="non-virtual"><scope>control::MotionControlNode</scope><name>param_provider_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

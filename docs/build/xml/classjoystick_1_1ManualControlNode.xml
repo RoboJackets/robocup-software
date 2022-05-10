@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classjoystick_1_1ManualControlNode" kind="class" language="C++" prot="public">
+    <compoundname>joystick::ManualControlNode</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Node</basecompoundref>
+    <includes refid="manual__control__node_8hpp" local="no">manual_control_node.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1afad9780db8d293e27a0c297472e35c07" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::unique_ptr&lt; <ref refid="classjoystick_1_1ManualControllerProvider" kindref="compound">ManualControllerProvider</ref> &gt; &gt;</type>
+        <definition>std::vector&lt;std::unique_ptr&lt;ManualControllerProvider&gt; &gt; joystick::ManualControlNode::providers_</definition>
+        <argsstring></argsstring>
+        <name>providers_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="45" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1ae27d5ec7312843bdf365bc3309009831" prot="private" static="no" mutable="no">
+        <type>std::map&lt; <ref refid="classjoystick_1_1ManualController" kindref="compound">ManualController</ref> *, std::optional&lt; int &gt; &gt;</type>
+        <definition>std::map&lt;ManualController*, std::optional&lt;int&gt; &gt; joystick::ManualControlNode::controllers_</definition>
+        <argsstring></argsstring>
+        <name>controllers_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="46" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1a1d87add4a89d44b69dcef70911153f45" prot="private" static="no" mutable="no">
+        <type>rclcpp::Service&lt; rj_msgs::srv::ListJoysticks &gt;::SharedPtr</type>
+        <definition>rclcpp::Service&lt;rj_msgs::srv::ListJoysticks&gt;::SharedPtr joystick::ManualControlNode::list_joysticks_</definition>
+        <argsstring></argsstring>
+        <name>list_joysticks_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="48" column="33" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1a549b1346e7ca9f39fa3340cabe941d8b" prot="private" static="no" mutable="no">
+        <type>rclcpp::Service&lt; rj_msgs::srv::SetManual &gt;::SharedPtr</type>
+        <definition>rclcpp::Service&lt;rj_msgs::srv::SetManual&gt;::SharedPtr joystick::ManualControlNode::set_manual_</definition>
+        <argsstring></argsstring>
+        <name>set_manual_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="49" column="33" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1afc168937b5c4efaf732f772616aa9193" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; rclcpp::Publisher&lt; rj_msgs::msg::MotionSetpoint &gt;::SharedPtr &gt;</type>
+        <definition>std::vector&lt;rclcpp::Publisher&lt;rj_msgs::msg::MotionSetpoint&gt;::SharedPtr&gt; joystick::ManualControlNode::motion_setpoint_pubs_</definition>
+        <argsstring></argsstring>
+        <name>motion_setpoint_pubs_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="51" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1a485763241f4bfc592b72f841661b41a4" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; rclcpp::Publisher&lt; rj_msgs::msg::ManipulatorSetpoint &gt;::SharedPtr &gt;</type>
+        <definition>std::vector&lt;rclcpp::Publisher&lt;rj_msgs::msg::ManipulatorSetpoint&gt;::SharedPtr&gt; joystick::ManualControlNode::manipulator_setpoint_pubs_</definition>
+        <argsstring></argsstring>
+        <name>manipulator_setpoint_pubs_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="53" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1a30d20188537ac452e458f2a957e7bf27" prot="private" static="no" mutable="no">
+        <type>rclcpp::TimerBase::SharedPtr</type>
+        <definition>rclcpp::TimerBase::SharedPtr joystick::ManualControlNode::timer_</definition>
+        <argsstring></argsstring>
+        <name>timer_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="55" column="34" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classjoystick_1_1ManualControlNode_1aadbffa3139dc7e2cbb07acf82ac650dc" prot="private" static="no" mutable="no">
+        <type>::params::LocalROS2ParamProvider</type>
+        <definition>::params::LocalROS2ParamProvider joystick::ManualControlNode::param_provider_</definition>
+        <argsstring></argsstring>
+        <name>param_provider_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="57" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classjoystick_1_1ManualControlNode_1af124696193418634ac2d0ae19b4c026c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>joystick::ManualControlNode::ManualControlNode</definition>
+        <argsstring>()</argsstring>
+        <name>ManualControlNode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="36" column="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classjoystick_1_1ManualControlNode_1a2360411b7baf9f35493fd802ad2c30a7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void joystick::ManualControlNode::stop_robot</definition>
+        <argsstring>(int robot_id)</argsstring>
+        <name>stop_robot</name>
+        <param>
+          <type>int</type>
+          <declname>robot_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="39" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.cpp" bodystart="97" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControlNode_1a9155c30ce87d2bcdb6eb47f6de8c2507" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void joystick::ManualControlNode::publish</definition>
+        <argsstring>(int robot_id, const ControllerCommand &amp;command)</argsstring>
+        <name>publish</name>
+        <param>
+          <type>int</type>
+          <declname>robot_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structjoystick_1_1ControllerCommand" kindref="compound">ControllerCommand</ref> &amp;</type>
+          <declname>command</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="40" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.cpp" bodystart="102" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControlNode_1a00ac73b7506ff23c36ac014a2a9d490e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void joystick::ManualControlNode::set_manual</definition>
+        <argsstring>(const std::string &amp;uuid, std::optional&lt; int &gt; robot_id)</argsstring>
+        <name>set_manual</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>uuid</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; int &gt;</type>
+          <declname>robot_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="42" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.cpp" bodystart="71" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1ManualControlNode_1a462fad43c3e5d6b83750a645999e1b7e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void joystick::ManualControlNode::remove_controller</definition>
+        <argsstring>(ManualController *controller)</argsstring>
+        <name>remove_controller</name>
+        <param>
+          <type><ref refid="classjoystick_1_1ManualController" kindref="compound">ManualController</ref> *</type>
+          <declname>controller</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="43" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.cpp" bodystart="88" bodyend="95"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Keeps track of joysticks (and other manual control methods) and assigning them to robots.</para>
+<para>Services:<itemizedlist>
+<listitem><para>ListJoysticks: get a list of joysticks and robots to which they are assigned</para>
+</listitem><listitem><para>SetManual: assign a particular robot to a joystick and remove the robot previously assigned to that joystick, if any</para>
+</listitem></itemizedlist>
+</para>
+<para>Publishes on manipulator and motion setpoints, only for the robots being controlled. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Node</label>
+      </node>
+      <node id="1">
+        <label>joystick::ManualControlNode</label>
+        <link refid="classjoystick_1_1ManualControlNode"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Node</label>
+      </node>
+      <node id="1">
+        <label>joystick::ManualControlNode</label>
+        <link refid="classjoystick_1_1ManualControlNode"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" line="34" column="44" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp" bodystart="34" bodyend="58"/>
+    <listofallmembers>
+      <member refid="classjoystick_1_1ManualControlNode_1ae27d5ec7312843bdf365bc3309009831" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>controllers_</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a1d87add4a89d44b69dcef70911153f45" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>list_joysticks_</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a485763241f4bfc592b72f841661b41a4" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>manipulator_setpoint_pubs_</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1af124696193418634ac2d0ae19b4c026c" prot="public" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>ManualControlNode</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1afc168937b5c4efaf732f772616aa9193" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>motion_setpoint_pubs_</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1aadbffa3139dc7e2cbb07acf82ac650dc" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>param_provider_</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1afad9780db8d293e27a0c297472e35c07" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>providers_</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a9155c30ce87d2bcdb6eb47f6de8c2507" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>publish</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a462fad43c3e5d6b83750a645999e1b7e" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>remove_controller</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a00ac73b7506ff23c36ac014a2a9d490e" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>set_manual</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a549b1346e7ca9f39fa3340cabe941d8b" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>set_manual_</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a2360411b7baf9f35493fd802ad2c30a7" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>stop_robot</name></member>
+      <member refid="classjoystick_1_1ManualControlNode_1a30d20188537ac452e458f2a957e7bf27" prot="private" virt="non-virtual"><scope>joystick::ManualControlNode</scope><name>timer_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

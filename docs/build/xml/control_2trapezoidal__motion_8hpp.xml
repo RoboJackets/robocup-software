@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="control_2trapezoidal__motion_8hpp" kind="file" language="C++">
+    <compoundname>trapezoidal_motion.hpp</compoundname>
+    <includedby refid="control_2trapezoidal__motion_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/control/trapezoidal_motion.cpp</includedby>
+    <includedby refid="control_2trapezoidal__motion__test_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/control/trapezoidal_motion_test.cpp</includedby>
+    <includedby refid="line__kick__planner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.cpp</includedby>
+    <includedby refid="path__smoothing_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.cpp</includedby>
+    <innernamespace refid="namespaceTrapezoidal">Trapezoidal</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="control_2trapezoidal__motion_8hpp_1ad8004b27b35cd34f8197cc9f85e51070" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool trapezoidal_motion</definition>
+        <argsstring>(double path_length, double max_speed, double max_acc, double time_into_lap, double start_speed, double final_speed, double &amp;pos_out, double &amp;speed_out)</argsstring>
+        <name>trapezoidal_motion</name>
+        <param>
+          <type>double</type>
+          <declname>path_length</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_speed</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_acc</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time_into_lap</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>start_speed</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>final_speed</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>pos_out</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>speed_out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This function evaluates a control situation using &quot;bang-bang&quot;. The robot accelerates at maxAcceleration until it hits max speed, then decelerates at max acc to the end point.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">pathLength</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The total distance we are trying to travel </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">timeIntoLap</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>How long since we started moving along the trapezoid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">finalSpeed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The speed we&apos;d like to be going at the end of the trapezoid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">distOut</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The distance to be at at the given time </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">speedOut</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The speed to be at at the given time </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the trapezoid is valid at the given time, false otherwise </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+<para>not even started on the path yet</para>
+<para>on the ramp-up, we&apos;re accelerating at @max_acc</para>
+<para>we&apos;re on the plateau</para>
+<para>we&apos;re on the ramp down</para>
+<para>past the end of the path</para>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/trapezoidal_motion.hpp" line="17" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/trapezoidal_motion.cpp" bodystart="115" bodyend="193" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/trapezoidal_motion.hpp" declline="17" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>trapezoidal_motion(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>path_length,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>max_speed,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>max_acc,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>time_into_lap,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>start_speed,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>final_speed,</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>pos_out,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>speed_out);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">Trapezoidal<sp/>{</highlight></codeline>
+<codeline lineno="37"><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>get_time(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>path_length,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>max_speed,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>max_acc,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>start_speed,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>final_speed);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>Trapezoidal</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/trapezoidal_motion.hpp"/>
+  </compounddef>
+</doxygen>

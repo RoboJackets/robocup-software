@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="src_2soccer_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="src_2soccer_2CMakeLists_8txt_1a7137c636f00143bd84ff62045660704b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(SOCCER_UIS ui/qt/ConfigFileTab.ui ui/qt/LogViewer.ui ui/qt/MainWindow.ui ui/qt/RefereeTab.ui ui/qt/RobotStatusWidget.ui) set(SOCCER_RSRC ui/qt/main_icons.qrc) set(ROBOCUP_LIB_SRC battery_profile.cpp global_params.cpp logger.cpp control/manipulator_control.cpp control/motion_control.cpp control/motion_control_node.cpp control/trapezoidal_motion.cpp joystick/manual_control_node.cpp joystick/sdl_manual_control.cpp optimization/gradient_ascent_1d.cpp optimization/parallel_gradient_ascent_1d.cpp optimization/nelder_mead_2d.cpp optimization/python_function_wrapper.cpp planning/primitives/angle_planning.cpp planning/primitives/create_path.cpp planning/primitives/path_smoothing.cpp planning/primitives/replanner.cpp planning/primitives/rrt_util.cpp planning/primitives/trapezoidal_motion.cpp planning/primitives/velocity_profiling.cpp planning/planner/collect_planner.cpp planning/planner/escape_obstacles_path_planner.cpp planning/planner/intercept_planner.cpp planning/planner/line_kick_planner.cpp planning/planner/path_target_planner.cpp planning/planner/pivot_path_planner.cpp planning/planner/plan_request.cpp planning/planner/settle_planner.cpp planning/planner_node.cpp planning/trajectory.cpp planning/trajectory_utils.cpp planning/planning_params.cpp processor.cpp radio/network_radio.cpp radio/packet_convert.cpp radio/sim_radio.cpp radio/radio.cpp referee/referee_base.cpp referee/external_referee.cpp referee/internal_referee.cpp debug_drawer.cpp ui/battery_widget.cpp ui/field_view.cpp ui/main_window.cpp ui/protobuf_tree.cpp ui/referee_tab.cpp ui/robot_status_widget.cpp ui/robot_widget.cpp ui/sim_field_view.cpp ui/strip_chart.cpp ui/style_sheet_manager.cpp world_state.cpp ros2_temp/soccer_config_client.cpp ros2_temp/raw_vision_packet_sub.cpp ros2_temp/referee_sub.cpp ros2_temp/autonomy_interface.cpp ros2_temp/debug_draw_interface.cpp) set(SOCCER_TEST_SRC battery_profile_test.cpp ball_test.cpp control/trapezoidal_motion_test.cpp control/motion_control_test.cpp optimization/gradient_ascent_1d_test.cpp optimization/parallel_gradient_ascent_1d_test.cpp optimization/nelder_mead_2d_test.cpp planning/tests/angle_planning_test.cpp planning/tests/bezier_path_test.cpp planning/tests/conversion_tests.cpp planning/tests/planner_test.cpp planning/tests/create_path_test.cpp planning/tests/testing_utils.cpp planning/tests/trajectory_test.cpp planning/tests/trapezoidal_motion_test.cpp planning/tests/velocity_profiling_test.cpp test_main.cpp logger_test.cpp) set(LOG_VIEWER_RSRC ui/qt/log_icons.qrc) set(LOG_VIEWER_UIS ui/qt/LogViewer.ui) set(LOG_VIEWER_SRC log_viewer.cpp) set(EXTERNAL_REFEREE_NODE_SRC referee/external_referee_main.cpp) set(INTERNAL_REFEREE_NODE_SRC referee/internal_referee_main.cpp) set(PLANNER_NODE_SRC planning/planner_node_main.cpp) set(CONTROL_NODE_SRC control/control_node_main.cpp) set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp) set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp) set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp) set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp) target_sources(robocup PRIVATE $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOCCER_UIS ui/qt/ConfigFileTab.ui ui/qt/LogViewer.ui ui/qt/MainWindow.ui ui/qt/RefereeTab.ui ui/qt/RobotStatusWidget.</type>
+          <declname>ui</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/CMakeLists.txt" line="4" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/CMakeLists.txt" bodystart="4" bodyend="119"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Set<sp/>Sources</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">set(SOCCER_UIS</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ui/qt/ConfigFileTab.ui</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ui/qt/<ref refid="classLogViewer" kindref="compound">LogViewer</ref>.ui</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ui/qt/<ref refid="classMainWindow" kindref="compound">MainWindow</ref>.ui</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ui/qt/<ref refid="classRefereeTab" kindref="compound">RefereeTab</ref>.ui</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ui/qt/<ref refid="classRobotStatusWidget" kindref="compound">RobotStatusWidget</ref>.ui)</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">set(SOCCER_RSRC<sp/>ui/qt/main_icons.qrc)</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">set(ROBOCUP_LIB_SRC</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>battery_profile.cpp</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>global_params.cpp</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>logger.cpp</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>control/manipulator_control.cpp</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>control/motion_control.cpp</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>control/motion_control_node.cpp</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>control/trapezoidal_motion.cpp</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>joystick/manual_control_node.cpp</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>joystick/sdl_manual_control.cpp</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>optimization/gradient_ascent_1d.cpp</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>optimization/parallel_gradient_ascent_1d.cpp</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>optimization/nelder_mead_2d.cpp</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>optimization/python_function_wrapper.cpp</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/primitives/angle_planning.cpp</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/primitives/create_path.cpp</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/primitives/path_smoothing.cpp</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/primitives/replanner.cpp</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/primitives/rrt_util.cpp</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/primitives/trapezoidal_motion.cpp</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/primitives/velocity_profiling.cpp</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/collect_planner.cpp</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/escape_obstacles_path_planner.cpp</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/intercept_planner.cpp</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/line_kick_planner.cpp</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/path_target_planner.cpp</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/pivot_path_planner.cpp</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/plan_request.cpp</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner/settle_planner.cpp</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planner_node.cpp</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/trajectory.cpp</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/trajectory_utils.cpp</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/planning_params.cpp</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>processor.cpp</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>radio/network_radio.cpp</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>radio/packet_convert.cpp</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>radio/sim_radio.cpp</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>radio/radio.cpp</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>referee/referee_base.cpp</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>referee/external_referee.cpp</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>referee/internal_referee.cpp</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>debug_drawer.cpp</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/battery_widget.cpp</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/field_view.cpp</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/main_window.cpp</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/protobuf_tree.cpp</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/referee_tab.cpp</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/robot_status_widget.cpp</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/robot_widget.cpp</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/sim_field_view.cpp</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/strip_chart.cpp</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>ui/style_sheet_manager.cpp</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>world_state.cpp</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>ros2_temp/soccer_config_client.cpp</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>ros2_temp/raw_vision_packet_sub.cpp</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>ros2_temp/referee_sub.cpp</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>ros2_temp/autonomy_interface.cpp</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>ros2_temp/debug_draw_interface.cpp</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal">set(SOCCER_TEST_SRC</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>battery_profile_test.cpp</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>ball_test.cpp</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>control/trapezoidal_motion_test.cpp</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>control/motion_control_test.cpp</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>optimization/gradient_ascent_1d_test.cpp</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>optimization/parallel_gradient_ascent_1d_test.cpp</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>optimization/nelder_mead_2d_test.cpp</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/angle_planning_test.cpp</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/bezier_path_test.cpp</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/conversion_tests.cpp</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/planner_test.cpp</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/create_path_test.cpp</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/testing_utils.cpp</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/trajectory_test.cpp</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/trapezoidal_motion_test.cpp</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>planning/tests/velocity_profiling_test.cpp</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>test_main.cpp</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>logger_test.cpp)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal">set(LOG_VIEWER_RSRC<sp/>ui/qt/log_icons.qrc)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal">set(LOG_VIEWER_UIS<sp/>ui/qt/<ref refid="classLogViewer" kindref="compound">LogViewer</ref>.ui)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal">set(LOG_VIEWER_SRC<sp/>log_viewer.cpp)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal">set(EXTERNAL_REFEREE_NODE_SRC<sp/>referee/external_referee_main.cpp)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal">set(INTERNAL_REFEREE_NODE_SRC<sp/>referee/internal_referee_main.cpp)</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal">set(PLANNER_NODE_SRC<sp/>planning/planner_node_main.cpp)</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal">set(CONTROL_NODE_SRC<sp/>control/control_node_main.cpp)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal">set(SIM_RADIO_NODE_SRC<sp/>radio/sim_radio_node_main.cpp)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal">set(NETWORK_RADIO_NODE_SRC<sp/>radio/network_radio_node_main.cpp)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal">set(MANUAL_CONTROL_NODE_SRC<sp/>joystick/manual_control_node_main.cpp)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">set(GLOBAL_PARAMETER_SERVER_NODE_SRC<sp/>global_param_server.cpp)</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>sources</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>----<sp/>robocup<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal">target_sources(robocup<sp/>PRIVATE<sp/>${ROBOCUP_LIB_SRC}<sp/>${SOCCER_UIS}<sp/>${SOCCER_RSRC})</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal">#<sp/>Set<sp/>the<sp/>directory<sp/>so<sp/>AUTOUIC<sp/>know<sp/>where<sp/>to<sp/>find<sp/>.ui<sp/>files</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">set(UI_PATH<sp/>${CMAKE_CURRENT_SOURCE_DIR}/ui/qt)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">set_target_properties(robocup<sp/>PROPERTIES<sp/>AUTOUIC_SEARCH_PATHS<sp/>${UI_PATH})</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal">#<sp/>----<sp/>soccer<sp/>----</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">target_sources(soccer<sp/>PRIVATE<sp/>main.cpp)</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>----<sp/>log_viewer<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal">target_sources(log_viewer<sp/>PRIVATE<sp/>${LOG_VIEWER_SRC}<sp/>${LOG_VIEWER_UIS}<sp/>${LOG_VIEWER_RSRC})</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal">#<sp/>----<sp/>external_referee_node<sp/>----</highlight></codeline>
+<codeline lineno="132"><highlight class="normal">target_sources(external_referee_node<sp/>PRIVATE<sp/>${EXTERNAL_REFEREE_NODE_SRC})</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal">#<sp/>----<sp/>internal_referee_node<sp/>----</highlight></codeline>
+<codeline lineno="135"><highlight class="normal">target_sources(internal_referee_node<sp/>PRIVATE<sp/>${INTERNAL_REFEREE_NODE_SRC})</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal">#<sp/>----<sp/>planner_node<sp/>----</highlight></codeline>
+<codeline lineno="138"><highlight class="normal">target_sources(planner_node<sp/>PRIVATE<sp/>${PLANNER_NODE_SRC})</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal">#<sp/>----<sp/>control_node<sp/>----</highlight></codeline>
+<codeline lineno="141"><highlight class="normal">target_sources(control_node<sp/>PRIVATE<sp/>${CONTROL_NODE_SRC})</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal">#<sp/>----<sp/>sim_radio_node<sp/>----</highlight></codeline>
+<codeline lineno="144"><highlight class="normal">target_sources(sim_radio_node<sp/>PRIVATE<sp/>${SIM_RADIO_NODE_SRC})</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal">#<sp/>----<sp/>sim_radio_node<sp/>----</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">target_sources(network_radio_node<sp/>PRIVATE<sp/>${NETWORK_RADIO_NODE_SRC})</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal">#<sp/>----<sp/>manual_control_node<sp/>----</highlight></codeline>
+<codeline lineno="150"><highlight class="normal">target_sources(manual_control_node<sp/>PRIVATE<sp/>${MANUAL_CONTROL_NODE_SRC})</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal">#<sp/>----<sp/>global_param_server_node<sp/>----</highlight></codeline>
+<codeline lineno="153"><highlight class="normal">target_sources(global_param_server_node<sp/>PRIVATE<sp/>${GLOBAL_PARAMETER_SERVER_NODE_SRC})</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal">#<sp/>Set<sp/>the<sp/>directory<sp/>so<sp/>AUTOUIC<sp/>know<sp/>where<sp/>to<sp/>find<sp/>.ui<sp/>files</highlight></codeline>
+<codeline lineno="156"><highlight class="normal">set_target_properties(log_viewer<sp/>PROPERTIES<sp/>AUTOUIC_SEARCH_PATHS<sp/>${UI_PATH})</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal">#<sp/>----<sp/>testing<sp/>----</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(BUILD_TESTING)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>target_sources(test-soccer<sp/>PRIVATE<sp/>${SOCCER_TEST_SRC})</highlight></codeline>
+<codeline lineno="161"><highlight class="normal">endif()</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

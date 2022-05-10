@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="nelder__mead__2d__test_8cpp" kind="file" language="C++">
+    <compoundname>nelder_mead_2d_test.cpp</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">gtest/gtest.h</includes>
+    <includes local="no">rj_geometry/util.hpp</includes>
+    <includes refid="nelder__mead__2d_8hpp" local="yes">nelder_mead_2d.hpp</includes>
+    <includes refid="nelder__mead__2d__config_8hpp" local="yes">nelder_mead_2d_config.hpp</includes>
+    <incdepgraph>
+      <node id="6">
+        <label>nelder_mead_2d_config.hpp</label>
+        <link refid="nelder__mead__2d__config_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>functional</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp</label>
+        <link refid="nelder__mead__2d__test_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>rj_geometry/util.hpp</label>
+      </node>
+      <node id="7">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="10">
+        <label>tuple</label>
+      </node>
+      <node id="9">
+        <label>vector</label>
+      </node>
+      <node id="3">
+        <label>gtest/gtest.h</label>
+      </node>
+      <node id="5">
+        <label>nelder_mead_2d.hpp</label>
+        <link refid="nelder__mead__2d_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>iostream</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="nelder__mead__2d__test_8cpp_1af1bf23a3a06613504bf4b0b5ad8ac588" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>static float eval_function1</definition>
+        <argsstring>(rj_geometry::Point p)</argsstring>
+        <name>eval_function1</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" line="10" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" bodystart="10" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="nelder__mead__2d__test_8cpp_1ac71adb22c1a34c80873f2a59c65f7692" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>static float eval_function2</definition>
+        <argsstring>(rj_geometry::Point p)</argsstring>
+        <name>eval_function2</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" line="14" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" bodystart="14" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="nelder__mead__2d__test_8cpp_1a6344f3098a8be168988f4f846945c1c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(NelderMead2D, execute)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref></type>
+        </param>
+        <param>
+          <type>execute</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" line="16" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" bodystart="16" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="nelder__mead__2d__test_8cpp_1a616b29922a3d0f8ecf248354de2c5ca7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(NelderMead2D, iteration_limit)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref></type>
+        </param>
+        <param>
+          <type>iteration_limit</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" line="30" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" bodystart="30" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="nelder__mead__2d__test_8cpp_1a95ec5a489f0ffbf411559330d70eaa79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(NelderMead2D, max_limit)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref></type>
+        </param>
+        <param>
+          <type>max_limit</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" line="44" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp" bodystart="44" bodyend="56"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;gtest/gtest.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/util.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nelder_mead_2d.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nelder_mead_2d_config.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>eval_function1(rj_geometry::Point<sp/>p)<sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1<sp/>*<sp/>sqrt(p.x()<sp/>*<sp/>p.x()<sp/>+<sp/>p.y()<sp/>*<sp/>p.y());</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>eval_function2(rj_geometry::Point<sp/>p)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1;<sp/>}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal">TEST(<ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref>,<sp/>execute)<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>std::function&lt;float(rj_geometry::Point)&gt;<sp/>f<sp/>=<sp/>&amp;eval_function1;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNelderMead2DConfig" kindref="compound">NelderMead2DConfig</ref><sp/>config(f,<sp/>rj_geometry::Point(1,<sp/>1),<sp/>rj_geometry::Point(1,<sp/>1),</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rj_geometry::Point(0.001,<sp/>0.001),<sp/>1,<sp/>2,<sp/>.5,<sp/>.5,<sp/>100,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref><sp/>nm(config);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>nm.execute();</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_value(),<sp/>0,<sp/>0.001);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_point().x(),<sp/>0,<sp/>0.001);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_point().y(),<sp/>0,<sp/>0.001);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">TEST(<ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref>,<sp/>iteration_limit)<sp/>{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>std::function&lt;float(rj_geometry::Point)&gt;<sp/>f<sp/>=<sp/>&amp;eval_function2;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNelderMead2DConfig" kindref="compound">NelderMead2DConfig</ref><sp/>config(f,<sp/>rj_geometry::Point(1,<sp/>1),<sp/>rj_geometry::Point(.0001,<sp/>.0001),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rj_geometry::Point(0.001,<sp/>0.001),<sp/>1,<sp/>2,<sp/>.5,<sp/>.5,<sp/>100,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref><sp/>nm(config);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>nm.execute();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_value(),<sp/>1,<sp/>0.001);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_point().x(),<sp/>1,<sp/>0.001);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_point().y(),<sp/>1,<sp/>0.001);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">TEST(<ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref>,<sp/>max_limit)<sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>std::function&lt;float(rj_geometry::Point)&gt;<sp/>f<sp/>=<sp/>&amp;eval_function1;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNelderMead2DConfig" kindref="compound">NelderMead2DConfig</ref><sp/>config(f,<sp/>rj_geometry::Point(1,<sp/>1),<sp/>rj_geometry::Point(1,<sp/>1),</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rj_geometry::Point(0.001,<sp/>0.001),<sp/>1,<sp/>2,<sp/>.5,<sp/>.5,<sp/>100,<sp/>0,<sp/>0.1);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNelderMead2D" kindref="compound">NelderMead2D</ref><sp/>nm(config);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>nm.execute();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_value(),<sp/>0,<sp/>0.1);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_point().x(),<sp/>0,<sp/>0.1);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_NEAR(nm.get_point().y(),<sp/>0,<sp/>0.1);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/nelder_mead_2d_test.cpp"/>
+  </compounddef>
+</doxygen>

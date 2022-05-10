@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceChart" kind="namespace" language="C++">
+    <compoundname>Chart</compoundname>
+    <innerclass refid="structChart_1_1Function" prot="public">Chart::Function</innerclass>
+    <innerclass refid="structChart_1_1NumericField" prot="public">Chart::NumericField</innerclass>
+    <innerclass refid="structChart_1_1PointMagnitude" prot="public">Chart::PointMagnitude</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="19" column="15"/>
+  </compounddef>
+</doxygen>

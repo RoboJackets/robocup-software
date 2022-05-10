@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_7e3d5965fc7a2fe7272e6ffff5ba4326" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/include/rj_vision_filter</compoundname>
+    <innerdir refid="dir_09b8bfc009190bd58f204818371ff4ae">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball</innerdir>
+    <innerdir refid="dir_160fcf1c1103b280fa7e37a2aaaded2c">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera</innerdir>
+    <innerdir refid="dir_e26240ab17283eb2597197cdd9c264e8">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/filter</innerdir>
+    <innerdir refid="dir_cb31a078f65c9347a322c3a7317b6e32">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick</innerdir>
+    <innerdir refid="dir_18191df44d6e83c262f37c712760b63a">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot</innerdir>
+    <innerfile refid="params_8hpp">params.hpp</innerfile>
+    <innerfile refid="vision__filter_8hpp">vision_filter.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/"/>
+  </compounddef>
+</doxygen>

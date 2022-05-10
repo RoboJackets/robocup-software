@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_11d261a114c96293da95e486dd1377db" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src/soccer/planning/tests</compoundname>
+    <innerfile refid="angle__planning__test_8cpp">angle_planning_test.cpp</innerfile>
+    <innerfile refid="bezier__path__test_8cpp">bezier_path_test.cpp</innerfile>
+    <innerfile refid="conversion__tests_8cpp">conversion_tests.cpp</innerfile>
+    <innerfile refid="create__path__test_8cpp">create_path_test.cpp</innerfile>
+    <innerfile refid="planner__test_8cpp">planner_test.cpp</innerfile>
+    <innerfile refid="testing__utils_8cpp">testing_utils.cpp</innerfile>
+    <innerfile refid="testing__utils_8hpp">testing_utils.hpp</innerfile>
+    <innerfile refid="trajectory__test_8cpp">trajectory_test.cpp</innerfile>
+    <innerfile refid="planning_2tests_2trapezoidal__motion__test_8cpp">trapezoidal_motion_test.cpp</innerfile>
+    <innerfile refid="velocity__profiling__test_8cpp">velocity_profiling_test.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/"/>
+  </compounddef>
+</doxygen>

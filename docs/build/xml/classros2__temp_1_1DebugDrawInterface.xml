@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classros2__temp_1_1DebugDrawInterface" kind="class" language="C++" prot="public">
+    <compoundname>ros2_temp::DebugDrawInterface</compoundname>
+    <basecompoundref refid="classNode" prot="public" virt="non-virtual">Node</basecompoundref>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classros2__temp_1_1DebugDrawInterface_1a03cd6fd4c82fe5ad27d5b13769beb9e2" prot="private" static="no" mutable="no">
+        <type>rclcpp::Node::SharedPtr</type>
+        <definition>rclcpp::Node::SharedPtr ros2_temp::DebugDrawInterface::node_</definition>
+        <argsstring></argsstring>
+        <name>node_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" line="18" column="29" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classros2__temp_1_1DebugDrawInterface_1ae24f59c82a88a3d3c3402c52f2d2bf00" prot="private" static="no" mutable="no">
+        <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+        <definition>Context* ros2_temp::DebugDrawInterface::context_</definition>
+        <argsstring></argsstring>
+        <name>context_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" line="19" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classros2__temp_1_1DebugDrawInterface_1acb0ed3b80f18e02d95c9a339e8dc4c40" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_drawing_msgs::msg::DebugDraw &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_drawing_msgs::msg::DebugDraw&gt;::SharedPtr ros2_temp::DebugDrawInterface::debug_draw_sub_</definition>
+        <argsstring></argsstring>
+        <name>debug_draw_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" line="20" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classros2__temp_1_1DebugDrawInterface_1af89364f66d19d922ee69b8740aa66236" prot="private" static="no" mutable="no">
+        <type>std::unordered_map&lt; std::string, rj_drawing_msgs::msg::DebugDraw::SharedPtr &gt;</type>
+        <definition>std::unordered_map&lt;std::string, rj_drawing_msgs::msg::DebugDraw::SharedPtr&gt; ros2_temp::DebugDrawInterface::latest_</definition>
+        <argsstring></argsstring>
+        <name>latest_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" line="21" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classros2__temp_1_1DebugDrawInterface_1a8142d39f904ba23fe9976afe755f6cd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ros2_temp::DebugDrawInterface::DebugDrawInterface</definition>
+        <argsstring>(Context *context, rclcpp::Executor *executor)</argsstring>
+        <name>DebugDrawInterface</name>
+        <param>
+          <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+          <declname>context</declname>
+        </param>
+        <param>
+          <type>rclcpp::Executor *</type>
+          <declname>executor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" line="13" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.cpp" bodystart="9" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classros2__temp_1_1DebugDrawInterface_1a850209ab628ea0bf79c2d1d7c17d8ad2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ros2_temp::DebugDrawInterface::run</definition>
+        <argsstring>() override</argsstring>
+        <name>run</name>
+        <reimplements refid="classNode_1a262b9594b45604c69d12263853768533">run</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" line="15" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.cpp" bodystart="21" bodyend="56"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>ros2_temp::DebugDrawInterface</label>
+        <link refid="classros2__temp_1_1DebugDrawInterface"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Node</label>
+        <link refid="classNode"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>ros2_temp::DebugDrawInterface</label>
+        <link refid="classros2__temp_1_1DebugDrawInterface"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Node</label>
+        <link refid="classNode"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" line="11" column="37" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp" bodystart="11" bodyend="22"/>
+    <listofallmembers>
+      <member refid="classros2__temp_1_1DebugDrawInterface_1ae24f59c82a88a3d3c3402c52f2d2bf00" prot="private" virt="non-virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>context_</name></member>
+      <member refid="classros2__temp_1_1DebugDrawInterface_1acb0ed3b80f18e02d95c9a339e8dc4c40" prot="private" virt="non-virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>debug_draw_sub_</name></member>
+      <member refid="classros2__temp_1_1DebugDrawInterface_1a8142d39f904ba23fe9976afe755f6cd3" prot="public" virt="non-virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>DebugDrawInterface</name></member>
+      <member refid="classros2__temp_1_1DebugDrawInterface_1af89364f66d19d922ee69b8740aa66236" prot="private" virt="non-virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>latest_</name></member>
+      <member refid="classros2__temp_1_1DebugDrawInterface_1a03cd6fd4c82fe5ad27d5b13769beb9e2" prot="private" virt="non-virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>node_</name></member>
+      <member refid="classros2__temp_1_1DebugDrawInterface_1a850209ab628ea0bf79c2d1d7c17d8ad2" prot="public" virt="virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>run</name></member>
+      <member refid="classNode_1abf2adab83bb649cf8bf5bd70d9447638" prot="public" virt="virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>start</name></member>
+      <member refid="classNode_1ae60b6f1eda15c537359ac04d44ba3473" prot="public" virt="virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>stop</name></member>
+      <member refid="classNode_1abce703f211f6a577085b4b8ad68cbb19" prot="public" virt="virtual"><scope>ros2_temp::DebugDrawInterface</scope><name>~Node</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

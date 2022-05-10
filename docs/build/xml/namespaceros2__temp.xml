@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceros2__temp" kind="namespace" language="C++">
+    <compoundname>ros2_temp</compoundname>
+    <innerclass refid="classros2__temp_1_1AutonomyInterface" prot="public">ros2_temp::AutonomyInterface</innerclass>
+    <innerclass refid="classros2__temp_1_1DebugDrawInterface" prot="public">ros2_temp::DebugDrawInterface</innerclass>
+    <innerclass refid="classros2__temp_1_1RawVisionPacketSub" prot="public">ros2_temp::RawVisionPacketSub</innerclass>
+    <innerclass refid="classros2__temp_1_1RefereeSub" prot="public">ros2_temp::RefereeSub</innerclass>
+    <innerclass refid="classros2__temp_1_1SoccerConfigClient" prot="public">ros2_temp::SoccerConfigClient</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="raw__vision__packet__sub_8hpp_1a74a19a139047511c56161e7bfc1ba540" prot="public" static="no">
+        <type>rj_msgs::msg::RawProtobuf</type>
+        <definition>typedef rj_msgs::msg::RawProtobuf ros2_temp::RawProtobufMsg</definition>
+        <argsstring></argsstring>
+        <name>RawProtobufMsg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="10" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="referee__sub_8hpp_1a71e70d34ccff94c778331cd015881dbc" prot="public" static="no">
+        <type>rj_msgs::msg::PlayState</type>
+        <definition>using ros2_temp::PlayStateMsg = typedef rj_msgs::msg::PlayState</definition>
+        <argsstring></argsstring>
+        <name>PlayStateMsg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" line="19" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="referee__sub_8hpp_1afe5c9629702e3f56658b2c02fa473195" prot="public" static="no">
+        <type>rj_msgs::msg::MatchState</type>
+        <definition>using ros2_temp::MatchStateMsg = typedef rj_msgs::msg::MatchState</definition>
+        <argsstring></argsstring>
+        <name>MatchStateMsg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" line="20" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="referee__sub_8hpp_1a484b009912ef80f3f98e1b5528cc834e" prot="public" static="no">
+        <type>rj_msgs::msg::Goalie</type>
+        <definition>using ros2_temp::GoalieMsg = typedef rj_msgs::msg::Goalie</definition>
+        <argsstring></argsstring>
+        <name>GoalieMsg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" line="21" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="referee__sub_8hpp_1aa833d430a190ca184c922ac3981ac9dd" prot="public" static="no">
+        <type>rj_msgs::msg::TeamColor</type>
+        <definition>using ros2_temp::TeamColorMsg = typedef rj_msgs::msg::TeamColor</definition>
+        <argsstring></argsstring>
+        <name>TeamColorMsg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" line="22" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="referee__sub_8hpp_1a44b54c3e0e980377e316aadc57885bdc" prot="public" static="no">
+        <type>rj_msgs::msg::TeamInfo</type>
+        <definition>using ros2_temp::TeamInfoMsg = typedef rj_msgs::msg::TeamInfo</definition>
+        <argsstring></argsstring>
+        <name>TeamInfoMsg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" line="23" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="debug__draw__interface_8cpp_1aa0594df6a8a9f76c6db4f61b93be4ae6" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr size_t</type>
+        <definition>constexpr size_t ros2_temp::kDebugDrawQueueSize</definition>
+        <argsstring></argsstring>
+        <name>kDebugDrawQueueSize</name>
+        <initializer>= 50</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.cpp" line="7" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.cpp" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/autonomy_interface.cpp" line="10" column="19"/>
+  </compounddef>
+</doxygen>

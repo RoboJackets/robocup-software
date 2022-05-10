@@ -1,0 +1,499 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classvision__filter_1_1KalmanRobot" kind="class" language="C++" prot="public">
+    <compoundname>vision_filter::KalmanRobot</compoundname>
+    <includes refid="kalman__robot_8hpp" local="no">kalman_robot.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1aff3ad0c06d1e3b500cabbe0f43d0ffe0" prot="private" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::KalmanRobot::last_update_time_</definition>
+        <argsstring></argsstring>
+        <name>last_update_time_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="115" column="14" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1a998ac6b7787b456f670cf68b30065795" prot="private" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::KalmanRobot::last_predict_time_</definition>
+        <argsstring></argsstring>
+        <name>last_predict_time_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="116" column="14" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1abb8543278a81d2f30ccd4b2b91c35cf1" prot="private" static="no" mutable="no">
+        <type>boost::circular_buffer&lt; <ref refid="classvision__filter_1_1CameraRobot" kindref="compound">CameraRobot</ref> &gt;</type>
+        <definition>boost::circular_buffer&lt;CameraRobot&gt; vision_filter::KalmanRobot::previous_measurements_</definition>
+        <argsstring></argsstring>
+        <name>previous_measurements_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="118" column="28" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1adb5c3c596009880931a70e0a7dfd5233" prot="private" static="no" mutable="no">
+        <type><ref refid="classvision__filter_1_1KalmanFilter3D" kindref="compound">KalmanFilter3D</ref></type>
+        <definition>KalmanFilter3D vision_filter::KalmanRobot::filter_</definition>
+        <argsstring></argsstring>
+        <name>filter_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="120" column="20" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1a58f5204679731109bdfb698829f25689" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double vision_filter::KalmanRobot::previous_theta_</definition>
+        <argsstring></argsstring>
+        <name>previous_theta_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="122" column="12" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1a1e900b6649ed6947afc98f95d96e6159" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int vision_filter::KalmanRobot::unwrap_theta_ctr_</definition>
+        <argsstring></argsstring>
+        <name>unwrap_theta_ctr_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="123" column="9" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1abf7ccbe67714cb587c96e91ac8fc2c4b" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int vision_filter::KalmanRobot::health_</definition>
+        <argsstring></argsstring>
+        <name>health_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="124" column="9" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1aa8593f67c349769674484060f4e4d561" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int vision_filter::KalmanRobot::robot_id_</definition>
+        <argsstring></argsstring>
+        <name>robot_id_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="126" column="9" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KalmanRobot_1a3ee9fd5d1bf840484f756b5eebffbd64" prot="private" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int vision_filter::KalmanRobot::camera_id_</definition>
+        <argsstring></argsstring>
+        <name>camera_id_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="128" column="18" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a24567d2bfc99080cbe7a25b70a9f7aaa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::KalmanRobot::KalmanRobot</definition>
+        <argsstring>(unsigned int camera_id, RJ::Time creation_time, CameraRobot init_measurement, const WorldRobot &amp;previous_world_robot)</argsstring>
+        <name>KalmanRobot</name>
+        <param>
+          <type>unsigned int</type>
+          <declname>camera_id</declname>
+        </param>
+        <param>
+          <type>RJ::Time</type>
+          <declname>creation_time</declname>
+        </param>
+        <param>
+          <type><ref refid="classvision__filter_1_1CameraRobot" kindref="compound">CameraRobot</ref></type>
+          <declname>init_measurement</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &amp;</type>
+          <declname>previous_world_robot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Checks previous_world_robot to see if it&apos;s valid</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>camera_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the camera this filter is applied to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>creation_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time this filter was created </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>init_measurement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial robot measurement </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>previous_world_robot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classvision__filter_1_1World" kindref="compound">World</ref> robot from last frame (or invalid world robot) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="27" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a415b3da4f74e80a3701a5b2618684bba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::KalmanRobot::predict</definition>
+        <argsstring>(RJ::Time current_time)</argsstring>
+        <name>predict</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>current_time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Predicts one time step forward</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>current_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current time of the prediction step </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="36" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="38" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1ae3e32f92f359f9315dd069a4649a1ec4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::KalmanRobot::predict_and_update</definition>
+        <argsstring>(RJ::Time current_time, CameraRobot update_robot)</argsstring>
+        <name>predict_and_update</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>current_time</declname>
+        </param>
+        <param>
+          <type><ref refid="classvision__filter_1_1CameraRobot" kindref="compound">CameraRobot</ref></type>
+          <declname>update_robot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Predicts one time step forward then triangulates toward the measurement</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>current_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current time of the prediction/update step </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>update_robot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Robot measurement that we are using as feedback </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="44" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="47" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a320f21ef7b5fcaaaf0b77cafeb78dfd3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool vision_filter::KalmanRobot::is_unhealthy</definition>
+        <argsstring>() const</argsstring>
+        <name>is_unhealthy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true when the filter hasn&apos;t been updated in a while and should be deleted </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="50" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="74" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a3041b1e658f8b935cc2a8f2f50ee910a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int vision_filter::KalmanRobot::get_camera_id</definition>
+        <argsstring>() const</argsstring>
+        <name>get_camera_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The camera id this belongs to </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="55" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a5acb249c538d6d342494558532c1eca8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int vision_filter::KalmanRobot::get_robot_id</definition>
+        <argsstring>() const</argsstring>
+        <name>get_robot_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>This robot&apos;s id </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="60" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1aaa86c4a5d72203d88e7012058cd45142" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int vision_filter::KalmanRobot::get_health</definition>
+        <argsstring>() const</argsstring>
+        <name>get_health</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>How healthy this filter is. AKA How often it&apos;s been updated </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="65" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a3315c0dbec4755e3f9e9dd7f700a3db8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point vision_filter::KalmanRobot::get_pos</definition>
+        <argsstring>() const</argsstring>
+        <name>get_pos</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Best estimate of the linear position of the robot </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="70" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1ad191e83de5832699f9affbbbbddd4322" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double vision_filter::KalmanRobot::get_theta</definition>
+        <argsstring>() const</argsstring>
+        <name>get_theta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Best estimate of the heading. Not bounded </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="75" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a8bd7e89da99afb7b01a41657ae66aa40" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point vision_filter::KalmanRobot::get_vel</definition>
+        <argsstring>() const</argsstring>
+        <name>get_vel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Best estimate of the linear velocity of the robot </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="80" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a0d772961f02611f5ff60ed596ef84130" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double vision_filter::KalmanRobot::get_omega</definition>
+        <argsstring>() const</argsstring>
+        <name>get_omega</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Best estimate of the angular velocity </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="85" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a418fbf65c9154c3216982273535aa20f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point vision_filter::KalmanRobot::get_pos_cov</definition>
+        <argsstring>() const</argsstring>
+        <name>get_pos_cov</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Covariance in X and Y linear direction of the position of the robot </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="91" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a1d6c424deb0b276bb8b69199139b54d4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double vision_filter::KalmanRobot::get_theta_cov</definition>
+        <argsstring>() const</argsstring>
+        <name>get_theta_cov</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Covariance of theta of the robot </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="96" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a70d8c40fff0204c875db8642afba0bdc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point vision_filter::KalmanRobot::get_vel_cov</definition>
+        <argsstring>() const</argsstring>
+        <name>get_vel_cov</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Covariance in X and Y linear direction of the velocity of the robot </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="102" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1a9bcf1225b538ecf3564d0e93bece20e3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double vision_filter::KalmanRobot::get_omega_cov</definition>
+        <argsstring>() const</argsstring>
+        <name>get_omega_cov</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Covariance of omega of the robot </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="107" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="101" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KalmanRobot_1ae26ee4140e268b55e3428674adcb3b18" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const boost::circular_buffer&lt; <ref refid="classvision__filter_1_1CameraRobot" kindref="compound">CameraRobot</ref> &gt; &amp;</type>
+        <definition>const boost::circular_buffer&lt; CameraRobot &gt; &amp; vision_filter::KalmanRobot::get_prev_measurements</definition>
+        <argsstring>() const</argsstring>
+        <name>get_prev_measurements</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>List of previous camera robot measurements for kick detection </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="112" column="34" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/kalman_robot.cpp" bodystart="103" bodyend="105"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Filtered robot estimation for a single camera </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" line="16" column="18" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/kalman_robot.hpp" bodystart="16" bodyend="129"/>
+    <listofallmembers>
+      <member refid="classvision__filter_1_1KalmanRobot_1a3ee9fd5d1bf840484f756b5eebffbd64" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>camera_id_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1adb5c3c596009880931a70e0a7dfd5233" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>filter_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a3041b1e658f8b935cc2a8f2f50ee910a" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_camera_id</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1aaa86c4a5d72203d88e7012058cd45142" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_health</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a0d772961f02611f5ff60ed596ef84130" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_omega</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a9bcf1225b538ecf3564d0e93bece20e3" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_omega_cov</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a3315c0dbec4755e3f9e9dd7f700a3db8" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_pos</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a418fbf65c9154c3216982273535aa20f" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_pos_cov</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1ae26ee4140e268b55e3428674adcb3b18" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_prev_measurements</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a5acb249c538d6d342494558532c1eca8" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_robot_id</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1ad191e83de5832699f9affbbbbddd4322" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_theta</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a1d6c424deb0b276bb8b69199139b54d4" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_theta_cov</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a8bd7e89da99afb7b01a41657ae66aa40" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_vel</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a70d8c40fff0204c875db8642afba0bdc" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>get_vel_cov</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1abf7ccbe67714cb587c96e91ac8fc2c4b" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>health_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a320f21ef7b5fcaaaf0b77cafeb78dfd3" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>is_unhealthy</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a24567d2bfc99080cbe7a25b70a9f7aaa" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>KalmanRobot</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a998ac6b7787b456f670cf68b30065795" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>last_predict_time_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1aff3ad0c06d1e3b500cabbe0f43d0ffe0" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>last_update_time_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a415b3da4f74e80a3701a5b2618684bba" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>predict</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1ae3e32f92f359f9315dd069a4649a1ec4" prot="public" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>predict_and_update</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1abb8543278a81d2f30ccd4b2b91c35cf1" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>previous_measurements_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a58f5204679731109bdfb698829f25689" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>previous_theta_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1aa8593f67c349769674484060f4e4d561" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>robot_id_</name></member>
+      <member refid="classvision__filter_1_1KalmanRobot_1a1e900b6649ed6947afc98f95d96e6159" prot="private" virt="non-virtual"><scope>vision_filter::KalmanRobot</scope><name>unwrap_theta_ctr_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

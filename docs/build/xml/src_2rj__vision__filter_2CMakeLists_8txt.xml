@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="src_2rj__vision__filter_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="src_2rj__vision__filter_2CMakeLists_8txt_1a5a435552b5313f77eade1bea43d4cff7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(RJ_VISION_FILTER_SRC ball/ball_bounce.cpp ball/camera_ball.cpp ball/kalman_ball.cpp ball/world_ball.cpp camera/camera.cpp camera/world.cpp filter/kalman_filter.cpp filter/kalman_filter_2d.cpp filter/kalman_filter3_d.cpp kick/detector/fast_kick_detector.cpp kick/detector/slow_kick_detector.cpp kick/estimator/chip_kick_estimator.cpp kick/estimator/flat_kick_estimator.cpp kick/kick_event.cpp robot/camera_robot.cpp robot/kalman_robot.cpp robot/world_robot.cpp params.cpp vision_filter.cpp) target_sources(robocup PRIVATE $</argsstring>
+        <name>set</name>
+        <param>
+          <type>RJ_VISION_FILTER_SRC ball/ball_bounce.cpp ball/camera_ball.cpp ball/kalman_ball.cpp ball/world_ball.cpp camera/camera.cpp camera/world.cpp filter/kalman_filter.cpp filter/kalman_filter_2d.cpp filter/kalman_filter3_d.cpp kick/detector/fast_kick_detector.cpp kick/detector/slow_kick_detector.cpp kick/estimator/chip_kick_estimator.cpp kick/estimator/flat_kick_estimator.cpp kick/kick_event.cpp robot/camera_robot.cpp robot/kalman_robot.cpp robot/world_robot.cpp params.cpp vision_filter.</type>
+          <declname>cpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/CMakeLists.txt" line="4" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/CMakeLists.txt" bodystart="4" bodyend="29"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Set<sp/>Sources</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">set(RJ_VISION_FILTER_SRC</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/>ball/ball_bounce.cpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/>ball/camera_ball.cpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/>ball/kalman_ball.cpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>ball/world_ball.cpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>camera/camera.cpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>camera/world.cpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>filter/kalman_filter.cpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>filter/kalman_filter_2d.cpp</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>filter/kalman_filter3_d.cpp</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>kick/detector/fast_kick_detector.cpp</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>kick/detector/slow_kick_detector.cpp</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>kick/estimator/chip_kick_estimator.cpp</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>kick/estimator/flat_kick_estimator.cpp</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>kick/kick_event.cpp</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>robot/camera_robot.cpp</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>robot/kalman_robot.cpp</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>robot/world_robot.cpp</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>params.cpp</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>vision_filter.cpp)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>sources</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>======================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>----<sp/>robocup<sp/>----</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">target_sources(robocup<sp/>PRIVATE<sp/>${RJ_VISION_FILTER_SRC})</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">#<sp/>----<sp/>vision_filter<sp/>----</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">target_sources(rj_vision_filter<sp/>PRIVATE<sp/>main.cpp)</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classNode" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Node</compoundname>
+    <derivedcompoundref refid="classLogger" prot="public" virt="non-virtual">Logger</derivedcompoundref>
+    <derivedcompoundref refid="classros2__temp_1_1AutonomyInterface" prot="public" virt="non-virtual">ros2_temp::AutonomyInterface</derivedcompoundref>
+    <derivedcompoundref refid="classros2__temp_1_1DebugDrawInterface" prot="public" virt="non-virtual">ros2_temp::DebugDrawInterface</derivedcompoundref>
+    <derivedcompoundref refid="classros2__temp_1_1RefereeSub" prot="public" virt="non-virtual">ros2_temp::RefereeSub</derivedcompoundref>
+    <includes refid="node_8hpp" local="no">node.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classNode_1abce703f211f6a577085b4b8ad68cbb19" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Node::~Node</definition>
+        <argsstring>()=default</argsstring>
+        <name>~Node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" line="9" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classNode_1abf2adab83bb649cf8bf5bd70d9447638" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Node::start</definition>
+        <argsstring>()</argsstring>
+        <name>start</name>
+        <reimplementedby refid="classLogger_1af41e4f7fc6ed98fa2e813b7148f7bee8">start</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" line="10" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" bodystart="10" bodyend="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classNode_1a262b9594b45604c69d12263853768533" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Node::run</definition>
+        <argsstring>()=0</argsstring>
+        <name>run</name>
+        <reimplementedby refid="classros2__temp_1_1DebugDrawInterface_1a850209ab628ea0bf79c2d1d7c17d8ad2">run</reimplementedby>
+        <reimplementedby refid="classros2__temp_1_1AutonomyInterface_1a09745b647c956c8e65023c9256e175c7">run</reimplementedby>
+        <reimplementedby refid="classros2__temp_1_1RefereeSub_1a22f20fc4490283674824bc1f986e2d0d">run</reimplementedby>
+        <reimplementedby refid="classLogger_1ac3af1e1355392bcd5e993e2a1daf0096">run</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" line="13" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classNode_1ae60b6f1eda15c537359ac04d44ba3473" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Node::stop</definition>
+        <argsstring>()</argsstring>
+        <name>stop</name>
+        <reimplementedby refid="classLogger_1aa1e440e8b3d057f95605dee07b281b27">stop</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" line="15" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" bodystart="15" bodyend="15"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The base class for a module run by <ref refid="classProcessor" kindref="compound">Processor</ref>. Override this and add it to the nodes vector in <ref refid="classProcessor" kindref="compound">Processor</ref> to have it run in the update loop. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="5">
+        <label>ros2_temp::RefereeSub</label>
+        <link refid="classros2__temp_1_1RefereeSub"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ros2_temp::DebugDrawInterface</label>
+        <link refid="classros2__temp_1_1DebugDrawInterface"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Node</label>
+        <link refid="classNode"/>
+      </node>
+      <node id="2">
+        <label>Logger</label>
+        <link refid="classLogger"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ros2_temp::AutonomyInterface</label>
+        <link refid="classros2__temp_1_1AutonomyInterface"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" line="7" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/node.hpp" bodystart="7" bodyend="16"/>
+    <listofallmembers>
+      <member refid="classNode_1a262b9594b45604c69d12263853768533" prot="public" virt="pure-virtual"><scope>Node</scope><name>run</name></member>
+      <member refid="classNode_1abf2adab83bb649cf8bf5bd70d9447638" prot="public" virt="virtual"><scope>Node</scope><name>start</name></member>
+      <member refid="classNode_1ae60b6f1eda15c537359ac04d44ba3473" prot="public" virt="virtual"><scope>Node</scope><name>stop</name></member>
+      <member refid="classNode_1abce703f211f6a577085b4b8ad68cbb19" prot="public" virt="virtual"><scope>Node</scope><name>~Node</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,814 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="sim__field__view_8cpp" kind="file" language="C++">
+    <compoundname>sim_field_view.cpp</compoundname>
+    <includes refid="sim__field__view_8hpp" local="yes">sim_field_view.hpp</includes>
+    <includes local="no">QFont</includes>
+    <includes local="no">QMouseEvent</includes>
+    <includes local="no">QPainter</includes>
+    <includes local="no">rj_common/network.hpp</includes>
+    <includes local="no">rj_constants/constants.hpp</includes>
+    <includes local="no">rj_constants/topic_names.hpp</includes>
+    <includes local="no">rj_msgs/msg/ball_placement.hpp</includes>
+    <includes local="no">rj_msgs/msg/robot_placement.hpp</includes>
+    <incdepgraph>
+      <node id="20">
+        <label>QMap</label>
+      </node>
+      <node id="55">
+        <label>rj_msgs/msg/world_vel_motion_command.hpp</label>
+      </node>
+      <node id="76">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>rj_constants/constants.hpp</label>
+      </node>
+      <node id="49">
+        <label>rj_msgs/msg/line_kick_motion_command.hpp</label>
+      </node>
+      <node id="50">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="61">
+        <label>fmt/format.h</label>
+      </node>
+      <node id="46">
+        <label>rj_msgs/msg/collect_motion_command.hpp</label>
+      </node>
+      <node id="84">
+        <label>field_view.hpp</label>
+        <link refid="field__view_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="59">
+        <label>rj_msgs/msg/world_state.hpp</label>
+      </node>
+      <node id="12">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="75">
+        <label>rotation_constraints.hpp</label>
+        <link refid="rotation__constraints_8hpp_source"/>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>game_state.hpp</label>
+        <link refid="game__state_8hpp_source"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>context.hpp</label>
+        <link refid="context_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>variant</label>
+      </node>
+      <node id="57">
+        <label>rj_msgs/msg/ball_state.hpp</label>
+      </node>
+      <node id="80">
+        <label>rj_msgs/srv/sim_placement.hpp</label>
+      </node>
+      <node id="93">
+        <label>rj_msgs/msg/robot_placement.hpp</label>
+      </node>
+      <node id="63">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="10">
+        <label>rj_msgs/msg/motion_setpoint.hpp</label>
+      </node>
+      <node id="18">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="73">
+        <label>gtest/gtest_prod.h</label>
+      </node>
+      <node id="24">
+        <label>game_settings.hpp</label>
+        <link refid="game__settings_8hpp_source"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="87">
+        <label>QFont</label>
+      </node>
+      <node id="56">
+        <label>world_state.hpp</label>
+        <link refid="world__state_8hpp_source"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>rj_common/field_dimensions.hpp</label>
+      </node>
+      <node id="22">
+        <label>string</label>
+      </node>
+      <node id="6">
+        <label>rj_protos/referee.pb.h</label>
+      </node>
+      <node id="39">
+        <label>radio/robot_status.hpp</label>
+        <link refid="robot__status_8hpp_source"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="34">
+        <label>rj_msgs/msg/match_state.hpp</label>
+      </node>
+      <node id="90">
+        <label>rj_common/network.hpp</label>
+      </node>
+      <node id="62">
+        <label>rclcpp/rclcpp.hpp</label>
+      </node>
+      <node id="47">
+        <label>rj_msgs/msg/empty_motion_command.hpp</label>
+      </node>
+      <node id="35">
+        <label>rj_msgs/msg/play_state.hpp</label>
+      </node>
+      <node id="38">
+        <label>fstream</label>
+      </node>
+      <node id="8">
+        <label>ostream</label>
+      </node>
+      <node id="83">
+        <label>rj_protos/grSim_Replacement.pb.h</label>
+      </node>
+      <node id="9">
+        <label>rj_convert/ros_convert.hpp</label>
+      </node>
+      <node id="15">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="82">
+        <label>rj_protos/grSim_Packet.pb.h</label>
+      </node>
+      <node id="32">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="89">
+        <label>QPainter</label>
+      </node>
+      <node id="40">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="91">
+        <label>rj_constants/topic_names.hpp</label>
+      </node>
+      <node id="65">
+        <label>planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>rj_geometry/transform_matrix.hpp</label>
+      </node>
+      <node id="44">
+        <label>planning/planner/motion_command.hpp</label>
+        <link refid="motion__command_8hpp_source"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>rj_msgs/msg/intercept_motion_command.hpp</label>
+      </node>
+      <node id="88">
+        <label>QMouseEvent</label>
+      </node>
+      <node id="30">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="54">
+        <label>rj_msgs/msg/settle_motion_command.hpp</label>
+      </node>
+      <node id="67">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="26">
+        <label>rj_common/referee_enums.hpp</label>
+      </node>
+      <node id="60">
+        <label>global_params.hpp</label>
+        <link refid="global__params_8hpp_source"/>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>optional</label>
+      </node>
+      <node id="41">
+        <label>node.hpp</label>
+        <link refid="node_8hpp_source"/>
+      </node>
+      <node id="7">
+        <label>control/motion_setpoint.hpp</label>
+        <link refid="motion__setpoint_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>vector</label>
+      </node>
+      <node id="92">
+        <label>rj_msgs/msg/ball_placement.hpp</label>
+      </node>
+      <node id="53">
+        <label>rj_msgs/msg/pivot_motion_command.hpp</label>
+      </node>
+      <node id="77">
+        <label>motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>sstream</label>
+      </node>
+      <node id="85">
+        <label>QGLWidget</label>
+      </node>
+      <node id="81">
+        <label>rj_protos/grSim_Commands.pb.h</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp</label>
+        <link refid="sim__field__view_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>QColor</label>
+      </node>
+      <node id="71">
+        <label>planning/rotation_command.hpp</label>
+        <link refid="rotation__command_8hpp_source"/>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>rj_msgs/msg/game_settings.hpp</label>
+      </node>
+      <node id="11">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="86">
+        <label>QLabel</label>
+      </node>
+      <node id="64">
+        <label>rj_param_utils/ros2_global_param_provider.hpp</label>
+      </node>
+      <node id="51">
+        <label>rj_msgs/msg/motion_command.hpp</label>
+      </node>
+      <node id="37">
+        <label>deque</label>
+      </node>
+      <node id="43">
+        <label>rj_msgs/msg/robot_intent.hpp</label>
+      </node>
+      <node id="68">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="52">
+        <label>rj_msgs/msg/path_target_motion_command.hpp</label>
+      </node>
+      <node id="4">
+        <label>set</label>
+      </node>
+      <node id="2">
+        <label>sim_field_view.hpp</label>
+        <link refid="sim__field__view_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+      </node>
+      <node id="79">
+        <label>rj_msgs/msg/team_info.hpp</label>
+      </node>
+      <node id="42">
+        <label>robot_intent.hpp</label>
+        <link refid="robot__intent_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="58">
+        <label>rj_msgs/msg/robot_state.hpp</label>
+      </node>
+      <node id="78">
+        <label>team_info.hpp</label>
+        <link refid="team__info_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>memory</label>
+      </node>
+      <node id="74">
+        <label>planning/robot_constraints.hpp</label>
+        <link refid="robot__constraints_8hpp_source"/>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>logger.hpp</label>
+        <link refid="logger_8hpp_source"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="66">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="sim__field__view_8cpp_1a2ffcf186a346c0789d56591379bcc55e" prot="public" static="yes" mutable="no">
+        <type>const float</type>
+        <definition>const float ShootScale</definition>
+        <argsstring></argsstring>
+        <name>ShootScale</name>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" line="17" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;sim_field_view.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;QFont&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;QMouseEvent&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;QPainter&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_common/network.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_constants/constants.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_constants/topic_names.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_msgs/msg/ball_placement.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_msgs/msg/robot_placement.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">boost;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">Packet;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Converts<sp/>from<sp/>meters<sp/>to<sp/>m/s<sp/>for<sp/>manually<sp/>shooting<sp/>the<sp/>ball</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ShootScale<sp/>=<sp/>5;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal">SimFieldView::SimFieldView(QWidget*<sp/>parent)<sp/>:<sp/><ref refid="classFieldView" kindref="compound">FieldView</ref>(parent)<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>drag_mode_<sp/>=<sp/>DRAG_NONE;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>drag_robot_<sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>drag_robot_blue_<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SimFieldView::setup(<ref refid="structContext" kindref="compound">Context</ref>*<sp/>context,<sp/>rclcpp::Node*<sp/>node)<sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;context_<sp/>=<sp/>context;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>node_<sp/>=<sp/>node;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>sim_placement_<sp/>=</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>node_-&gt;create_client&lt;rj_msgs::srv::SimPlacement&gt;(sim::topics::kSimPlacementSrv);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SimFieldView::mousePressEvent(QMouseEvent*<sp/>me)<sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Ignore<sp/>mouse<sp/>events<sp/>in<sp/>the<sp/>field<sp/>if<sp/>not<sp/>in<sp/>sim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!context_-&gt;game_settings.simulation)<sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>pos<sp/>=<sp/>_worldToTeam<sp/>*<sp/>_screenToWorld<sp/>*<sp/>me-&gt;pos();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;LogFrame&gt;<sp/>frame<sp/>=<sp/>currentFrame();</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(me-&gt;button()<sp/>==<sp/>Qt::LeftButton<sp/>&amp;&amp;<sp/>frame)<sp/>{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_robot_<sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>LogFrame::Robot&amp;<sp/>r<sp/>:<sp/>frame-&gt;self())<sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pos.near_point(r.pos(),<sp/>kRobotRadius))<sp/>{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_robot_<sp/>=<sp/>r.shell();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_robot_blue_<sp/>=<sp/>frame-&gt;blue_team();</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>LogFrame::Robot&amp;<sp/>r<sp/>:<sp/>frame-&gt;opp())<sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pos.near_point(r.pos(),<sp/>kRobotRadius))<sp/>{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_robot_<sp/>=<sp/>r.shell();</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_robot_blue_<sp/>=<sp/>!frame-&gt;blue_team();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(drag_robot_<sp/>&lt;<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_ball(me-&gt;pos());</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_mode_<sp/>=<sp/>DRAG_PLACE;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(me-&gt;button()<sp/>==<sp/>Qt::RightButton<sp/>&amp;&amp;<sp/>frame)<sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(frame-&gt;has_ball()<sp/>&amp;&amp;<sp/>pos.near_point(frame-&gt;ball().pos(),<sp/>10<sp/>*<sp/>kBallRadius))<sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Drag<sp/>to<sp/>shoot<sp/>the<sp/>ball</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_mode_<sp/>=<sp/>DRAG_SHOOT;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_point_<sp/>=<sp/>pos;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Look<sp/>for<sp/>a<sp/>robot<sp/>selection</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>new_id<sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>frame-&gt;self_size();<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pos.dist_to(frame-&gt;self(i).pos())<sp/>&lt;<sp/>kRobotRadius)<sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>new_id<sp/>=<sp/>frame-&gt;self(i).shell();</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(new_id<sp/>!=<sp/>frame-&gt;manual_id())<sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>robotSelected(new_id);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SimFieldView::mouseMoveEvent(QMouseEvent*<sp/>me)<sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>FieldView::mouseMoveEvent(me);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(drag_mode_)<sp/>{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>DRAG_SHOOT:</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_point_<sp/>=<sp/>_worldToTeam<sp/>*<sp/>_screenToWorld<sp/>*<sp/>me-&gt;pos();</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>DRAG_PLACE:</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(drag_robot_<sp/>&gt;=<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_robot(me-&gt;pos(),<sp/>drag_robot_,<sp/>drag_robot_blue_);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drag_ball(me-&gt;pos());</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>update();</highlight></codeline>
+<codeline lineno="105"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SimFieldView::drag_ball(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QPoint&amp;<sp/>screen_pos)<sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classSimFieldView_1af9f9f4edf798505cd36fb2aeaea6a219" kindref="member">set_ball_position</ref>(_screenToWorld<sp/>*<sp/>screen_pos);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classSimFieldView_1af9f9f4edf798505cd36fb2aeaea6a219" kindref="member">SimFieldView::set_ball_position</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Point&amp;<sp/>field_pos)<sp/>{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>request<sp/>=<sp/>std::make_shared&lt;rj_msgs::srv::SimPlacement::Request&gt;();</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>request-&gt;ball.position.push_back(rj_convert::convert_to_ros(field_pos));</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>sim_placement_-&gt;async_send_request(request);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classSimFieldView_1a26aed1463df782f23dba56aae4aa5473" kindref="member">SimFieldView::set_ball_velocity</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Point&amp;<sp/>shot)<sp/>{</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>request<sp/>=<sp/>std::make_shared&lt;rj_msgs::srv::SimPlacement::Request&gt;();</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>request-&gt;ball.velocity.push_back(</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rj_convert::convert_to_ros(_teamToWorld.transform_direction(shot)));</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>sim_placement_-&gt;async_send_request(request);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SimFieldView::drag_robot(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QPoint&amp;<sp/>screen_pos,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>robot_id,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>is_blue)<sp/>{</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classSimFieldView_1a4d124e3a0e820c0519eb043d0ed260c5" kindref="member">set_robot_pose</ref>(rj_geometry::Pose(_screenToWorld<sp/>*<sp/>screen_pos,<sp/>0),<sp/>robot_id,<sp/>is_blue);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classSimFieldView_1a4d124e3a0e820c0519eb043d0ed260c5" kindref="member">SimFieldView::set_robot_pose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Pose&amp;<sp/>field_pose,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>robot_id,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>is_blue)<sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>request<sp/>=<sp/>std::make_shared&lt;rj_msgs::srv::SimPlacement::Request&gt;();</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_msgs::msg::RobotPlacement<sp/>robot;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>robot.pose<sp/>=<sp/>rj_convert::convert_to_ros(field_pose);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>robot.robot_id<sp/>=<sp/>robot_id;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>robot.is_blue_team<sp/>=<sp/>is_blue;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>request-&gt;robots.emplace_back(robot);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>sim_placement_-&gt;async_send_request(request);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SimFieldView::mouseReleaseEvent(QMouseEvent*<sp/></highlight><highlight class="comment">/*me*/</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(drag_mode_<sp/>==<sp/>DRAG_SHOOT)<sp/>{</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classSimFieldView_1a26aed1463df782f23dba56aae4aa5473" kindref="member">set_ball_velocity</ref>(shot_);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>update();</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>drag_mode_<sp/>=<sp/>DRAG_NONE;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SimFieldView::drawTeamSpace(QPainter&amp;<sp/>p)<sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classFieldView_1aaabad424c361d3c3e090c0967f785a41" kindref="member">FieldView::drawTeamSpace</ref>(p);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Simulator<sp/>drag-to-shoot</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;LogFrame&gt;<sp/>frame<sp/>=<sp/>currentFrame();</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(drag_mode_<sp/>==<sp/>DRAG_SHOOT<sp/>&amp;&amp;<sp/>frame)<sp/>{</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>p.setPen(QPen(Qt::white,<sp/>0.025f));</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>ball<sp/>=<sp/>frame-&gt;ball().pos();</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>p.drawLine(ball.to_q_point_f(),<sp/>drag_point_.to_q_point_f());</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ball<sp/>!=<sp/>drag_point_)<sp/>{</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>p.setPen(QPen(Qt::gray,<sp/>0.025f));</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>shot_<sp/>=<sp/>(ball<sp/>-<sp/>drag_point_)<sp/>*<sp/>ShootScale;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>speed<sp/>=<sp/>shot_.mag();</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>shot_extension<sp/>=<sp/>ball<sp/>+<sp/>shot_<sp/>/<sp/>speed<sp/>*<sp/>8;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>p.drawLine(ball.to_q_point_f(),<sp/>shot_extension.to_q_point_f());</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>p.setPen(Qt::black);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QFont<sp/>font;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>font.setPixelSize(30);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>p.setFont(font);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drawText(p,<sp/>drag_point_.to_q_point_f(),<sp/>QString(</highlight><highlight class="stringliteral">&quot;%1<sp/>m/s&quot;</highlight><highlight class="normal">).arg(speed,<sp/>0,<sp/></highlight><highlight class="charliteral">&apos;f&apos;</highlight><highlight class="normal">,<sp/>1));</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.cpp"/>
+  </compounddef>
+</doxygen>

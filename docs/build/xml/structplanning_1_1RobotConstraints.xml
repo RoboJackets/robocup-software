@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1RobotConstraints" kind="struct" language="C++" prot="public">
+    <compoundname>planning::RobotConstraints</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1RobotConstraints_1af0848562fcaae9a250f41158cb22ab27" prot="public" static="no" mutable="no">
+        <type><ref refid="structplanning_1_1RotationConstraints" kindref="compound">RotationConstraints</ref></type>
+        <definition>RotationConstraints planning::RobotConstraints::rot</definition>
+        <argsstring></argsstring>
+        <name>rot</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" line="12" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1RobotConstraints_1a012df62fb4aef570980a1ffcd7f4c560" prot="public" static="no" mutable="no">
+        <type><ref refid="structplanning_1_1MotionConstraints" kindref="compound">MotionConstraints</ref></type>
+        <definition>MotionConstraints planning::RobotConstraints::mot</definition>
+        <argsstring></argsstring>
+        <name>mot</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" line="13" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structplanning_1_1RobotConstraints_1a7da28cad9c626b0f96fe44fb9aec0dbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::RobotConstraints::RobotConstraints</definition>
+        <argsstring>()=default</argsstring>
+        <name>RobotConstraints</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" line="10" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="structplanning_1_1RobotConstraints_1a90863af3a88656f282c8208223fdbb1c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::RobotConstraints::RobotConstraints</definition>
+        <argsstring>(MotionConstraints mot, RotationConstraints rot)</argsstring>
+        <name>RobotConstraints</name>
+        <param>
+          <type><ref refid="structplanning_1_1MotionConstraints" kindref="compound">MotionConstraints</ref></type>
+          <declname>mot</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1RotationConstraints" kindref="compound">RotationConstraints</ref></type>
+          <declname>rot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" line="11" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" bodystart="11" bodyend="11"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>planning::RotationConstraints</label>
+        <link refid="structplanning_1_1RotationConstraints"/>
+      </node>
+      <node id="1">
+        <label>planning::RobotConstraints</label>
+        <link refid="structplanning_1_1RobotConstraints"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>rot</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mot</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>planning::MotionConstraints</label>
+        <link refid="structplanning_1_1MotionConstraints"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" line="8" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/robot_constraints.hpp" bodystart="8" bodyend="14"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1RobotConstraints_1a012df62fb4aef570980a1ffcd7f4c560" prot="public" virt="non-virtual"><scope>planning::RobotConstraints</scope><name>mot</name></member>
+      <member refid="structplanning_1_1RobotConstraints_1a7da28cad9c626b0f96fe44fb9aec0dbd" prot="public" virt="non-virtual"><scope>planning::RobotConstraints</scope><name>RobotConstraints</name></member>
+      <member refid="structplanning_1_1RobotConstraints_1a90863af3a88656f282c8208223fdbb1c" prot="public" virt="non-virtual"><scope>planning::RobotConstraints</scope><name>RobotConstraints</name></member>
+      <member refid="structplanning_1_1RobotConstraints_1af0848562fcaae9a250f41158cb22ab27" prot="public" virt="non-virtual"><scope>planning::RobotConstraints</scope><name>rot</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

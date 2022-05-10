@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="testing__utils_8hpp" kind="file" language="C++">
+    <compoundname>testing_utils.hpp</compoundname>
+    <includes local="no">random</includes>
+    <includes refid="instant_8hpp" local="yes">planning/instant.hpp</includes>
+    <includes refid="robot__constraints_8hpp" local="yes">planning/robot_constraints.hpp</includes>
+    <includes refid="trajectory_8hpp" local="yes">planning/trajectory.hpp</includes>
+    <includedby refid="create__path__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/create_path_test.cpp</includedby>
+    <includedby refid="planner__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/planner_test.cpp</includedby>
+    <includedby refid="testing__utils_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/testing_utils.cpp</includedby>
+    <includedby refid="trajectory__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/trajectory_test.cpp</includedby>
+    <includedby refid="velocity__profiling__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp</includedby>
+    <incdepgraph>
+      <node id="19">
+        <label>QMap</label>
+      </node>
+      <node id="27">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="31">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="12">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="26">
+        <label>rotation_constraints.hpp</label>
+        <link refid="rotation__constraints_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="17">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="13">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="30">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>string</label>
+      </node>
+      <node id="14">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="7">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="6">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="8">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="3">
+        <label>planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="2">
+        <label>random</label>
+      </node>
+      <node id="4">
+        <label>optional</label>
+      </node>
+      <node id="22">
+        <label>vector</label>
+      </node>
+      <node id="29">
+        <label>motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>QColor</label>
+      </node>
+      <node id="11">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="16">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/testing_utils.hpp</label>
+        <link refid="testing__utils_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>memory</label>
+      </node>
+      <node id="25">
+        <label>planning/robot_constraints.hpp</label>
+        <link refid="robot__constraints_8hpp_source"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="10">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespaceplanning">planning</innernamespace>
+    <innernamespace refid="namespaceplanning_1_1TestingUtils">planning::TestingUtils</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;random&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/instant.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/robot_constraints.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/trajectory.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">planning::TestingUtils<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>check_trajectory_continuous(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Trajectory&amp;<sp/>trajectory,</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>RobotConstraints&amp;<sp/>constraints);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">T<sp/>random(std::mt19937*<sp/>generator,<sp/>T<sp/>lo,<sp/>T<sp/>hi);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>random(std::mt19937*<sp/>generator,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lo,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>hi)<sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>std::uniform_int_distribution&lt;&gt;<sp/>rand_distribution(lo,<sp/>hi);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rand_distribution(*generator);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>random(std::mt19937*<sp/>generator,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lo,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>hi)<sp/>{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>std::uniform_real_distribution&lt;&gt;<sp/>rand_distribution(lo,<sp/>hi);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rand_distribution(*generator);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal">RobotInstant<sp/>random_instant(std::mt19937*<sp/>generator);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>planning::TestingUtils</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/testing_utils.hpp"/>
+  </compounddef>
+</doxygen>

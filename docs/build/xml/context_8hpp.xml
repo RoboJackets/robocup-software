@@ -1,0 +1,763 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="context_8hpp" kind="file" language="C++">
+    <compoundname>context.hpp</compoundname>
+    <includes local="no">set</includes>
+    <includes local="no">rj_constants/constants.hpp</includes>
+    <includes local="no">rj_protos/referee.pb.h</includes>
+    <includes refid="motion__setpoint_8hpp" local="yes">control/motion_setpoint.hpp</includes>
+    <includes refid="debug__drawer_8hpp" local="yes">debug_drawer.hpp</includes>
+    <includes refid="game__settings_8hpp" local="yes">game_settings.hpp</includes>
+    <includes refid="game__state_8hpp" local="yes">game_state.hpp</includes>
+    <includes refid="logger_8hpp" local="yes">logger.hpp</includes>
+    <includes refid="robot__constraints_8hpp" local="yes">planning/robot_constraints.hpp</includes>
+    <includes refid="trajectory_8hpp" local="yes">planning/trajectory.hpp</includes>
+    <includes refid="robot__status_8hpp" local="yes">radio/robot_status.hpp</includes>
+    <includes refid="robot__intent_8hpp" local="yes">robot_intent.hpp</includes>
+    <includes refid="team__info_8hpp" local="yes">team_info.hpp</includes>
+    <includes refid="world__state_8hpp" local="yes">world_state.hpp</includes>
+    <includedby refid="motion__control_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp</includedby>
+    <includedby refid="motion__control_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp</includedby>
+    <includedby refid="manual__control__node_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp</includedby>
+    <includedby refid="logger_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp</includedby>
+    <includedby refid="logger__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/logger_test.cpp</includedby>
+    <includedby refid="plan__request_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.hpp</includedby>
+    <includedby refid="planner__node_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp</includedby>
+    <includedby refid="processor_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/processor.hpp</includedby>
+    <includedby refid="sim__radio_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp</includedby>
+    <includedby refid="autonomy__interface_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/autonomy_interface.cpp</includedby>
+    <includedby refid="debug__draw__interface_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp</includedby>
+    <includedby refid="raw__vision__packet__sub_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp</includedby>
+    <includedby refid="referee__sub_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp</includedby>
+    <includedby refid="soccer__config__client_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/soccer_config_client.hpp</includedby>
+    <includedby refid="sim__field__view_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp</includedby>
+    <incdepgraph>
+      <node id="18">
+        <label>QMap</label>
+      </node>
+      <node id="53">
+        <label>rj_msgs/msg/world_vel_motion_command.hpp</label>
+      </node>
+      <node id="74">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="61" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>rj_constants/constants.hpp</label>
+      </node>
+      <node id="47">
+        <label>rj_msgs/msg/line_kick_motion_command.hpp</label>
+      </node>
+      <node id="48">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="59">
+        <label>fmt/format.h</label>
+      </node>
+      <node id="44">
+        <label>rj_msgs/msg/collect_motion_command.hpp</label>
+      </node>
+      <node id="68">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="57">
+        <label>rj_msgs/msg/world_state.hpp</label>
+      </node>
+      <node id="10">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="73">
+        <label>rotation_constraints.hpp</label>
+        <link refid="rotation__constraints_8hpp_source"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>game_state.hpp</label>
+        <link refid="game__state_8hpp_source"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</label>
+        <link refid="context_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>variant</label>
+      </node>
+      <node id="55">
+        <label>rj_msgs/msg/ball_state.hpp</label>
+      </node>
+      <node id="61">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="8">
+        <label>rj_msgs/msg/motion_setpoint.hpp</label>
+      </node>
+      <node id="16">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="71">
+        <label>gtest/gtest_prod.h</label>
+      </node>
+      <node id="22">
+        <label>game_settings.hpp</label>
+        <link refid="game__settings_8hpp_source"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="54">
+        <label>world_state.hpp</label>
+        <link refid="world__state_8hpp_source"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>rj_common/field_dimensions.hpp</label>
+      </node>
+      <node id="20">
+        <label>string</label>
+      </node>
+      <node id="4">
+        <label>rj_protos/referee.pb.h</label>
+      </node>
+      <node id="37">
+        <label>radio/robot_status.hpp</label>
+        <link refid="robot__status_8hpp_source"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="32">
+        <label>rj_msgs/msg/match_state.hpp</label>
+      </node>
+      <node id="60">
+        <label>rclcpp/rclcpp.hpp</label>
+      </node>
+      <node id="45">
+        <label>rj_msgs/msg/empty_motion_command.hpp</label>
+      </node>
+      <node id="33">
+        <label>rj_msgs/msg/play_state.hpp</label>
+      </node>
+      <node id="36">
+        <label>fstream</label>
+      </node>
+      <node id="6">
+        <label>ostream</label>
+      </node>
+      <node id="7">
+        <label>rj_convert/ros_convert.hpp</label>
+      </node>
+      <node id="13">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="30">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="38">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="63">
+        <label>planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>rj_geometry/transform_matrix.hpp</label>
+      </node>
+      <node id="42">
+        <label>planning/planner/motion_command.hpp</label>
+        <link refid="motion__command_8hpp_source"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>rj_msgs/msg/intercept_motion_command.hpp</label>
+      </node>
+      <node id="28">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="52">
+        <label>rj_msgs/msg/settle_motion_command.hpp</label>
+      </node>
+      <node id="65">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="66" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="24">
+        <label>rj_common/referee_enums.hpp</label>
+      </node>
+      <node id="58">
+        <label>global_params.hpp</label>
+        <link refid="global__params_8hpp_source"/>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>optional</label>
+      </node>
+      <node id="39">
+        <label>node.hpp</label>
+        <link refid="node_8hpp_source"/>
+      </node>
+      <node id="5">
+        <label>control/motion_setpoint.hpp</label>
+        <link refid="motion__setpoint_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>vector</label>
+      </node>
+      <node id="51">
+        <label>rj_msgs/msg/pivot_motion_command.hpp</label>
+      </node>
+      <node id="75">
+        <label>motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>sstream</label>
+      </node>
+      <node id="17">
+        <label>QColor</label>
+      </node>
+      <node id="69">
+        <label>planning/rotation_command.hpp</label>
+        <link refid="rotation__command_8hpp_source"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>rj_msgs/msg/game_settings.hpp</label>
+      </node>
+      <node id="9">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>rj_param_utils/ros2_global_param_provider.hpp</label>
+      </node>
+      <node id="49">
+        <label>rj_msgs/msg/motion_command.hpp</label>
+      </node>
+      <node id="35">
+        <label>deque</label>
+      </node>
+      <node id="41">
+        <label>rj_msgs/msg/robot_intent.hpp</label>
+      </node>
+      <node id="66">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="50">
+        <label>rj_msgs/msg/path_target_motion_command.hpp</label>
+      </node>
+      <node id="2">
+        <label>set</label>
+      </node>
+      <node id="77">
+        <label>rj_msgs/msg/team_info.hpp</label>
+      </node>
+      <node id="40">
+        <label>robot_intent.hpp</label>
+        <link refid="robot__intent_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="56">
+        <label>rj_msgs/msg/robot_state.hpp</label>
+      </node>
+      <node id="76">
+        <label>team_info.hpp</label>
+        <link refid="team__info_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>memory</label>
+      </node>
+      <node id="72">
+        <label>planning/robot_constraints.hpp</label>
+        <link refid="robot__constraints_8hpp_source"/>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>logger.hpp</label>
+        <link refid="logger_8hpp_source"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="64">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="7">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/collect_planner.hpp</label>
+        <link refid="collect__planner_8hpp_source"/>
+      </node>
+      <node id="6">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/planner.hpp</label>
+        <link refid="planner_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</label>
+        <link refid="context_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp</label>
+        <link refid="debug__draw__interface_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/processor.hpp</label>
+        <link refid="processor_8hpp_source"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/intercept_planner.hpp</label>
+        <link refid="intercept__planner_8hpp_source"/>
+      </node>
+      <node id="11">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp</label>
+        <link refid="line__kick__planner_8hpp_source"/>
+      </node>
+      <node id="8">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/path_target_planner.hpp</label>
+        <link refid="path__target__planner_8hpp_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp</label>
+        <link refid="referee__sub_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp</label>
+        <link refid="raw__vision__packet__sub_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.hpp</label>
+        <link refid="plan__request_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp</label>
+        <link refid="motion__control__node_8hpp_source"/>
+      </node>
+      <node id="14">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp</label>
+        <link refid="planner__node_8hpp_source"/>
+      </node>
+      <node id="17">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp</label>
+        <link refid="sim__radio_8hpp_source"/>
+      </node>
+      <node id="9">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp</label>
+        <link refid="escape__obstacles__path__planner_8hpp_source"/>
+      </node>
+      <node id="16">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/main_window.hpp</label>
+        <link refid="main__window_8hpp_source"/>
+      </node>
+      <node id="4">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp</label>
+        <link refid="manual__control__node_8hpp_source"/>
+      </node>
+      <node id="13">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/settle_planner.hpp</label>
+        <link refid="settle__planner_8hpp_source"/>
+      </node>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp</label>
+        <link refid="motion__control_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp</label>
+        <link refid="pivot__path__planner_8hpp_source"/>
+      </node>
+      <node id="22">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp</label>
+        <link refid="sim__field__view_8hpp_source"/>
+      </node>
+      <node id="21">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/soccer_config_client.hpp</label>
+        <link refid="soccer__config__client_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structContext" prot="public">Context</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;set&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_constants/constants.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_protos/referee.pb.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;control/motion_setpoint.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;debug_drawer.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;game_settings.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;game_state.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;logger.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/robot_constraints.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/trajectory.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;radio/robot_status.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;robot_intent.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;team_info.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;world_state.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="structContext" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structContext" kindref="compound">Context</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref>()<sp/>:<sp/>debug_drawer(</highlight><highlight class="keyword">this</highlight><highlight class="normal">)<sp/>{}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Delete<sp/>copy,<sp/>copy-assign,<sp/>move,<sp/>and<sp/>move-assign<sp/>because</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>many<sp/>places<sp/>are<sp/>expected<sp/>to<sp/>hold<sp/>Context*<sp/>pointers.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structContext" kindref="compound">Context</ref>&amp;)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref>&amp;<sp/>operator=(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structContext" kindref="compound">Context</ref>&amp;)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref>(<ref refid="structContext" kindref="compound">Context</ref>&amp;&amp;)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref>&amp;<sp/>operator=(<ref refid="structContext" kindref="compound">Context</ref>&amp;&amp;)<sp/>=<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Gameplay<sp/>-&gt;<sp/>Planning,<sp/>Radio</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;RobotIntent,<sp/>kNumShells&gt;<sp/>robot_intents;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Motion<sp/>control<sp/>-&gt;<sp/>Radio</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;MotionSetpoint,<sp/>kNumShells&gt;<sp/>motion_setpoints;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Planning<sp/>-&gt;<sp/>Motion<sp/>control</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;planning::Trajectory,<sp/>kNumShells&gt;<sp/>trajectories;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Radio<sp/>-&gt;<sp/>Gameplay</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;RobotStatus,<sp/>kNumShells&gt;<sp/>robot_status;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>MainWindow<sp/>-&gt;<sp/>Manual<sp/>control</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;bool,<sp/>kNumShells&gt;<sp/>is_joystick_controlled{};</highlight></codeline>
+<codeline lineno="41" refid="structContext_1a7d6fd379e92c1545214c460e794bd9b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structContext_1a7d6fd379e92c1545214c460e794bd9b2" kindref="member">joystick_valid</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::ShapeSet<sp/>global_obstacles;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::ShapeSet<sp/>def_area_obstacles;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structPlayState" kindref="compound">PlayState</ref><sp/>play_state<sp/>=<sp/>PlayState::halt();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structMatchState" kindref="compound">MatchState</ref><sp/>match_state;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classTeamInfo" kindref="compound">TeamInfo</ref><sp/>our_info;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classTeamInfo" kindref="compound">TeamInfo</ref><sp/>their_info;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>blue_team<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref><sp/>debug_drawer;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;SSL_Referee&gt;<sp/>referee_packets;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;SSL_WrapperPacket&gt;<sp/>raw_vision_packets;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structWorldState" kindref="compound">WorldState</ref><sp/>world_state;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>FieldDimensions<sp/>field_dimensions;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structGameSettings" kindref="compound">GameSettings</ref><sp/>game_settings;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structLogs" kindref="compound">Logs</ref><sp/>logs;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>behavior_tree;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/context.hpp"/>
+  </compounddef>
+</doxygen>

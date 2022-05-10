@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="chip__kick__estimator_8hpp" kind="file" language="C++">
+    <compoundname>chip_kick_estimator.hpp</compoundname>
+    <includedby refid="chip__kick__estimator_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/rj_vision_filter/kick/estimator/chip_kick_estimator.cpp</includedby>
+    <innerclass refid="classvision__filter_1_1ChipKickEstimator" prot="public">vision_filter::ChipKickEstimator</innerclass>
+    <innernamespace refid="namespacevision__filter">vision_filter</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">vision_filter<sp/>{</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO(1246):<sp/>Estimate<sp/>kicks.</highlight></codeline>
+<codeline lineno="8" refid="classvision__filter_1_1ChipKickEstimator" refkind="compound"><highlight class="comment"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classvision__filter_1_1ChipKickEstimator" kindref="compound">ChipKickEstimator</ref><sp/>{};</highlight></codeline>
+<codeline lineno="9"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>vision_filter</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/estimator/chip_kick_estimator.hpp"/>
+  </compounddef>
+</doxygen>

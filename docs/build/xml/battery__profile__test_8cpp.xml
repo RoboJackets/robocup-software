@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="battery__profile__test_8cpp" kind="file" language="C++">
+    <compoundname>battery_profile_test.cpp</compoundname>
+    <includes local="no">gtest/gtest.h</includes>
+    <includes refid="battery__profile_8hpp" local="yes">battery_profile.hpp</includes>
+    <incdepgraph>
+      <node id="5">
+        <label>stdarg.h</label>
+      </node>
+      <node id="3">
+        <label>battery_profile.hpp</label>
+        <link refid="battery__profile_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>vector</label>
+      </node>
+      <node id="2">
+        <label>gtest/gtest.h</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/battery_profile_test.cpp</label>
+        <link refid="battery__profile__test_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="battery__profile__test_8cpp_1a8ba09702a4ef7c1fbb74c9a29f44c701" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(BatteryProfile, get_charge_level)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="classBatteryProfile" kindref="compound">BatteryProfile</ref></type>
+        </param>
+        <param>
+          <type>get_charge_level</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/battery_profile_test.cpp" line="5" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/battery_profile_test.cpp" bodystart="5" bodyend="12"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;gtest/gtest.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;battery_profile.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal">TEST(<ref refid="classBatteryProfile" kindref="compound">BatteryProfile</ref>,<sp/>get_charge_level)<sp/>{</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classBatteryProfile" kindref="compound">BatteryProfile</ref><sp/>profile({{1,<sp/>0.00},<sp/>{4,<sp/>0.50},<sp/>{5,<sp/>0.75},<sp/>{7,<sp/>1.00}});</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_FLOAT_EQ(0,<sp/>profile.get_charge_level(1));</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_FLOAT_EQ(0,<sp/>profile.get_charge_level(-100));</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_FLOAT_EQ(1,<sp/>profile.get_charge_level(100));</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_FLOAT_EQ((0.5<sp/>+<sp/>0.75)<sp/>/<sp/>2,<sp/>profile.get_charge_level(4.5));</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/battery_profile_test.cpp"/>
+  </compounddef>
+</doxygen>

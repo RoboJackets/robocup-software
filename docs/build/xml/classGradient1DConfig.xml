@@ -1,0 +1,332 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classGradient1DConfig" kind="class" language="C++" prot="public">
+    <compoundname>Gradient1DConfig</compoundname>
+    <includes refid="gradient__1d__config_8hpp" local="no">gradient_1d_config.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classGradient1DConfig_1a4f55d20733c9972faa77bc9d205c7d72" prot="public" static="no" mutable="no">
+        <type>std::function&lt; std::tuple&lt; float, float &gt;float)&gt; *</type>
+        <definition>std::function&lt;std::tuple&lt;float, float&gt;float)&gt;* Gradient1DConfig::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="70" column="21" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1aa6f7943627142f9c0c1485e025a505eb" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::start_x</definition>
+        <argsstring></argsstring>
+        <name>start_x</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="71" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1ae2c5635c9c5ebd535d63dc4d350ccd48" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::prev_x</definition>
+        <argsstring></argsstring>
+        <name>prev_x</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="72" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1a109d44ec19f7da46745be37f51a5a359" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::dx_error</definition>
+        <argsstring></argsstring>
+        <name>dx_error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="73" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1ae6ccb3689ac5f033d6742f08cc48f087" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::max_x_movement</definition>
+        <argsstring></argsstring>
+        <name>max_x_movement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="74" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1a712fa10aee43063e63c4b9651efd204d" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::temperature_descent</definition>
+        <argsstring></argsstring>
+        <name>temperature_descent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="75" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1a2c52b325c75a3274b1b4e99fcd8a3d8e" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::temperature_min</definition>
+        <argsstring></argsstring>
+        <name>temperature_min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="76" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1aff8b9f57cdfac7649727a0e7dde43b2e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Gradient1DConfig::max_iterations</definition>
+        <argsstring></argsstring>
+        <name>max_iterations</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="77" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1a89fb804cdff7d84e6b99001764e0faf6" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::max_value</definition>
+        <argsstring></argsstring>
+        <name>max_value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="78" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradient1DConfig_1afeeea3ccefd9834a17000a116a77c237" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Gradient1DConfig::max_thresh</definition>
+        <argsstring></argsstring>
+        <name>max_thresh</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="79" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classGradient1DConfig_1aa3efec49d25ea964003c38713c2eb9fe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Gradient1DConfig::Gradient1DConfig</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient1DConfig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a Gradient Ascent 1D config Default args: dx_error, max_x_movement, temperature_descent temperature_min, max_iterations, max_value max_thresh </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="20" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="20" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classGradient1DConfig_1a4560a18678944d28dcd3f7f23744cb89" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Gradient1DConfig::Gradient1DConfig</definition>
+        <argsstring>(std::function&lt; std::tuple&lt; float, float &gt;(float)&gt; *f, float start_x, float prev_x, float dx_error=0.1, float max_x_movement=0.02, float temperature_descent=0.5, float temperature_min=0.01, int max_iterations=100, float max_value=0, float max_thresh=0)</argsstring>
+        <name>Gradient1DConfig</name>
+        <param>
+          <type>std::function&lt; std::tuple&lt; float, float &gt;(float)&gt; *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>start_x</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>prev_x</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>dx_error</declname>
+          <defval>0.1</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>max_x_movement</declname>
+          <defval>0.02</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>temperature_descent</declname>
+          <defval>0.5</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>temperature_min</declname>
+          <defval>0.01</defval>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>max_iterations</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>max_value</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>max_thresh</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a Gradient Ascent 1D config</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>f</parametername>
+<parametername>std</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>function pointer which returns a tuple with &lt;F(X), F&apos;(X)&gt; </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start_x</parametername>
+<parametername>X</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value in which to start from </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prev_x</parametername>
+<parametername>X</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value near start_x which is not star_tx </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dx_error</parametername>
+<parametername>threshold</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>of F&apos;(X) in reference to zero to exit </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_x_movement</parametername>
+<parametername>max</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>distance to go when stepping to either side in reference to current x </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>temperature_descent</parametername>
+<parametername>factor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>by which to decrease the temperature each time we pass a discontinuity in the F&apos;(X) space </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>temperature_min</parametername>
+<parametername>minimum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>temperature to hit before exiting (Directly related to the X resolution) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_iterations</parametername>
+<parametername>Maximum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>number of iterations to reach end </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_value</parametername>
+<parametername>used</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>to leave function early when max value is already know (but corrseponding X is needed) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_thresh</parametername>
+<parametername>minimum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>distance to max before exit</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>By default, the max value exit capabilities are not used </para>
+</simplesect>
+<simplesect kind="note"><para>Only f, args, start_x, and prev_x are required </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="52" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="52" bodyend="68"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Config data for a Gradient Ascent 1D optimizer Can be intitialized through the constructor or through obj.attribute style initialization </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" line="12" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_1d_config.hpp" bodystart="12" bodyend="80"/>
+    <listofallmembers>
+      <member refid="classGradient1DConfig_1a109d44ec19f7da46745be37f51a5a359" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>dx_error</name></member>
+      <member refid="classGradient1DConfig_1a4f55d20733c9972faa77bc9d205c7d72" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>f</name></member>
+      <member refid="classGradient1DConfig_1aa3efec49d25ea964003c38713c2eb9fe" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>Gradient1DConfig</name></member>
+      <member refid="classGradient1DConfig_1a4560a18678944d28dcd3f7f23744cb89" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>Gradient1DConfig</name></member>
+      <member refid="classGradient1DConfig_1aff8b9f57cdfac7649727a0e7dde43b2e" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>max_iterations</name></member>
+      <member refid="classGradient1DConfig_1afeeea3ccefd9834a17000a116a77c237" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>max_thresh</name></member>
+      <member refid="classGradient1DConfig_1a89fb804cdff7d84e6b99001764e0faf6" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>max_value</name></member>
+      <member refid="classGradient1DConfig_1ae6ccb3689ac5f033d6742f08cc48f087" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>max_x_movement</name></member>
+      <member refid="classGradient1DConfig_1ae2c5635c9c5ebd535d63dc4d350ccd48" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>prev_x</name></member>
+      <member refid="classGradient1DConfig_1aa6f7943627142f9c0c1485e025a505eb" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>start_x</name></member>
+      <member refid="classGradient1DConfig_1a712fa10aee43063e63c4b9651efd204d" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>temperature_descent</name></member>
+      <member refid="classGradient1DConfig_1a2c52b325c75a3274b1b4e99fcd8a3d8e" prot="public" virt="non-virtual"><scope>Gradient1DConfig</scope><name>temperature_min</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

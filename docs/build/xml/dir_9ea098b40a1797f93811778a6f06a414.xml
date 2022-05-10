@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_9ea098b40a1797f93811778a6f06a414" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src/soccer/joystick</compoundname>
+    <innerfile refid="manual__control_8hpp">manual_control.hpp</innerfile>
+    <innerfile refid="manual__control__node_8cpp">manual_control_node.cpp</innerfile>
+    <innerfile refid="manual__control__node_8hpp">manual_control_node.hpp</innerfile>
+    <innerfile refid="manual__control__node__main_8cpp">manual_control_node_main.cpp</innerfile>
+    <innerfile refid="sdl__manual__control_8cpp">sdl_manual_control.cpp</innerfile>
+    <innerfile refid="sdl__manual__control_8hpp">sdl_manual_control.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/"/>
+  </compounddef>
+</doxygen>

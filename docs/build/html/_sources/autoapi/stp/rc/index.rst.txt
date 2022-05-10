@@ -1,0 +1,804 @@
+:py:mod:`stp.rc`
+================
+
+.. py:module:: stp.rc
+
+.. autoapi-nested-parse::
+
+   This module contains data structures that are robocup specific, ie. Robot, Ball,
+   WorldState
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.rc.Robot
+   stp.rc.Ball
+   stp.rc.GamePeriod
+   stp.rc.GameState
+   stp.rc.GameRestart
+   stp.rc.Field
+   stp.rc.GameInfo
+   stp.rc.WorldState
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   stp.rc.RobotId
+
+
+.. py:data:: RobotId
+   
+
+   
+
+.. py:class:: Robot(robot_id: RobotId, is_ours: bool, pose: numpy.ndarray, twist: numpy.ndarray, visible: bool, has_ball_sense: bool, kicker_charged: bool, kicker_healthy: bool, lethal_fault: bool)
+
+   State of a robot. Pose: [x, y, theta]. Twist: [dx, dy, dtheta]. Properties are
+   to enforce that instances of this class should not be mutated.
+
+   .. py:attribute:: __slots__
+      :annotation: = ['__id', '__is_ours', '__pose', '__twist', '__visible', '__has_ball_sense', '__kicker_charged',...
+
+      
+
+   .. py:attribute:: __id
+      :annotation: :RobotId
+
+      
+
+   .. py:attribute:: __is_ours
+      :annotation: :bool
+
+      
+
+   .. py:attribute:: __pose
+      :annotation: :numpy.ndarray
+
+      
+
+   .. py:attribute:: __twist
+      :annotation: :numpy.ndarray
+
+      
+
+   .. py:attribute:: __visible
+      :annotation: :bool
+
+      
+
+   .. py:attribute:: __has_ball_sense
+      :annotation: :bool
+
+      
+
+   .. py:attribute:: __kicker_charged
+      :annotation: :bool
+
+      
+
+   .. py:attribute:: __kicker_healthy
+      :annotation: :bool
+
+      
+
+   .. py:attribute:: __lethal_fault
+      :annotation: :bool
+
+      
+
+   .. py:method:: __repr__(self) -> str
+
+      Return repr(self).
+
+
+   .. py:method:: __eq__(self, other) -> bool
+
+      Return self==value.
+
+
+   .. py:method:: __hash__(self) -> int
+
+      Return hash(self).
+
+
+   .. py:method:: id(self) -> RobotId
+      :property:
+
+      :return: Id of the robot.
+
+
+   .. py:method:: is_ours(self) -> bool
+      :property:
+
+      :return: True if the robot is our robot.
+
+
+   .. py:method:: pose(self) -> numpy.ndarray
+      :property:
+
+      :return: Pose of the robot. [x, y, theta].
+
+
+   .. py:method:: twist(self) -> numpy.ndarray
+      :property:
+
+      :return: Twist of the robot. [dx, dy, dtheta].
+
+
+   .. py:method:: visible(self) -> bool
+      :property:
+
+      :return: True if the robot is visible
+
+
+   .. py:method:: has_ball_sense(self) -> bool
+      :property:
+
+      :return: True if this robot has functioning ball sensors
+
+
+   .. py:method:: kicker_charged(self) -> bool
+      :property:
+
+      :return: True if the kicker capacitors are charged
+
+
+   .. py:method:: kicker_healthy(self) -> bool
+      :property:
+
+      :return: True if the kicker is healthy
+
+
+   .. py:method:: lethal_fault(self) -> bool
+      :property:
+
+      :return: True if the robot has encounted a fault that will prevent further play, such as an FPGA or motor fault.
+
+
+
+.. py:class:: Ball(pos: numpy.ndarray, vel: numpy.ndarray, visible: bool)
+
+   State of the ball. Properties are used to enforce that instances of this class
+   should not be mutated.
+
+   .. py:attribute:: __slots__
+      :annotation: = ['__pos', '__vel', '__visible']
+
+      
+
+   .. py:attribute:: __pos
+      :annotation: :numpy.ndarray
+
+      
+
+   .. py:attribute:: __vel
+      :annotation: :numpy.ndarray
+
+      
+
+   .. py:attribute:: __visible
+      :annotation: :bool
+
+      
+
+   .. py:method:: __repr__(self) -> str
+
+      Return repr(self).
+
+
+   .. py:method:: pos(self) -> numpy.ndarray
+      :property:
+
+      :return: Position of the ball. [x, y].
+
+
+   .. py:method:: vel(self) -> numpy.ndarray
+      :property:
+
+      :return: Velocity of the ball. [dx, dy].
+
+
+   .. py:method:: visible(self) -> bool
+      :property:
+
+      :return: True if the ball can currently be seen by the global vision system.
+
+      Note that with filtering or additional sensors like whiskers we may still know where the ball is located
+
+
+
+.. py:class:: GamePeriod
+
+   Bases: :py:obj:`enum.Enum`
+
+   Game period.
+
+   .. py:attribute:: FIRST_HALF
+      :annotation: = 0
+
+      
+
+   .. py:attribute:: HALF_TIME
+      :annotation: = 1
+
+      
+
+   .. py:attribute:: SECOND_HALF
+      :annotation: = 2
+
+      
+
+   .. py:attribute:: OVERTIME1
+      :annotation: = 3
+
+      
+
+   .. py:attribute:: OVERTIME2
+      :annotation: = 4
+
+      
+
+   .. py:attribute:: PENALTY_SHOOTOUT
+      :annotation: = 5
+
+      
+
+
+.. py:class:: GameState
+
+   Bases: :py:obj:`enum.Enum`
+
+   State of the game.
+
+   .. py:attribute:: HALT
+      :annotation: = 0
+
+      
+
+   .. py:attribute:: STOP
+      :annotation: = 1
+
+      
+
+   .. py:attribute:: SETUP
+      :annotation: = 2
+
+      
+
+   .. py:attribute:: READY
+      :annotation: = 3
+
+      
+
+   .. py:attribute:: PLAYING
+      :annotation: = 4
+
+      
+
+   .. py:attribute:: PENALTY_PLAYING
+      :annotation: = 5
+
+      
+
+
+.. py:class:: GameRestart
+
+   Bases: :py:obj:`enum.Enum`
+
+   What kind of restart.
+
+   .. py:attribute:: NONE
+      :annotation: = 0
+
+      
+
+   .. py:attribute:: KICKOFF
+      :annotation: = 1
+
+      
+
+   .. py:attribute:: DIRECT
+      :annotation: = 2
+
+      
+
+   .. py:attribute:: INDIRECT
+      :annotation: = 3
+
+      
+
+   .. py:attribute:: PENALTY
+      :annotation: = 4
+
+      
+
+   .. py:attribute:: PLACEMENT
+      :annotation: = 5
+
+      
+
+
+.. py:class:: Field(length_m: float, width_m: float, border_m: float, line_width_m: float, goal_width_m: float, goal_depth_m: float, goal_height_m: float, def_area_short_dist_m: float, def_area_long_dist_m: float, center_radius_m: float, center_diameter_m: float, goal_flat_m: float, floor_length_m: float, floor_width_m: float)
+
+   Information about the field.
+
+   .. py:attribute:: __slots__
+      :annotation: = ['__length_m', '__width_m', '__border_m', '__line_width_m', '__goal_width_m', '__goal_depth_m',...
+
+      
+
+   .. py:attribute:: __length_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __width_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __border_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __line_width_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __goal_width_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __goal_depth_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __goal_height_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __def_area_short_dist_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __def_area_long_dist_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __center_radius_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __center_diameter_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __goal_flat_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __floor_length_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __floor_width_m
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __def_area_x_right_coord
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __def_area_x_left_coord
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __field_x_right_coord
+      :annotation: :float
+
+      
+
+   .. py:attribute:: __field_x_left_coord
+      :annotation: :float
+
+      
+
+   .. py:method:: our_goal_loc(self) -> numpy.ndarray
+      :property:
+
+      Convenience function for getting our goal location
+      :return: the location of our goal - its always (0,0)
+
+
+   .. py:method:: center_field_loc(self) -> numpy.ndarray
+      :property:
+
+      Convenience function for getting the center field location
+      :return: the location of the center of the field
+
+
+   .. py:method:: their_goal_loc(self) -> numpy.ndarray
+      :property:
+
+      Convenience function for getting the opponents field location
+      :return: the location of the opponents goal
+
+
+   .. py:method:: our_defense_area_coordinates(self) -> List
+      :property:
+
+      Convenience function for getting our defense area locations
+      :return: the list of points for our defense area locations
+
+
+   .. py:method:: opp_defense_area_coordinates(self) -> List
+      :property:
+
+      Convenience function for getting oppenent defense area locations
+      Note: each coordinate starts from top left and continues normal order
+      :return: the list of points for opponent defense area locations
+
+
+   .. py:method:: our_goal_post_coordinates(self) -> List
+      :property:
+
+      Convenience function for getting our goal post coordinates
+      :return: the list of points for our goal post locations
+
+
+   .. py:method:: their_goal_post_coordinates(self) -> List
+      :property:
+
+      Convenience function for getting their goal post coordinates
+      :return: the list of points for their goal post locations
+
+
+   .. py:method:: top_left_field_loc(self) -> numpy.ndarray
+      :property:
+
+      Convenience function for getting the top left corner field location
+      Note: each coordinate starts from top left and continues normal order
+      :return: the location of the top left corner of the field
+
+
+   .. py:method:: top_right_field_loc(self) -> numpy.ndarray
+      :property:
+
+      Convenience function for getting the top left corner field location
+      :return: the location of the top left corner of the field
+
+
+   .. py:method:: bot_left_field_loc(self) -> numpy.ndarray
+      :property:
+
+      Convenience function for getting the top left corner field location
+      :return: the location of the top left corner of the field
+
+
+   .. py:method:: bot_right_field_loc(self) -> numpy.ndarray
+      :property:
+
+      Convenience function for getting the top left corner field location
+      :return: the location of the top left corner of the field
+
+
+   .. py:method:: floor_width_m(self) -> float
+      :property:
+
+      :return: width of full field (including borders)
+
+
+   .. py:method:: def_area_x_left_coord(self) -> float
+      :property:
+
+      :return: left x coordinate of the defense area
+
+
+   .. py:method:: def_area_x_right_coord(self) -> float
+      :property:
+
+      :return: right x coordinate of the defense area
+
+
+   .. py:method:: floor_length_m(self) -> float
+      :property:
+
+      :return: length of full field (including borders)
+
+
+   .. py:method:: goal_flat_m(self) -> float
+      :property:
+
+      :return: check on this one
+
+
+   .. py:method:: center_diameter_m(self) -> float
+      :property:
+
+      :return: returns the diameter of the center of the field
+
+
+   .. py:method:: center_radius_m(self) -> float
+      :property:
+
+      :return: returns the radius of the center of the field
+
+
+   .. py:method:: def_area_long_dist_m(self) -> float
+      :property:
+
+      :return: double check on this one
+
+
+   .. py:method:: def_area_short_dist_m(self) -> float
+      :property:
+
+      :return: double check on this one
+
+
+   .. py:method:: border_m(self) -> float
+      :property:
+
+      :return: The size of the border of the field
+
+
+   .. py:method:: line_width_m(self) -> float
+      :property:
+
+      :return: The width of the lines of the field
+
+
+   .. py:method:: length_m(self) -> float
+      :property:
+
+      :return: The length of the field in meters
+
+
+   .. py:method:: width_m(self) -> float
+      :property:
+
+      :return: the width of the field in meters
+
+
+   .. py:method:: goal_width_m(self) -> float
+      :property:
+
+      :return: the width of the goals in meters
+
+
+   .. py:method:: goal_depth_m(self) -> float
+      :property:
+
+      :return: the depth of the goals in meters
+
+
+   .. py:method:: goal_height_m(self) -> float
+      :property:
+
+      :return: the height of the goals in meters
+
+
+
+.. py:class:: GameInfo(period: GamePeriod, state: GameState, restart: GameRestart, our_restart: bool, ball_placement: numpy.array)
+
+   State of the soccer game. Corresponds to a combination of the C++-side PlayState and MatchState
+
+   .. py:attribute:: __slots__
+      :annotation: = ['__period', '__state', '__restart', '__our_restart', '__ball_placement']
+
+      
+
+   .. py:attribute:: __period
+      :annotation: :GamePeriod
+
+      
+
+   .. py:attribute:: __state
+      :annotation: :GameState
+
+      
+
+   .. py:attribute:: __restart
+      :annotation: :GameRestart
+
+      
+
+   .. py:attribute:: __our_restart
+      :annotation: :bool
+
+      
+
+   .. py:attribute:: __ball_placement
+      :annotation: :numpy.array
+
+      
+
+   .. py:method:: period(self) -> GamePeriod
+      :property:
+
+      :return: The game period
+
+
+   .. py:method:: state(self) -> GameState
+      :property:
+
+      :return: The game state
+
+
+   .. py:method:: restart(self) -> GameRestart
+      :property:
+
+      :return: The game restart state
+
+
+   .. py:method:: our_restart(self) -> bool
+      :property:
+
+      :return: True if it is our restart
+
+
+   .. py:method:: their_restart(self) -> bool
+      :property:
+
+      :return: True if it is their restart
+
+
+   .. py:method:: is_stopped(self) -> bool
+
+      :return: True if play is stopped.
+
+
+   .. py:method:: is_ready(self) -> bool
+
+      :return: True if the field is waiting on a team to kick the ball in a restart.
+
+
+   .. py:method:: is_setup(self) -> bool
+
+      :return: True if the field is setting up for a penalty kick or kickoff.
+
+
+   .. py:method:: is_restart(self) -> bool
+
+      :return: True if there is a restart.
+
+
+   .. py:method:: is_kickoff(self) -> bool
+
+      :return: True if the restart is a kickoff.
+
+
+   .. py:method:: is_penalty(self) -> bool
+
+      :return: True if the restart is a penalty.
+
+
+   .. py:method:: is_direct(self) -> bool
+
+      :return: True if the restart is a direct kick.
+
+
+   .. py:method:: is_indirect(self) -> bool
+
+      :return: True if the restart is an indirect kick.
+
+
+   .. py:method:: is_free_placement(self) -> bool
+
+      :return: True if the restart is free placement.
+
+
+   .. py:method:: ball_placement(self) -> Optional[numpy.ndarray]
+
+      :return: True if the restart is free placement.
+
+
+
+.. py:class:: WorldState(our_robots: List[Robot], their_robots: List[Robot], ball: Ball, game_info: GameInfo, field: Field, goalie_id: int)
+
+   Current state of the world.
+
+   .. py:attribute:: __slots__
+      :annotation: = ['__our_robots', '__their_robots', '__ball', '__game_info', '__field', '__goalie_id']
+
+      
+
+   .. py:attribute:: __our_robots
+      :annotation: :List[Robot]
+
+      
+
+   .. py:attribute:: __their_robots
+      :annotation: :List[Robot]
+
+      
+
+   .. py:attribute:: __ball
+      :annotation: :Ball
+
+      
+
+   .. py:attribute:: __game_info
+      :annotation: :GameInfo
+
+      
+
+   .. py:attribute:: __field
+      :annotation: :Field
+
+      
+
+   .. py:attribute:: __goalie_id
+      :annotation: :int
+
+      
+
+   .. py:method:: robots(self) -> List[Robot]
+      :property:
+
+      :return: A list of all robots (created by merging our_robots with their_robots)
+
+
+   .. py:method:: our_robots(self) -> List[Robot]
+      :property:
+
+      :return: A list of our robots
+
+
+   .. py:method:: their_robots(self) -> List[Robot]
+      :property:
+
+      :return: A list of their robots
+
+
+   .. py:method:: ball(self) -> Ball
+      :property:
+
+      :return: The ball
+
+
+   .. py:method:: game_info(self) -> GameInfo
+      :property:
+
+      :return: The GameInfo object
+
+
+   .. py:method:: field(self) -> Field
+      :property:
+
+      :return: The Field object
+
+
+   .. py:method:: goalie_id(self) -> int
+      :property:
+
+      :return: The Field object
+
+
+

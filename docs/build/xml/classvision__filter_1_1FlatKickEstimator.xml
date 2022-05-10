@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classvision__filter_1_1FlatKickEstimator" kind="class" language="C++" prot="public">
+    <compoundname>vision_filter::FlatKickEstimator</compoundname>
+    <includes refid="flat__kick__estimator_8hpp" local="no">flat_kick_estimator.hpp</includes>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Takes a kick event and tries to match a non-chip kick model to the trajectory </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/estimator/flat_kick_estimator.hpp" line="9" column="24" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/estimator/flat_kick_estimator.hpp" bodystart="9" bodyend="9"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

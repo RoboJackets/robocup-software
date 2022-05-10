@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceConvertTx" kind="namespace" language="C++">
+    <compoundname>ConvertTx</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="packet__convert_8cpp_1a2df623f3960143826b016d82dc5785bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ConvertTx::to_rtp</definition>
+        <argsstring>(const RobotIntent &amp;intent, const MotionSetpoint &amp;setpoint, int shell, rtp::RobotTxMessage *rtp_message)</argsstring>
+        <name>to_rtp</name>
+        <param>
+          <type>const <ref refid="structRobotIntent" kindref="compound">RobotIntent</ref> &amp;</type>
+          <declname>intent</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> &amp;</type>
+          <declname>setpoint</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>shell</declname>
+        </param>
+        <param>
+          <type>rtp::RobotTxMessage *</type>
+          <declname>rtp_message</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" line="164" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" bodystart="164" bodyend="202" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp" declline="51" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="packet__convert_8cpp_1a907e8d48fc31226368e5e81d420b01a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ConvertTx::to_proto</definition>
+        <argsstring>(const RobotIntent &amp;intent, const MotionSetpoint &amp;setpoint, int shell, Packet::Robot *proto)</argsstring>
+        <name>to_proto</name>
+        <param>
+          <type>const <ref refid="structRobotIntent" kindref="compound">RobotIntent</ref> &amp;</type>
+          <declname>intent</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> &amp;</type>
+          <declname>setpoint</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>shell</declname>
+        </param>
+        <param>
+          <type>Packet::Robot *</type>
+          <declname>proto</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" line="204" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" bodystart="204" bodyend="240" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp" declline="57" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="packet__convert_8cpp_1a73231652ca17ffbfc38eca3e668241c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ConvertTx::to_sim</definition>
+        <argsstring>(const RobotIntent &amp;intent, const MotionSetpoint &amp;setpoint, int shell, RobotCommand *sim)</argsstring>
+        <name>to_sim</name>
+        <param>
+          <type>const <ref refid="structRobotIntent" kindref="compound">RobotIntent</ref> &amp;</type>
+          <declname>intent</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> &amp;</type>
+          <declname>setpoint</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>shell</declname>
+        </param>
+        <param>
+          <type>RobotCommand *</type>
+          <declname>sim</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" line="242" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" bodystart="242" bodyend="272" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp" declline="60" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="packet__convert_8cpp_1a3be3e25ce09911e228a67775f7e3c94f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ConvertTx::ros_to_rtp</definition>
+        <argsstring>(const rj_msgs::msg::ManipulatorSetpoint &amp;manipulator, const rj_msgs::msg::MotionSetpoint &amp;motion, int shell, rtp::RobotTxMessage *rtp)</argsstring>
+        <name>ros_to_rtp</name>
+        <param>
+          <type>const rj_msgs::msg::ManipulatorSetpoint &amp;</type>
+          <declname>manipulator</declname>
+        </param>
+        <param>
+          <type>const rj_msgs::msg::MotionSetpoint &amp;</type>
+          <declname>motion</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>shell</declname>
+        </param>
+        <param>
+          <type>rtp::RobotTxMessage *</type>
+          <declname>rtp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" line="273" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" bodystart="273" bodyend="294" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp" declline="54" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="packet__convert_8cpp_1a91057e1ebeb68d527ccd40a216fa6458" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ConvertTx::ros_to_sim</definition>
+        <argsstring>(const rj_msgs::msg::ManipulatorSetpoint &amp;manipulator, const rj_msgs::msg::MotionSetpoint &amp;motion, int shell, RobotCommand *sim)</argsstring>
+        <name>ros_to_sim</name>
+        <param>
+          <type>const rj_msgs::msg::ManipulatorSetpoint &amp;</type>
+          <declname>manipulator</declname>
+        </param>
+        <param>
+          <type>const rj_msgs::msg::MotionSetpoint &amp;</type>
+          <declname>motion</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>shell</declname>
+        </param>
+        <param>
+          <type>RobotCommand *</type>
+          <declname>sim</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" line="296" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" bodystart="296" bodyend="328" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp" declline="63" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp" line="161" column="19"/>
+  </compounddef>
+</doxygen>

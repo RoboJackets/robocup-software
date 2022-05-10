@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1TargetFacePoint" kind="struct" language="C++" prot="public">
+    <compoundname>planning::TargetFacePoint</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1TargetFacePoint_1a886a9c724e27b94ac6f7ad15a58ee7cd" prot="public" static="no" mutable="no">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point planning::TargetFacePoint::face_point</definition>
+        <argsstring></argsstring>
+        <name>face_point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="43" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Point</label>
+      </node>
+      <node id="1">
+        <label>planning::TargetFacePoint</label>
+        <link refid="structplanning_1_1TargetFacePoint"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>face_point</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="42" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="42" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1TargetFacePoint_1a886a9c724e27b94ac6f7ad15a58ee7cd" prot="public" virt="non-virtual"><scope>planning::TargetFacePoint</scope><name>face_point</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

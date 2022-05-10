@@ -1,0 +1,120 @@
+:py:mod:`rj_gameplay.tactic.pass_tactic`
+========================================
+
+.. py:module:: rj_gameplay.tactic.pass_tactic
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.tactic.pass_tactic.State
+   rj_gameplay.tactic.pass_tactic.PassTactic
+
+
+
+
+.. py:class:: State
+
+   Bases: :py:obj:`enum.Enum`
+
+   Generic enumeration.
+
+   Derive from this class to define new enumerations.
+
+   .. py:attribute:: INIT
+      
+
+      
+
+   .. py:attribute:: ACTIVE
+      
+
+      
+
+   .. py:attribute:: INIT_PASSER_CAPTURE
+      
+
+      
+
+   .. py:attribute:: PASSER_CAPTURE
+      
+
+      
+
+   .. py:attribute:: GET_RECEIVER
+      
+
+      
+
+   .. py:attribute:: INIT_EXECUTE_PASS
+      
+
+      
+
+   .. py:attribute:: EXECUTE_PASS
+      
+
+      
+
+   .. py:attribute:: AWAIT_PASSER_KICK
+      
+
+      
+
+   .. py:attribute:: PASS_IN_TRANSIT
+      
+
+      
+
+   .. py:attribute:: INIT_AWAIT_RECEIVE
+      
+
+      
+
+   .. py:attribute:: EXECUTE_RECEIVE
+      
+
+      
+
+   .. py:attribute:: AWAIT_RECEIVE
+      
+
+      
+
+   .. py:attribute:: DONE
+      
+
+      
+
+
+.. py:class:: PassTactic(world_state: stp.rc.WorldState, init_passer_cost: stp.role.CostFn, init_receiver_cost: stp.role.CostFn)
+
+   Bases: :py:obj:`stp.tactic.Tactic`
+
+   .. py:method:: init_roles(self, world_state: stp.rc.WorldState) -> None
+
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, rj_msgs.msg.RobotIntent]]
+
+      FSM
+       - init: request passer
+       - on filled req: init_roles > tick passer's capture
+       - when passer ready to pass: request receiver
+       - on filled req: init_roles > tick passer pass
+       - on ball passed: tick receiver, release passer role
+       - when receiver done: done
+
+
+   .. py:method:: needs_assign(self)
+      :property:
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

@@ -1,0 +1,5 @@
+<map id="planning::RobotConstraints" name="planning::RobotConstraints">
+<area shape="rect" id="node1" title=" " alt="" coords="131,95,329,121"/>
+<area shape="rect" id="node2" href="$structplanning_1_1RotationConstraints.html" title=" " alt="" coords="5,5,220,32"/>
+<area shape="rect" id="node3" href="$structplanning_1_1MotionConstraints.html" title=" " alt="" coords="245,5,450,32"/>
+</map>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1MotionConstraints" kind="struct" language="C++" prot="public">
+    <compoundname>planning::MotionConstraints</compoundname>
+    <includes refid="motion__constraints_8hpp" local="no">motion_constraints.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1MotionConstraints_1aa6227968a80174fb92c5e005934a3b78" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double planning::MotionConstraints::max_speed</definition>
+        <argsstring></argsstring>
+        <name>max_speed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" line="15" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1MotionConstraints_1a1acf2c5256d33b6a0805fa7b5bb50515" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double planning::MotionConstraints::max_acceleration</definition>
+        <argsstring></argsstring>
+        <name>max_acceleration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" line="16" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structplanning_1_1MotionConstraints_1a124ff10ced40f5d56c2930efe10e984c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::MotionConstraints::MotionConstraints</definition>
+        <argsstring>()</argsstring>
+        <name>MotionConstraints</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" line="11" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" bodystart="11" bodyend="13"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This class contains the motion constraints that the high-level logic sets for a robot. </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" line="10" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/motion_constraints.hpp" bodystart="10" bodyend="17"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1MotionConstraints_1a1acf2c5256d33b6a0805fa7b5bb50515" prot="public" virt="non-virtual"><scope>planning::MotionConstraints</scope><name>max_acceleration</name></member>
+      <member refid="structplanning_1_1MotionConstraints_1aa6227968a80174fb92c5e005934a3b78" prot="public" virt="non-virtual"><scope>planning::MotionConstraints</scope><name>max_speed</name></member>
+      <member refid="structplanning_1_1MotionConstraints_1a124ff10ced40f5d56c2930efe10e984c" prot="public" virt="non-virtual"><scope>planning::MotionConstraints</scope><name>MotionConstraints</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

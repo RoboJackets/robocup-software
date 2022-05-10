@@ -1,0 +1,52 @@
+:py:mod:`rj_gameplay.play.basic_defense`
+========================================
+
+.. py:module:: rj_gameplay.play.basic_defense
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.play.basic_defense.State
+   rj_gameplay.play.basic_defense.BasicDefense
+
+
+
+
+.. py:class:: State
+
+   Bases: :py:obj:`enum.Enum`
+
+   Generic enumeration.
+
+   Derive from this class to define new enumerations.
+
+   .. py:attribute:: INIT
+      
+
+      
+
+   .. py:attribute:: ACTIVE
+      
+
+      
+
+
+.. py:class:: BasicDefense
+
+   Bases: :py:obj:`stp.play.Play`
+
+   Play that consists of:
+   - 1 Goalie
+   - 5 Wallers
+   TODO: add 2 aggressive markers, go down to 3 Wallers
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> List[rj_msgs.msg.RobotIntent]
+
+
+

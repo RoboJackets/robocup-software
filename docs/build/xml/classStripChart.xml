@@ -1,0 +1,366 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classStripChart" kind="class" language="C++" prot="public">
+    <compoundname>StripChart</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">QWidget</basecompoundref>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classStripChart_1ae3b7b94efa98dadc32029b28fd4068b6" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool StripChart::autoRange</definition>
+        <argsstring></argsstring>
+        <name>autoRange</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="70" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classStripChart_1a16bb3663339e36de7fdbc77b017189c6" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int StripChart::chartSize</definition>
+        <argsstring></argsstring>
+        <name>chartSize</name>
+        <initializer>= 1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="73" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classStripChart_1afd4eaaede18edf50c197bba846d18447" prot="protected" static="no" mutable="no">
+        <type>QList&lt; <ref refid="structChart_1_1Function" kindref="compound">Chart::Function</ref> * &gt;</type>
+        <definition>QList&lt;Chart::Function*&gt; StripChart::_functions</definition>
+        <argsstring></argsstring>
+        <name>_functions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="86" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classStripChart_1ac953b6b58e6bf416be57a6046c201631" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float StripChart::_minValue</definition>
+        <argsstring></argsstring>
+        <name>_minValue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="88" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classStripChart_1a03e0e8c071aefa418b9396c077f6df65" prot="protected" static="no" mutable="no">
+        <type>float</type>
+        <definition>float StripChart::_maxValue</definition>
+        <argsstring></argsstring>
+        <name>_maxValue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="89" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classStripChart_1a2a4adeabe2c50395a9a0ad56e55a6067" prot="protected" static="no" mutable="no">
+        <type>QColor</type>
+        <definition>QColor StripChart::_color</definition>
+        <argsstring></argsstring>
+        <name>_color</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="90" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classStripChart_1aa6eb7cd7924051d29cf9e3f4b06a959f" prot="protected" static="no" mutable="no">
+        <type>const std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; *</type>
+        <definition>const std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt;* StripChart::_history</definition>
+        <argsstring></argsstring>
+        <name>_history</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="92" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classStripChart_1ac315d458d28b1091077cbd1d987f6b21" prot="protected" static="no" mutable="no">
+        <type>QPointF</type>
+        <definition>QPointF StripChart::_mouse_overlay</definition>
+        <argsstring></argsstring>
+        <name>_mouse_overlay</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="94" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classStripChart_1afe5e6ff14b37f5b4df8a903222336286" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StripChart::StripChart</definition>
+        <argsstring>(QWidget *parent=nullptr)</argsstring>
+        <name>StripChart</name>
+        <param>
+          <type>QWidget *</type>
+          <declname>parent</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="43" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.cpp" bodystart="25" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1a67c5a06311a10ce1bc531f5183fc4e54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StripChart::~StripChart</definition>
+        <argsstring>() override=default</argsstring>
+        <name>~StripChart</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="44" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1a902103c49b854229ba93929b2144ccd3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StripChart::history</definition>
+        <argsstring>(const std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; *value)</argsstring>
+        <name>history</name>
+        <param>
+          <type>const std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="46" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="46" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1af26b8a2a762301142e942eeb6b553cd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StripChart::function</definition>
+        <argsstring>(Chart::Function *function)</argsstring>
+        <name>function</name>
+        <param>
+          <type><ref refid="structChart_1_1Function" kindref="compound">Chart::Function</ref> *</type>
+          <declname>function</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="52" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.cpp" bodystart="44" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1a0fec361ca031fd7afc6c07c6a799341b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>QList&lt; <ref refid="structChart_1_1Function" kindref="compound">Chart::Function</ref> * &gt;</type>
+        <definition>QList&lt;Chart::Function*&gt; StripChart::getFunctions</definition>
+        <argsstring>()</argsstring>
+        <name>getFunctions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="54" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="54" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1a6c112cbadcd22b885499039548b46844" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StripChart::exportChart</definition>
+        <argsstring>()</argsstring>
+        <name>exportChart</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="57" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.cpp" bodystart="50" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1acf085c3fb05c6e6c1a42946bd73e195c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StripChart::minValue</definition>
+        <argsstring>(float v)</argsstring>
+        <name>minValue</name>
+        <param>
+          <type>float</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="59" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="59" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1a7248b8bf78b6e482acdc4e6bbb23c20b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StripChart::maxValue</definition>
+        <argsstring>(float v)</argsstring>
+        <name>maxValue</name>
+        <param>
+          <type>float</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="61" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="61" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1ab4a279f831aad7084733a8b5b93848e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StripChart::color</definition>
+        <argsstring>(const QColor &amp;color)</argsstring>
+        <name>color</name>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>color</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="63" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="63" bodyend="66"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classStripChart_1ae6b97fb77db3089340364eea6fc1fe85" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StripChart::paintEvent</definition>
+        <argsstring>(QPaintEvent *e) override</argsstring>
+        <name>paintEvent</name>
+        <param>
+          <type>QPaintEvent *</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="76" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.cpp" bodystart="95" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1a63c1ebf716323c7c8fdf39b98464ceab" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>QPointF</type>
+        <definition>QPointF StripChart::dataPoint</definition>
+        <argsstring>(int i, float value)</argsstring>
+        <name>dataPoint</name>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="81" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.cpp" bodystart="84" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classStripChart_1a56d0e0a0ff8da4c392831912076597ea" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int StripChart::indexAtPoint</definition>
+        <argsstring>(const QPoint &amp;point)</argsstring>
+        <name>indexAtPoint</name>
+        <param>
+          <type>const QPoint &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="83" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.cpp" bodystart="91" bodyend="93"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>StripChart</label>
+        <link refid="classStripChart"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>QWidget</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>StripChart</label>
+        <link refid="classStripChart"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>QWidget</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="41" column="32" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="41" bodyend="95"/>
+    <listofallmembers>
+      <member refid="classStripChart_1a2a4adeabe2c50395a9a0ad56e55a6067" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>_color</name></member>
+      <member refid="classStripChart_1afd4eaaede18edf50c197bba846d18447" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>_functions</name></member>
+      <member refid="classStripChart_1aa6eb7cd7924051d29cf9e3f4b06a959f" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>_history</name></member>
+      <member refid="classStripChart_1a03e0e8c071aefa418b9396c077f6df65" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>_maxValue</name></member>
+      <member refid="classStripChart_1ac953b6b58e6bf416be57a6046c201631" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>_minValue</name></member>
+      <member refid="classStripChart_1ac315d458d28b1091077cbd1d987f6b21" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>_mouse_overlay</name></member>
+      <member refid="classStripChart_1ae3b7b94efa98dadc32029b28fd4068b6" prot="public" virt="non-virtual"><scope>StripChart</scope><name>autoRange</name></member>
+      <member refid="classStripChart_1a16bb3663339e36de7fdbc77b017189c6" prot="public" virt="non-virtual"><scope>StripChart</scope><name>chartSize</name></member>
+      <member refid="classStripChart_1ab4a279f831aad7084733a8b5b93848e1" prot="public" virt="non-virtual"><scope>StripChart</scope><name>color</name></member>
+      <member refid="classStripChart_1a63c1ebf716323c7c8fdf39b98464ceab" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>dataPoint</name></member>
+      <member refid="classStripChart_1a6c112cbadcd22b885499039548b46844" prot="public" virt="non-virtual"><scope>StripChart</scope><name>exportChart</name></member>
+      <member refid="classStripChart_1af26b8a2a762301142e942eeb6b553cd4" prot="public" virt="non-virtual"><scope>StripChart</scope><name>function</name></member>
+      <member refid="classStripChart_1a0fec361ca031fd7afc6c07c6a799341b" prot="public" virt="non-virtual"><scope>StripChart</scope><name>getFunctions</name></member>
+      <member refid="classStripChart_1a902103c49b854229ba93929b2144ccd3" prot="public" virt="non-virtual"><scope>StripChart</scope><name>history</name></member>
+      <member refid="classStripChart_1a56d0e0a0ff8da4c392831912076597ea" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>indexAtPoint</name></member>
+      <member refid="classStripChart_1a7248b8bf78b6e482acdc4e6bbb23c20b" prot="public" virt="non-virtual"><scope>StripChart</scope><name>maxValue</name></member>
+      <member refid="classStripChart_1acf085c3fb05c6e6c1a42946bd73e195c" prot="public" virt="non-virtual"><scope>StripChart</scope><name>minValue</name></member>
+      <member refid="classStripChart_1ae6b97fb77db3089340364eea6fc1fe85" prot="protected" virt="non-virtual"><scope>StripChart</scope><name>paintEvent</name></member>
+      <member refid="classStripChart_1afe5e6ff14b37f5b4df8a903222336286" prot="public" virt="non-virtual"><scope>StripChart</scope><name>StripChart</name></member>
+      <member refid="classStripChart_1a67c5a06311a10ce1bc531f5183fc4e54" prot="public" virt="non-virtual"><scope>StripChart</scope><name>~StripChart</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

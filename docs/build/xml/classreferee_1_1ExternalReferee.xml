@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classreferee_1_1ExternalReferee" kind="class" language="C++" prot="public">
+    <compoundname>referee::ExternalReferee</compoundname>
+    <basecompoundref refid="classreferee_1_1RefereeBase" prot="public" virt="non-virtual">referee::RefereeBase</basecompoundref>
+    <includes refid="external__referee_8hpp" local="no">external_referee.hpp</includes>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classreferee_1_1ExternalReferee_1af9ae26c3428dcc6752806a14d8cc35f8" prot="private" static="no">
+        <type>std::pair&lt; SSL_Referee::Command, std::optional&lt; rj_geometry::Point &gt; &gt;</type>
+        <definition>using referee::ExternalReferee::Command =  std::pair&lt;SSL_Referee::Command, std::optional&lt;rj_geometry::Point&gt; &gt;</definition>
+        <argsstring></argsstring>
+        <name>Command</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="52" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1af78d4783261cb20487d7754b97e1fdbd" prot="private" static="no" mutable="no">
+        <type>rclcpp::Publisher&lt; RawProtobufMsg &gt;::SharedPtr</type>
+        <definition>rclcpp::Publisher&lt;RawProtobufMsg&gt;::SharedPtr referee::ExternalReferee::raw_ref_pub_</definition>
+        <argsstring></argsstring>
+        <name>raw_ref_pub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="49" column="35" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1ae4cd8ae52d3c3ed2fe49749ee35dbf2a" prot="private" static="no" mutable="no">
+        <type>rclcpp::TimerBase::SharedPtr</type>
+        <definition>rclcpp::TimerBase::SharedPtr referee::ExternalReferee::network_timer_</definition>
+        <argsstring></argsstring>
+        <name>network_timer_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="50" column="34" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1a1dc3cddcaec153e2ea9b1a996bfac4ce" prot="private" static="no" mutable="no">
+        <type>std::array&lt; char, kRecvBufferSize &gt;</type>
+        <definition>std::array&lt;char, kRecvBufferSize&gt; referee::ExternalReferee::recv_buffer_</definition>
+        <argsstring></argsstring>
+        <name>recv_buffer_</name>
+        <initializer>{}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="60" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1ad839ae9d534ca2db5b458398598da410" prot="private" static="no" mutable="no">
+        <type>boost::asio::io_service</type>
+        <definition>boost::asio::io_service referee::ExternalReferee::io_service_</definition>
+        <argsstring></argsstring>
+        <name>io_service_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="62" column="29" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1ae07acb34537518dec722f16ec58e855a" prot="private" static="no" mutable="no">
+        <type>boost::asio::ip::udp::socket</type>
+        <definition>boost::asio::ip::udp::socket referee::ExternalReferee::asio_socket_</definition>
+        <argsstring></argsstring>
+        <name>asio_socket_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="63" column="34" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1a7f692713ae616fd0f858a14809f5ada1" prot="private" static="no" mutable="no">
+        <type>boost::asio::ip::udp::endpoint</type>
+        <definition>boost::asio::ip::udp::endpoint referee::ExternalReferee::sender_endpoint_</definition>
+        <argsstring></argsstring>
+        <name>sender_endpoint_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="64" column="36" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1a41fe5791c736716b3d6a02b3a7367829" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; Command &gt;</type>
+        <definition>std::optional&lt;Command&gt; referee::ExternalReferee::last_command_</definition>
+        <argsstring></argsstring>
+        <name>last_command_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="70" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classreferee_1_1ExternalReferee_1a8f1d5c9bd7c76b8778a6e5f56b870b75" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr size_t</type>
+        <definition>constexpr size_t referee::ExternalReferee::kRecvBufferSize</definition>
+        <argsstring></argsstring>
+        <name>kRecvBufferSize</name>
+        <initializer>= std::numeric_limits&lt;uint16_t&gt;::max() + 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="59" column="29" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1afe128630b7158d19e5b19cfcf807ffca" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>referee::ExternalReferee::ExternalReferee</definition>
+        <argsstring>()</argsstring>
+        <name>ExternalReferee</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="39" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="44" bodyend="54"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1ac6a33871183f9c157bcbe4cd72dcaff7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void referee::ExternalReferee::update</definition>
+        <argsstring>()</argsstring>
+        <name>update</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Listen on the network and publish results. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="45" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1a1bdd95d16e9ab91fb8f6dd5d001a629d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void referee::ExternalReferee::handle_command</definition>
+        <argsstring>(const Command &amp;command)</argsstring>
+        <name>handle_command</name>
+        <param>
+          <type>const Command &amp;</type>
+          <declname>command</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="55" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="127" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1ad637155188472e17c4fe1851bf739835" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void referee::ExternalReferee::handle_stage</definition>
+        <argsstring>(SSL_Referee::Stage stage)</argsstring>
+        <name>handle_stage</name>
+        <param>
+          <type>SSL_Referee::Stage</type>
+          <declname>stage</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="56" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="229" bodyend="231"/>
+      </memberdef>
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1abf5df7de05eb0e62005657551f6559cf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void referee::ExternalReferee::setup_referee_multicast</definition>
+        <argsstring>()</argsstring>
+        <name>setup_referee_multicast</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="66" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="107" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1a78d55be55384ea00ea357843a2e41cc2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void referee::ExternalReferee::start_receive</definition>
+        <argsstring>()</argsstring>
+        <name>start_receive</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="67" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="56" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1a72c1636207c187481811a816cd7da608" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void referee::ExternalReferee::receive_packet</definition>
+        <argsstring>(const boost::system::error_code &amp;error, size_t num_bytes)</argsstring>
+        <name>receive_packet</name>
+        <param>
+          <type>const boost::system::error_code &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>num_bytes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="68" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="66" bodyend="105"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classreferee_1_1ExternalReferee_1a9efd8597ce852c368c5f22bb763ac391" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatchState::Period</type>
+        <definition>MatchState::Period referee::ExternalReferee::period_from_proto</definition>
+        <argsstring>(SSL_Referee::Stage stage)</argsstring>
+        <name>period_from_proto</name>
+        <param>
+          <type>SSL_Referee::Stage</type>
+          <declname>stage</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="47" column="31" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.cpp" bodystart="199" bodyend="227"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classreferee_1_1ExternalReferee" kindref="compound">ExternalReferee</ref> listens to a port for referee packets over the network. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Referee packets are sent out from the <ulink url="https://github.com/RoboCup-SSL/ssl-game-controller">ssl-game-controller</ulink>. Referee packets contains info about which stage of the game it is, team scores, yellow/red cards, etc. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>referee::ExternalReferee</label>
+        <link refid="classreferee_1_1ExternalReferee"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Node</label>
+      </node>
+      <node id="2">
+        <label>referee::RefereeBase</label>
+        <link refid="classreferee_1_1RefereeBase"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>referee::ExternalReferee</label>
+        <link refid="classreferee_1_1ExternalReferee"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Node</label>
+      </node>
+      <node id="2">
+        <label>referee::RefereeBase</label>
+        <link refid="classreferee_1_1RefereeBase"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" line="37" column="41" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp" bodystart="37" bodyend="71"/>
+    <listofallmembers>
+      <member refid="classreferee_1_1ExternalReferee_1ae07acb34537518dec722f16ec58e855a" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>asio_socket_</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1af9ae26c3428dcc6752806a14d8cc35f8" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>Command</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1afe128630b7158d19e5b19cfcf807ffca" prot="public" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>ExternalReferee</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a1bdd95d16e9ab91fb8f6dd5d001a629d" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>handle_command</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1ad637155188472e17c4fe1851bf739835" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>handle_stage</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1ad839ae9d534ca2db5b458398598da410" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>io_service_</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a8f1d5c9bd7c76b8778a6e5f56b870b75" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>kRecvBufferSize</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a41fe5791c736716b3d6a02b3a7367829" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>last_command_</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1ae4cd8ae52d3c3ed2fe49749ee35dbf2a" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>network_timer_</name></member>
+      <member refid="classreferee_1_1RefereeBase_1aaabee878bf4b235982abd87be9daa78a" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>override_goalie</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a9efd8597ce852c368c5f22bb763ac391" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>period_from_proto</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1af78d4783261cb20487d7754b97e1fdbd" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>raw_ref_pub_</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a72c1636207c187481811a816cd7da608" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>receive_packet</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a1dc3cddcaec153e2ea9b1a996bfac4ce" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>recv_buffer_</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a376446b821deb4c2d483cfcfc0637ed9" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>RefereeBase</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a87ecde165d1a53cd95bbc293dccb9c2d" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>send</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a7f692713ae616fd0f858a14809f5ada1" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>sender_endpoint_</name></member>
+      <member refid="classreferee_1_1RefereeBase_1af428d715daf977485c3087f122cf323c" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>set_period</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a770f914b9d3e6e5d91adf520c91c31dd" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>set_play_state</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a697f93c7da96f570d16fb206ef48d2a0" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>set_stage_time_left</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a301f81b9587ea019e9c6af7701fda4b8" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>set_team_color</name></member>
+      <member refid="classreferee_1_1RefereeBase_1aedf5d757272bda656d46353b25bc8d87" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>set_team_info</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a00597117383ba57f90c3465109531e7d" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>set_team_name</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1abf5df7de05eb0e62005657551f6559cf" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>setup_referee_multicast</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a148f5f93b12e2eed986c863d8dc3a923" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>spin_kick_detector</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1a78d55be55384ea00ea357843a2e41cc2" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>start_receive</name></member>
+      <member refid="classreferee_1_1ExternalReferee_1ac6a33871183f9c157bcbe4cd72dcaff7" prot="private" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>update</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a3f3c73c811133054d7a0cac46803ef7f" prot="protected" virt="non-virtual"><scope>referee::ExternalReferee</scope><name>yellow_play_state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

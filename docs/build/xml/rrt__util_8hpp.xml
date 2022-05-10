@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="rrt__util_8hpp" kind="file" language="C++">
+    <compoundname>rrt_util.hpp</compoundname>
+    <includes refid="debug__drawer_8hpp" local="no">debug_drawer.hpp</includes>
+    <includes local="no">rj_geometry/point.hpp</includes>
+    <includes local="no">rj_common/field_dimensions.hpp</includes>
+    <includes local="no">rrt/BiRRT.hpp</includes>
+    <includes refid="robo__cup__state__space_8hpp" local="yes">robo_cup_state_space.hpp</includes>
+    <includes refid="motion__constraints_8hpp" local="yes">planning/motion_constraints.hpp</includes>
+    <includes refid="trajectory_8hpp" local="yes">planning/trajectory.hpp</includes>
+    <includedby refid="collect__planner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/collect_planner.cpp</includedby>
+    <includedby refid="escape__obstacles__path__planner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.cpp</includedby>
+    <includedby refid="settle__planner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/settle_planner.cpp</includedby>
+    <includedby refid="create__path_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/create_path.cpp</includedby>
+    <includedby refid="replanner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp</includedby>
+    <includedby refid="rrt__util_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp</includedby>
+    <includedby refid="planner__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/planner_test.cpp</includedby>
+    <includedby refid="trajectory__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/trajectory_test.cpp</includedby>
+    <incdepgraph>
+      <node id="11">
+        <label>QMap</label>
+      </node>
+      <node id="20">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="25">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="3">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="21">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="9">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="4">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="22">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>rj_common/field_dimensions.hpp</label>
+      </node>
+      <node id="13">
+        <label>string</label>
+      </node>
+      <node id="5">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="16">
+        <label>rrt/BiRRT.hpp</label>
+      </node>
+      <node id="6">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="28">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="24">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="26">
+        <label>instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="18">
+        <label>rrt/2dplane/PlaneStateSpace.hpp</label>
+      </node>
+      <node id="27">
+        <label>optional</label>
+      </node>
+      <node id="14">
+        <label>vector</label>
+      </node>
+      <node id="19">
+        <label>planning/motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>robo_cup_state_space.hpp</label>
+        <link refid="robo__cup__state__space_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>QColor</label>
+      </node>
+      <node id="2">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="8">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp</label>
+        <link refid="rrt__util_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>memory</label>
+      </node>
+      <node id="23">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="30">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespaceplanning">planning</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;debug_drawer.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/point.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_common/field_dimensions.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rrt/BiRRT.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;robo_cup_state_space.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/motion_constraints.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/trajectory.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">planning<sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_rrt(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>RRT::Tree&lt;rj_geometry::Point&gt;&amp;<sp/>rrt,<sp/><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref>*<sp/>debug_drawer,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>shell_id);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_bi_rrt(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>RRT::BiRRT&lt;rj_geometry::Point&gt;&amp;<sp/>bi_rrt,</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref>*<sp/>debug_drawer,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>shell_id);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">std::vector&lt;rj_geometry::Point&gt;<sp/>generate_rrt(</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>start,<sp/>rj_geometry::Point<sp/>goal,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::ShapeSet&amp;<sp/>obstacles,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;rj_geometry::Point&gt;&amp;<sp/>waypoints<sp/>=<sp/>{});</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>planning</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1PathTargetCommand" kind="struct" language="C++" prot="public">
+    <compoundname>planning::PathTargetCommand</compoundname>
+    <includes refid="motion__command_8hpp" local="no">motion_command.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1PathTargetCommand_1a53b9ca16c624d89b6281da873cf36a23" prot="public" static="no" mutable="no">
+        <type><ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref></type>
+        <definition>LinearMotionInstant planning::PathTargetCommand::goal</definition>
+        <argsstring></argsstring>
+        <name>goal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="52" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1PathTargetCommand_1a1b4aec0565eda9dc54092ebf4c7d780b" prot="public" static="no" mutable="no">
+        <type>AngleOverride</type>
+        <definition>AngleOverride planning::PathTargetCommand::angle_override</definition>
+        <argsstring></argsstring>
+        <name>angle_override</name>
+        <initializer>= <ref refid="structplanning_1_1TargetFaceTangent" kindref="compound">TargetFaceTangent</ref>{}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="53" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1PathTargetCommand_1ace51733d3eb280ffa88087f6b5a78d92" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool planning::PathTargetCommand::ignore_ball</definition>
+        <argsstring></argsstring>
+        <name>ignore_ball</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="54" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Move to a particular target with a particular velocity, avoiding obstacles. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>planning::PathTargetCommand</label>
+        <link refid="structplanning_1_1PathTargetCommand"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>goal</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Point</label>
+      </node>
+      <node id="2">
+        <label>planning::LinearMotionInstant</label>
+        <link refid="structplanning_1_1LinearMotionInstant"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>position</edgelabel>
+          <edgelabel>velocity</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="51" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="51" bodyend="55"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1PathTargetCommand_1a1b4aec0565eda9dc54092ebf4c7d780b" prot="public" virt="non-virtual"><scope>planning::PathTargetCommand</scope><name>angle_override</name></member>
+      <member refid="structplanning_1_1PathTargetCommand_1a53b9ca16c624d89b6281da873cf36a23" prot="public" virt="non-virtual"><scope>planning::PathTargetCommand</scope><name>goal</name></member>
+      <member refid="structplanning_1_1PathTargetCommand_1ace51733d3eb280ffa88087f6b5a78d92" prot="public" virt="non-virtual"><scope>planning::PathTargetCommand</scope><name>ignore_ball</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

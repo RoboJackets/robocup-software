@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1Trapezoid_1_1State" kind="struct" language="C++" prot="public">
+    <compoundname>planning::Trapezoid::State</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1Trapezoid_1_1State_1ad39525968bc0bcd79e9ef837d493b95a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double planning::Trapezoid::State::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" line="8" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1Trapezoid_1_1State_1ad5ec3d0cb0335b15b78623facfd3f837" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double planning::Trapezoid::State::velocity</definition>
+        <argsstring></argsstring>
+        <name>velocity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" line="9" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" line="7" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" bodystart="7" bodyend="10"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1Trapezoid_1_1State_1ad39525968bc0bcd79e9ef837d493b95a" prot="public" virt="non-virtual"><scope>planning::Trapezoid::State</scope><name>position</name></member>
+      <member refid="structplanning_1_1Trapezoid_1_1State_1ad5ec3d0cb0335b15b78623facfd3f837" prot="public" virt="non-virtual"><scope>planning::Trapezoid::State</scope><name>velocity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

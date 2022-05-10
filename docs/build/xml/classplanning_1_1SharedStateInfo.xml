@@ -1,0 +1,302 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classplanning_1_1SharedStateInfo" kind="class" language="C++" prot="public">
+    <compoundname>planning::SharedStateInfo</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1a620c8d39cb7bd946aaffaa67dfe583f1" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_msgs::msg::PlayState &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_msgs::msg::PlayState&gt;::SharedPtr planning::SharedStateInfo::play_state_sub_</definition>
+        <argsstring></argsstring>
+        <name>play_state_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="113" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1aca96630020cec0ef388ba85896ff04cb" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_msgs::msg::GameSettings &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_msgs::msg::GameSettings&gt;::SharedPtr planning::SharedStateInfo::game_settings_sub_</definition>
+        <argsstring></argsstring>
+        <name>game_settings_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="114" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1a05220b57978888037a11ffb00aafe967" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_msgs::msg::Goalie &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_msgs::msg::Goalie&gt;::SharedPtr planning::SharedStateInfo::goalie_sub_</definition>
+        <argsstring></argsstring>
+        <name>goalie_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="115" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1adcb89d44322a4f72ec940dec85cc70de" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_geometry_msgs::msg::ShapeSet &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_geometry_msgs::msg::ShapeSet&gt;::SharedPtr planning::SharedStateInfo::global_obstacles_sub_</definition>
+        <argsstring></argsstring>
+        <name>global_obstacles_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="116" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1a48d414ad8ef354ea82c064d27b37fbc9" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_geometry_msgs::msg::ShapeSet &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_geometry_msgs::msg::ShapeSet&gt;::SharedPtr planning::SharedStateInfo::def_area_obstacles_sub_</definition>
+        <argsstring></argsstring>
+        <name>def_area_obstacles_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="117" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1a28468db5962b15a0e7ae82fecba542ab" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_msgs::msg::WorldState &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_msgs::msg::WorldState&gt;::SharedPtr planning::SharedStateInfo::world_state_sub_</definition>
+        <argsstring></argsstring>
+        <name>world_state_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="118" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1ae1289f893013039936be6355694b4693" prot="private" static="no" mutable="yes">
+        <type>std::mutex</type>
+        <definition>std::mutex planning::SharedStateInfo::mutex_</definition>
+        <argsstring></argsstring>
+        <name>mutex_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="120" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1a206cdc6d45b1178fd4cc4d39db760b19" prot="private" static="no" mutable="no">
+        <type><ref refid="structPlayState" kindref="compound">PlayState</ref></type>
+        <definition>PlayState planning::SharedStateInfo::last_play_state_</definition>
+        <argsstring></argsstring>
+        <name>last_play_state_</name>
+        <initializer>= PlayState::halt()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="121" column="15" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1ac549dce64177337449af4f35ba022295" prot="private" static="no" mutable="no">
+        <type><ref refid="structGameSettings" kindref="compound">GameSettings</ref></type>
+        <definition>GameSettings planning::SharedStateInfo::last_game_settings_</definition>
+        <argsstring></argsstring>
+        <name>last_game_settings_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="122" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1a19d7b3dc5771e2cfd445eb88f42d27b8" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int planning::SharedStateInfo::last_goalie_id_</definition>
+        <argsstring></argsstring>
+        <name>last_goalie_id_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="123" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1aa78d8207b194a78f952cb2c1f4eba631" prot="private" static="no" mutable="no">
+        <type>rj_geometry::ShapeSet</type>
+        <definition>rj_geometry::ShapeSet planning::SharedStateInfo::last_global_obstacles_</definition>
+        <argsstring></argsstring>
+        <name>last_global_obstacles_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="124" column="27" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1a56dc5e4ffc3947c81f81f44c2223e770" prot="private" static="no" mutable="no">
+        <type>rj_geometry::ShapeSet</type>
+        <definition>rj_geometry::ShapeSet planning::SharedStateInfo::last_def_area_obstacles_</definition>
+        <argsstring></argsstring>
+        <name>last_def_area_obstacles_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="125" column="27" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1SharedStateInfo_1afad9355bd48af2089758e1791fdf3cbc" prot="private" static="no" mutable="no">
+        <type><ref refid="structWorldState" kindref="compound">WorldState</ref></type>
+        <definition>WorldState planning::SharedStateInfo::last_world_state_</definition>
+        <argsstring></argsstring>
+        <name>last_world_state_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="126" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classplanning_1_1SharedStateInfo_1aed6e91863e0cf08793cf76e1298efc77" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::SharedStateInfo::SharedStateInfo</definition>
+        <argsstring>(rclcpp::Node *node)</argsstring>
+        <name>SharedStateInfo</name>
+        <param>
+          <type>rclcpp::Node *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="48" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="48" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1SharedStateInfo_1a21529ed2e9e2af27e8c1ec6e81c7c8c4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structPlayState" kindref="compound">PlayState</ref></type>
+        <definition>PlayState planning::SharedStateInfo::play_state</definition>
+        <argsstring>() const</argsstring>
+        <name>play_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="87" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="87" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1SharedStateInfo_1a40ebeeb13e85f3ad5c0567f8dc9d9622" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structGameSettings" kindref="compound">GameSettings</ref></type>
+        <definition>GameSettings planning::SharedStateInfo::game_settings</definition>
+        <argsstring>() const</argsstring>
+        <name>game_settings</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="91" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="91" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1SharedStateInfo_1a1b3f3b77d890c8a10a6d6f9e2ad7ad5d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int planning::SharedStateInfo::goalie_id</definition>
+        <argsstring>() const</argsstring>
+        <name>goalie_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="95" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="95" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1SharedStateInfo_1a910a0aa4c69ed39dde75b28f271c289c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_geometry::ShapeSet</type>
+        <definition>rj_geometry::ShapeSet planning::SharedStateInfo::global_obstacles</definition>
+        <argsstring>() const</argsstring>
+        <name>global_obstacles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="99" column="28" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="99" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1SharedStateInfo_1afd3ac1a736f2459961706d4c731f406c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_geometry::ShapeSet</type>
+        <definition>rj_geometry::ShapeSet planning::SharedStateInfo::def_area_obstacles</definition>
+        <argsstring>() const</argsstring>
+        <name>def_area_obstacles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="103" column="28" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="103" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1SharedStateInfo_1ac5627a2d17b4176301a115779c6d77f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="structWorldState" kindref="compound">WorldState</ref> *</type>
+        <definition>const WorldState* planning::SharedStateInfo::world_state</definition>
+        <argsstring>() const</argsstring>
+        <name>world_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="107" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="107" bodyend="110"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" line="46" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp" bodystart="46" bodyend="127"/>
+    <listofallmembers>
+      <member refid="classplanning_1_1SharedStateInfo_1afd3ac1a736f2459961706d4c731f406c" prot="public" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>def_area_obstacles</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a48d414ad8ef354ea82c064d27b37fbc9" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>def_area_obstacles_sub_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a40ebeeb13e85f3ad5c0567f8dc9d9622" prot="public" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>game_settings</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1aca96630020cec0ef388ba85896ff04cb" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>game_settings_sub_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a910a0aa4c69ed39dde75b28f271c289c" prot="public" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>global_obstacles</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1adcb89d44322a4f72ec940dec85cc70de" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>global_obstacles_sub_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a1b3f3b77d890c8a10a6d6f9e2ad7ad5d" prot="public" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>goalie_id</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a05220b57978888037a11ffb00aafe967" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>goalie_sub_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a56dc5e4ffc3947c81f81f44c2223e770" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>last_def_area_obstacles_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1ac549dce64177337449af4f35ba022295" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>last_game_settings_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1aa78d8207b194a78f952cb2c1f4eba631" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>last_global_obstacles_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a19d7b3dc5771e2cfd445eb88f42d27b8" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>last_goalie_id_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a206cdc6d45b1178fd4cc4d39db760b19" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>last_play_state_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1afad9355bd48af2089758e1791fdf3cbc" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>last_world_state_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1ae1289f893013039936be6355694b4693" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>mutex_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a21529ed2e9e2af27e8c1ec6e81c7c8c4" prot="public" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>play_state</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a620c8d39cb7bd946aaffaa67dfe583f1" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>play_state_sub_</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1aed6e91863e0cf08793cf76e1298efc77" prot="public" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>SharedStateInfo</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1ac5627a2d17b4176301a115779c6d77f7" prot="public" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>world_state</name></member>
+      <member refid="classplanning_1_1SharedStateInfo_1a28468db5962b15a0e7ae82fecba542ab" prot="private" virt="non-virtual"><scope>planning::SharedStateInfo</scope><name>world_state_sub_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

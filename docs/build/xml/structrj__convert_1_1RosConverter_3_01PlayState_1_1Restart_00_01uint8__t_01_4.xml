@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01PlayState_1_1Restart_00_01uint8__t_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; PlayState::Restart, uint8_t &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01PlayState_1_1Restart_00_01uint8__t_01_4_1a7d280daff4dffc7e70564b4a1c7fdbb1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint8_t</type>
+        <definition>static uint8_t rj_convert::RosConverter&lt; PlayState::Restart, uint8_t &gt;::to_ros</definition>
+        <argsstring>(const PlayState::Restart &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <type>const PlayState::Restart &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="273" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" bodystart="273" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01PlayState_1_1Restart_00_01uint8__t_01_4_1a500e4911f43cd39ec3da7141e2d43fb2" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>PlayState::Restart</type>
+        <definition>static PlayState::Restart rj_convert::RosConverter&lt; PlayState::Restart, uint8_t &gt;::from_ros</definition>
+        <argsstring>(const uint8_t from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <type>const uint8_t</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="275" column="31" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" bodystart="275" bodyend="277"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="272" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" bodystart="272" bodyend="278"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01PlayState_1_1Restart_00_01uint8__t_01_4_1a500e4911f43cd39ec3da7141e2d43fb2" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; PlayState::Restart, uint8_t &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01PlayState_1_1Restart_00_01uint8__t_01_4_1a7d280daff4dffc7e70564b4a1c7fdbb1" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; PlayState::Restart, uint8_t &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

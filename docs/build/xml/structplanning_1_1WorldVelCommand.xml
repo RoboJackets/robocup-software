@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1WorldVelCommand" kind="struct" language="C++" prot="public">
+    <compoundname>planning::WorldVelCommand</compoundname>
+    <includes refid="motion__command_8hpp" local="no">motion_command.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1WorldVelCommand_1a89d67e96212ab371c307d466b94c2c32" prot="public" static="no" mutable="no">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point planning::WorldVelCommand::world_vel</definition>
+        <argsstring></argsstring>
+        <name>world_vel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="61" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Move with a particular velocity. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>planning::WorldVelCommand</label>
+        <link refid="structplanning_1_1WorldVelCommand"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>world_vel</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Point</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="60" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="60" bodyend="62"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1WorldVelCommand_1a89d67e96212ab371c307d466b94c2c32" prot="public" virt="non-virtual"><scope>planning::WorldVelCommand</scope><name>world_vel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classLogger" kind="class" language="C++" prot="public">
+    <compoundname>Logger</compoundname>
+    <basecompoundref refid="classNode" prot="public" virt="non-virtual">Node</basecompoundref>
+    <includes refid="logger_8hpp" local="no">logger.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classLogger_1a2e56f8b1688b22e49e61187cba4b7db6" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; std::fstream &gt;</type>
+        <definition>std::optional&lt;std::fstream&gt; Logger::log_file_</definition>
+        <argsstring></argsstring>
+        <name>log_file_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="112" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classLogger_1a861a6635bd21ea9bf56bbfb3dd1391fb" prot="private" static="no" mutable="no">
+        <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+        <definition>Context* Logger::context_</definition>
+        <argsstring></argsstring>
+        <name>context_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="114" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classLogger_1a165c6bad827ab17ae103cedce2f24c3f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Logger::Logger</definition>
+        <argsstring>(Context *context)</argsstring>
+        <name>Logger</name>
+        <param>
+          <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="74" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1a25979e3a73f00714d3fec9314acea5ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::read</definition>
+        <argsstring>(const std::string &amp;filename)</argsstring>
+        <name>read</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>filename</declname>
+        </param>
+        <briefdescription>
+<para>Open the given file for reading. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="79" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="118" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1a965d29a76b9df508a76a20cb6b160b5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::write</definition>
+        <argsstring>(const std::string &amp;filename)</argsstring>
+        <name>write</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>filename</declname>
+        </param>
+        <briefdescription>
+<para>Open the given file for writing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="84" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="140" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1afee2bab560c2db0190c980884d33868c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::close</definition>
+        <argsstring>()</argsstring>
+        <name>close</name>
+        <briefdescription>
+<para>Close the current log file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="89" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="152" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1af41e4f7fc6ed98fa2e813b7148f7bee8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Logger::start</definition>
+        <argsstring>() override</argsstring>
+        <name>start</name>
+        <reimplements refid="classNode_1abf2adab83bb649cf8bf5bd70d9447638">start</reimplements>
+        <briefdescription>
+<para>Flush the file to disk. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="95" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="85" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1ac3af1e1355392bcd5e993e2a1daf0096" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Logger::run</definition>
+        <argsstring>() override</argsstring>
+        <name>run</name>
+        <reimplements refid="classNode_1a262b9594b45604c69d12263853768533">run</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="96" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="100" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1aa1e440e8b3d057f95605dee07b281b27" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Logger::stop</definition>
+        <argsstring>() override</argsstring>
+        <name>stop</name>
+        <reimplements refid="classNode_1ae60b6f1eda15c537359ac04d44ba3473">stop</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="97" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="116" bodyend="116"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classLogger_1a82edcd9a80fae050df393213e3909b25" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::shared_ptr&lt; Packet::LogFrame &gt;</type>
+        <definition>std::shared_ptr&lt; Packet::LogFrame &gt; Logger::create_log_frame</definition>
+        <argsstring>(Context *context)</argsstring>
+        <name>create_log_frame</name>
+        <param>
+          <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="100" column="28" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="158" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1a70dd3fa3f3cef55951b436c80be491b9" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Logger::write_to_file</definition>
+        <argsstring>(Packet::LogFrame *frame, google::protobuf::io::ZeroCopyOutputStream *out)</argsstring>
+        <name>write_to_file</name>
+        <param>
+          <type>Packet::LogFrame *</type>
+          <declname>frame</declname>
+        </param>
+        <param>
+          <type>google::protobuf::io::ZeroCopyOutputStream *</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="101" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="256" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1a287d119dfe26909d08c0bf04a59e9b21" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Logger::read_from_file</definition>
+        <argsstring>(Packet::LogFrame *frame, google::protobuf::io::ZeroCopyInputStream *in)</argsstring>
+        <name>read_from_file</name>
+        <param>
+          <type>Packet::LogFrame *</type>
+          <declname>frame</declname>
+        </param>
+        <param>
+          <type>google::protobuf::io::ZeroCopyInputStream *</type>
+          <declname>in</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="103" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="261" bodyend="264"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1a613146a29ad30b115a4da0866c53aa80" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::fill_robot</definition>
+        <argsstring>(Packet::LogFrame::Robot *out, int shell_id, RobotState const *state, RobotStatus const *status, MotionSetpoint const *setpoint)</argsstring>
+        <name>fill_robot</name>
+        <param>
+          <type>Packet::LogFrame::Robot *</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>shell_id</declname>
+        </param>
+        <param>
+          <type><ref refid="structRobotState" kindref="compound">RobotState</ref> const *</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type><ref refid="structRobotStatus" kindref="compound">RobotStatus</ref> const *</type>
+          <declname>status</declname>
+        </param>
+        <param>
+          <type><ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> const *</type>
+          <declname>setpoint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="105" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.cpp" bodystart="266" bodyend="299"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classLogger_1a716565c9180484b812efd811e912b29d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Logger::FRIEND_TEST</definition>
+        <argsstring>(Logger, SaveContext)</argsstring>
+        <name>FRIEND_TEST</name>
+        <param>
+          <type><ref refid="classLogger" kindref="compound">Logger</ref></type>
+        </param>
+        <param>
+          <type>SaveContext</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="109" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classLogger_1a9ec1fdb7106b9264801d514fba181bdf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Logger::FRIEND_TEST</definition>
+        <argsstring>(Logger, SerializeDeserialize)</argsstring>
+        <name>FRIEND_TEST</name>
+        <param>
+          <type><ref refid="classLogger" kindref="compound">Logger</ref></type>
+        </param>
+        <param>
+          <type>SerializeDeserialize</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="110" column="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Populates the log frame in <ref refid="structContext" kindref="compound">Context</ref>, and writes it to a file. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>When viewing logs, reads logs from a file and populates the log frame. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Node</label>
+        <link refid="classNode"/>
+      </node>
+      <node id="1">
+        <label>Logger</label>
+        <link refid="classLogger"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Node</label>
+        <link refid="classNode"/>
+      </node>
+      <node id="1">
+        <label>Logger</label>
+        <link refid="classLogger"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" line="72" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp" bodystart="72" bodyend="115"/>
+    <listofallmembers>
+      <member refid="classLogger_1afee2bab560c2db0190c980884d33868c" prot="public" virt="non-virtual"><scope>Logger</scope><name>close</name></member>
+      <member refid="classLogger_1a861a6635bd21ea9bf56bbfb3dd1391fb" prot="private" virt="non-virtual"><scope>Logger</scope><name>context_</name></member>
+      <member refid="classLogger_1a82edcd9a80fae050df393213e3909b25" prot="private" virt="non-virtual"><scope>Logger</scope><name>create_log_frame</name></member>
+      <member refid="classLogger_1a613146a29ad30b115a4da0866c53aa80" prot="private" virt="non-virtual"><scope>Logger</scope><name>fill_robot</name></member>
+      <member refid="classLogger_1a716565c9180484b812efd811e912b29d" prot="private" virt="non-virtual"><scope>Logger</scope><name>FRIEND_TEST</name></member>
+      <member refid="classLogger_1a9ec1fdb7106b9264801d514fba181bdf" prot="private" virt="non-virtual"><scope>Logger</scope><name>FRIEND_TEST</name></member>
+      <member refid="classLogger_1a2e56f8b1688b22e49e61187cba4b7db6" prot="private" virt="non-virtual"><scope>Logger</scope><name>log_file_</name></member>
+      <member refid="classLogger_1a165c6bad827ab17ae103cedce2f24c3f" prot="public" virt="non-virtual"><scope>Logger</scope><name>Logger</name></member>
+      <member refid="classLogger_1a25979e3a73f00714d3fec9314acea5ec" prot="public" virt="non-virtual"><scope>Logger</scope><name>read</name></member>
+      <member refid="classLogger_1a287d119dfe26909d08c0bf04a59e9b21" prot="private" virt="non-virtual"><scope>Logger</scope><name>read_from_file</name></member>
+      <member refid="classLogger_1ac3af1e1355392bcd5e993e2a1daf0096" prot="public" virt="virtual"><scope>Logger</scope><name>run</name></member>
+      <member refid="classLogger_1af41e4f7fc6ed98fa2e813b7148f7bee8" prot="public" virt="virtual"><scope>Logger</scope><name>start</name></member>
+      <member refid="classLogger_1aa1e440e8b3d057f95605dee07b281b27" prot="public" virt="virtual"><scope>Logger</scope><name>stop</name></member>
+      <member refid="classLogger_1a965d29a76b9df508a76a20cb6b160b5c" prot="public" virt="non-virtual"><scope>Logger</scope><name>write</name></member>
+      <member refid="classLogger_1a70dd3fa3f3cef55951b436c80be491b9" prot="private" virt="non-virtual"><scope>Logger</scope><name>write_to_file</name></member>
+      <member refid="classNode_1abce703f211f6a577085b4b8ad68cbb19" prot="public" virt="virtual"><scope>Logger</scope><name>~Node</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,548 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="debug__drawer_8hpp" kind="file" language="C++">
+    <compoundname>debug_drawer.hpp</compoundname>
+    <includes local="no">rj_protos/LogFrame.pb.h</includes>
+    <includes local="no">rj_geometry/arc.hpp</includes>
+    <includes local="no">rj_geometry/composite_shape.hpp</includes>
+    <includes local="no">rj_geometry/point.hpp</includes>
+    <includes local="no">rj_geometry/polygon.hpp</includes>
+    <includes local="no">rj_geometry/segment.hpp</includes>
+    <includes local="no">rj_geometry/shape_set.hpp</includes>
+    <includes local="no">QColor</includes>
+    <includes local="no">QMap</includes>
+    <includes local="no">memory</includes>
+    <includes local="no">string</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="instant_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp</includedby>
+    <includedby refid="trajectory_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp</includedby>
+    <includedby refid="context_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</includedby>
+    <includedby refid="debug__drawer_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp</includedby>
+    <includedby refid="rrt__util_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp</includedby>
+    <includedby refid="rrt__util_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp</includedby>
+    <includedby refid="processor_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/processor.cpp</includedby>
+    <incdepgraph>
+      <node id="10">
+        <label>QMap</label>
+      </node>
+      <node id="2">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="8">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="3">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="12">
+        <label>string</label>
+      </node>
+      <node id="4">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="5">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="6">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="13">
+        <label>vector</label>
+      </node>
+      <node id="9">
+        <label>QColor</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="11">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="13">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/collect_planner.hpp</label>
+        <link refid="collect__planner_8hpp_source"/>
+      </node>
+      <node id="12">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/planner.hpp</label>
+        <link refid="planner_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/network_radio.hpp</label>
+        <link refid="network__radio_8hpp_source"/>
+      </node>
+      <node id="37">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp</label>
+        <link refid="angle__planning_8hpp_source"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</label>
+        <link refid="context_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp</label>
+        <link refid="debug__draw__interface_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/processor.hpp</label>
+        <link refid="processor_8hpp_source"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp</label>
+        <link refid="replanner_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/intercept_planner.hpp</label>
+        <link refid="intercept__planner_8hpp_source"/>
+      </node>
+      <node id="3">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp</label>
+        <link refid="world__state_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp</label>
+        <link refid="line__kick__planner_8hpp_source"/>
+      </node>
+      <node id="14">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/path_target_planner.hpp</label>
+        <link refid="path__target__planner_8hpp_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp</label>
+        <link refid="referee__sub_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp</label>
+        <link refid="raw__vision__packet__sub_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp</label>
+        <link refid="packet__convert_8hpp_source"/>
+      </node>
+      <node id="35">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp</label>
+        <link refid="internal__referee_8hpp_source"/>
+      </node>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp</label>
+        <link refid="motion__command_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.hpp</label>
+        <link refid="velocity__profiling_8hpp_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.hpp</label>
+        <link refid="plan__request_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp</label>
+        <link refid="motion__control__node_8hpp_source"/>
+      </node>
+      <node id="32">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/autonomy_interface.hpp</label>
+        <link refid="autonomy__interface_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp</label>
+        <link refid="planner__node_8hpp_source"/>
+      </node>
+      <node id="23">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp</label>
+        <link refid="sim__radio_8hpp_source"/>
+      </node>
+      <node id="15">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp</label>
+        <link refid="escape__obstacles__path__planner_8hpp_source"/>
+      </node>
+      <node id="22">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/main_window.hpp</label>
+        <link refid="main__window_8hpp_source"/>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp</label>
+        <link refid="manual__control__node_8hpp_source"/>
+      </node>
+      <node id="39">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/create_path.hpp</label>
+        <link refid="create__path_8hpp_source"/>
+      </node>
+      <node id="31">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp</label>
+        <link refid="radio_8hpp_source"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/settle_planner.hpp</label>
+        <link refid="settle__planner_8hpp_source"/>
+      </node>
+      <node id="8">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp</label>
+        <link refid="motion__control_8hpp_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.hpp</label>
+        <link refid="trajectory__utils_8hpp_source"/>
+      </node>
+      <node id="34">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp</label>
+        <link refid="external__referee_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp</label>
+        <link refid="pivot__path__planner_8hpp_source"/>
+      </node>
+      <node id="28">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp</label>
+        <link refid="sim__field__view_8hpp_source"/>
+      </node>
+      <node id="27">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/soccer_config_client.hpp</label>
+        <link refid="soccer__config__client_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp</label>
+        <link refid="robot__intent_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp</label>
+        <link refid="rrt__util_8hpp_source"/>
+      </node>
+      <node id="42">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/testing_utils.hpp</label>
+        <link refid="testing__utils_8hpp_source"/>
+      </node>
+      <node id="6">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp</label>
+        <link refid="logger_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/referee/referee_base.hpp</label>
+        <link refid="referee__base_8hpp_source"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classDebugDrawer" prot="public">DebugDrawer</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_protos/LogFrame.pb.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/arc.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/composite_shape.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/point.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/polygon.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/segment.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/shape_set.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;QColor&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;QMap&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;memory&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="structContext" kindref="compound">Context</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="classDebugDrawer" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref>(<ref refid="structContext" kindref="compound">Context</ref>*<sp/>context)<sp/>:<sp/>context_(context),<sp/>num_debug_layers_(0)<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reset_log_frame();</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QStringList&amp;<sp/>debug_layers()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>debug_layers_;<sp/>}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classDebugDrawer_1a49c41af0ba8514fa4c1b2ba555b25646" kindref="member">find_debug_layer</ref>(QString<sp/>layer);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_polygon(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Point*<sp/>pts,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qc<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_polygon(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;rj_geometry::Point&gt;&amp;<sp/>pts,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qc<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_polygon(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Polygon&amp;<sp/>pts,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qc<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_circle(rj_geometry::Point<sp/>center,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>radius,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qc<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_arc(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Arc&amp;<sp/>arc,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qw<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_shape(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;rj_geometry::Shape&gt;&amp;<sp/>obs,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qw<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_shape_set(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::ShapeSet&amp;<sp/>shapes,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qw<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_line(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Segment&amp;<sp/>line,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qw<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_line(rj_geometry::Point<sp/>p0,<sp/>rj_geometry::Point<sp/>p1,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qw<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_text(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>text,<sp/>rj_geometry::Point<sp/>pos,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qw<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>draw_segment(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::Segment&amp;<sp/>line,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>qw<sp/>=<sp/>Qt::black,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>layer<sp/>=<sp/>QString());</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="classDebugDrawer_1a68bd2bdd9085a2c4e26521f1e977e011" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classDebugDrawer_1a68bd2bdd9085a2c4e26521f1e977e011" kindref="member">fill_log_frame</ref>(Packet::LogFrame*<sp/>log_frame)<sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log_frame-&gt;MergeFrom(log_frame_);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reset_log_frame();</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="classDebugDrawer_1a68abc1557a2290fc1ec2a733a7097f0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Packet::DebugRobotPath*<sp/><ref refid="classDebugDrawer_1a68abc1557a2290fc1ec2a733a7097f0b" kindref="member">add_debug_path</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>log_frame_.add_debug_robot_paths();</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reset_log_frame()<sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log_frame_.Clear();</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>:<sp/>debug_layers_)<sp/>{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log_frame_.add_debug_layers(</highlight><highlight class="keywordtype">string</highlight><highlight class="normal">.toStdString());</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_debug_layers_;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>QMap&lt;QString,<sp/>int&gt;<sp/>debug_layer_map_;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>QStringList<sp/>debug_layers_;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref>*<sp/>context_;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Keep<sp/>an<sp/>entire<sp/>log<sp/>frame,<sp/>but<sp/>only<sp/>fill<sp/>the<sp/>parts<sp/>related<sp/>to<sp/>debug</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>drawing.<sp/>Then<sp/>we<sp/>can<sp/>use<sp/>protobuf&apos;s<sp/>merge<sp/>functionality<sp/>to<sp/>merge<sp/>it<sp/>into</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>main<sp/>log<sp/>frame.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>Packet::LogFrame<sp/>log_frame_;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp"/>
+  </compounddef>
+</doxygen>

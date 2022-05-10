@@ -1,0 +1,673 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="logger__test_8cpp" kind="file" language="C++">
+    <compoundname>logger_test.cpp</compoundname>
+    <includes local="no">google/protobuf/io/zero_copy_stream_impl.h</includes>
+    <includes local="no">google/protobuf/util/message_differencer.h</includes>
+    <includes local="no">gtest/gtest.h</includes>
+    <includes refid="context_8hpp" local="yes">context.hpp</includes>
+    <includes refid="logger_8hpp" local="yes">logger.hpp</includes>
+    <incdepgraph>
+      <node id="22">
+        <label>QMap</label>
+      </node>
+      <node id="57">
+        <label>rj_msgs/msg/world_vel_motion_command.hpp</label>
+      </node>
+      <node id="78">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>rj_constants/constants.hpp</label>
+      </node>
+      <node id="51">
+        <label>rj_msgs/msg/line_kick_motion_command.hpp</label>
+      </node>
+      <node id="52">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="63">
+        <label>fmt/format.h</label>
+      </node>
+      <node id="48">
+        <label>rj_msgs/msg/collect_motion_command.hpp</label>
+      </node>
+      <node id="72">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="61">
+        <label>rj_msgs/msg/world_state.hpp</label>
+      </node>
+      <node id="14">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="77">
+        <label>rotation_constraints.hpp</label>
+        <link refid="rotation__constraints_8hpp_source"/>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>game_state.hpp</label>
+        <link refid="game__state_8hpp_source"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>context.hpp</label>
+        <link refid="context_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>variant</label>
+      </node>
+      <node id="59">
+        <label>rj_msgs/msg/ball_state.hpp</label>
+      </node>
+      <node id="65">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="12">
+        <label>rj_msgs/msg/motion_setpoint.hpp</label>
+      </node>
+      <node id="20">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="75">
+        <label>gtest/gtest_prod.h</label>
+      </node>
+      <node id="26">
+        <label>game_settings.hpp</label>
+        <link refid="game__settings_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="58">
+        <label>world_state.hpp</label>
+        <link refid="world__state_8hpp_source"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>rj_common/field_dimensions.hpp</label>
+      </node>
+      <node id="24">
+        <label>string</label>
+      </node>
+      <node id="8">
+        <label>rj_protos/referee.pb.h</label>
+      </node>
+      <node id="41">
+        <label>radio/robot_status.hpp</label>
+        <link refid="robot__status_8hpp_source"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="36">
+        <label>rj_msgs/msg/match_state.hpp</label>
+      </node>
+      <node id="64">
+        <label>rclcpp/rclcpp.hpp</label>
+      </node>
+      <node id="49">
+        <label>rj_msgs/msg/empty_motion_command.hpp</label>
+      </node>
+      <node id="37">
+        <label>rj_msgs/msg/play_state.hpp</label>
+      </node>
+      <node id="40">
+        <label>fstream</label>
+      </node>
+      <node id="10">
+        <label>ostream</label>
+      </node>
+      <node id="3">
+        <label>google/protobuf/util/message_differencer.h</label>
+      </node>
+      <node id="11">
+        <label>rj_convert/ros_convert.hpp</label>
+      </node>
+      <node id="17">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="34">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="42">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="67">
+        <label>planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>rj_geometry/transform_matrix.hpp</label>
+      </node>
+      <node id="46">
+        <label>planning/planner/motion_command.hpp</label>
+        <link refid="motion__command_8hpp_source"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>rj_msgs/msg/intercept_motion_command.hpp</label>
+      </node>
+      <node id="32">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="56">
+        <label>rj_msgs/msg/settle_motion_command.hpp</label>
+      </node>
+      <node id="69">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/logger_test.cpp</label>
+        <link refid="logger__test_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>rj_common/referee_enums.hpp</label>
+      </node>
+      <node id="62">
+        <label>global_params.hpp</label>
+        <link refid="global__params_8hpp_source"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>optional</label>
+      </node>
+      <node id="43">
+        <label>node.hpp</label>
+        <link refid="node_8hpp_source"/>
+      </node>
+      <node id="9">
+        <label>control/motion_setpoint.hpp</label>
+        <link refid="motion__setpoint_8hpp_source"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>google/protobuf/io/zero_copy_stream_impl.h</label>
+      </node>
+      <node id="25">
+        <label>vector</label>
+      </node>
+      <node id="55">
+        <label>rj_msgs/msg/pivot_motion_command.hpp</label>
+      </node>
+      <node id="4">
+        <label>gtest/gtest.h</label>
+      </node>
+      <node id="79">
+        <label>motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>sstream</label>
+      </node>
+      <node id="21">
+        <label>QColor</label>
+      </node>
+      <node id="73">
+        <label>planning/rotation_command.hpp</label>
+        <link refid="rotation__command_8hpp_source"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>rj_msgs/msg/game_settings.hpp</label>
+      </node>
+      <node id="13">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>rj_param_utils/ros2_global_param_provider.hpp</label>
+      </node>
+      <node id="53">
+        <label>rj_msgs/msg/motion_command.hpp</label>
+      </node>
+      <node id="39">
+        <label>deque</label>
+      </node>
+      <node id="45">
+        <label>rj_msgs/msg/robot_intent.hpp</label>
+      </node>
+      <node id="70">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="54">
+        <label>rj_msgs/msg/path_target_motion_command.hpp</label>
+      </node>
+      <node id="6">
+        <label>set</label>
+      </node>
+      <node id="81">
+        <label>rj_msgs/msg/team_info.hpp</label>
+      </node>
+      <node id="44">
+        <label>robot_intent.hpp</label>
+        <link refid="robot__intent_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="60">
+        <label>rj_msgs/msg/robot_state.hpp</label>
+      </node>
+      <node id="80">
+        <label>team_info.hpp</label>
+        <link refid="team__info_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>memory</label>
+      </node>
+      <node id="76">
+        <label>planning/robot_constraints.hpp</label>
+        <link refid="robot__constraints_8hpp_source"/>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>logger.hpp</label>
+        <link refid="logger_8hpp_source"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="68">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="logger__test_8cpp_1ada3c717a3276ad602019d2aba3b75791" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Logger, SaveContext)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="classLogger" kindref="compound">Logger</ref></type>
+        </param>
+        <param>
+          <type>SaveContext</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger_test.cpp" line="9" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger_test.cpp" bodystart="9" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="logger__test_8cpp_1ad777d991c74c62a4aca9a4c06e77b06e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Logger, SerializeDeserialize)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="classLogger" kindref="compound">Logger</ref></type>
+        </param>
+        <param>
+          <type>SerializeDeserialize</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger_test.cpp" line="46" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/logger_test.cpp" bodystart="46" bodyend="84"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;google/protobuf/io/zero_copy_stream_impl.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;google/protobuf/util/message_differencer.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;gtest/gtest.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;context.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;logger.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NOLINTNEXTLINE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">TEST(<ref refid="classLogger" kindref="compound">Logger</ref>,<sp/>SaveContext)<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Time<sp/>start_time<sp/>=<sp/>RJ::now();</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>sure<sp/>the<sp/>logger<sp/>saves<sp/>stuff<sp/>from<sp/>Context.<sp/>This<sp/>is<sp/>not<sp/>anywhere<sp/>near</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>exhaustive,<sp/>it<sp/>just<sp/>gets<sp/>a<sp/>few<sp/>items.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref><sp/>context;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>should<sp/>save<sp/>robot<sp/>states,<sp/>and<sp/>their<sp/>radio<sp/>packets</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>context.world_state.our_robots.at(0)<sp/>=</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structRobotState" kindref="compound">RobotState</ref>{rj_geometry::Pose(1,<sp/>2,<sp/>3),<sp/>rj_geometry::Twist(4,<sp/>5,<sp/>6),<sp/>start_time,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>context.robot_status.at(0).timestamp<sp/>=<sp/>start_time;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>context.robot_status.at(0).kicker<sp/>=<sp/>RobotStatus::KickerState::kCharged;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>should<sp/>not<sp/>save<sp/>invisible<sp/>robots<sp/>though</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>context.world_state.our_robots.at(1)<sp/>=</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structRobotState" kindref="compound">RobotState</ref>{rj_geometry::Pose(1,<sp/>2,<sp/>3),<sp/>rj_geometry::Twist(4,<sp/>5,<sp/>6),<sp/>start_time,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Or<sp/>their<sp/>radio<sp/>packets</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>context.robot_status.at(1).kicker<sp/>=<sp/>RobotStatus::KickerState::kFailed;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>should<sp/>use<sp/>blue_team<sp/>from<sp/>GameState,<sp/>not<sp/>GameSettings</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>context.game_settings.request_blue_team<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>context.blue_team<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;Packet::LogFrame&gt;<sp/>frame<sp/>=<sp/>Logger::create_log_frame(&amp;context);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(frame-&gt;self_size(),<sp/>1);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(frame-&gt;self(0).shell(),<sp/>0);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(frame-&gt;self(0).pos().x(),<sp/>1);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(frame-&gt;self(0).pos().y(),<sp/>2);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(frame-&gt;self(0).angle(),<sp/>3);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(frame-&gt;radio_rx_size(),<sp/>1);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(frame-&gt;blue_team(),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NOLINTNEXTLINE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">TEST(<ref refid="classLogger" kindref="compound">Logger</ref>,<sp/>SerializeDeserialize)<sp/>{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>a<sp/>simple<sp/>log<sp/>frame</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structContext" kindref="compound">Context</ref><sp/>context;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Time<sp/>start_time<sp/>=<sp/>RJ::now();</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>context.world_state.our_robots.at(0)<sp/>=</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structRobotState" kindref="compound">RobotState</ref>{rj_geometry::Pose(1,<sp/>2,<sp/>3),<sp/>rj_geometry::Twist(4,<sp/>5,<sp/>6),<sp/>start_time,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>context.robot_status.at(0).timestamp<sp/>=<sp/>start_time;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>context.robot_status.at(0).kicker<sp/>=<sp/>RobotStatus::KickerState::kCharged;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;Packet::LogFrame&gt;<sp/>frame<sp/>=<sp/>Logger::create_log_frame(&amp;context);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Allocate<sp/>1MiB</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;char&gt;<sp/>data(1<sp/>&lt;&lt;<sp/>20);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>google::protobuf::io::ArrayOutputStream<sp/>output(data.data(),<sp/>data.size());</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>kExpected<sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>3;<sp/>i++)<sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(Logger::write_to_file(frame.get(),<sp/>&amp;output));</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>Packet::LogFrame<sp/>other_frame;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>google::protobuf::util::MessageDifferencer<sp/>differencer;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>diff;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>differencer.ReportDifferencesToString(&amp;diff);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>google::protobuf::io::ArrayInputStream<sp/>input(data.data(),<sp/>output.ByteCount());</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(Logger::read_from_file(&amp;other_frame,<sp/>&amp;input))<sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>count++;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(differencer.Compare(*frame,<sp/>other_frame));</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>other_frame.Clear();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>diff<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(kExpected,<sp/>count);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/logger_test.cpp"/>
+  </compounddef>
+</doxygen>

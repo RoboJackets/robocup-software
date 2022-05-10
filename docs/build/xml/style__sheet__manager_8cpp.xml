@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="style__sheet__manager_8cpp" kind="file" language="C++">
+    <compoundname>style_sheet_manager.cpp</compoundname>
+    <includes refid="style__sheet__manager_8hpp" local="yes">style_sheet_manager.hpp</includes>
+    <includes local="no">map</includes>
+    <includes local="no">rj_common/qt_utils.hpp</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>style_sheet_manager.hpp</label>
+        <link refid="style__sheet__manager_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>map</label>
+      </node>
+      <node id="5">
+        <label>rj_common/qt_utils.hpp</label>
+      </node>
+      <node id="3">
+        <label>QtWidgets</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.cpp</label>
+        <link refid="style__sheet__manager_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="style__sheet__manager_8cpp_1a7df0696ab15e52c3f5738c2db4281cda" prot="public" static="no" mutable="no">
+        <type>std::map&lt; QString, QString &gt;</type>
+        <definition>std::map&lt;QString, QString&gt; filePaths</definition>
+        <argsstring></argsstring>
+        <name>filePaths</name>
+        <initializer>= {
+    
+    {&quot;DARK&quot;, &quot;../soccer/ui/qt/themes/QTDark.stylesheet&quot;},
+    {&quot;DARCULIZED&quot;, &quot;../soccer/ui/qt/themes/darculized.stylesheet&quot;},
+    {&quot;1337H4X0R&quot;, &quot;../soccer/ui/qt/themes/1337h4x0r.stylesheet&quot;},
+    {&quot;NYAN&quot;, &quot;../soccer/ui/qt/themes/nyan.stylesheet&quot;}}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.cpp" line="9" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.cpp" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;style_sheet_manager.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;map&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_common/qt_utils.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>To<sp/>add<sp/>a<sp/>new<sp/>style<sp/>sheet,<sp/>declare<sp/>the<sp/>static<sp/>variable</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">std::map&lt;QString,<sp/>QString&gt;<sp/>filePaths<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>new<sp/>entries<sp/>here:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight><highlight class="stringliteral">&quot;DARK&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;../soccer/ui/qt/themes/QTDark.stylesheet&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight><highlight class="stringliteral">&quot;DARCULIZED&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;../soccer/ui/qt/themes/darculized.stylesheet&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight><highlight class="stringliteral">&quot;1337H4X0R&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;../soccer/ui/qt/themes/1337h4x0r.stylesheet&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight><highlight class="stringliteral">&quot;NYAN&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;../soccer/ui/qt/themes/nyan.stylesheet&quot;</highlight><highlight class="normal">}};</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classStyleSheetManager_1a5b686f7d944d1d56bb2af008fe2f7b31" kindref="member">StyleSheetManager::changeStyleSheet</ref>(QMainWindow*<sp/>window,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>name)<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(filePaths.count(name)<sp/>!=<sp/>0u)<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Found<sp/>an<sp/>element</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>setStyleSheet(window,<sp/>filePaths[name]);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Default<sp/>to<sp/>no<sp/>style<sp/>sheet<sp/>if<sp/>we<sp/>didn&apos;t<sp/>find<sp/>anything</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>window-&gt;setStyleSheet(</highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>StyleSheetManager::setStyleSheet(QMainWindow*<sp/>window,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QString&amp;<sp/>path)<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Normalize<sp/>file<sp/>paths<sp/>to<sp/>work<sp/>regardless<sp/>of<sp/>location<sp/>of<sp/>pwd</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>QFile<sp/>file(application_run_directory().filePath(path));</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>file.open(QFile::ReadOnly);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>QString<sp/>styleSheet<sp/>=<sp/>file.readAll();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>window-&gt;setStyleSheet(styleSheet);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>file.close();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/style_sheet_manager.cpp"/>
+  </compounddef>
+</doxygen>

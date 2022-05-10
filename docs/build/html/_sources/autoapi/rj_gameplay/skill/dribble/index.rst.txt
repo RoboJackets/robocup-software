@@ -1,0 +1,36 @@
+:py:mod:`rj_gameplay.skill.dribble`
+===================================
+
+.. py:module:: rj_gameplay.skill.dribble
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.skill.dribble.Dribble
+
+
+
+
+.. py:class:: Dribble(robot: stp.rc.Robot = None, target_point: numpy.ndarray = np.array([0.0, 0.0]), target_vel: numpy.ndarray = np.array([0.0, 0.0]), face_angle: Optional[float] = None, face_point: Optional[numpy.ndarray] = None, priority: int = 0)
+
+   Bases: :py:obj:`stp.skill.ISkill`
+
+   .. py:method:: tick(self, robot: stp.rc.Robot, world_state: stp.rc.WorldState, intent: rj_msgs.msg.RobotIntent)
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState)
+
+
+   .. py:method:: __str__(self)
+
+
+   .. py:method:: __repr__(self) -> str
+
+
+

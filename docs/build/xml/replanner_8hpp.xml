@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="replanner_8hpp" kind="file" language="C++">
+    <compoundname>replanner.hpp</compoundname>
+    <includes local="no">rj_param_utils/param.hpp</includes>
+    <includes refid="instant_8hpp" local="yes">planning/instant.hpp</includes>
+    <includes refid="planning__params_8hpp" local="yes">planning/planning_params.hpp</includes>
+    <includes refid="angle__planning_8hpp" local="yes">planning/primitives/angle_planning.hpp</includes>
+    <includes refid="robot__constraints_8hpp" local="yes">planning/robot_constraints.hpp</includes>
+    <includes refid="trajectory_8hpp" local="yes">planning/trajectory.hpp</includes>
+    <includes refid="velocity__profiling_8hpp" local="yes">velocity_profiling.hpp</includes>
+    <includedby refid="collect__planner_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/collect_planner.hpp</includedby>
+    <includedby refid="path__target__planner_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/path_target_planner.hpp</includedby>
+    <includedby refid="settle__planner_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/settle_planner.hpp</includedby>
+    <includedby refid="replanner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp</includedby>
+    <incdepgraph>
+      <node id="19">
+        <label>QMap</label>
+      </node>
+      <node id="25">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>rj_constants/constants.hpp</label>
+      </node>
+      <node id="9">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="33">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="12">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="30">
+        <label>rotation_constraints.hpp</label>
+        <link refid="rotation__constraints_8hpp_source"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>planning/primitives/angle_planning.hpp</label>
+        <link refid="angle__planning_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="17">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp</label>
+        <link refid="replanner_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="32">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>string</label>
+      </node>
+      <node id="14">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="7">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="6">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="8">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="3">
+        <label>planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="34">
+        <label>velocity_profiling.hpp</label>
+        <link refid="velocity__profiling_8hpp_source"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>optional</label>
+      </node>
+      <node id="22">
+        <label>vector</label>
+      </node>
+      <node id="31">
+        <label>motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>rj_common/utils.hpp</label>
+      </node>
+      <node id="18">
+        <label>QColor</label>
+      </node>
+      <node id="11">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="35">
+        <label>path_smoothing.hpp</label>
+        <link refid="path__smoothing_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="20">
+        <label>memory</label>
+      </node>
+      <node id="29">
+        <label>planning/robot_constraints.hpp</label>
+        <link refid="robot__constraints_8hpp_source"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="10">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/collect_planner.hpp</label>
+        <link refid="collect__planner_8hpp_source"/>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp</label>
+        <link refid="replanner_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/path_target_planner.hpp</label>
+        <link refid="path__target__planner_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp</label>
+        <link refid="escape__obstacles__path__planner_8hpp_source"/>
+      </node>
+      <node id="5">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/settle_planner.hpp</label>
+        <link refid="settle__planner_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classplanning_1_1Replanner" prot="public">planning::Replanner</innerclass>
+    <innerclass refid="structplanning_1_1Replanner_1_1PlanParams" prot="public">planning::Replanner::PlanParams</innerclass>
+    <innernamespace refid="namespaceplanning">planning</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_param_utils/param.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/instant.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/planning_params.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/primitives/angle_planning.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/robot_constraints.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/trajectory.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;velocity_profiling.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">planning<sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="classplanning_1_1Replanner" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classplanning_1_1Replanner" kindref="compound">Replanner</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="24" refid="structplanning_1_1Replanner_1_1PlanParams" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structplanning_1_1Replanner_1_1PlanParams" kindref="compound">PlanParams</ref><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref><sp/>start;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref><sp/>goal;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::ShapeSet&amp;<sp/>static_obstacles;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;DynamicObstacle&gt;&amp;<sp/>dynamic_obstacles;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1RobotConstraints" kindref="compound">RobotConstraints</ref><sp/>constraints;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AngleFunction&amp;<sp/>angle_function;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::optional&lt;RJ::Seconds&gt;<sp/>hold_time<sp/>=<sp/>std::nullopt;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/><ref refid="classplanning_1_1Replanner_1adf3d6c590a09bb5cd762a4f1ad9e905c" kindref="member">create_plan</ref>(<ref refid="structplanning_1_1Replanner_1_1PlanParams" kindref="compound">PlanParams</ref><sp/>params,<sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>previous);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classplanning_1_1Replanner_1acb97ecd3a783512794c7b5413284b7a5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Replanner_1acb97ecd3a783512794c7b5413284b7a5" kindref="member">goal_pos_change_threshold</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>replanner::PARAM_pos_change_threshold;<sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="classplanning_1_1Replanner_1a454713f7c48a0414abf5689ac773730a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Replanner_1a454713f7c48a0414abf5689ac773730a" kindref="member">goal_vel_change_threshold</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>replanner::PARAM_vel_change_threshold;<sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="classplanning_1_1Replanner_1a48db7148854765d0ed21684d1c5ce131" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>RJ::Seconds<sp/><ref refid="classplanning_1_1Replanner_1a48db7148854765d0ed21684d1c5ce131" kindref="member">partial_replan_lead_time</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>RJ::Seconds(replanner::PARAM_partial_replan_lead_time);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Attempt<sp/>a<sp/>partial<sp/>replan,<sp/>and<sp/>use<sp/>it<sp/>only<sp/>if<sp/>it<sp/>is<sp/>faster.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>check_better(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PlanParams&amp;<sp/>params,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>previous);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Replan<sp/>part<sp/>of<sp/>the<sp/>trajectory,<sp/>re-using<sp/>the<sp/>first</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>`partial_replan_lead_time()`<sp/>of<sp/>the<sp/>previous<sp/>trajectory.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>partial_replan(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PlanParams&amp;<sp/>params,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>previous);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Replan<sp/>from<sp/>the<sp/>start<sp/>without<sp/>a<sp/>previous<sp/>trajectory.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>full_replan(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PlanParams&amp;<sp/>params);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Whether<sp/>the<sp/>trajectory<sp/>has<sp/>deviated<sp/>from<sp/>the<sp/>path<sp/>and<sp/>requires<sp/>a<sp/>replan.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>veered_off_path(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>trajectory,<sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref><sp/>actual,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RJ::Time<sp/>now);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Whether<sp/>the<sp/>goal<sp/>has<sp/>changed<sp/>past<sp/>the<sp/>`goal_pos_change_threshold()`.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>goal_changed(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref>&amp;<sp/>prev_goal,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref>&amp;<sp/>goal);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Get<sp/>the<sp/>partial<sp/>path<sp/>starting<sp/>at<sp/>`now`,<sp/>plus<sp/>the<sp/>partial<sp/>replan<sp/>lead<sp/>time</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>duration.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>partial_path(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>prev_trajectory,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RJ::Time<sp/>now)<sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RJ::Time<sp/>end_time<sp/>=<sp/>now<sp/>+<sp/>RJ::Seconds(replanner::PARAM_partial_replan_lead_time);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>prev_trajectory.<ref refid="classplanning_1_1Trajectory_1a96f2201ea5b6138ebc9043dd0367b32e" kindref="member">sub_trajectory</ref>(prev_trajectory.<ref refid="classplanning_1_1Trajectory_1a2d86901d130909aaebbbda99284f67c5" kindref="member">begin_time</ref>(),</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end_time);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/>RJ::Seconds<sp/>kCheckBetterDeltaTime<sp/>=<sp/>0.2s;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>planning</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1Replanner_1_1PlanParams" kind="struct" language="C++" prot="public">
+    <compoundname>planning::Replanner::PlanParams</compoundname>
+    <includes refid="replanner_8hpp" local="no">replanner.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1Replanner_1_1PlanParams_1a154990c2d4750b036befaa2d4583df3f" prot="public" static="no" mutable="no">
+        <type><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref></type>
+        <definition>RobotInstant planning::Replanner::PlanParams::start</definition>
+        <argsstring></argsstring>
+        <name>start</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="25" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1Replanner_1_1PlanParams_1afb0ad657c43307223a0bba0bab314940" prot="public" static="no" mutable="no">
+        <type><ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref></type>
+        <definition>LinearMotionInstant planning::Replanner::PlanParams::goal</definition>
+        <argsstring></argsstring>
+        <name>goal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="26" column="29" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1Replanner_1_1PlanParams_1a7424e1c5eb0b6826206ed5938ba47e5a" prot="public" static="no" mutable="no">
+        <type>const rj_geometry::ShapeSet &amp;</type>
+        <definition>const rj_geometry::ShapeSet&amp; planning::Replanner::PlanParams::static_obstacles</definition>
+        <argsstring></argsstring>
+        <name>static_obstacles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="27" column="37" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1Replanner_1_1PlanParams_1afbe731472f0eafe77b4dc80a1b6be272" prot="public" static="no" mutable="no">
+        <type>const std::vector&lt; <ref refid="structplanning_1_1DynamicObstacle" kindref="compound">DynamicObstacle</ref> &gt; &amp;</type>
+        <definition>const std::vector&lt;DynamicObstacle&gt;&amp; planning::Replanner::PlanParams::dynamic_obstacles</definition>
+        <argsstring></argsstring>
+        <name>dynamic_obstacles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="28" column="27" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1Replanner_1_1PlanParams_1a25ca961c1ea989815abf62f9fd5902b7" prot="public" static="no" mutable="no">
+        <type><ref refid="structplanning_1_1RobotConstraints" kindref="compound">RobotConstraints</ref></type>
+        <definition>RobotConstraints planning::Replanner::PlanParams::constraints</definition>
+        <argsstring></argsstring>
+        <name>constraints</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="29" column="26" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1Replanner_1_1PlanParams_1a2c4e727cca117f506ed219d5e746850c" prot="public" static="no" mutable="no">
+        <type>const AngleFunction &amp;</type>
+        <definition>const AngleFunction&amp; planning::Replanner::PlanParams::angle_function</definition>
+        <argsstring></argsstring>
+        <name>angle_function</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="30" column="29" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1Replanner_1_1PlanParams_1a2325fe7f7b78921b90f9368d1e903109" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; RJ::Seconds &gt;</type>
+        <definition>std::optional&lt;RJ::Seconds&gt; planning::Replanner::PlanParams::hold_time</definition>
+        <argsstring></argsstring>
+        <name>hold_time</name>
+        <initializer>= std::nullopt</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="31" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Parameters for planning to a point using the replanner. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>Point</label>
+      </node>
+      <node id="8">
+        <label>planning::RotationConstraints</label>
+        <link refid="structplanning_1_1RotationConstraints"/>
+      </node>
+      <node id="7">
+        <label>planning::RobotConstraints</label>
+        <link refid="structplanning_1_1RobotConstraints"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>rot</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mot</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>planning::MotionConstraints</label>
+        <link refid="structplanning_1_1MotionConstraints"/>
+      </node>
+      <node id="3">
+        <label>Twist</label>
+      </node>
+      <node id="5">
+        <label>planning::LinearMotionInstant</label>
+        <link refid="structplanning_1_1LinearMotionInstant"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>position</edgelabel>
+          <edgelabel>velocity</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Pose</label>
+      </node>
+      <node id="1">
+        <label>planning::Replanner::PlanParams</label>
+        <link refid="structplanning_1_1Replanner_1_1PlanParams"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>start</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>goal</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>constraints</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>planning::RobotInstant</label>
+        <link refid="structplanning_1_1RobotInstant"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>velocity</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>pose</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" line="24" column="21" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp" bodystart="24" bodyend="32"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1Replanner_1_1PlanParams_1a2c4e727cca117f506ed219d5e746850c" prot="public" virt="non-virtual"><scope>planning::Replanner::PlanParams</scope><name>angle_function</name></member>
+      <member refid="structplanning_1_1Replanner_1_1PlanParams_1a25ca961c1ea989815abf62f9fd5902b7" prot="public" virt="non-virtual"><scope>planning::Replanner::PlanParams</scope><name>constraints</name></member>
+      <member refid="structplanning_1_1Replanner_1_1PlanParams_1afbe731472f0eafe77b4dc80a1b6be272" prot="public" virt="non-virtual"><scope>planning::Replanner::PlanParams</scope><name>dynamic_obstacles</name></member>
+      <member refid="structplanning_1_1Replanner_1_1PlanParams_1afb0ad657c43307223a0bba0bab314940" prot="public" virt="non-virtual"><scope>planning::Replanner::PlanParams</scope><name>goal</name></member>
+      <member refid="structplanning_1_1Replanner_1_1PlanParams_1a2325fe7f7b78921b90f9368d1e903109" prot="public" virt="non-virtual"><scope>planning::Replanner::PlanParams</scope><name>hold_time</name></member>
+      <member refid="structplanning_1_1Replanner_1_1PlanParams_1a154990c2d4750b036befaa2d4583df3f" prot="public" virt="non-virtual"><scope>planning::Replanner::PlanParams</scope><name>start</name></member>
+      <member refid="structplanning_1_1Replanner_1_1PlanParams_1a7424e1c5eb0b6826206ed5938ba47e5a" prot="public" virt="non-virtual"><scope>planning::Replanner::PlanParams</scope><name>static_obstacles</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

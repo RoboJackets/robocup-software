@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classplanning_1_1PivotPathPlanner" kind="class" language="C++" prot="public">
+    <compoundname>planning::PivotPathPlanner</compoundname>
+    <basecompoundref refid="classplanning_1_1PlannerForCommandType" prot="public" virt="non-virtual">planning::PlannerForCommandType&lt; PivotCommand &gt;</basecompoundref>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classplanning_1_1PivotPathPlanner_1a3b4c6c3bbef50306ddbf9c794d956c40" prot="private" static="no" mutable="no">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::PivotPathPlanner::previous_</definition>
+        <argsstring></argsstring>
+        <name>previous_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="26" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1PivotPathPlanner_1a9510991083553d79d077b67cafec53c2" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; rj_geometry::Point &gt;</type>
+        <definition>std::optional&lt;rj_geometry::Point&gt; planning::PivotPathPlanner::cached_pivot_point_</definition>
+        <argsstring></argsstring>
+        <name>cached_pivot_point_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="29" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classplanning_1_1PivotPathPlanner_1aea07e044daaf8c3dd8f89e370c25ffea" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; rj_geometry::Point &gt;</type>
+        <definition>std::optional&lt;rj_geometry::Point&gt; planning::PivotPathPlanner::cached_pivot_target_</definition>
+        <argsstring></argsstring>
+        <name>cached_pivot_target_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="30" column="19" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1ae3cd699419da2c7ef2e3e7948c207a88" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::PivotPathPlanner::PivotPathPlanner</definition>
+        <argsstring>()</argsstring>
+        <name>PivotPathPlanner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="8" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" bodystart="8" bodyend="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1a6dbf39c2fa7012d1aa0329cbb5caf003" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::PivotPathPlanner::~PivotPathPlanner</definition>
+        <argsstring>() override=default</argsstring>
+        <name>~PivotPathPlanner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="10" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1aaa16f624e590dac0fb8b5a4a46597ec7" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::PivotPathPlanner::PivotPathPlanner</definition>
+        <argsstring>(PivotPathPlanner &amp;&amp;) noexcept=default</argsstring>
+        <name>PivotPathPlanner</name>
+        <param>
+          <type><ref refid="classplanning_1_1PivotPathPlanner" kindref="compound">PivotPathPlanner</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="12" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1a4498deac9c3f9a46e0498401ff3fedd9" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classplanning_1_1PivotPathPlanner" kindref="compound">PivotPathPlanner</ref> &amp;</type>
+        <definition>PivotPathPlanner&amp; planning::PivotPathPlanner::operator=</definition>
+        <argsstring>(PivotPathPlanner &amp;&amp;) noexcept=default</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classplanning_1_1PivotPathPlanner" kindref="compound">PivotPathPlanner</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="13" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1ae329c48d3c2a4fb8b39204435a02806d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::PivotPathPlanner::PivotPathPlanner</definition>
+        <argsstring>(const PivotPathPlanner &amp;)=default</argsstring>
+        <name>PivotPathPlanner</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1PivotPathPlanner" kindref="compound">PivotPathPlanner</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="14" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1a1f913499ceac9dd62921a3d26fafff23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1PivotPathPlanner" kindref="compound">PivotPathPlanner</ref> &amp;</type>
+        <definition>PivotPathPlanner&amp; planning::PivotPathPlanner::operator=</definition>
+        <argsstring>(const PivotPathPlanner &amp;)=default</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1PivotPathPlanner" kindref="compound">PivotPathPlanner</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="15" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1afbdfdfc654624d3b09d44b5342159a58" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::PivotPathPlanner::plan</definition>
+        <argsstring>(const PlanRequest &amp;request) override</argsstring>
+        <name>plan</name>
+        <reimplements refid="classplanning_1_1Planner_1ad199c20bdcb712ccd1580e5ec602437b">plan</reimplements>
+        <param>
+          <type>const <ref refid="structplanning_1_1PlanRequest" kindref="compound">PlanRequest</ref> &amp;</type>
+          <declname>request</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Plan a trajectory for this request. This is guaranteed to be a request that this planner is able to handle (according to <ref refid="classplanning_1_1PlannerForCommandType_1a15adefc5f4fc9687dafe6b8014914365" kindref="member">is_applicable</ref>)</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>request</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The request to plan. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A trajectory for the robot to follow. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="17" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.cpp" bodystart="21" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1PivotPathPlanner_1ae62644c6451883a8f1c6db3a2937609b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void planning::PivotPathPlanner::reset</definition>
+        <argsstring>() override</argsstring>
+        <name>reset</name>
+        <reimplements refid="classplanning_1_1Planner_1a3801e1037f332cfb6abda304eec7c094">reset</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reset this planner. Called after the planner is <emphasis>not</emphasis> used to handle a given command for the robot. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="19" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" bodystart="19" bodyend="23"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>planning::Planner</label>
+        <link refid="classplanning_1_1Planner"/>
+      </node>
+      <node id="2">
+        <label>planning::PlannerForCommandType&lt; PivotCommand &gt;</label>
+        <link refid="classplanning_1_1PlannerForCommandType"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>planning::PivotPathPlanner</label>
+        <link refid="classplanning_1_1PivotPathPlanner"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>planning::Planner</label>
+        <link refid="classplanning_1_1Planner"/>
+      </node>
+      <node id="2">
+        <label>planning::PlannerForCommandType&lt; PivotCommand &gt;</label>
+        <link refid="classplanning_1_1PlannerForCommandType"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>planning::PivotPathPlanner</label>
+        <link refid="classplanning_1_1PivotPathPlanner"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" line="6" column="53" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp" bodystart="6" bodyend="31"/>
+    <listofallmembers>
+      <member refid="classplanning_1_1PivotPathPlanner_1a9510991083553d79d077b67cafec53c2" prot="private" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>cached_pivot_point_</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1aea07e044daaf8c3dd8f89e370c25ffea" prot="private" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>cached_pivot_target_</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a15adefc5f4fc9687dafe6b8014914365" prot="public" virt="virtual"><scope>planning::PivotPathPlanner</scope><name>is_applicable</name></member>
+      <member refid="classplanning_1_1Planner_1a1de466640407759489cc9f74ac1e3aba" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>name</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1a4498deac9c3f9a46e0498401ff3fedd9" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1a1f913499ceac9dd62921a3d26fafff23" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a955be0ec4e67379ce9b5949fe1d2efe4" prot="public" virt="non-virtual" ambiguityscope="PlannerForCommandType&lt; PivotCommand &gt;::"><scope>planning::PivotPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1aa0a3846baecac12398ddd7a9f0d52e18" prot="public" virt="non-virtual" ambiguityscope="PlannerForCommandType&lt; PivotCommand &gt;::"><scope>planning::PivotPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1Planner_1a5d25e229f428de27c7ab72fc2e5a1a5e" prot="public" virt="non-virtual" ambiguityscope="planning::Planner::"><scope>planning::PivotPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1Planner_1ad0a51fdbb90de2f370b9dbf08f9850c2" prot="public" virt="non-virtual" ambiguityscope="planning::Planner::"><scope>planning::PivotPathPlanner</scope><name>operator=</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1ae3cd699419da2c7ef2e3e7948c207a88" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>PivotPathPlanner</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1aaa16f624e590dac0fb8b5a4a46597ec7" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>PivotPathPlanner</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1ae329c48d3c2a4fb8b39204435a02806d" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>PivotPathPlanner</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1afbdfdfc654624d3b09d44b5342159a58" prot="public" virt="virtual"><scope>planning::PivotPathPlanner</scope><name>plan</name></member>
+      <member refid="classplanning_1_1Planner_1ade63e8fe5919753dddcdfce60289a4db" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1Planner_1a32a25b3aa79b38f3a40a3835444bb655" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1Planner_1a896421dcf5ec7cde31bfa1e66786dfe7" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>Planner</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a4acd90731e313c29f531ae7e6c7a5522" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>PlannerForCommandType</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a0052d11e437b1bcd71b4dff931da307c" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>PlannerForCommandType</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1a2b572cc2412b56620ab3bc9d4cd12e70" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>PlannerForCommandType</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1a3b4c6c3bbef50306ddbf9c794d956c40" prot="private" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>previous_</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1ae62644c6451883a8f1c6db3a2937609b" prot="public" virt="virtual"><scope>planning::PivotPathPlanner</scope><name>reset</name></member>
+      <member refid="classplanning_1_1PivotPathPlanner_1a6dbf39c2fa7012d1aa0329cbb5caf003" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>~PivotPathPlanner</name></member>
+      <member refid="classplanning_1_1Planner_1aa3f85157362f54234fe961add1a0c2ee" prot="public" virt="virtual"><scope>planning::PivotPathPlanner</scope><name>~Planner</name></member>
+      <member refid="classplanning_1_1PlannerForCommandType_1ac5c9a5077f11bb5d39eb9fff5d63c055" prot="public" virt="non-virtual"><scope>planning::PivotPathPlanner</scope><name>~PlannerForCommandType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

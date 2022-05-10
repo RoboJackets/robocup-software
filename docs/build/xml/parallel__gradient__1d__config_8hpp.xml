@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="parallel__gradient__1d__config_8hpp" kind="file" language="C++">
+    <compoundname>parallel_gradient_1d_config.hpp</compoundname>
+    <includes refid="gradient__1d__config_8hpp" local="yes">gradient_1d_config.hpp</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">memory</includes>
+    <includedby refid="parallel__gradient__ascent__1d_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/optimization/parallel_gradient_ascent_1d.hpp</includedby>
+    <includedby refid="parallel__gradient__ascent__1d__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/optimization/parallel_gradient_ascent_1d_test.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>gradient_1d_config.hpp</label>
+        <link refid="gradient__1d__config_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>functional</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/optimization/parallel_gradient_1d_config.hpp</label>
+        <link refid="parallel__gradient__1d__config_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>tuple</label>
+      </node>
+      <node id="6">
+        <label>vector</label>
+      </node>
+      <node id="3">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/optimization/parallel_gradient_1d_config.hpp</label>
+        <link refid="parallel__gradient__1d__config_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/optimization/parallel_gradient_ascent_1d.hpp</label>
+        <link refid="parallel__gradient__ascent__1d_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classParallelGradient1DConfig" prot="public">ParallelGradient1DConfig</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;gradient_1d_config.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;memory&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="classParallelGradient1DConfig" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classParallelGradient1DConfig" kindref="compound">ParallelGradient1DConfig</ref><sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="19" refid="classParallelGradient1DConfig_1a0e9bfedecd1b1634bacef33aa747e62e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classParallelGradient1DConfig_1a0e9bfedecd1b1634bacef33aa747e62e" kindref="member">ParallelGradient1DConfig</ref>()<sp/>:<sp/>x_combine_thresh(0.1)<sp/>{}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="classParallelGradient1DConfig_1aafc5eaab59239151d61bdd4fa59782b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classParallelGradient1DConfig_1aafc5eaab59239151d61bdd4fa59782b5" kindref="member">ParallelGradient1DConfig</ref>(std::vector&lt;Gradient1DConfig&gt;<sp/>ga_config,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>x_combine_thresh)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ga_config(std::move(ga_config)),</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_combine_thresh(x_combine_thresh)<sp/>{}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Gradient1DConfig&gt;<sp/>ga_config;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>x_combine_thresh;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/parallel_gradient_1d_config.hpp"/>
+  </compounddef>
+</doxygen>

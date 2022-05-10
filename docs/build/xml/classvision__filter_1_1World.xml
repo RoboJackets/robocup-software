@@ -1,0 +1,435 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classvision__filter_1_1World" kind="class" language="C++" prot="public">
+    <compoundname>vision_filter::World</compoundname>
+    <includes refid="world_8hpp" local="no">world.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classvision__filter_1_1World_1aaa3543ee06c0c2f2d946a602ab041883" prot="private" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::World::last_update_time_</definition>
+        <argsstring></argsstring>
+        <name>last_update_time_</name>
+        <briefdescription>
+<para>Timestamp of the latest vision receiver message that was used to updated the states. Initialized with RJ::Time::min(). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="103" column="14" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1World_1a38122b8c85ff0f4db44db083a866ed9b" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classvision__filter_1_1Camera" kindref="compound">Camera</ref> &gt;</type>
+        <definition>std::vector&lt;Camera&gt; vision_filter::World::cameras_</definition>
+        <argsstring></argsstring>
+        <name>cameras_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="105" column="17" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1World_1a4a6ffc0d7dd5f4f93a3221e709dfa46a" prot="private" static="no" mutable="no">
+        <type><ref refid="classvision__filter_1_1WorldBall" kindref="compound">WorldBall</ref></type>
+        <definition>WorldBall vision_filter::World::ball_</definition>
+        <argsstring></argsstring>
+        <name>ball_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="107" column="15" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1World_1ae8a1f2411a481db508b2826ec68afe0d" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt;</type>
+        <definition>std::vector&lt;WorldRobot&gt; vision_filter::World::robots_yellow_</definition>
+        <argsstring></argsstring>
+        <name>robots_yellow_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="108" column="17" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1World_1a25b2746e5139f8b451cc67a14d1d804f" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt;</type>
+        <definition>std::vector&lt;WorldRobot&gt; vision_filter::World::robots_blue_</definition>
+        <argsstring></argsstring>
+        <name>robots_blue_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="109" column="17" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1World_1a0cdd0487d1695a196ed7d0f3bee150be" prot="private" static="no" mutable="no">
+        <type><ref refid="classvision__filter_1_1FastKickDetector" kindref="compound">FastKickDetector</ref></type>
+        <definition>FastKickDetector vision_filter::World::fast_kick_</definition>
+        <argsstring></argsstring>
+        <name>fast_kick_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="111" column="22" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1World_1a02a6f8015974eec8529fb15247f13167" prot="private" static="no" mutable="no">
+        <type><ref refid="classvision__filter_1_1SlowKickDetector" kindref="compound">SlowKickDetector</ref></type>
+        <definition>SlowKickDetector vision_filter::World::slow_kick_</definition>
+        <argsstring></argsstring>
+        <name>slow_kick_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="112" column="22" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1World_1a9c117bcd2b19fa2d281269b2f837ff9b" prot="private" static="no" mutable="no">
+        <type><ref refid="classvision__filter_1_1KickEvent" kindref="compound">KickEvent</ref></type>
+        <definition>KickEvent vision_filter::World::best_kick_estimate_</definition>
+        <argsstring></argsstring>
+        <name>best_kick_estimate_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="113" column="15" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classvision__filter_1_1World_1ab90af5df45eefb9288fb02ede0e9d0f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::World::World</definition>
+        <argsstring>()</argsstring>
+        <name>World</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="19" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1ab293deba431a9ca01bd8f8a5d004c511" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::World::update_with_camera_frame</definition>
+        <argsstring>(RJ::Time calc_time, const std::vector&lt; CameraFrame &gt; &amp;new_frames, bool update_all)</argsstring>
+        <name>update_with_camera_frame</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>calc_time</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classvision__filter_1_1CameraFrame" kindref="compound">CameraFrame</ref> &gt; &amp;</type>
+          <declname>new_frames</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>update_all</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Updates all the child cameras given a set of new camera frames</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>calc_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current iteration time </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_frames</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of new frames from ssl vision </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>update_all</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether to update the cameras without vision measurements</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Call this OR update_without_camera_frame ONCE an iteration </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="30" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="27" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1ae4cfc064ade4edf9f1303811260413ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::World::update_single_camera</definition>
+        <argsstring>(RJ::Time calc_time, const CameraFrame &amp;frame)</argsstring>
+        <name>update_single_camera</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>calc_time</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1CameraFrame" kindref="compound">CameraFrame</ref> &amp;</type>
+          <declname>frame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Updates all the child cameras given a set of new camera frames</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>calc_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current iteration time </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>frame</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>new frame for a single camera, from vision</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Call this once per camera per iteration </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="41" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="23" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1ae875f95cecc08ef82fb457d72027149b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::World::update_without_camera_frame</definition>
+        <argsstring>(RJ::Time calc_time)</argsstring>
+        <name>update_without_camera_frame</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>calc_time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Updates all the child cameras when there are no new camera frames</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>calc_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current iteration time</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Call this OR update_with_camera_frame ONCE an iteration </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="50" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="76" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1ab64d5b0f870238dadf57533134877a71" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classvision__filter_1_1WorldBall" kindref="compound">WorldBall</ref> &amp;</type>
+        <definition>const WorldBall &amp; vision_filter::World::get_world_ball</definition>
+        <argsstring>() const</argsstring>
+        <name>get_world_ball</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Best estimate of the ball </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="55" column="21" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="215" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1a08fc5c99f50c09c79923fe62b1076644" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt; &amp;</type>
+        <definition>const std::vector&lt; WorldRobot &gt; &amp; vision_filter::World::get_robots_yellow</definition>
+        <argsstring>() const</argsstring>
+        <name>get_robots_yellow</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>List of the best estimates of all the yellow robots </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="60" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="217" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1a1c93d252090a64be8e914fe18b4c0329" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt; &amp;</type>
+        <definition>const std::vector&lt; WorldRobot &gt; &amp; vision_filter::World::get_robots_blue</definition>
+        <argsstring>() const</argsstring>
+        <name>get_robots_blue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>List of the best estimates of all the blue robots </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="65" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="219" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1acb3af54ade3c5a1bdefaebcce43e8c7c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classvision__filter_1_1KickEvent" kindref="compound">KickEvent</ref> &amp;</type>
+        <definition>const KickEvent &amp; vision_filter::World::get_best_kick_estimate</definition>
+        <argsstring>() const</argsstring>
+        <name>get_best_kick_estimate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The best kick estimate over the last few seconds </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="70" column="21" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="221" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1a94f180975b0f46bce5e0810d5ac7027e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::World::last_update_time</definition>
+        <argsstring>() const</argsstring>
+        <name>last_update_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Timestamp of the latest vision receiver message that was used to updated the states. Initialized with RJ::Time::min(). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="76" column="15" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classvision__filter_1_1World_1a7feb7f76ffaba0e16e1cd509031219d9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::World::calc_ball_bounce</definition>
+        <argsstring>()</argsstring>
+        <name>calc_ball_bounce</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Does the ball bounce calculations for each of the child cameras </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="82" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="89" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1a2c85780708d2f7ab058a23cccf4d2175" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::World::update_world_objects</definition>
+        <argsstring>(RJ::Time calc_time)</argsstring>
+        <name>update_world_objects</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>calc_time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fills the world objects with a mix of the best kalman filters from each camera</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>calc_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current iteration time </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="90" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="97" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1World_1a368f2fabd99955f7d1bc38653b29b189" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::World::detect_kicks</definition>
+        <argsstring>(RJ::Time calc_time)</argsstring>
+        <name>detect_kicks</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>calc_time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds the latest estimate to the kick detectors and checks for kick</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>calc_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current iteration time </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="97" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/camera/world.cpp" bodystart="170" bodyend="213"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Keeps list of all the cameras and sends camera data down to the correct location </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" line="17" column="12" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp" bodystart="17" bodyend="114"/>
+    <listofallmembers>
+      <member refid="classvision__filter_1_1World_1a4a6ffc0d7dd5f4f93a3221e709dfa46a" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>ball_</name></member>
+      <member refid="classvision__filter_1_1World_1a9c117bcd2b19fa2d281269b2f837ff9b" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>best_kick_estimate_</name></member>
+      <member refid="classvision__filter_1_1World_1a7feb7f76ffaba0e16e1cd509031219d9" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>calc_ball_bounce</name></member>
+      <member refid="classvision__filter_1_1World_1a38122b8c85ff0f4db44db083a866ed9b" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>cameras_</name></member>
+      <member refid="classvision__filter_1_1World_1a368f2fabd99955f7d1bc38653b29b189" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>detect_kicks</name></member>
+      <member refid="classvision__filter_1_1World_1a0cdd0487d1695a196ed7d0f3bee150be" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>fast_kick_</name></member>
+      <member refid="classvision__filter_1_1World_1acb3af54ade3c5a1bdefaebcce43e8c7c" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>get_best_kick_estimate</name></member>
+      <member refid="classvision__filter_1_1World_1a1c93d252090a64be8e914fe18b4c0329" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>get_robots_blue</name></member>
+      <member refid="classvision__filter_1_1World_1a08fc5c99f50c09c79923fe62b1076644" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>get_robots_yellow</name></member>
+      <member refid="classvision__filter_1_1World_1ab64d5b0f870238dadf57533134877a71" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>get_world_ball</name></member>
+      <member refid="classvision__filter_1_1World_1a94f180975b0f46bce5e0810d5ac7027e" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>last_update_time</name></member>
+      <member refid="classvision__filter_1_1World_1aaa3543ee06c0c2f2d946a602ab041883" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>last_update_time_</name></member>
+      <member refid="classvision__filter_1_1World_1a25b2746e5139f8b451cc67a14d1d804f" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>robots_blue_</name></member>
+      <member refid="classvision__filter_1_1World_1ae8a1f2411a481db508b2826ec68afe0d" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>robots_yellow_</name></member>
+      <member refid="classvision__filter_1_1World_1a02a6f8015974eec8529fb15247f13167" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>slow_kick_</name></member>
+      <member refid="classvision__filter_1_1World_1ae4cfc064ade4edf9f1303811260413ac" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>update_single_camera</name></member>
+      <member refid="classvision__filter_1_1World_1ab293deba431a9ca01bd8f8a5d004c511" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>update_with_camera_frame</name></member>
+      <member refid="classvision__filter_1_1World_1ae875f95cecc08ef82fb457d72027149b" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>update_without_camera_frame</name></member>
+      <member refid="classvision__filter_1_1World_1a2c85780708d2f7ab058a23cccf4d2175" prot="private" virt="non-virtual"><scope>vision_filter::World</scope><name>update_world_objects</name></member>
+      <member refid="classvision__filter_1_1World_1ab90af5df45eefb9288fb02ede0e9d0f7" prot="public" virt="non-virtual"><scope>vision_filter::World</scope><name>World</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

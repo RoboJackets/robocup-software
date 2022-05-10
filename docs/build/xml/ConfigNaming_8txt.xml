@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="ConfigNaming_8txt" kind="file" language="C++">
+    <compoundname>ConfigNaming.txt</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="ConfigNaming_8txt_1ade2605ee52a344ab5e3e7d6b4ffcb25a" prot="public" static="no" mutable="no">
+        <type>The naming convention for the config files is as</type>
+        <definition>The naming convention for the config files is as follows</definition>
+        <argsstring></argsstring>
+        <name>follows</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" line="1" column="50" bodyfile="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ConfigNaming_8txt_1a2df0d8dd72fff6e39ba30621a72f1937" prot="public" static="no" mutable="no">
+        <type>The naming convention for the config files is as especially as carpets change between situations For normal testing at</type>
+        <definition>The naming convention for the config files is as especially as carpets change between situations For normal testing at street</definition>
+        <argsstring></argsstring>
+        <name>street</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" line="7" column="59" bodyfile="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ConfigNaming_8txt_1a84620127efaa9b3a0ca6e14464c4cf0c" prot="public" static="no" mutable="no">
+        <type>The naming convention for the config files is as especially as carpets change between situations For normal testing at use the ShopField</type>
+        <definition>The naming convention for the config files is as especially as carpets change between situations For normal testing at use the ShopField settings</definition>
+        <argsstring></argsstring>
+        <name>settings</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" line="8" column="19" bodyfile="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="ConfigNaming_8txt_1ab199e3a5f743aed427b47c00b48cc285" prot="public" static="no" mutable="no">
+        <type>The naming convention for the config files is as especially as carpets change between situations For normal testing at use the ShopField and for competitions on other</type>
+        <definition>The naming convention for the config files is as especially as carpets change between situations For normal testing at use the ShopField and for competitions on other fields</definition>
+        <argsstring></argsstring>
+        <name>fields</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" line="8" column="58" bodyfile="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt" bodystart="8" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal">The<sp/>naming<sp/>convention<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>the<sp/>config<sp/>files<sp/>is<sp/>as<sp/>follows:</highlight></codeline>
+<codeline lineno="2"><highlight class="normal">[real|sim](Field<sp/>Location)</highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">The<sp/>config<sp/>should<sp/>be<sp/>specific<sp/>to<sp/>either<sp/>the<sp/>real<sp/>robots<sp/>or<sp/>a<sp/>simulation</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal">The<sp/>field<sp/>location<sp/>allows<sp/>configs<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>different<sp/>scenarios,<sp/>especially<sp/>as</highlight></codeline>
+<codeline lineno="7"><highlight class="normal">carpets<sp/>change<sp/>between<sp/>situations.<sp/><sp/>For<sp/>normal<sp/>testing<sp/>at<sp/>14th<sp/>street,</highlight></codeline>
+<codeline lineno="8"><highlight class="normal">use<sp/>the<sp/></highlight><highlight class="stringliteral">&quot;ShopField&quot;</highlight><highlight class="normal"><sp/>settings,<sp/>and<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>competitions<sp/>on<sp/>other<sp/>fields,<sp/>make<sp/></highlight></codeline>
+<codeline lineno="9"><highlight class="normal">a<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>config<sp/>to<sp/>allow<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>adaptation<sp/>of<sp/>parameters.<sp/><sp/></highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/config/ConfigNaming.txt"/>
+  </compounddef>
+</doxygen>

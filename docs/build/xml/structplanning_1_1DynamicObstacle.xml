@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structplanning_1_1DynamicObstacle" kind="struct" language="C++" prot="public">
+    <compoundname>planning::DynamicObstacle</compoundname>
+    <includes refid="dynamic__obstacle_8hpp" local="no">dynamic_obstacle.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structplanning_1_1DynamicObstacle_1a944fe684b9e632a46c5db2f961c2d66c" prot="public" static="no" mutable="no">
+        <type>rj_geometry::Circle</type>
+        <definition>rj_geometry::Circle planning::DynamicObstacle::circle</definition>
+        <argsstring></argsstring>
+        <name>circle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" line="20" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structplanning_1_1DynamicObstacle_1ac93778825d6d4d25ac742bfa30ec3a30" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> *</type>
+        <definition>const Trajectory* planning::DynamicObstacle::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" line="21" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structplanning_1_1DynamicObstacle_1abb657cd6a4a1f1a4fc2f624d108fa8c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>planning::DynamicObstacle::DynamicObstacle</definition>
+        <argsstring>(double radius, const Trajectory *path)</argsstring>
+        <name>DynamicObstacle</name>
+        <param>
+          <type>double</type>
+          <declname>radius</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> *</type>
+          <declname>path</declname>
+        </param>
+        <briefdescription>
+<para>Create a new dynamic obstacle. The trajectory provided must outlive the usage of this object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" line="18" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" bodystart="18" bodyend="19"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An obstacle that will follow some predicted trajectory. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>@detail We only support circular dynamic obstacles for now. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>planning::DynamicObstacle</label>
+        <link refid="structplanning_1_1DynamicObstacle"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>path</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>planning::Trajectory</label>
+        <link refid="classplanning_1_1Trajectory"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" line="13" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" bodystart="13" bodyend="22"/>
+    <listofallmembers>
+      <member refid="structplanning_1_1DynamicObstacle_1a944fe684b9e632a46c5db2f961c2d66c" prot="public" virt="non-virtual"><scope>planning::DynamicObstacle</scope><name>circle</name></member>
+      <member refid="structplanning_1_1DynamicObstacle_1abb657cd6a4a1f1a4fc2f624d108fa8c0" prot="public" virt="non-virtual"><scope>planning::DynamicObstacle</scope><name>DynamicObstacle</name></member>
+      <member refid="structplanning_1_1DynamicObstacle_1ac93778825d6d4d25ac742bfa30ec3a30" prot="public" virt="non-virtual"><scope>planning::DynamicObstacle</scope><name>path</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

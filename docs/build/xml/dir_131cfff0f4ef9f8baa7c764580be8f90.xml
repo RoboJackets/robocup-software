@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_131cfff0f4ef9f8baa7c764580be8f90" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/src</compoundname>
+    <innerdir refid="dir_fb466f1f73dd816b909dac0bddc9417a">/home/pnayak/robocup-software/soccer/src/rj_vision_filter</innerdir>
+    <innerdir refid="dir_f029997cfed9f86c10474607560d1cec">/home/pnayak/robocup-software/soccer/src/soccer</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/"/>
+  </compounddef>
+</doxygen>

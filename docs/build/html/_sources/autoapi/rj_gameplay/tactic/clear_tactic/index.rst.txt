@@ -1,0 +1,64 @@
+:py:mod:`rj_gameplay.tactic.clear_tactic`
+=========================================
+
+.. py:module:: rj_gameplay.tactic.clear_tactic
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.tactic.clear_tactic.ClearerCost
+   rj_gameplay.tactic.clear_tactic.Clear
+
+
+
+
+.. py:class:: ClearerCost
+
+   Bases: :py:obj:`stp.role.CostFn`
+
+   A cost function for how to choose a robot that will clears
+
+   .. py:method:: __call__(self, robot: stp.rc.Robot, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: unassigned_cost_fn(self, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+
+.. py:class:: Clear(target_point: numpy.ndarray, kick_speed=3.0, chip=False)
+
+   Bases: :py:obj:`stp.tactic.ITactic`
+
+   A passing tactic which captures then passes the ball
+
+   .. py:method:: compute_props(self)
+
+
+   .. py:method:: create_request(self, **kwargs) -> stp.role.RoleRequest
+
+      Creates a sane default RoleRequest.
+      :return: A list of size 1 of a sane default RoleRequest.
+
+
+   .. py:method:: get_requests(self, world_state: stp.rc.WorldState, props) -> List[stp.tactic.RoleRequests]
+
+      Checks if we have the ball and returns the proper request
+      :return: A list of size 2 of role requests
+
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState, role_results: stp.tactic.RoleResults) -> List[stp.tactic.SkillEntry]
+
+      :return: A list of size 1 or 2 skills depending on which roles are filled and state of aiming
+      TODO: Come up with better timings for starting receive
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState)
+
+
+

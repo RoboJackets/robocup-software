@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01planning_1_1LineKickCommand_00_01rj__msgs_1_1msg_1_1LineKickMotionCommand_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1LineKickCommand_00_01rj__msgs_1_1msg_1_1LineKickMotionCommand_01_4_1a9d68aafd07d4303df4ed6ec06864ac6c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::LineKickMotionCommand</type>
+        <definition>static rj_msgs::msg::LineKickMotionCommand rj_convert::RosConverter&lt; planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand &gt;::to_ros</definition>
+        <argsstring>([[maybe_unused]] const planning::LineKickCommand &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1LineKickCommand" kindref="compound">planning::LineKickCommand</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="215" column="48" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="215" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1LineKickCommand_00_01rj__msgs_1_1msg_1_1LineKickMotionCommand_01_4_1a4f57c705bcd5c6d25ed5d46dabd4f6f4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structplanning_1_1LineKickCommand" kindref="compound">planning::LineKickCommand</ref></type>
+        <definition>static planning::LineKickCommand rj_convert::RosConverter&lt; planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand &gt;::from_ros</definition>
+        <argsstring>([[maybe_unused]] const rj_msgs::msg::LineKickMotionCommand &amp;from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const rj_msgs::msg::LineKickMotionCommand &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="221" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="221" bodyend="224"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="214" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="214" bodyend="225"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1LineKickCommand_00_01rj__msgs_1_1msg_1_1LineKickMotionCommand_01_4_1a4f57c705bcd5c6d25ed5d46dabd4f6f4" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1LineKickCommand_00_01rj__msgs_1_1msg_1_1LineKickMotionCommand_01_4_1a9d68aafd07d4303df4ed6ec06864ac6c" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

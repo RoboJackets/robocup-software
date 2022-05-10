@@ -1,0 +1,30 @@
+:py:mod:`rj_gameplay`
+=====================
+
+.. py:module:: rj_gameplay
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   eval/index.rst
+   play/index.rst
+   role/index.rst
+   situation/index.rst
+   skill/index.rst
+   tactic/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   basic_play_selector/index.rst
+   gameplay_node/index.rst
+
+

@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceplanning_1_1AngleFns" kind="namespace" language="C++">
+    <compoundname>planning::AngleFns</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="angle__planning_8hpp_1af01d96fe303a13c2cd3fde191c7cdcee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double planning::AngleFns::tangent</definition>
+        <argsstring>(const LinearMotionInstant &amp;instant, double previous_angle, Eigen::Vector2d *jacobian)</argsstring>
+        <name>tangent</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref> &amp;</type>
+          <declname>instant</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>previous_angle</declname>
+        </param>
+        <param>
+          <type>Eigen::Vector2d *</type>
+          <declname>jacobian</declname>
+        </param>
+        <briefdescription>
+<para>An angle function to move tangent to the path. <computeroutput>previous_angle</computeroutput> is used to decide whether to target forwards or backwards motion. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" line="34" column="15" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" bodystart="34" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="angle__planning_8hpp_1ad0f05b0c407154a878bad6dd876f84c9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>AngleFunction</type>
+        <definition>AngleFunction planning::AngleFns::face_point</definition>
+        <argsstring>(const rj_geometry::Point point)</argsstring>
+        <name>face_point</name>
+        <param>
+          <type>const rj_geometry::Point</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Create an AngleFunction for facing a particular point on the field. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" line="64" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" bodystart="64" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="angle__planning_8hpp_1a1c920d0762d05cff2c4c6b11d73c7eea" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>AngleFunction</type>
+        <definition>AngleFunction planning::AngleFns::face_angle</definition>
+        <argsstring>(double angle)</argsstring>
+        <name>face_angle</name>
+        <param>
+          <type>double</type>
+          <declname>angle</declname>
+        </param>
+        <briefdescription>
+<para>Create an AngleFunction for facing a particular constant angle. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" line="85" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" bodystart="85" bodyend="94"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" line="28" column="18"/>
+  </compounddef>
+</doxygen>

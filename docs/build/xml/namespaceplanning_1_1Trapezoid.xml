@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceplanning_1_1Trapezoid" kind="namespace" language="C++">
+    <compoundname>planning::Trapezoid</compoundname>
+    <innerclass refid="structplanning_1_1Trapezoid_1_1State" prot="public">planning::Trapezoid::State</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="planning_2primitives_2trapezoidal__motion_8cpp_1ac5d0ffb791f16f21a0d553b867056b5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::Trapezoid::should_flip_acceleration</definition>
+        <argsstring>(State initial, State goal, double max_acceleration)</argsstring>
+        <name>should_flip_acceleration</name>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>initial</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_acceleration</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Is the profile &quot;inverted&quot;? That is, do we first accelerate in the positive or negative direction? true = inverted profile (negative direction) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" line="11" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" bodystart="11" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="planning_2primitives_2trapezoidal__motion_8cpp_1a0e36475b3a78d842c7bdff39f42c0506" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::Trapezoid::get_motion_times</definition>
+        <argsstring>(State initial, State goal, double max_velocity, double max_acceleration, double *end_accel, double *end_constant, double *end)</argsstring>
+        <name>get_motion_times</name>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>initial</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_velocity</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_acceleration</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>end_accel</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>end_constant</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" line="21" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" bodystart="21" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="planning_2primitives_2trapezoidal__motion_8cpp_1ab9ca9645db30ad24f9756c9ad341c088" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double planning::Trapezoid::time_remaining</definition>
+        <argsstring>(State initial, State goal, double max_velocity, double max_acceleration)</argsstring>
+        <name>time_remaining</name>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>initial</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_velocity</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_acceleration</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the time remaining using a bang-bang profile to get to the specified state from any initial state (other than greater-than-max velocity). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>initial</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current state of the system. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>goal</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The final state of the system. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_velocity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum allowed velocity. initial.velocity must be within this speed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The minimum time required to go from initial to goal. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" line="58" column="8" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" bodystart="58" bodyend="74" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" declline="23" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="planning_2primitives_2trapezoidal__motion_8cpp_1a3bd3b038bc2d481e86d8c9304eca8114" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+        <definition>State planning::Trapezoid::trapezoid_interpolate</definition>
+        <argsstring>(State initial, State goal, double max_velocity, double max_acceleration, double time_now, double time_accel_end, double time_constant_end, double time_end)</argsstring>
+        <name>trapezoid_interpolate</name>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>initial</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_velocity</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_acceleration</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time_now</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time_accel_end</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time_constant_end</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time_end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" line="76" column="7" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" bodystart="76" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="planning_2primitives_2trapezoidal__motion_8cpp_1ae9cffca717163ce042e920519a249127" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+        <definition>State planning::Trapezoid::predict_in</definition>
+        <argsstring>(State initial, State goal, double max_velocity, double max_acceleration, double time_now)</argsstring>
+        <name>predict_in</name>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>initial</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1Trapezoid_1_1State" kindref="compound">State</ref></type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_velocity</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_acceleration</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time_now</declname>
+        </param>
+        <briefdescription>
+<para>Use trapezoidal profiling to get an intermediate state on the way to a goal, after a set amount of time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>initial</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current state of the system. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>goal</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The final goal state of the system. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_velocity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum allowed velocity. initial.velocity must be within this speed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>time_now</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The time at which to query the profile. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The minimum time required to go from initial to goal. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" line="103" column="7" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" bodystart="103" bodyend="129" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.hpp" declline="37" declcolumn="7"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/trapezoidal_motion.cpp" line="5" column="29"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classBatteryWidget" kind="class" language="C++" prot="public">
+    <compoundname>BatteryWidget</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">QWidget</basecompoundref>
+    <includes refid="battery__widget_8hpp" local="no">battery_widget.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classBatteryWidget_1a515fdf78f2184109b5cc09ed20cff206" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float BatteryWidget::_batteryLevel</definition>
+        <argsstring></argsstring>
+        <name>_batteryLevel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" line="21" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classBatteryWidget_1a820b45ea6e0e3e433a9eed571b09929a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BatteryWidget::BatteryWidget</definition>
+        <argsstring>(QWidget *parent=nullptr, Qt::WindowFlags f=nullptr)</argsstring>
+        <name>BatteryWidget</name>
+        <param>
+          <type>QWidget *</type>
+          <declname>parent</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>Qt::WindowFlags</type>
+          <declname>f</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" line="10" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.cpp" bodystart="5" bodyend="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classBatteryWidget_1a00ba251b454f574fc067c6f741f72240" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float BatteryWidget::batteryLevel</definition>
+        <argsstring>() const</argsstring>
+        <name>batteryLevel</name>
+        <briefdescription>
+<para>Battery level represented by a number between 0 and 1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" line="15" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.cpp" bodystart="10" bodyend="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classBatteryWidget_1ad850bacfebeacfcce54146596cef39d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BatteryWidget::setBatteryLevel</definition>
+        <argsstring>(float batteryLevel)</argsstring>
+        <name>setBatteryLevel</name>
+        <param>
+          <type>float</type>
+          <declname>batteryLevel</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" line="16" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.cpp" bodystart="12" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classBatteryWidget_1a9b28abbdfe102b4962d278c5effc8a57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BatteryWidget::paintEvent</definition>
+        <argsstring>(QPaintEvent *event) override</argsstring>
+        <name>paintEvent</name>
+        <param>
+          <type>QPaintEvent *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" line="18" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.cpp" bodystart="27" bodyend="71"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Draws a battery given a battery level value from 0 to 1. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>BatteryWidget</label>
+        <link refid="classBatteryWidget"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>QWidget</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>BatteryWidget</label>
+        <link refid="classBatteryWidget"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>QWidget</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" line="8" column="35" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/battery_widget.hpp" bodystart="8" bodyend="22"/>
+    <listofallmembers>
+      <member refid="classBatteryWidget_1a515fdf78f2184109b5cc09ed20cff206" prot="private" virt="non-virtual"><scope>BatteryWidget</scope><name>_batteryLevel</name></member>
+      <member refid="classBatteryWidget_1a00ba251b454f574fc067c6f741f72240" prot="public" virt="non-virtual"><scope>BatteryWidget</scope><name>batteryLevel</name></member>
+      <member refid="classBatteryWidget_1a820b45ea6e0e3e433a9eed571b09929a" prot="public" virt="non-virtual"><scope>BatteryWidget</scope><name>BatteryWidget</name></member>
+      <member refid="classBatteryWidget_1a9b28abbdfe102b4962d278c5effc8a57" prot="public" virt="non-virtual"><scope>BatteryWidget</scope><name>paintEvent</name></member>
+      <member refid="classBatteryWidget_1ad850bacfebeacfcce54146596cef39d8" prot="public" virt="non-virtual"><scope>BatteryWidget</scope><name>setBatteryLevel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

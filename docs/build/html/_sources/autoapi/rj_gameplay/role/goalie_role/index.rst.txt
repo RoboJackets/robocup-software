@@ -1,0 +1,75 @@
+:py:mod:`rj_gameplay.role.goalie_role`
+======================================
+
+.. py:module:: rj_gameplay.role.goalie_role
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.role.goalie_role.GoalieRole
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.role.goalie_role.get_goalie_pt
+   rj_gameplay.role.goalie_role.get_block_pt
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.role.goalie_role.MIN_WALL_RAD
+   rj_gameplay.role.goalie_role.GOALIE_PCT_TO_BALL
+   rj_gameplay.role.goalie_role.DIST_TO_FAST_KICK
+
+
+.. py:data:: MIN_WALL_RAD
+   :annotation: = 0
+
+   
+
+.. py:data:: GOALIE_PCT_TO_BALL
+   :annotation: = 0.15
+
+   
+
+.. py:data:: DIST_TO_FAST_KICK
+   :annotation: = 7
+
+   
+
+.. py:function:: get_goalie_pt(world_state: stp.rc.WorldState) -> numpy.ndarray
+
+   Gives goalie a default location to track the ball from when it is not actively intercepting or capturing the ball.
+   :return numpy point
+
+
+.. py:function:: get_block_pt(world_state: stp.rc.WorldState, my_pos: numpy.ndarray) -> numpy.ndarray
+
+
+.. py:class:: GoalieRole(robot: stp.rc.Robot, brick=False)
+
+   Bases: :py:obj:`stp.role.Role`
+
+   Role to produce goalie behavior, which tracks the ball, moves to block if a shot on goal is taken, stays within the goalie box (generally), and clears ball away.
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> rj_msgs.msg.RobotIntent
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

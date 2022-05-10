@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="kalman__filter_8cpp" kind="file" language="C++">
+    <compoundname>kalman_filter.cpp</compoundname>
+    <includes refid="kalman__filter_8hpp" local="no">rj_vision_filter/filter/kalman_filter.hpp</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/rj_vision_filter/filter/kalman_filter.cpp</label>
+        <link refid="kalman__filter_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>rj_vision_filter/filter/kalman_filter.hpp</label>
+        <link refid="kalman__filter_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacevision__filter">vision_filter</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;rj_vision_filter/filter/kalman_filter.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">vision_filter<sp/>{</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classvision__filter_1_1KalmanFilter_1a1268efc628399270413977dd388916e6" kindref="member">KalmanFilter::predict</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/>x_k1_k1_<sp/>=<sp/>x_k_k_;</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/>P_k1_k1_<sp/>=<sp/>P_k_k_;</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Predict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>x_k_k1_<sp/>=<sp/>F_k_<sp/>*<sp/>x_k1_k1_<sp/>+<sp/>B_k_<sp/>*<sp/>u_k_;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>P_k_k1_<sp/>=<sp/>F_k_<sp/>*<sp/>P_k1_k1_<sp/>*<sp/>F_k_.transpose()<sp/>+<sp/>Q_k_;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>x_k_k_<sp/>=<sp/>x_k_k1_;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>P_k_k_<sp/>=<sp/>P_k_k1_;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classvision__filter_1_1KalmanFilter_1a5cbc222c88a026a1235cac9b574c2705" kindref="member">KalmanFilter::predict_with_update</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>x_k1_k1_<sp/>=<sp/>x_k_k_;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>P_k1_k1_<sp/>=<sp/>P_k_k_;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Predict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>x_k_k1_<sp/>=<sp/>F_k_<sp/>*<sp/>x_k1_k1_<sp/>+<sp/>B_k_<sp/>*<sp/>u_k_;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>P_k_k1_<sp/>=<sp/>F_k_<sp/>*<sp/>P_k1_k1_<sp/>*<sp/>F_k_.transpose()<sp/>+<sp/>Q_k_;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Update</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>y_k_k1_<sp/>=<sp/>z_k_<sp/>-<sp/>H_k_<sp/>*<sp/>x_k_k1_;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>S_k_<sp/>=<sp/>R_k_<sp/>+<sp/>H_k_<sp/>*<sp/>P_k_k1_<sp/>*<sp/>H_k_.transpose();</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>K_k_<sp/>=<sp/>P_k_k1_<sp/>*<sp/>H_k_.transpose()<sp/>*<sp/>S_k_.inverse();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>x_k_k_<sp/>=<sp/>x_k_k1_<sp/>+<sp/>K_k_<sp/>*<sp/>y_k_k1_;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>P_k_k_<sp/>=<sp/>(identity_<sp/>-<sp/>K_k_<sp/>*<sp/>H_k_)<sp/>*<sp/>P_k_k1_<sp/>*<sp/>(identity_<sp/>-<sp/>K_k_<sp/>*<sp/>H_k_).transpose()<sp/>+</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>K_k_<sp/>*<sp/>R_k_<sp/>*<sp/>K_k_.transpose();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>y_k_k_<sp/>=<sp/>z_k_<sp/>-<sp/>H_k_<sp/>*<sp/>x_k_k_;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>vision_filter</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/filter/kalman_filter.cpp"/>
+  </compounddef>
+</doxygen>

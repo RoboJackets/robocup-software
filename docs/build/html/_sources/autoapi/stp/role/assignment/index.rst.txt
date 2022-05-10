@@ -1,0 +1,76 @@
+:py:mod:`stp.role.assignment`
+=============================
+
+.. py:module:: stp.role.assignment
+
+.. autoapi-nested-parse::
+
+   This module contains the interface for role assignment.
+
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   naive/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.role.assignment.IRoleAssignment
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   stp.role.assignment.RoleId
+   stp.role.assignment.FlatRoleRequests
+   stp.role.assignment.FlatRoleResults
+
+
+.. py:data:: RoleId
+   
+
+   
+
+.. py:data:: FlatRoleRequests
+   
+
+   
+
+.. py:data:: FlatRoleResults
+   
+
+   
+
+.. py:class:: IRoleAssignment
+
+   Bases: :py:obj:`abc.ABC`
+
+   Interface for role assignment implementations.
+
+   .. py:method:: assign_roles(flat_requests: FlatRoleRequests, world_state: stp.rc.WorldState, prev_results: FlatRoleResults) -> FlatRoleResults
+      :staticmethod:
+      :abstractmethod:
+
+      Assigns roles.
+      :param flat_requests: The role requests.
+      :param world_state: The current state of the world.
+      :param prev_results: The previous results.
+      :return: The results of the role assignment.
+
+
+

@@ -1,0 +1,38 @@
+:py:mod:`test_rc`
+=================
+
+.. py:module:: test_rc
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   test_rc.test_generate_test_robot
+   test_rc.test_generate_test_ball
+   test_rc.test_generate_test_field
+   test_rc.test_generate_test_game_info
+   test_rc.test_generate_test_world_state
+
+
+
+.. py:function:: test_generate_test_robot() -> None
+
+
+.. py:function:: test_generate_test_ball() -> None
+
+
+.. py:function:: test_generate_test_field() -> None
+
+
+.. py:function:: test_generate_test_game_info() -> None
+
+
+.. py:function:: test_generate_test_world_state() -> None
+
+

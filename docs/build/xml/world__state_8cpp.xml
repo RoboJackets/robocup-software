@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="world__state_8cpp" kind="file" language="C++">
+    <compoundname>world_state.cpp</compoundname>
+    <includes refid="world__state_8hpp" local="yes">world_state.hpp</includes>
+    <incdepgraph>
+      <node id="29">
+        <label>QMap</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp</label>
+        <link refid="world__state_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>rj_constants/constants.hpp</label>
+      </node>
+      <node id="19">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="12">
+        <label>fmt/format.h</label>
+      </node>
+      <node id="36">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="10">
+        <label>rj_msgs/msg/world_state.hpp</label>
+      </node>
+      <node id="22">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="8">
+        <label>rj_msgs/msg/ball_state.hpp</label>
+      </node>
+      <node id="14">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="27">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="23">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="2">
+        <label>world_state.hpp</label>
+        <link refid="world__state_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>string</label>
+      </node>
+      <node id="24">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="13">
+        <label>rclcpp/rclcpp.hpp</label>
+      </node>
+      <node id="7">
+        <label>rj_convert/ros_convert.hpp</label>
+      </node>
+      <node id="18">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="3">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="4">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="16">
+        <label>planning/instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="11">
+        <label>global_params.hpp</label>
+        <link refid="global__params_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>optional</label>
+      </node>
+      <node id="32">
+        <label>vector</label>
+      </node>
+      <node id="28">
+        <label>QColor</label>
+      </node>
+      <node id="21">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>rj_param_utils/ros2_global_param_provider.hpp</label>
+      </node>
+      <node id="34">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="26">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="9">
+        <label>rj_msgs/msg/robot_state.hpp</label>
+      </node>
+      <node id="30">
+        <label>memory</label>
+      </node>
+      <node id="5">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="20">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;world_state.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"><ref refid="structBallState" kindref="compound">BallState</ref><sp/><ref refid="structBallState_1a742a96957b5c9bf2cc5172d0707b4ebd" kindref="member">BallState::predict_at</ref>(RJ::Time<sp/>time)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>estimate<sp/>isn&apos;t<sp/>valid,<sp/>just<sp/>return<sp/>an<sp/>invalid<sp/>ball.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!visible)<sp/>{</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="structBallState_1a62928333f80533e53e94fbfb65de5e49" kindref="member">BallState</ref>();</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(time<sp/>&lt;<sp/>timestamp)<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Estimated<sp/>Time<sp/>can&apos;t<sp/>be<sp/>before<sp/>observation<sp/>time.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>dt<sp/>=<sp/>RJ::Seconds(time<sp/>-<sp/>timestamp);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>s0<sp/>=<sp/>velocity.mag();</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>ball<sp/>is<sp/>stopped<sp/>just<sp/>return<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(s0<sp/>==<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>speed<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>max_time<sp/>=<sp/>s0<sp/>/<sp/>soccer::physics::PARAM_ball_decay_constant;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(dt.count()<sp/>&gt;=<sp/>max_time)<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>speed<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>distance<sp/>=<sp/>s0<sp/>*<sp/>max_time<sp/>-<sp/>pow(max_time,<sp/>2)<sp/>/<sp/>2.0<sp/>*<sp/>soccer::physics::PARAM_ball_decay_constant;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>speed<sp/>=<sp/>s0<sp/>-<sp/>(dt.count()<sp/>*<sp/>soccer::physics::PARAM_ball_decay_constant);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>distance<sp/>=<sp/>s0<sp/>*<sp/>dt.count()<sp/>-<sp/>pow(dt.count(),<sp/>2)<sp/>/<sp/>2.0<sp/>*<sp/>soccer::physics::PARAM_ball_decay_constant;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="structBallState_1a62928333f80533e53e94fbfb65de5e49" kindref="member">BallState</ref>(position<sp/>+<sp/>velocity.normalized(distance),<sp/>velocity.normalized(speed),<sp/>time);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><ref refid="structBallState" kindref="compound">BallState</ref><sp/><ref refid="structBallState_1a5a79771bc042e45b105344f6b625fb09" kindref="member">BallState::predict_in</ref>(RJ::Seconds<sp/>seconds)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="structBallState_1a742a96957b5c9bf2cc5172d0707b4ebd" kindref="member">predict_at</ref>(timestamp<sp/>+<sp/>seconds);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">RJ::Time<sp/><ref refid="structBallState_1abb714f6e4c4d903314581a18a7899d22" kindref="member">BallState::query_time_near</ref>(rj_geometry::Point<sp/>near_to,<sp/>rj_geometry::Point*<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>ball<sp/>isn&apos;t<sp/>moving<sp/>we&apos;re<sp/>as<sp/>close<sp/>as<sp/>we&apos;re<sp/>ever<sp/>going<sp/>to<sp/>get.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(velocity.mag()<sp/>==<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(out<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*out<sp/>=<sp/>position;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>timestamp;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Otherwise,<sp/>find<sp/>the<sp/>closest<sp/>point<sp/>on<sp/>the<sp/>ball&apos;s<sp/>line<sp/>of<sp/>travel...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Segment<sp/>segment(position,<sp/><ref refid="structBallState_1a742a96957b5c9bf2cc5172d0707b4ebd" kindref="member">predict_at</ref>(RJ::Time::max()).position);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>nearest<sp/>=<sp/>segment.nearest_point(near_to);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance_to_nearest<sp/>=<sp/>(position<sp/>-<sp/>nearest).mag();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;RJ::Seconds&gt;<sp/>maybe_seconds<sp/>=<sp/><ref refid="structBallState_1aa64808eb0be71cddadc569c33b2d9bf3" kindref="member">query_seconds_to_dist</ref>(distance_to_nearest);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Seconds<sp/>seconds;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maybe_seconds.has_value())<sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>seconds<sp/>=<sp/>*maybe_seconds;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>seconds<sp/>=<sp/><ref refid="structBallState_1ae92c8df07a64aaefe5223dd57576c66d" kindref="member">query_stop_time</ref>();</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(out<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*out<sp/>=<sp/><ref refid="structBallState_1a5a79771bc042e45b105344f6b625fb09" kindref="member">predict_in</ref>(seconds).position;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>timestamp<sp/>+<sp/>seconds;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal">RJ::Seconds<sp/><ref refid="structBallState_1a48f75edbbd1676bdb2217561a5d6c424" kindref="member">BallState::query_seconds_near</ref>(rj_geometry::Point<sp/>near_to,<sp/>rj_geometry::Point*<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="structBallState_1abb714f6e4c4d903314581a18a7899d22" kindref="member">query_time_near</ref>(near_to,<sp/>out)<sp/>-<sp/>timestamp;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal">RJ::Seconds<sp/><ref refid="structBallState_1ae92c8df07a64aaefe5223dd57576c66d" kindref="member">BallState::query_stop_time</ref>(rj_geometry::Point*<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>speed<sp/>=<sp/>velocity.mag();</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(out<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>vf^2<sp/>-<sp/>vi^2<sp/>=<sp/>2ad<sp/>=&gt;<sp/>d<sp/>=<sp/>-vi^2<sp/>/<sp/>2a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*out<sp/>=<sp/>position<sp/>+<sp/>velocity.normalized(std::pow(speed,<sp/>2)<sp/>/<sp/>(2<sp/>*<sp/>soccer::physics::PARAM_ball_decay_constant));</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>the<sp/>formula<sp/>for<sp/>time<sp/>until<sp/>zero<sp/>velocity:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>0<sp/>=<sp/>v<sp/>=<sp/>vi<sp/>+<sp/>at<sp/>=&gt;<sp/>t<sp/>=<sp/>-vi<sp/>/<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>RJ::Seconds(speed<sp/>/<sp/>soccer::physics::PARAM_ball_decay_constant);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">rj_geometry::Point<sp/><ref refid="structBallState_1ab4dccb29873415fbc19084ab23bc8584" kindref="member">BallState::query_stop_position</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>point;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>[[maybe_unused]]<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>stop_time<sp/>=<sp/><ref refid="structBallState_1ae92c8df07a64aaefe5223dd57576c66d" kindref="member">query_stop_time</ref>(&amp;point);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>point;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal">std::optional&lt;RJ::Seconds&gt;<sp/><ref refid="structBallState_1aa64808eb0be71cddadc569c33b2d9bf3" kindref="member">BallState::query_seconds_to_dist</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>vf^2<sp/>-<sp/>vi^2<sp/>=<sp/>2ad<sp/>=&gt;<sp/>vf<sp/>=<sp/>sqrt(vi^2<sp/>+<sp/>2ad)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>speed<sp/>=<sp/>velocity.mag();</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>vf_sq<sp/>=<sp/>std::pow(speed,<sp/>2)<sp/>-<sp/>2<sp/>*<sp/>soccer::physics::PARAM_ball_decay_constant<sp/>*<sp/>distance;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>vf^2<sp/>is<sp/>negative,<sp/>the<sp/>ball<sp/>will<sp/>never<sp/>travel<sp/>the<sp/>desired<sp/>distance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Return<sp/>nullopt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(vf_sq<sp/>&lt;<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::nullopt;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Otherwise,<sp/>use<sp/>t<sp/>=<sp/>(vf<sp/>-<sp/>vi)<sp/>/<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>RJ::Seconds(speed<sp/>-<sp/>std::sqrt(vf_sq))<sp/>/<sp/>soccer::physics::PARAM_ball_decay_constant;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref><sp/><ref refid="structBallState_1aecc8bd7efbf34e854f71dc0e89fbf662" kindref="member">BallState::make_trajectory</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">rj_geometry;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>trajectory<sp/>interface<sp/>fits<sp/>cubic<sp/>splines.<sp/>Luckily,<sp/>a<sp/>cubic<sp/>spline</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>between<sp/>two<sp/>instants<sp/>that<sp/>can<sp/>be<sp/>connected<sp/>by<sp/>a<sp/>constant<sp/>acceleration</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>(like<sp/>we<sp/>have<sp/>here)<sp/>will<sp/>be,<sp/>and<sp/>so<sp/>we<sp/>can<sp/>use<sp/>this<sp/>for<sp/>our<sp/>trajectory.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>start<sp/>point<sp/>is<sp/>the<sp/>current<sp/>instant<sp/>in<sp/>time,<sp/>and<sp/>the<sp/>endpoint<sp/>is<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>stopping<sp/>point.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">planning::RobotInstant</ref><sp/>instant0;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>instant0.pose<sp/>=<sp/>Pose(position,<sp/>0);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>instant0.velocity<sp/>=<sp/>Twist(velocity,<sp/>0);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>instant0.stamp<sp/>=<sp/>timestamp;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>Point<sp/>stop_position;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Time<sp/>stop_time<sp/>=<sp/>timestamp<sp/>+<sp/><ref refid="structBallState_1ae92c8df07a64aaefe5223dd57576c66d" kindref="member">query_stop_time</ref>(&amp;stop_position);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">planning::RobotInstant</ref><sp/>instant1{Pose{stop_position,<sp/>0},<sp/>Twist::zero(),<sp/>stop_time};</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref>({instant0,<sp/>instant1});</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp"/>
+  </compounddef>
+</doxygen>

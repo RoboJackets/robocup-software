@@ -1,0 +1,35 @@
+:py:mod:`rj_gameplay.tactic.basic_seek`
+=======================================
+
+.. py:module:: rj_gameplay.tactic.basic_seek
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.tactic.basic_seek.BasicSeek
+
+
+
+
+.. py:class:: BasicSeek(world_state: stp.rc.WorldState, num_seekers: int, formations: List, centroids: List)
+
+   Bases: :py:obj:`stp.tactic.Tactic`
+
+   Seeks to a single point, passed in on init.
+
+   .. py:method:: init_roles(self, world_state: stp.rc.WorldState)
+
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, rj_msgs.msg.RobotIntent]]
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

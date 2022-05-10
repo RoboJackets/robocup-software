@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_naive_assignment &mdash; RJ RC Software  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> RJ RC Software
+            <img src="../../_static/RoboBuzz.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#running-the-first-time">Running The First Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#running-again">Running Again</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../our_stack.html">Our Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#ros2">ROS2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#vision">Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#gameplay">Gameplay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#motion-planning">Motion Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#radio">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#referee">Referee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#ui">UI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#code">Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#docs">Docs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../meta_docs.html">Meta-Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../meta_docs.html#log">Log</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../setup/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">setup</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../setup/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../setup/index.html#setup.PACKAGE_NAME">PACKAGE_NAME</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_rc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_rc</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../test_rc/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../test_rc/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_pass_or_shoot/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_pass_or_shoot</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../test_pass_or_shoot/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../test_pass_or_shoot/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_tactic</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../test_tactic/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../test_tactic/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../test_tactic/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_play</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../test_play/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../test_play/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../test_play/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_skill</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../test_skill/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../test_skill/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../test_skill/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_cost/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_cost</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../test_cost/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../test_cost/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_naive_assignment</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../test_typed_key_dict/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_typed_key_dict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../test_typed_key_dict/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../test_typed_key_dict/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../test_typed_key_dict/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rj_gameplay/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rj_gameplay/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/eval/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.eval</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.play</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/role/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/situation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.situation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.skill</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.tactic</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../rj_gameplay/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/basic_play_selector/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.basic_play_selector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rj_gameplay/gameplay_node/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.gameplay_node</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../wall_calculations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">wall_calculations</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../wall_calculations/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../wall_calculations/index.html#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../wall_calculations/index.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ball_classifier/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ball_classifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ball_classifier/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ball_classifier/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ball_classifier/index.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../stp/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../stp/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../stp/action/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.action</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/formations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.formations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.play</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/role/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/situation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.situation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.skill</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.tactic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../stp/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../stp/global_parameters/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.global_parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/local_parameters/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.local_parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/pylint_stp/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.pylint_stp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/rc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.rc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stp/testing/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.testing</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">RJ RC Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_naive_assignment</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/autoapi/test_naive_assignment/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-test_naive_assignment">
+<span id="test-naive-assignment"></span><h1><a class="reference internal" href="#module-test_naive_assignment" title="test_naive_assignment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_naive_assignment</span></code></a><a class="headerlink" href="#module-test_naive_assignment" title="Permalink to this headline"></a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline"></a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.AssignCostFn" title="test_naive_assignment.AssignCostFn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AssignCostFn</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.UnassignCostFn" title="test_naive_assignment.UnassignCostFn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnassignCostFn</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.TestCostFn" title="test_naive_assignment.TestCostFn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TestCostFn</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.SkillBase" title="test_naive_assignment.SkillBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillBase</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.SkillA" title="test_naive_assignment.SkillA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillA</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.SkillB" title="test_naive_assignment.SkillB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillB</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.SkillC" title="test_naive_assignment.SkillC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillC</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.BallSkill" title="test_naive_assignment.BallSkill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BallSkill</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.Skills" title="test_naive_assignment.Skills"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Skills</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.TacticBase" title="test_naive_assignment.TacticBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TacticBase</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.get_simple_role_ids" title="test_naive_assignment.get_simple_role_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_simple_role_ids</span></code></a>() → List[stp.role.assignment.RoleId]</p></td>
+<td><p>Creates and returns a list of role ids with skills SkillA, SkillB and SkillC for</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.test_get_sorted_requests_simple" title="test_naive_assignment.test_get_sorted_requests_simple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_get_sorted_requests_simple</span></code></a>()</p></td>
+<td><p>Manually create a Requests and check that get_sorted_requests returns a list of</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.get_tactic_ctx" title="test_naive_assignment.get_tactic_ctx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tactic_ctx</span></code></a>() → stp.tactic.Ctx</p></td>
+<td><p>Creates a simple tactic context for convenience.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.test_get_sorted_requests_multiple" title="test_naive_assignment.test_get_sorted_requests_multiple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_get_sorted_requests_multiple</span></code></a>() → None</p></td>
+<td><p>Tests get_sorted_requests with a more complicated example.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.test_compute_costs_matrix" title="test_naive_assignment.test_compute_costs_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_compute_costs_matrix</span></code></a>() → None</p></td>
+<td><p>Tests the compute_costs_matrix function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.test_assign_prioritized_roles" title="test_naive_assignment.test_assign_prioritized_roles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_assign_prioritized_roles</span></code></a>() → None</p></td>
+<td><p>Tests that for the role requests and free robots above that role assignment</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.test_assign_roles" title="test_naive_assignment.test_assign_roles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_assign_roles</span></code></a>() → None</p></td>
+<td><p>Tests that NaiveRoleAssignment.assign_roles assigns HIGH, then MEDIUM, then LOW</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.test_assign_roles_constrained" title="test_naive_assignment.test_assign_roles_constrained"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_assign_roles_constrained</span></code></a>() → None</p></td>
+<td><p>Tests that NaiveRoleAssignment.assign_roles respects constraints, ie. even though</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#test_naive_assignment.test_unassigned_role" title="test_naive_assignment.test_unassigned_role"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_unassigned_role</span></code></a>() → None</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#test_naive_assignment.test_unassigned_roles" title="test_naive_assignment.test_unassigned_roles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_unassigned_roles</span></code></a>() → None</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.AssignCostFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">AssignCostFn</span></span><a class="headerlink" href="#test_naive_assignment.AssignCostFn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../stp/role/index.html#stp.role.CostFn" title="stp.role.CostFn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stp.role.CostFn</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.AssignCostFn.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.Robot" title="stp.rc.Robot"><span class="pre">stp.rc.Robot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/role/index.html#stp.role.RoleResult" title="stp.role.RoleResult"><span class="pre">stp.role.RoleResult</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#test_naive_assignment.AssignCostFn.__call__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.AssignCostFn.unassigned_cost_fn">
+<span class="sig-name descname"><span class="pre">unassigned_cost_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/role/index.html#stp.role.RoleResult" title="stp.role.RoleResult"><span class="pre">stp.role.RoleResult</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#test_naive_assignment.AssignCostFn.unassigned_cost_fn" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.UnassignCostFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">UnassignCostFn</span></span><a class="headerlink" href="#test_naive_assignment.UnassignCostFn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../stp/role/index.html#stp.role.CostFn" title="stp.role.CostFn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stp.role.CostFn</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.UnassignCostFn.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.Robot" title="stp.rc.Robot"><span class="pre">stp.rc.Robot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/role/index.html#stp.role.RoleResult" title="stp.role.RoleResult"><span class="pre">stp.role.RoleResult</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#test_naive_assignment.UnassignCostFn.__call__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.UnassignCostFn.unassigned_cost_fn">
+<span class="sig-name descname"><span class="pre">unassigned_cost_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/role/index.html#stp.role.RoleResult" title="stp.role.RoleResult"><span class="pre">stp.role.RoleResult</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#test_naive_assignment.UnassignCostFn.unassigned_cost_fn" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.TestCostFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">TestCostFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/rc/index.html#stp.rc.Robot" title="stp.rc.Robot"><span class="pre">stp.rc.Robot</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/role/index.html#stp.role.RoleResult" title="stp.role.RoleResult"><span class="pre">stp.role.RoleResult</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_naive_assignment.TestCostFn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../stp/role/index.html#stp.role.CostFn" title="stp.role.CostFn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stp.role.CostFn</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.TestCostFn.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.Robot" title="stp.rc.Robot"><span class="pre">stp.rc.Robot</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/role/index.html#stp.role.RoleResult" title="stp.role.RoleResult"><span class="pre">stp.role.RoleResult</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#test_naive_assignment.TestCostFn.__call__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.TestCostFn.unassigned_cost_fn">
+<span class="sig-name descname"><span class="pre">unassigned_cost_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/role/index.html#stp.role.RoleResult" title="stp.role.RoleResult"><span class="pre">stp.role.RoleResult</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#test_naive_assignment.TestCostFn.unassigned_cost_fn" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">SkillBase</span></span><a class="headerlink" href="#test_naive_assignment.SkillBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../stp/skill/index.html#stp.skill.ISkill" title="stp.skill.ISkill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stp.skill.ISkill</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillBase.define">
+<span class="sig-name descname"><span class="pre">define</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_naive_assignment.SkillBase.define" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillBase.tick">
+<span class="sig-name descname"><span class="pre">tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_naive_assignment.SkillBase.tick" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillBase.create_request">
+<span class="sig-name descname"><span class="pre">create_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../stp/role/index.html#stp.role.RoleRequest" title="stp.role.RoleRequest"><span class="pre">stp.role.RoleRequest</span></a></span></span><a class="headerlink" href="#test_naive_assignment.SkillBase.create_request" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillBase.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#test_naive_assignment.SkillBase.__repr__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">SkillA</span></span><a class="headerlink" href="#test_naive_assignment.SkillA" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#test_naive_assignment.SkillBase" title="test_naive_assignment.SkillBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillB">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">SkillB</span></span><a class="headerlink" href="#test_naive_assignment.SkillB" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#test_naive_assignment.SkillBase" title="test_naive_assignment.SkillBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.SkillC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">SkillC</span></span><a class="headerlink" href="#test_naive_assignment.SkillC" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#test_naive_assignment.SkillBase" title="test_naive_assignment.SkillBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.BallSkill">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">BallSkill</span></span><a class="headerlink" href="#test_naive_assignment.BallSkill" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#test_naive_assignment.SkillBase" title="test_naive_assignment.SkillBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkillBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">Skills</span></span><a class="headerlink" href="#test_naive_assignment.Skills" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">stp.tactic.SkillsEnum</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills.A1">
+<span class="sig-name descname"><span class="pre">A1</span></span><a class="headerlink" href="#test_naive_assignment.Skills.A1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills.A2">
+<span class="sig-name descname"><span class="pre">A2</span></span><a class="headerlink" href="#test_naive_assignment.Skills.A2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills.B1">
+<span class="sig-name descname"><span class="pre">B1</span></span><a class="headerlink" href="#test_naive_assignment.Skills.B1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills.B2">
+<span class="sig-name descname"><span class="pre">B2</span></span><a class="headerlink" href="#test_naive_assignment.Skills.B2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills.C1">
+<span class="sig-name descname"><span class="pre">C1</span></span><a class="headerlink" href="#test_naive_assignment.Skills.C1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills.C2">
+<span class="sig-name descname"><span class="pre">C2</span></span><a class="headerlink" href="#test_naive_assignment.Skills.C2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="test_naive_assignment.Skills.BALL_SKILL">
+<span class="sig-name descname"><span class="pre">BALL_SKILL</span></span><a class="headerlink" href="#test_naive_assignment.Skills.BALL_SKILL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_naive_assignment.TacticBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">TacticBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">stp.tactic.Ctx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_naive_assignment.TacticBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../stp/tactic/index.html#stp.tactic.ITactic" title="stp.tactic.ITactic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stp.tactic.ITactic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.TacticBase.compute_props">
+<span class="sig-name descname"><span class="pre">compute_props</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_props</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.TacticBase.compute_props" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.TacticBase.tick">
+<span class="sig-name descname"><span class="pre">tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">stp.tactic.RoleResults</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stp/action/index.html#stp.action.IAction" title="stp.action.IAction"><span class="pre">stp.action.IAction</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#test_naive_assignment.TacticBase.tick" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.TacticBase.get_requests">
+<span class="sig-name descname"><span class="pre">get_requests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../stp/rc/index.html#stp.rc.WorldState" title="stp.rc.WorldState"><span class="pre">stp.rc.WorldState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">stp.tactic.RoleRequests</span></span></span><a class="headerlink" href="#test_naive_assignment.TacticBase.get_requests" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test_naive_assignment.TacticBase.create_request">
+<span class="sig-name descname"><span class="pre">create_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_naive_assignment.TacticBase.create_request" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.get_simple_role_ids">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">get_simple_role_ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">stp.role.assignment.RoleId</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#test_naive_assignment.get_simple_role_ids" title="Permalink to this definition"></a></dt>
+<dd><p>Creates and returns a list of role ids with skills SkillA, SkillB and SkillC for
+TacticBase.
+:return: List of role ids with skills SkillA, SkillB and SkillC for TacticBase.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_get_sorted_requests_simple">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_get_sorted_requests_simple</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test_naive_assignment.test_get_sorted_requests_simple" title="Permalink to this definition"></a></dt>
+<dd><p>Manually create a Requests and check that get_sorted_requests returns a list of
+three dictionaries, one for each priority level.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.get_tactic_ctx">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">get_tactic_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">stp.tactic.Ctx</span></span></span><a class="headerlink" href="#test_naive_assignment.get_tactic_ctx" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a simple tactic context for convenience.
+:return: Tactic context containing SkillA, SkillB and SkillC.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_get_sorted_requests_multiple">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_get_sorted_requests_multiple</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.test_get_sorted_requests_multiple" title="Permalink to this definition"></a></dt>
+<dd><p>Tests get_sorted_requests with a more complicated example.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_compute_costs_matrix">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_compute_costs_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.test_compute_costs_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Tests the compute_costs_matrix function.</p>
+<dl class="simple">
+<dt>Costs:</dt><dd><p>A: Dist to (0, 0)
+B: Dist to (1, 1)
+C: Dist to (2, 2)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_assign_prioritized_roles">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_assign_prioritized_roles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.test_assign_prioritized_roles" title="Permalink to this definition"></a></dt>
+<dd><p>Tests that for the role requests and free robots above that role assignment
+returns the expected result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_assign_roles">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_assign_roles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.test_assign_roles" title="Permalink to this definition"></a></dt>
+<dd><p>Tests that NaiveRoleAssignment.assign_roles assigns HIGH, then MEDIUM, then LOW
+priority. This is tested by having a MEDIUM priority role request that has a lower
+cost than a HIGH priority role request, and expecting that the HIGH role request is
+fulfilled first.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_assign_roles_constrained">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_assign_roles_constrained</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.test_assign_roles_constrained" title="Permalink to this definition"></a></dt>
+<dd><p>Tests that NaiveRoleAssignment.assign_roles respects constraints, ie. even though
+role_id_a and role_id_ball both are HIGH priority, the robot at (0, 0) has the ball
+and thus is assigned BALL_SKILL.</p>
+<p>This test will fail as has_ball has been removed from Robot thus breaking the ball constraint</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_unassigned_role">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_unassigned_role</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.test_unassigned_role" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_naive_assignment.test_unassigned_roles">
+<span class="sig-prename descclassname"><span class="pre">test_naive_assignment.</span></span><span class="sig-name descname"><span class="pre">test_unassigned_roles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#test_naive_assignment.test_unassigned_roles" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Kevin Fu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+:py:mod:`rj_gameplay.role.unassigned_role`
+==========================================
+
+.. py:module:: rj_gameplay.role.unassigned_role
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.role.unassigned_role.UnassignedRole
+
+
+
+
+.. py:class:: UnassignedRole(robot: stp.rc.Robot)
+
+   Bases: :py:obj:`stp.role.Role`
+
+   Role given to help role assignment correctly handle an unassigned robot
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> rj_msgs.msg.RobotIntent
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

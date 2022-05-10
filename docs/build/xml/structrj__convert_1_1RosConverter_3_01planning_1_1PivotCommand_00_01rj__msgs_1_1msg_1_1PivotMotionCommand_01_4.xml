@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01planning_1_1PivotCommand_00_01rj__msgs_1_1msg_1_1PivotMotionCommand_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; planning::PivotCommand, rj_msgs::msg::PivotMotionCommand &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1PivotCommand_00_01rj__msgs_1_1msg_1_1PivotMotionCommand_01_4_1a6a82ec374f7546916a281139845b7da3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::PivotMotionCommand</type>
+        <definition>static rj_msgs::msg::PivotMotionCommand rj_convert::RosConverter&lt; planning::PivotCommand, rj_msgs::msg::PivotMotionCommand &gt;::to_ros</definition>
+        <argsstring>(const planning::PivotCommand &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1PivotCommand" kindref="compound">planning::PivotCommand</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="163" column="45" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="163" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1PivotCommand_00_01rj__msgs_1_1msg_1_1PivotMotionCommand_01_4_1ace872a08167c521f0a426dab1fea07fe" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structplanning_1_1PivotCommand" kindref="compound">planning::PivotCommand</ref></type>
+        <definition>static planning::PivotCommand rj_convert::RosConverter&lt; planning::PivotCommand, rj_msgs::msg::PivotMotionCommand &gt;::from_ros</definition>
+        <argsstring>(const rj_msgs::msg::PivotMotionCommand &amp;from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <type>const rj_msgs::msg::PivotMotionCommand &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="169" column="35" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="169" bodyend="172"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="162" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="162" bodyend="173"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1PivotCommand_00_01rj__msgs_1_1msg_1_1PivotMotionCommand_01_4_1ace872a08167c521f0a426dab1fea07fe" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::PivotCommand, rj_msgs::msg::PivotMotionCommand &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1PivotCommand_00_01rj__msgs_1_1msg_1_1PivotMotionCommand_01_4_1a6a82ec374f7546916a281139845b7da3" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::PivotCommand, rj_msgs::msg::PivotMotionCommand &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

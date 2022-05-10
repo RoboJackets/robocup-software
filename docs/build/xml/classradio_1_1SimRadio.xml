@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classradio_1_1SimRadio" kind="class" language="C++" prot="public">
+    <compoundname>radio::SimRadio</compoundname>
+    <basecompoundref refid="classradio_1_1Radio" prot="public" virt="non-virtual">radio::Radio</basecompoundref>
+    <includes refid="sim__radio_8hpp" local="no">sim_radio.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classradio_1_1SimRadio_1a37407c51c68e0045b0a79e694eb07e10" prot="private" static="no" mutable="no">
+        <type>boost::asio::io_service</type>
+        <definition>boost::asio::io_service radio::SimRadio::io_service_</definition>
+        <argsstring></argsstring>
+        <name>io_service_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="38" column="29" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classradio_1_1SimRadio_1a09820e71ff0c9b87cf063ba86cc20156" prot="private" static="no" mutable="no">
+        <type>boost::asio::ip::udp::socket</type>
+        <definition>boost::asio::ip::udp::socket radio::SimRadio::socket_</definition>
+        <argsstring></argsstring>
+        <name>socket_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="39" column="34" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classradio_1_1SimRadio_1a7649ff20e5bc14a4b3d18b552e707b7a" prot="private" static="no" mutable="no">
+        <type>boost::asio::ip::udp::endpoint</type>
+        <definition>boost::asio::ip::udp::endpoint radio::SimRadio::sim_control_endpoint_</definition>
+        <argsstring></argsstring>
+        <name>sim_control_endpoint_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="40" column="36" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classradio_1_1SimRadio_1a6a30ee2f76f2e6904e95267a14211372" prot="private" static="no" mutable="no">
+        <type>boost::asio::ip::udp::endpoint</type>
+        <definition>boost::asio::ip::udp::endpoint radio::SimRadio::robot_control_endpoint_</definition>
+        <argsstring></argsstring>
+        <name>robot_control_endpoint_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="41" column="36" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classradio_1_1SimRadio_1a34a5a27dff46f51b684eb696e688a5b0" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; char &gt;</type>
+        <definition>std::vector&lt;char&gt; radio::SimRadio::buffer_</definition>
+        <argsstring></argsstring>
+        <name>buffer_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="43" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classradio_1_1SimRadio_1ac67f6960c08cc0f4c8dbb84695c70552" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool radio::SimRadio::blue_team_</definition>
+        <argsstring></argsstring>
+        <name>blue_team_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="45" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classradio_1_1SimRadio_1a343c4e1570364b4b56c08bf0e32f22fd" prot="private" static="no" mutable="no">
+        <type>rclcpp::Service&lt; rj_msgs::srv::SimPlacement &gt;::SharedPtr</type>
+        <definition>rclcpp::Service&lt;rj_msgs::srv::SimPlacement&gt;::SharedPtr radio::SimRadio::sim_placement_service_</definition>
+        <argsstring></argsstring>
+        <name>sim_placement_service_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="47" column="33" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classradio_1_1SimRadio_1a42b8039c160a7cdc0272a5fdfa4652f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>radio::SimRadio::SimRadio</definition>
+        <argsstring>(bool blue_team=false)</argsstring>
+        <name>SimRadio</name>
+        <param>
+          <type>bool</type>
+          <declname>blue_team</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="20" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="60" bodyend="81"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classradio_1_1SimRadio_1a307a9fd342988345eb91fd02698041a0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::send</definition>
+        <argsstring>(int robot_id, const rj_msgs::msg::MotionSetpoint &amp;motion, const rj_msgs::msg::ManipulatorSetpoint &amp;manipulator) override</argsstring>
+        <name>send</name>
+        <reimplements refid="classradio_1_1Radio_1aef0f24a06ece28be29b487c1d02d3267">send</reimplements>
+        <param>
+          <type>int</type>
+          <declname>robot_id</declname>
+        </param>
+        <param>
+          <type>const rj_msgs::msg::MotionSetpoint &amp;</type>
+          <declname>motion</declname>
+        </param>
+        <param>
+          <type>const rj_msgs::msg::ManipulatorSetpoint &amp;</type>
+          <declname>manipulator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="23" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="83" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classradio_1_1SimRadio_1ad0835ef848322b2090ef2d6d1400bdb7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::receive</definition>
+        <argsstring>() override</argsstring>
+        <name>receive</name>
+        <reimplements refid="classradio_1_1Radio_1a593bda460d56792b85243aed7299bb7c">receive</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="25" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classradio_1_1SimRadio_1acd79e4a1063b2cfc0084b57744b51e46" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::switch_team</definition>
+        <argsstring>(bool blue) override</argsstring>
+        <name>switch_team</name>
+        <reimplements refid="classradio_1_1Radio_1a0b79b9fa951b6cf2a91686d0802d4428">switch_team</reimplements>
+        <param>
+          <type>bool</type>
+          <declname>blue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="26" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="153" bodyend="175"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classradio_1_1SimRadio_1a6ad39639a4f91a37e3c431aff6287ecc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::stop_robots</definition>
+        <argsstring>()</argsstring>
+        <name>stop_robots</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="29" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="131" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classradio_1_1SimRadio_1afb24d7c7f739cca526b8b7e1d577ea6b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::handle_receive</definition>
+        <argsstring>(const std::string &amp;data)</argsstring>
+        <name>handle_receive</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="31" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="115" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classradio_1_1SimRadio_1a1c13d5db26fd889bc7137d1f293924c7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::start_receive</definition>
+        <argsstring>()</argsstring>
+        <name>start_receive</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="32" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="101" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classradio_1_1SimRadio_1ab6552eda3260c69a3a47f4c870740cde" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::receive_packet</definition>
+        <argsstring>(const boost::system::error_code &amp;error, size_t num_bytes)</argsstring>
+        <name>receive_packet</name>
+        <param>
+          <type>const boost::system::error_code &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>num_bytes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="33" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="109" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classradio_1_1SimRadio_1ae73f95b16fbca97b6cbd1fe7295cf12c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void radio::SimRadio::send_sim_command</definition>
+        <argsstring>(const SimulatorCommand &amp;cmd)</argsstring>
+        <name>send_sim_command</name>
+        <param>
+          <type>const SimulatorCommand &amp;</type>
+          <declname>cmd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="36" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="177" bodyend="184"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classradio_1_1Radio" kindref="compound">Radio</ref> IO with robots in the simulator. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Node</label>
+      </node>
+      <node id="1">
+        <label>radio::SimRadio</label>
+        <link refid="classradio_1_1SimRadio"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>radio::Radio</label>
+        <link refid="classradio_1_1Radio"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>Node</label>
+      </node>
+      <node id="1">
+        <label>radio::SimRadio</label>
+        <link refid="classradio_1_1SimRadio"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>radio::Radio</label>
+        <link refid="classradio_1_1Radio"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" line="18" column="28" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp" bodystart="18" bodyend="48"/>
+    <listofallmembers>
+      <member refid="classradio_1_1SimRadio_1ac67f6960c08cc0f4c8dbb84695c70552" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>blue_team_</name></member>
+      <member refid="classradio_1_1SimRadio_1a34a5a27dff46f51b684eb696e688a5b0" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>buffer_</name></member>
+      <member refid="classradio_1_1SimRadio_1afb24d7c7f739cca526b8b7e1d577ea6b" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>handle_receive</name></member>
+      <member refid="classradio_1_1SimRadio_1a37407c51c68e0045b0a79e694eb07e10" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>io_service_</name></member>
+      <member refid="classradio_1_1Radio_1a7b2d3fc1e7c2c209f511a8f5e5cbfeae" prot="protected" virt="non-virtual"><scope>radio::SimRadio</scope><name>publish</name></member>
+      <member refid="classradio_1_1Radio_1ac3e1d7aae5ec07015bb6c0d63e3da64d" prot="public" virt="non-virtual"><scope>radio::SimRadio</scope><name>Radio</name></member>
+      <member refid="classradio_1_1SimRadio_1ad0835ef848322b2090ef2d6d1400bdb7" prot="protected" virt="virtual"><scope>radio::SimRadio</scope><name>receive</name></member>
+      <member refid="classradio_1_1SimRadio_1ab6552eda3260c69a3a47f4c870740cde" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>receive_packet</name></member>
+      <member refid="classradio_1_1SimRadio_1a6a30ee2f76f2e6904e95267a14211372" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>robot_control_endpoint_</name></member>
+      <member refid="classradio_1_1SimRadio_1a307a9fd342988345eb91fd02698041a0" prot="protected" virt="virtual"><scope>radio::SimRadio</scope><name>send</name></member>
+      <member refid="classradio_1_1SimRadio_1ae73f95b16fbca97b6cbd1fe7295cf12c" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>send_sim_command</name></member>
+      <member refid="classradio_1_1SimRadio_1a7649ff20e5bc14a4b3d18b552e707b7a" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>sim_control_endpoint_</name></member>
+      <member refid="classradio_1_1SimRadio_1a343c4e1570364b4b56c08bf0e32f22fd" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>sim_placement_service_</name></member>
+      <member refid="classradio_1_1SimRadio_1a42b8039c160a7cdc0272a5fdfa4652f3" prot="public" virt="non-virtual"><scope>radio::SimRadio</scope><name>SimRadio</name></member>
+      <member refid="classradio_1_1SimRadio_1a09820e71ff0c9b87cf063ba86cc20156" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>socket_</name></member>
+      <member refid="classradio_1_1SimRadio_1a1c13d5db26fd889bc7137d1f293924c7" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>start_receive</name></member>
+      <member refid="classradio_1_1SimRadio_1a6ad39639a4f91a37e3c431aff6287ecc" prot="private" virt="non-virtual"><scope>radio::SimRadio</scope><name>stop_robots</name></member>
+      <member refid="classradio_1_1SimRadio_1acd79e4a1063b2cfc0084b57744b51e46" prot="protected" virt="virtual"><scope>radio::SimRadio</scope><name>switch_team</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

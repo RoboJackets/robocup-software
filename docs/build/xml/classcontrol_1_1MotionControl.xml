@@ -1,0 +1,378 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classcontrol_1_1MotionControl" kind="class" language="C++" prot="public">
+    <compoundname>control::MotionControl</compoundname>
+    <includes refid="motion__control_8hpp" local="no">motion_control.hpp</includes>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classcontrol_1_1MotionControl_1ad4ba9f2e7ead43a9653f2f7fbf3a985e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>friend class</type>
+        <definition>friend class testing::MotionControlTest</definition>
+        <argsstring></argsstring>
+        <name>testing::MotionControlTest</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="43" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1ad81f7959fdbc7dce510014fa1c225eb1" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int control::MotionControl::shell_id_</definition>
+        <argsstring></argsstring>
+        <name>shell_id_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="74" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1ae7b54dedbc482c4bd6502c0d311bdd6f" prot="private" static="no" mutable="no">
+        <type>rj_geometry::Twist</type>
+        <definition>rj_geometry::Twist control::MotionControl::last_world_vel_command_</definition>
+        <argsstring></argsstring>
+        <name>last_world_vel_command_</name>
+        <briefdescription>
+<para>The last velocity command (in m/s) that we sent / to the robot. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="77" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1a4fb13b050556cfac7c507627ea130a27" prot="private" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time control::MotionControl::last_cmd_time_</definition>
+        <argsstring></argsstring>
+        <name>last_cmd_time_</name>
+        <briefdescription>
+<para>the time when the last velocity command was sent </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="80" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1a5162aa80c647ca181871d1a1fdf13569" prot="private" static="no" mutable="no">
+        <type>Pid</type>
+        <definition>Pid control::MotionControl::position_x_controller_</definition>
+        <argsstring></argsstring>
+        <name>position_x_controller_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="82" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1af39b8b90ab10df54e6720af20bc90e12" prot="private" static="no" mutable="no">
+        <type>Pid</type>
+        <definition>Pid control::MotionControl::position_y_controller_</definition>
+        <argsstring></argsstring>
+        <name>position_y_controller_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="83" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1aacac2683b97855c0e2b5152fcc58e13a" prot="private" static="no" mutable="no">
+        <type>Pid</type>
+        <definition>Pid control::MotionControl::angle_controller_</definition>
+        <argsstring></argsstring>
+        <name>angle_controller_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="84" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1ae6ac54dd6da10bf421fb2fb7b05171a4" prot="private" static="no" mutable="no">
+        <type><ref refid="classrj__drawing_1_1RosDebugDrawer" kindref="compound">rj_drawing::RosDebugDrawer</ref></type>
+        <definition>rj_drawing::RosDebugDrawer control::MotionControl::drawer_</definition>
+        <argsstring></argsstring>
+        <name>drawer_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="86" column="32" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1a63f79ddaa4dfe5bd31852629c401b62a" prot="private" static="no" mutable="no">
+        <type>PlayState::State</type>
+        <definition>PlayState::State control::MotionControl::play_state_</definition>
+        <argsstring></argsstring>
+        <name>play_state_</name>
+        <initializer>= PlayState::State::Halt</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="88" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1a72f3582ad598246cb79f29d1fd3d5053" prot="private" static="no" mutable="no">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref></type>
+        <definition>planning::Trajectory control::MotionControl::trajectory_</definition>
+        <argsstring></argsstring>
+        <name>trajectory_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="90" column="26" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1ad74172cd5ab1dfe6255c41f62a323efb" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; planning::Trajectory::Msg &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;planning::Trajectory::Msg&gt;::SharedPtr control::MotionControl::trajectory_sub_</definition>
+        <argsstring></argsstring>
+        <name>trajectory_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="92" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1aa5996d71691408ac20ddb11e9c2df0c0" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; WorldState::Msg &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;WorldState::Msg&gt;::SharedPtr control::MotionControl::world_state_sub_</definition>
+        <argsstring></argsstring>
+        <name>world_state_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="93" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1ab24b533a99937effeedd1d911f88add9" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; PlayState::Msg &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;PlayState::Msg&gt;::SharedPtr control::MotionControl::play_state_sub_</definition>
+        <argsstring></argsstring>
+        <name>play_state_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="94" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1a96a6dd06e5b1fa2ffbb95b8b077d5923" prot="private" static="no" mutable="no">
+        <type>rclcpp::Publisher&lt; MotionSetpoint::Msg &gt;::SharedPtr</type>
+        <definition>rclcpp::Publisher&lt;MotionSetpoint::Msg&gt;::SharedPtr control::MotionControl::motion_setpoint_pub_</definition>
+        <argsstring></argsstring>
+        <name>motion_setpoint_pub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="95" column="35" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcontrol_1_1MotionControl_1adb3e43e8ace6f558548bcd06286f4f08" prot="private" static="no" mutable="no">
+        <type>rclcpp::Publisher&lt; RobotState::Msg &gt;::SharedPtr</type>
+        <definition>rclcpp::Publisher&lt;RobotState::Msg&gt;::SharedPtr control::MotionControl::target_state_pub_</definition>
+        <argsstring></argsstring>
+        <name>target_state_pub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="96" column="35" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcontrol_1_1MotionControl_1a47d3d3b65db7d86399978b4f74ae4ca7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::MotionControl::MotionControl</definition>
+        <argsstring>(int shell_id, rclcpp::Node *node)</argsstring>
+        <name>MotionControl</name>
+        <param>
+          <type>int</type>
+          <declname>shell_id</declname>
+        </param>
+        <param>
+          <type>rclcpp::Node *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="40" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" bodystart="41" bodyend="75"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classcontrol_1_1MotionControl_1a6bed0d92d0b6f625884a4320dab3fb1a" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void control::MotionControl::run</definition>
+        <argsstring>(const RobotState &amp;state, const planning::Trajectory &amp;trajectory, const PlayState::State &amp;play_state, bool is_joystick_controlled, MotionSetpoint *setpoint)</argsstring>
+        <name>run</name>
+        <param>
+          <type>const <ref refid="structRobotState" kindref="compound">RobotState</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref> &amp;</type>
+          <declname>trajectory</declname>
+        </param>
+        <param>
+          <type>const PlayState::State &amp;</type>
+          <declname>play_state</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>is_joystick_controlled</declname>
+        </param>
+        <param>
+          <type><ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> *</type>
+          <declname>setpoint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This runs PID control on the position and angle of the robot and sets values in the robot&apos;s radio_tx packet. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="49" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" bodystart="77" bodyend="168"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcontrol_1_1MotionControl_1a6db009b7292ed5c64b99184f8625eb29" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void control::MotionControl::stop</definition>
+        <argsstring>(MotionSetpoint *setpoint)</argsstring>
+        <name>stop</name>
+        <param>
+          <type><ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> *</type>
+          <declname>setpoint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Force stop the motion by setting the setpoint to zero. Also resets PID controllers. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>setpoint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="59" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" bodystart="217" bodyend="220"/>
+      </memberdef>
+      <memberdef kind="function" id="classcontrol_1_1MotionControl_1ad8804fe0c8ef0d571b85f460bdc931ef" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void control::MotionControl::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reset all PID controllers. To be used while the robot is not under PID control (stopped or joystick-controlled). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="65" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" bodystart="211" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="classcontrol_1_1MotionControl_1a0880c02aa95117caea494b3f2b8a6c02" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void control::MotionControl::update_params</definition>
+        <argsstring>()</argsstring>
+        <name>update_params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Update PID parameters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="70" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" bodystart="193" bodyend="209"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classcontrol_1_1MotionControl_1a95e2de6ee65fa008ea408b48ae3f7463" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void control::MotionControl::set_velocity</definition>
+        <argsstring>(MotionSetpoint *setpoint, rj_geometry::Twist target_vel)</argsstring>
+        <name>set_velocity</name>
+        <param>
+          <type><ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> *</type>
+          <declname>setpoint</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Twist</type>
+          <declname>target_vel</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="72" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" bodystart="170" bodyend="191"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Handles computer-side motion control. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class handles the details of creating velocity commands for a robot given the desired path to follow. </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="38" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" bodystart="38" bodyend="97"/>
+    <listofallmembers>
+      <member refid="classcontrol_1_1MotionControl_1aacac2683b97855c0e2b5152fcc58e13a" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>angle_controller_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1ae6ac54dd6da10bf421fb2fb7b05171a4" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>drawer_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a4fb13b050556cfac7c507627ea130a27" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>last_cmd_time_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1ae7b54dedbc482c4bd6502c0d311bdd6f" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>last_world_vel_command_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a96a6dd06e5b1fa2ffbb95b8b077d5923" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>motion_setpoint_pub_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a47d3d3b65db7d86399978b4f74ae4ca7" prot="public" virt="non-virtual"><scope>control::MotionControl</scope><name>MotionControl</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a63f79ddaa4dfe5bd31852629c401b62a" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>play_state_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1ab24b533a99937effeedd1d911f88add9" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>play_state_sub_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a5162aa80c647ca181871d1a1fdf13569" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>position_x_controller_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1af39b8b90ab10df54e6720af20bc90e12" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>position_y_controller_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1ad8804fe0c8ef0d571b85f460bdc931ef" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>reset</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a6bed0d92d0b6f625884a4320dab3fb1a" prot="protected" virt="non-virtual"><scope>control::MotionControl</scope><name>run</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a95e2de6ee65fa008ea408b48ae3f7463" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>set_velocity</name></member>
+      <member refid="classcontrol_1_1MotionControl_1ad81f7959fdbc7dce510014fa1c225eb1" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>shell_id_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a6db009b7292ed5c64b99184f8625eb29" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>stop</name></member>
+      <member refid="classcontrol_1_1MotionControl_1adb3e43e8ace6f558548bcd06286f4f08" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>target_state_pub_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1ad4ba9f2e7ead43a9653f2f7fbf3a985e" prot="public" virt="non-virtual"><scope>control::MotionControl</scope><name>testing::MotionControlTest</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a72f3582ad598246cb79f29d1fd3d5053" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>trajectory_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1ad74172cd5ab1dfe6255c41f62a323efb" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>trajectory_sub_</name></member>
+      <member refid="classcontrol_1_1MotionControl_1a0880c02aa95117caea494b3f2b8a6c02" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>update_params</name></member>
+      <member refid="classcontrol_1_1MotionControl_1aa5996d71691408ac20ddb11e9c2df0c0" prot="private" virt="non-virtual"><scope>control::MotionControl</scope><name>world_state_sub_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

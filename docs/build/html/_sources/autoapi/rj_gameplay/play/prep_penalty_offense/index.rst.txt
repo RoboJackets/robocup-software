@@ -1,0 +1,35 @@
+:py:mod:`rj_gameplay.play.prep_penalty_offense`
+===============================================
+
+.. py:module:: rj_gameplay.play.prep_penalty_offense
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.play.prep_penalty_offense.PreparePenaltyOffense
+
+
+
+
+.. py:class:: PreparePenaltyOffense
+
+   Bases: :py:obj:`stp.play.IPlay`
+
+   Move all robots to our half, but away from ball to prep for penalty kick
+
+   .. py:method:: compute_props(self, prev_props)
+
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState, prev_results: stp.role.assignment.FlatRoleResults, props) -> Tuple[Dict[PreparePenaltyOffense.tick.tactic, List[stp.role.RoleResult]], List[PreparePenaltyOffense.tick.tactic]]
+
+
+   .. py:method:: is_done(self, world_state)
+
+
+

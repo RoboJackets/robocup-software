@@ -1,0 +1,93 @@
+:py:mod:`test_typed_key_dict`
+=============================
+
+.. py:module:: test_typed_key_dict
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   test_typed_key_dict.Interface
+   test_typed_key_dict.ConcreteA
+   test_typed_key_dict.ConcreteB
+   test_typed_key_dict.Key
+   test_typed_key_dict.TKDictFixture
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   test_typed_key_dict.test_tkdict_get_set
+   test_typed_key_dict.test_tkdict_get_wrong_type
+   test_typed_key_dict.test_tkdict_in_len
+   test_typed_key_dict.test_tkdict_del_len
+   test_typed_key_dict.test_tkdict_keys_values_items
+
+
+
+.. py:class:: Interface(name: str)
+
+   .. py:method:: __eq__(self, other) -> bool
+
+      Return self==value.
+
+
+
+.. py:class:: ConcreteA(name: str)
+
+   Bases: :py:obj:`Interface`
+
+
+.. py:class:: ConcreteB(name: str)
+
+   Bases: :py:obj:`Interface`
+
+
+.. py:class:: Key(str_val: str, cls: Type[stp.utils.typed_key_dict.ValueConcreteT])
+
+   Bases: :py:obj:`stp.utils.typed_key_dict.TypedKey`\ [\ :py:obj:`stp.utils.typed_key_dict.ValueConcreteT`\ ]
+
+   .. py:method:: __eq__(self, other) -> bool
+
+
+   .. py:method:: __hash__(self) -> int
+
+
+
+.. py:class:: TKDictFixture
+
+
+.. py:function:: test_tkdict_get_set() -> None
+
+   Tests that __getitem__ and __setitem__ work properly.
+
+
+.. py:function:: test_tkdict_get_wrong_type() -> None
+
+   Check that using a key that hashes to the same value but has a different
+   concrete type results in an exception.
+
+
+.. py:function:: test_tkdict_in_len()
+
+   Check that __contains__ and __len__ works.
+
+
+.. py:function:: test_tkdict_del_len()
+
+   Check that __del__ works.
+
+
+.. py:function:: test_tkdict_keys_values_items()
+
+   Checks that .keys(), .values() and .items() work as expected.
+
+

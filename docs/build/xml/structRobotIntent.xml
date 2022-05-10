@@ -1,0 +1,209 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structRobotIntent" kind="struct" language="C++" prot="public">
+    <compoundname>RobotIntent</compoundname>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="structRobotIntent_1ae0b8a923dabbc562cabf34c52af67693" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>ShootMode</name>
+        <enumvalue id="structRobotIntent_1ae0b8a923dabbc562cabf34c52af67693a959a795d5524bd9054026703a33afb87" prot="public">
+          <name>KICK</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="structRobotIntent_1ae0b8a923dabbc562cabf34c52af67693aed8e8497a6a4c2315790d3d56b7c5065" prot="public">
+          <name>CHIP</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="13" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="13" bodyend="13"/>
+      </memberdef>
+      <memberdef kind="enum" id="structRobotIntent_1a774abba98b640977e600ab93c4edb2ee" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>TriggerMode</name>
+        <enumvalue id="structRobotIntent_1a774abba98b640977e600ab93c4edb2eeac7bf028d37054533855edd06e2b5b7f0" prot="public">
+          <name>STAND_DOWN</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="structRobotIntent_1a774abba98b640977e600ab93c4edb2eeae35884a2445bc4ae2df52f188763273c" prot="public">
+          <name>IMMEDIATE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="structRobotIntent_1a774abba98b640977e600ab93c4edb2eea598ede1949779cf3e676be14959e470c" prot="public">
+          <name>ON_BREAK_BEAM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="14" column="27" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="14" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="typedef" id="structRobotIntent_1af96a2d36a3a68175f5fb4daea0eecc31" prot="public" static="no">
+        <type>rj_msgs::msg::RobotIntent</type>
+        <definition>using RobotIntent::Msg =  rj_msgs::msg::RobotIntent</definition>
+        <argsstring></argsstring>
+        <name>Msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="12" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structRobotIntent_1ab73e06820f27271b42e84e4d9923c18f" prot="public" static="no" mutable="no">
+        <type>planning::MotionCommand</type>
+        <definition>planning::MotionCommand RobotIntent::motion_command</definition>
+        <argsstring></argsstring>
+        <name>motion_command</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="16" column="29" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structRobotIntent_1a60381ceca9e6a5d4fc5a8005eae5ffbf" prot="public" static="no" mutable="no">
+        <type>rj_geometry::ShapeSet</type>
+        <definition>rj_geometry::ShapeSet RobotIntent::local_obstacles</definition>
+        <argsstring></argsstring>
+        <name>local_obstacles</name>
+        <briefdescription>
+<para>Set of obstacles added by plays. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="19" column="27" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structRobotIntent_1a3160b5f3bbb9b721f4f7108882dd115a" prot="public" static="no" mutable="no">
+        <type>ShootMode</type>
+        <definition>ShootMode RobotIntent::shoot_mode</definition>
+        <argsstring></argsstring>
+        <name>shoot_mode</name>
+        <initializer>= ShootMode::KICK</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="21" column="15" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structRobotIntent_1a2366215e70ef9ac542cb2091470cac09" prot="public" static="no" mutable="no">
+        <type>TriggerMode</type>
+        <definition>TriggerMode RobotIntent::trigger_mode</definition>
+        <argsstring></argsstring>
+        <name>trigger_mode</name>
+        <initializer>= TriggerMode::STAND_DOWN</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="22" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structRobotIntent_1acdd97fe8330f0ee6a064340a593e19ad" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float RobotIntent::kick_speed</definition>
+        <argsstring></argsstring>
+        <name>kick_speed</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="23" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structRobotIntent_1a46251b32801e8424c79d208563d59b77" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float RobotIntent::dribbler_speed</definition>
+        <argsstring></argsstring>
+        <name>dribbler_speed</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="24" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structRobotIntent_1aab5c594d901d4e6e77c08ae84f9a6b59" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool RobotIntent::is_active</definition>
+        <argsstring></argsstring>
+        <name>is_active</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="26" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structRobotIntent_1a7ca4a1ef1695d84fd25962cef45db01e" prot="public" static="no" mutable="no">
+        <type>int8_t</type>
+        <definition>int8_t RobotIntent::priority</definition>
+        <argsstring></argsstring>
+        <name>priority</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="28" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="11" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="11" bodyend="29"/>
+    <listofallmembers>
+      <member refid="structRobotIntent_1a46251b32801e8424c79d208563d59b77" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>dribbler_speed</name></member>
+      <member refid="structRobotIntent_1aab5c594d901d4e6e77c08ae84f9a6b59" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>is_active</name></member>
+      <member refid="structRobotIntent_1acdd97fe8330f0ee6a064340a593e19ad" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>kick_speed</name></member>
+      <member refid="structRobotIntent_1a60381ceca9e6a5d4fc5a8005eae5ffbf" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>local_obstacles</name></member>
+      <member refid="structRobotIntent_1ab73e06820f27271b42e84e4d9923c18f" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>motion_command</name></member>
+      <member refid="structRobotIntent_1af96a2d36a3a68175f5fb4daea0eecc31" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>Msg</name></member>
+      <member refid="structRobotIntent_1a7ca4a1ef1695d84fd25962cef45db01e" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>priority</name></member>
+      <member refid="structRobotIntent_1a3160b5f3bbb9b721f4f7108882dd115a" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>shoot_mode</name></member>
+      <member refid="structRobotIntent_1ae0b8a923dabbc562cabf34c52af67693" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>ShootMode</name></member>
+      <member refid="structRobotIntent_1a2366215e70ef9ac542cb2091470cac09" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>trigger_mode</name></member>
+      <member refid="structRobotIntent_1a774abba98b640977e600ab93c4edb2ee" prot="public" virt="non-virtual"><scope>RobotIntent</scope><name>TriggerMode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

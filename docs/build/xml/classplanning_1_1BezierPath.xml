@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classplanning_1_1BezierPath" kind="class" language="C++" prot="public">
+    <compoundname>planning::BezierPath</compoundname>
+    <includes refid="path__smoothing_8hpp" local="no">path_smoothing.hpp</includes>
+    <innerclass refid="structplanning_1_1BezierPath_1_1CubicBezierControlPoints" prot="public">planning::BezierPath::CubicBezierControlPoints</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classplanning_1_1BezierPath_1a340260a0b1ef920dee93120dd0e6fb64" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structplanning_1_1BezierPath_1_1CubicBezierControlPoints" kindref="compound">CubicBezierControlPoints</ref> &gt;</type>
+        <definition>std::vector&lt;CubicBezierControlPoints&gt; planning::BezierPath::control_</definition>
+        <argsstring></argsstring>
+        <name>control_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" line="70" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classplanning_1_1BezierPath_1ae5f4363879466eb070774b22c7d0eb14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::BezierPath::BezierPath</definition>
+        <argsstring>(const std::vector&lt; rj_geometry::Point &gt; &amp;points, rj_geometry::Point vi, rj_geometry::Point vf, MotionConstraints motion_constraints)</argsstring>
+        <name>BezierPath</name>
+        <param>
+          <type>const std::vector&lt; rj_geometry::Point &gt; &amp;</type>
+          <declname>points</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>vi</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>vf</declname>
+        </param>
+        <param>
+          <type><ref refid="structplanning_1_1MotionConstraints" kindref="compound">MotionConstraints</ref></type>
+          <declname>motion_constraints</declname>
+        </param>
+        <briefdescription>
+<para>Construct a bezier path for a curve with a given velocity, going through the specified points and with specified velocity at endpoints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>points</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The points through which the final curve must pass. These will be used as the endpoints for consecutive Bezier segments. In total there will be points.size() - 1 curves. This must not be empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vi</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The initial velocity, used as a tangent for the first curve. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The final velocity, used as a tangent for the last curve. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>motion_constraints</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Linear constraints for motion. These are used to approximate the time between control points, which is later used to match up tangent vectors (approximately) with velocities. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" line="28" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.cpp" bodystart="126" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1BezierPath_1a7bc7c59c735b81b7a04979e8be000f22" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::BezierPath::evaluate</definition>
+        <argsstring>(double s, rj_geometry::Point *position=nullptr, rj_geometry::Point *tangent=nullptr, double *curvature=nullptr) const</argsstring>
+        <name>evaluate</name>
+        <param>
+          <type>double</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point *</type>
+          <declname>position</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>rj_geometry::Point *</type>
+          <declname>tangent</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>curvature</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the path at a particular instant drawn from [0, 1]. Calculates only those values requested (by passing in a non-null pointer). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index to sample along, in the range of [0, 1]. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>position</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output parameter for the position at s, if non-null. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tangent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output parameter for the tangent vector at s, if non-null. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>curvature</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output parameter for the curvature at s, if non-null. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" line="42" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.cpp" bodystart="177" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1BezierPath_1a75c9fc05b47ba2a4428a8e5ce8b5b743" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::BezierPath::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <briefdescription>
+<para>Whether or not this curve is empty. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" line="49" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" bodystart="49" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classplanning_1_1BezierPath_1af8366bb34e7c50207e63a8cfe51a4156" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int planning::BezierPath::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>The number of cubic segments in this Bezier curve. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" line="54" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" bodystart="54" bodyend="54"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A spatial path with no time or angle information. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" line="12" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.hpp" bodystart="12" bodyend="71"/>
+    <listofallmembers>
+      <member refid="classplanning_1_1BezierPath_1ae5f4363879466eb070774b22c7d0eb14" prot="public" virt="non-virtual"><scope>planning::BezierPath</scope><name>BezierPath</name></member>
+      <member refid="classplanning_1_1BezierPath_1a340260a0b1ef920dee93120dd0e6fb64" prot="private" virt="non-virtual"><scope>planning::BezierPath</scope><name>control_</name></member>
+      <member refid="classplanning_1_1BezierPath_1a75c9fc05b47ba2a4428a8e5ce8b5b743" prot="public" virt="non-virtual"><scope>planning::BezierPath</scope><name>empty</name></member>
+      <member refid="classplanning_1_1BezierPath_1a7bc7c59c735b81b7a04979e8be000f22" prot="public" virt="non-virtual"><scope>planning::BezierPath</scope><name>evaluate</name></member>
+      <member refid="classplanning_1_1BezierPath_1af8366bb34e7c50207e63a8cfe51a4156" prot="public" virt="non-virtual"><scope>planning::BezierPath</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

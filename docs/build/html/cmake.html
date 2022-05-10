@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; RJ RC Software  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> RJ RC Software
+            <img src="_static/RoboBuzz.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#running-the-first-time">Running The First Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#running-again">Running Again</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="our_stack.html">Our Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#ros2">ROS2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#vision">Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#gameplay">Gameplay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#motion-planning">Motion Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#radio">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#referee">Referee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#ui">UI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#code">Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#docs">Docs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="meta_docs.html">Meta-Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="meta_docs.html#log">Log</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/setup/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">setup</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/setup/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/setup/index.html#setup.PACKAGE_NAME">PACKAGE_NAME</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_rc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_rc</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_rc/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_rc/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_pass_or_shoot/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_pass_or_shoot</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_pass_or_shoot/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_pass_or_shoot/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_tactic</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_tactic/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_tactic/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_tactic/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_play</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_play/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_play/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_play/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_skill</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_skill/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_skill/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_skill/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_cost/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_cost</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_cost/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_cost/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_naive_assignment/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_naive_assignment</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_naive_assignment/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_naive_assignment/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_naive_assignment/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_typed_key_dict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/test_typed_key_dict/index.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/rj_gameplay/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/rj_gameplay/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/eval/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.eval</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.play</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/role/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/situation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.situation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.skill</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.tactic</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/rj_gameplay/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/basic_play_selector/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.basic_play_selector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/rj_gameplay/gameplay_node/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rj_gameplay.gameplay_node</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/wall_calculations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">wall_calculations</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/wall_calculations/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/wall_calculations/index.html#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/wall_calculations/index.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/ball_classifier/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ball_classifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ball_classifier/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/ball_classifier/index.html#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/ball_classifier/index.html#attributes">Attributes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/stp/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/stp/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/action/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.action</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/formations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.formations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/play/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.play</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/role/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/situation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.situation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/skill/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.skill</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/tactic/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.tactic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/stp/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/global_parameters/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.global_parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/local_parameters/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.local_parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/pylint_stp/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.pylint_stp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/rc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.rc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/stp/testing/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stp.testing</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RJ RC Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cmake.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It’s been mentioned (as of 5/17/2022) that this section is no longer
+up-to-date. Use these instructions as a rough guide.</p>
+</div>
+<div class="section" id="codebase">
+<h2>Codebase<a class="headerlink" href="#codebase" title="Permalink to this headline"></a></h2>
+</div>
+<div class="section" id="clion-setup">
+<h2>CLion Setup<a class="headerlink" href="#clion-setup" title="Permalink to this headline"></a></h2>
+<p>We strongly recommend that users use <a class="reference external" href="https://www.jetbrains.com/clion/">CLion</a>, which Jetbrains offers for free through their university programs.
+Apply for it <a class="reference external" href="https://www.jetbrains.com/shop/eform/students">here</a>.</p>
+<div class="section" id="getting-clion">
+<h3>Getting CLion<a class="headerlink" href="#getting-clion" title="Permalink to this headline"></a></h3>
+<p>Download the <a class="reference external" href="https://www.jetbrains.com/toolbox-app/">Jetbrains toolbox</a>. From there, install the latest version of CLion.</p>
+</div>
+<div class="section" id="opening-the-project-in-clion">
+<h3>Opening the project in CLion<a class="headerlink" href="#opening-the-project-in-clion" title="Permalink to this headline"></a></h3>
+<p>Open up CLion. Click <strong>Open or Import</strong>, and then select the <strong>robocup-software</strong> folder.
+An editor should pop up, with the <strong>cmake</strong> tab showing a bunch of errors. Don’t worry, this to be expected.</p>
+<p>To fix this, we need to tell CLion about where ROS is.</p>
+<p>Go to <strong>File -&gt; Settings -&gt; Build, Execution, Deployment -&gt; CMake -&gt; Environment</strong> and paste the below in that textbox:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AMENT_PREFIX_PATH</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">ros</span><span class="o">/</span><span class="n">foxy</span><span class="p">;</span><span class="n">AMENT_CURRENT_PATH</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">ros</span><span class="o">/</span><span class="n">foxy</span><span class="p">;</span><span class="n">ROS_DISTRO</span><span class="o">=</span><span class="n">foxy</span><span class="p">;</span><span class="n">ROS_VERSION</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="n">ROS_PYTHON_VERSION</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span><span class="n">PYTHONPATH</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">ros</span><span class="o">/</span><span class="n">foxy</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">8</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="p">;</span><span class="n">CMAKE_PREFIX_PATH</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">ros</span><span class="o">/</span><span class="n">foxy</span><span class="p">;</span><span class="n">PATH</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">ros</span><span class="o">/</span><span class="n">foxy</span><span class="o">/</span><span class="nb">bin</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">sbin</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="p">:</span><span class="o">/</span><span class="n">sbin</span><span class="p">:</span><span class="o">/</span><span class="nb">bin</span>
+</pre></div>
+</div>
+<p>Next, on the same page, paste the below in the <strong>CMake Options</strong> textbox:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=../</span><span class="n">install</span>
+</pre></div>
+</div>
+<p>Close the settings menu, and click the <strong>CMake</strong> tab on the bottom.
+On the left, there should be a “refresh” symbol. There should now be no errors.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Kevin Fu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

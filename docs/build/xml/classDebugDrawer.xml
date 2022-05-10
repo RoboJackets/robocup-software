@@ -1,0 +1,525 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classDebugDrawer" kind="class" language="C++" prot="public">
+    <compoundname>DebugDrawer</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classDebugDrawer_1aa68018530517718800929517ac43358f" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int DebugDrawer::num_debug_layers_</definition>
+        <argsstring></argsstring>
+        <name>num_debug_layers_</name>
+        <briefdescription>
+<para>Number of debug layers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="109" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classDebugDrawer_1a638ab7778fb87d2474a81af5071575e0" prot="private" static="no" mutable="no">
+        <type>QMap&lt; QString, int &gt;</type>
+        <definition>QMap&lt;QString, int&gt; DebugDrawer::debug_layer_map_</definition>
+        <argsstring></argsstring>
+        <name>debug_layer_map_</name>
+        <briefdescription>
+<para>Map from debug layer name to ID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="112" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classDebugDrawer_1a6daa27669b28a2f7c832730f064eec12" prot="private" static="no" mutable="no">
+        <type>QStringList</type>
+        <definition>QStringList DebugDrawer::debug_layers_</definition>
+        <argsstring></argsstring>
+        <name>debug_layers_</name>
+        <briefdescription>
+<para>Debug layers in order by ID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="115" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classDebugDrawer_1a5b83a5f2c36dccc02f07a90eb77f6f2d" prot="private" static="no" mutable="no">
+        <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+        <definition>Context* DebugDrawer::context_</definition>
+        <argsstring></argsstring>
+        <name>context_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="117" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classDebugDrawer_1a50ce5a06f9df23d868f8b8f5cc160e3a" prot="private" static="no" mutable="no">
+        <type>Packet::LogFrame</type>
+        <definition>Packet::LogFrame DebugDrawer::log_frame_</definition>
+        <argsstring></argsstring>
+        <name>log_frame_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="122" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classDebugDrawer_1a8e6fb7861173934b81ab53362d3d5386" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DebugDrawer::DebugDrawer</definition>
+        <argsstring>(Context *context)</argsstring>
+        <name>DebugDrawer</name>
+        <param>
+          <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="21" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="21" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a86d33d4e4561345dcf7bfff3b8f687fd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const QStringList &amp;</type>
+        <definition>const QStringList&amp; DebugDrawer::debug_layers</definition>
+        <argsstring>() const</argsstring>
+        <name>debug_layers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="25" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="25" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a49c41af0ba8514fa4c1b2ba555b25646" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DebugDrawer::find_debug_layer</definition>
+        <argsstring>(QString layer)</argsstring>
+        <name>find_debug_layer</name>
+        <param>
+          <type>QString</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Returns the number of a debug layer given its name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="28" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="5" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a8fbfcf845ecaff94ef26e1680d855df7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_polygon</definition>
+        <argsstring>(const rj_geometry::Point *pts, int n, const QColor &amp;qc=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_polygon</name>
+        <param>
+          <type>const rj_geometry::Point *</type>
+          <declname>pts</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qc</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="31" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="22" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a979b38d24ae42567a2c643f845a1aa22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_polygon</definition>
+        <argsstring>(const std::vector&lt; rj_geometry::Point &gt; &amp;pts, const QColor &amp;qc=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_polygon</name>
+        <param>
+          <type>const std::vector&lt; rj_geometry::Point &gt; &amp;</type>
+          <declname>pts</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qc</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="36" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="32" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a425d50dfbd544c2649a1ea5e6e48b2d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_polygon</definition>
+        <argsstring>(const rj_geometry::Polygon &amp;pts, const QColor &amp;qc=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_polygon</name>
+        <param>
+          <type>const rj_geometry::Polygon &amp;</type>
+          <declname>pts</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qc</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="41" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="37" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a66efec0014c3c1d8398c47cf6f87a7f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_circle</definition>
+        <argsstring>(rj_geometry::Point center, float radius, const QColor &amp;qc=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_circle</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>center</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>radius</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qc</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="46" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="42" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1ad7120962b53e3f99aa788f8daa148b9a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_arc</definition>
+        <argsstring>(const rj_geometry::Arc &amp;arc, const QColor &amp;qw=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_arc</name>
+        <param>
+          <type>const rj_geometry::Arc &amp;</type>
+          <declname>arc</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qw</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="51" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="51" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a7a1be63304cb8e8a382512aad160d096" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_shape</definition>
+        <argsstring>(const std::shared_ptr&lt; rj_geometry::Shape &gt; &amp;obs, const QColor &amp;qw=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_shape</name>
+        <param>
+          <type>const std::shared_ptr&lt; rj_geometry::Shape &gt; &amp;</type>
+          <declname>obs</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qw</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="55" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="61" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a174fdb6e09672febaa2998e9b5c7f957" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_shape_set</definition>
+        <argsstring>(const rj_geometry::ShapeSet &amp;shapes, const QColor &amp;qw=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_shape_set</name>
+        <param>
+          <type>const rj_geometry::ShapeSet &amp;</type>
+          <declname>shapes</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qw</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="60" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="87" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a7f73af00d4d294c5200a3b4ac724f8ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_line</definition>
+        <argsstring>(const rj_geometry::Segment &amp;line, const QColor &amp;qw=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_line</name>
+        <param>
+          <type>const rj_geometry::Segment &amp;</type>
+          <declname>line</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qw</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="65" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="94" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1af6ffee6d06f6da55c056ef18e3ab0ddd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_line</definition>
+        <argsstring>(rj_geometry::Point p0, rj_geometry::Point p1, const QColor &amp;qw=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_line</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>p0</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qw</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="69" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="103" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a74f135bda9eb9ef0d930d7f072bf4785" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_text</definition>
+        <argsstring>(const QString &amp;text, rj_geometry::Point pos, const QColor &amp;qw=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_text</name>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>text</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>pos</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qw</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="74" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="108" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a9d265b8f9df0bb470d84482a250b2144" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::draw_segment</definition>
+        <argsstring>(const rj_geometry::Segment &amp;line, const QColor &amp;qw=Qt::black, const QString &amp;layer=QString())</argsstring>
+        <name>draw_segment</name>
+        <param>
+          <type>const rj_geometry::Segment &amp;</type>
+          <declname>line</declname>
+        </param>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>qw</declname>
+          <defval>Qt::black</defval>
+        </param>
+        <param>
+          <type>const QString &amp;</type>
+          <declname>layer</declname>
+          <defval>QString()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="79" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp" bodystart="117" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a68bd2bdd9085a2c4e26521f1e977e011" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::fill_log_frame</definition>
+        <argsstring>(Packet::LogFrame *log_frame)</argsstring>
+        <name>fill_log_frame</name>
+        <param>
+          <type>Packet::LogFrame *</type>
+          <declname>log_frame</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fill the given log frame with the current debug drawing information, and reset our current debug drawing data for the next cycle.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>log_frame</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="89" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="89" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugDrawer_1a68abc1557a2290fc1ec2a733a7097f0b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>Packet::DebugRobotPath *</type>
+        <definition>Packet::DebugRobotPath* DebugDrawer::add_debug_path</definition>
+        <argsstring>()</argsstring>
+        <name>add_debug_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Helper pass-through method to create a new debug path. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="97" column="28" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="97" bodyend="99"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classDebugDrawer_1a83e89aa418281ef66c9e13c0f08ff531" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DebugDrawer::reset_log_frame</definition>
+        <argsstring>()</argsstring>
+        <name>reset_log_frame</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="102" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="102" bodyend="107"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" line="19" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.hpp" bodystart="19" bodyend="123"/>
+    <listofallmembers>
+      <member refid="classDebugDrawer_1a68abc1557a2290fc1ec2a733a7097f0b" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>add_debug_path</name></member>
+      <member refid="classDebugDrawer_1a5b83a5f2c36dccc02f07a90eb77f6f2d" prot="private" virt="non-virtual"><scope>DebugDrawer</scope><name>context_</name></member>
+      <member refid="classDebugDrawer_1a638ab7778fb87d2474a81af5071575e0" prot="private" virt="non-virtual"><scope>DebugDrawer</scope><name>debug_layer_map_</name></member>
+      <member refid="classDebugDrawer_1a86d33d4e4561345dcf7bfff3b8f687fd" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>debug_layers</name></member>
+      <member refid="classDebugDrawer_1a6daa27669b28a2f7c832730f064eec12" prot="private" virt="non-virtual"><scope>DebugDrawer</scope><name>debug_layers_</name></member>
+      <member refid="classDebugDrawer_1a8e6fb7861173934b81ab53362d3d5386" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>DebugDrawer</name></member>
+      <member refid="classDebugDrawer_1ad7120962b53e3f99aa788f8daa148b9a" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_arc</name></member>
+      <member refid="classDebugDrawer_1a66efec0014c3c1d8398c47cf6f87a7f9" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_circle</name></member>
+      <member refid="classDebugDrawer_1a7f73af00d4d294c5200a3b4ac724f8ce" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_line</name></member>
+      <member refid="classDebugDrawer_1af6ffee6d06f6da55c056ef18e3ab0ddd" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_line</name></member>
+      <member refid="classDebugDrawer_1a8fbfcf845ecaff94ef26e1680d855df7" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_polygon</name></member>
+      <member refid="classDebugDrawer_1a979b38d24ae42567a2c643f845a1aa22" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_polygon</name></member>
+      <member refid="classDebugDrawer_1a425d50dfbd544c2649a1ea5e6e48b2d8" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_polygon</name></member>
+      <member refid="classDebugDrawer_1a9d265b8f9df0bb470d84482a250b2144" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_segment</name></member>
+      <member refid="classDebugDrawer_1a7a1be63304cb8e8a382512aad160d096" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_shape</name></member>
+      <member refid="classDebugDrawer_1a174fdb6e09672febaa2998e9b5c7f957" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_shape_set</name></member>
+      <member refid="classDebugDrawer_1a74f135bda9eb9ef0d930d7f072bf4785" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>draw_text</name></member>
+      <member refid="classDebugDrawer_1a68bd2bdd9085a2c4e26521f1e977e011" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>fill_log_frame</name></member>
+      <member refid="classDebugDrawer_1a49c41af0ba8514fa4c1b2ba555b25646" prot="public" virt="non-virtual"><scope>DebugDrawer</scope><name>find_debug_layer</name></member>
+      <member refid="classDebugDrawer_1a50ce5a06f9df23d868f8b8f5cc160e3a" prot="private" virt="non-virtual"><scope>DebugDrawer</scope><name>log_frame_</name></member>
+      <member refid="classDebugDrawer_1aa68018530517718800929517ac43358f" prot="private" virt="non-virtual"><scope>DebugDrawer</scope><name>num_debug_layers_</name></member>
+      <member refid="classDebugDrawer_1a83e89aa418281ef66c9e13c0f08ff531" prot="private" virt="non-virtual"><scope>DebugDrawer</scope><name>reset_log_frame</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

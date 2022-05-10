@@ -1,0 +1,23 @@
+API Reference
+=============
+
+This page contains auto-generated API reference documentation [#f1]_.
+
+.. toctree::
+   :titlesonly:
+
+   /autoapi/setup/index
+   /autoapi/test_rc/index
+   /autoapi/test_pass_or_shoot/index
+   /autoapi/test_tactic/index
+   /autoapi/test_play/index
+   /autoapi/test_skill/index
+   /autoapi/test_cost/index
+   /autoapi/test_naive_assignment/index
+   /autoapi/test_typed_key_dict/index
+   /autoapi/rj_gameplay/index
+   /autoapi/wall_calculations/index
+   /autoapi/ball_classifier/index
+   /autoapi/stp/index
+
+.. [#f1] Created with `sphinx-autoapi <https://github.com/readthedocs/sphinx-autoapi>`_

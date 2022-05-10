@@ -1,0 +1,3338 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceplanning" kind="namespace" language="C++">
+    <compoundname>planning</compoundname>
+    <innerclass refid="classplanning_1_1BezierPath" prot="public">planning::BezierPath</innerclass>
+    <innerclass refid="structplanning_1_1CollectCommand" prot="public">planning::CollectCommand</innerclass>
+    <innerclass refid="classplanning_1_1CollectPlanner" prot="public">planning::CollectPlanner</innerclass>
+    <innerclass refid="structplanning_1_1DynamicObstacle" prot="public">planning::DynamicObstacle</innerclass>
+    <innerclass refid="structplanning_1_1EmptyAngleCommand" prot="public">planning::EmptyAngleCommand</innerclass>
+    <innerclass refid="structplanning_1_1EmptyCommand" prot="public">planning::EmptyCommand</innerclass>
+    <innerclass refid="classplanning_1_1EscapeObstaclesPathPlanner" prot="public">planning::EscapeObstaclesPathPlanner</innerclass>
+    <innerclass refid="structplanning_1_1FaceAngleCommand" prot="public">planning::FaceAngleCommand</innerclass>
+    <innerclass refid="structplanning_1_1FacePointCommand" prot="public">planning::FacePointCommand</innerclass>
+    <innerclass refid="structplanning_1_1InterceptCommand" prot="public">planning::InterceptCommand</innerclass>
+    <innerclass refid="classplanning_1_1InterceptPlanner" prot="public">planning::InterceptPlanner</innerclass>
+    <innerclass refid="structplanning_1_1LinearMotionInstant" prot="public">planning::LinearMotionInstant</innerclass>
+    <innerclass refid="structplanning_1_1LineKickCommand" prot="public">planning::LineKickCommand</innerclass>
+    <innerclass refid="classplanning_1_1LineKickPlanner" prot="public">planning::LineKickPlanner</innerclass>
+    <innerclass refid="structplanning_1_1MotionConstraints" prot="public">planning::MotionConstraints</innerclass>
+    <innerclass refid="structplanning_1_1PathTargetCommand" prot="public">planning::PathTargetCommand</innerclass>
+    <innerclass refid="classplanning_1_1PathTargetPlanner" prot="public">planning::PathTargetPlanner</innerclass>
+    <innerclass refid="structplanning_1_1PivotCommand" prot="public">planning::PivotCommand</innerclass>
+    <innerclass refid="classplanning_1_1PivotPathPlanner" prot="public">planning::PivotPathPlanner</innerclass>
+    <innerclass refid="classplanning_1_1Planner" prot="public">planning::Planner</innerclass>
+    <innerclass refid="classplanning_1_1PlannerForCommandType" prot="public">planning::PlannerForCommandType</innerclass>
+    <innerclass refid="classplanning_1_1PlannerForRobot" prot="public">planning::PlannerForRobot</innerclass>
+    <innerclass refid="classplanning_1_1PlannerNode" prot="public">planning::PlannerNode</innerclass>
+    <innerclass refid="structplanning_1_1PlanRequest" prot="public">planning::PlanRequest</innerclass>
+    <innerclass refid="classplanning_1_1Replanner" prot="public">planning::Replanner</innerclass>
+    <innerclass refid="classplanning_1_1RoboCupStateSpace" prot="public">planning::RoboCupStateSpace</innerclass>
+    <innerclass refid="structplanning_1_1RobotConstraints" prot="public">planning::RobotConstraints</innerclass>
+    <innerclass refid="structplanning_1_1RobotInstant" prot="public">planning::RobotInstant</innerclass>
+    <innerclass refid="structplanning_1_1RotationCommand" prot="public">planning::RotationCommand</innerclass>
+    <innerclass refid="structplanning_1_1RotationConstraints" prot="public">planning::RotationConstraints</innerclass>
+    <innerclass refid="structplanning_1_1SettleCommand" prot="public">planning::SettleCommand</innerclass>
+    <innerclass refid="classplanning_1_1SettlePlanner" prot="public">planning::SettlePlanner</innerclass>
+    <innerclass refid="classplanning_1_1SharedStateInfo" prot="public">planning::SharedStateInfo</innerclass>
+    <innerclass refid="structplanning_1_1TargetFaceAngle" prot="public">planning::TargetFaceAngle</innerclass>
+    <innerclass refid="structplanning_1_1TargetFacePoint" prot="public">planning::TargetFacePoint</innerclass>
+    <innerclass refid="structplanning_1_1TargetFaceTangent" prot="public">planning::TargetFaceTangent</innerclass>
+    <innerclass refid="classplanning_1_1Trajectory" prot="public">planning::Trajectory</innerclass>
+    <innerclass refid="classplanning_1_1TrajectoryCollection" prot="public">planning::TrajectoryCollection</innerclass>
+    <innerclass refid="structplanning_1_1WorldVelCommand" prot="public">planning::WorldVelCommand</innerclass>
+    <innernamespace refid="namespaceplanning_1_1AngleFns">planning::AngleFns</innernamespace>
+    <innernamespace refid="namespaceplanning_1_1CreatePath">planning::CreatePath</innernamespace>
+    <innernamespace refid="namespaceplanning_1_1testing">planning::testing</innernamespace>
+    <innernamespace refid="namespaceplanning_1_1TestingUtils">planning::TestingUtils</innernamespace>
+    <innernamespace refid="namespaceplanning_1_1Trapezoid">planning::Trapezoid</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="motion__command_8hpp_1a62388840bc96d75cac4ce28ea2f542da" prot="public" static="no">
+        <type>std::variant&lt; <ref refid="structplanning_1_1TargetFaceTangent" kindref="compound">TargetFaceTangent</ref>, <ref refid="structplanning_1_1TargetFaceAngle" kindref="compound">TargetFaceAngle</ref>, <ref refid="structplanning_1_1TargetFacePoint" kindref="compound">TargetFacePoint</ref> &gt;</type>
+        <definition>using planning::AngleOverride = typedef std::variant&lt;TargetFaceTangent, TargetFaceAngle, TargetFacePoint&gt;</definition>
+        <argsstring></argsstring>
+        <name>AngleOverride</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="46" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="motion__command_8hpp_1abda4da91d5a58fc7ade9457f4c568b2f" prot="public" static="no">
+        <type>std::variant&lt; <ref refid="structplanning_1_1EmptyCommand" kindref="compound">EmptyCommand</ref>, <ref refid="structplanning_1_1PathTargetCommand" kindref="compound">PathTargetCommand</ref>, <ref refid="structplanning_1_1WorldVelCommand" kindref="compound">WorldVelCommand</ref>, <ref refid="structplanning_1_1PivotCommand" kindref="compound">PivotCommand</ref>, <ref refid="structplanning_1_1SettleCommand" kindref="compound">SettleCommand</ref>, <ref refid="structplanning_1_1CollectCommand" kindref="compound">CollectCommand</ref>, <ref refid="structplanning_1_1LineKickCommand" kindref="compound">LineKickCommand</ref>, <ref refid="structplanning_1_1InterceptCommand" kindref="compound">InterceptCommand</ref> &gt;</type>
+        <definition>using planning::MotionCommand = typedef std::variant&lt;EmptyCommand, PathTargetCommand, WorldVelCommand, PivotCommand, SettleCommand, CollectCommand, LineKickCommand, InterceptCommand&gt;</definition>
+        <argsstring></argsstring>
+        <name>MotionCommand</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" line="84" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="angle__planning_8hpp_1a175e84ff5e6bb4707aa457405462c93e" prot="public" static="no">
+        <type>std::function&lt; double(const <ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref> &amp;instant, double previous_angle, Eigen::Vector2d *jacobian)&gt;</type>
+        <definition>using planning::AngleFunction = typedef std::function&lt;double(const LinearMotionInstant&amp; instant, double previous_angle, Eigen::Vector2d* jacobian)&gt;</definition>
+        <argsstring></argsstring>
+        <name>AngleFunction</name>
+        <briefdescription>
+<para>Represents a functor that calculates the next angular target given the linear position and velocity as well as the (rough) previous angle. The previous angle only exists to calculate a good local minimum. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>instant</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current linear motion of the robot </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>previous_angle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Represents a general area of the previous angle. Used for selecting the correct local minimum. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>jacobian</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output parameter for the Jacobian of the angle with respect to position. Used to calculate angular velocity. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A target angle to attempt to follow. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" line="24" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="trajectory_8hpp_1a5ca5c4eeea5a8130df47838fdd1593da" prot="public" static="no">
+        <type>std::vector&lt; <ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref> &gt;</type>
+        <definition>using planning::RobotInstantSequence = typedef std::vector&lt;RobotInstant&gt;</definition>
+        <argsstring></argsstring>
+        <name>RobotInstantSequence</name>
+        <briefdescription>
+<para>An ordered sequence (by time) of RobotInstants. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp" line="16" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="planning__params_8cpp_1aea02f01c3df9b4e46523622f20f52955" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the Change in ball velocity required to reset all planning::settle</definition>
+        <argsstring></argsstring>
+        <name>settle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="142" column="2" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1aae35489d342476f9a34e2bc2d4cac2be" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>planning::search_start_dist</definition>
+        <argsstring></argsstring>
+        <name>search_start_dist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="142" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1a9c752f3b121b094ab78edffa460d7768" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept</type>
+        <definition>Closest dist to start searching for intercept planning::search_end_dist</definition>
+        <argsstring></argsstring>
+        <name>search_end_dist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="145" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1ac0989885aa355222dcdcf657c536c878" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept planning::search_inc_dist</definition>
+        <argsstring></argsstring>
+        <name>search_inc_dist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="148" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1adf4e3f739f8ecfeb060e91823c3bdcc9" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept planning::intercept_buffer_time</definition>
+        <argsstring></argsstring>
+        <name>intercept_buffer_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="156" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1a90b33fc1ad04e1a01d7a7442161756d2" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept planning::point</definition>
+        <argsstring></argsstring>
+        <name>point</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="157" column="51" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1af292e9e814822100aa3bf7f84a91b982" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total planning::target_point_gain</definition>
+        <argsstring></argsstring>
+        <name>target_point_gain</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="164" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1af5392c0da6b4f41a7200195b87894616" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target planning::ball_vel_gain</definition>
+        <argsstring></argsstring>
+        <name>ball_vel_gain</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="172" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1a816eaf3affe2814d985e77babb5532b4" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball planning::shortcut_dist</definition>
+        <argsstring></argsstring>
+        <name>shortcut_dist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="179" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1ad479cf2c31d03175cdac7e1a50de31d8" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the planning::max_ball_angle_for_reset</definition>
+        <argsstring></argsstring>
+        <name>max_ball_angle_for_reset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="186" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1a840bc0ec1ee4d52e3b3f9c35e28cb53b" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the planning::max_ball_vel_for_path_reset</definition>
+        <argsstring></argsstring>
+        <name>max_ball_vel_for_path_reset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="192" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8cpp_1a867a4d5ce8e6f8a30f8e502c776b473c" prot="public" static="no" mutable="no">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the Change in ball velocity required to reset all</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the Change in ball velocity required to reset all planning::max_bounce_angle</definition>
+        <argsstring></argsstring>
+        <name>max_bounce_angle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="195" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="planning__params_8hpp_1a1cd56bc76fe06290ebdb42333ec76a50" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr auto</type>
+        <definition>constexpr auto planning::kPlanningParamModule</definition>
+        <argsstring></argsstring>
+        <name>kPlanningParamModule</name>
+        <initializer>= &quot;planning&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="7" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" bodystart="7" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="velocity__profiling_8cpp_1a521b0cbdbf3d58c44c5a4532dcb5e7f1" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr int</type>
+        <definition>constexpr int planning::kInterpolationsPerBezier</definition>
+        <argsstring></argsstring>
+        <name>kInterpolationsPerBezier</name>
+        <initializer>= 40</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.cpp" line="12" column="15" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="plan__request_8cpp_1ab8fad35af1b19f224a8904899c66e497" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::fill_obstacles</definition>
+        <argsstring>(const PlanRequest &amp;in, rj_geometry::ShapeSet *out_static, std::vector&lt; DynamicObstacle &gt; *out_dynamic, bool avoid_ball, Trajectory *out_ball_trajectory)</argsstring>
+        <name>fill_obstacles</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1PlanRequest" kindref="compound">PlanRequest</ref> &amp;</type>
+          <declname>in</declname>
+        </param>
+        <param>
+          <type>rj_geometry::ShapeSet *</type>
+          <declname>out_static</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="structplanning_1_1DynamicObstacle" kindref="compound">DynamicObstacle</ref> &gt; *</type>
+          <declname>out_dynamic</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>avoid_ball</declname>
+        </param>
+        <param>
+          <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> *</type>
+          <declname>out_ball_trajectory</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fill the obstacle fields.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the plan request. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_static</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>an (empty) vector of static obstacles to be populated. This will be filled with field obstacles, local (virtual) obstacles, opponent robots, and our robots that have not yet been planned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_dynamic</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>an (empty) vector of dynamic obstacles to be populated. This will be filled with trajectories for our robots that have already been planned. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>avoid_ball</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>whether or not to avoid the ball. If this is true, out_ball_trajectory should point to a valid trajectory. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ball_trajectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>temporary storage for the ball trajectory. This must outlive the usage of out_dynamic. If avoid_ball == false, this should be nullptr. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.cpp" line="5" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.cpp" bodystart="5" bodyend="47" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.hpp" declline="121" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a833a01c839074b49f6430e0c1ab8f30e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, timeout, 0.1, &quot;Timeout for vision data to reach planning (s)&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>timeout</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>1</declname>
+        </param>
+        <param>
+          <type>&quot;Timeout for vision data to reach planning (s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="5" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="5" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a8cc6b83125f3a4ae20e17d259ae5020b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_translational_speed, 3.0, &quot;Maximum translational speed for planning (m/s)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_translational_speed</type>
+        </param>
+        <param>
+          <type>3.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Maximum translational speed for planning (m/s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="7" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="7" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a864a231ecb2adb9059c927f08f79bc69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_translational_accel, 3.0, &quot;Maximum translational acceleration for planning (m/s^2)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_translational_accel</type>
+        </param>
+        <param>
+          <type>3.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Maximum translational acceleration for planning (m/s^2)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="9" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="9" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1aaa164a5266b83e6cd2b06abf8bce0171" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_rotational_speed, 10.0, &quot;Maximum rotational speed for planning (rad/s)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_rotational_speed</type>
+        </param>
+        <param>
+          <type>10.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Maximum rotational speed for planning (rad/s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="11" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="11" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1aff8ef552282fa8b907480c5d9e4c3370" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_rotational_accel, 10.0, &quot;Maximum rotational acceleration for planning (rad/s^2)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_rotational_accel</type>
+        </param>
+        <param>
+          <type>10.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Maximum rotational acceleration for planning (rad/s^2)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="13" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="13" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1ae82238c711b8eb1d04a37d11073e81a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, pos_change_threshold, 0.025, &quot;Position target threshold (m); if the change in position from the originally planned &quot; &quot;target is smaller than this amount no replanning will occur.&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>pos_change_threshold</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>025</declname>
+        </param>
+        <param>
+          <type>&quot;Position target threshold (m); if the change in position from the originally planned &quot; &quot;target is smaller than this amount no replanning will occur.&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="16" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="16" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a6ad6984a2d6e8a26369a569d3b2929bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, vel_change_threshold, 0.025, &quot;Velocity target threshold (m/s); if the change in velocity from the originally planned &quot; &quot;target is smaller than this amount no replanning will occur.&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>vel_change_threshold</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>025</declname>
+        </param>
+        <param>
+          <type>&quot;Velocity target threshold (m/s); if the change in velocity from the originally planned &quot; &quot;target is smaller than this amount no replanning will occur.&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="20" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="20" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1aa659cfd0405c17919c75a3d9c4cc264b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, partial_replan_lead_time, 0.1, &quot;Portion of the path (seconds) that will not be changed in the case of a partial replan&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>partial_replan_lead_time</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>1</declname>
+        </param>
+        <param>
+          <type>&quot;Portion of the path (seconds) that will not be changed in the case of a partial replan&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="24" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="24" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a4ec7a8d64458764ca07a0a5d8a8b7142" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, off_path_threshold, 0.1, &quot;Position error threshold (m), a partial replan will be forced if we are not within this &quot; &quot;amount of the planned trajectory.&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>off_path_threshold</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>1</declname>
+        </param>
+        <param>
+          <type>&quot;Position error threshold </type>
+          <array>m</array>
+        </param>
+        <param>
+          <type>a partial replan will be forced if we are not within this &quot; &quot;amount of the planned trajectory.&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="27" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="27" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a8919a21c3a575c413c2b04497895e01d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_BOOL</definition>
+        <argsstring>(kPlanningParamModule, rrt, enable_debug_drawing, false, &quot;Whether to enable RRT debug drawing&quot;)</argsstring>
+        <name>DEFINE_NS_BOOL</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>enable_debug_drawing</type>
+        </param>
+        <param>
+          <type>false</type>
+        </param>
+        <param>
+          <type>&quot;Whether to enable RRT debug drawing&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="32" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="32" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a085cbf78c9d10becfd6cd816dbf68af8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, step_size, 0.15, &quot;Step size for RRT (m)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>step_size</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>15</declname>
+        </param>
+        <param>
+          <type>&quot;Step size for RRT (m)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="34" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="34" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1ad3629c5b6c10075badf9d7b53f4c4bc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, goal_bias, 0.3, &quot;Chance that the RRT will extend directly towards the goal (unitless)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>goal_bias</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>3</declname>
+        </param>
+        <param>
+          <type>&quot;Chance that the RRT will extend directly towards the goal (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="35" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="35" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a7b8a5c59564b881b33196b21805f709f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, waypoint_bias, 0.5, &quot;Chance that the RRT will extend directly towards a waypoint (unitless)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>waypoint_bias</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>5</declname>
+        </param>
+        <param>
+          <type>&quot;Chance that the RRT will extend directly towards a waypoint (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="37" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="37" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a2d056d6c3fd52cc54374b142814e0742" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_INT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, min_iterations, 0, &quot;Minimum number of RRT iterations to run (unused without RRT* enabled)&quot;)</argsstring>
+        <name>DEFINE_NS_INT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>min_iterations</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <param>
+          <type>&quot;Minimum number of RRT iterations to run (unused without RRT* enabled)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="39" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="39" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1aedde2d5036302047542fee8931052293" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_INT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, max_iterations, 250, &quot;Maximum number of RRT iterations to run before giving up&quot;)</argsstring>
+        <name>DEFINE_NS_INT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>max_iterations</type>
+        </param>
+        <param>
+          <type>250</type>
+        </param>
+        <param>
+          <type>&quot;Maximum number of RRT iterations to run before giving up&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="41" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="41" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a3fb27b7cc942f487a30eeac04d39d5d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, escape, step_size, 0.1, &quot;Step size for the RRT used to find an unblocked point in find_non_blocked_goal()&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>escape</type>
+        </param>
+        <param>
+          <type>step_size</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>1</declname>
+        </param>
+        <param>
+          <type>&quot;Step size for the RRT used to find an unblocked point in find_non_blocked_goal()&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="44" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="44" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1ade7ae6a305600cd6ff7317d4e0a0ecf4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, escape, goal_change_threshold, 0.9, &quot;A newly-found unblocked goal must be this much closer to the start position than the &quot; &quot;previous point in order to be used (m).&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>escape</type>
+        </param>
+        <param>
+          <type>goal_change_threshold</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>9</declname>
+        </param>
+        <param>
+          <type>&quot;A newly-found unblocked goal must be this much closer to the start position than the &quot; &quot;previous point in order to be used (m).&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="47" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="47" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a25921c5c27b0a9cee8ae047dd050efcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, pivot, radius_multiplier, 1.0, &quot;A newly-found unblocked goal must be this much closer to the start position than the &quot; &quot;previous point in order to be used (m).&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>pivot</type>
+        </param>
+        <param>
+          <type>radius_multiplier</type>
+        </param>
+        <param>
+          <type>1.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;A newly-found unblocked goal must be this much closer to the start position than the &quot; &quot;previous point in order to be used (m).&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="52" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="52" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a5d9eabea58632fa745677caab5a57f6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, ball_speed_approach_direction_cutoff, 0.1, &quot;Controls at which ball speed we should try to go directly to the ball &quot; &quot;or to move behind it and in the same direction as it (m/s)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>ball_speed_approach_direction_cutoff</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>1</declname>
+        </param>
+        <param>
+          <type>&quot;Controls at which ball speed we should try to go directly to the ball &quot; &quot;or to move behind it and in the same direction as it (m/s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="65" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="65" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a6ffbff503637b6004d2c173933051bfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, approach_accel_scale, 0.7, &quot;How much to scale the accelerations by as a percent of the normal acceleration (unitless)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>approach_accel_scale</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>7</declname>
+        </param>
+        <param>
+          <type>&quot;How much to scale the accelerations by as a percent of the normal acceleration (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="73" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="73" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a0724d1638b8c9b39aa711838ecefefc4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, control_accel_scale, 0.4, &quot;Control acceleration controls the touch to stop (unitless)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>control_accel_scale</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>4</declname>
+        </param>
+        <param>
+          <type>&quot;Control acceleration controls the touch to stop (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="79" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="79" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a466c83a997851a902d8019de084e1b05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, approach_dist_target, 0.04, &quot;How far away from the ball to target for the approach (m)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>approach_dist_target</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>04</declname>
+        </param>
+        <param>
+          <type>&quot;How far away from the ball to target for the approach (m)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="85" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="85" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a1555d7a717ef5a8b84b94c7f7ebe6315" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, touch_delta_speed, 0.15, &quot;At what speed should we be when we touch the ball (m/s)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>touch_delta_speed</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>15</declname>
+        </param>
+        <param>
+          <type>&quot;At what speed should we be when we touch the ball (m/s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="93" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="93" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1af15ad764ceb9099f41d64e0318554707" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, velocity_control_scale, 1.0, &quot;The amount  (unitless)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>velocity_control_scale</type>
+        </param>
+        <param>
+          <type>1.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;The amount (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="95" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="95" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a233efb09a91a9e07dc507bd6d3e7738e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, dist_cutoff_to_control, 0.0285, &quot;How close to the ball do we have to be before transferring to the control state (m)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>dist_cutoff_to_control</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>0285</declname>
+        </param>
+        <param>
+          <type>&quot;How close to the ball do we have to be before transferring to the control state (m)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="100" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="100" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1aea782d8e15f8da018eed5c531562bcd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, dist_cutoff_to_approach, 1, &quot;How close to the ball do we need to be before transferring back to the approach state &quot; &quot;and restarting (m)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>dist_cutoff_to_approach</type>
+        </param>
+        <param>
+          <type>1</type>
+        </param>
+        <param>
+          <type>&quot;How close to the ball do we need to be before transferring back to the approach state &quot; &quot;and restarting (m)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="105" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="105" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a7443f060fbc8f3c138d5802f1eecb6fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, vel_cutoff_to_control, 0.3, &quot;How close to the target velocity do we have to be before transferring to the control &quot; &quot;state (m/s)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>vel_cutoff_to_control</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>3</declname>
+        </param>
+        <param>
+          <type>&quot;How close to the target velocity do we have to be before transferring to the control &quot; &quot;state (m/s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="113" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="113" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a44c88d97c0cbe9a14e703f563493d1dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, stop_dist_scale, 1, &quot;Portion of maximum stopping distance for which we stay at the delta speed (unitless)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>stop_dist_scale</type>
+        </param>
+        <param>
+          <type>1</type>
+        </param>
+        <param>
+          <type>&quot;Portion of maximum stopping distance for which we stay at the delta speed (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="123" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="123" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a01c33e06be6c0d4f2c3ac3cb4a44d32f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, target_point_lowpass_gain, 0.8, &quot;Gain on the averaging function to smooth the target point to intercept (unitless)&quot;)</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>target_point_lowpass_gain</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>8</declname>
+        </param>
+        <param>
+          <type>&quot;Gain on the averaging function to smooth the target point to intercept (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="132" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" declline="132" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a6593f0a1b0222dc4689d80b2ad94a5d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DEFINE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, ball_speed_percent_for_dampen, 0.1, &quot;How much of the ball seed to contact the ball with before slowing down to &quot; &quot;dampen the initial hit (unitless)&quot;) DEFINE_NS_FLOAT64(kPlanningParamModule</argsstring>
+        <name>DEFINE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>ball_speed_percent_for_dampen</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>1</declname>
+        </param>
+        <param>
+          <type>&quot;How much of the ball seed to contact the ball with before slowing down to &quot; &quot;dampen the initial hit (unitless)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="138" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1ae4da819e48cf789f7af372f6c70f3af1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Closest dist to start searching for intercept</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept planning::points</definition>
+        <argsstring>(m)&quot;)  DEFINE_NS_FLOAT64(kPlanningParamModule</argsstring>
+        <name>points</name>
+        <param>
+          <type>m</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="143" column="65"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a3fe7dfb190e731b77e4734ab82957400" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total planning::time</definition>
+        <argsstring>(unitless)&quot;)       DEFINE_NS_FLOAT64(kPlanningParamModule</argsstring>
+        <name>time</name>
+        <param>
+          <type>unitless</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="157" column="79"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a23adaf94c630d6251ed6ee5ccb4f9e07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target planning::position</definition>
+        <argsstring>(unitless)&quot;)       DEFINE_NS_FLOAT64(kPlanningParamModule</argsstring>
+        <name>position</name>
+        <param>
+          <type>unitless</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="165" column="48"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1a4b65e8675e827ff77fe246167827ca0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball planning::velocity</definition>
+        <argsstring>(unitless)&quot;)     DEFINE_NS_FLOAT64( kPlanningParamModule</argsstring>
+        <name>velocity</name>
+        <param>
+          <type>unitless</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="173" column="47"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1af3c1877dfa401951a84af51275be48bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the planning::line</definition>
+        <argsstring>(m)&quot;)     DEFINE_NS_FLOAT64( kPlanningParamModule</argsstring>
+        <name>line</name>
+        <param>
+          <type>m</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="180" column="83"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1ac2a18378e0441054c15340a19b21b4ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the planning::line</definition>
+        <argsstring>(deg)&quot;)     DEFINE_NS_FLOAT64(kPlanningParamModule</argsstring>
+        <name>line</name>
+        <param>
+          <type>deg</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="187" column="83"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8cpp_1ac4ba69b8f764175b20a1322a27c0bfbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the Change in ball velocity required to reset all</type>
+        <definition>Closest dist to start searching for intercept Furthest dist to start searching for intercept Search increment for intercept How much sooner we should reach the intercept compared to the total Gain for LPF for ball target Gain for LPF to smooth ball Distance between robot and closest point on ball line to move directly to the Distance between robot and closest point on ball line to move directly to the Change in ball velocity required to reset all planning::filters</definition>
+        <argsstring>(m/s)&quot;)  DEFINE_NS_FLOAT64(kPlanningParamModule</argsstring>
+        <name>filters</name>
+        <param>
+          <type>m/</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.cpp" line="193" column="65"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1ab79a9ecc28d0c1d22096b7397d7174c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, timeout)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>timeout</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="9" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="9" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a07d655837588767b205d4625df00e166" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_translational_speed)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_translational_speed</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="11" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="11" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1adf3ecc8dbeb11a6073937c1a35002648" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_translational_accel)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_translational_accel</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="12" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="12" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a4de2203bb7a86d4c9414b9a5e0d47002" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_rotational_speed)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_rotational_speed</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="13" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="13" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a2bc17315e63c307cd3b0fb1343136095" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, constraints, max_rotational_accel)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>constraints</type>
+        </param>
+        <param>
+          <type>max_rotational_accel</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="14" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="14" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1aa6284b8e1ddd79fa033f22d0ffd0504d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, pos_change_threshold)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>pos_change_threshold</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="16" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="16" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a9554f5247e14de1dc5868f82940c7697" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, vel_change_threshold)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>vel_change_threshold</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="17" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="17" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1af285f5a861328d3a58498e4df324f4cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, partial_replan_lead_time)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>partial_replan_lead_time</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="18" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="18" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1aab2e986a536a22b0438316ec569ff5b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, replanner, off_path_threshold)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>replanner</type>
+        </param>
+        <param>
+          <type>off_path_threshold</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="19" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="19" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a7d012aea99b8c3bf07793054d7356e0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_BOOL</definition>
+        <argsstring>(kPlanningParamModule, rrt, enable_debug_drawing)</argsstring>
+        <name>DECLARE_NS_BOOL</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>enable_debug_drawing</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="21" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="21" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a94a5028ab2a20bbee464073b401b5b24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, step_size)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>step_size</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="22" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="22" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1aeba2dfc56dda543f5209c586ba86bed6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, goal_bias)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>goal_bias</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="23" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="23" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1aa19f74fe9281a635e0cda715774a3c00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, waypoint_bias)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>waypoint_bias</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="24" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="24" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a80961f0177d0b789bcedca0c6ea029a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_INT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, min_iterations)</argsstring>
+        <name>DECLARE_NS_INT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>min_iterations</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="25" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="25" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a6dc9d3caa22397921d204f610e021a54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_INT64</definition>
+        <argsstring>(kPlanningParamModule, rrt, max_iterations)</argsstring>
+        <name>DECLARE_NS_INT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>rrt</type>
+        </param>
+        <param>
+          <type>max_iterations</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="26" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="26" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1abcd06de2e9f408f050a028332f03087b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, escape, step_size)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>escape</type>
+        </param>
+        <param>
+          <type>step_size</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="28" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="28" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1aa95a8bcd30615fe36736ffb194763f2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, escape, goal_change_threshold)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>escape</type>
+        </param>
+        <param>
+          <type>goal_change_threshold</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="29" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="29" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a931eaffe60dfa917e5dec5f4f514d27f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, pivot, radius_multiplier)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>pivot</type>
+        </param>
+        <param>
+          <type>radius_multiplier</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="31" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="31" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a1cb15afbb52bab604f95a165b0040679" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, ball_speed_approach_direction_cutoff)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>ball_speed_approach_direction_cutoff</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="33" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="33" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1af4adee440a25fe50829f432fcb59900e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, approach_accel_scale)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>approach_accel_scale</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="34" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="34" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a6f823db1f6309d7ef48ca9b701527eef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, control_accel_scale)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>control_accel_scale</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="35" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="35" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a051e906f215c624897eff83aef24f3d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, approach_dist_target)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>approach_dist_target</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="36" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="36" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a40ab21eb0f1e426fc8f41560e7a8dc55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, touch_delta_speed)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>touch_delta_speed</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="37" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="37" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a0291fc6ebcd1c51525980676dd6404f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, velocity_control_scale)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>velocity_control_scale</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="38" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="38" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a1fc778f54552012a6396e1655ade2b0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, dist_cutoff_to_control)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>dist_cutoff_to_control</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="39" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="39" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1ae3b552acffd27f81432aa57359befcc2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, dist_cutoff_to_approach)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>dist_cutoff_to_approach</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="40" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="40" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a807319e969bd0d2b6e33b66506c108d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, vel_cutoff_to_control)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>vel_cutoff_to_control</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="41" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="41" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1ae9c1c55a0bb6bf5712c0e1f363de2a8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, stop_dist_scale)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>stop_dist_scale</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="42" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="42" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1af7fc09044dd1a532f921a418f8723fc6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, collect, target_point_lowpass_gain)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>collect</type>
+        </param>
+        <param>
+          <type>target_point_lowpass_gain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="43" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="43" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a8b67d0f80e325c79b0705af958793a85" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, ball_speed_percent_for_dampen)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>ball_speed_percent_for_dampen</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="45" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="45" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1ae0dc109bee17357386beca745d0d09e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, search_start_dist)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>search_start_dist</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="46" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="46" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a53e8759982295531d00ad7193f4f3ccd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, search_inc_dist)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>search_inc_dist</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="48" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="48" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1ae553573228e21af8c08aa98957ad6fa8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, search_end_dist)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>search_end_dist</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="49" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="49" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a10548a24379a8514e81ff06547d69312" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, intercept_buffer_time)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>intercept_buffer_time</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="50" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="50" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1af21d74c031adea5124c02ae1867ae77f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, target_point_gain)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>target_point_gain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="51" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="51" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a43ed00230f47ed1c1f41534891217834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, ball_vel_gain)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>ball_vel_gain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="52" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="52" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a42e34e73a5db5d20ac4af3a154c3ec62" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, shortcut_dist)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>shortcut_dist</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="53" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="53" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a0ddf904f955027aeff9a62cbccf3c60f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, max_ball_angle_for_reset)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>max_ball_angle_for_reset</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="54" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="54" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a5aa03ae59291a77a319590a354d3a8bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, max_ball_vel_for_path_reset)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>max_ball_vel_for_path_reset</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="55" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="55" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="planning__params_8hpp_1a6513d2ff69635ee082f1502650d53203" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::DECLARE_NS_FLOAT64</definition>
+        <argsstring>(kPlanningParamModule, settle, max_bounce_angle)</argsstring>
+        <name>DECLARE_NS_FLOAT64</name>
+        <param>
+          <type>kPlanningParamModule</type>
+        </param>
+        <param>
+          <type>settle</type>
+        </param>
+        <param>
+          <type>max_bounce_angle</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" line="56" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/planning_params.hpp" declline="56" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="angle__planning_8cpp_1ad9f1cf3482e6c6f45b0bf927da423ef1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::plan_angles</definition>
+        <argsstring>(Trajectory *trajectory, const RobotInstant &amp;start_instant, const AngleFunction &amp;angle_function, const RotationConstraints &amp;)</argsstring>
+        <name>plan_angles</name>
+        <param>
+          <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> *</type>
+          <declname>trajectory</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref> &amp;</type>
+          <declname>start_instant</declname>
+        </param>
+        <param>
+          <type>const AngleFunction &amp;</type>
+          <declname>angle</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1RotationConstraints" kindref="compound">RotationConstraints</ref> &amp;</type>
+          <declname>constraints</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Applies an angle function to a given trajectory and enforces the angle constraints. This function may add instants to the end of the trajectory to allow the angle to match the output from angle_function (assumes the target angular velocity at the end of the path is 0)</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>trajectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The trajectory to plan angles on </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start_instant</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The initial robot instant </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>angle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An angle function describing the desired angle of the robot as a function of the robot&apos;s current state. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>constraints</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Constraints on the robot&apos;s rotation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.cpp" line="7" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.cpp" bodystart="7" bodyend="147" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp" declline="110" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="path__smoothing_8cpp_1a2bc151a9d5eec16987d4b7b64fc85bb1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void planning::fit_cubic_bezier</definition>
+        <argsstring>(Point vi, Point vf, const std::vector&lt; Point &gt; &amp;points, const std::vector&lt; double &gt; &amp;ks, std::vector&lt; BezierPath::CubicBezierControlPoints &gt; *control_out)</argsstring>
+        <name>fit_cubic_bezier</name>
+        <param>
+          <type>Point</type>
+          <declname>vi</declname>
+        </param>
+        <param>
+          <type>Point</type>
+          <declname>vf</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; Point &gt; &amp;</type>
+          <declname>points</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; double &gt; &amp;</type>
+          <declname>ks</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="structplanning_1_1BezierPath_1_1CubicBezierControlPoints" kindref="compound">BezierPath::CubicBezierControlPoints</ref> &gt; *</type>
+          <declname>control_out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>For each curve, calculate control points using a heuristic.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vi</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The initial velocity of the robot on the path. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The final velocity of the robot on the path. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>points</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of endpoints of the curves. The resulting curve will pass through these points. points should have length &gt;= 2 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An estimate of the time it will take to travel each curve. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A vector of control point locations. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.cpp" line="19" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/path_smoothing.cpp" bodystart="19" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="replanner_8cpp_1a321dd708813d2d9d9f180a8e6adc9800" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::apply_hold</definition>
+        <argsstring>(Trajectory *trajectory, std::optional&lt; RJ::Seconds &gt; hold_time)</argsstring>
+        <name>apply_hold</name>
+        <param>
+          <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> *</type>
+          <declname>trajectory</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; RJ::Seconds &gt;</type>
+          <declname>hold_time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" line="16" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.cpp" bodystart="16" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="rrt__util_8cpp_1a914d6866d971a945e7272f5aea6380bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::draw_rrt</definition>
+        <argsstring>(const RRT::Tree&lt; Point &gt; &amp;rrt, DebugDrawer *debug_drawer, unsigned shell_id)</argsstring>
+        <name>draw_rrt</name>
+        <param>
+          <type>const RRT::Tree&lt; Point &gt; &amp;</type>
+          <declname>rrt</declname>
+        </param>
+        <param>
+          <type><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref> *</type>
+          <declname>debug_drawer</declname>
+        </param>
+        <param>
+          <type>unsigned</type>
+          <declname>shell_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" line="21" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" bodystart="21" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="rrt__util_8cpp_1ad204dee6e38e116b04c808f30b6d1044" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::draw_bi_rrt</definition>
+        <argsstring>(const RRT::BiRRT&lt; Point &gt; &amp;bi_rrt, DebugDrawer *debug_drawer, unsigned shell_id)</argsstring>
+        <name>draw_bi_rrt</name>
+        <param>
+          <type>const RRT::BiRRT&lt; Point &gt; &amp;</type>
+          <declname>bi_rrt</declname>
+        </param>
+        <param>
+          <type><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref> *</type>
+          <declname>debug_drawer</declname>
+        </param>
+        <param>
+          <type>unsigned</type>
+          <declname>shell_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" line="37" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" bodystart="37" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="rrt__util_8cpp_1a845049f94db9326554e767a9346f11e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>vector&lt; Point &gt;</type>
+        <definition>vector&lt;Point&gt; planning::run_rrt_helper</definition>
+        <argsstring>(Point start, Point goal, const ShapeSet &amp;obstacles, const vector&lt; Point &gt; &amp;waypoints, bool straight_line)</argsstring>
+        <name>run_rrt_helper</name>
+        <param>
+          <type>Point</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>Point</type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>const ShapeSet &amp;</type>
+          <declname>obstacles</declname>
+        </param>
+        <param>
+          <type>const vector&lt; Point &gt; &amp;</type>
+          <declname>waypoints</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>straight_line</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" line="42" column="8" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" bodystart="42" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="rrt__util_8cpp_1a9353fc6db368f6b48cc94252a6ff70cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>vector&lt; Point &gt;</type>
+        <definition>vector&lt;Point&gt; planning::generate_rrt</definition>
+        <argsstring>(Point start, Point goal, const ShapeSet &amp;obstacles, const vector&lt; Point &gt; &amp;waypoints)</argsstring>
+        <name>generate_rrt</name>
+        <param>
+          <type>Point</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>Point</type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>const ShapeSet &amp;</type>
+          <declname>obstacles</declname>
+        </param>
+        <param>
+          <type>const vector&lt; Point &gt; &amp;</type>
+          <declname>waypoints</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" line="83" column="8" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp" bodystart="83" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="rrt__util_8hpp_1ac4be73c62cfa052358917452f63c9ff6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::draw_rrt</definition>
+        <argsstring>(const RRT::Tree&lt; rj_geometry::Point &gt; &amp;rrt, DebugDrawer *debug_drawer, unsigned shell_id)</argsstring>
+        <name>draw_rrt</name>
+        <param>
+          <type>const RRT::Tree&lt; rj_geometry::Point &gt; &amp;</type>
+          <declname>rrt</declname>
+        </param>
+        <param>
+          <type><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref> *</type>
+          <declname>debug_drawer</declname>
+        </param>
+        <param>
+          <type>unsigned</type>
+          <declname>shell_id</declname>
+        </param>
+        <briefdescription>
+<para>Drawing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp" line="14" column="6" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp" declline="14" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="rrt__util_8hpp_1a2143f96113886c588809af0b52965c9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::draw_bi_rrt</definition>
+        <argsstring>(const RRT::BiRRT&lt; rj_geometry::Point &gt; &amp;bi_rrt, DebugDrawer *debug_drawer, unsigned shell_id)</argsstring>
+        <name>draw_bi_rrt</name>
+        <param>
+          <type>const RRT::BiRRT&lt; rj_geometry::Point &gt; &amp;</type>
+          <declname>bi_rrt</declname>
+        </param>
+        <param>
+          <type><ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref> *</type>
+          <declname>debug_drawer</declname>
+        </param>
+        <param>
+          <type>unsigned</type>
+          <declname>shell_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp" line="16" column="6" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp" declline="16" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="rrt__util_8hpp_1aed4266cdacb71de65da0bce4caf1f5bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; rj_geometry::Point &gt;</type>
+        <definition>std::vector&lt;rj_geometry::Point&gt; planning::generate_rrt</definition>
+        <argsstring>(rj_geometry::Point start, rj_geometry::Point goal, const rj_geometry::ShapeSet &amp;obstacles, const std::vector&lt; rj_geometry::Point &gt; &amp;waypoints={})</argsstring>
+        <name>generate_rrt</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>goal</declname>
+        </param>
+        <param>
+          <type>const rj_geometry::ShapeSet &amp;</type>
+          <declname>obstacles</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; rj_geometry::Point &gt; &amp;</type>
+          <declname>waypoints</declname>
+          <defval>{}</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Generate a path with BiRRT</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The starting position. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>goal</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The goal position. (note: goal.stamp is unused) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obstacles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the obstacles to avoid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>waypoints</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A vector of points from a previous path. The RRT will be biased towards these points. If empty, they will be unused. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A vector of points representing some clear path from the start to the end. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp" line="30" column="13" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp" declline="30" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="velocity__profiling_8cpp_1a06bf93ca1eb202a952987f8622a4f43d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double planning::limit_acceleration</definition>
+        <argsstring>(double velocity_initial, double velocity_final, double displacement, double max_accel)</argsstring>
+        <name>limit_acceleration</name>
+        <param>
+          <type>double</type>
+          <declname>velocity_initial</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>velocity_final</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>displacement</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max_accel</declname>
+        </param>
+        <briefdescription>
+<para>Find the final (tangential) speed, at most velocity_final, that we can achieve moving along the path. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>velocity_initial</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The initial speed along the path at the beginning of a segment </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>velocity_final</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum final speed along the path at the end of the segment, from other constraints </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>displacement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The total displacement of the segment </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>max_accel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum (tangential) acceleration over this segment </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.cpp" line="14" column="8" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.cpp" bodystart="14" bodyend="19" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.hpp" declline="22" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="velocity__profiling_8cpp_1abad2af07a9e3602574d8c40a1a8a09da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref></type>
+        <definition>Trajectory planning::profile_velocity</definition>
+        <argsstring>(const BezierPath &amp;path, double initial_speed, double final_speed, const MotionConstraints &amp;constraints, RJ::Time initial_time=RJ::now())</argsstring>
+        <name>profile_velocity</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1BezierPath" kindref="compound">BezierPath</ref> &amp;</type>
+          <declname>path</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>initial_speed</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>final_speed</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1MotionConstraints" kindref="compound">MotionConstraints</ref> &amp;</type>
+          <declname>constraints</declname>
+        </param>
+        <param>
+          <type>RJ::Time</type>
+          <declname>initial_time</declname>
+          <defval>RJ::now()</defval>
+        </param>
+        <briefdescription>
+<para>Create a trajectory with the given path by calculating the maximum possible velocity at each points given constraints on speed and acceleration. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>path</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A spatial path along which to move. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initial_speed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The initial tangential speed along the path at <computeroutput>initial_time</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>final_speed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The (goal) final tangential speed along the path. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initial_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The start time of the trajectory (usually close to now, or the most recent instant from vision). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A profiled time-indexed trajectory that follows velocity constraints. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.cpp" line="21" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.cpp" bodystart="21" bodyend="168" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.hpp" declline="37" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a6c9b7f68eaa4c0ed992550810ccacde3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const LinearMotionInstant &amp;a, const LinearMotionInstant &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">LinearMotionInstant</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="13" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="13" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1aa75f101810aadfd159def522a0eac63d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>([[maybe_unused]] const TargetFaceTangent &amp;a, [[maybe_unused]] const TargetFaceTangent &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1TargetFaceTangent" kindref="compound">TargetFaceTangent</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1TargetFaceTangent" kindref="compound">TargetFaceTangent</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="17" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="17" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a11d85f1c1072f936985d1061cad67367" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const TargetFaceAngle &amp;a, const TargetFaceAngle &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1TargetFaceAngle" kindref="compound">TargetFaceAngle</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1TargetFaceAngle" kindref="compound">TargetFaceAngle</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="21" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="21" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a3a8e035cbbacb20bf8900f9452d2298e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const TargetFacePoint &amp;a, const TargetFacePoint &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1TargetFacePoint" kindref="compound">TargetFacePoint</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1TargetFacePoint" kindref="compound">TargetFacePoint</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="22" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="22" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1ab93a951f7d33513b8df1b3c9e992927a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>([[maybe_unused]] const EmptyCommand &amp;a, [[maybe_unused]] const EmptyCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1EmptyCommand" kindref="compound">EmptyCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1EmptyCommand" kindref="compound">EmptyCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="26" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="26" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1aaf5a485bf8cd4cf5112282e9ba7cec2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const PathTargetCommand &amp;a, const PathTargetCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1PathTargetCommand" kindref="compound">PathTargetCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1PathTargetCommand" kindref="compound">PathTargetCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="29" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="29" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1ab30de4a916ad0c07d9a2e64a3bb09a15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const WorldVelCommand &amp;a, const WorldVelCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1WorldVelCommand" kindref="compound">WorldVelCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1WorldVelCommand" kindref="compound">WorldVelCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="32" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="32" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1af1cc28c7b950d179b1dceaaac64e0aa8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const PivotCommand &amp;a, const PivotCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1PivotCommand" kindref="compound">PivotCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1PivotCommand" kindref="compound">PivotCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="35" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="35" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1aa04f38881655c10bec7146c03eb6977e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const SettleCommand &amp;a, const SettleCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1SettleCommand" kindref="compound">SettleCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1SettleCommand" kindref="compound">SettleCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="38" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="38" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a086ab36521ad8b5dd48750efe36b8e2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>([[maybe_unused]] const CollectCommand &amp;a, [[maybe_unused]] const CollectCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1CollectCommand" kindref="compound">CollectCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] const <ref refid="structplanning_1_1CollectCommand" kindref="compound">CollectCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="39" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="39" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a26eb71b0f3258805e83cf74533508e39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const LineKickCommand &amp;a, const LineKickCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1LineKickCommand" kindref="compound">LineKickCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1LineKickCommand" kindref="compound">LineKickCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="43" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="43" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1adde364f14e1ac424c383b478173e4cea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const InterceptCommand &amp;a, const InterceptCommand &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1InterceptCommand" kindref="compound">InterceptCommand</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structplanning_1_1InterceptCommand" kindref="compound">InterceptCommand</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="44" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="44" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="conversion__tests_8cpp_1a93a5a8368db78fbe102b1139138c6cdd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::operator==</definition>
+        <argsstring>(const Trajectory &amp;a, const Trajectory &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" line="47" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/conversion_tests.cpp" bodystart="47" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="create__path__test_8cpp_1ac13a1fee4e8e11b5f90875fccaa5bbc4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::TEST</definition>
+        <argsstring>(CreatePath, smoke_test_efficiency)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>CreatePath</type>
+        </param>
+        <param>
+          <type>smoke_test_efficiency</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/create_path_test.cpp" line="13" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/create_path_test.cpp" bodystart="13" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="create__path__test_8cpp_1ae434005f02617e7dd4e286004e06b676" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::TEST</definition>
+        <argsstring>(CreatePath, infinitesimal_rrt)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>CreatePath</type>
+        </param>
+        <param>
+          <type>infinitesimal_rrt</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/create_path_test.cpp" line="36" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/create_path_test.cpp" bodystart="36" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="create__path__test_8cpp_1a0ffa7d6ecced37279509e9c81bb9c3ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::TEST</definition>
+        <argsstring>(CreatePath, success_rate)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>CreatePath</type>
+        </param>
+        <param>
+          <type>success_rate</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/create_path_test.cpp" line="46" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/create_path_test.cpp" bodystart="46" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="velocity__profiling__test_8cpp_1a3e026a653d3f30678ec101cf720d5dae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void planning::dump_trajectory</definition>
+        <argsstring>(const std::string &amp;filename, const Trajectory &amp;trajectory)</argsstring>
+        <name>dump_trajectory</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>filename</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>trajectory</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" line="13" column="7" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" bodystart="13" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="velocity__profiling__test_8cpp_1aebbbdb21e14ba27e67d93922613dda87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::TEST</definition>
+        <argsstring>(VelocityProfiling, BasicTest)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>VelocityProfiling</type>
+        </param>
+        <param>
+          <type>BasicTest</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" line="25" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" bodystart="25" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="velocity__profiling__test_8cpp_1a64c60777ece669043b10b2d61e19a4da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::TEST</definition>
+        <argsstring>(VelocityProfiling, ComplexPath)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>VelocityProfiling</type>
+        </param>
+        <param>
+          <type>ComplexPath</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" line="37" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" bodystart="37" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="velocity__profiling__test_8cpp_1a66b95e07706be4876c3d55b98957a5a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>planning::TEST</definition>
+        <argsstring>(VelocityProfiling, ClampAccel)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>VelocityProfiling</type>
+        </param>
+        <param>
+          <type>ClampAccel</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" line="50" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/velocity_profiling_test.cpp" bodystart="50" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="trajectory__utils_8cpp_1ab7da8e44ef077bf94358212986c72271" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::trajectory_hits_static</definition>
+        <argsstring>(const Trajectory &amp;trajectory, const rj_geometry::ShapeSet &amp;obstacles, RJ::Time start_time, RJ::Time *hit_time)</argsstring>
+        <name>trajectory_hits_static</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>trajectory</declname>
+        </param>
+        <param>
+          <type>const rj_geometry::ShapeSet &amp;</type>
+          <declname>obstacles</declname>
+        </param>
+        <param>
+          <type>RJ::Time</type>
+          <declname>start_time</declname>
+        </param>
+        <param>
+          <type>RJ::Time *</type>
+          <declname>hit_time</declname>
+        </param>
+        <briefdescription>
+<para>Whether the given trajectory intersects any of the static obstacles at any point along its path after a specified starting time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>trajectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The trajectory to check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obstacles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A set of obstacles to check against. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A start time to the entire check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hit_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The time of the collision (output parameter). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Whether or not there is a collision. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.cpp" line="7" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.cpp" bodystart="7" bodyend="57" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.hpp" declline="21" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="trajectory__utils_8cpp_1a4877595a285ff9741d0320d49b789140" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool planning::trajectory_hits_dynamic</definition>
+        <argsstring>(const Trajectory &amp;trajectory, const std::vector&lt; DynamicObstacle &gt; &amp;obstacles, RJ::Time start_time, rj_geometry::Circle *out_hit_obstacle, RJ::Time *out_hit_time)</argsstring>
+        <name>trajectory_hits_dynamic</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref> &amp;</type>
+          <declname>trajectory</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="structplanning_1_1DynamicObstacle" kindref="compound">DynamicObstacle</ref> &gt; &amp;</type>
+          <declname>obstacles</declname>
+        </param>
+        <param>
+          <type>RJ::Time</type>
+          <declname>start_time</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Circle *</type>
+          <declname>out_hit_obstacle</declname>
+        </param>
+        <param>
+          <type>RJ::Time *</type>
+          <declname>out_hit_time</declname>
+        </param>
+        <briefdescription>
+<para>Whether the given trajectory intersects any of the dynamic obstacles at any point along its path after a specified starting time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>trajectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The trajectory to check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obstacles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A set of obstacles to check against. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A start time to the entire check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_hit_obstacle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A bounding circle for the obstacle that was hit. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_hit_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The time of the collision (output parameter). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Whether or not there is a collision. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.cpp" line="59" column="6" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.cpp" bodystart="59" bodyend="141" declfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.hpp" declline="36" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/dynamic_obstacle.hpp" line="4" column="18"/>
+  </compounddef>
+</doxygen>

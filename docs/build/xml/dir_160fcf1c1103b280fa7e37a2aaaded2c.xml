@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_160fcf1c1103b280fa7e37a2aaaded2c" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera</compoundname>
+    <innerfile refid="camera_8hpp">camera.hpp</innerfile>
+    <innerfile refid="camera__frame_8hpp">camera_frame.hpp</innerfile>
+    <innerfile refid="world_8hpp">world.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/"/>
+  </compounddef>
+</doxygen>

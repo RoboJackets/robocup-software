@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="camera__ball_8cpp" kind="file" language="C++">
+    <compoundname>camera_ball.cpp</compoundname>
+    <includes local="no">spdlog/spdlog.h</includes>
+    <includes refid="camera__ball_8hpp" local="no">rj_vision_filter/ball/camera_ball.hpp</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/camera_ball.cpp</label>
+        <link refid="camera__ball_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="5">
+        <label>rj_geometry/transform_matrix.hpp</label>
+      </node>
+      <node id="2">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="8">
+        <label>vector</label>
+      </node>
+      <node id="3">
+        <label>rj_vision_filter/ball/camera_ball.hpp</label>
+        <link refid="camera__ball_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>rj_msgs/msg/detection_ball.hpp</label>
+      </node>
+      <node id="6">
+        <label>rj_common/time.hpp</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacevision__filter">vision_filter</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;spdlog/spdlog.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_vision_filter/ball/camera_ball.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">vision_filter<sp/>{</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><ref refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" kindref="member">CameraBall::CameraBall</ref>(RJ::Time<sp/>time_captured,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DetectionBallMsg&amp;<sp/>msg,</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::TransformMatrix&amp;<sp/>world_to_team)</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/>time_captured_{time_captured},</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>pos_{world_to_team<sp/>*<sp/>rj_geometry::Point{msg.x<sp/>/<sp/>1000,<sp/>msg.y<sp/>/<sp/>1000}}<sp/>{}</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">RJ::Time<sp/><ref refid="classvision__filter_1_1CameraBall_1ab7dd304ebb5db70df10338c2130341c2" kindref="member">CameraBall::get_time_captured</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>time_captured_;<sp/>}</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">rj_geometry::Point<sp/><ref refid="classvision__filter_1_1CameraBall_1aac796936cb292b8a305c5affd099f5ee" kindref="member">CameraBall::get_pos</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pos_;<sp/>}</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal">CameraBall<sp/><ref refid="classvision__filter_1_1CameraBall_1a2212d7c24c76cf3fcc80e83b9dc3a45e" kindref="member">CameraBall::combine_balls</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;CameraBall&gt;&amp;<sp/>balls)<sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>sure<sp/>we<sp/>don&apos;t<sp/>divide<sp/>by<sp/>zero<sp/>due<sp/>to<sp/>some<sp/>weird<sp/>error</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(balls.empty())<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SPDLOG_ERROR(</highlight><highlight class="stringliteral">&quot;Number<sp/>of<sp/>balls<sp/>to<sp/>combine<sp/>is<sp/>zero&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" kindref="member">CameraBall</ref>(RJ::now(),<sp/>rj_geometry::Point(0,<sp/>0));</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Have<sp/>to<sp/>do<sp/>the<sp/>average<sp/>like<sp/>Ti<sp/>+<sp/>sum(Tn<sp/>-<sp/>Ti)/N</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>so<sp/>that<sp/>we<sp/>aren&apos;t<sp/>trying<sp/>to<sp/>add<sp/>time_points.<sp/>It&apos;s<sp/>durations<sp/>instead.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Time<sp/>init_time<sp/>=<sp/>balls.front().get_time_captured();</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Seconds<sp/>time_avg<sp/>=<sp/>RJ::Seconds(0);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>pos_avg<sp/>=<sp/>rj_geometry::Point(0,<sp/>0);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" kindref="member">CameraBall</ref>&amp;<sp/>cb<sp/>:<sp/>balls)<sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>time_avg<sp/>+=<sp/>RJ::Seconds(cb.get_time_captured()<sp/>-<sp/>init_time);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_avg<sp/>+=<sp/>cb.get_pos();</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>time_avg<sp/>/=<sp/>balls.size();</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>pos_avg<sp/>/=<sp/>balls.size();</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" kindref="member">CameraBall</ref>(init_time<sp/>+<sp/>time_avg,<sp/>pos_avg);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>vision_filter</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/camera_ball.cpp"/>
+  </compounddef>
+</doxygen>

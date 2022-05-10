@@ -1,0 +1,32 @@
+:py:mod:`rj_gameplay.role.marker`
+=================================
+
+.. py:module:: rj_gameplay.role.marker
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.role.marker.MarkerRole
+
+
+
+
+.. py:class:: MarkerRole(robot: stp.rc.Robot, target_robot: stp.rc.Robot)
+
+   Bases: :py:obj:`stp.role.Role`
+
+   Role to produce marking behavior
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState, target_robot: stp.rc.Robot) -> rj_msgs.msg.RobotIntent
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classvision__filter_1_1CameraRobot" kind="class" language="C++" prot="public">
+    <compoundname>vision_filter::CameraRobot</compoundname>
+    <includes refid="camera__robot_8hpp" local="no">camera_robot.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classvision__filter_1_1CameraRobot_1a74912dfb5dbfb11a043f1fa1f86a63d1" prot="private" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::CameraRobot::time_captured_</definition>
+        <argsstring></argsstring>
+        <name>time_captured_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="73" column="14" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1CameraRobot_1a51e65f6b7871b5f7b762cf2d2aecd5f6" prot="private" static="no" mutable="no">
+        <type>rj_geometry::Pose</type>
+        <definition>rj_geometry::Pose vision_filter::CameraRobot::pose_</definition>
+        <argsstring></argsstring>
+        <name>pose_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="74" column="23" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1CameraRobot_1a597bcf10034519da60bb09e1c755d70d" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int vision_filter::CameraRobot::robot_id_</definition>
+        <argsstring></argsstring>
+        <name>robot_id_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="76" column="9" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1a90d8f8463bc0a10d466a36f69d6c261f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::CameraRobot::CameraRobot</definition>
+        <argsstring>(RJ::Time time_captured, rj_geometry::Pose pose, int robot_id)</argsstring>
+        <name>CameraRobot</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>time_captured</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Pose</type>
+          <declname>pose</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>robot_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>time_captured</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time the frame was captured </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pos</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Position of the robot observation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>theta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Heading of the robot observation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>robot_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the robot </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="23" column="5" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" bodystart="23" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1aa855b9f1acb2aaea9b62b1df44676ff1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::CameraRobot::CameraRobot</definition>
+        <argsstring>(const RJ::Time &amp;time_captured, const DetectionRobotMsg &amp;msg, const rj_geometry::TransformMatrix &amp;world_to_team, double team_angle)</argsstring>
+        <name>CameraRobot</name>
+        <param>
+          <type>const RJ::Time &amp;</type>
+          <declname>time_captured</declname>
+        </param>
+        <param>
+          <type>const DetectionRobotMsg &amp;</type>
+          <declname>msg</declname>
+        </param>
+        <param>
+          <type>const rj_geometry::TransformMatrix &amp;</type>
+          <declname>world_to_team</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>team_angle</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructor that takes in a DetectionRobotMsg. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>time_captured</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>world_to_team</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>team_angle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="33" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/camera_robot.cpp" bodystart="8" bodyend="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1ae09b5ecde92ea14f0abb7ede64138e16" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::CameraRobot::get_time_captured</definition>
+        <argsstring>() const</argsstring>
+        <name>get_time_captured</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the time the detection was captured </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="40" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/camera_robot.cpp" bodystart="15" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1a54c7dbeadf974fd4fdae3f5223e2f14b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point vision_filter::CameraRobot::get_pos</definition>
+        <argsstring>() const</argsstring>
+        <name>get_pos</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the position of the measurement </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="45" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/camera_robot.cpp" bodystart="17" bodyend="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1aa9251d239be6ecb529a41c95e797f187" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double vision_filter::CameraRobot::get_theta</definition>
+        <argsstring>() const</argsstring>
+        <name>get_theta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the heading of the measurement </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="50" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/camera_robot.cpp" bodystart="19" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1a64a461d4bbbdc85d80cee35240633d8a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int vision_filter::CameraRobot::get_robot_id</definition>
+        <argsstring>() const</argsstring>
+        <name>get_robot_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the robot ID of the measurement </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="55" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/camera_robot.cpp" bodystart="21" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1aa571affc6f74c3da533e7edb42972541" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Pose</type>
+        <definition>rj_geometry::Pose vision_filter::CameraRobot::get_pose</definition>
+        <argsstring>() const</argsstring>
+        <name>get_pose</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the pose of the measurement </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="60" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/camera_robot.cpp" bodystart="23" bodyend="23"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classvision__filter_1_1CameraRobot_1aa65bc621e4e2ba76ce3842c6975a0494" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classvision__filter_1_1CameraRobot" kindref="compound">CameraRobot</ref></type>
+        <definition>CameraRobot vision_filter::CameraRobot::combine_robots</definition>
+        <argsstring>(const std::list&lt; CameraRobot &gt; &amp;robots)</argsstring>
+        <name>combine_robots</name>
+        <param>
+          <type>const std::list&lt; <ref refid="classvision__filter_1_1CameraRobot" kindref="compound">CameraRobot</ref> &gt; &amp;</type>
+          <declname>robots</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Combines all the robots in the list and returns a robot with the average pos, time, and theta</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>robots</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of robots to combine</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Note: All robots must have the same robot_id </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="70" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/robot/camera_robot.cpp" bodystart="25" bodyend="57"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Wrapper for the protobuf observation </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" line="15" column="18" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/robot/camera_robot.hpp" bodystart="15" bodyend="77"/>
+    <listofallmembers>
+      <member refid="classvision__filter_1_1CameraRobot_1a90d8f8463bc0a10d466a36f69d6c261f" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>CameraRobot</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1aa855b9f1acb2aaea9b62b1df44676ff1" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>CameraRobot</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1aa65bc621e4e2ba76ce3842c6975a0494" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>combine_robots</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1a54c7dbeadf974fd4fdae3f5223e2f14b" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>get_pos</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1aa571affc6f74c3da533e7edb42972541" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>get_pose</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1a64a461d4bbbdc85d80cee35240633d8a" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>get_robot_id</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1aa9251d239be6ecb529a41c95e797f187" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>get_theta</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1ae09b5ecde92ea14f0abb7ede64138e16" prot="public" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>get_time_captured</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1a51e65f6b7871b5f7b762cf2d2aecd5f6" prot="private" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>pose_</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1a597bcf10034519da60bb09e1c755d70d" prot="private" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>robot_id_</name></member>
+      <member refid="classvision__filter_1_1CameraRobot_1a74912dfb5dbfb11a043f1fa1f86a63d1" prot="private" virt="non-virtual"><scope>vision_filter::CameraRobot</scope><name>time_captured_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,5 @@
+<map id="planning::RobotInstant" name="planning::RobotInstant">
+<area shape="rect" id="node1" title="Represents the current state of a robot in a planned trajectory." alt="" coords="5,95,175,121"/>
+<area shape="rect" id="node2" title=" " alt="" coords="19,5,73,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="107,5,161,32"/>
+</map>

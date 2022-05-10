@@ -1,0 +1,4 @@
+<map id="planning::FacePointCommand" name="planning::FacePointCommand">
+<area shape="rect" id="node1" title=" " alt="" coords="5,80,220,107"/>
+<area shape="rect" id="node2" href="$structplanning_1_1RotationCommand.html" title=" " alt="" coords="9,5,217,32"/>
+</map>

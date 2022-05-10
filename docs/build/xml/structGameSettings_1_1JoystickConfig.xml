@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structGameSettings_1_1JoystickConfig" kind="struct" language="C++" prot="public">
+    <compoundname>GameSettings::JoystickConfig</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structGameSettings_1_1JoystickConfig_1afdac02b01f6d362dbd6b67c3e130d797" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int GameSettings::JoystickConfig::manual_id</definition>
+        <argsstring></argsstring>
+        <name>manual_id</name>
+        <initializer>= -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="34" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1_1JoystickConfig_1a95ed7d002b97d4f93bd236929949b891" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::JoystickConfig::damped_translation</definition>
+        <argsstring></argsstring>
+        <name>damped_translation</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="35" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1_1JoystickConfig_1a63937b0f8a56564616a1308053dee4e0" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::JoystickConfig::damped_rotation</definition>
+        <argsstring></argsstring>
+        <name>damped_rotation</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="36" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1_1JoystickConfig_1a28e89203efd8427297d25796ec4fc579" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::JoystickConfig::use_kick_on_break_beam</definition>
+        <argsstring></argsstring>
+        <name>use_kick_on_break_beam</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="37" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structGameSettings_1_1JoystickConfig_1a011f828a29dc89944325a17a378baad8" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool GameSettings::JoystickConfig::use_field_oriented_drive</definition>
+        <argsstring></argsstring>
+        <name>use_field_oriented_drive</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="38" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" line="33" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_settings.hpp" bodystart="33" bodyend="39"/>
+    <listofallmembers>
+      <member refid="structGameSettings_1_1JoystickConfig_1a63937b0f8a56564616a1308053dee4e0" prot="public" virt="non-virtual"><scope>GameSettings::JoystickConfig</scope><name>damped_rotation</name></member>
+      <member refid="structGameSettings_1_1JoystickConfig_1a95ed7d002b97d4f93bd236929949b891" prot="public" virt="non-virtual"><scope>GameSettings::JoystickConfig</scope><name>damped_translation</name></member>
+      <member refid="structGameSettings_1_1JoystickConfig_1afdac02b01f6d362dbd6b67c3e130d797" prot="public" virt="non-virtual"><scope>GameSettings::JoystickConfig</scope><name>manual_id</name></member>
+      <member refid="structGameSettings_1_1JoystickConfig_1a011f828a29dc89944325a17a378baad8" prot="public" virt="non-virtual"><scope>GameSettings::JoystickConfig</scope><name>use_field_oriented_drive</name></member>
+      <member refid="structGameSettings_1_1JoystickConfig_1a28e89203efd8427297d25796ec4fc579" prot="public" virt="non-virtual"><scope>GameSettings::JoystickConfig</scope><name>use_kick_on_break_beam</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

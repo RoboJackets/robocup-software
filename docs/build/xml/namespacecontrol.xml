@@ -1,0 +1,491 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespacecontrol" kind="namespace" language="C++">
+    <compoundname>control</compoundname>
+    <innerclass refid="classcontrol_1_1ManipulatorControl" prot="public">control::ManipulatorControl</innerclass>
+    <innerclass refid="classcontrol_1_1MotionControl" prot="public">control::MotionControl</innerclass>
+    <innerclass refid="classcontrol_1_1MotionControlNode" prot="public">control::MotionControlNode</innerclass>
+    <innernamespace refid="namespacecontrol_1_1testing">control::testing</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="motion__control_8cpp_1a4bf3d496aefc1725289cdd5f0afa7708" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, max_acceleration, 3.5, &quot;Maximum acceleration limit (motion control) (m/s^2)&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>max_acceleration</type>
+        </param>
+        <param>
+          <type>3.</type>
+          <declname>5</declname>
+        </param>
+        <param>
+          <type>&quot;Maximum acceleration limit (motion control) (m/s^2)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="18" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="18" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1afcf9aa57499bb95c65731963f12ce726" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, max_velocity, 3.5, &quot;Maximum velocity limit (motion control) (m/s)&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>max_velocity</type>
+        </param>
+        <param>
+          <type>3.</type>
+          <declname>5</declname>
+        </param>
+        <param>
+          <type>&quot;Maximum velocity limit (motion control) (m/s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="20" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="20" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1aa19ae3426442555e96351a47fb85ab9e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, max_angular_velocity, 15.0, &quot;Maximum angular velocity limit (motion control) (rad/s)&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>max_angular_velocity</type>
+        </param>
+        <param>
+          <type>15.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Maximum angular velocity limit (motion control) (rad/s)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="22" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="22" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1ad51ef4e5198b535a8a9d6ec161d3dbd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_kp, 6.0, &quot;Kp for rotation ((rad/s)/rad)&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_kp</type>
+        </param>
+        <param>
+          <type>6.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Kp for rotation ((rad/s)/rad)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="24" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="24" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1a7970f8a750a9d0e353190724d206dd7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_ki, 0.0, &quot;Ki for rotation ((rad/s)/(rad*s))&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_ki</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Ki for rotation ((rad/s)/(rad*s))&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="26" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="26" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1aefa2b6ad7cb6fcb05e5d5bb27f65a8b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_kd, 3.0, &quot;Kd for rotation ((rad/s)/(rad/s))&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_kd</type>
+        </param>
+        <param>
+          <type>3.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Kd for rotation ((rad/s)/(rad/s))&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="28" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="28" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1a9a321eaf7ecc94418c9e1a00a676b201" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_INT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_windup, 0, &quot;Windup limit for rotation (unknown units)&quot;)</argsstring>
+        <name>DEFINE_INT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_windup</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <param>
+          <type>&quot;Windup limit for rotation (unknown units)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="30" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="30" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1ae39599d3ba388c3893d3d912c4d9568d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_kp, 6.0, &quot;Kp for translation ((m/s)/m)&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_kp</type>
+        </param>
+        <param>
+          <type>6.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Kp for translation ((m/s)/m)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="32" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="32" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1ae5451b663c44773a2b018f52b773864e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_ki, 0.0, &quot;Ki for translation ((m/s)/(m*s))&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_ki</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Ki for translation ((m/s)/(m*s))&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="34" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="34" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1aee4b3b5bb956ec7d02ab390c9402eb81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_kd, 3.0, &quot;Kd for translation ((m/s)/(m/s))&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_kd</type>
+        </param>
+        <param>
+          <type>3.</type>
+          <declname>0</declname>
+        </param>
+        <param>
+          <type>&quot;Kd for translation ((m/s)/(m/s))&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="36" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="36" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8cpp_1ac11f44bbfccc2b22aa1a463fe380ef66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DEFINE_INT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_windup, 0, &quot;Windup limit for translation (unknown units)&quot;)</argsstring>
+        <name>DEFINE_INT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_windup</type>
+        </param>
+        <param>
+          <type>0</type>
+        </param>
+        <param>
+          <type>&quot;Windup limit for translation (unknown units)&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" line="38" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.cpp" declline="38" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1a5e26ab4af5a9174dd198927c5ca110bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, max_acceleration)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>max_acceleration</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="16" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="16" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1a17953f6d862d6eee6ecb364e2ab5ed7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, max_velocity)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>max_velocity</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="17" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="17" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1ade280638f381c4bc5f5deb14eaaf3568" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_kp)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_kp</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="18" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="18" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1ac03cb6f0900be3f620654828e354076d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_ki)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_ki</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="19" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="19" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1a1f0048d4a80a70db3b63200f0282f06c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_kd)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_kd</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="20" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="20" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1a31ca560d472088992c638269b593e405" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_INT64</definition>
+        <argsstring>(params::kMotionControlParamModule, rotation_windup)</argsstring>
+        <name>DECLARE_INT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>rotation_windup</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="21" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="21" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1aef8c59c3735053d9899decfaf99a13c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_kp)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_kp</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="22" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="22" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1a10c4b2ce76ad3467c0563827d30fff9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_ki)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_ki</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="23" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="23" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1ac551a808fbeabb77fe38f84a53be029c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_FLOAT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_kd)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_kd</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="24" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="24" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="motion__control_8hpp_1a2c1ae55b52992dbc8251bb78394f1d32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>control::DECLARE_INT64</definition>
+        <argsstring>(params::kMotionControlParamModule, translation_windup)</argsstring>
+        <name>DECLARE_INT64</name>
+        <param>
+          <type>params::kMotionControlParamModule</type>
+        </param>
+        <param>
+          <type>translation_windup</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" line="25" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp" declline="25" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/manipulator_control.cpp" line="8" column="17"/>
+  </compounddef>
+</doxygen>

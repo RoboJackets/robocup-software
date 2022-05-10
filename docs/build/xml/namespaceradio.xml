@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="namespaceradio" kind="namespace" language="C++">
+    <compoundname>radio</compoundname>
+    <innerclass refid="classradio_1_1NetworkRadio" prot="public">radio::NetworkRadio</innerclass>
+    <innerclass refid="classradio_1_1Radio" prot="public">radio::Radio</innerclass>
+    <innerclass refid="classradio_1_1SimRadio" prot="public">radio::SimRadio</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="radio_8hpp_1af715486eeb9d6765bdd9e995085775fb" prot="public" static="no" constexpr="yes" mutable="no">
+        <type>constexpr auto</type>
+        <definition>constexpr auto radio::kRadioParamModule</definition>
+        <argsstring></argsstring>
+        <name>kRadioParamModule</name>
+        <initializer>= &quot;radio&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp" line="21" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="radio_8cpp_1a7e3f665bd3ed316dcc3aae4bdc5844a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>radio::DEFINE_FLOAT64</definition>
+        <argsstring>(kRadioParamModule, timeout, 0.25, &quot;Timeout after which radio will assume a robot is disconnected. Seconds.&quot;)</argsstring>
+        <name>DEFINE_FLOAT64</name>
+        <param>
+          <type>kRadioParamModule</type>
+        </param>
+        <param>
+          <type>timeout</type>
+        </param>
+        <param>
+          <type>0.</type>
+          <declname>25</declname>
+        </param>
+        <param>
+          <type>&quot;Timeout after which radio will assume a robot is disconnected. Seconds.&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.cpp" line="5" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.cpp" declline="5" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="radio_8hpp_1a6dad015b72c373a5a76673abe333e41d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>radio::DECLARE_FLOAT64</definition>
+        <argsstring>(kRadioParamModule, timeout)</argsstring>
+        <name>DECLARE_FLOAT64</name>
+        <param>
+          <type>kRadioParamModule</type>
+        </param>
+        <param>
+          <type>timeout</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp" line="22" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp" declline="22" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="sim__radio_8cpp_1a91db06d6cbc067ef02a025311f266e89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>radio::DEFINE_STRING</definition>
+        <argsstring>(kRadioParamModule, interface, &quot;127.0.0.1&quot;, &quot;The interface for sim radio operation&quot;)</argsstring>
+        <name>DEFINE_STRING</name>
+        <param>
+          <type>kRadioParamModule</type>
+        </param>
+        <param>
+          <type>interface</type>
+        </param>
+        <param>
+          <type>&quot;127.0.0.1&quot;</type>
+        </param>
+        <param>
+          <type>&quot;The interface for sim radio operation&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" line="21" column="1" declfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" declline="21" declcolumn="1"/>
+      </memberdef>
+      <memberdef kind="function" id="sim__radio_8cpp_1a0e937752b688f3cf64751cfd808611ad" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>SimulatorCommand</type>
+        <definition>static SimulatorCommand radio::convert_placement_to_proto</definition>
+        <argsstring>(const rj_msgs::srv::SimPlacement::Request &amp;placement)</argsstring>
+        <name>convert_placement_to_proto</name>
+        <param>
+          <type>const rj_msgs::srv::SimPlacement::Request &amp;</type>
+          <declname>placement</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" line="23" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.cpp" bodystart="23" bodyend="58"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/network_radio.cpp" line="14" column="15"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="log__utils_8hpp" kind="file" language="C++">
+    <compoundname>log_utils.hpp</compoundname>
+    <includes local="no">rj_protos/LogFrame.pb.h</includes>
+    <includes local="no">QColor</includes>
+    <includes local="no">QPointF</includes>
+    <includedby refid="debug__drawer_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/debug_drawer.cpp</includedby>
+    <includedby refid="field__view_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/ui/field_view.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp</label>
+        <link refid="log__utils_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="4">
+        <label>QPointF</label>
+      </node>
+      <node id="3">
+        <label>QColor</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="log__utils_8hpp_1a01da2758285d03af1fb540140bf5ddae" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>QColor</type>
+        <definition>static QColor qcolor</definition>
+        <argsstring>(uint32_t value)</argsstring>
+        <name>qcolor</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp" line="8" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp" bodystart="8" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="log__utils_8hpp_1af411f2d687c94dba078764b19d976e4e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>QPointF</type>
+        <definition>static QPointF qpointf</definition>
+        <argsstring>(const Packet::Point &amp;pt)</argsstring>
+        <name>qpointf</name>
+        <param>
+          <type>const Packet::Point &amp;</type>
+          <declname>pt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp" line="16" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp" bodystart="16" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="log__utils_8hpp_1a1fbd17badc5a209d4e350e8a42d6ba08" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uint32_t</type>
+        <definition>static uint32_t color</definition>
+        <argsstring>(const QColor &amp;color)</argsstring>
+        <name>color</name>
+        <param>
+          <type>const QColor &amp;</type>
+          <declname>color</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp" line="20" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp" bodystart="20" bodyend="22"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_protos/LogFrame.pb.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;QColor&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;QPointF&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>QColor<sp/>qcolor(uint32_t<sp/>value)<sp/>{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/>a<sp/>=<sp/>value<sp/>&gt;&gt;<sp/>24;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/>r<sp/>=<sp/>value<sp/>&gt;&gt;<sp/>16;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/>g<sp/>=<sp/>value<sp/>&gt;&gt;<sp/>8;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t<sp/>b<sp/>=<sp/>value;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>QColor(r,<sp/>g,<sp/>b,<sp/>a);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>QPointF<sp/>qpointf(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Packet::Point&amp;<sp/>pt)<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>QPointF(pt.x(),<sp/>pt.y());</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>uint32_t<sp/>color(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>QColor&amp;<sp/>color)<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(color.red()<sp/>&lt;&lt;<sp/>16)<sp/>|<sp/>(color.green()<sp/>&lt;&lt;<sp/>8)<sp/>|<sp/>(color.blue())<sp/>|<sp/>(color.alpha()<sp/>&lt;&lt;<sp/>24);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/log_utils.hpp"/>
+  </compounddef>
+</doxygen>

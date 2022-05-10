@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="robot__status_8hpp" kind="file" language="C++">
+    <compoundname>robot_status.hpp</compoundname>
+    <includes local="no">rj_geometry/pose.hpp</includes>
+    <includes local="no">optional</includes>
+    <includes local="no">rj_common/time.hpp</includes>
+    <includedby refid="logger_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp</includedby>
+    <includedby refid="context_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</includedby>
+    <includedby refid="packet__convert_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp</includedby>
+    <includedby refid="radio_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp</includedby>
+    <includedby refid="packet__convert_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/robot_status.hpp</label>
+        <link refid="robot__status_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="3">
+        <label>optional</label>
+      </node>
+      <node id="4">
+        <label>rj_common/time.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="9">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/collect_planner.hpp</label>
+        <link refid="collect__planner_8hpp_source"/>
+      </node>
+      <node id="8">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/planner.hpp</label>
+        <link refid="planner_8hpp_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/network_radio.hpp</label>
+        <link refid="network__radio_8hpp_source"/>
+      </node>
+      <node id="3">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</label>
+        <link refid="context_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp</label>
+        <link refid="debug__draw__interface_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/processor.hpp</label>
+        <link refid="processor_8hpp_source"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/intercept_planner.hpp</label>
+        <link refid="intercept__planner_8hpp_source"/>
+      </node>
+      <node id="13">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp</label>
+        <link refid="line__kick__planner_8hpp_source"/>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/robot_status.hpp</label>
+        <link refid="robot__status_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/path_target_planner.hpp</label>
+        <link refid="path__target__planner_8hpp_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp</label>
+        <link refid="referee__sub_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp</label>
+        <link refid="raw__vision__packet__sub_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp</label>
+        <link refid="packet__convert_8hpp_source"/>
+      </node>
+      <node id="7">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.hpp</label>
+        <link refid="plan__request_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp</label>
+        <link refid="motion__control__node_8hpp_source"/>
+      </node>
+      <node id="16">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp</label>
+        <link refid="planner__node_8hpp_source"/>
+      </node>
+      <node id="19">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp</label>
+        <link refid="sim__radio_8hpp_source"/>
+      </node>
+      <node id="11">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp</label>
+        <link refid="escape__obstacles__path__planner_8hpp_source"/>
+      </node>
+      <node id="18">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/main_window.hpp</label>
+        <link refid="main__window_8hpp_source"/>
+      </node>
+      <node id="6">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp</label>
+        <link refid="manual__control__node_8hpp_source"/>
+      </node>
+      <node id="26">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp</label>
+        <link refid="radio_8hpp_source"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/settle_planner.hpp</label>
+        <link refid="settle__planner_8hpp_source"/>
+      </node>
+      <node id="4">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp</label>
+        <link refid="motion__control_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp</label>
+        <link refid="pivot__path__planner_8hpp_source"/>
+      </node>
+      <node id="24">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp</label>
+        <link refid="sim__field__view_8hpp_source"/>
+      </node>
+      <node id="23">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/soccer_config_client.hpp</label>
+        <link refid="soccer__config__client_8hpp_source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp</label>
+        <link refid="logger_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structRobotStatus" prot="public">RobotStatus</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/pose.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;optional&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_common/time.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="structRobotStatus" refkind="compound"><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structRobotStatus" kindref="compound">RobotStatus</ref><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Time<sp/>timestamp;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>shell_id<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>HardwareVersion<sp/>{<sp/>kUnknown,<sp/>kFleet2018,<sp/>kSimulated<sp/>};</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>HardwareVersion<sp/>version<sp/>=<sp/>HardwareVersion::kFleet2018;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;rj_geometry::Twist&gt;<sp/>twist_estimate;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;rj_geometry::Pose&gt;<sp/>pose_estimate;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>battery_voltage<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>kicker_voltage<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>has_ball<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/>KickerState<sp/>{<sp/>kFailed,<sp/>kCharging,<sp/>kCharged<sp/>};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>KickerState<sp/>kicker<sp/>=<sp/>KickerState::kFailed;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;bool,<sp/>5&gt;<sp/>motors_healthy{};</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>fpga_healthy<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/radio/robot_status.hpp"/>
+  </compounddef>
+</doxygen>

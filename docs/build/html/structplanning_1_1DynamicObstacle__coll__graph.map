@@ -1,0 +1,4 @@
+<map id="planning::DynamicObstacle" name="planning::DynamicObstacle">
+<area shape="rect" id="node1" title="An obstacle that will follow some predicted trajectory." alt="" coords="5,95,207,121"/>
+<area shape="rect" id="node2" href="$classplanning_1_1Trajectory.html" title="Represents a trajectory x(t), y(t), h(t), with a smooth velocity and piecewise&#45;continuous acceleratio..." alt="" coords="31,5,181,32"/>
+</map>

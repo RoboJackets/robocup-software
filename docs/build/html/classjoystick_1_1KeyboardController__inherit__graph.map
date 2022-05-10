@@ -1,0 +1,5 @@
+<map id="joystick::KeyboardController" name="joystick::KeyboardController">
+<area shape="rect" id="node1" title=" " alt="" coords="5,155,212,181"/>
+<area shape="rect" id="node2" href="$classjoystick_1_1SDLController.html" title=" " alt="" coords="23,80,194,107"/>
+<area shape="rect" id="node3" href="$classjoystick_1_1ManualController.html" title=" " alt="" coords="12,5,205,32"/>
+</map>

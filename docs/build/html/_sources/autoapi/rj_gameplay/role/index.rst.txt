@@ -1,0 +1,23 @@
+:py:mod:`rj_gameplay.role`
+==========================
+
+.. py:module:: rj_gameplay.role
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   capture_role/index.rst
+   dumb_move/index.rst
+   goalie_role/index.rst
+   marker/index.rst
+   passer/index.rst
+   receiver/index.rst
+   seeker/index.rst
+   striker/index.rst
+   unassigned_role/index.rst
+
+

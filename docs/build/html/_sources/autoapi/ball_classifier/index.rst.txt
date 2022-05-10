@@ -1,0 +1,109 @@
+:py:mod:`ball_classifier`
+=========================
+
+.. py:module:: ball_classifier
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ball_classifier.BallClassifier
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ball_classifier.Team
+
+
+.. py:data:: Team
+   
+
+   
+
+.. py:class:: BallClassifier
+
+   Bases: :py:obj:`fsm.StateMachine`
+
+   .. py:class:: State
+
+      Bases: :py:obj:`enum.Enum`
+
+      Generic enumeration.
+
+      Derive from this class to define new enumerations.
+
+      .. py:attribute:: no_possession
+         :annotation: = 1
+
+         
+
+      .. py:attribute:: our_possession
+         :annotation: = 2
+
+         
+
+      .. py:attribute:: our_kick
+         :annotation: = 3
+
+         
+
+      .. py:attribute:: their_possession
+         :annotation: = 4
+
+         
+
+      .. py:attribute:: scramble
+         :annotation: = 5
+
+         
+
+      .. py:attribute:: kickoff
+         :annotation: = 6
+
+         
+
+
+   .. py:method:: on_enter_our_possession(self) -> None
+
+
+   .. py:method:: on_enter_scramble(self) -> None
+
+
+   .. py:method:: on_enter_their_possession(self) -> None
+
+
+   .. py:method:: on_enter_scramble(self) -> None
+
+
+   .. py:method:: on_enter_kickoff(self) -> None
+
+
+   .. py:method:: team_has_possession(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: we_kicked(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: pass_success(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: pass_intercepted(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: kick_to_scramble(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: shot_successful(self, world_state: stp.rc.WorldState) -> bool
+
+
+

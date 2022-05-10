@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classreferee_1_1InternalReferee" kind="class" language="C++" prot="public">
+    <compoundname>referee::InternalReferee</compoundname>
+    <basecompoundref refid="classreferee_1_1RefereeBase" prot="public" virt="non-virtual">referee::RefereeBase</basecompoundref>
+    <includes refid="internal__referee_8hpp" local="no">internal_referee.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classreferee_1_1InternalReferee_1a192204d5a6ca84d096fe23eec9c2c3aa" prot="private" static="no" mutable="no">
+        <type>rclcpp::Service&lt; rj_msgs::srv::QuickCommands &gt;::SharedPtr</type>
+        <definition>rclcpp::Service&lt;rj_msgs::srv::QuickCommands&gt;::SharedPtr referee::InternalReferee::quick_commands_srv_</definition>
+        <argsstring></argsstring>
+        <name>quick_commands_srv_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp" line="27" column="33" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classreferee_1_1InternalReferee_1ac9e6af7f3835278974aab1b21536c32c" prot="private" static="no" mutable="no">
+        <type>rclcpp::Subscription&lt; rj_msgs::msg::GameSettings &gt;::SharedPtr</type>
+        <definition>rclcpp::Subscription&lt;rj_msgs::msg::GameSettings&gt;::SharedPtr referee::InternalReferee::game_settings_sub_</definition>
+        <argsstring></argsstring>
+        <name>game_settings_sub_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp" line="28" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classreferee_1_1InternalReferee_1a1bf92c74d214371775bca0854d5c72a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>referee::InternalReferee::InternalReferee</definition>
+        <argsstring>()</argsstring>
+        <name>InternalReferee</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp" line="23" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.cpp" bodystart="7" bodyend="27"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Responsible for handling &quot;quick actions&quot; (UI start/stop/restart buttons) for fake matches. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Exposes quick commands and restarts on referee::topics::kQuickCommandsSrv and referee::topics::kQuickRestartsSrv. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>referee::InternalReferee</label>
+        <link refid="classreferee_1_1InternalReferee"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Node</label>
+      </node>
+      <node id="2">
+        <label>referee::RefereeBase</label>
+        <link refid="classreferee_1_1RefereeBase"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>referee::InternalReferee</label>
+        <link refid="classreferee_1_1InternalReferee"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Node</label>
+      </node>
+      <node id="2">
+        <label>referee::RefereeBase</label>
+        <link refid="classreferee_1_1RefereeBase"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp" line="21" column="41" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp" bodystart="21" bodyend="29"/>
+    <listofallmembers>
+      <member refid="classreferee_1_1InternalReferee_1ac9e6af7f3835278974aab1b21536c32c" prot="private" virt="non-virtual"><scope>referee::InternalReferee</scope><name>game_settings_sub_</name></member>
+      <member refid="classreferee_1_1InternalReferee_1a1bf92c74d214371775bca0854d5c72a7" prot="public" virt="non-virtual"><scope>referee::InternalReferee</scope><name>InternalReferee</name></member>
+      <member refid="classreferee_1_1RefereeBase_1aaabee878bf4b235982abd87be9daa78a" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>override_goalie</name></member>
+      <member refid="classreferee_1_1InternalReferee_1a192204d5a6ca84d096fe23eec9c2c3aa" prot="private" virt="non-virtual"><scope>referee::InternalReferee</scope><name>quick_commands_srv_</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a376446b821deb4c2d483cfcfc0637ed9" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>RefereeBase</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a87ecde165d1a53cd95bbc293dccb9c2d" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>send</name></member>
+      <member refid="classreferee_1_1RefereeBase_1af428d715daf977485c3087f122cf323c" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>set_period</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a770f914b9d3e6e5d91adf520c91c31dd" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>set_play_state</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a697f93c7da96f570d16fb206ef48d2a0" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>set_stage_time_left</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a301f81b9587ea019e9c6af7701fda4b8" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>set_team_color</name></member>
+      <member refid="classreferee_1_1RefereeBase_1aedf5d757272bda656d46353b25bc8d87" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>set_team_info</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a00597117383ba57f90c3465109531e7d" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>set_team_name</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a148f5f93b12e2eed986c863d8dc3a923" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>spin_kick_detector</name></member>
+      <member refid="classreferee_1_1RefereeBase_1a3f3c73c811133054d7a0cac46803ef7f" prot="protected" virt="non-virtual"><scope>referee::InternalReferee</scope><name>yellow_play_state</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,99 @@
+:py:mod:`stp.tactic`
+====================
+
+.. py:module:: stp.tactic
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.tactic.ITactic
+   stp.tactic.Tactic
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   stp.tactic.RoleRequests
+   stp.tactic.RoleResults
+   stp.tactic.SkillEntry
+
+
+.. py:class:: ITactic
+
+   Bases: :py:obj:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+.. py:data:: RoleRequests
+   
+
+   
+
+.. py:data:: RoleResults
+   
+
+   
+
+.. py:data:: SkillEntry
+   
+
+   
+
+.. py:class:: Tactic(world_state: stp.rc.WorldState)
+
+   Bases: :py:obj:`abc.ABC`
+
+   High-level construct that coordinates one or more roles. Creates role requests to be handled by Plays.
+
+   .. py:method:: init_roles(self, world_state: stp.rc.WorldState) -> None
+      :abstractmethod:
+
+      Given assigned robots by the Play, initialize each role of role_requests with its assigned robot.
+
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, rj_msgs.msg.RobotIntent]]
+      :abstractmethod:
+
+      Tick each Role of the Tactic to get a list of robot_ids and linked RobotIntents for the Play.
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+      :abstractmethod:
+
+      True when Tactic is done; False otherwise.
+
+
+   .. py:method:: role_requests(self) -> List[Tuple[stp.role.Role, stp.role.CostFn]]
+      :property:
+
+      Returns self._role_requests. @property allows the getter to be called like this:
+
+      some_tactic = ConcreteTactic()
+      role_reqs = some_tactic.role_requests
+
+
+   .. py:method:: set_assigned_robots(self, assigned_robots)
+
+
+   .. py:method:: needs_assign(self)
+      :property:
+
+
+   .. py:method:: __repr__(self)
+
+      returns a string with all the roles requested and all the roles assigned.
+
+
+

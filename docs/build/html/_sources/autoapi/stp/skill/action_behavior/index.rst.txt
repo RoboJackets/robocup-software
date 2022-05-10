@@ -1,0 +1,126 @@
+:py:mod:`stp.skill.action_behavior`
+===================================
+
+.. py:module:: stp.skill.action_behavior
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.skill.action_behavior.RobotActions
+   stp.skill.action_behavior.ActionBehavior
+
+
+
+
+.. py:class:: RobotActions
+
+   Bases: :py:obj:`TypedDict`
+
+   A simple typed namespace. At runtime it is equivalent to a plain dict.
+
+   TypedDict creates a dictionary type that expects all of its
+   instances to have a certain set of keys, where each key is
+   associated with a value of a consistent type. This expectation
+   is not checked at runtime but is only enforced by type checkers.
+   Usage::
+
+       class Point2D(TypedDict):
+           x: int
+           y: int
+           label: str
+
+       a: Point2D = {'x': 1, 'y': 2, 'label': 'good'}  # OK
+       b: Point2D = {'z': 3, 'label': 'bad'}           # Fails type check
+
+       assert Point2D(x=1, y=2, label='first') == dict(x=1, y=2, label='first')
+
+   The type info can be accessed via Point2D.__annotations__. TypedDict
+   supports two additional equivalent forms::
+
+       Point2D = TypedDict('Point2D', x=int, y=int, label=str)
+       Point2D = TypedDict('Point2D', {'x': int, 'y': int, 'label': str})
+
+   By default, all keys must be present in a TypedDict. It is possible
+   to override this by specifying totality.
+   Usage::
+
+       class point2D(TypedDict, total=False):
+           x: int
+           y: int
+
+   This means that a point2D TypedDict can have any of the keys omitted.A type
+   checker is only expected to support a literal False or True as the value of
+   the total argument. True is the default, and makes all items defined in the
+   class body be required.
+
+   The class syntax is only supported in Python 3.6+, while two other
+   syntax forms work for Python 2.7 and 3.2+
+
+   .. py:attribute:: robot_id
+      :annotation: :int
+
+      
+
+   .. py:attribute:: actions
+      :annotation: :List[stp.action.IAction]
+
+      
+
+
+.. py:class:: ActionBehavior(name: str, action: ActionBehavior.__init__.action, robot: stp.rc.Robot = None, ctx=None)
+
+   Bases: :py:obj:`py_trees.behaviour.Behaviour`
+
+   A behaviour for behviour trees which ticks its action when ticked
+
+   .. py:method:: tick_once(self, robot: stp.rc.Robot, world_state: stp.rc.WorldState, ctx=None) -> RobotActions
+
+      Ticks its action using the robot given (if root) or the robot from its parent.
+      This will probably become tick() or spin() once action server is implemented
+      TODO: Should return a list of robot intents
+
+
+   .. py:method:: initialise(self) -> None
+
+      Begin spinning the action
+      TODO: Implement with action server
+
+
+   .. py:method:: update(self) -> py_trees.common.Status
+
+      Check action and return the current state of the aciton
+      TODO: Needs to somehow use robot intents to check on status of action
+
+
+   .. py:method:: terminate(self, new_status)
+
+      .. note:: User Customisable Callback
+
+      Subclasses may override this method to clean up. It will be triggered when a behaviour either
+      finishes execution (switching from :data:`~py_trees.common.Status.RUNNING`
+      to :data:`~py_trees.common.Status.FAILURE` || :data:`~py_trees.common.Status.SUCCESS`)
+      or it got interrupted by a higher priority branch (switching to
+      :data:`~py_trees.common.Status.INVALID`). Remember that the :meth:`~py_trees.behaviour.Behaviour.initialise` method
+      will handle resetting of variables before re-entry, so this method is about
+      disabling resources until this behaviour's next tick. This could be a indeterminably
+      long time. e.g.
+
+      * cancel an external action that got started
+      * shut down any tempoarary communication handles
+
+      Args:
+          new_status (:class:`~py_trees.common.Status`): the behaviour is transitioning to this new status
+
+      .. warning:: Do not set `self.status = new_status` here, that is automatically handled
+         by the :meth:`~py_trees.behaviour.Behaviour.stop` method. Use the argument purely for introspection purposes (e.g.
+         comparing the current state in `self.status` with the state it will transition to in
+         `new_status`.
+
+
+

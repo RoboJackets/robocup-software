@@ -1,0 +1,33 @@
+:py:mod:`rj_gameplay.tactic.dumb_tactic`
+========================================
+
+.. py:module:: rj_gameplay.tactic.dumb_tactic
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.tactic.dumb_tactic.DumbTactic
+
+
+
+
+.. py:class:: DumbTactic(world_state: stp.rc.WorldState, pts: list)
+
+   Bases: :py:obj:`stp.tactic.Tactic`
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, rj_msgs.msg.RobotIntent]]
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: init_roles(self, world_state: stp.rc.WorldState)
+
+
+

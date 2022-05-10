@@ -1,0 +1,37 @@
+:py:mod:`stp.utils.enum`
+========================
+
+.. py:module:: stp.utils.enum
+
+.. autoapi-nested-parse::
+
+   This module contains the implementation of a metaclass for defining Enums.
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.utils.enum.SimpleEnumMeta
+
+
+
+
+.. py:class:: SimpleEnumMeta
+
+   Bases: :py:obj:`type`
+
+   Metaclass for TacticsEnum. Collects all the class attributes and puts it
+   in enum_names
+
+   .. py:attribute:: enum_names
+      :annotation: :List[str]
+
+      
+
+

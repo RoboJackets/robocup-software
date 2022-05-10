@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_09b8bfc009190bd58f204818371ff4ae" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball</compoundname>
+    <innerfile refid="ball__bounce_8hpp">ball_bounce.hpp</innerfile>
+    <innerfile refid="camera__ball_8hpp">camera_ball.hpp</innerfile>
+    <innerfile refid="kalman__ball_8hpp">kalman_ball.hpp</innerfile>
+    <innerfile refid="world__ball_8hpp">world_ball.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/"/>
+  </compounddef>
+</doxygen>

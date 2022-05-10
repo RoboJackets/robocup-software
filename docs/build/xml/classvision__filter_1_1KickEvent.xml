@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classvision__filter_1_1KickEvent" kind="class" language="C++" prot="public">
+    <compoundname>vision_filter::KickEvent</compoundname>
+    <includes refid="kick__event_8hpp" local="no">kick_event.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classvision__filter_1_1KickEvent_1a6c8a27b1a3422f106ca2fb49113ebcca" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool vision_filter::KickEvent::is_valid_</definition>
+        <argsstring></argsstring>
+        <name>is_valid_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="73" column="10" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KickEvent_1a5647f6f45e4f7fdfd0f5c97eb93de548" prot="private" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::KickEvent::kick_time_</definition>
+        <argsstring></argsstring>
+        <name>kick_time_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="75" column="14" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KickEvent_1aadbf93c61a559a30b16596bfa4b9924e" prot="private" static="no" mutable="no">
+        <type><ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref></type>
+        <definition>WorldRobot vision_filter::KickEvent::kicking_robot_</definition>
+        <argsstring></argsstring>
+        <name>kicking_robot_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="77" column="16" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classvision__filter_1_1KickEvent_1a552f814d61f16a822ebae8d7f29b9664" prot="private" static="no" mutable="no">
+        <type>std::deque&lt; <ref refid="classvision__filter_1_1VisionState" kindref="compound">VisionState</ref> &gt;</type>
+        <definition>std::deque&lt;VisionState&gt; vision_filter::KickEvent::states_since_kick_</definition>
+        <argsstring></argsstring>
+        <name>states_since_kick_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="79" column="16" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classvision__filter_1_1KickEvent_1ad6c75265f0cd26c412fa81b256f06d33" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::KickEvent::KickEvent</definition>
+        <argsstring>()</argsstring>
+        <name>KickEvent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates invalid kick event Makes things a little easier instead of check for null etc </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="21" column="5" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" bodystart="21" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KickEvent_1a6907c496d3a6c7a0668a82905caf0556" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::KickEvent::KickEvent</definition>
+        <argsstring>(RJ::Time kick_time, WorldRobot kicking_robot, std::deque&lt; VisionState &gt; states_since_kick)</argsstring>
+        <name>KickEvent</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>kick_time</declname>
+        </param>
+        <param>
+          <type><ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref></type>
+          <declname>kicking_robot</declname>
+        </param>
+        <param>
+          <type>std::deque&lt; <ref refid="classvision__filter_1_1VisionState" kindref="compound">VisionState</ref> &gt;</type>
+          <declname>states_since_kick</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a valid kick event</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>kick_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time of kick </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kicking_robot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classvision__filter_1_1World" kindref="compound">World</ref> robot who is the one kicking </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>states_since_kick</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>All the vision states that we have since the kick </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="30" column="5" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" bodystart="30" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KickEvent_1aac7aee1d537986f3e16df9aa5f385646" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vision_filter::KickEvent::add_state</definition>
+        <argsstring>(RJ::Time calc_time, const WorldBall &amp;ball, const std::vector&lt; WorldRobot &gt; &amp;yellow_robots, const std::vector&lt; WorldRobot &gt; &amp;blue_robots)</argsstring>
+        <name>add_state</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>calc_time</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1WorldBall" kindref="compound">WorldBall</ref> &amp;</type>
+          <declname>ball</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt; &amp;</type>
+          <declname>yellow_robots</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt; &amp;</type>
+          <declname>blue_robots</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds a state to the history Use when the kick event is already created and we are trying to estimate the kick trajectory</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>calc_time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Time of current frame </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ball</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ball at current frame </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>yellow_robots</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Yellow robots at current frame </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blue_robots</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Blue robots at current frame </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="47" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/kick/kick_event.cpp" bodystart="4" bodyend="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KickEvent_1ac3e79722bb54868b66b2b06e44ebf266" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool vision_filter::KickEvent::get_is_valid</definition>
+        <argsstring>() const</argsstring>
+        <name>get_is_valid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if the kick is a valid one </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="54" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/kick/kick_event.cpp" bodystart="10" bodyend="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KickEvent_1a899b47319c2aa8c24e9e296ebbe8635b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RJ::Time</type>
+        <definition>RJ::Time vision_filter::KickEvent::get_kick_time</definition>
+        <argsstring>() const</argsstring>
+        <name>get_kick_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>time we think a robot kicked </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="59" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/kick/kick_event.cpp" bodystart="12" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KickEvent_1a7e01efe5b69d8fe3b05ee1a3acecd927" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref></type>
+        <definition>WorldRobot vision_filter::KickEvent::get_kicking_robot</definition>
+        <argsstring>() const</argsstring>
+        <name>get_kicking_robot</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>robot we think kicked </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="64" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/kick/kick_event.cpp" bodystart="14" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1KickEvent_1a1ba9dd9f9ca688eb0e4ddab456aa8716" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const std::deque&lt; <ref refid="classvision__filter_1_1VisionState" kindref="compound">VisionState</ref> &gt; &amp;</type>
+        <definition>const std::deque&lt; VisionState &gt; &amp; vision_filter::KickEvent::get_states_since_kick</definition>
+        <argsstring>() const</argsstring>
+        <name>get_states_since_kick</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>vision states since that time we kicked </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="69" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/kick/kick_event.cpp" bodystart="16" bodyend="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Contains all the useful information for a kick Like: Who kicked, when, what are the ball positions since etc </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" line="15" column="16" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp" bodystart="15" bodyend="80"/>
+    <listofallmembers>
+      <member refid="classvision__filter_1_1KickEvent_1aac7aee1d537986f3e16df9aa5f385646" prot="public" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>add_state</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1ac3e79722bb54868b66b2b06e44ebf266" prot="public" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>get_is_valid</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1a899b47319c2aa8c24e9e296ebbe8635b" prot="public" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>get_kick_time</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1a7e01efe5b69d8fe3b05ee1a3acecd927" prot="public" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>get_kicking_robot</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1a1ba9dd9f9ca688eb0e4ddab456aa8716" prot="public" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>get_states_since_kick</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1a6c8a27b1a3422f106ca2fb49113ebcca" prot="private" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>is_valid_</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1a5647f6f45e4f7fdfd0f5c97eb93de548" prot="private" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>kick_time_</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1ad6c75265f0cd26c412fa81b256f06d33" prot="public" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>KickEvent</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1a6907c496d3a6c7a0668a82905caf0556" prot="public" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>KickEvent</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1aadbf93c61a559a30b16596bfa4b9924e" prot="private" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>kicking_robot_</name></member>
+      <member refid="classvision__filter_1_1KickEvent_1a552f814d61f16a822ebae8d7f29b9664" prot="private" virt="non-virtual"><scope>vision_filter::KickEvent</scope><name>states_since_kick_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

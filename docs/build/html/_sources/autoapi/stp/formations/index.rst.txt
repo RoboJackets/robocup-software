@@ -1,0 +1,54 @@
+:py:mod:`stp.formations`
+========================
+
+.. py:module:: stp.formations
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   diamond_formation/index.rst
+   x_formation/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.formations.Formations
+
+
+
+
+.. py:class:: Formations(world_state: stp.rc.WorldState)
+
+   Bases: :py:obj:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: get_centroids(self) -> List
+      :property:
+
+      Get the centroid associated with the called region
+
+
+   .. py:method:: get_regions(self) -> List
+      :property:
+
+      Get all of the region bounds of the formation. Each region is in order of left to right from top to bottom.
+      Within each region the bounds are order as follows:
+          x min,
+          x max,
+          y min,
+          y max,
+
+
+

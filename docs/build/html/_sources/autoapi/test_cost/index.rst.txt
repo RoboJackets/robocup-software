@@ -1,0 +1,30 @@
+:py:mod:`test_cost`
+===================
+
+.. py:module:: test_cost
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   test_cost.test_constant
+   test_cost.test_distance_to_pt
+
+
+
+.. py:function:: test_constant() -> None
+
+   Tests cost.constant for both the same robot and different robot cases.
+
+
+.. py:function:: test_distance_to_pt() -> None
+
+   Tests cost.distance_to_pt for both the same robot and different robot cases.
+
+

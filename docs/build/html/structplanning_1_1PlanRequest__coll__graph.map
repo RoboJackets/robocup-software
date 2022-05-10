@@ -1,0 +1,13 @@
+<map id="planning::PlanRequest" name="planning::PlanRequest">
+<area shape="rect" id="node1" title="Encapsulates information needed for planner to make a path." alt="" coords="841,100,1008,127"/>
+<area shape="rect" id="node2" href="$structWorldState.html" title=" " alt="" coords="544,21,637,48"/>
+<area shape="rect" id="node3" href="$structBallState.html" title="Our belief about the ball&#39;s current position and velocity." alt="" coords="232,21,313,48"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,21,60,48"/>
+<area shape="rect" id="node5" href="$structplanning_1_1RobotInstant.html" title="Represents the current state of a robot in a planned trajectory." alt="" coords="506,72,675,99"/>
+<area shape="rect" id="node6" title=" " alt="" coords="245,72,300,99"/>
+<area shape="rect" id="node7" title=" " alt="" coords="246,123,299,149"/>
+<area shape="rect" id="node8" href="$classrj__drawing_1_1RosDebugDrawer.html" title=" " alt="" coords="485,123,696,149"/>
+<area shape="rect" id="node9" href="$structplanning_1_1RobotConstraints.html" title=" " alt="" coords="491,173,690,200"/>
+<area shape="rect" id="node10" href="$structplanning_1_1RotationConstraints.html" title=" " alt="" coords="165,173,380,200"/>
+<area shape="rect" id="node11" href="$structplanning_1_1MotionConstraints.html" title=" " alt="" coords="170,224,375,251"/>
+</map>

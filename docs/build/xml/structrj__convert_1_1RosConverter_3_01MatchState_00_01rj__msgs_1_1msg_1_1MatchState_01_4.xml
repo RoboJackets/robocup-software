@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01MatchState_00_01rj__msgs_1_1msg_1_1MatchState_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; MatchState, rj_msgs::msg::MatchState &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01MatchState_00_01rj__msgs_1_1msg_1_1MatchState_01_4_1af8702711b6ebb56f8cd6cfb7d9b39e89" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::MatchState</type>
+        <definition>static rj_msgs::msg::MatchState rj_convert::RosConverter&lt; MatchState, rj_msgs::msg::MatchState &gt;::to_ros</definition>
+        <argsstring>(const MatchState &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <type>const <ref refid="structMatchState" kindref="compound">MatchState</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="245" column="37" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" bodystart="245" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01MatchState_00_01rj__msgs_1_1msg_1_1MatchState_01_4_1af877854738fa00fc4d913c8c868ad275" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structMatchState" kindref="compound">MatchState</ref></type>
+        <definition>static MatchState rj_convert::RosConverter&lt; MatchState, rj_msgs::msg::MatchState &gt;::from_ros</definition>
+        <argsstring>(const rj_msgs::msg::MatchState from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <type>const rj_msgs::msg::MatchState</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="252" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" bodystart="252" bodyend="257"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" line="244" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/game_state.hpp" bodystart="244" bodyend="258"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01MatchState_00_01rj__msgs_1_1msg_1_1MatchState_01_4_1af877854738fa00fc4d913c8c868ad275" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; MatchState, rj_msgs::msg::MatchState &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01MatchState_00_01rj__msgs_1_1msg_1_1MatchState_01_4_1af8702711b6ebb56f8cd6cfb7d9b39e89" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; MatchState, rj_msgs::msg::MatchState &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

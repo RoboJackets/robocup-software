@@ -1,0 +1,4 @@
+<map id="BallState" name="BallState">
+<area shape="rect" id="node1" title="Our belief about the ball&#39;s current position and velocity." alt="" coords="5,109,87,136"/>
+<area shape="rect" id="node2" title=" " alt="" coords="19,5,73,32"/>
+</map>

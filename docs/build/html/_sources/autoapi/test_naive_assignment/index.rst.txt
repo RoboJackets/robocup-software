@@ -1,0 +1,235 @@
+:py:mod:`test_naive_assignment`
+===============================
+
+.. py:module:: test_naive_assignment
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   test_naive_assignment.AssignCostFn
+   test_naive_assignment.UnassignCostFn
+   test_naive_assignment.TestCostFn
+   test_naive_assignment.SkillBase
+   test_naive_assignment.SkillA
+   test_naive_assignment.SkillB
+   test_naive_assignment.SkillC
+   test_naive_assignment.BallSkill
+   test_naive_assignment.Skills
+   test_naive_assignment.TacticBase
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   test_naive_assignment.get_simple_role_ids
+   test_naive_assignment.test_get_sorted_requests_simple
+   test_naive_assignment.get_tactic_ctx
+   test_naive_assignment.test_get_sorted_requests_multiple
+   test_naive_assignment.test_compute_costs_matrix
+   test_naive_assignment.test_assign_prioritized_roles
+   test_naive_assignment.test_assign_roles
+   test_naive_assignment.test_assign_roles_constrained
+   test_naive_assignment.test_unassigned_role
+   test_naive_assignment.test_unassigned_roles
+
+
+
+.. py:class:: AssignCostFn
+
+   Bases: :py:obj:`stp.role.CostFn`
+
+   .. py:method:: __call__(self, robot: stp.rc.Robot, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: unassigned_cost_fn(self, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+
+.. py:class:: UnassignCostFn
+
+   Bases: :py:obj:`stp.role.CostFn`
+
+   .. py:method:: __call__(self, robot: stp.rc.Robot, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: unassigned_cost_fn(self, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+
+.. py:class:: TestCostFn(fn: Callable[[stp.rc.Robot, Optional[stp.role.RoleResult], stp.rc.WorldState], float])
+
+   Bases: :py:obj:`stp.role.CostFn`
+
+   .. py:method:: __call__(self, robot: stp.rc.Robot, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: unassigned_cost_fn(self, prev_result: Optional[stp.role.RoleResult], world_state: stp.rc.WorldState) -> float
+
+
+
+.. py:class:: SkillBase
+
+   Bases: :py:obj:`stp.skill.ISkill`
+
+   .. py:method:: define(self)
+
+
+   .. py:method:: tick(self)
+
+
+   .. py:method:: create_request(self) -> stp.role.RoleRequest
+
+
+   .. py:method:: __repr__(self) -> str
+
+
+
+.. py:class:: SkillA
+
+   Bases: :py:obj:`SkillBase`
+
+
+.. py:class:: SkillB
+
+   Bases: :py:obj:`SkillBase`
+
+
+.. py:class:: SkillC
+
+   Bases: :py:obj:`SkillBase`
+
+
+.. py:class:: BallSkill
+
+   Bases: :py:obj:`SkillBase`
+
+
+.. py:class:: Skills
+
+   Bases: :py:obj:`stp.tactic.SkillsEnum`
+
+   .. py:attribute:: A1
+      
+
+      
+
+   .. py:attribute:: A2
+      
+
+      
+
+   .. py:attribute:: B1
+      
+
+      
+
+   .. py:attribute:: B2
+      
+
+      
+
+   .. py:attribute:: C1
+      
+
+      
+
+   .. py:attribute:: C2
+      
+
+      
+
+   .. py:attribute:: BALL_SKILL
+      
+
+      
+
+
+.. py:class:: TacticBase(ctx: stp.tactic.Ctx)
+
+   Bases: :py:obj:`stp.tactic.ITactic`\ [\ :py:obj:`None`\ ]
+
+   .. py:method:: compute_props(self, prev_props: None) -> None
+
+
+   .. py:method:: tick(self, role_results: stp.tactic.RoleResults, props: None) -> List[stp.action.IAction]
+
+
+   .. py:method:: get_requests(self, world_state: stp.rc.WorldState, props: None) -> stp.tactic.RoleRequests
+
+
+   .. py:method:: create_request(self)
+
+
+
+.. py:function:: get_simple_role_ids() -> List[stp.role.assignment.RoleId]
+
+   Creates and returns a list of role ids with skills SkillA, SkillB and SkillC for
+   TacticBase.
+   :return: List of role ids with skills SkillA, SkillB and SkillC for TacticBase.
+
+
+.. py:function:: test_get_sorted_requests_simple()
+
+   Manually create a Requests and check that get_sorted_requests returns a list of
+   three dictionaries, one for each priority level.
+
+
+.. py:function:: get_tactic_ctx() -> stp.tactic.Ctx
+
+   Creates a simple tactic context for convenience.
+   :return: Tactic context containing SkillA, SkillB and SkillC.
+
+
+.. py:function:: test_get_sorted_requests_multiple() -> None
+
+   Tests get_sorted_requests with a more complicated example.
+
+
+.. py:function:: test_compute_costs_matrix() -> None
+
+   Tests the compute_costs_matrix function.
+
+   Costs:
+       A: Dist to (0, 0)
+       B: Dist to (1, 1)
+       C: Dist to (2, 2)
+
+
+.. py:function:: test_assign_prioritized_roles() -> None
+
+   Tests that for the role requests and free robots above that role assignment
+   returns the expected result.
+
+
+.. py:function:: test_assign_roles() -> None
+
+   Tests that NaiveRoleAssignment.assign_roles assigns HIGH, then MEDIUM, then LOW
+   priority. This is tested by having a MEDIUM priority role request that has a lower
+   cost than a HIGH priority role request, and expecting that the HIGH role request is
+   fulfilled first.
+
+
+.. py:function:: test_assign_roles_constrained() -> None
+
+   Tests that NaiveRoleAssignment.assign_roles respects constraints, ie. even though
+   role_id_a and role_id_ball both are HIGH priority, the robot at (0, 0) has the ball
+   and thus is assigned BALL_SKILL.
+
+   This test will fail as has_ball has been removed from Robot thus breaking the ball constraint
+
+
+.. py:function:: test_unassigned_role() -> None
+
+
+.. py:function:: test_unassigned_roles() -> None
+
+

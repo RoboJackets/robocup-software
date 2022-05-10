@@ -1,0 +1,723 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="trajectory_8hpp" kind="file" language="C++">
+    <compoundname>trajectory.hpp</compoundname>
+    <includes local="no">rj_common/time.hpp</includes>
+    <includes local="no">rj_geometry/pose.hpp</includes>
+    <includes local="no">rj_msgs/msg/trajectory.hpp</includes>
+    <includes refid="debug__drawer_8hpp" local="yes">debug_drawer.hpp</includes>
+    <includes refid="instant_8hpp" local="yes">instant.hpp</includes>
+    <includes refid="dynamic__obstacle_8hpp" local="yes">planning/dynamic_obstacle.hpp</includes>
+    <includedby refid="world__state_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp</includedby>
+    <includedby refid="motion__command_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp</includedby>
+    <includedby refid="context_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</includedby>
+    <includedby refid="plan__request_8hpp" local="no">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.hpp</includedby>
+    <includedby refid="planner_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/planner.hpp</includedby>
+    <includedby refid="line__kick__planner_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp</includedby>
+    <includedby refid="path__target__planner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/path_target_planner.cpp</includedby>
+    <includedby refid="pivot__path__planner_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.cpp</includedby>
+    <includedby refid="planner__node_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp</includedby>
+    <includedby refid="angle__planning_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp</includedby>
+    <includedby refid="create__path_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/create_path.hpp</includedby>
+    <includedby refid="replanner_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp</includedby>
+    <includedby refid="velocity__profiling_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.hpp</includedby>
+    <includedby refid="rrt__util_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp</includedby>
+    <includedby refid="rrt__util_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.cpp</includedby>
+    <includedby refid="planner__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/planner_test.cpp</includedby>
+    <includedby refid="testing__utils_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/testing_utils.hpp</includedby>
+    <includedby refid="testing__utils_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/testing_utils.cpp</includedby>
+    <includedby refid="trajectory__test_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/trajectory_test.cpp</includedby>
+    <includedby refid="trajectory_8cpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.cpp</includedby>
+    <includedby refid="trajectory__utils_8hpp" local="yes">/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.hpp</includedby>
+    <incdepgraph>
+      <node id="14">
+        <label>QMap</label>
+      </node>
+      <node id="21">
+        <label>rj_msgs/msg/linear_motion_instant.hpp</label>
+      </node>
+      <node id="4">
+        <label>rj_msgs/msg/trajectory.hpp</label>
+      </node>
+      <node id="6">
+        <label>rj_protos/LogFrame.pb.h</label>
+      </node>
+      <node id="12">
+        <label>rj_geometry/shape_set.hpp</label>
+      </node>
+      <node id="7">
+        <label>rj_geometry/arc.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>string</label>
+      </node>
+      <node id="8">
+        <label>rj_geometry/composite_shape.hpp</label>
+      </node>
+      <node id="9">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="20">
+        <label>rj_geometry/geometry_conversions.hpp</label>
+      </node>
+      <node id="3">
+        <label>rj_geometry/pose.hpp</label>
+      </node>
+      <node id="18">
+        <label>instant.hpp</label>
+        <link refid="instant_8hpp_source"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>planning/dynamic_obstacle.hpp</label>
+        <link refid="dynamic__obstacle_8hpp_source"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>rj_geometry/polygon.hpp</label>
+      </node>
+      <node id="19">
+        <label>optional</label>
+      </node>
+      <node id="17">
+        <label>vector</label>
+      </node>
+      <node id="13">
+        <label>QColor</label>
+      </node>
+      <node id="5">
+        <label>debug_drawer.hpp</label>
+        <link refid="debug__drawer_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>rj_geometry/circle.hpp</label>
+      </node>
+      <node id="11">
+        <label>rj_geometry/segment.hpp</label>
+      </node>
+      <node id="15">
+        <label>memory</label>
+      </node>
+      <node id="2">
+        <label>rj_common/time.hpp</label>
+      </node>
+      <node id="22">
+        <label>rj_msgs/msg/robot_instant.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="12">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/collect_planner.hpp</label>
+        <link refid="collect__planner_8hpp_source"/>
+      </node>
+      <node id="11">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/planner.hpp</label>
+        <link refid="planner_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/network_radio.hpp</label>
+        <link refid="network__radio_8hpp_source"/>
+      </node>
+      <node id="35">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/angle_planning.hpp</label>
+        <link refid="angle__planning_8hpp_source"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/context.hpp</label>
+        <link refid="context_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/debug_draw_interface.hpp</label>
+        <link refid="debug__draw__interface_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/processor.hpp</label>
+        <link refid="processor_8hpp_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/replanner.hpp</label>
+        <link refid="replanner_8hpp_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/intercept_planner.hpp</label>
+        <link refid="intercept__planner_8hpp_source"/>
+      </node>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp</label>
+        <link refid="world__state_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp</label>
+        <link refid="trajectory_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/line_kick_planner.hpp</label>
+        <link refid="line__kick__planner_8hpp_source"/>
+      </node>
+      <node id="13">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/path_target_planner.hpp</label>
+        <link refid="path__target__planner_8hpp_source"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/referee_sub.hpp</label>
+        <link refid="referee__sub_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp</label>
+        <link refid="raw__vision__packet__sub_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/packet_convert.hpp</label>
+        <link refid="packet__convert_8hpp_source"/>
+      </node>
+      <node id="34">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/referee/internal_referee.hpp</label>
+        <link refid="internal__referee_8hpp_source"/>
+      </node>
+      <node id="3">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/motion_command.hpp</label>
+        <link refid="motion__command_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/velocity_profiling.hpp</label>
+        <link refid="velocity__profiling_8hpp_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/plan_request.hpp</label>
+        <link refid="plan__request_8hpp_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control_node.hpp</label>
+        <link refid="motion__control__node_8hpp_source"/>
+      </node>
+      <node id="31">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/autonomy_interface.hpp</label>
+        <link refid="autonomy__interface_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner_node.hpp</label>
+        <link refid="planner__node_8hpp_source"/>
+      </node>
+      <node id="22">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/sim_radio.hpp</label>
+        <link refid="sim__radio_8hpp_source"/>
+      </node>
+      <node id="14">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/escape_obstacles_path_planner.hpp</label>
+        <link refid="escape__obstacles__path__planner_8hpp_source"/>
+      </node>
+      <node id="21">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/main_window.hpp</label>
+        <link refid="main__window_8hpp_source"/>
+      </node>
+      <node id="9">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/joystick/manual_control_node.hpp</label>
+        <link refid="manual__control__node_8hpp_source"/>
+      </node>
+      <node id="37">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/create_path.hpp</label>
+        <link refid="create__path_8hpp_source"/>
+      </node>
+      <node id="30">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/radio/radio.hpp</label>
+        <link refid="radio_8hpp_source"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/settle_planner.hpp</label>
+        <link refid="settle__planner_8hpp_source"/>
+      </node>
+      <node id="7">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/control/motion_control.hpp</label>
+        <link refid="motion__control_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory_utils.hpp</label>
+        <link refid="trajectory__utils_8hpp_source"/>
+      </node>
+      <node id="33">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/referee/external_referee.hpp</label>
+        <link refid="external__referee_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/planner/pivot_path_planner.hpp</label>
+        <link refid="pivot__path__planner_8hpp_source"/>
+      </node>
+      <node id="27">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ui/sim_field_view.hpp</label>
+        <link refid="sim__field__view_8hpp_source"/>
+      </node>
+      <node id="26">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/soccer_config_client.hpp</label>
+        <link refid="soccer__config__client_8hpp_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp</label>
+        <link refid="robot__intent_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/primitives/rrt_util.hpp</label>
+        <link refid="rrt__util_8hpp_source"/>
+      </node>
+      <node id="40">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/testing_utils.hpp</label>
+        <link refid="testing__utils_8hpp_source"/>
+      </node>
+      <node id="5">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/logger.hpp</label>
+        <link refid="logger_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/referee/referee_base.hpp</label>
+        <link refid="referee__base_8hpp_source"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classplanning_1_1Trajectory" prot="public">planning::Trajectory</innerclass>
+    <innerclass refid="classplanning_1_1Trajectory_1_1Cursor" prot="public">planning::Trajectory::Cursor</innerclass>
+    <innerclass refid="structrj__convert_1_1RosConverter_3_01planning_1_1Trajectory_00_01rj__msgs_1_1msg_1_1Trajectory_01_4" prot="public">rj_convert::RosConverter&lt; planning::Trajectory, rj_msgs::msg::Trajectory &gt;</innerclass>
+    <innernamespace refid="namespaceplanning">planning</innernamespace>
+    <innernamespace refid="namespacerj__convert">rj_convert</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_common/time.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/pose.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_msgs/msg/trajectory.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;debug_drawer.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;instant.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/dynamic_obstacle.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">planning<sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="keyword">using</highlight><highlight class="normal"><sp/>RobotInstantSequence<sp/>=<sp/>std::vector&lt;RobotInstant&gt;;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="classplanning_1_1Trajectory" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>Msg<sp/>=<sp/>rj_msgs::msg::Trajectory;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>~<ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="classplanning_1_1Trajectory_1a6f2acc93683b3db86290c57b73a2e6cd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a6f2acc93683b3db86290c57b73a2e6cd" kindref="member">Trajectory</ref>(RobotInstantSequence<sp/><ref refid="classplanning_1_1Trajectory_1a76fabf3aa475f2e7e52ac2c7c9f3d3ce" kindref="member">instants</ref>)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>instants_(std::move(<ref refid="classplanning_1_1Trajectory_1a76fabf3aa475f2e7e52ac2c7c9f3d3ce" kindref="member">instants</ref>))<sp/>{}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>(<ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>b);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>(<ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;&amp;<sp/>other)<sp/>noexcept<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>operator=(<ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;&amp;<sp/>other)<sp/>noexcept<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>operator=(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>other)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a1904daf08c7f566432dc2def4c24ec94" kindref="member">append_instant</ref>(<ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref><sp/>instant);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a306fe22c35fd8c52706ab57e0a4abdc9" kindref="member">hold_for</ref>(RJ::Seconds<sp/><ref refid="classplanning_1_1Trajectory_1a54ddb10176574d9d074e0d94dfdbe736" kindref="member">duration</ref>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1aed83fbf1cc9c16fc1f9b59e8ca2ba5b6" kindref="member">check_time</ref>(RJ::Time<sp/>time)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a229c0d2f534bb5d6b765e388a8a4a879" kindref="member">check_seconds</ref>(RJ::Seconds<sp/>seconds)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a5d5a6c7272fb71d98d13fcb485c50325" kindref="member">scale_duration</ref>(RJ::Seconds<sp/>final_duration,<sp/>RJ::Time<sp/>fixed_point);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a5d5a6c7272fb71d98d13fcb485c50325" kindref="member">scale_duration</ref>(RJ::Seconds<sp/>final_duration);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="classplanning_1_1Trajectory_1a2d86901d130909aaebbbda99284f67c5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>RJ::Time<sp/><ref refid="classplanning_1_1Trajectory_1a2d86901d130909aaebbbda99284f67c5" kindref="member">begin_time</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(instants_.empty())<sp/>{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>RJ::now();</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a148140986277de8ff415202756305720" kindref="member">first</ref>().stamp;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="classplanning_1_1Trajectory_1a68f04e57ac6b9f1c7f827c724ed63065" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>RJ::Time<sp/><ref refid="classplanning_1_1Trajectory_1a68f04e57ac6b9f1c7f827c724ed63065" kindref="member">end_time</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(instants_.empty())<sp/>{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>RJ::now();</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a3dd24c057ec35affd3005f20b482c8a0" kindref="member">last</ref>().stamp;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="classplanning_1_1Trajectory_1a54ddb10176574d9d074e0d94dfdbe736" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>RJ::Seconds<sp/><ref refid="classplanning_1_1Trajectory_1a54ddb10176574d9d074e0d94dfdbe736" kindref="member">duration</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a68f04e57ac6b9f1c7f827c724ed63065" kindref="member">end_time</ref>()<sp/>-<sp/><ref refid="classplanning_1_1Trajectory_1a2d86901d130909aaebbbda99284f67c5" kindref="member">begin_time</ref>();</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>std::optional&lt;RobotInstant&gt;<sp/><ref refid="classplanning_1_1Trajectory_1afddc56fe0b0ce5d21ad6f4433709b55f" kindref="member">evaluate</ref>(RJ::Time<sp/>time)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>std::optional&lt;RobotInstant&gt;<sp/><ref refid="classplanning_1_1Trajectory_1afddc56fe0b0ce5d21ad6f4433709b55f" kindref="member">evaluate</ref>(</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RJ::Seconds<sp/>seconds)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref><sp/><ref refid="classplanning_1_1Trajectory_1a96f2201ea5b6138ebc9043dd0367b32e" kindref="member">sub_trajectory</ref>(RJ::Time<sp/>clip_start_time,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RJ::Time<sp/>clip_end_time)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179" refid="classplanning_1_1Trajectory_1a5b89a3775d13c2a42dc71ddf980619c1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a5b89a3775d13c2a42dc71ddf980619c1" kindref="member">num_instants</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.size();<sp/>}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="classplanning_1_1Trajectory_1a06e44ccf6d7845d6d73b8d73e4815b93" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref>&amp;<sp/><ref refid="classplanning_1_1Trajectory_1a06e44ccf6d7845d6d73b8d73e4815b93" kindref="member">instant_at</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.at(i);<sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="classplanning_1_1Trajectory_1a8b3c500c92576266565d0b944be1955d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref><sp/><ref refid="classplanning_1_1Trajectory_1a8b3c500c92576266565d0b944be1955d" kindref="member">instant_at</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.at(i);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204" refid="classplanning_1_1Trajectory_1a2cab811031d186c05bb837b2547f491d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a2cab811031d186c05bb837b2547f491d" kindref="member">instants_end</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.end();<sp/>}</highlight></codeline>
+<codeline lineno="208" refid="classplanning_1_1Trajectory_1a34aa862ae4a7ffaa24680d015d8601cf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a34aa862ae4a7ffaa24680d015d8601cf" kindref="member">instants_end</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.end();<sp/>}</highlight></codeline>
+<codeline lineno="212" refid="classplanning_1_1Trajectory_1a5ed272f2a4130be40c302796560b590d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a5ed272f2a4130be40c302796560b590d" kindref="member">instants_begin</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.begin();<sp/>}</highlight></codeline>
+<codeline lineno="216" refid="classplanning_1_1Trajectory_1a38585354a6f5dcd7237ba8080e24ed50" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a38585354a6f5dcd7237ba8080e24ed50" kindref="member">instants_begin</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.begin();<sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221" refid="classplanning_1_1Trajectory_1a359153dce0c741208d85570c52e2b4a2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a359153dce0c741208d85570c52e2b4a2" kindref="member">empty</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.empty();<sp/>}</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1acba6880797e3d9f3d8a82fd9045767f0" kindref="member">nearly_equal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>b,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-6);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233" refid="classplanning_1_1Trajectory_1a148140986277de8ff415202756305720" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref>&amp;<sp/><ref refid="classplanning_1_1Trajectory_1a148140986277de8ff415202756305720" kindref="member">first</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classplanning_1_1Trajectory_1a359153dce0c741208d85570c52e2b4a2" kindref="member">empty</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Can&apos;t<sp/>get<sp/>the<sp/>first()<sp/>instant<sp/>in<sp/>an<sp/>empty<sp/>trajectory&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.front();</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244" refid="classplanning_1_1Trajectory_1a79e9a8a1d76c811d92e803303eb1e720" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref>&amp;<sp/><ref refid="classplanning_1_1Trajectory_1a79e9a8a1d76c811d92e803303eb1e720" kindref="member">first</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classplanning_1_1Trajectory_1a359153dce0c741208d85570c52e2b4a2" kindref="member">empty</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Can&apos;t<sp/>get<sp/>the<sp/>first()<sp/>instant<sp/>in<sp/>an<sp/>empty<sp/>trajectory&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.front();</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="classplanning_1_1Trajectory_1a3dd24c057ec35affd3005f20b482c8a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref>&amp;<sp/><ref refid="classplanning_1_1Trajectory_1a3dd24c057ec35affd3005f20b482c8a0" kindref="member">last</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classplanning_1_1Trajectory_1a359153dce0c741208d85570c52e2b4a2" kindref="member">empty</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Can&apos;t<sp/>get<sp/>the<sp/>last()<sp/>instant<sp/>in<sp/>an<sp/>empty<sp/>trajectory&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.back();</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref>&amp;<sp/><ref refid="classplanning_1_1Trajectory_1a3dd24c057ec35affd3005f20b482c8a0" kindref="member">last</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classplanning_1_1Trajectory_1a359153dce0c741208d85570c52e2b4a2" kindref="member">empty</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Can&apos;t<sp/>get<sp/>the<sp/>last()<sp/>instant<sp/>in<sp/>an<sp/>empty<sp/>trajectory&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_.back();</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a5ba601a1dac51a755badedb24cce23d3" kindref="member">draw</ref>(<ref refid="classDebugDrawer" kindref="compound">DebugDrawer</ref>*<sp/>drawer,</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::optional&lt;rj_geometry::Point&gt;<sp/>alt_text_position<sp/>=</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::nullopt)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>RobotInstant<sp/><ref refid="classplanning_1_1Trajectory_1aaf9a8824c408e945122b37b031aa4ff8" kindref="member">interpolated_instant</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>RobotInstant&amp;<sp/>prev,</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>RobotInstant&amp;<sp/>next,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RJ::Time<sp/>time);</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>set_debug_text(std::string<sp/>str)<sp/>{<sp/>debug_text_<sp/>=<sp/>std::move(str);<sp/>};</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>std::string<sp/>get_debug_text()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>debug_text_<sp/>?<sp/>*debug_text_<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302" refid="classplanning_1_1Trajectory_1aa179ab8650198b456c33a52b2f59c759" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>std::optional&lt;RJ::Time&gt;<sp/><ref refid="classplanning_1_1Trajectory_1aa179ab8650198b456c33a52b2f59c759" kindref="member">time_created</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>creation_stamp_;<sp/>}</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307" refid="classplanning_1_1Trajectory_1a63a2f9b643b8854edeca12476f4b28bc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a63a2f9b643b8854edeca12476f4b28bc" kindref="member">stamp</ref>(RJ::Time<sp/>time)<sp/>{<sp/>creation_stamp_<sp/>=<sp/>time;<sp/>}</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="310"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>@brief<sp/>Allows<sp/>seeking<sp/>to<sp/>arbitrary<sp/>positions<sp/>in<sp/>a<sp/>Trajectory<sp/>and</highlight></codeline>
+<codeline lineno="311"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/><sp/>incrementing<sp/>by<sp/>arbitrary<sp/>steps.</highlight></codeline>
+<codeline lineno="312"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="313" refid="classplanning_1_1Trajectory_1_1Cursor" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classplanning_1_1Trajectory_1_1Cursor" kindref="compound">Cursor</ref><sp/>{</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1a61ce777cf533439634838a8520fbef7e" kindref="member">Cursor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>trajectory,<sp/>RJ::Time<sp/>start_time);</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1a61ce777cf533439634838a8520fbef7e" kindref="member">Cursor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>trajectory);</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"></highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1a61ce777cf533439634838a8520fbef7e" kindref="member">Cursor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>trajectory,</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RobotInstantSequence::const_iterator<sp/>iterator);</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335" refid="classplanning_1_1Trajectory_1_1Cursor_1a6e4de2cd400d9f16baee3ff800071e17" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1a6e4de2cd400d9f16baee3ff800071e17" kindref="member">has_value</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trajectory_.<ref refid="classplanning_1_1Trajectory_1aed83fbf1cc9c16fc1f9b59e8ca2ba5b6" kindref="member">check_time</ref>(time_);</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/><ref refid="structplanning_1_1RobotInstant" kindref="compound">RobotInstant</ref><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1af08e577a6a80662c0fd2f84d7daa0275" kindref="member">value</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1a59642df7c131a839993596dfc300238e" kindref="member">seek</ref>(RJ::Time<sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1ad59e62bb0ec90b494b027f1033facc68" kindref="member">time</ref>);</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1ab646848d550608fc0706f46159a69b00" kindref="member">advance</ref>(RJ::Seconds<sp/>seconds);</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1aa4ca488626cbe6def7a90ccf5dad01b2" kindref="member">next_knot</ref>();</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"></highlight></codeline>
+<codeline lineno="373" refid="classplanning_1_1Trajectory_1_1Cursor_1ad59e62bb0ec90b494b027f1033facc68" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>RJ::Time<sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1ad59e62bb0ec90b494b027f1033facc68" kindref="member">time</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>time_;<sp/>}</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"></highlight></codeline>
+<codeline lineno="379" refid="classplanning_1_1Trajectory_1_1Cursor_1a1a70d4a0e394b4daabb63d5b055c5f3c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>std::optional&lt;RJ::Time&gt;<sp/><ref refid="classplanning_1_1Trajectory_1_1Cursor_1a1a70d4a0e394b4daabb63d5b055c5f3c" kindref="member">time_next</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iterator_<sp/>==<sp/>trajectory_.<ref refid="classplanning_1_1Trajectory_1a2cab811031d186c05bb837b2547f491d" kindref="member">instants_end</ref>()<sp/>||</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iterator_<sp/>+<sp/>1<sp/>==<sp/>trajectory_.<ref refid="classplanning_1_1Trajectory_1a2cab811031d186c05bb837b2547f491d" kindref="member">instants_end</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::nullopt;</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(iterator_<sp/>+<sp/>1)-&gt;stamp;</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"></highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">Trajectory</ref>&amp;<sp/>trajectory_;</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"></highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>An<sp/>iterator<sp/>pointing<sp/>to<sp/>the<sp/>knot<sp/>point<sp/>at<sp/>or<sp/>immediately<sp/>before<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>time<sp/>point<sp/>referred<sp/>to<sp/>by<sp/>`time_`.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RobotInstantSequence::const_iterator<sp/>iterator_;</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RJ::Time<sp/>time_;</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"></highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>Cursor<sp/><ref refid="classplanning_1_1Trajectory_1a1e525a2d89ef3d9d1f061245f2a27046" kindref="member">cursor</ref>(RJ::Time<sp/>start_time)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"></highlight></codeline>
+<codeline lineno="404"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>Cursor<sp/><ref refid="classplanning_1_1Trajectory_1ad3e98d04150557e85d6cc10e14535174" kindref="member">cursor_begin</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="405"><highlight class="normal"></highlight></codeline>
+<codeline lineno="413" refid="classplanning_1_1Trajectory_1a0e29fea4159824cbca07c73eb340d2ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1a0e29fea4159824cbca07c73eb340d2ce" kindref="member">mark_angles_valid</ref>()<sp/>{<sp/>has_angle_profile_<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="414"><highlight class="normal"></highlight></codeline>
+<codeline lineno="418" refid="classplanning_1_1Trajectory_1ae9c957e3425f53aff34ed669ddeb5b54" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory_1ae9c957e3425f53aff34ed669ddeb5b54" kindref="member">angles_valid</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>has_angle_profile_;<sp/>}</highlight></codeline>
+<codeline lineno="419"><highlight class="normal"></highlight></codeline>
+<codeline lineno="423" refid="classplanning_1_1Trajectory_1a76fabf3aa475f2e7e52ac2c7c9f3d3ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>RobotInstantSequence&amp;<sp/><ref refid="classplanning_1_1Trajectory_1a76fabf3aa475f2e7e52ac2c7c9f3d3ce" kindref="member">instants</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>instants_;<sp/>}</highlight></codeline>
+<codeline lineno="424"><highlight class="normal"></highlight></codeline>
+<codeline lineno="425"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>A<sp/>sorted<sp/>array<sp/>of<sp/>RobotInstants<sp/>(by<sp/>timestamp)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="427"><highlight class="normal"><sp/><sp/><sp/><sp/>RobotInstantSequence<sp/>instants_;</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"></highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Time<sp/>this<sp/>trajectory<sp/>was<sp/>created.<sp/>If<sp/>the<sp/>trajectory<sp/>is<sp/>not<sp/>yet<sp/>finished,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="430"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>this<sp/>will<sp/>be<sp/>std::nullopt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;RJ::Time&gt;<sp/>creation_stamp_;</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="433"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;std::string&gt;<sp/>debug_text_;</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"></highlight></codeline>
+<codeline lineno="435"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Whether<sp/>or<sp/>not<sp/>this<sp/>has<sp/>been<sp/>profiled.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="436"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>has_angle_profile_{</highlight><highlight class="keyword">false</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="437"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="438"><highlight class="normal"></highlight></codeline>
+<codeline lineno="439"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>planning</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="440"><highlight class="normal"></highlight></codeline>
+<codeline lineno="441"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rj_convert<sp/>{</highlight></codeline>
+<codeline lineno="442"><highlight class="normal"></highlight></codeline>
+<codeline lineno="443"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="444" refid="structrj__convert_1_1RosConverter_3_01planning_1_1Trajectory_00_01rj__msgs_1_1msg_1_1Trajectory_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">RosConverter&lt;planning::Trajectory,<sp/>rj_msgs::msg::Trajectory&gt;<sp/>{</highlight></codeline>
+<codeline lineno="445"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>rj_msgs::msg::Trajectory<sp/>to_ros(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref>&amp;<sp/>from)<sp/>{</highlight></codeline>
+<codeline lineno="446"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!from.<ref refid="classplanning_1_1Trajectory_1ae9c957e3425f53aff34ed669ddeb5b54" kindref="member">angles_valid</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="447"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::invalid_argument(</highlight><highlight class="stringliteral">&quot;Cannot<sp/>serialize<sp/>trajectory<sp/>with<sp/>invalid<sp/>angles&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="448"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="449"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rj_msgs::build&lt;rj_msgs::msg::Trajectory&gt;()</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.stamp(convert_to_ros(from.<ref refid="classplanning_1_1Trajectory_1aa179ab8650198b456c33a52b2f59c759" kindref="member">time_created</ref>().value()))</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.instants(convert_to_ros(from.<ref refid="classplanning_1_1Trajectory_1a76fabf3aa475f2e7e52ac2c7c9f3d3ce" kindref="member">instants</ref>()));</highlight></codeline>
+<codeline lineno="452"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="453"><highlight class="normal"></highlight></codeline>
+<codeline lineno="454"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref><sp/>from_ros(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_msgs::msg::Trajectory&amp;<sp/>from)<sp/>{</highlight></codeline>
+<codeline lineno="455"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>trajectory<sp/>=<sp/><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref>{convert_from_ros(from.instants)};</highlight></codeline>
+<codeline lineno="456"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>trajectory.<ref refid="classplanning_1_1Trajectory_1a63a2f9b643b8854edeca12476f4b28bc" kindref="member">stamp</ref>(convert_from_ros(from.stamp));</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>trajectory.mark_angles_valid();</highlight></codeline>
+<codeline lineno="458"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>trajectory;</highlight></codeline>
+<codeline lineno="459"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="460"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="461"><highlight class="normal"></highlight></codeline>
+<codeline lineno="462"><highlight class="normal">ASSOCIATE_CPP_ROS(<ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref>,<sp/>planning::Trajectory::Msg);</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"></highlight></codeline>
+<codeline lineno="464"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rj_convert</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/trajectory.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,362 @@
+:py:mod:`rj_gameplay.situation.decision_tree.plays`
+===================================================
+
+.. py:module:: rj_gameplay.situation.decision_tree.plays
+
+.. autoapi-nested-parse::
+
+   This module contains all the plays used by the decision tree situation analyzer.
+   Ported from the old situation alaysis.
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.situation.decision_tree.plays.NoSituation
+   rj_gameplay.situation.decision_tree.plays.PrepareKickoff
+   rj_gameplay.situation.decision_tree.plays.Kickoff
+   rj_gameplay.situation.decision_tree.plays.DefendKickoff
+   rj_gameplay.situation.decision_tree.plays.DefendRestartOffensive
+   rj_gameplay.situation.decision_tree.plays.DefendRestartMidfield
+   rj_gameplay.situation.decision_tree.plays.DefendRestartDefensive
+   rj_gameplay.situation.decision_tree.plays.DefendRestartOffensiveDirect
+   rj_gameplay.situation.decision_tree.plays.DefendRestartMidfieldDirect
+   rj_gameplay.situation.decision_tree.plays.DefendRestartDefensiveDirect
+   rj_gameplay.situation.decision_tree.plays.Clear
+   rj_gameplay.situation.decision_tree.plays.DefendClear
+   rj_gameplay.situation.decision_tree.plays.DefendGoal
+   rj_gameplay.situation.decision_tree.plays.MidfieldClear
+   rj_gameplay.situation.decision_tree.plays.AttackGoal
+   rj_gameplay.situation.decision_tree.plays.OffensiveScramble
+   rj_gameplay.situation.decision_tree.plays.MidfieldScramble
+   rj_gameplay.situation.decision_tree.plays.DefensiveScramble
+   rj_gameplay.situation.decision_tree.plays.SaveBall
+   rj_gameplay.situation.decision_tree.plays.SaveShot
+   rj_gameplay.situation.decision_tree.plays.OffensivePileup
+   rj_gameplay.situation.decision_tree.plays.BasicOffense
+   rj_gameplay.situation.decision_tree.plays.BasicDefense
+   rj_gameplay.situation.decision_tree.plays.MidfieldPileup
+   rj_gameplay.situation.decision_tree.plays.DefensivePileup
+   rj_gameplay.situation.decision_tree.plays.MidfieldDefendClear
+   rj_gameplay.situation.decision_tree.plays.PrepareShootout
+   rj_gameplay.situation.decision_tree.plays.Shootout
+   rj_gameplay.situation.decision_tree.plays.PrepareDefendShootout
+   rj_gameplay.situation.decision_tree.plays.DefendShootout
+   rj_gameplay.situation.decision_tree.plays.PreparePenalty
+   rj_gameplay.situation.decision_tree.plays.Penalty
+   rj_gameplay.situation.decision_tree.plays.PrepareDefendPenalty
+   rj_gameplay.situation.decision_tree.plays.DefendPenalty
+   rj_gameplay.situation.decision_tree.plays.OffensiveKick
+   rj_gameplay.situation.decision_tree.plays.DefensiveKick
+   rj_gameplay.situation.decision_tree.plays.MidfieldKick
+   rj_gameplay.situation.decision_tree.plays.OffensiveKickDirect
+   rj_gameplay.situation.decision_tree.plays.DefensiveKickDirect
+   rj_gameplay.situation.decision_tree.plays.MidfieldKickDirect
+   rj_gameplay.situation.decision_tree.plays.GoalieClear
+   rj_gameplay.situation.decision_tree.plays.Stop
+
+
+
+
+.. py:class:: NoSituation
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   No Situation.
+
+
+.. py:class:: PrepareKickoff
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Setup for kickoff.
+
+
+.. py:class:: Kickoff
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Kickoff.
+
+
+.. py:class:: DefendKickoff
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Kickoff defense.
+
+
+.. py:class:: DefendRestartOffensive
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Defending our opponents restart on their side of the field.
+
+
+.. py:class:: DefendRestartMidfield
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending our opponents restart on their side of the field.
+
+
+.. py:class:: DefendRestartDefensive
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending our opponents restart in the midfield.
+
+
+.. py:class:: DefendRestartOffensiveDirect
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Defending our direct opponents restart on their side of the field.
+
+
+.. py:class:: DefendRestartMidfieldDirect
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending our opponents direct restart on their side of the field.
+
+
+.. py:class:: DefendRestartDefensiveDirect
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending our opponents direct restart in the midfield.
+
+
+.. py:class:: Clear
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for clearing the ball from our side of the field (should include defensive
+   caution).
+
+
+.. py:class:: DefendClear
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending the opponents clear, when the ball is on their side.
+
+
+.. py:class:: DefendGoal
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending our goal from opponents near it with the ball.
+
+
+.. py:class:: MidfieldClear
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for when we possess the ball in the midfield.
+
+
+.. py:class:: AttackGoal
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for attacking the opponents goal, when we have the ball near it.
+
+
+.. py:class:: OffensiveScramble
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for getting a loose ball when the ball is on the opponents half.
+
+
+.. py:class:: MidfieldScramble
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for getting a loose ball when the ball is on the opponents half.
+
+
+.. py:class:: DefensiveScramble
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for getting a loose ball when the ball is on our half.
+
+
+.. py:class:: SaveBall
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays that will trigger when the ball is headed out of the field with no
+   obstructions.
+
+
+.. py:class:: SaveShot
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays that will trigger when the ball is headed directly at our goal.
+
+
+.. py:class:: OffensivePileup
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays to handle a pile up on their side of the field.
+
+
+.. py:class:: BasicOffense
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Basic Offense.
+
+
+.. py:class:: BasicDefense
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Basic Defense.
+
+
+.. py:class:: MidfieldPileup
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays to handle a pile up in the midfield.
+
+
+.. py:class:: DefensivePileup
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays to handle a pile up on our side of the field.
+
+
+.. py:class:: MidfieldDefendClear
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays to defend a clear when the ball is in the midfield.
+
+
+.. py:class:: PrepareShootout
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for making shootout shots.
+
+
+.. py:class:: Shootout
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for making shootout shots.
+
+
+.. py:class:: PrepareDefendShootout
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending shootout shots.
+
+
+.. py:class:: DefendShootout
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending shootout shots.
+
+
+.. py:class:: PreparePenalty
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Set up for penalty shots.
+
+
+.. py:class:: Penalty
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for making penalty shots.
+
+
+.. py:class:: PrepareDefendPenalty
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Prepare to defend the penalty. Our goalie must be on the goal box line.
+
+
+.. py:class:: DefendPenalty
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for defending penalty shots.
+
+
+.. py:class:: OffensiveKick
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for indirect kicks on their side.
+
+
+.. py:class:: DefensiveKick
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for indirect kicks on our side.
+
+
+.. py:class:: MidfieldKick
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for indirect kicks in the midfield.
+
+
+.. py:class:: OffensiveKickDirect
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for direct kicks on their side.
+
+
+.. py:class:: DefensiveKickDirect
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for direct kicks on our side.
+
+
+.. py:class:: MidfieldKickDirect
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for direct kicks in the midfield.
+
+
+.. py:class:: GoalieClear
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for clearing the ball when our goalie possesses the ball.
+
+
+.. py:class:: Stop
+
+   Bases: :py:obj:`stp.situation.ISituation`
+
+   Plays for dealing with the stop state.
+
+

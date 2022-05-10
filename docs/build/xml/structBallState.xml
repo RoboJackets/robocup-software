@@ -1,0 +1,378 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structBallState" kind="struct" language="C++" prot="public">
+    <compoundname>BallState</compoundname>
+    <includes refid="world__state_8hpp" local="no">world_state.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structBallState_1a94b2d0da24bbba1aed2ddc5cb5258af0" prot="public" static="no">
+        <type>rj_msgs::msg::BallState</type>
+        <definition>using BallState::Msg =  rj_msgs::msg::BallState</definition>
+        <argsstring></argsstring>
+        <name>Msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="47" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structBallState_1a44d1251385f12ca930d518cb2e6aab55" prot="public" static="no" mutable="no">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point BallState::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="49" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBallState_1a00fd14b9d4174a0dba6b13338b426f92" prot="public" static="no" mutable="no">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point BallState::velocity</definition>
+        <argsstring></argsstring>
+        <name>velocity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="50" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBallState_1a793a074aa816eb965e962ef24a23891e" prot="public" static="no" mutable="no">
+        <type>RJ::Time</type>
+        <definition>RJ::Time BallState::timestamp</definition>
+        <argsstring></argsstring>
+        <name>timestamp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="51" column="14" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBallState_1af451efd89f12db46a8005ba7345ad528" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool BallState::visible</definition>
+        <argsstring></argsstring>
+        <name>visible</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="52" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structBallState_1a62928333f80533e53e94fbfb65de5e49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BallState::BallState</definition>
+        <argsstring>()=default</argsstring>
+        <name>BallState</name>
+        <briefdescription>
+<para>Default constructor: an invalid ball with visible=false. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="57" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1ae71434e99e7d6afc4209ac2f5dc6b9a8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BallState::BallState</definition>
+        <argsstring>(rj_geometry::Point position, rj_geometry::Point velocity, RJ::Time timestamp=RJ::now())</argsstring>
+        <name>BallState</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>position</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>velocity</declname>
+        </param>
+        <param>
+          <type>RJ::Time</type>
+          <declname>timestamp</declname>
+          <defval>RJ::now()</defval>
+        </param>
+        <briefdescription>
+<para>Construct a <ref refid="structBallState" kindref="compound">BallState</ref> with a valid estimate. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="62" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" bodystart="62" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1a742a96957b5c9bf2cc5172d0707b4ebd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structBallState" kindref="compound">BallState</ref></type>
+        <definition>BallState BallState::predict_at</definition>
+        <argsstring>(RJ::Time time) const</argsstring>
+        <name>predict_at</name>
+        <param>
+          <type>RJ::Time</type>
+          <declname>time</declname>
+        </param>
+        <briefdescription>
+<para>Predict the ball&apos;s state at a particular instance in time. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the time at which to evaluate the ball&apos;s position. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The ball&apos;s state. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="74" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="3" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1a5a79771bc042e45b105344f6b625fb09" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structBallState" kindref="compound">BallState</ref></type>
+        <definition>BallState BallState::predict_in</definition>
+        <argsstring>(RJ::Seconds seconds) const</argsstring>
+        <name>predict_in</name>
+        <param>
+          <type>RJ::Seconds</type>
+          <declname>seconds</declname>
+        </param>
+        <briefdescription>
+<para>Similar to <ref refid="structBallState_1a742a96957b5c9bf2cc5172d0707b4ebd" kindref="member">predict_at(RJ::Time)</ref>, but for a duration in the future (offset calculated from the ball&apos;s sample time). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>seconds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The offset from this ball&apos;s sample time at which to predict its motion. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The ball&apos;s motion at the specified duration after this sample. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="84" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="37" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1abb714f6e4c4d903314581a18a7899d22" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RJ::Time</type>
+        <definition>RJ::Time BallState::query_time_near</definition>
+        <argsstring>(rj_geometry::Point near_to, rj_geometry::Point *out=nullptr) const</argsstring>
+        <name>query_time_near</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>near_to</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point *</type>
+          <declname>out</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Estimate the instant in time at which the ball will reach the given position (or the nearest point along the line of its path). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>@detail If the ball will never reach the nearest point along its line, return the ball&apos;s endpoint and time.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>near_to</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The query point </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The nearest point to <computeroutput>near_to</computeroutput> along the path. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The instant in time at which the ball is nearest to <computeroutput>near_to</computeroutput>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="97" column="15" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="41" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1a48f75edbbd1676bdb2217561a5d6c424" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RJ::Seconds</type>
+        <definition>RJ::Seconds BallState::query_seconds_near</definition>
+        <argsstring>(rj_geometry::Point near_to, rj_geometry::Point *out=nullptr) const</argsstring>
+        <name>query_seconds_near</name>
+        <param>
+          <type>rj_geometry::Point</type>
+          <declname>near_to</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point *</type>
+          <declname>out</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Similar to <ref refid="structBallState_1a742a96957b5c9bf2cc5172d0707b4ebd" kindref="member">query_time_near(RJ::Time)</ref>, but for a duration in the future. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="104" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="72" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1ae92c8df07a64aaefe5223dd57576c66d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RJ::Seconds</type>
+        <definition>RJ::Seconds BallState::query_stop_time</definition>
+        <argsstring>(rj_geometry::Point *out=nullptr) const</argsstring>
+        <name>query_stop_time</name>
+        <param>
+          <type>rj_geometry::Point *</type>
+          <declname>out</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Predict the stop time of the ball. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>out</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>will be filled with the stopping position, if it is not nullptr. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The duration until the ball stops. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="114" column="18" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="76" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1ab4dccb29873415fbc19084ab23bc8584" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>rj_geometry::Point</type>
+        <definition>rj_geometry::Point BallState::query_stop_position</definition>
+        <argsstring>() const</argsstring>
+        <name>query_stop_position</name>
+        <briefdescription>
+<para>Predict the stop position of the ball. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The point at which the ball will stop. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="122" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="89" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1aa64808eb0be71cddadc569c33b2d9bf3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::optional&lt; RJ::Seconds &gt;</type>
+        <definition>std::optional&lt; RJ::Seconds &gt; BallState::query_seconds_to_dist</definition>
+        <argsstring>(double distance) const</argsstring>
+        <name>query_seconds_to_dist</name>
+        <param>
+          <type>double</type>
+          <declname>distance</declname>
+        </param>
+        <briefdescription>
+<para>Query the time before the ball goes a certain distance. Return nullopt if it will stop before traveling the specified distance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>distance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The distance along the ball path at which to query. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The time at which the ball will hit the specified distance, or nullopt. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="132" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="95" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="structBallState_1aecc8bd7efbf34e854f71dc0e89fbf662" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classplanning_1_1Trajectory" kindref="compound">planning::Trajectory</ref></type>
+        <definition>planning::Trajectory BallState::make_trajectory</definition>
+        <argsstring>() const</argsstring>
+        <name>make_trajectory</name>
+        <briefdescription>
+<para>Create a trajectory for the ball. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A trajectory for this ball to follow. Angles are meaningless. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="139" column="27" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.cpp" bodystart="110" bodyend="128"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Our belief about the ball&apos;s current position and velocity. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Point</label>
+      </node>
+      <node id="1">
+        <label>BallState</label>
+        <link refid="structBallState"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>position</edgelabel>
+          <edgelabel>velocity</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" line="46" column="16" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/world_state.hpp" bodystart="46" bodyend="140"/>
+    <listofallmembers>
+      <member refid="structBallState_1a62928333f80533e53e94fbfb65de5e49" prot="public" virt="non-virtual"><scope>BallState</scope><name>BallState</name></member>
+      <member refid="structBallState_1ae71434e99e7d6afc4209ac2f5dc6b9a8" prot="public" virt="non-virtual"><scope>BallState</scope><name>BallState</name></member>
+      <member refid="structBallState_1aecc8bd7efbf34e854f71dc0e89fbf662" prot="public" virt="non-virtual"><scope>BallState</scope><name>make_trajectory</name></member>
+      <member refid="structBallState_1a94b2d0da24bbba1aed2ddc5cb5258af0" prot="public" virt="non-virtual"><scope>BallState</scope><name>Msg</name></member>
+      <member refid="structBallState_1a44d1251385f12ca930d518cb2e6aab55" prot="public" virt="non-virtual"><scope>BallState</scope><name>position</name></member>
+      <member refid="structBallState_1a742a96957b5c9bf2cc5172d0707b4ebd" prot="public" virt="non-virtual"><scope>BallState</scope><name>predict_at</name></member>
+      <member refid="structBallState_1a5a79771bc042e45b105344f6b625fb09" prot="public" virt="non-virtual"><scope>BallState</scope><name>predict_in</name></member>
+      <member refid="structBallState_1a48f75edbbd1676bdb2217561a5d6c424" prot="public" virt="non-virtual"><scope>BallState</scope><name>query_seconds_near</name></member>
+      <member refid="structBallState_1aa64808eb0be71cddadc569c33b2d9bf3" prot="public" virt="non-virtual"><scope>BallState</scope><name>query_seconds_to_dist</name></member>
+      <member refid="structBallState_1ab4dccb29873415fbc19084ab23bc8584" prot="public" virt="non-virtual"><scope>BallState</scope><name>query_stop_position</name></member>
+      <member refid="structBallState_1ae92c8df07a64aaefe5223dd57576c66d" prot="public" virt="non-virtual"><scope>BallState</scope><name>query_stop_time</name></member>
+      <member refid="structBallState_1abb714f6e4c4d903314581a18a7899d22" prot="public" virt="non-virtual"><scope>BallState</scope><name>query_time_near</name></member>
+      <member refid="structBallState_1a793a074aa816eb965e962ef24a23891e" prot="public" virt="non-virtual"><scope>BallState</scope><name>timestamp</name></member>
+      <member refid="structBallState_1a00fd14b9d4174a0dba6b13338b426f92" prot="public" virt="non-virtual"><scope>BallState</scope><name>velocity</name></member>
+      <member refid="structBallState_1af451efd89f12db46a8005ba7345ad528" prot="public" virt="non-virtual"><scope>BallState</scope><name>visible</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

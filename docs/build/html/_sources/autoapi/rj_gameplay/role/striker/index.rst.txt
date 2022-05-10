@@ -1,0 +1,101 @@
+:py:mod:`rj_gameplay.role.striker`
+==================================
+
+.. py:module:: rj_gameplay.role.striker
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.role.striker.State
+   rj_gameplay.role.striker.StrikerRole
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.role.striker.OPPONENT_SPEED
+   rj_gameplay.role.striker.KICK_SPEED
+   rj_gameplay.role.striker.EFF_BLOCK_WIDTH
+
+
+.. py:class:: State
+
+   Bases: :py:obj:`enum.Enum`
+
+   Generic enumeration.
+
+   Derive from this class to define new enumerations.
+
+   .. py:attribute:: INIT
+      
+
+      
+
+   .. py:attribute:: CAPTURING
+      
+
+      
+
+   .. py:attribute:: INIT_SHOOT
+      
+
+      
+
+   .. py:attribute:: SHOOTING
+      
+
+      
+
+   .. py:attribute:: KICK_DONE
+      
+
+      
+
+
+.. py:data:: OPPONENT_SPEED
+   :annotation: = 1.5
+
+   
+
+.. py:data:: KICK_SPEED
+   :annotation: = 4.5
+
+   
+
+.. py:data:: EFF_BLOCK_WIDTH
+   :annotation: = 0.7
+
+   
+
+.. py:class:: StrikerRole(robot: stp.rc.Robot)
+
+   Bases: :py:obj:`stp.role.Role`
+
+   Grabs ball and shoots on goal. Should eventually be merged with some hybrid PassOrShoot role.
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> rj_msgs.msg.RobotIntent
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: _blocker_margin(self, kick_origin: numpy.array, kick_target: numpy.array, kick_speed: float, blocker: stp.rc.Robot)
+
+
+   .. py:method:: _kick_cost(self, point: numpy.array, kick_speed: float, kick_origin: numpy.array, world_state: stp.rc.WorldState)
+
+
+   .. py:method:: _find_target_point(self, world_state: stp.rc.WorldState, kick_speed: float) -> numpy.ndarray
+
+
+

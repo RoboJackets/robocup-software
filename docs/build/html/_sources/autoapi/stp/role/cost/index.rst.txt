@@ -1,0 +1,70 @@
+:py:mod:`stp.role.cost`
+=======================
+
+.. py:module:: stp.role.cost
+
+.. autoapi-nested-parse::
+
+   This module contains a variety of cost functions for convenience.
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.role.cost.PickRobotById
+   stp.role.cost.PickClosestToPoint
+   stp.role.cost.PickFarthestFromPoint
+
+
+
+
+.. py:class:: PickRobotById(robot_id: int)
+
+   Bases: :py:obj:`stp.role.CostFn`
+
+   Always select robot of robot_id (passed on init).
+
+   .. py:method:: __call__(self, robot: stp.rc.Robot, world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: unassigned_cost_fn(self, prev_results: Any, world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: __repr__(self)
+
+
+
+.. py:class:: PickClosestToPoint(target_point: numpy.ndarray)
+
+   Bases: :py:obj:`stp.role.CostFn`
+
+   Always select closest robot to some target_point (passed on init).
+   Can get closest to ball by passing in `world_state.ball.pos`.
+
+   .. py:method:: __call__(self, robot: stp.rc.Robot, world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: __repr__(self)
+
+
+
+.. py:class:: PickFarthestFromPoint(target_point)
+
+   Bases: :py:obj:`stp.role.CostFn`
+
+   Always select farthest robot to some target_point (passed on init).
+   Can get farthest from ball by passing in `world_state.ball.pos`.
+
+   .. py:method:: __call__(self, robot: stp.rc.Robot, world_state: stp.rc.WorldState) -> float
+
+
+   .. py:method:: __repr__(self)
+
+
+

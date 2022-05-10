@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="dir_cb31a078f65c9347a322c3a7317b6e32" kind="dir">
+    <compoundname>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick</compoundname>
+    <innerdir refid="dir_017fa49dd86a3961b60fa25d6cfd4807">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/detector</innerdir>
+    <innerdir refid="dir_7fa454386f2556566aae95cc51964ad3">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/estimator</innerdir>
+    <innerfile refid="kick__event_8hpp">kick_event.hpp</innerfile>
+    <innerfile refid="vision__state_8hpp">vision_state.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structChart_1_1PointMagnitude" kind="struct" language="C++" prot="public">
+    <compoundname>Chart::PointMagnitude</compoundname>
+    <basecompoundref refid="structChart_1_1Function" prot="public" virt="non-virtual">Chart::Function</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structChart_1_1PointMagnitude_1a773621ab1dac5430031a436be1c3aa18" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool Chart::PointMagnitude::value</definition>
+        <argsstring>(const Packet::LogFrame &amp;frame, float *v) const override</argsstring>
+        <name>value</name>
+        <reimplements refid="structChart_1_1Function_1a7937bffdaa9a1588218d8da6211fc420">value</reimplements>
+        <param>
+          <type>const Packet::LogFrame &amp;</type>
+          <declname>frame</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="33" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.cpp" bodystart="187" bodyend="228"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Chart::Function</label>
+        <link refid="structChart_1_1Function"/>
+      </node>
+      <node id="1">
+        <label>Chart::PointMagnitude</label>
+        <link refid="structChart_1_1PointMagnitude"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Chart::Function</label>
+        <link refid="structChart_1_1Function"/>
+      </node>
+      <node id="1">
+        <label>Chart::PointMagnitude</label>
+        <link refid="structChart_1_1PointMagnitude"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" line="32" column="37" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ui/strip_chart.hpp" bodystart="32" bodyend="34"/>
+    <listofallmembers>
+      <member refid="structChart_1_1Function_1a34167f6aa2a96d9c217b906d0574e384" prot="public" virt="non-virtual"><scope>Chart::PointMagnitude</scope><name>name</name></member>
+      <member refid="structChart_1_1Function_1ac60f5f6618c4f092e7e4be34ef89b757" prot="public" virt="non-virtual"><scope>Chart::PointMagnitude</scope><name>path</name></member>
+      <member refid="structChart_1_1PointMagnitude_1a773621ab1dac5430031a436be1c3aa18" prot="public" virt="virtual"><scope>Chart::PointMagnitude</scope><name>value</name></member>
+      <member refid="structChart_1_1Function_1a5c418747daa82f9df94b45f0ee6ab351" prot="public" virt="virtual"><scope>Chart::PointMagnitude</scope><name>~Function</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

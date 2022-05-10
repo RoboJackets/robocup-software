@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01planning_1_1RobotInstant_00_01rj__msgs_1_1msg_1_1RobotInstant_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; planning::RobotInstant, rj_msgs::msg::RobotInstant &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1RobotInstant_00_01rj__msgs_1_1msg_1_1RobotInstant_01_4_1aaf87204150677204fb84c8aa503280cc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::RobotInstant</type>
+        <definition>static rj_msgs::msg::RobotInstant rj_convert::RosConverter&lt; planning::RobotInstant, rj_msgs::msg::RobotInstant &gt;::to_ros</definition>
+        <argsstring>(const planning::RobotInstant &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1RobotInstant" kindref="compound">planning::RobotInstant</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="122" column="39" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" bodystart="122" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1RobotInstant_00_01rj__msgs_1_1msg_1_1RobotInstant_01_4_1a537f76bed1ff10e31757b4453ddf606c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structplanning_1_1RobotInstant" kindref="compound">planning::RobotInstant</ref></type>
+        <definition>static planning::RobotInstant rj_convert::RosConverter&lt; planning::RobotInstant, rj_msgs::msg::RobotInstant &gt;::from_ros</definition>
+        <argsstring>(const rj_msgs::msg::RobotInstant &amp;from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <type>const rj_msgs::msg::RobotInstant &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="129" column="35" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" bodystart="129" bodyend="132"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="121" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" bodystart="121" bodyend="133"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1RobotInstant_00_01rj__msgs_1_1msg_1_1RobotInstant_01_4_1a537f76bed1ff10e31757b4453ddf606c" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::RobotInstant, rj_msgs::msg::RobotInstant &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1RobotInstant_00_01rj__msgs_1_1msg_1_1RobotInstant_01_4_1aaf87204150677204fb84c8aa503280cc" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::RobotInstant, rj_msgs::msg::RobotInstant &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

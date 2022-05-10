@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="bezier__path__test_8cpp" kind="file" language="C++">
+    <compoundname>bezier_path_test.cpp</compoundname>
+    <includes local="no">fstream</includes>
+    <includes local="no">gtest/gtest.h</includes>
+    <includes refid="path__smoothing_8hpp" local="yes">planning/primitives/path_smoothing.hpp</includes>
+    <incdepgraph>
+      <node id="7">
+        <label>planning/planning_params.hpp</label>
+        <link refid="planning__params_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>rj_param_utils/param.hpp</label>
+      </node>
+      <node id="2">
+        <label>fstream</label>
+      </node>
+      <node id="5">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="3">
+        <label>gtest/gtest.h</label>
+      </node>
+      <node id="6">
+        <label>planning/motion_constraints.hpp</label>
+        <link refid="motion__constraints_8hpp_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp</label>
+        <link refid="bezier__path__test_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>planning/primitives/path_smoothing.hpp</label>
+        <link refid="path__smoothing_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="bezier__path__test_8cpp_1acdcb2fdd89c970c253edfd19fb81109a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void check_bezier_low_curvature</definition>
+        <argsstring>(const planning::BezierPath &amp;path)</argsstring>
+        <name>check_bezier_low_curvature</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref> &amp;</type>
+          <declname>path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" line="9" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" bodystart="9" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="bezier__path__test_8cpp_1aaf66160dace92a0d2f46201960414e1f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void check_bezier_smooth</definition>
+        <argsstring>(const planning::BezierPath &amp;path)</argsstring>
+        <name>check_bezier_smooth</name>
+        <param>
+          <type>const <ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref> &amp;</type>
+          <declname>path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" line="26" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" bodystart="26" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="bezier__path__test_8cpp_1ab1856247eed77ba0577bca45c15964b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(BezierPath, two_points_path_smooth_and_consistent)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>BezierPath</type>
+        </param>
+        <param>
+          <type>two_points_path_smooth_and_consistent</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" line="60" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" bodystart="60" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="bezier__path__test_8cpp_1a4a3d866b1c03bfa7cbf53233ea060c31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(BezierPath, multiple_points_path_smooth_and_consistent)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>BezierPath</type>
+        </param>
+        <param>
+          <type>multiple_points_path_smooth_and_consistent</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" line="67" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" bodystart="67" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="bezier__path__test_8cpp_1a2b47a897fea6293292288d5c803470f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(BezierPath, zero_velocity_endpoints_straight_smooth_and_consistent)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>BezierPath</type>
+        </param>
+        <param>
+          <type>zero_velocity_endpoints_straight_smooth_and_consistent</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" line="86" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" bodystart="86" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="bezier__path__test_8cpp_1a706b75f09358d7d57d49c85e3b999bae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(BezierPath, zero_endpoints_curved_smooth_and_consistent)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>BezierPath</type>
+        </param>
+        <param>
+          <type>zero_endpoints_curved_smooth_and_consistent</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" line="93" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" bodystart="93" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="bezier__path__test_8cpp_1ad841623dad88aeb01fd074cb5a1ccfa5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(BezierPath, nonzero_start_zero_end_curved_smooth_and_consistent)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type>BezierPath</type>
+        </param>
+        <param>
+          <type>nonzero_start_zero_end_curved_smooth_and_consistent</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" line="101" column="1" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp" bodystart="101" bodyend="107"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;fstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;gtest/gtest.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;planning/primitives/path_smoothing.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>rj_geometry::Point;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>check_bezier_low_curvature(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref>&amp;<sp/>path)<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Expected<sp/>error<sp/>is<sp/>O(1/N)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>kN<sp/>=<sp/>1000;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ds<sp/>=<sp/>1.0<sp/>/<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(kN);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;=<sp/>kN;<sp/>i++)<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>s<sp/>=<sp/>i<sp/>*<sp/>ds;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>curvature<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Point<sp/>tangent;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>path.<ref refid="classplanning_1_1BezierPath_1a7bc7c59c735b81b7a04979e8be000f22" kindref="member">evaluate</ref>(s,<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,<sp/>&amp;tangent,<sp/>&amp;curvature);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tangent.mag()<sp/>&gt;<sp/>1e-3)<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_LE(std::abs(curvature),<sp/>100);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>check_bezier_smooth(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref>&amp;<sp/>path)<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Expected<sp/>error<sp/>decreases<sp/>with<sp/>high<sp/>N</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>kN<sp/>=<sp/>100;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>kEpsilon<sp/>=<sp/>1e-2;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ds<sp/>=<sp/>1.0<sp/>/<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(kN);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>kN;<sp/>i++)<sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>s<sp/>=<sp/>i<sp/>*<sp/>ds;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Point<sp/>position;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Point<sp/>tangent;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>curvature<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>path.<ref refid="classplanning_1_1BezierPath_1a7bc7c59c735b81b7a04979e8be000f22" kindref="member">evaluate</ref>(s,<sp/>&amp;position,<sp/>&amp;tangent,<sp/>&amp;curvature);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Point<sp/>position_next;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Point<sp/>tangent_next;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>curvature_next<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>h<sp/>=<sp/>1e-6;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>path.<ref refid="classplanning_1_1BezierPath_1a7bc7c59c735b81b7a04979e8be000f22" kindref="member">evaluate</ref>(s<sp/>+<sp/>h,<sp/>&amp;position_next,<sp/>&amp;tangent_next,<sp/>&amp;curvature_next);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_LE((0.5<sp/>*<sp/>(tangent<sp/>+<sp/>tangent_next)).dist_to((position_next<sp/>-<sp/>position)<sp/>/<sp/>h),</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>kEpsilon);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>curvature_expected<sp/>=<sp/>tangent_next.angle_between(tangent)<sp/>/<sp/>h<sp/>/<sp/>tangent.mag();</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tangent.mag()<sp/>&gt;<sp/>1e-3<sp/>&amp;&amp;<sp/>tangent_next.mag()<sp/>&gt;<sp/>1e-3)<sp/>{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>sure<sp/>that<sp/>the<sp/>approximate<sp/>curvature<sp/>is<sp/>consistent<sp/>with<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>calculated<sp/>exact<sp/>value.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_NEAR(curvature,<sp/>std::abs(curvature_expected),<sp/>kEpsilon)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>at<sp/>s<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>s;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal">TEST(BezierPath,<sp/>two_points_path_smooth_and_consistent)<sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1MotionConstraints" kindref="compound">planning::MotionConstraints</ref><sp/>constraints;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Point&gt;<sp/>points{Point{0,<sp/>0},<sp/>Point{1,<sp/>1}};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref><sp/>path(std::move(points),<sp/>Point(1,<sp/>0),<sp/>Point(1,<sp/>0),<sp/>constraints);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>check_bezier_smooth(path);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal">TEST(BezierPath,<sp/>multiple_points_path_smooth_and_consistent)<sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1MotionConstraints" kindref="compound">planning::MotionConstraints</ref><sp/>constraints;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Point&gt;<sp/>points{Point{0,<sp/>0},<sp/>Point{1,<sp/>1},<sp/>Point{2,<sp/>0}};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref><sp/>path(std::move(points),<sp/>Point(1,<sp/>0),<sp/>Point(1,<sp/>0),<sp/>constraints);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>check_bezier_smooth(path);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Smoothed<sp/>paths<sp/>should<sp/>have<sp/>reasonably<sp/>low<sp/>curvature<sp/>everywhere<sp/>on<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//<sp/>path.<sp/>Sadly,<sp/>this<sp/>does<sp/>not<sp/>hold<sp/>with<sp/>our<sp/>current<sp/>system,<sp/>which<sp/>uses</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Bezier<sp/>curves<sp/>and<sp/>places<sp/>keypoints<sp/>in<sp/>a<sp/>fairly<sp/>naive<sp/>manner.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="comment">//<sp/>All<sp/>examples<sp/>with<sp/>zero-velocity<sp/>endpoints<sp/>are<sp/>broken<sp/>because<sp/>of<sp/>numerical</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//<sp/>issues<sp/>(in<sp/>this<sp/>case,<sp/>the<sp/>second<sp/>and<sp/>third<sp/>control<sp/>points<sp/>go<sp/>on<sp/>top<sp/>of<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="comment">//<sp/>first<sp/>and<sp/>fourth,<sp/>respectively).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO(#1539):<sp/>Switch<sp/>to<sp/>a<sp/>scheme<sp/>that<sp/>minimizes<sp/>sum<sp/>of<sp/>squared</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>{acceleration/curvature/etc}.<sp/>This<sp/>should<sp/>be<sp/>fairly<sp/>simple<sp/>with<sp/>Hermite</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>splines,<sp/>as<sp/>acceleration<sp/>on<sp/>a<sp/>point<sp/>in<sp/>a<sp/>curve<sp/>is<sp/>a<sp/>linear<sp/>function<sp/>of</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>the<sp/>endpoints&apos;<sp/>positions<sp/>and<sp/>velocities<sp/>(so<sp/>sub<sp/>of<sp/>squared<sp/>acceleration</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>is<sp/>a<sp/>quadratic<sp/>in<sp/>the<sp/>velocities<sp/>(decision<sp/>variables))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal">TEST(BezierPath,<sp/>zero_velocity_endpoints_straight_smooth_and_consistent)<sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1MotionConstraints" kindref="compound">planning::MotionConstraints</ref><sp/>constraints;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Point&gt;<sp/>points{Point{0,<sp/>0},<sp/>Point{2,<sp/>0}};</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref><sp/>path(std::move(points),<sp/>Point(0,<sp/>0),<sp/>Point(0,<sp/>0),<sp/>constraints);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>check_bezier_smooth(path);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal">TEST(BezierPath,<sp/>zero_endpoints_curved_smooth_and_consistent)<sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1MotionConstraints" kindref="compound">planning::MotionConstraints</ref><sp/>constraints;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Point&gt;<sp/>points{Point{0,<sp/>0},<sp/>Point{1,<sp/>1},<sp/>Point{2,<sp/>0}};</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref><sp/>path(std::move(points),<sp/>Point(0,<sp/>0),<sp/>Point(0,<sp/>0),<sp/>constraints);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>check_bezier_smooth(path);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>check_bezier_low_curvature(path);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal">TEST(BezierPath,<sp/>nonzero_start_zero_end_curved_smooth_and_consistent)<sp/>{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structplanning_1_1MotionConstraints" kindref="compound">planning::MotionConstraints</ref><sp/>constraints;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Point&gt;<sp/>points{Point{0,<sp/>0},<sp/>Point{2,<sp/>2}};</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classplanning_1_1BezierPath" kindref="compound">planning::BezierPath</ref><sp/>path(std::move(points),<sp/>Point(1,<sp/>0),<sp/>Point(0,<sp/>0),<sp/>constraints);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>check_bezier_smooth(path);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>check_bezier_low_curvature(path);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/tests/bezier_path_test.cpp"/>
+  </compounddef>
+</doxygen>

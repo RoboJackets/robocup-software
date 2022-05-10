@@ -1,0 +1,4 @@
+<map id="planning::LinearMotionInstant" name="planning::LinearMotionInstant">
+<area shape="rect" id="node1" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity." alt="" coords="5,109,221,136"/>
+<area shape="rect" id="node2" title=" " alt="" coords="86,5,141,32"/>
+</map>

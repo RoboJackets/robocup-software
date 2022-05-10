@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classGradientAscent1D" kind="class" language="C++" prot="public">
+    <compoundname>GradientAscent1D</compoundname>
+    <includes refid="gradient__ascent__1d_8hpp" local="no">gradient_ascent_1d.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classGradientAscent1D_1a5f5de94dfb0d0b44bdc3c8e6e37285ba" prot="private" static="no" mutable="no">
+        <type><ref refid="classGradient1DConfig" kindref="compound">Gradient1DConfig</ref> *</type>
+        <definition>Gradient1DConfig* GradientAscent1D::config_</definition>
+        <argsstring></argsstring>
+        <name>config_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="58" column="22" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradientAscent1D_1a3647f21f4dbe757ed882d6cdd17afc65" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float GradientAscent1D::current_val_</definition>
+        <argsstring></argsstring>
+        <name>current_val_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="60" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradientAscent1D_1af3a5d3c81a8e1ac0128676c743860c12" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float GradientAscent1D::currentx_</definition>
+        <argsstring></argsstring>
+        <name>currentx_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="61" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradientAscent1D_1afc413bf60efd80bb7564883cab5bd24d" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float GradientAscent1D::currentdx_</definition>
+        <argsstring></argsstring>
+        <name>currentdx_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="62" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradientAscent1D_1a5807d99c3aba5f49f42bfe3650b15583" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float GradientAscent1D::previousx_</definition>
+        <argsstring></argsstring>
+        <name>previousx_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="63" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradientAscent1D_1a58cc235b80bd005f3b012b3a76881bc1" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float GradientAscent1D::previousdx_</definition>
+        <argsstring></argsstring>
+        <name>previousdx_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="64" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradientAscent1D_1ae8ca4e19157a82d39d33dd348da34271" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float GradientAscent1D::temperature_</definition>
+        <argsstring></argsstring>
+        <name>temperature_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="66" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classGradientAscent1D_1a404ac5faa410bd3456dad027daf4e5da" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int GradientAscent1D::iteration_count_</definition>
+        <argsstring></argsstring>
+        <name>iteration_count_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="68" column="9" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classGradientAscent1D_1a3347a0c63dc2f13d45f2835dd026a1ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GradientAscent1D::GradientAscent1D</definition>
+        <argsstring>(Gradient1DConfig *config)</argsstring>
+        <name>GradientAscent1D</name>
+        <param>
+          <type><ref refid="classGradient1DConfig" kindref="compound">Gradient1DConfig</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="23" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.cpp" bodystart="8" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classGradientAscent1D_1aef0c056251247f9bfa31a15adacf7393" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool GradientAscent1D::single_step</definition>
+        <argsstring>()</argsstring>
+        <name>single_step</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Runs a single step of the optimization algorithm</para>
+<para><simplesect kind="note"><para>This is most likely not the function you are looking for to find the max. This is used when executing multiple <ref refid="classGradientAscent1D" kindref="compound">GradientAscent1D</ref>&apos;s in parallel </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="32" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.cpp" bodystart="25" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classGradientAscent1D_1a93f7929e5ebe692c7028d32fc154b9db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GradientAscent1D::execute</definition>
+        <argsstring>()</argsstring>
+        <name>execute</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Executes the full optimization algorithm</para>
+<para><simplesect kind="note"><para>This function is used when there is no need to step through each iteration. Most uses of <ref refid="classGradientAscent1D" kindref="compound">GradientAscent1D</ref> will call this function </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="40" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.cpp" bodystart="45" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classGradientAscent1D_1a1adca626306c2f537a746ca5a0a858d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float GradientAscent1D::get_x_value</definition>
+        <argsstring>()</argsstring>
+        <name>get_x_value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the X value of the current guess of the max </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="45" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.cpp" bodystart="51" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classGradientAscent1D_1a8a797018b022e63698288f72b2b4312e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float GradientAscent1D::get_value</definition>
+        <argsstring>()</argsstring>
+        <name>get_value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>the current guess of the max value </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="50" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.cpp" bodystart="53" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classGradientAscent1D_1a1e31602c1fa0ceea7f9821e3ec317fd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool GradientAscent1D::continue_execution</definition>
+        <argsstring>()</argsstring>
+        <name>continue_execution</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Should continue execution? </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="55" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.cpp" bodystart="55" bodyend="67"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classGradientAscent1D_1a7fd6361525adabf65f15fdb61fac29ec" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float GradientAscent1D::next_x</definition>
+        <argsstring>()</argsstring>
+        <name>next_x</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>next x value based on derivative </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="73" column="11" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.cpp" bodystart="69" bodyend="81"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Gradient Ascent in 1 Dimension with Temperature Works for all functions that are continous with a specified derivative function Only finds the closest local max</para>
+<para>Temperature controls X movement around discontinuity in the derivative function EX: X=0 when F(x) = abs(x)</para>
+<para>Use Example: <ref refid="classGradientAscent1D" kindref="compound">GradientAscent1D</ref> ga(&amp; [Gradient1DConfig]); ga.execute(); ga.get_value(); </para>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" line="21" column="23" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/optimization/gradient_ascent_1d.hpp" bodystart="21" bodyend="74"/>
+    <listofallmembers>
+      <member refid="classGradientAscent1D_1a5f5de94dfb0d0b44bdc3c8e6e37285ba" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>config_</name></member>
+      <member refid="classGradientAscent1D_1a1e31602c1fa0ceea7f9821e3ec317fd1" prot="public" virt="non-virtual"><scope>GradientAscent1D</scope><name>continue_execution</name></member>
+      <member refid="classGradientAscent1D_1a3647f21f4dbe757ed882d6cdd17afc65" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>current_val_</name></member>
+      <member refid="classGradientAscent1D_1afc413bf60efd80bb7564883cab5bd24d" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>currentdx_</name></member>
+      <member refid="classGradientAscent1D_1af3a5d3c81a8e1ac0128676c743860c12" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>currentx_</name></member>
+      <member refid="classGradientAscent1D_1a93f7929e5ebe692c7028d32fc154b9db" prot="public" virt="non-virtual"><scope>GradientAscent1D</scope><name>execute</name></member>
+      <member refid="classGradientAscent1D_1a8a797018b022e63698288f72b2b4312e" prot="public" virt="non-virtual"><scope>GradientAscent1D</scope><name>get_value</name></member>
+      <member refid="classGradientAscent1D_1a1adca626306c2f537a746ca5a0a858d1" prot="public" virt="non-virtual"><scope>GradientAscent1D</scope><name>get_x_value</name></member>
+      <member refid="classGradientAscent1D_1a3347a0c63dc2f13d45f2835dd026a1ed" prot="public" virt="non-virtual"><scope>GradientAscent1D</scope><name>GradientAscent1D</name></member>
+      <member refid="classGradientAscent1D_1a404ac5faa410bd3456dad027daf4e5da" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>iteration_count_</name></member>
+      <member refid="classGradientAscent1D_1a7fd6361525adabf65f15fdb61fac29ec" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>next_x</name></member>
+      <member refid="classGradientAscent1D_1a58cc235b80bd005f3b012b3a76881bc1" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>previousdx_</name></member>
+      <member refid="classGradientAscent1D_1a5807d99c3aba5f49f42bfe3650b15583" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>previousx_</name></member>
+      <member refid="classGradientAscent1D_1aef0c056251247f9bfa31a15adacf7393" prot="public" virt="non-virtual"><scope>GradientAscent1D</scope><name>single_step</name></member>
+      <member refid="classGradientAscent1D_1ae8ca4e19157a82d39d33dd348da34271" prot="private" virt="non-virtual"><scope>GradientAscent1D</scope><name>temperature_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

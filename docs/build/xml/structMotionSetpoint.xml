@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structMotionSetpoint" kind="struct" language="C++" prot="public">
+    <compoundname>MotionSetpoint</compoundname>
+    <includes refid="motion__setpoint_8hpp" local="no">motion_setpoint.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structMotionSetpoint_1ac9709d2e701f25c60648ff3f10da2faa" prot="public" static="no">
+        <type>rj_msgs::msg::MotionSetpoint</type>
+        <definition>using MotionSetpoint::Msg =  rj_msgs::msg::MotionSetpoint</definition>
+        <argsstring></argsstring>
+        <name>Msg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="12" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structMotionSetpoint_1a9f2c6bca1242c33be311defac8066861" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double MotionSetpoint::xvelocity</definition>
+        <argsstring></argsstring>
+        <name>xvelocity</name>
+        <initializer>= 0.</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="14" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structMotionSetpoint_1a580687a25578bdd2fcc630d1addae724" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double MotionSetpoint::yvelocity</definition>
+        <argsstring></argsstring>
+        <name>yvelocity</name>
+        <initializer>= 0.</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="15" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structMotionSetpoint_1aa57fb83f742a1cdceadbce21bc9f8196" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double MotionSetpoint::avelocity</definition>
+        <argsstring></argsstring>
+        <name>avelocity</name>
+        <initializer>= 0.</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="16" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structMotionSetpoint_1a5c77c73b302274ea9e52495e75b11019" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MotionSetpoint::MotionSetpoint</definition>
+        <argsstring>()=default</argsstring>
+        <name>MotionSetpoint</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="18" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="structMotionSetpoint_1a3ea7ad74225a45ad2c376d54fab0a40f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MotionSetpoint::MotionSetpoint</definition>
+        <argsstring>(double x, double y, double a)</argsstring>
+        <name>MotionSetpoint</name>
+        <param>
+          <type>double</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="19" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" bodystart="19" bodyend="19"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="structMotionSetpoint_1a0937500ee732e4a2c488e8ab15bd044d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>friend std::ostream &amp;</type>
+        <definition>std::ostream&amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;stream, const MotionSetpoint &amp;setpoint)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>stream</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structMotionSetpoint" kindref="compound">MotionSetpoint</ref> &amp;</type>
+          <declname>setpoint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="21" column="12" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" bodystart="21" bodyend="25"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Stores the outputs published by MotionControl. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" line="11" column="21" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/control/motion_setpoint.hpp" bodystart="11" bodyend="26"/>
+    <listofallmembers>
+      <member refid="structMotionSetpoint_1aa57fb83f742a1cdceadbce21bc9f8196" prot="public" virt="non-virtual"><scope>MotionSetpoint</scope><name>avelocity</name></member>
+      <member refid="structMotionSetpoint_1a5c77c73b302274ea9e52495e75b11019" prot="public" virt="non-virtual"><scope>MotionSetpoint</scope><name>MotionSetpoint</name></member>
+      <member refid="structMotionSetpoint_1a3ea7ad74225a45ad2c376d54fab0a40f" prot="public" virt="non-virtual"><scope>MotionSetpoint</scope><name>MotionSetpoint</name></member>
+      <member refid="structMotionSetpoint_1ac9709d2e701f25c60648ff3f10da2faa" prot="public" virt="non-virtual"><scope>MotionSetpoint</scope><name>Msg</name></member>
+      <member refid="structMotionSetpoint_1a0937500ee732e4a2c488e8ab15bd044d" prot="public" virt="non-virtual"><scope>MotionSetpoint</scope><name>operator&lt;&lt;</name></member>
+      <member refid="structMotionSetpoint_1a9f2c6bca1242c33be311defac8066861" prot="public" virt="non-virtual"><scope>MotionSetpoint</scope><name>xvelocity</name></member>
+      <member refid="structMotionSetpoint_1a580687a25578bdd2fcc630d1addae724" prot="public" virt="non-virtual"><scope>MotionSetpoint</scope><name>yvelocity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

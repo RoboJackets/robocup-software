@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01RobotIntent_00_01rj__msgs_1_1msg_1_1RobotIntent_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; RobotIntent, rj_msgs::msg::RobotIntent &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01RobotIntent_00_01rj__msgs_1_1msg_1_1RobotIntent_01_4_1a3c2c3eb2dfb6d404847185161afc9d43" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::RobotIntent</type>
+        <definition>static rj_msgs::msg::RobotIntent rj_convert::RosConverter&lt; RobotIntent, rj_msgs::msg::RobotIntent &gt;::to_ros</definition>
+        <argsstring>(const RobotIntent &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <type>const <ref refid="structRobotIntent" kindref="compound">RobotIntent</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="35" column="38" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="35" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01RobotIntent_00_01rj__msgs_1_1msg_1_1RobotIntent_01_4_1ad914675bbc15f328ee286ee2b2a4c7b4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structRobotIntent" kindref="compound">RobotIntent</ref></type>
+        <definition>static RobotIntent rj_convert::RosConverter&lt; RobotIntent, rj_msgs::msg::RobotIntent &gt;::from_ros</definition>
+        <argsstring>(const rj_msgs::msg::RobotIntent &amp;from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <type>const rj_msgs::msg::RobotIntent &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="47" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="47" bodyend="58"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" line="34" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/robot_intent.hpp" bodystart="34" bodyend="59"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01RobotIntent_00_01rj__msgs_1_1msg_1_1RobotIntent_01_4_1ad914675bbc15f328ee286ee2b2a4c7b4" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; RobotIntent, rj_msgs::msg::RobotIntent &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01RobotIntent_00_01rj__msgs_1_1msg_1_1RobotIntent_01_4_1a3c2c3eb2dfb6d404847185161afc9d43" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; RobotIntent, rj_msgs::msg::RobotIntent &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

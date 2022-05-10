@@ -1,0 +1,30 @@
+:py:mod:`rj_gameplay.skill.pivot`
+=================================
+
+.. py:module:: rj_gameplay.skill.pivot
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.skill.pivot.Pivot
+
+
+
+
+.. py:class:: Pivot(robot: stp.rc.Robot = None, pivot_point: numpy.ndarray = None, target_point: numpy.ndarray = None, dribble_speed: float = 1.0, threshold: float = 0.02, priority: int = 1)
+
+   Bases: :py:obj:`stp.skill.Skill`
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> rj_msgs.msg.RobotIntent
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+

@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classjoystick_1_1SDLController" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>joystick::SDLController</compoundname>
+    <basecompoundref refid="classjoystick_1_1ManualController" prot="public" virt="non-virtual">joystick::ManualController</basecompoundref>
+    <derivedcompoundref refid="classjoystick_1_1GamepadController" prot="public" virt="non-virtual">joystick::GamepadController</derivedcompoundref>
+    <derivedcompoundref refid="classjoystick_1_1KeyboardController" prot="public" virt="non-virtual">joystick::KeyboardController</derivedcompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1aec0dee6a0caf448ff52cb45ed351af67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>joystick::SDLController::SDLController</definition>
+        <argsstring>()=default</argsstring>
+        <name>SDLController</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="16" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1a9463dfbf275dab575942246ad7f9cde9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual joystick::SDLController::~SDLController</definition>
+        <argsstring>()=default</argsstring>
+        <name>~SDLController</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="17" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1ae3630207f58a7bf6321e57db3ccc2872" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>joystick::SDLController::SDLController</definition>
+        <argsstring>(const SDLController &amp;)=delete</argsstring>
+        <name>SDLController</name>
+        <param>
+          <type>const <ref refid="classjoystick_1_1SDLController" kindref="compound">SDLController</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="19" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1a600432ae310abfe7041b03c854e42b7b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjoystick_1_1SDLController" kindref="compound">SDLController</ref> &amp;</type>
+        <definition>SDLController&amp; joystick::SDLController::operator=</definition>
+        <argsstring>(const SDLController &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classjoystick_1_1SDLController" kindref="compound">SDLController</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="20" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1a957895ef1eacafa796bb7285e322d904" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>joystick::SDLController::SDLController</definition>
+        <argsstring>(SDLController &amp;&amp;)=delete</argsstring>
+        <name>SDLController</name>
+        <param>
+          <type><ref refid="classjoystick_1_1SDLController" kindref="compound">SDLController</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="21" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1ac8b032b4c19e6f84746ff471fc1eac27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classjoystick_1_1SDLController" kindref="compound">SDLController</ref> &amp;</type>
+        <definition>SDLController&amp; joystick::SDLController::operator=</definition>
+        <argsstring>(const SDLController &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classjoystick_1_1SDLController" kindref="compound">SDLController</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="22" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1a65106bd3e379361485fee75f51521161" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void joystick::SDLController::process_sdl</definition>
+        <argsstring>(SDL_Event *event)=0</argsstring>
+        <name>process_sdl</name>
+        <reimplementedby refid="classjoystick_1_1KeyboardController_1a718313841a8ed2c866b0c6bffc8ea9c1">process_sdl</reimplementedby>
+        <reimplementedby refid="classjoystick_1_1GamepadController_1a64c1fc21952b84ff8981123f7bbd6545">process_sdl</reimplementedby>
+        <param>
+          <type>SDL_Event *</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="24" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classjoystick_1_1SDLController_1a17e0662ea61ab6972d8303aec5555f4e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>SDL_JoystickID</type>
+        <definition>virtual SDL_JoystickID joystick::SDLController::get_id</definition>
+        <argsstring>() const =0</argsstring>
+        <name>get_id</name>
+        <reimplementedby refid="classjoystick_1_1KeyboardController_1ae7b13040e00dde71ccf4df04172bbec4">get_id</reimplementedby>
+        <reimplementedby refid="classjoystick_1_1GamepadController_1a64a75303d604e4d2716b6d4779e554b6">get_id</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="25" column="29"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>joystick::SDLController</label>
+        <link refid="classjoystick_1_1SDLController"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>joystick::GamepadController</label>
+        <link refid="classjoystick_1_1GamepadController"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>joystick::ManualController</label>
+        <link refid="classjoystick_1_1ManualController"/>
+      </node>
+      <node id="4">
+        <label>joystick::KeyboardController</label>
+        <link refid="classjoystick_1_1KeyboardController"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>joystick::SDLController</label>
+        <link refid="classjoystick_1_1SDLController"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>joystick::ManualController</label>
+        <link refid="classjoystick_1_1ManualController"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" line="14" column="44" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/joystick/sdl_manual_control.hpp" bodystart="14" bodyend="26"/>
+    <listofallmembers>
+      <member refid="classjoystick_1_1ManualController_1acc4596d94caff6ca5a8f53b045ca4f63" prot="public" virt="pure-virtual"><scope>joystick::SDLController</scope><name>get_command</name></member>
+      <member refid="classjoystick_1_1ManualController_1aaae386e2111d159f3235e62ee52d85b0" prot="public" virt="pure-virtual"><scope>joystick::SDLController</scope><name>get_description</name></member>
+      <member refid="classjoystick_1_1SDLController_1a17e0662ea61ab6972d8303aec5555f4e" prot="public" virt="pure-virtual"><scope>joystick::SDLController</scope><name>get_id</name></member>
+      <member refid="classjoystick_1_1ManualController_1ae4342e4936e666dfd29da6c674877cc9" prot="public" virt="pure-virtual"><scope>joystick::SDLController</scope><name>get_uuid</name></member>
+      <member refid="classjoystick_1_1SDLController_1a600432ae310abfe7041b03c854e42b7b" prot="public" virt="non-virtual"><scope>joystick::SDLController</scope><name>operator=</name></member>
+      <member refid="classjoystick_1_1SDLController_1ac8b032b4c19e6f84746ff471fc1eac27" prot="public" virt="non-virtual"><scope>joystick::SDLController</scope><name>operator=</name></member>
+      <member refid="classjoystick_1_1SDLController_1a65106bd3e379361485fee75f51521161" prot="public" virt="pure-virtual"><scope>joystick::SDLController</scope><name>process_sdl</name></member>
+      <member refid="classjoystick_1_1SDLController_1aec0dee6a0caf448ff52cb45ed351af67" prot="public" virt="non-virtual"><scope>joystick::SDLController</scope><name>SDLController</name></member>
+      <member refid="classjoystick_1_1SDLController_1ae3630207f58a7bf6321e57db3ccc2872" prot="public" virt="non-virtual"><scope>joystick::SDLController</scope><name>SDLController</name></member>
+      <member refid="classjoystick_1_1SDLController_1a957895ef1eacafa796bb7285e322d904" prot="public" virt="non-virtual"><scope>joystick::SDLController</scope><name>SDLController</name></member>
+      <member refid="classjoystick_1_1SDLController_1a9463dfbf275dab575942246ad7f9cde9" prot="public" virt="virtual"><scope>joystick::SDLController</scope><name>~SDLController</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

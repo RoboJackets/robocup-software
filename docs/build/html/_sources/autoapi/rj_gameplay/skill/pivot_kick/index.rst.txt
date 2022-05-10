@@ -1,0 +1,69 @@
+:py:mod:`rj_gameplay.skill.pivot_kick`
+======================================
+
+.. py:module:: rj_gameplay.skill.pivot_kick
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   rj_gameplay.skill.pivot_kick.State
+   rj_gameplay.skill.pivot_kick.PivotKick
+
+
+
+
+.. py:class:: State
+
+   Bases: :py:obj:`enum.Enum`
+
+   Generic enumeration.
+
+   Derive from this class to define new enumerations.
+
+   .. py:attribute:: CAPTURE
+      
+
+      
+
+   .. py:attribute:: PIVOT
+      
+
+      
+
+   .. py:attribute:: KICK
+      
+
+      
+
+   .. py:attribute:: DONE
+      
+
+      
+
+
+.. py:class:: PivotKick(robot: stp.rc.Robot = None, pivot_point: numpy.ndarray = None, target_point: numpy.ndarray = None, dribble_speed: float = 1.0, chip: bool = False, kick_speed: float = RobotConstants.MAX_KICK_SPEED, threshold: float = 0.02, priority: int = 1)
+
+   Bases: :py:obj:`stp.skill.Skill`
+
+   A pivot kick skill
+   capture -> pivot -> kick
+
+   .. py:method:: tick(self, world_state: stp.rc.WorldState) -> rj_msgs.msg.RobotIntent
+
+
+   .. py:method:: is_done(self, world_state: stp.rc.WorldState) -> bool
+
+
+   .. py:method:: __str__(self)
+
+
+   .. py:method:: __repr__(self) -> str
+
+
+

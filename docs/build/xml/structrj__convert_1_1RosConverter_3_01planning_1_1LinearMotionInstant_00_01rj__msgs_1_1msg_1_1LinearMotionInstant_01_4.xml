@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="structrj__convert_1_1RosConverter_3_01planning_1_1LinearMotionInstant_00_01rj__msgs_1_1msg_1_1LinearMotionInstant_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>rj_convert::RosConverter&lt; planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant &gt;</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1LinearMotionInstant_00_01rj__msgs_1_1msg_1_1LinearMotionInstant_01_4_1a39419ccccec2df49694c39c4410bffd9" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>rj_msgs::msg::LinearMotionInstant</type>
+        <definition>static rj_msgs::msg::LinearMotionInstant rj_convert::RosConverter&lt; planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant &gt;::to_ros</definition>
+        <argsstring>(const planning::LinearMotionInstant &amp;from)</argsstring>
+        <name>to_ros</name>
+        <param>
+          <type>const <ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">planning::LinearMotionInstant</ref> &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="106" column="46" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" bodystart="106" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="structrj__convert_1_1RosConverter_3_01planning_1_1LinearMotionInstant_00_01rj__msgs_1_1msg_1_1LinearMotionInstant_01_4_1a77d90d8d26120a4cc2a4056ec66a0e9b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structplanning_1_1LinearMotionInstant" kindref="compound">planning::LinearMotionInstant</ref></type>
+        <definition>static planning::LinearMotionInstant rj_convert::RosConverter&lt; planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant &gt;::from_ros</definition>
+        <argsstring>(const rj_msgs::msg::LinearMotionInstant &amp;from)</argsstring>
+        <name>from_ros</name>
+        <param>
+          <type>const rj_msgs::msg::LinearMotionInstant &amp;</type>
+          <declname>from</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="112" column="42" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" bodystart="112" bodyend="115"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" line="105" column="20" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/planning/instant.hpp" bodystart="105" bodyend="116"/>
+    <listofallmembers>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1LinearMotionInstant_00_01rj__msgs_1_1msg_1_1LinearMotionInstant_01_4_1a77d90d8d26120a4cc2a4056ec66a0e9b" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant &gt;</scope><name>from_ros</name></member>
+      <member refid="structrj__convert_1_1RosConverter_3_01planning_1_1LinearMotionInstant_00_01rj__msgs_1_1msg_1_1LinearMotionInstant_01_4_1a39419ccccec2df49694c39c4410bffd9" prot="public" virt="non-virtual"><scope>rj_convert::RosConverter&lt; planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant &gt;</scope><name>to_ros</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

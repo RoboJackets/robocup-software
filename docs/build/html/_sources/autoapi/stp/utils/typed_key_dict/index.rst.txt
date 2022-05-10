@@ -1,0 +1,94 @@
+:py:mod:`stp.utils.typed_key_dict`
+==================================
+
+.. py:module:: stp.utils.typed_key_dict
+
+.. autoapi-nested-parse::
+
+   This module contains data structures to define TypedKeyDict.
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.utils.typed_key_dict.TypedKey
+   stp.utils.typed_key_dict.TypedKeyDict
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   stp.utils.typed_key_dict.ValueInterfaceT
+   stp.utils.typed_key_dict.ValueConcreteT
+
+
+.. py:data:: ValueInterfaceT
+   
+
+   
+
+.. py:data:: ValueConcreteT
+   
+
+   
+
+.. py:class:: TypedKey(cls: Type[ValueConcreteT])
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`ValueConcreteT`\ ]
+
+   A key that contains type information about the value.
+
+   .. py:attribute:: __slots__
+      :annotation: = ['concrete_cls']
+
+      
+
+   .. py:method:: value_t(self) -> Type[ValueConcreteT]
+
+      Returns the type of the value for this key.
+      :return: The type of the value for this key.
+
+
+
+.. py:class:: TypedKeyDict
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`ValueInterfaceT`\ ], :py:obj:`collections.abc.MutableMapping`
+
+   A dictionary with type information where the key encodes information about the
+   subclass so that the correct subclass can be retrieved without an additional
+   instanceof check.
+
+   .. py:attribute:: __slots__
+      :annotation: = ['_dict']
+
+      
+
+   .. py:method:: __getitem__(self, key: TypedKey[ValueConcreteT]) -> ValueConcreteT
+
+
+   .. py:method:: __setitem__(self, key: TypedKey[ValueConcreteT], value: ValueConcreteT) -> None
+
+
+   .. py:method:: __delitem__(self, key: TypedKey[ValueConcreteT]) -> None
+
+
+   .. py:method:: __len__(self) -> int
+
+
+   .. py:method:: __iter__(self)
+
+
+   .. py:method:: __contains__(self, item) -> bool
+
+
+

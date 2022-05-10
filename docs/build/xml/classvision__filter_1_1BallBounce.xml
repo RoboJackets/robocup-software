@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classvision__filter_1_1BallBounce" kind="class" language="C++" prot="public">
+    <compoundname>vision_filter::BallBounce</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classvision__filter_1_1BallBounce_1a30a7d7a92a462a4558ea653050d43f18" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::BallBounce::BallBounce</definition>
+        <argsstring>()=delete</argsstring>
+        <name>BallBounce</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>These functions are wrapped into a class instead of a namespace so that the config system can be used. It requires a class with the REGISTER_CONFIGUABLE define. Additionally, this allows for the extra helper functions to be hidden. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp" line="17" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1BallBounce_1ae6f68633f5f42b0a7c5146498d46ace1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>vision_filter::BallBounce::~BallBounce</definition>
+        <argsstring>()=delete</argsstring>
+        <name>~BallBounce</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp" line="18" column="5"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classvision__filter_1_1BallBounce_1a69a1213989c850ba7616fb44186130b1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool vision_filter::BallBounce::calc_ball_bounce</definition>
+        <argsstring>(const KalmanBall &amp;ball, const std::vector&lt; WorldRobot &gt; &amp;yellow_robots, const std::vector&lt; WorldRobot &gt; &amp;blue_robots, rj_geometry::Point &amp;out_new_vel)</argsstring>
+        <name>calc_ball_bounce</name>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1KalmanBall" kindref="compound">KalmanBall</ref> &amp;</type>
+          <declname>ball</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt; &amp;</type>
+          <declname>yellow_robots</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &gt; &amp;</type>
+          <declname>blue_robots</declname>
+        </param>
+        <param>
+          <type>rj_geometry::Point &amp;</type>
+          <declname>out_new_vel</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Calculates whether the given kalman ball will bounce against another robot and the resulting velocity vector</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ball</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Kalman ball we are trying to test </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>yellow_robots</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Best estimation of the yellow robots states </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blue_robots</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Best estimation of the yellow robots states </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_new_vel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output of the resulting velocity vector after bounce</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Whether the ball bounces or not </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp" line="31" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/ball_bounce.cpp" bodystart="42" bodyend="243"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classvision__filter_1_1BallBounce_1a121f4eba30e2a8c1a748739ee0a9a975" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool vision_filter::BallBounce::ball_in_robot</definition>
+        <argsstring>(const KalmanBall &amp;ball, const WorldRobot &amp;robot)</argsstring>
+        <name>ball_in_robot</name>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1KalmanBall" kindref="compound">KalmanBall</ref> &amp;</type>
+          <declname>ball</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &amp;</type>
+          <declname>robot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns whether the ball is most likely intersecting the robots</para>
+<para>Note: Ignores the extra mouth calculations</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ball</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The ball we want to check for intersection with </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>robot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The robot we what to check for intersection with </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp" line="45" column="17" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/ball_bounce.cpp" bodystart="245" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="classvision__filter_1_1BallBounce_1ab50e927bb1cf177f739365d79a8130a4" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; rj_geometry::Point &gt;</type>
+        <definition>std::vector&lt; rj_geometry::Point &gt; vision_filter::BallBounce::possible_ball_intersection_pts</definition>
+        <argsstring>(const KalmanBall &amp;ball, const WorldRobot &amp;robot)</argsstring>
+        <name>possible_ball_intersection_pts</name>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1KalmanBall" kindref="compound">KalmanBall</ref> &amp;</type>
+          <declname>ball</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classvision__filter_1_1WorldRobot" kindref="compound">WorldRobot</ref> &amp;</type>
+          <declname>robot</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Finds the 0, 1 or 2 interserct locations on the ball shell</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ball</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The ball we want to check for </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>robot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The robot we want to check against</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>List of all intersection points. Length 0, 1, or 2 0 means no intersection 1 means tangental intersection 2 means chord based intersection </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp" line="58" column="24" bodyfile="/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/ball_bounce.cpp" bodystart="251" bodyend="312"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp" line="9" column="17" bodyfile="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp" bodystart="9" bodyend="60"/>
+    <listofallmembers>
+      <member refid="classvision__filter_1_1BallBounce_1a121f4eba30e2a8c1a748739ee0a9a975" prot="private" virt="non-virtual"><scope>vision_filter::BallBounce</scope><name>ball_in_robot</name></member>
+      <member refid="classvision__filter_1_1BallBounce_1a30a7d7a92a462a4558ea653050d43f18" prot="public" virt="non-virtual"><scope>vision_filter::BallBounce</scope><name>BallBounce</name></member>
+      <member refid="classvision__filter_1_1BallBounce_1a69a1213989c850ba7616fb44186130b1" prot="public" virt="non-virtual"><scope>vision_filter::BallBounce</scope><name>calc_ball_bounce</name></member>
+      <member refid="classvision__filter_1_1BallBounce_1ab50e927bb1cf177f739365d79a8130a4" prot="private" virt="non-virtual"><scope>vision_filter::BallBounce</scope><name>possible_ball_intersection_pts</name></member>
+      <member refid="classvision__filter_1_1BallBounce_1ae6f68633f5f42b0a7c5146498d46ace1" prot="public" virt="non-virtual"><scope>vision_filter::BallBounce</scope><name>~BallBounce</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

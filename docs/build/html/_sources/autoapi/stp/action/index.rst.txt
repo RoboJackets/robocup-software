@@ -1,0 +1,57 @@
+:py:mod:`stp.action`
+====================
+
+.. py:module:: stp.action
+
+.. autoapi-nested-parse::
+
+   This module contains Actions of the STP(A) hierarchy.
+
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   stp.action.IAction
+   stp.action.IFiniteAction
+   stp.action.Ctx
+
+
+
+
+.. py:class:: IAction
+
+   Bases: :py:obj:`abc.ABC`
+
+   Interface for actions.
+
+   .. py:method:: tick(self, intent) -> None
+      :abstractmethod:
+
+      Modifies the passed RobotIntent with the relavant fields
+
+
+
+.. py:class:: IFiniteAction
+
+   Bases: :py:obj:`IAction`, :py:obj:`abc.ABC`
+
+   Interface for actions that end
+
+   .. py:method:: is_done(self, world_state) -> bool
+      :abstractmethod:
+
+      Checks to see if the action is done running
+
+
+
+.. py:class:: Ctx
+
+   Context for actions, dummy for now
+
+

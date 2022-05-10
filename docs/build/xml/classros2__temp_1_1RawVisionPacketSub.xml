@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="classros2__temp_1_1RawVisionPacketSub" kind="class" language="C++" prot="public">
+    <compoundname>ros2_temp::RawVisionPacketSub</compoundname>
+    <includes refid="raw__vision__packet__sub_8hpp" local="no">raw_vision_packet_sub.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classros2__temp_1_1RawVisionPacketSub_1a6f8c6ffb37b115122f33d563b842821c" prot="public" static="no">
+        <type>std::unique_ptr&lt; <ref refid="classros2__temp_1_1RawVisionPacketSub" kindref="compound">RawVisionPacketSub</ref> &gt;</type>
+        <definition>using ros2_temp::RawVisionPacketSub::UniquePtr =  std::unique_ptr&lt;RawVisionPacketSub&gt;</definition>
+        <argsstring></argsstring>
+        <name>UniquePtr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="19" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classros2__temp_1_1RawVisionPacketSub_1acbbdd31a11c4d8f5fae6c5086bf6ac6d" prot="private" static="no">
+        <type>rj_topic_utils::AsyncMessageQueue&lt; RawProtobufMsg, rj_topic_utils::MessagePolicy::kQueue &gt;</type>
+        <definition>using ros2_temp::RawVisionPacketSub::RawProtobufMsgQueue =  rj_topic_utils::AsyncMessageQueue&lt; RawProtobufMsg, rj_topic_utils::MessagePolicy::kQueue&gt;</definition>
+        <argsstring></argsstring>
+        <name>RawProtobufMsgQueue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="31" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classros2__temp_1_1RawVisionPacketSub_1af769c8b26e73f14028eec5168421affc" prot="private" static="no" mutable="no">
+        <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+        <definition>Context* ros2_temp::RawVisionPacketSub::context_</definition>
+        <argsstring></argsstring>
+        <name>context_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="29" column="13" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classros2__temp_1_1RawVisionPacketSub_1a1d8e369e671c3b0a72514fa7d97b0f3f" prot="private" static="no" mutable="no">
+        <type>RawProtobufMsgQueue::UniquePtr</type>
+        <definition>RawProtobufMsgQueue::UniquePtr ros2_temp::RawVisionPacketSub::queue_</definition>
+        <argsstring></argsstring>
+        <name>queue_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="33" column="36" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classros2__temp_1_1RawVisionPacketSub_1ad4050b3c095dfd22baebc37ce733ebad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ros2_temp::RawVisionPacketSub::RawVisionPacketSub</definition>
+        <argsstring>(Context *context)</argsstring>
+        <name>RawVisionPacketSub</name>
+        <param>
+          <type><ref refid="structContext" kindref="compound">Context</ref> *</type>
+          <declname>context</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="20" column="5" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.cpp" bodystart="5" bodyend="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classros2__temp_1_1RawVisionPacketSub_1a86d867bd60f3c033e092f47fff7014d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ros2_temp::RawVisionPacketSub::run</definition>
+        <argsstring>()</argsstring>
+        <name>run</name>
+        <briefdescription>
+<para>Updates context-&gt;raw_vision_packets with the raw protobuf message from vision_receiver. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="26" column="10" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.cpp" bodystart="10" bodyend="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A temporary class (until the logging framework is ported) that obtains the raw protobuf messages from vision_receiver by spinning off a thread to handle callbacks. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" line="17" column="25" bodyfile="/home/pnayak/robocup-software/soccer/src/soccer/ros2_temp/raw_vision_packet_sub.hpp" bodystart="17" bodyend="34"/>
+    <listofallmembers>
+      <member refid="classros2__temp_1_1RawVisionPacketSub_1af769c8b26e73f14028eec5168421affc" prot="private" virt="non-virtual"><scope>ros2_temp::RawVisionPacketSub</scope><name>context_</name></member>
+      <member refid="classros2__temp_1_1RawVisionPacketSub_1a1d8e369e671c3b0a72514fa7d97b0f3f" prot="private" virt="non-virtual"><scope>ros2_temp::RawVisionPacketSub</scope><name>queue_</name></member>
+      <member refid="classros2__temp_1_1RawVisionPacketSub_1acbbdd31a11c4d8f5fae6c5086bf6ac6d" prot="private" virt="non-virtual"><scope>ros2_temp::RawVisionPacketSub</scope><name>RawProtobufMsgQueue</name></member>
+      <member refid="classros2__temp_1_1RawVisionPacketSub_1ad4050b3c095dfd22baebc37ce733ebad" prot="public" virt="non-virtual"><scope>ros2_temp::RawVisionPacketSub</scope><name>RawVisionPacketSub</name></member>
+      <member refid="classros2__temp_1_1RawVisionPacketSub_1a86d867bd60f3c033e092f47fff7014d9" prot="public" virt="non-virtual"><scope>ros2_temp::RawVisionPacketSub</scope><name>run</name></member>
+      <member refid="classros2__temp_1_1RawVisionPacketSub_1a6f8c6ffb37b115122f33d563b842821c" prot="public" virt="non-virtual"><scope>ros2_temp::RawVisionPacketSub</scope><name>UniquePtr</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.17">
+  <compounddef id="camera__ball_8hpp" kind="file" language="C++">
+    <compoundname>camera_ball.hpp</compoundname>
+    <includes local="no">rj_geometry/point.hpp</includes>
+    <includes local="no">rj_geometry/transform_matrix.hpp</includes>
+    <includes local="no">rj_common/time.hpp</includes>
+    <includes local="no">rj_msgs/msg/detection_ball.hpp</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="kalman__ball_8hpp" local="no">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/kalman_ball.hpp</includedby>
+    <includedby refid="camera_8hpp" local="no">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/camera.hpp</includedby>
+    <includedby refid="camera__frame_8hpp" local="no">/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/camera_frame.hpp</includedby>
+    <includedby refid="camera__ball_8cpp" local="no">/home/pnayak/robocup-software/soccer/src/rj_vision_filter/ball/camera_ball.cpp</includedby>
+    <includedby refid="ball__bounce__test_8cpp" local="no">/home/pnayak/robocup-software/soccer/testing/rj_vision_filter/ball_bounce_test.cpp</includedby>
+    <includedby refid="camera__ball__test_8cpp" local="no">/home/pnayak/robocup-software/soccer/testing/rj_vision_filter/camera_ball_test.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>rj_geometry/point.hpp</label>
+      </node>
+      <node id="3">
+        <label>rj_geometry/transform_matrix.hpp</label>
+      </node>
+      <node id="6">
+        <label>vector</label>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp</label>
+        <link refid="camera__ball_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>rj_msgs/msg/detection_ball.hpp</label>
+      </node>
+      <node id="4">
+        <label>rj_common/time.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/ball_bounce.hpp</label>
+        <link refid="ball__bounce_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/kick_event.hpp</label>
+        <link refid="kick__event_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/world.hpp</label>
+        <link refid="world_8hpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp</label>
+        <link refid="camera__ball_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/camera_frame.hpp</label>
+        <link refid="camera__frame_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/camera/camera.hpp</label>
+        <link refid="camera_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/detector/fast_kick_detector.hpp</label>
+        <link refid="fast__kick__detector_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/vision_state.hpp</label>
+        <link refid="vision__state_8hpp_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/world_ball.hpp</label>
+        <link refid="world__ball_8hpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/kalman_ball.hpp</label>
+        <link refid="kalman__ball_8hpp_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/kick/detector/slow_kick_detector.hpp</label>
+        <link refid="slow__kick__detector_8hpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>/home/pnayak/robocup-software/soccer/include/rj_vision_filter/vision_filter.hpp</label>
+        <link refid="vision__filter_8hpp_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classvision__filter_1_1CameraBall" prot="public">vision_filter::CameraBall</innerclass>
+    <innernamespace refid="namespacevision__filter">vision_filter</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/point.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_geometry/transform_matrix.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_common/time.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;rj_msgs/msg/detection_ball.hpp&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">vision_filter<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>DetectionBallMsg<sp/>=<sp/>rj_msgs::msg::DetectionBall;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="classvision__filter_1_1CameraBall" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classvision__filter_1_1CameraBall" kindref="compound">CameraBall</ref><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="21" refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" kindref="member">CameraBall</ref>(RJ::Time<sp/>time_captured,<sp/>rj_geometry::Point<sp/>pos)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>time_captured_(time_captured),<sp/>pos_(pos)<sp/>{}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classvision__filter_1_1CameraBall_1a3d9bf98931864eaa32189faa7b20b79b" kindref="member">CameraBall</ref>(RJ::Time<sp/>time_captured,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DetectionBallMsg&amp;<sp/>msg,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>rj_geometry::TransformMatrix&amp;<sp/>world_to_team);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Time<sp/><ref refid="classvision__filter_1_1CameraBall_1ab7dd304ebb5db70df10338c2130341c2" kindref="member">get_time_captured</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/><ref refid="classvision__filter_1_1CameraBall_1aac796936cb292b8a305c5affd099f5ee" kindref="member">get_pos</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classvision__filter_1_1CameraBall" kindref="compound">CameraBall</ref><sp/><ref refid="classvision__filter_1_1CameraBall_1a2212d7c24c76cf3fcc80e83b9dc3a45e" kindref="member">combine_balls</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;CameraBall&gt;&amp;<sp/>balls);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>RJ::Time<sp/>time_captured_;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>rj_geometry::Point<sp/>pos_;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">}<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>vision_filter</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/pnayak/robocup-software/soccer/include/rj_vision_filter/ball/camera_ball.hpp"/>
+  </compounddef>
+</doxygen>
