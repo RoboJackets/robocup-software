@@ -164,7 +164,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
             }
         }
 
-        // TODO: reenable this planner by modifying trajectory_hits_static() call
+        // TODO(Kevin): reenable this planner by modifying trajectory_hits_static() call
         if (prev_path_.check_time(start_instant.stamp) &&
             /* !trajectory_hits_static(prev_path_, static_obstacles, start_instant.stamp, nullptr)
                && */
