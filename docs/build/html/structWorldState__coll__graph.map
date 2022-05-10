@@ -1,5 +1,0 @@
-<map id="WorldState" name="WorldState">
-<area shape="rect" id="node1" title=" " alt="" coords="5,199,99,225"/>
-<area shape="rect" id="node2" href="$structBallState.html" title="Our belief about the ball&#39;s current position and velocity." alt="" coords="11,109,93,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="25,5,79,32"/>
-</map>

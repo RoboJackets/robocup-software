@@ -1,5 +1,0 @@
-<map id="radio::NetworkRadio" name="radio::NetworkRadio">
-<area shape="rect" id="node1" title="Interface for the radio over regular network interface." alt="" coords="5,155,160,181"/>
-<area shape="rect" id="node2" href="$classradio_1_1Radio.html" title="Sends and receives information to/from our robots." alt="" coords="33,80,133,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="55,5,111,32"/>
-</map>

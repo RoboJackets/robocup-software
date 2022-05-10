@@ -1,6 +1,0 @@
-<map id="planning::RotationCommand" name="planning::RotationCommand">
-<area shape="rect" id="node1" title=" " alt="" coords="267,5,475,32"/>
-<area shape="rect" id="node2" href="$structplanning_1_1EmptyAngleCommand.html" title=" " alt="" coords="5,80,237,107"/>
-<area shape="rect" id="node3" href="$structplanning_1_1FaceAngleCommand.html" title=" " alt="" coords="261,80,480,107"/>
-<area shape="rect" id="node4" href="$structplanning_1_1FacePointCommand.html" title=" " alt="" coords="505,80,719,107"/>
-</map>

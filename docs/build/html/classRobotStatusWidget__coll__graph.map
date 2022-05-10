@@ -1,4 +1,0 @@
-<map id="RobotStatusWidget" name="RobotStatusWidget">
-<area shape="rect" id="node1" title="Shows the status of a single robot." alt="" coords="5,80,152,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="39,5,118,32"/>
-</map>

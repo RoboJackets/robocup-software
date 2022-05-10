@@ -1,4 +1,0 @@
-<map id="referee::RefereeBase" name="referee::RefereeBase">
-<area shape="rect" id="node1" title="Base class for both types of referee. Handles sending ROS messages to the relevant channels (when nec..." alt="" coords="5,80,165,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="57,5,113,32"/>
-</map>

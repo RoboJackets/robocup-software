@@ -1,4 +1,0 @@
-<map id="BatteryWidget" name="BatteryWidget">
-<area shape="rect" id="node1" title="Draws a battery given a battery level value from 0 to 1." alt="" coords="5,80,121,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="24,5,103,32"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="planning::PathTargetCommand" name="planning::PathTargetCommand">
-<area shape="rect" id="node1" title=" " alt="" coords="5,199,227,225"/>
-<area shape="rect" id="node2" href="$structplanning_1_1LinearMotionInstant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity." alt="" coords="8,109,224,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="89,5,143,32"/>
-</map>

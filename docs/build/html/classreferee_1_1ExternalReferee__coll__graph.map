@@ -1,5 +1,0 @@
-<map id="referee::ExternalReferee" name="referee::ExternalReferee">
-<area shape="rect" id="node1" title="The ExternalReferee listens to a port for referee packets over the network." alt="" coords="5,155,188,181"/>
-<area shape="rect" id="node2" href="$classreferee_1_1RefereeBase.html" title="Base class for both types of referee. Handles sending ROS messages to the relevant channels (when nec..." alt="" coords="17,80,177,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="69,5,125,32"/>
-</map>
