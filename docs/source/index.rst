@@ -6,10 +6,10 @@
 Welcome
 ===================================================
 
-This is the documentation for `RoboJackets' <https://robojackets.org/>`_ 
+This is the documentation for `RoboJackets' <https://robojackets.org/>`_
 RoboCup Software team. We are a primarily undergraduate robotics team from
-Georgia Tech who compete in Division B of the RoboCup Small Size League. See 
-the `RoboCup SSL website <https://ssl.robocup.org/about/>`_ for 
+Georgia Tech who compete in Division B of the RoboCup Small Size League. See
+the `RoboCup SSL website <https://ssl.robocup.org/about/>`_ for
 more details on the competition.
 
 .. note::
@@ -29,6 +29,7 @@ on your adblocker to support their free documentation hosting.
    self
    getting_started.rst
    our_stack.rst
+   faq.rst
    contributing.rst
    meta_docs.rst
 
