@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+# git does not appreciate installing things as sudo, so this script is for
+# a couple git-related installs
+
+# install pre-commit hooks
+echo "-- Installing pre-commit hook"
+pre-commit install
+pre-commit autoupdate
+
+# update git submodules
+echo "-- Updating git submodules"
+git submodule sync
+git submodule update --init --recursive
