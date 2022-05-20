@@ -11,7 +11,7 @@ First, clone the repository from GitHub:
 
 .. code-block:: bash
 
-   git clone git://github.com/RoboJackets/robocup-software
+   git clone https://github.com/RoboJackets/robocup-software.git
 
 Then change directories (``cd``) to the repository you just cloned, and run the
 setup script to install all required dependencies:
