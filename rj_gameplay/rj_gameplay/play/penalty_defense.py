@@ -19,7 +19,6 @@ class State(Enum):
 class PenaltyDefense(stp.play.Play):
     def __init__(self):
         super().__init__()
-
         self._state = State.INIT
 
     def tick(
