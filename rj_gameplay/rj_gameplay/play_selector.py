@@ -3,22 +3,15 @@ from typing import Optional, Tuple
 
 import numpy as np
 import stp
-import stp.rc as rc
 import stp.situation as situation
 
-import rj_gameplay.play as plays
 import rj_gameplay.situation.decision_tree.plays as situations
-from rj_gameplay.play import (
-    defend_restart,
+from rj_gameplay.play import (  # defend_restart,; defensive_clear,; keepaway,; prep_penalty_offense,; restart,
     defense,
-    defensive_clear,
-    keepaway,
     kickoff_play,
     offense,
     penalty_defense,
     penalty_offense,
-    prep_penalty_offense,
-    restart,
 )
 
 POSSESS_MIN_DIST = 0.15

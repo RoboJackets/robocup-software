@@ -1,6 +1,5 @@
 from typing import List, Tuple
 
-import numpy as np
 import stp
 from rj_msgs.msg import RobotIntent
 

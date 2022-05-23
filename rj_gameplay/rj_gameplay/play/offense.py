@@ -4,7 +4,6 @@ from typing import List
 
 import stp
 from rj_msgs.msg import RobotIntent
-from stp.formations.diamond_formation import DiamondFormation
 
 from rj_gameplay.tactic import (  # seek,
     goalie_tactic,
@@ -12,6 +11,8 @@ from rj_gameplay.tactic import (  # seek,
     striker_tactic,
     wall_tactic,
 )
+
+# from stp.formations.diamond_formation import DiamondFormation
 
 
 class State(Enum):
