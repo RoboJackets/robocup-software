@@ -42,7 +42,7 @@ private:
     boost::asio::ip::udp::endpoint robot_control_endpoint_;
 
     std::vector<char> buffer_;
-    std::vector<RJ::Time> last_sent_diff;
+    std::vector<RJ::Time> last_sent_diff_;
 
     bool blue_team_;
 

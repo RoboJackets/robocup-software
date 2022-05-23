@@ -66,7 +66,7 @@ SimRadio::SimRadio(bool blue_team)
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
     for (int i = 0; i < kNumShells; ++i) {
-        last_sent_diff.emplace_back(RJ::now());
+        last_sent_diff_.emplace_back(RJ::now());
     }
     auto address = boost::asio::ip::make_address(PARAM_interface).to_v4();
     robot_control_endpoint_ =
@@ -93,10 +93,10 @@ void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
     // Send a sim packet with a single robot. The simulator can handle many robots, but our commands
     // may come in at different times and it should be fine to just recalculate like this.
     // TODO(Kyle): Verify that this is okay.
-    if (RJ::now() - last_sent_diff.at(robot_id) < 5.1ms) {
+    if (RJ::now() - last_sent_diff_.at(robot_id) < 5.1ms) {
         return;
     }
-    last_sent_diff.at(robot_id) = RJ::now();
+    last_sent_diff_.at(robot_id) = RJ::now();
     RobotCommand* sim_robot = sim_packet.add_robot_commands();
     ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot);
 
