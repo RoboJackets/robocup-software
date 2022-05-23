@@ -6,7 +6,7 @@ import stp
 from rj_msgs.msg import RobotIntent
 from stp.formations.diamond_formation import DiamondFormation
 
-from rj_gameplay.tactic import (  # basic_seek,
+from rj_gameplay.tactic import (  # seek,
     goalie_tactic,
     pass_tactic,
     striker_tactic,
@@ -25,8 +25,8 @@ class State(Enum):
     DONE = auto()
 
 
-class BasicOffense(stp.play.Play):
-    """Basic play to score goals. Set up two flank and one center handler. Pass ball as needed.
+class Offense(stp.play.Play):
+    """play to score goals. Set up two flank and one center handler. Pass ball as needed.
     See tick() for more details.
     """
 
@@ -59,7 +59,7 @@ class BasicOffense(stp.play.Play):
                 goalie_tactic.GoalieTactic(world_state, 0),
                 striker_tactic.StrikerTactic(world_state),
                 wall_tactic.WallTactic(world_state, num_wallers),
-                # basic_seek.BasicSeek(
+                # seek.Seek(
                 #     world_state,
                 #     4,
                 #     DiamondFormation(world_state).get_regions,

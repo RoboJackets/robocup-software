@@ -15,7 +15,7 @@ class State(Enum):
     ACTIVE = auto()
 
 
-class BasicDefense(stp.play.Play):
+class Defense(stp.play.Play):
     """Play that consists of:
     - 1 Goalie
     - 5 Wallers

@@ -9,12 +9,12 @@ import stp.situation as situation
 import rj_gameplay.play as plays
 import rj_gameplay.situation.decision_tree.plays as situations
 from rj_gameplay.play import (
-    basic_defense,
-    basic_offense,
     defend_restart,
+    defense,
     defensive_clear,
     keepaway,
     kickoff_play,
+    offense,
     penalty_defense,
     penalty_offense,
     prep_penalty_offense,
@@ -172,14 +172,14 @@ class HeuristicInformation:
         return False
 
 
-class BasicPlaySelector(situation.IPlaySelector):
+class PlaySelector(situation.IPlaySelector):
     """Play selector that returns a play and situation based on world state
     (see select method)
     """
 
     def __init__(self):
-        self.curr_situation = situations.BasicDefense
-        self.curr_play = basic_defense.BasicDefense()
+        self.curr_situation = situations.Defense
+        self.curr_play = defense.Defense()
         self._midpoint_latency = None
 
     def select(
@@ -205,7 +205,7 @@ class BasicPlaySelector(situation.IPlaySelector):
                     self.situation = situations.Kickoff()
                     # passing is bad
                     # self.curr_play = kickoff_play.Kickoff()
-                    self.curr_play = basic_offense.BasicOffense()
+                    self.curr_play = offense.Offense()
             else:
                 self.situation = situations.DefendKickoff()
                 self.curr_play = penalty_defense.PenaltyDefense()
@@ -226,36 +226,36 @@ class BasicPlaySelector(situation.IPlaySelector):
         elif game_info.is_direct():
             if game_info.our_restart:
                 self.situation = situations.OffensiveKickDirect()
-                self.curr_play = basic_offense.BasicOffense()
+                self.curr_play = offense.Offense()
             else:
                 self.situation = situations.DefendRestartOffensiveDirect()
-                self.curr_play = basic_defense.BasicDefense()
+                self.curr_play = defense.Defense()
 
         elif world_state.game_info is None and self.curr_play is None:
-            self.curr_situation = situations.BasicDefense
-            self.curr_play = basic_defense.BasicDefense()
+            self.curr_situation = situations.Defense
+            self.curr_play = defense.Defense()
         elif world_state.game_info.state == stp.rc.GameState.STOP:
             self.curr_situation = situations.Stop()
-            self.curr_play = basic_defense.BasicDefense()
+            self.curr_play = defense.Defense()
         elif (
             heuristics.ball_pos == BallPos.OUR_BALL
             or heuristics.ball_pos == BallPos.FREE_BALL
         ):
-            self.curr_situation = situations.BasicOffense
-            self.curr_play = basic_offense.BasicOffense()
+            self.curr_situation = situations.Offense
+            self.curr_play = offense.Offense()
         elif heuristics.ball_pos == BallPos.THEIR_BALL:
-            self.curr_situation = situations.BasicDefense
-            self.curr_play = basic_defense.BasicDefense()
+            self.curr_situation = situations.Defense
+            self.curr_play = defense.Defense()
         elif heuristics.ball_pos == BallPos.CONTEST_BALL:
             if (
                 heuristics.ball_pos == BallPos.CONTEST_BALL
                 and heuristics.field_loc == FieldLoc.ATTACK_SIDE
             ):
                 self.curr_situation = situations.OffensiveScramble
-                self.curr_play = basic_offense.BasicOffense()
+                self.curr_play = offense.Offense()
             else:
                 self.curr_situation = situations.DefensiveScramble
-                self.curr_play = basic_offense.BasicOffense()
+                self.curr_play = offense.Offense()
 
         return self.curr_situation, self.curr_play
 

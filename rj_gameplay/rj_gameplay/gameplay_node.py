@@ -25,15 +25,15 @@ from std_msgs.msg import String as StringMsg
 from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
 
-import rj_gameplay.basic_play_selector as basic_play_selector
+import rj_gameplay.play_selector as play_selector
 
 # ignore "unused import" error
 from rj_gameplay.play import (  # noqa: F401
-    basic_defense,
-    basic_offense,
+    defense,
     keepaway,
     kickoff_play,
     line_up,
+    offense,
 )
 
 NUM_ROBOTS = 16
@@ -488,12 +488,12 @@ class GameplayNode(Node):
 
 
 def main():
-    play_selector = basic_play_selector.BasicPlaySelector()
+    my_play_selector = play_selector.PlaySelector()
 
     # change this line to test different plays (set to None if no desired test play)
 
-    # test_play = basic_defense.BasicDefense()
+    # test_play = defense.Defense()
     test_play = None
 
-    gameplay = GameplayNode(play_selector, test_play)
+    gameplay = GameplayNode(my_play_selector, test_play)
     rclpy.spin(gameplay)

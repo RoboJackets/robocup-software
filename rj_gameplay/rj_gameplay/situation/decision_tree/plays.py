@@ -132,14 +132,14 @@ class OffensivePileup(stp.situation.ISituation):
     ...
 
 
-class BasicOffense(stp.situation.ISituation):
-    """Basic Offense."""
+class Offense(stp.situation.ISituation):
+    """Offense."""
 
     ...
 
 
-class BasicDefense(stp.situation.ISituation):
-    """Basic Defense."""
+class Defense(stp.situation.ISituation):
+    """Defense."""
 
     ...
 

@@ -7,7 +7,7 @@ from rj_msgs.msg import RobotIntent
 from rj_gameplay.role import seeker
 
 
-class BasicSeek(stp.tactic.Tactic):
+class Seek(stp.tactic.Tactic):
     """Seeks to a single point, passed in on init."""
 
     def __init__(
