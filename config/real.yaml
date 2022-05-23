@@ -44,6 +44,10 @@
     interface: "172.19.0.0"
     use_sim_time: false
 
+/internal_referee:
+  ros__parameters:
+    team_name: RoboJackets
+    use_sim_time: false
 /planner:
   ros__parameters:
     collect:
