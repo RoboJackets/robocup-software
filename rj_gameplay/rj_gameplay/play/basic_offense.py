@@ -84,6 +84,7 @@ class BasicOffense(stp.play.Play):
             if seek_tactic.is_done(world_state):
                 self._state = State.INIT_PASS
             """
+            # TODO: properly error log this
             if self._striker_st_time is None:
                 self._striker_st_time = time.time()
             if (time.time() - self._striker_st_time) > 5:

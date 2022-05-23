@@ -95,6 +95,7 @@
     timeout: 0.1
     use_sim_time: false
 
+# TODO: split into sim/network radio config
 /radio:
   ros__parameters:
     timeout: 0.25
