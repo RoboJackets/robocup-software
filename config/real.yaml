@@ -99,8 +99,13 @@
     timeout: 0.1
     use_sim_time: false
 
-# TODO: split into sim/network radio config
-/radio:
+/sim_radio:
+  ros__parameters:
+    timeout: 0.25
+    interface: "172.19.0.0"
+    use_sim_time: false
+
+/network_radio:
   ros__parameters:
     timeout: 0.25
     interface: "172.19.0.0"
