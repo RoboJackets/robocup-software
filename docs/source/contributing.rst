@@ -27,11 +27,10 @@ docs/source/ and Sphinx will do the rest. If you add a new page, put it in the
 it in the toctree in ``docs/source/index.rst``. (Toctree = table of contents
 tree.) The toctree will preserve the order given.
 
-You can check if your changes look right in HTML format by building locally
-with ``make docs`` and ``make open-docs``. This will open a static version of
-the documentation that only exists on your local machine.
-
-TODO(Kevin): check that this still works
+You can check your work by asking whoever maintains these docs (as of 2022,
+Kevin Fu) to add your branch as a version on the ReadTheDocs dashboard. They
+should go to the webpage, add a version that points to the new doc development
+branch, and build that version, then give you the link.
 
 .. note::
 

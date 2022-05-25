@@ -12,8 +12,14 @@ Kevin Fu, 5/24/2022
 
 To save myself some time in the future:
 
-The RTD dashboard points to the branch that it should build under `"Advanced
+The RTD dashboard points to the branch that latest builds under `"Advanced
 Settings" <https://readthedocs.org/dashboard/rj-rc-software/advanced/>`.
+
+Also, you can build multiple branches easily, for development of new
+documentation. Just go to the dashboard, hit Versions, and add whichever
+branch. It should build automatically, but you can check under Builds. (The
+alternate versions will have different links, click Builds > <version name> >
+"view docs")
 
 Kevin Fu, 5/7/2022 
 
