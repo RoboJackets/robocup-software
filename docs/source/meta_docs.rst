@@ -8,6 +8,13 @@ Documentation for how to write documentation is under "Contributing".
 Log
 ---
 
+Kevin Fu, 5/24/2022
+
+To save myself some time in the future:
+
+The RTD dashboard points to the branch that it should build under `"Advanced
+Settings" <https://readthedocs.org/dashboard/rj-rc-software/advanced/>`.
+
 Kevin Fu, 5/7/2022 
 
 First, big thanks to Oswin So, who wrote `this PR <https://github.com/RoboJackets/robocup-software/pull/1574>`_ 
