@@ -33,7 +33,7 @@ Then, within rqt:
 1. Go to Plugins > Services > Service Caller
 2. From the Service dropdown menu, `/list_joystick`, then click the call button
    on the top right. Take note of the string given for keyboard at uuids or
-   controller input (e.g. `'keyboard-controller'` for kb)
+   controller input (e.g. `'keyboard-controller'` for kb). If it is not there, click the blue refresh button.
 3. From the Service dropdown menu, select `/select_manual`, then in this menu:
    1. set the desired `robot_id` by clicking on the value under "Expression"
       and typing the desired number (e.g. 1 for robot 1)

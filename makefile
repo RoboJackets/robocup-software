@@ -12,6 +12,9 @@ endif
 # Tell CMake to create compile_commands.json for debug builds for clang-tidy
 DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+# FOR MACHINES WITHOUT CLANG:
+# 1) try installing w/ ./util/ubuntu-setup
+# 2) change clang/clang++ to gcc/g++ above
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -58,23 +61,24 @@ again:
 run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 
-run-sim-grsim:
+run-sim:
 	ros2 launch rj_robocup sim.launch.py
 
-run-sim:
-	ros2 launch rj_robocup sim.launch.py use_grsim:=False
+run-sim-external:
+	ros2 launch rj_robocup sim.launch.py use_internal_ref:=False
 
-run-external-grsim:
-	ros2 launch rj_robocup external_sim.launch.py
-	
-run-external:
-	ros2 launch rj_robocup external_sim.launch.py use_grsim:=False
-	
+run-sim-ex: run-sim-external
+
+# actually, config must be changed manually
+run-real-sim:
+	ros2 launch rj_robocup sim.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
+
 run-real:
-	ros2 launch rj_robocup real_soccer.launch.py
+	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
 
 run-sim2play:
 	ros2 launch rj_robocup sim2play.launch.py
+
 run-sim2: run-sim2play
 
 # Run both C++ and python unit tests
@@ -162,10 +166,9 @@ else
 	CORES=$(shell nproc)
 endif
 
-# Restyles all C++ (Clang formatter) and Python files (Black formatter) excluding files in the external and build folders
+# Restyles all C++ (Clang formatter) excluding files in the external and build folders. For Python, run black rj_gameplay.
 pretty-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
-	# @git diff -U0 --no-color $(DIFFBASE) | black .
 
 tidy-lines:
 ifeq ("$(wildcard $(COMPILE_COMMANDS_DIR)/compile_commands.json)","")

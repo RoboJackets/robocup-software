@@ -39,6 +39,10 @@ static const bool kCancelBallPlaceOnHalt = true;
 DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "
               "colors from referee");
+
+// this IP addr should be where the external ref sends messages
+// see PR #1887 for last time this file was used w/ external interface
+// run ifconfig to see list of interfaces on this computer
 DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1", "The interface for referee operation");
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
@@ -118,8 +122,10 @@ void ExternalReferee::setup_referee_multicast() {
     // Join multicast group
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeAddress).to_v4();
-    asio_socket_.set_option(boost::asio::ip::multicast::join_group(
-        multicast_address, boost::asio::ip::address_v4::any()));
+    const boost::asio::ip::address_v4 multicast_interface =
+        boost::asio::ip::address::from_string(PARAM_interface).to_v4();
+    asio_socket_.set_option(
+        boost::asio::ip::multicast::join_group(multicast_address, multicast_interface));
 }
 
 void ExternalReferee::update() { io_service_.poll(); }

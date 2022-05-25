@@ -95,7 +95,12 @@
     timeout: 0.1
     use_sim_time: false
 
-/radio:
+/sim_radio:
+  ros__parameters:
+    timeout: 0.25
+    use_sim_time: false
+
+/network_radio:
   ros__parameters:
     timeout: 0.25
     use_sim_time: false

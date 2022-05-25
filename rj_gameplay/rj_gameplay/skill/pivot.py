@@ -1,17 +1,12 @@
-from abc import ABC, abstractmethod
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
 import sys
 import time
 
-import stp.skill as skill
-import stp.role as role
-from rj_msgs.msg import RobotIntent, PivotMotionCommand
-import stp.rc as rc
 import numpy as np
+import stp.rc as rc
+import stp.skill as skill
 from rj_geometry_msgs.msg import Point
+from rj_msgs.msg import PivotMotionCommand, RobotIntent
 
 
 class Pivot(skill.Skill):
@@ -21,7 +16,7 @@ class Pivot(skill.Skill):
         pivot_point: np.ndarray = None,
         target_point: np.ndarray = None,
         dribble_speed: float = 1.0,
-        threshold: float = 0.02,
+        threshold: float = 0.2,
         priority: int = 1,
     ):
         self.robot = robot
@@ -53,6 +48,7 @@ class Pivot(skill.Skill):
         if self.robot is None:
             return False
         angle_threshold = self.threshold
+        angle_threshold = 0.05
         stopped_threshold = (
             5 * self.threshold
         )  # We don't _really_ care about this when we're kicking, if not for latency

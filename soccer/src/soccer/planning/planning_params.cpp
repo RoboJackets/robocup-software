@@ -50,7 +50,7 @@ DEFINE_NS_FLOAT64(
     "previous point in order to be used (m).");
 
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, pivot, radius_multiplier, 1.0,
+    kPlanningParamModule, pivot, radius_multiplier, 1.5,
     "A newly-found unblocked goal must be this much closer to the start position than the "
     "previous point in order to be used (m).");
 
@@ -76,13 +76,13 @@ DEFINE_NS_FLOAT64(
 // Control acceleration controls the touch to stop
 // Lower this if we decelerate too quickly for the dribbler to keep a back
 // spin on
-DEFINE_NS_FLOAT64(kPlanningParamModule, collect, control_accel_scale, 0.4,
+DEFINE_NS_FLOAT64(kPlanningParamModule, collect, control_accel_scale, 0.2,
                   "Control acceleration controls the touch to stop (unitless)");
 // How far away from the ball to target for the approach
 // This should be tuned so that the end of approach places the dribbler
 // touching the ball Increase the distance so that when we overshoot, it
 // doesn't hit the ball Ideally this is 0
-DEFINE_NS_FLOAT64(kPlanningParamModule, collect, approach_dist_target, 0.04,
+DEFINE_NS_FLOAT64(kPlanningParamModule, collect, approach_dist_target, 0.01,
                   "How far away from the ball to target for the approach (m)");
 // At what speed should we be when we touch the ball (Well, the difference
 // in speed between the ball and robot)
@@ -98,7 +98,7 @@ DEFINE_NS_FLOAT64(kPlanningParamModule, collect, velocity_control_scale, 1.0,
 // This should be almost zero. Increase if the noise on vision causes problems and we never
 // transition.
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, collect, dist_cutoff_to_control, 0.0285,
+    kPlanningParamModule, collect, dist_cutoff_to_control, 0.05,
     "How close to the ball do we have to be before transferring to the control state (m)");
 // How close to the ball do we need to be before transferring back to the approach state and
 // restarting. This should be just above zero to account for noise in vision.

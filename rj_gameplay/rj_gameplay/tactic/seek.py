@@ -1,13 +1,12 @@
 from typing import List, Tuple
 
-import numpy as np
 import stp
 from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.role import seeker
 
 
-class BasicSeek(stp.tactic.Tactic):
+class Seek(stp.tactic.Tactic):
     """Seeks to a single point, passed in on init."""
 
     def __init__(
@@ -26,6 +25,8 @@ class BasicSeek(stp.tactic.Tactic):
         self._num_seekers = num_seekers
 
         for i in range(self._num_seekers):
+            if i not in range(len(formation)):
+                break
             my_region = formation[i]
             self._used_regions.append(my_region)
             centroid = centroid_list[i]
@@ -56,6 +57,10 @@ class BasicSeek(stp.tactic.Tactic):
             self.init_roles(world_state)
 
         return [(role.robot.id, role.tick(world_state)) for role in self.assigned_roles]
+
+    @property
+    def needs_assign(self):
+        return False
 
     def is_done(
         self,
