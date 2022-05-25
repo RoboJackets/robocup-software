@@ -122,7 +122,7 @@ To run sim, run the following:
 
 If everything is working properly, you should see the following window show up.
 
-.. image:: soccer.png
+.. image:: ./_static/soccer.png
 
 
 Running Again
