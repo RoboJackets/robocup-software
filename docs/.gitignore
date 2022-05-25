@@ -1,0 +1,9 @@
+# Ignore the generated Doxyfile from sphinx-build.
+Doxyfile
+
+# Ignore the doxygen build folder when using sphinx-build.
+src/build
+
+# Ignore the sphinx build folder when using sphinx-build.
+src/_build
+
