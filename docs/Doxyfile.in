@@ -1,9 +1,0 @@
-PROJECT_NAME            = "rj_robocup"
-INPUT                   = "@DOXYGEN_INPUT_DIR@"
-OUTPUT_DIRECTORY        = "@DOXYGEN_OUTPUT_DIR@"
-GENERATE_XML            = YES
-RECURSIVE               = YES
-GENERATE_LATEX          = NO
-GENERATE_MAN            = NO
-MACRO_EXPANSION         = YES
-WARN_IF_UNDOCUMENTED    = NO

@@ -1,4 +1,0 @@
-breathe
-sphinx-tabs
-sphinx-autoapi
-
