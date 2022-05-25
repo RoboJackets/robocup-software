@@ -173,20 +173,6 @@ pre-commit install
 # runs pre-commit autoupdate periodically to make sure version (rev) is correct
 pre-commit autoupdate
 
-echo "-- Installing grSim default configuration"
-GRSIM_XML_INSTALL_LOCATION="$HOME/.grsim.xml"
-SOURCE_GRSIM_XML_LOCATION="$BASE"/grsim.xml
-
-if [ "$(readlink -f "$GRSIM_XML_INSTALL_LOCATION")" == "$SOURCE_GRSIM_XML_LOCATION" ]; then
-    echo "-- grSim default configuration is already installed! Doing nothing."
-else
-    if test -f "$GRSIM_XML_INSTALL_LOCATION"; then
-        echo "$HOME/.grsim.xml exists! Renaming it to grsim.xml.old..."
-        mv "$HOME/.grsim.xml" "$HOME/.grsim.xml.old"
-    fi
-    ln -vsf "$SOURCE_GRSIM_XML_LOCATION" "$GRSIM_XML_INSTALL_LOCATION"
-fi
-
 # This script is run as sudo, but we don't want submodules to be owned by the
 # root user, so we use `su` to update submodules as the normal user
 SETUP_USER="$SUDO_USER"

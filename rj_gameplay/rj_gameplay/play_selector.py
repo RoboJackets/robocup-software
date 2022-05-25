@@ -3,21 +3,15 @@ from typing import Optional, Tuple
 
 import numpy as np
 import stp
-import stp.rc as rc
 import stp.situation as situation
 
-import rj_gameplay.play as plays
 import rj_gameplay.situation.decision_tree.plays as situations
-from rj_gameplay.play import (
-    basic_defense,
-    basic_offense,
-    defend_restart,
-    defensive_clear,
+from rj_gameplay.play import (  # defend_restart,; defensive_clear,; keepaway,; prep_penalty_offense,; restart,
+    defense,
     kickoff_play,
+    offense,
     penalty_defense,
     penalty_offense,
-    prep_penalty_offense,
-    restart,
 )
 
 POSSESS_MIN_DIST = 0.15
@@ -42,6 +36,7 @@ class FieldLoc(Enum):
     ATTACK_SIDE = 3
 
 
+# TODO: evaluate whether this class is useful at all
 class HeuristicInformation:
     """Class that represents all the heuristic information needed by the decision
     tree situation analyzer.
@@ -170,17 +165,19 @@ class HeuristicInformation:
         return False
 
 
-class BasicPlaySelector(situation.IPlaySelector):
+class PlaySelector(situation.IPlaySelector):
     """Play selector that returns a play and situation based on world state
     (see select method)
     """
 
     def __init__(self):
-        self.curr_situation = None
-        self.curr_play = None
+        self.curr_situation = situations.Defense
+        self.curr_play = defense.Defense()
+        self._midpoint_latency = None
 
     def select(
-        self, world_state: stp.rc.WorldState
+        self,
+        world_state: stp.rc.WorldState,
     ) -> Tuple[Optional[situation.ISituation], stp.play.IPlay]:
         """Returns the best situation and play
         for the current world state based on a hardcoded
@@ -192,29 +189,68 @@ class BasicPlaySelector(situation.IPlaySelector):
         game_info = world_state.game_info
         heuristics = HeuristicInformation(world_state, game_info)
 
-        # TODO: add new plays here as created,
-        #  for now will be commented out
-        """if game_info.state == stp.rc.GameState.STOP:
-            return situations.Stop()
-        elif game_info.is_restart():
-            return self.__analyze_restart(world_state, heuristics)"""
-        if world_state.game_info is None and self.curr_play is None:
-            return (situations.BasicDefense, basic_defense.BasicDefense())
+        if game_info.is_kickoff():
+            if game_info.our_restart:
+                if game_info.is_setup():
+                    self.situation = situations.PrepareKickoff()
+                    self.curr_play = kickoff_play.PrepareKickoff()
+                elif game_info.is_ready():
+                    self.situation = situations.Kickoff()
+                    # passing is bad
+                    # self.curr_play = kickoff_play.Kickoff()
+                    self.curr_play = offense.Offense()
+            else:
+                self.situation = situations.DefendKickoff()
+                self.curr_play = penalty_defense.PenaltyDefense()
+
+        elif game_info.is_penalty():
+            if game_info.our_restart:
+                if game_info.is_setup():
+                    self.situation = situations.PrepareKickoff()  # TODO wrong situation
+                    self.curr_play = penalty_offense.PrepPenaltyOff()
+                else:
+                    self.situation = situations.PrepareKickoff()  # TODO wrong situation
+                    self.curr_play = penalty_offense.PenaltyOffense()
+            else:
+                # I believe penalty defense can just have goalie in box to start, no prep play necessary
+                self.situation = situations.PrepareKickoff()  # TODO wrong situation
+                self.curr_play = penalty_defense.PenaltyDefense()
+
+        elif game_info.is_direct():
+            if game_info.our_restart:
+                self.situation = situations.OffensiveKickDirect()
+                self.curr_play = offense.Offense()
+            else:
+                self.situation = situations.DefendRestartOffensiveDirect()
+                self.curr_play = defense.Defense()
+
+        elif world_state.game_info is None and self.curr_play is None:
+            self.curr_situation = situations.Defense
+            self.curr_play = defense.Defense()
+        elif world_state.game_info.state == stp.rc.GameState.STOP:
+            self.curr_situation = situations.Stop()
+            self.curr_play = defense.Defense()
         elif (
             heuristics.ball_pos == BallPos.OUR_BALL
             or heuristics.ball_pos == BallPos.FREE_BALL
         ):
-            return (situations.BasicOffense, basic_offense.BasicOffense())
+            self.curr_situation = situations.Offense
+            self.curr_play = offense.Offense()
         elif heuristics.ball_pos == BallPos.THEIR_BALL:
-            return (situations.BasicDefense, basic_defense.BasicDefense())
+            self.curr_situation = situations.Defense
+            self.curr_play = defense.Defense()
         elif heuristics.ball_pos == BallPos.CONTEST_BALL:
             if (
                 heuristics.ball_pos == BallPos.CONTEST_BALL
                 and heuristics.field_loc == FieldLoc.ATTACK_SIDE
             ):
-                return (situations.OffensiveScramble, basic_offense.BasicOffense())
+                self.curr_situation = situations.OffensiveScramble
+                self.curr_play = offense.Offense()
             else:
-                return (situations.DefensiveScramble, basic_defense.BasicDefense())
+                self.curr_situation = situations.DefensiveScramble
+                self.curr_play = offense.Offense()
+
+        return self.curr_situation, self.curr_play
 
     @staticmethod
     def __analyze_restart(

@@ -20,22 +20,20 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile
 from rj_geometry_msgs import msg as geo_msg
 from rj_msgs import msg
+from rj_msgs.msg import EmptyMotionCommand, RobotIntent
 from std_msgs.msg import String as StringMsg
 from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
 
-import rj_gameplay.basic_play_selector as basic_play_selector
-from rj_gameplay.action.move import Move
+import rj_gameplay.play_selector as play_selector
 
 # ignore "unused import" error
-from rj_gameplay.play import (  # line_up,; basic_defense,; keepaway,; basic122,; noqa: F401
-    penalty_offense,
-    basic_defense,
-    basic_offense,
+from rj_gameplay.play import (  # noqa: F401
+    defense,
     keepaway,
     kickoff_play,
     line_up,
-    penalty_defense,
+    offense,
 )
 
 NUM_ROBOTS = 16
@@ -253,8 +251,14 @@ class GameplayNode(Node):
             if intents:
                 for i in range(len(self.world_state.our_robots)):
                     if intents[i] is not None:
-                        rip_i = self.robot_intent_pubs[i]
-                        rip_i.publish(intents[i])
+                        # if intent given by gameplay, publish it
+                        self.robot_intent_pubs[i].publish(intents[i])
+                    else:
+                        # otherwise, send empty (to stop previous intents)
+                        empty_intent = RobotIntent()
+                        empty_command = EmptyMotionCommand()
+                        empty_intent.motion_command.empty_command = [empty_command]
+                        self.robot_intent_pubs[i].publish(empty_intent)
 
             field = self.world_state.field
             game_info = self.build_game_info()
@@ -484,11 +488,12 @@ class GameplayNode(Node):
 
 
 def main():
-    play_selector = basic_play_selector.BasicPlaySelector()
+    my_play_selector = play_selector.PlaySelector()
 
     # change this line to test different plays (set to None if no desired test play)
-    # test_play = basic_defense.BasicDefense()
+
+    # test_play = defense.Defense()
     test_play = None
 
-    gameplay = GameplayNode(play_selector, test_play)
+    gameplay = GameplayNode(my_play_selector, test_play)
     rclpy.spin(gameplay)
