@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import subprocess
-import sys
-import sphinx.application
 import pathlib
+import subprocess
+
+import sphinx.application
 
 # -- Project information -----------------------------------------------------
 
@@ -32,8 +32,8 @@ extensions = [
 # -- AutoAPI Configuration ---------------------------------------------------
 # (Python-only auto-api generation)
 # https://github.com/readthedocs/sphinx-autoapi
-autoapi_type = 'python'
-autoapi_dirs = ['../../rj_gameplay']
+autoapi_type = "python"
+autoapi_dirs = ["../../rj_gameplay"]
 
 # -- Breathe Configuration ---------------------------------------------------
 breathe_projects = {}
