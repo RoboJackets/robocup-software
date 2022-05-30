@@ -6,7 +6,9 @@ Contains TestPlaySelector, GameplayNode, and main() which spins GameplayNode
 and allows the PlaySelector to be changed between Test and other forms.
 """
 
-from typing import List, Optional, Tuple
+import os
+from glob import glob
+from typing import List, Optional, Set, Tuple
 
 import numpy as np
 import rclpy
@@ -16,7 +18,9 @@ import stp.rc as rc
 import stp.situation as situation
 import stp.skill
 import stp.utils.world_state_converter as conv
+from rcl_interfaces.msg import SetParametersResult
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 from rclpy.qos import QoSProfile
 from rj_geometry_msgs import msg as geo_msg
 from rj_msgs import msg
@@ -48,18 +52,26 @@ class GameplayNode(Node):
     def __init__(
         self,
         play_selector: situation.IPlaySelector,
-        test_play: Optional[stp.play.Play] = None,
         # TODO: see whether or not world_state is ever not None here
         world_state: Optional[rc.WorldState] = None,
     ) -> None:
         rclpy.init()
         super().__init__("gameplay_node")
 
-        # do not change this line, change the test play passed in at bottom of file
-        self._curr_play = test_play
+        self._test_play = None
+        self._curr_play = None
         self._curr_situation = None
-        # force test play to overwrite play selector if given
-        self._using_test_play = test_play is not None
+
+        self.plays: Set = {
+            "defense.Defense()",
+            "offense.Offense()",
+            "line_up.LineUp()",
+            "None",
+        }
+
+        self.declare_parameter("test_play", "defense.Defense()")
+
+        self.add_on_set_parameters_callback(self.update_test_play)
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
@@ -234,9 +246,15 @@ class GameplayNode(Node):
         Then, add field and game_info to world_state, and push global obstacles to motion planning.
         """
         self.update_world_state()
+        print(str(self._test_play))
+
+        if str(self.get_parameter("test_play").value) is not "None" or "{0}.{1}".format(
+            self._test_play.__class__.__module__, self._test_play.__class__.__name__
+        ):
+            self._test_play = eval(str(self.get_parameter("test_play").value))
 
         if self.world_state is not None:
-            if not self._using_test_play:
+            if self._test_play is None:
                 new_situation, new_play = self.play_selector.select(self.world_state)
 
                 # if play/situation hasn't changed, keep old play
@@ -245,6 +263,8 @@ class GameplayNode(Node):
                 ) != type(new_situation):
                     self._curr_play = new_play
                     self._curr_situation = new_situation
+            else:
+                self._curr_play = self._test_play
 
             intents = self._curr_play.tick(self.world_state)
 
@@ -479,6 +499,21 @@ class GameplayNode(Node):
     def clear_override_actions(self) -> None:
         self.override_actions = [None] * NUM_ROBOTS
 
+    def update_test_play(self, parameter_list) -> SetParametersResult:
+        """
+        Checks all gameplay node parameters to see if they are valid.
+        Right now test_play is the only one.
+        It should be a string in the plays set.
+        """
+        rejected_parameters = (
+            param
+            for param in parameter_list
+            if param.name == "test_play"
+            and param.type_ is Parameter.Type.String
+            and str(param.value) not in self.plays
+        )
+        return SetParametersResult(successful=(not any(rejected_parameters)))
+
     def shutdown(self) -> None:
         """
         destroys node
@@ -489,11 +524,5 @@ class GameplayNode(Node):
 
 def main():
     my_play_selector = play_selector.PlaySelector()
-
-    # change this line to test different plays (set to None if no desired test play)
-
-    # test_play = defense.Defense()
-    test_play = None
-
-    gameplay = GameplayNode(my_play_selector, test_play)
+    gameplay = GameplayNode(my_play_selector)
     rclpy.spin(gameplay)
