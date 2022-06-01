@@ -4,9 +4,8 @@
 
 /control:
   ros__parameters:
-    max_acceleration: 5.5
-    max_angular_velocity: 15.0
-    max_velocity: 3.0
+    max_acceleration: 1.5
+    max_velocity: 2.0
     rotation_kd: 0.0
     rotation_ki: 0.0
     rotation_kp: 8.0
@@ -75,11 +74,11 @@
       vel_change_threshold: 0.025
     rrt:
       enable_debug_drawing: false
-      goal_bias: 0.2
+      goal_bias: 0.3
       max_iterations: 250
-      min_iterations: 100
-      step_size: 0.1
-      waypoint_bias: 0.2
+      min_iterations: 0
+      step_size: 0.15
+      waypoint_bias: 0.5
     settle:
       ball_speed_percent_for_dampen: 0.1
       ball_vel_gain: 0.9
