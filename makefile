@@ -132,12 +132,11 @@ modernize:
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build/modernize -include=common,logging,soccer
 
-# build docs
-docs:
-	(cd docs/ && make html)
 # open docs
+# see PR #1897
+# if you need local files, see docs/source/
 open-docs:
-	xdg-open docs/build/html/index.html
+	xdg-open https://rj-rc-software.readthedocs.io/en/latest/
 
 # build docs (old)
 apidocs:
