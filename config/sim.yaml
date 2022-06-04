@@ -11,7 +11,7 @@
     rotation_kp: 8.0
     rotation_windup: 0
     translation_kd: 0.0
-    translation_ki: 0.0
+    # translation_ki: 0.0
     translation_kp: 4.0
     translation_windup: 0
     use_sim_time: false

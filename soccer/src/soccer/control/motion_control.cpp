@@ -6,6 +6,7 @@
 #include <rj_common/utils.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_utils/logging.hpp>
+#include <spdlog/spdlog.h>
 
 #include "planning/instant.hpp"
 
@@ -15,6 +16,7 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
+// TODO(Kevin): all of these DEFINES are reset by ROS
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.5,
                "Maximum acceleration limit (motion control) (m/s^2)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 3.5,
@@ -31,8 +33,8 @@ DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
              "Windup limit for rotation (unknown units)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 6.0,
                "Kp for translation ((m/s)/m)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 1.0,
-               "Ki for translation ((m/s)/(m*s))");
+/* DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0, */
+/*                "Ki for translation ((m/s)/(m*s))"); */
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 3.0,
                "Kd for translation ((m/s)/(m/s))");
 DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
@@ -72,6 +74,8 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         [this](PlayState::Msg::SharedPtr play_state_msg) {  // NOLINT
             play_state_ = rj_convert::convert_from_ros(*play_state_msg).state();
         });
+
+    my_node_ = node;
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -89,6 +93,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         return;
     }
 
+    SPDLOG_INFO("update_params MotionControl::run");
     update_params();
 
     // We run this at 60Hz, so we want to do motion control off of the goal
@@ -193,12 +198,16 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
 void MotionControl::update_params() {
     // Update PID parameters
     position_x_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_x_controller_.ki = static_cast<float>(PARAM_translation_ki);
+    /* position_x_controller_.ki = static_cast<float>(PARAM_translation_ki); */
+    position_x_controller_.ki = my_node_->get_parameter("translation_ki").as_double();
+    SPDLOG_INFO("ki: %f", position_x_controller_.ki);
+
     position_x_controller_.kd = static_cast<float>(PARAM_translation_kd);
     position_x_controller_.setWindup(PARAM_translation_windup);
 
     position_y_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_y_controller_.ki = static_cast<float>(PARAM_translation_ki);
+    /* position_y_controller_.ki = static_cast<float>(PARAM_translation_ki); */
+    position_y_controller_.ki = 0.0;
     position_y_controller_.kd = static_cast<float>(PARAM_translation_kd);
     position_y_controller_.setWindup(PARAM_translation_windup);
 
