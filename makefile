@@ -12,6 +12,9 @@ endif
 # Tell CMake to create compile_commands.json for debug builds for clang-tidy
 DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+# FOR MACHINES WITHOUT CLANG:
+# 1) try installing w/ ./util/ubuntu-setup
+# 2) change clang/clang++ to gcc/g++ above
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -129,12 +132,11 @@ modernize:
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build/modernize -include=common,logging,soccer
 
-# build docs
-docs:
-	(cd docs/ && make html)
 # open docs
+# see PR #1897
+# if you need local files, see docs/source/
 open-docs:
-	xdg-open docs/build/html/index.html
+	xdg-open https://rj-rc-software.readthedocs.io/en/latest/
 
 # build docs (old)
 apidocs:
@@ -163,10 +165,9 @@ else
 	CORES=$(shell nproc)
 endif
 
-# Restyles all C++ (Clang formatter) and Python files (Black formatter) excluding files in the external and build folders
+# Restyles all C++ (Clang formatter) excluding files in the external and build folders. For Python, run black rj_gameplay.
 pretty-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
-	@git diff -U0 --no-color $(DIFFBASE) | black .
 
 tidy-lines:
 ifeq ("$(wildcard $(COMPILE_COMMANDS_DIR)/compile_commands.json)","")

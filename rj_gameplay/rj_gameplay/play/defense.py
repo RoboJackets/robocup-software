@@ -1,14 +1,13 @@
 from enum import Enum, auto
 from typing import List
 
-import numpy as np
 import stp
 import stp.rc
 import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
 
-from rj_gameplay.tactic import goalie_tactic, line_tactic
+from rj_gameplay.tactic import goalie_tactic, nmark_tactic, wall_tactic
 
 
 class State(Enum):
@@ -16,9 +15,16 @@ class State(Enum):
     ACTIVE = auto()
 
 
-class PenaltyDefense(stp.play.Play):
+class Defense(stp.play.Play):
+    """Play that consists of:
+    - 1 Goalie
+    - 5 Wallers
+    TODO: add 2 aggressive markers, go down to 3 Wallers
+    """
+
     def __init__(self):
         super().__init__()
+
         self._state = State.INIT
 
     def tick(
@@ -28,11 +34,13 @@ class PenaltyDefense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            num_liners = len(world_state.our_visible_robots) - 1
-            start_pt = np.array([-3.0, 0.5])
-            end_pt = np.array([-3.0, 5.5])
+            num_wallers = min(3, len(world_state.our_visible_robots) - 1)
             self.prioritized_tactics.append(
-                line_tactic.LineTactic(world_state, num_liners, start_pt, end_pt)
+                wall_tactic.WallTactic(world_state, num_wallers)
+            )
+            num_markers = len(world_state.our_visible_robots) - (1 + num_wallers)
+            self.prioritized_tactics.append(
+                nmark_tactic.NMarkTactic(world_state, num_markers)
             )
             self.assign_roles(world_state)
             self._state = State.ACTIVE

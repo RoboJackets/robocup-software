@@ -6,6 +6,7 @@ from rj_msgs.msg import RobotIntent
 from rj_gameplay.role import dumb_move
 
 
+# TODO: rename to DumbMoveTactic or figure out how to avoid needing this tactic at all
 class DumbTactic(stp.tactic.Tactic):
     def __init__(self, world_state: stp.rc.WorldState, pts: list):
         super().__init__(world_state)

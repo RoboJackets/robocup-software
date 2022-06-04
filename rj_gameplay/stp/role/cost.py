@@ -3,6 +3,7 @@
 from typing import Any
 
 import numpy as np
+
 import stp.rc
 import stp.role
 
@@ -82,3 +83,31 @@ class PickFarthestFromPoint(stp.role.CostFn):
 
     def __repr__(self):
         return f"PickFarthestFromPoint(target_point={self._target_point})"
+
+
+class PickClosestInFront(stp.role.CostFn):
+    """Select closest robot "in front" of the current one. (Assuming opp goal is front.)"""
+
+    def __init__(self, target_point):
+        self._target_point = target_point
+        self.closest_picker = PickClosestToPoint(target_point)
+
+    def __call__(
+        self,
+        robot: stp.rc.Robot,
+        world_state: stp.rc.WorldState,
+    ) -> float:
+        closest_cost = self.closest_picker(robot, world_state)
+        bot_to_goal = np.linalg.norm(robot.pose[0:2] - world_state.field.their_goal_loc)
+        ball_to_goal = np.linalg.norm(
+            world_state.ball.pos - world_state.field.their_goal_loc
+        )
+
+        if closest_cost >= 1e9:
+            return 1e9
+        if bot_to_goal > ball_to_goal:
+            return closest_cost + 100
+        return closest_cost
+
+    def __repr__(self):
+        return f"PickClosestInFront(target_point={self._target_point})"

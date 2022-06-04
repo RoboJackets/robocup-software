@@ -14,6 +14,7 @@
 *~
 build-*
 cmake-*
+docs/build/
 
 # sublime-text
 *.sublime-workspace
