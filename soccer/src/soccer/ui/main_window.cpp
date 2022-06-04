@@ -10,6 +10,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QString>
+#include <boost/algorithm/string.hpp>
 #include <google/protobuf/descriptor.h>
 
 #include <rj_common/qt_utils.hpp>
@@ -1169,4 +1170,21 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 
         _ui.debugLayers->sortItems();
     }
+}
+
+void MainWindow::on_addToTable_clicked() {
+    auto to_add = (_ui.testInput->toPlainText().toStdString());
+    boost::trim(to_add);
+    auto* selectedTestsTable = _ui.selectedTestsTable;
+
+    // do not add same test multiple times
+    for (int i = 0; i < selectedTestsTable->count(); ++i) {
+        auto test = selectedTestsTable->item(i);
+        auto test_name = test->text().toStdString();
+        if (to_add == test_name) {
+            return;
+        }
+    }
+
+    new QListWidgetItem(tr(to_add.c_str()), selectedTestsTable);
 }

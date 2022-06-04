@@ -161,6 +161,9 @@ private Q_SLOTS:
     void on_fastIndirectBlue_clicked();
     void on_fastIndirectYellow_clicked();
 
+    // Testing
+    void on_addToTable_clicked();
+
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
     int historyLocationChanged(int value);
