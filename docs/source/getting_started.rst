@@ -19,14 +19,7 @@ setup script to install all required dependencies:
 .. code-block:: bash
 
     cd robocup-software
-    ./util/ubuntu-setup
-
-And setup git submodules:
-
-.. code-block:: bash
-
-    git submodule init
-    git submodule update
+    ./util/ubuntu-setup && ./util/git-setup
 
 
 Running The First Time
