@@ -509,7 +509,7 @@ class GameplayNode(Node):
             param
             for param in parameter_list
             if param.name == "test_play"
-            and param.type_ is Parameter.Type.String
+            and param.type_ is Parameter.Type.STRING
             and str(param.value) not in self.plays
         )
         return SetParametersResult(successful=(not any(rejected_parameters)))
