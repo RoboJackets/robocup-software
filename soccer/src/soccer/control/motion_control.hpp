@@ -20,7 +20,7 @@ DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
 DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
 DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
 DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
-/* DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki); */
+DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
 DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
 DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
 
@@ -94,8 +94,6 @@ private:
     rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
     rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
-
-    rclcpp::Node* my_node_;
 };
 
 }  // namespace control
