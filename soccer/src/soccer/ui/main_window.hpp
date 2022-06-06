@@ -73,6 +73,8 @@ public:
 
     void setUseRefChecked(bool use_ref);
 
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_play_pub_;
+
 private Q_SLOTS:
     void addLayer(int i, const QString& name, bool checked);
     void updateViews();

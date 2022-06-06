@@ -22,7 +22,9 @@
 
 #include "battery_profile.hpp"
 #include "radio/radio.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "robot_status_widget.hpp"
+#include "std_msgs/msg/string.hpp"
 
 #include "rc-fshare/git_version.hpp"
 
@@ -187,6 +189,8 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
+
+    test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
 }
@@ -1182,8 +1186,11 @@ void MainWindow::on_addToTable_clicked() {
 }
 
 void MainWindow::on_testRun_clicked() {
+    if (_ui.selectedTestsTable->currentItem() == nullptr) {
+        return;
+    }
     std::string test_name = _ui.selectedTestsTable->currentItem()->text().toStdString();
-    std::string cmd = "ros2 param set /gameplay_node test_play";
-    cmd += "'" + test_name + "'";
-    std::system(cmd.c_str());
+    auto message = std_msgs::msg::String();
+    message.data = test_name;
+    test_play_pub_->publish(message);
 }

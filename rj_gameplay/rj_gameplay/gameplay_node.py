@@ -6,9 +6,7 @@ Contains TestPlaySelector, GameplayNode, and main() which spins GameplayNode
 and allows the PlaySelector to be changed between Test and other forms.
 """
 
-import os
-from glob import glob
-from typing import List, Optional, Set, Tuple
+from typing import List, Optional, Set
 
 import numpy as np
 import rclpy
@@ -66,10 +64,14 @@ class GameplayNode(Node):
             "defense.Defense()",
             "offense.Offense()",
             "line_up.LineUp()",
+            "keepaway.Keepaway()",
+            "kickoff_play.PrepareKickoff()",
+            "kickoff_play.Kickoff()",
+            "kickoff_play.DefendKickoff()",
             "None",
         }
 
-        self.declare_parameter("test_play", "defense.Defense()")
+        self.declare_parameter("test_play", "None")
 
         self.add_on_set_parameters_callback(self.update_test_play)
 
@@ -163,6 +165,11 @@ class GameplayNode(Node):
         self.debug_text_pub = self.create_publisher(
             StringMsg, "/gameplay/debug_text", 10
         )
+
+        self.test_play_sub = self.create_subscription(
+            StringMsg, "test_play", self.set_test_play_callback, 1
+        )
+
         self.play_selector: situation.IPlaySelector = play_selector
 
     def set_play_state(self, play_state: msg.PlayState):
@@ -250,7 +257,6 @@ class GameplayNode(Node):
         Then, add field and game_info to world_state, and push global obstacles to motion planning.
         """
         self.update_world_state()
-        print(str(self._test_play))
 
         if str(self.get_parameter("test_play").value) != "None" or "{0}.{1}".format(
             self._test_play.__class__.__module__, self._test_play.__class__.__name__
@@ -517,7 +523,14 @@ class GameplayNode(Node):
             and param.type_ is Parameter.Type.STRING
             and str(param.value) not in self.plays
         )
-        return SetParametersResult(successful=(not any(rejected_parameters)))
+        was_success = not any(rejected_parameters)
+        return SetParametersResult(successful=(was_success))
+
+    def set_test_play_callback(self, test_play_msg: StringMsg):
+        new_test_play = rclpy.parameter.Parameter(
+            "test_play", Parameter.Type.STRING, test_play_msg.data
+        )
+        self.set_parameters([new_test_play])
 
     def shutdown(self) -> None:
         """
