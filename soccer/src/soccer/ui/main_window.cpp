@@ -752,14 +752,6 @@ void MainWindow::status(const QString& text, MainWindow::StatusType status) {
     }
 }
 
-void MainWindow::playIndicatorStatus(bool color) {
-    if (color) {
-        _ui.playIndicatorStatus->setStyleSheet("background-color: #00ff00");
-    } else {
-        _ui.playIndicatorStatus->setStyleSheet("background-color: #ff0000");
-    }
-}
-
 void MainWindow::updateRadioBaseStatus(bool usbRadio) {
     QString label = QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
     if (_ui.radioBaseStatus->text() != label) {
@@ -1187,4 +1179,9 @@ void MainWindow::on_addToTable_clicked() {
     }
 
     new QListWidgetItem(tr(to_add.c_str()), selectedTestsTable);
+}
+
+void MainWindow::on_testRun_clicked() {
+    std::string test_name = _ui.selectedTestsTable->currentItem()->text().toStdString();
+    std::string cmd;
 }

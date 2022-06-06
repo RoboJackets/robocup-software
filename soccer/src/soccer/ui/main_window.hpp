@@ -147,8 +147,6 @@ private Q_SLOTS:
     void on_debugLayers_itemChanged(QListWidgetItem* item);
     void on_debugLayers_customContextMenuRequested(const QPoint& pos);
 
-    void playIndicatorStatus(bool color);
-
     // Fast Ref Buttons
     void on_fastHalt_clicked();
     void on_fastStop_clicked();
@@ -163,6 +161,7 @@ private Q_SLOTS:
 
     // Testing
     void on_addToTable_clicked();
+    void on_testRun_clicked();
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now

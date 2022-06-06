@@ -73,6 +73,11 @@ class GameplayNode(Node):
 
         self.add_on_set_parameters_callback(self.update_test_play)
 
+        """uncomment the below line and use the local param server
+        if we need a more robust param setup. 
+        Right now this is overengineering though:"""
+        # local_parameters.register_parameters(self)
+
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
             "vision_filter/world_state",
@@ -143,7 +148,6 @@ class GameplayNode(Node):
         self.global_parameter_client = GlobalParameterClient(
             self, "global_parameter_server"
         )
-        local_parameters.register_parameters(self)
 
         # publish def_area_obstacles, global obstacles
         self.def_area_obstacles_pub = self.create_publisher(
@@ -248,7 +252,7 @@ class GameplayNode(Node):
         self.update_world_state()
         print(str(self._test_play))
 
-        if str(self.get_parameter("test_play").value) is not "None" or "{0}.{1}".format(
+        if str(self.get_parameter("test_play").value) != "None" or "{0}.{1}".format(
             self._test_play.__class__.__module__, self._test_play.__class__.__name__
         ):
             self._test_play = eval(str(self.get_parameter("test_play").value))
@@ -504,6 +508,7 @@ class GameplayNode(Node):
         Checks all gameplay node parameters to see if they are valid.
         Right now test_play is the only one.
         It should be a string in the plays set.
+        If we use the local param server later, move this logic there.
         """
         rejected_parameters = (
             param
