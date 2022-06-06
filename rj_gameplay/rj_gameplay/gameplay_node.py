@@ -76,7 +76,7 @@ class GameplayNode(Node):
         self.add_on_set_parameters_callback(self.update_test_play)
 
         """uncomment the below line and use the local param server
-        if we need a more robust param setup. 
+        if we need a more robust param setup.
         Right now this is overengineering though:"""
         # local_parameters.register_parameters(self)
 
