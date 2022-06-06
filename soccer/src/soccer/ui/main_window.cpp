@@ -1183,5 +1183,7 @@ void MainWindow::on_addToTable_clicked() {
 
 void MainWindow::on_testRun_clicked() {
     std::string test_name = _ui.selectedTestsTable->currentItem()->text().toStdString();
-    std::string cmd;
+    std::string cmd = "ros2 param set /gameplay_node test_play";
+    cmd += "'" + test_name + "'";
+    std::system(cmd.c_str());
 }
