@@ -1,6 +1,10 @@
 Getting Started
 ===============
 
+.. note:: 
+   If you are completely unfamiliar with the command line or basic git
+   usage, see the Tutorial page before proceeding. 
+
 Installation
 ------------
 
@@ -32,19 +36,17 @@ And setup git submodules:
 Running The First Time
 ----------------------
 
-Let's run the stack! We'll use the ER-Force simulator to simulate the vision
-data we'd get from a real field camera setup. (Read the "Welcome" page if that
-sentence made no sense to you.)
+Let's run the stack! To simulate the vision data we'd get from a real field
+camera setup, we'll use ER-Force's simulator.
 
-To download the ER-Force Simulator, git clone from the following repo:
+To start, clone their repo, and ``cd`` into it.
 
 .. code-block:: sh
 
    git clone https://github.com/robotics-erlangen/framework.git
+   cd framework
 
-Change directory into the recently cloned repo
-
-Run the following code line by line
+Then, build their code with the following:
 
 .. code-block:: sh
 
@@ -52,28 +54,40 @@ Run the following code line by line
     cmake ..
     make simulator-cli
 
-This builds an executable in ``framework/build/bin``.
-
-Open a new terminal window and change directory into ``framework/build/bin``. In this folder, there should be a file named ``simulator-cli``.
-
-Run this file by doing the following
+This builds an executable in ``framework/build/bin``. Like any other
+executable, it can be run with ``./[filepath-to-executable]``. Since we're
+already in the ``framework/build/`` directory, simply run:
 
 .. code-block:: sh
 
-    ./simulator-cli
+   ./bin/simulator-cli
 
-This will run the ER-Force Simulator to test your code
+Note that the absolute filepath works from anywhere:
+
+.. code-block:: sh
+
+   ./framework/build/bin/simulator-cli
+
+We're a Division B team, so add the flag `-g` and the option `2020B` to use the
+Division B field dimensions, like so:
+
+.. code-block:: sh
+
+   ./bin/simulator-cli -g 2020B
+
+For whatever reason, this program has no output, but it will become obvious
+after you start our UI whether or not you've done this step correctly.
 
 Now, make sure you're on the most updated version of ``ros2`` branch. This is
 where the latest working version of our codebase exists. (See "Github" doc.
---TODO(Kevin): transfer this to docs--)
+--TODO(Prabhanjan): transfer this to docs--)
 
 .. code-block:: bash
 
     git pull
     git checkout ros2
 
-Then, source the ROS setup file. This ensures your shell can use ROS commands.
+Then, source the ROS setup file. This allows your shell to use ROS commands.
 
 .. code-block:: bash
 
@@ -94,8 +108,8 @@ Then build the codebase. This compiles all of our code.
 
 (This step will take upwards of 15 minutes on a VM.)
 
-After building, we need to source our local setup. Run the following in the
-``robocup-software`` directory:
+After building, we need to source our custom ROS setup. Run the following in
+the ``robocup-software`` directory:
 
 .. code-block:: bash
 
@@ -114,7 +128,8 @@ out ``rj_robocup``:
 
     ros2 pkg list | grep rj_robocup
 
-To run sim, run the following:
+To launch our stack, which contains our AI plus a UI to show what's happening,
+run the following:
 
 .. code-block:: bash
 
@@ -160,8 +175,8 @@ and staying in one terminal, it's likely that you'll mostly only need:
 
 However, if you're working on C++ or launch files (or if someone else changes
 them on a different branch and you want their changes), you'll need to build
-again. If you've already built once, though, you can build again more quickly
-with:
+again. If you've already built once on your machine, though, you can build
+again more quickly with:
 
 .. code-block:: bash
 
@@ -169,8 +184,8 @@ with:
    . ./source.bash
 
 The ``source.bash`` line is necessary to source the file in ``install/``, which
-is refreshed on each build. (Note: this does not build any CMake-related files,
-so if you're editing those, use ``make perf`` as usual.)
+is refreshed on each build. (**Note:** this does not build any CMake-related
+files, so if you're editing those, use ``make perf`` as usual.)
 
 There are a few different ways to build our code. See the makefile for more
 details, but in short:

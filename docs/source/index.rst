@@ -27,6 +27,7 @@ on your adblocker to support their free documentation hosting.
    :caption: Contents
 
    self
+   tutorial.rst
    getting_started.rst
    our_stack.rst
    faq.rst
