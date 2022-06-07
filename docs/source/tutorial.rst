@@ -15,7 +15,7 @@ The tutorial is structured as follows:
 
 .. contents::
 
-There are some intentionally left gaps in the tutorial. This is to force you to
+There are some gaps intentionally left in the tutorial. This is to force you to
 problem-solve on your own, simulating what it feels like to write a new
 feature. If the tutorial was simply a bulleted list of commands to type, it
 would not prove that you're ready to work on something meaningful on your own.
@@ -23,22 +23,29 @@ would not prove that you're ready to work on something meaningful on your own.
 When you run into issues, your order of question-asking should be:
 
 #. Google
+
    * Keywords, not full sentences
+
    * Error messages, if they come up
+
 #. Google
+
    * Seriously
+
 #. Fellow new members
+
 #. Software lead
+
 #. Anyone the SW lead takes advice from
 
 This is not because older members don't want to help you, but because if older
 members helped every new member with every question, they wouldn't have time to
-make our robots better (nor would you learn as much). So try your best to
-resolve your issue yourself, and be prepared to demonstrate what you've tried
-already if you ask someone else for help.
+make our robots better (nor would you learn as much). So try to resolve your
+issue yourself, and expect to be asked "what have you tried already?" if you ask
+for help.
 
-Command-Line Basics
--------------------
+0. Command-Line Basics
+----------------------
 
 If you've never heard of or used the command-line before, this website is
 lengthy, but wonderful for beginners:
@@ -60,24 +67,24 @@ Two indispensable tips not mentioned in that link:
    Many custom command-line tools will have a --help output, if they don't have
    a man page.
 
-Installation
-------------
+1. Installation
+---------------
 
 See "Getting Started". That page will assume you have the Command-Line Basics
 from above, as well as a working knowledge of Git (which you can get either
 `online <https://rogerdudler.github.io/git-guide/>`_ or from "Contributing").
 
-GitHub Basics
+2. GitHub Basics
+----------------
+
+3. rj_gameplay and Python
+-------------------------
+
+4. ROS Basics
 -------------
 
-rj_gameplay and Python
-----------------------
+5. ROS and C++
+--------------
 
-ROS Basics
-----------
-
-ROS and C++
------------
-
-Conclusion
-----------
+6. Conclusion
+-------------
