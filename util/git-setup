@@ -3,10 +3,13 @@
 # git does not appreciate installing things as sudo, so this script is for
 # a couple git-related installs
 
-# install pre-commit hooks
-echo "-- Installing pre-commit hook"
-pre-commit install
-pre-commit autoupdate
+# install pre-commit hooks if not already installed
+if ! command -v pre-commit &> /dev/null
+then
+	echo "-- Installing pre-commit hook"
+	pre-commit install
+	pre-commit autoupdate
+fi
 
 # update git submodules
 echo "-- Updating git submodules"
