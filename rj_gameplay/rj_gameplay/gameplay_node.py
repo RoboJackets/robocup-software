@@ -160,7 +160,6 @@ class GameplayNode(Node):
         Publishes the string that shows up in the behavior tree in the Soccer UI.
         """
         debug_text = ""
-        debug_text += f"WorldState: {self.world_state}\n\n"
         debug_text += f"Play: {self._curr_play}\n\n"
 
         # situation is a long, ugly type: shorten before printing
@@ -169,8 +168,8 @@ class GameplayNode(Node):
         debug_text += f"Situation: {short_situation}\n\n"
 
         with np.printoptions(precision=3, suppress=True):
-            for i, tactic in enumerate(self._curr_play.prioritized_tactics):
-                debug_text += f"{i+1}. {tactic}\n\n"
+            for i, tactic in enumerate(self._curr_play.approved_prioritized_tactics):
+                debug_text = f"{i+1}. {tactic}\n\n" + debug_text
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
@@ -493,7 +492,7 @@ def main():
     # change this line to test different plays (set to None if no desired test play)
 
     # test_play = defense.Defense()
-    test_play = None
+    test_play = offense.Offense()
 
     gameplay = GameplayNode(my_play_selector, test_play)
     rclpy.spin(gameplay)

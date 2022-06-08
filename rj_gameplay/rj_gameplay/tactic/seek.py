@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 import stp
 from rj_msgs.msg import RobotIntent
+from stp import formations, tactic
 
 from rj_gameplay.role import seeker
 
@@ -13,20 +14,21 @@ class Seek(stp.tactic.Tactic):
         self,
         world_state: stp.rc.WorldState,
         num_seekers: int,
-        formations: List,
-        centroids: List,
+        formations: stp.formations.Formations,
     ):
         super().__init__(world_state)
 
-        formation = formations
-        centroid_list = centroids
+        formation = formations.get_regions
+        centroid_list = formations.get_centroids
         self._used_regions = []
         self._used_centroids = []
         self._num_seekers = num_seekers
-
+        # TODO: make seeker be able to handle more robots than formation regions available OR make formations have more regions
+        reset = 0
         for i in range(self._num_seekers):
             if i not in range(len(formation)):
-                break
+                i = reset
+                reset += 1 if reset < 4 else 0
             my_region = formation[i]
             self._used_regions.append(my_region)
             centroid = centroid_list[i]
