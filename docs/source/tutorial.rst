@@ -138,11 +138,92 @@ comment below your brand new PR. Nice work!
 -------------------------
 
 
-4. ROS Basics
--------------
+4. ROS CLI Basics
+-----------------
+
+This section is our variation of the ROS 2 `"Beginner: CLI Tools" tutorials
+<https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>`_. We do
+things slightly differently (and don't use all of the ROS 2 features described
+in those tutorials), so this is intended to supplement those docs.
+
+Before we get started, read all of the short "Background" sections for these pages:
+ * Understanding ROS 2 nodes
+ * Understanding ROS 2 topics
+ * Understanding ROS 2 services
+ * Understanding ROS 2 parameters
+ * Understanding ROS 2 actions
+
+These sections put together are only a couple hundred words, and contain very
+neat animated diagrams that we can't recreate here.
+
+Now that you have some background on what ROS is and how it works, let's
+explore how we use ROS in our stack. (ROS is used in place of ROS 2 in the rest
+of these docs, just know that we are referencing ROS 2 every time.)
+
+First, open up our stack, same as you did in the installation guide. Then run
+
+.. code-block::
+
+   ros2 topic list
+
+to see the list of topics. Let's look at what robot 0 is thinking. Run
+
+.. code-block::
+
+   ros2 topic echo /gameplay/robot_intent/robot_0
+
+to see what's being published to that topic. You should see that robot 0 is
+being given a motion_command to go to a certain position at a certain angle.
+Feel free to try echoing other topics to see what they're publishing.
+
+Now run ``ros2 topic info`` on the same topic to see what message type that
+topic is publishing, and how many publishers and subscribers are listening to
+it. For this topic, the message type is a subset of ``rj_msgs/``, which means
+we wrote our own custom .msg file that this topic uses.
+
+Your task for this section is to find the file that defines the message type
+used by ``/gameplay/robot_intent/robot_0``. This will take you a long time if
+you search for it manually and almost no time if you use a tool like ``find``.
+Once you have the right file, screenshot it and add it to your GitHub PR as a
+comment. Congrats! You now have a working understanding of ROS CLI tools.
+
+5. rqt Basics
+-----------------
+
+The observant among you may have noticed that the last section only covered ROS
+topics, even though it asked you to read about ROS nodes, services, parameters,
+and actions as well. This was to set up the need to use ``rqt``, a graphical
+interface for the many tools ROS includes.
+
+To use it, open a new terminal, source ROS (like you do before running our
+stack), and run ``rqt``. (This should have been installed with the rest of the
+stack when you ran ``./util/ubuntu-setup``; if not, see `this guide
+<http://wiki.ros.org/rqt/UserGuide/Install/Groovy>_`.)
+
+The rqt window should pop up, like this:
+
+// TODO: Kevin, add screenshot here
+
+To replicate what we did in the last section, go to the top, click Plugins,
+then find the Topic Monitor and enable it. This allows you to see both a list
+of all topics, and see what messages are being published to them (by clicking
+the checkbox).
+
+Now launch the Node Graph. You should see a large, complex node diagram pop up.
+Don't fret--most of the nodes are actually just duplicated across robot
+numbers. (For instance, every robot has its own robot_intent, which you may
+have noticed in the last section.) Hover over the topic that contains robot 0's
+robot intent and figure out which nodes publish and subscribe to it, then post
+your answer as a GitHub comment.
+
+<see 8c>
+<see 8d>
+
 
 5. ROS and C++
 --------------
+
+
 
 6. Conclusion
 -------------
