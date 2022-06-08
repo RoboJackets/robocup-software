@@ -2,7 +2,6 @@ from typing import List, Tuple
 
 import stp
 from rj_msgs.msg import RobotIntent
-from stp import formations, tactic
 
 from rj_gameplay.role import seeker
 
