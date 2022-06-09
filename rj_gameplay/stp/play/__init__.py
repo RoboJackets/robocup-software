@@ -143,10 +143,10 @@ class Play(ABC):
         formation = DiamondFormation(world_state)
 
         seek_tactic = seek.Seek(world_state, len(unused_robots), formation)
-
-        seek_tactic.set_assigned_robots(unused_robots)
-        self.approved_prioritized_tactics.append(seek_tactic)
-        seek_tactic.init_roles(world_state)
+        if len(unused_robots) > 0:
+            seek_tactic.set_assigned_robots(unused_robots)
+            self.approved_prioritized_tactics.append(seek_tactic)
+            seek_tactic.init_roles(world_state)
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Has to be called after assigned_roles has been called.

@@ -34,14 +34,16 @@ class Defense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            num_wallers = min(3, len(world_state.our_visible_robots) - 1)
+            num_wallers = 3
             self.prioritized_tactics.append(
                 wall_tactic.WallTactic(world_state, num_wallers)
             )
+            """
             num_markers = len(world_state.our_visible_robots) - (1 + num_wallers)
             self.prioritized_tactics.append(
                 nmark_tactic.NMarkTactic(world_state, num_markers)
             )
+            """
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)
