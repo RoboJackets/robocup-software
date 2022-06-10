@@ -7,6 +7,7 @@ import stp.situation as situation
 
 import rj_gameplay.situation.decision_tree.plays as situations
 from rj_gameplay.play import (  # defend_restart,; defensive_clear,; keepaway,; prep_penalty_offense,; restart,
+    ball_placement,
     defense,
     kickoff_play,
     offense,
@@ -223,6 +224,13 @@ class PlaySelector(situation.IPlaySelector):
             else:
                 self.situation = situations.DefendRestartOffensiveDirect()
                 self.curr_play = defense.Defense()
+        elif game_info.is_free_placement():
+            if game_info.our_restart:
+                self.situation = situations.Restart()  # TODO wrong situation
+                self.curr_play = ball_placement.BallPlacement()
+            else:
+                self.situation = situations.Restart()  # TODO wrong situation
+                self.curr_play = defense.Defense()  # TODO replace with stop play
 
         elif world_state.game_info is None and self.curr_play is None:
             self.curr_situation = situations.Defense
