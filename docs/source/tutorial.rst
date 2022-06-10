@@ -95,8 +95,8 @@ First, use git to create a new branch under this naming scheme:
 Then take a look at the defense play in
 ``rj_gameplay/rj_gameplay/play/defense.py``. Launch soccer (our UI) and the
 ER-force simulator, then select this play as the test play to see it in action.
-You should see 3 robots form a wall, 2 robots mark the opposing team, and 1
-robot play goalie. 
+Click the green checkmark. You should see 3 robots form a wall, 2 robots mark
+the opposing team, and 1 robot play goalie. 
 
 Figure out which line(s) to change so that 4 robots form a wall instead of 3.
 When done, take a screenshot of the four wallers; we'll use this later.
@@ -136,6 +136,16 @@ comment below your brand new PR. Nice work!
 
 3. rj_gameplay and Python
 -------------------------
+
+create a "runner" role that moves on the perimeter of the field
+
+grep for "world_state.field" to figure out how to get perimeter coords
+
+look at existing roles to figure out how to structure + see stp init
+
+modify the defense play to use 4 wallers, 1 goalie, 1 "runner"
+
+You'll use this play in part 5, so make sure it works!
 
 
 4. ROS CLI Basics
@@ -198,32 +208,54 @@ interface for the many tools ROS includes.
 To use it, open a new terminal, source ROS (like you do before running our
 stack), and run ``rqt``. (This should have been installed with the rest of the
 stack when you ran ``./util/ubuntu-setup``; if not, see `this guide
-<http://wiki.ros.org/rqt/UserGuide/Install/Groovy>_`.)
+<http://wiki.ros.org/rqt/UserGuide/Install/Groovy>_`.) You should see a blank
+white rqt GUI pop up.
 
-The rqt window should pop up, like this:
+To replicate what we did in the last section, go to the top, click Plugins >
+Topics > Topic Monitor. This allows you to see both a list of all topics, and
+see what messages are being published to them (by clicking the checkbox).
 
-// TODO: Kevin, add screenshot here
+Now find and launch the Node Graph. You should see a large, complex node
+diagram pop up. If you don't see something large and complex, make sure you
+have both our UI and the ER-Force simulator running.
 
-To replicate what we did in the last section, go to the top, click Plugins,
-then find the Topic Monitor and enable it. This allows you to see both a list
-of all topics, and see what messages are being published to them (by clicking
-the checkbox).
+Zoom in and notice and most of the nodes are actually just duplicated across
+robot numbers. (For instance, notice there is a
+``/planning/trajectory/robot_*`` topic for each robot.) Find the two arrows
+that contains the robot intent topic for robot 0's and figure out which nodes
+publish and subscribe to that topic, then post your answer as a GitHub comment.
 
-Now launch the Node Graph. You should see a large, complex node diagram pop up.
-Don't fret--most of the nodes are actually just duplicated across robot
-numbers. (For instance, every robot has its own robot_intent, which you may
-have noticed in the last section.) Hover over the topic that contains robot 0's
-robot intent and figure out which nodes publish and subscribe to it, then post
-your answer as a GitHub comment.
+We can also use rqt to dynamically change the behavior of our robots. Pull up
+the Dynamic Reconfigure menu and click the control params. Run your runner play
+from earlier. In the middle of the play, lower the max velocity. You should see
+the runner (and every other robot on our team) move much more slowly.
 
-<see 8c>
-<see 8d>
+Take a screen recording of this whole process: runner play at normal speed,
+then lower the max velocity and show the runner play at slow speed. Slack it to
+your software lead.
 
+Feel free to play around with any other params you see!
 
-5. ROS and C++
+6. ROS and C++
 --------------
 
+this is our version of the node tutorials
 
+create a node
 
-6. Conclusion
+see google docs 9
+
+7. Conclusion
 -------------
+
+Finally, tag your software lead for review on your pull request. For your final
+comment, leave feedback on anything that confused you in this tutorial.
+
+After your software lead approves your PR, **CLOSE** your pull request. **Do
+not merge it.** Typically the final step is to merge your code into our
+codebase upon approval, but since this is only a tutorial project, there's no
+need to add it to the codebase.
+
+Congratulations! This was a long journey, but if you've made it this far, you
+have proved yourself worthy of your teammates' trust, and are ready to work on
+real features. <first step to pro robot dev>
