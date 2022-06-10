@@ -10,7 +10,7 @@ function(run_setup_py setup_py_dir build_dir install_dir)
     find_program(PYTHON3 "python3" REQUIRED)
 
     set(SETUP_PY    "${setup_py_dir}/setup.py")
-    set(SETUP_ARGS  "--prefix ${install_dir} --build ${build_dir} --no-deps -e .")
+    set(SETUP_ARGS  "--prefix ${install_dir} --no-deps -e .")
     set(SETUP_COMMAND "${PYTHON3} -m pip install ${SETUP_ARGS} WORKING_DIRECTORY ${setup_py_dir}")
 
     install(CODE "
