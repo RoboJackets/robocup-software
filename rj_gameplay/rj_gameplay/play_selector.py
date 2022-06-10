@@ -226,10 +226,10 @@ class PlaySelector(situation.IPlaySelector):
                 self.curr_play = defense.Defense()
         elif game_info.is_free_placement():
             if game_info.our_restart:
-                self.situation = situations.Restart()  # TODO wrong situation
+                self.situation = situations.Stop()  # TODO wrong situation
                 self.curr_play = ball_placement.BallPlacement()
             else:
-                self.situation = situations.Restart()  # TODO wrong situation
+                self.situation = situations.Stop()  # TODO wrong situation
                 self.curr_play = defense.Defense()  # TODO replace with stop play
 
         elif world_state.game_info is None and self.curr_play is None:

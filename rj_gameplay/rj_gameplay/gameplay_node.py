@@ -428,7 +428,7 @@ class GameplayNode(Node):
 
         if game_info is not None:
             ball_point = self.world_state.ball.pos
-            if (
+            if not game_info.is_free_placement() and (
                 game_info.is_stopped()
                 or game_info.their_restart
                 and (game_info.is_indirect() or game_info.is_direct())
@@ -436,7 +436,7 @@ class GameplayNode(Node):
                 global_obstacles.circles.append(
                     geo_msg.Circle(
                         center=geo_msg.Point(x=ball_point[0], y=ball_point[1]),
-                        radius=0.6,
+                        radius=1.6,
                     )
                 )
             if game_info.is_kickoff() and game_info.their_restart:
@@ -457,7 +457,9 @@ class GameplayNode(Node):
                         radius=0.1,
                     )
                 )
-            if game_info.is_free_placement():
+            # TODO : put this stuff in a different class
+            #  so multiple files can use it
+            """if game_info.is_free_placement():
                 for t in np.linspace(0.0, 1.0, 20):
                     placement = game_info.ball_placement()
 
@@ -466,7 +468,7 @@ class GameplayNode(Node):
                         geo_msg.Circle(
                             center=geo_msg.Point(x=pt[0], y=pt[1]), radius=0.8
                         )
-                    )
+                    )"""
 
     def tick_override_actions(self, world_state) -> None:
         for i in range(0, NUM_ROBOTS):
