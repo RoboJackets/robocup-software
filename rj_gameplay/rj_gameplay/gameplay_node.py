@@ -64,7 +64,6 @@ class GameplayNode(Node):
         self.plays: Set = set(file.read().splitlines())
         file.close()
 
-        print(self.plays)
         self.declare_parameter("test_play", "None")
 
         self.add_on_set_parameters_callback(self.update_test_play)
