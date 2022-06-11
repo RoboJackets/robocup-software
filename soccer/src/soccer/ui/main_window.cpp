@@ -1,6 +1,7 @@
 #include "main_window.hpp"
 
 #include <ctime>
+#include <fstream>
 
 #include <QActionGroup>
 #include <QDateTime>
@@ -190,7 +191,21 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
 
+    // test play logic initialization
     test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
+
+    std::fstream plays;
+    plays.open("config/plays.txt",
+               ios::in);    // open a file to perform read operation using file object
+    if (plays.is_open()) {  // checking whether the file is open
+        std::string to_add;
+        while (getline(plays, to_add)) {  // read data from file object and put it into string.
+            boost::trim(to_add);
+            new QListWidgetItem(tr(to_add.c_str()), _ui.selectedTestsTable);
+        }
+        plays.close();  // close the file object.
+    }
+
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
 }
@@ -1171,18 +1186,17 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 void MainWindow::on_addToTable_clicked() {
     auto to_add = (_ui.testInput->toPlainText().toStdString());
     boost::trim(to_add);
-    auto* selectedTestsTable = _ui.selectedTestsTable;
 
     // do not add same test multiple times
-    for (int i = 0; i < selectedTestsTable->count(); ++i) {
-        auto test = selectedTestsTable->item(i);
+    for (int i = 0; i < _ui.selectedTestsTable->count(); ++i) {
+        auto test = _ui.selectedTestsTable->item(i);
         auto test_name = test->text().toStdString();
         if (to_add == test_name) {
             return;
         }
     }
 
-    new QListWidgetItem(tr(to_add.c_str()), selectedTestsTable);
+    new QListWidgetItem(tr(to_add.c_str()), _ui.selectedTestsTable);
 }
 
 void MainWindow::on_testRun_clicked() {

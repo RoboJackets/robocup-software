@@ -60,17 +60,11 @@ class GameplayNode(Node):
         self._curr_play = None
         self._curr_situation = None
 
-        self.plays: Set = {
-            "defense.Defense()",
-            "offense.Offense()",
-            "line_up.LineUp()",
-            "keepaway.Keepaway()",
-            "kickoff_play.PrepareKickoff()",
-            "kickoff_play.Kickoff()",
-            "kickoff_play.DefendKickoff()",
-            "None",
-        }
+        file = open("config/plays.txt")
+        self.plays: Set = set(file.read().splitlines())
+        file.close()
 
+        print(self.plays)
         self.declare_parameter("test_play", "None")
 
         self.add_on_set_parameters_callback(self.update_test_play)
