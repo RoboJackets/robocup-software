@@ -82,15 +82,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
         // if we can't find a piecewise trajectory X robot widths away, give up and use RRT
         // TODO(Kevin): ros param this
-        int MAX_ITERATIONS = (10 * kRobotRadius) / STEP_SIZE;
-
-        // TODO(Kevin): why debug_drawer not always non-null??
-        if (debug_drawer != nullptr) {
-            // show the max bounds of the iterative search
-            Point ccw_max = hit_pt + MAX_ITERATIONS * ccw_offset;
-            Point cw_max = hit_pt + MAX_ITERATIONS * cw_offset;
-            debug_drawer->draw_segment(Segment(ccw_max, cw_max));
-        }
+        int MAX_ITERATIONS = (20 * kRobotRadius) / STEP_SIZE;
 
         // setup data structures for iterative search
         std::vector<Point> intermediate_points;
@@ -99,7 +91,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         Point points_to_check[] = {hit_pt, hit_pt};
 
         // iteratively search as described above
-        for (int i = 0; i < MAX_ITERATIONS; i++) {
+        for (int i = 1; i < MAX_ITERATIONS; i++) {
             points_to_check[0] = hit_pt + i * ccw_offset;
             points_to_check[1] = hit_pt + i * cw_offset;
 
