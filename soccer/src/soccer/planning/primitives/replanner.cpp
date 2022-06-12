@@ -119,13 +119,11 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     RJ::Time hit_time = RJ::Time::max();
 
     // Use short-circuiting to only check dynamic trajectories if necessary.
-    // TODO: reenable partial replanning
     bool should_partial_replan =
-        trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time, &hit_time);
-    /* || trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time,
-     * nullptr,
-     */
-    /*                         &hit_time); */
+        trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time,
+                               &hit_time) ||
+        trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
+                                &hit_time);
 
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
