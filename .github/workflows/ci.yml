@@ -19,8 +19,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install some dependencies
+      - name: Run util/ubuntu-setup as sudo
         run: "sudo ./util/ubuntu-setup --yes"
+
+      - name: Install git pre-commit hooks & update submodules
+        run: "./util/git-setup --yes"
 
       - name: Make ${{ github.base_ref }} branch exist
         run: |
