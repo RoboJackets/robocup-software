@@ -50,12 +50,24 @@ static SimulatorCommand convert_placement_to_proto(
         robot_proto->set_x(static_cast<float>(robot.pose.position.x));
         robot_proto->set_y(static_cast<float>(robot.pose.position.y));
         robot_proto->set_orientation(static_cast<float>(robot.pose.heading));
+
         robot_proto->set_v_x(0);
         robot_proto->set_v_y(0);
         robot_proto->set_v_angular(0);
         robot_proto->mutable_id()->set_id(robot.robot_id);
         robot_proto->mutable_id()->set_team(robot.is_blue_team ? Team::BLUE : Team::YELLOW);
-        robot_proto->set_present(true);
+
+        // this line sets robots with an ID above 6 to "not present", meaning
+        // they will be removed on their next sim command
+        // see "rj_protos/proto/ssl_simulation_control.proto"
+        //
+        // to see this in effect, click and drag the robots expected to be not
+        // present and they should disappear
+        if (robot.robot_id <= 5) {
+            robot_proto->set_present(true);
+        } else {
+            robot_proto->set_present(false);
+        }
     }
     return packet;
 }
