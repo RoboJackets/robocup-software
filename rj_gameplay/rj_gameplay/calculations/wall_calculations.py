@@ -32,7 +32,7 @@ def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarr
     box_w = world_state.field.def_area_long_dist_m
     box_h = world_state.field.def_area_short_dist_m
     line_w = world_state.field.line_width_m * 2
-    MIN_WALL_RAD = RobotConstants.RADIUS * 2.0 + line_w + np.hypot(box_w / 2, box_h)
+    MIN_WALL_RAD = RobotConstants.RADIUS * 4.0 + line_w + np.hypot(box_w / 2, box_h)
 
     # get direction vec
     dir_vec = (ball_pt - goal_pt) / (np.linalg.norm(ball_pt - goal_pt) + 1e-9)
