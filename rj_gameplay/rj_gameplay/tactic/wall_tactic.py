@@ -17,8 +17,6 @@ from rj_gameplay.calculations import wall_calculations
 from rj_gameplay.role import dumb_move
 from rj_gameplay.skill import move
 
-MIN_WALL_RAD = None
-
 
 class WallTactic(stp.tactic.Tactic):
     def __init__(self, world_state: stp.rc.WorldState, num_wallers: int):

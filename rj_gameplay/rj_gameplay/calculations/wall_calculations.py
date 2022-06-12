@@ -1,28 +1,23 @@
 """Holds functions used by plays that use the wall tactic."""
 
 from dataclasses import dataclass
-from typing import List, Optional
 from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
+import numpy as np
 import stp.action as action
+import stp.global_parameters as global_parameters
 import stp.rc as rc
-import stp.tactic as tactic
 import stp.role as role
+import stp.skill as skill
+import stp.tactic as tactic
+from stp.utils.constants import BallConstants, RobotConstants
 
 import rj_gameplay.eval
 import rj_gameplay.skill as skills
 from rj_gameplay.skill import move
-import stp.skill as skill
-import numpy as np
-
-from stp.utils.constants import RobotConstants, BallConstants
-import stp.global_parameters as global_parameters
-
-MIN_WALL_RAD = None
 
 
 def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarray]:
-    global MIN_WALL_RAD
     """Calculates num_wallers points to form a wall between the ball and goal.
     :return list of wall_pts (as numpy arrays)
     """
@@ -37,7 +32,7 @@ def find_wall_pts(num_wallers: int, world_state: rc.WorldState) -> List[np.ndarr
     box_w = world_state.field.def_area_long_dist_m
     box_h = world_state.field.def_area_short_dist_m
     line_w = world_state.field.line_width_m * 2
-    MIN_WALL_RAD = RobotConstants.RADIUS + line_w + np.hypot(box_w / 2, box_h)
+    MIN_WALL_RAD = RobotConstants.RADIUS * 2.0 + line_w + np.hypot(box_w / 2, box_h)
 
     # get direction vec
     dir_vec = (ball_pt - goal_pt) / (np.linalg.norm(ball_pt - goal_pt) + 1e-9)
