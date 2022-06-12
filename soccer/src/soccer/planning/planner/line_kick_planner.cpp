@@ -164,10 +164,8 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
             }
         }
 
-        // TODO(Kevin): reenable this planner by modifying trajectory_hits_static() call
         if (prev_path_.check_time(start_instant.stamp) &&
-            /* !trajectory_hits_static(prev_path_, static_obstacles, start_instant.stamp, nullptr)
-               && */
+            !trajectory_hits_static(prev_path_, static_obstacles, start_instant.stamp, nullptr) &&
             end_time_adjusted < intercept_time && reuse_path_count_ < 10) {
             reuse_path_count_++;
             Point near_point;
