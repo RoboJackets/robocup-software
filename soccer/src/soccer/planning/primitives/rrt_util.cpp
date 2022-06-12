@@ -39,7 +39,6 @@ void draw_bi_rrt(const RRT::BiRRT<Point>& bi_rrt, DebugDrawer* debug_drawer, uns
     draw_rrt(bi_rrt.goalTree(), debug_drawer, shell_id);
 }
 
-// TODO: remove straight_line arg since the straight_line case is already checked in create_path.cpp
 vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
                              const vector<Point>& waypoints, bool straight_line) {
     auto state_space =

@@ -53,22 +53,12 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     bool static_obs_collision_found = trajectory_hits_static(straight_trajectory, static_obstacles,
                                                              start_time, &hit_time, &hit_pt);
 
-    if (static_obs_collision_found) {
-        SPDLOG_INFO("static obstacle collision found");
-    }
-    if (trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
-                                nullptr)) {
-        SPDLOG_INFO("dynamic obstacle collision found");
-    }
-
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
         (!static_obs_collision_found &&
          !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
                                   nullptr))) {
-        // not an error but this makes it stand out from my other debug output
-        SPDLOG_ERROR("\nRETURNING STRAIGHT TRAJ\n");
         return straight_trajectory;
     }
 
@@ -81,7 +71,6 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         // then, iteratively create a two-line-segment path around the
         // first obstacle, with a certain STEP_SIZE and MAX_ITERATIONS
         // and greedily pick first traj that works (in a given max range)
-        SPDLOG_INFO("ITERATIVE SEARCH");
 
         path_points.push_back(start.position);
         Point dir = (hit_pt - start.position).normalized();
@@ -135,7 +124,6 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     }
 
     // if iterative search can't find a good path, use RRT
-    SPDLOG_INFO("FULL RRT AGAIN");
     path_points = generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
 
     // fill in velocities along path to get Trajectory
