@@ -493,8 +493,7 @@ def main():
 
     # change this line to test different plays (set to None if no desired test play)
 
-    test_play = planning_test_play.PlanningTestPlay()
-    # test_play = basic_defense.BasicDefense()
+    test_play = defense.Defense()
     # test_play = None
 
     gameplay = GameplayNode(my_play_selector, test_play)
