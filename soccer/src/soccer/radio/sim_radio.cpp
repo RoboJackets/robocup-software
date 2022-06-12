@@ -63,7 +63,7 @@ static SimulatorCommand convert_placement_to_proto(
         //
         // to see this in effect, click and drag the robots expected to be not
         // present and they should disappear
-        if (robot.robot_id <= 6) {
+        if (robot.robot_id <= 5) {
             robot_proto->set_present(true);
         } else {
             robot_proto->set_present(false);
