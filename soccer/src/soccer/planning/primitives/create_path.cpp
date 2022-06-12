@@ -69,8 +69,6 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
                                   nullptr))) {
         // not an error but this makes it stand out from my other debug output
         SPDLOG_ERROR("\nRETURNING STRAIGHT TRAJ\n");
-        // TODO (Kevin): max acceleration on straight line with no obstacles should be higher than
-        // curvy path around obstacles
         return straight_trajectory;
     }
 
