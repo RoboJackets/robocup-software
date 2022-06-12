@@ -8,8 +8,9 @@ Getting Started
 Installation
 ------------
 
-We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
-are on an Ubuntu 20.04 machine before continuing.
+We only provide official support for Ubuntu 20.04 due to ROS2. For the easiest
+setup experience, make sure you are on an Ubuntu 20.04 machine before
+proceeding.
 
 First, clone the repository from GitHub:
 
@@ -17,22 +18,16 @@ First, clone the repository from GitHub:
 
    git clone https://github.com/RoboJackets/robocup-software.git
 
-Then change directories (``cd``) to the repository you just cloned, and run the
-setup script to install all required dependencies:
+Then ``cd`` to the repository you just cloned, and run the setup scripts to
+install all required dependencies:
 
 .. code-block:: bash
 
     cd robocup-software
     ./util/ubuntu-setup && ./util/git-setup
 
-
-Running The First Time
-----------------------
-
-Let's run the stack! To simulate the vision data we'd get from a real field
-camera setup, we'll use ER-Force's simulator.
-
-To start, clone their repo, and ``cd`` into it.
+To simulate the vision data we'd get from a real field camera setup, we'll use
+ER-Force's simulator. For that, clone their repo, and ``cd`` into it.
 
 .. code-block:: sh
 
@@ -48,18 +43,18 @@ Then, build their code with the following:
     make simulator-cli
 
 This builds an executable in ``framework/build/bin``. Like any other
-executable, it can be run with ``./[filepath-to-executable]``. Since we're
+executable, it can be run with ``[filepath-to-executable]``. Since we're
 already in the ``framework/build/`` directory, simply run:
 
 .. code-block:: sh
 
    ./bin/simulator-cli
 
-Note that the absolute filepath works from anywhere:
+Note also that the absolute filepath works from any directory:
 
 .. code-block:: sh
 
-   ./framework/build/bin/simulator-cli
+   ~/framework/build/bin/simulator-cli
 
 We're a Division B team, so add the flag `-g` and the option `2020B` to use the
 Division B field dimensions, like so:
@@ -68,8 +63,9 @@ Division B field dimensions, like so:
 
    ./bin/simulator-cli -g 2020B
 
-For whatever reason, this program has no output, but it will become obvious
-after you start our UI whether or not you've done this step correctly.
+Sadly, this program has no output, so when you run it nothing will appear to
+happen. However, it will become obvious after you start our UI whether or not
+you've correctly started the simulator or not.
 
 Now, make sure you're on the most updated version of ``ros2`` branch. This is
 where the latest working version of our codebase exists. (See "Github" doc.
@@ -86,20 +82,15 @@ Then, source the ROS setup file. This allows your shell to use ROS commands.
 
     source /opt/ros/foxy/setup.bash
 
-If you're on zsh, source the ``.zsh`` version instead. (If you don't know what
+If you're on zsh, source ``setup.zsh`` instead. (If you don't know what
 zsh is, you're not on zsh.)
 
-.. code-block:: bash
-
-    source /opt/ros/foxy/setup.zsh
-
-Then build the codebase. This compiles all of our code.
+Then build the codebase. This compiles all of our code. On a VM, this step will
+take upwards of 15 minutes.
 
 .. code-block:: bash
 
    make perf
-
-(This step will take upwards of 15 minutes on a VM.)
 
 After building, we need to source our custom ROS setup. Run the following in
 the ``robocup-software`` directory:
@@ -108,11 +99,7 @@ the ``robocup-software`` directory:
 
     source install/setup.bash
 
-Again, if you're on zsh, source the ``.zsh`` version instead:
-
-.. code-block:: bash
-
-    source install/setup.zsh
+(Again, if you're on zsh, source the ``.zsh`` version instead.)
 
 Now we are good to go. As a sanity check, the following command should print
 out ``rj_robocup``:
@@ -121,8 +108,8 @@ out ``rj_robocup``:
 
     ros2 pkg list | grep rj_robocup
 
-To launch our stack, which contains our AI plus a UI to show what's happening,
-run the following:
+To launch our stack, which contains our AI that sends commands to the
+simulator, plus a UI to show what's happening, run the following:
 
 .. code-block:: bash
 
@@ -130,21 +117,22 @@ run the following:
 
 If everything is working properly, you should see the following window show up.
 
-.. image:: ./_static/soccer.png
+.. image:: 
+
+   ./_static/soccer.png
 
 
-Running Again
--------------
+Shortcuts
+---------
 
 Now that you know how to source dependencies, build, and run our code, you can
 take advantage of some neat shortcuts. These shortcuts all depend on the
 following knowledge:
 
-Sourcing only needs to happen every time a new terminal is opened, and
-building only needs to happen when C++ or launch.py files are changed.
-
-(Python is not a compiled language; thus, those files do not need to be built
-when changed.)
+Sourcing only needs to happen every time a new terminal is opened, and building
+only needs to happen when C++ or launch.py files are changed. (Python is not a
+compiled language; thus, most of those files do not need to be built when
+changed.)
 
 So, after you've built once, the ``install/setup.bash`` script will exist in
 your version of the repo, and you won't have to build again until you make
@@ -156,8 +144,8 @@ terminal, you can launch sim with:
    . ./source.bash
    make run-sim
 
-``source.bash`` is an alias for the two source commands in the above section,
-and ``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
+``source.bash`` is an alias for the two source commands you saw above, and
+``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
 
 Since Python is not compiled, if you're exclusively working on Python files,
 and staying in one terminal, it's likely that you'll mostly only need:
@@ -168,8 +156,8 @@ and staying in one terminal, it's likely that you'll mostly only need:
 
 However, if you're working on C++ or launch files (or if someone else changes
 them on a different branch and you want their changes), you'll need to build
-again. If you've already built once on your machine, though, you can build
-again more quickly with:
+again to see your changes take effect. If you've already built once on your
+machine, though, you can build again more quickly with:
 
 .. code-block:: bash
 

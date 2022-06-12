@@ -41,7 +41,7 @@ When you run into issues, your order of question-asking should be:
 This is not because older members don't want to help you, but because if older
 members helped every new member with every question, they wouldn't have time to
 make our robots better (nor would you learn as much). So try to resolve your
-issue yourself, and expect to be asked "what have you tried already?" if you ask
+issue yourself, and expect to be asked "what have you tried already?" when you ask
 for help.
 
 0. Command-Line Basics
@@ -54,37 +54,39 @@ https://ubuntu.com/tutorials/command-line-for-beginners#1-overview
 
 The rest of this tutorial assumes you have working knowledge of the
 command-line: how to run an executable, change directories, move files, run
-commands. So if you're uncomfortable with any of that, go through and follow
-the exercises in the site above.
+commands, etc. So if you're uncomfortable with any of that, go through the
+exercises in the site above.
 
-Two indispensable tips not mentioned in that link:
+Some tips about learning how to use commands:
  * ``man [command]`` will pull up a manpage, which is an explanation of the
-   command and all of its options. This usually only works on standarad Unix
+   command and all of its options. This usually only works on standard Unix
    commands. For instance, you can find words in any file in a directory using
    ``grep``: try ``man grep`` to see its full potential.
  * ``[command or executable] --help`` will almost always return a prompt that
    tells you what the command does, and how you can modify it with options.
    Many custom command-line tools will have a --help output, if they don't have
    a man page.
+ * Of course, you can also simply Google a command you don't understand, or
+   look up something like "how to search for a filename with command line".
 
 1. Installation
 ---------------
 
 See "Getting Started". That page will assume you have the Command-Line Basics
 from above, as well as a working knowledge of Git (which you can get either
-`online <https://rogerdudler.github.io/git-guide/>`_ or from "Contributing").
+`online <https://rogerdudler.github.io/git-guide/>`_ or from the Contributing
+page).
 
 2. GitHub Basics
 ----------------
 
 Now that you have everything installed, understand basic command-line
-usage, and have at least seen git before, let's get started using
-GitHub.
+usage, and have seen git before, let's get started using GitHub.
 
 .. Note::
 
    git is a command line version-control tool. GitHub is a website to host
-   shared files, and is well-integrated with git.
+   shared files, and is well-integrated with git, but is not the same thing.
 
 First, use git to create a new branch under this naming scheme: 
 
@@ -99,12 +101,12 @@ Click the green checkmark. You should see 3 robots form a wall, 2 robots mark
 the opposing team, and 1 robot play goalie. 
 
 Figure out which line(s) to change so that 4 robots form a wall instead of 3.
-When done, take a screenshot of the four wallers; we'll use this later.
+When done, take a screenshot of the four wallers.
 
 Now that you've made a change to the repo, run ``git status``. You should see
 that whatever files you changed show up in red, which indicates that they are
-unstaged. Stage the files you changed with ``git add`` (Google this if unsure!),
-then commit them like so:
+unstaged. Stage the files you changed with ``git add`` (Google this if unsure
+how, or see the previous section on git), then commit them like so:
 
 .. code-block:: bash
 
@@ -113,23 +115,25 @@ then commit them like so:
 .. note::
 
    <commit msg> should be a present-tense description of what you've changed.
-   In this case, "change num wallers to 4" is fine.
+   In this case, "change to 4 wallers" is fine.
 
-   Without -m, git commit will open a nano editor instance, and ask you to type
-   in a commit msg. -m is a bit faster.
+   Without the -m flag, git commit will open a nano, a text editor, and ask you
+   to type in a commit msg. -m is a bit faster.
 
 When you commit, you should see our pre-commit hooks run. These are automated
 programs that make your code comply with standardized style guidelines. If one
-of the checks fails, simply re-add and re-commit and they should pass.
+of the checks fails, simply re-add your files and re-commit. (If you don't see
+this, make sure you have everything installed correctly per the installation
+guide.)
 
 Now that you've committed, run ``git push`` to push your changes to the remote
-server. This is how GitHub sees and displays your changes. If you run into any
-errors at this step, read the error logs carefully (they often tell you what to
+server. This is how GitHub sees your changes. If you run into any errors at
+this step, read the error logs carefully (they often tell you what to
 do), and Google if needed.
 
 Finally, go to our GitHub page, click the "Pull Requests" tab, and create a new
 draft pull request for your branch. When it asks you to fill in the PR
-description, you can delete the whole template and write something simple like
+description, you can delete the template and write something simple like
 "Completes RC SW tutorials". Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
@@ -163,8 +167,8 @@ Before we get started, read all of the short "Background" sections for these pag
  * Understanding ROS 2 parameters
  * Understanding ROS 2 actions
 
-These sections put together are only a couple hundred words, and contain very
-neat animated diagrams that we can't recreate here.
+The background sections put together are only a couple hundred words, and
+contain very neat animated diagrams that we can't recreate here.
 
 Now that you have some background on what ROS is and how it works, let's
 explore how we use ROS in our stack. (ROS is used in place of ROS 2 in the rest
@@ -194,11 +198,11 @@ we wrote our own custom .msg file that this topic uses.
 Your task for this section is to find the file that defines the message type
 used by ``/gameplay/robot_intent/robot_0``. This will take you a long time if
 you search for it manually and almost no time if you use a tool like ``find``.
-Once you have the right file, screenshot it and add it to your GitHub PR as a
-comment. Congrats! You now have a working understanding of ROS CLI tools.
+Once you have the right file, figure out the full filepath and add it to your
+GitHub PR as a comment. Congrats! You now have a grasp of ROS CLI tools.
 
 5. rqt Basics
------------------
+-------------
 
 The observant among you may have noticed that the last section only covered ROS
 topics, even though it asked you to read about ROS nodes, services, parameters,
@@ -208,33 +212,31 @@ interface for the many tools ROS includes.
 To use it, open a new terminal, source ROS (like you do before running our
 stack), and run ``rqt``. (This should have been installed with the rest of the
 stack when you ran ``./util/ubuntu-setup``; if not, see `this guide
-<http://wiki.ros.org/rqt/UserGuide/Install/Groovy>_`.) You should see a blank
-white rqt GUI pop up.
+<http://wiki.ros.org/rqt/UserGuide/Install/Groovy>`_.) You should see a blank
+GUI pop up.
 
 To replicate what we did in the last section, go to the top, click Plugins >
 Topics > Topic Monitor. This allows you to see both a list of all topics, and
-see what messages are being published to them (by clicking the checkbox).
+see the most recent message published to any topic (by clicking the checkbox).
 
 Now find and launch the Node Graph. You should see a large, complex node
 diagram pop up. If you don't see something large and complex, make sure you
-have both our UI and the ER-Force simulator running.
+have both our AI and the ER-Force simulator running.
 
-Zoom in and notice and most of the nodes are actually just duplicated across
-robot numbers. (For instance, notice there is a
+Zoom in to some of the complexity. You should notice and most of the nodes are
+actually just duplicated across robot numbers. (For instance, notice there is a
 ``/planning/trajectory/robot_*`` topic for each robot.) Find the two arrows
-that contains the robot intent topic for robot 0's and figure out which nodes
-publish and subscribe to that topic, then post your answer as a GitHub comment.
+that are labelled with robot 0's robot intent and figure out which nodes
+publish and subscribe to that topic. Post your answer as a GitHub comment on
+your PR.
 
 We can also use rqt to dynamically change the behavior of our robots. Pull up
 the Dynamic Reconfigure menu and click the control params. Run your runner play
-from earlier. In the middle of the play, lower the max velocity. You should see
-the runner (and every other robot on our team) move much more slowly.
+from earlier. In the middle of the play, double the max velocity. You should see
+the runner (and every other robot on our team) move much more quickly.
 
-Take a screen recording of this whole process: runner play at normal speed,
-then lower the max velocity and show the runner play at slow speed. Slack it to
-your software lead.
-
-Feel free to play around with any other params you see!
+Take a screen recording of this whole process and send it to your software lead
+via Slack. Feel free to play around with any other params you see!
 
 6. ROS and C++
 --------------
@@ -249,13 +251,15 @@ see google docs 9
 -------------
 
 Finally, tag your software lead for review on your pull request. For your final
-comment, leave feedback on anything that confused you in this tutorial.
+comment, leave feedback on anything that confused you in this tutorial. Your
+software lead will either request changes, meaning they have some feedback for
+you to adjust your PR, or approve it, meaning your changes are ready to merge.
 
-After your software lead approves your PR, **CLOSE** your pull request. **Do
-not merge it.** Typically the final step is to merge your code into our
-codebase upon approval, but since this is only a tutorial project, there's no
-need to add it to the codebase.
+However, this time, upon approval, **CLOSE your pull request. Do not merge
+it.** Since this is only a tutorial project, there's no need to add it to the
+codebase.
 
 Congratulations! This was a long journey, but if you've made it this far, you
 have proved yourself worthy of your teammates' trust, and are ready to work on
-real features. <first step to pro robot dev>
+real features. We hope this was a helpful first step in your long robotics
+career.
