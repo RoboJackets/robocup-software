@@ -120,9 +120,12 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
                 maybe_traj = CreatePath::simple(start, goal, motion_constraints, start_time,
                                                 intermediate_points);
 
-                bool static_obs_collision_found =
-                    trajectory_hits_static(straight_trajectory, static_obstacles, start_time);
-                if (!static_obs_collision_found) {
+                bool collision_found =
+                    trajectory_hits_static(maybe_traj, static_obstacles, start_time) ||
+                    trajectory_hits_dynamic(maybe_traj, dynamic_obstacles, start_time, nullptr,
+                                            nullptr);
+
+                if (!collision_found) {
                     // TODO(Kevin): dynamic obstacles need to be accounted for
                     // return first path that works
                     return maybe_traj;
