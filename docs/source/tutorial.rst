@@ -137,20 +137,76 @@ description, you can delete the template and write something simple like
 "Completes RC SW tutorials". Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
-
 3. rj_gameplay and Python
 -------------------------
 
-create a "runner" role that moves on the perimeter of the field
+In this section, you'll be tasked with creating a new Python class to give our
+robots some new tricks on the field. This section will be the most coding-heavy
+that you've seen thus far. 
 
-grep for "world_state.field" to figure out how to get perimeter coords
+ * If you don't know Python, but you've coded in some other language before,
+   Python is likely an easier language to learn than the one you already know.
+   (Just look at some of the .py files in this repo and you'll see.) 
+ * If you've never coded before this club, hopefully you are in CS 1301/1371,
+   and you'll start learning how to code very shortly. In that case, skip to
+   section #4 for now, and come back here at the end of section #5 when it
+   becomes necessary to have this section done. 
+ * If you've never coded before and you're not in an introductory CS course,
+   you'll have to go through a Python tutorial like `this one
+   <https://docs.python.org/3/tutorial/>`_ to learn the ropes.
 
-look at existing roles to figure out how to structure + see stp init
+Your task is to create a Runner Role that can make any arbitrary robot run
+around the perimeter of the field. This should hopefully distract the other
+team and keep them from being able to score on us. **Read the rest of this
+section before starting.**
 
-modify the defense play to use 4 wallers, 1 goalie, 1 "runner"
+The coordinates of the field are in the ``world_state`` object that is passed
+through every single gameplay element. Search the ``rj_gameplay`` folder for
+``world_state.field`` to figure out how to get those coordinates--you will
+eventually find the file where the field coords are passed in, and from there
+it will be obvious how to use them. Do this search with ``grep``, not by hand.
 
-You'll use this play in part 5, so make sure it works!
+A Role defines a complex, single-robot behavior, like the Goalie, or a Passer.
+See the Design Docs linked in `this PR
+<https://github.com/RoboJackets/robocup-software/pull/1811>`_ for more detail.
+The superclass for all Roles is defined in
+``rj_gameplay/stp/role/__init__.py``, and the subclasses that define actual
+Roles are in ``rj_gameplay/rj_gameplay/role/``. All roles use a finite state
+machine, or FSM, which is really just a good mental model for writing programs
+that change over the course of time. Look at the existing files to figure out
+how to structure and implement your role to use an FSM.
 
+If you've never heard of a superclass before, see `this website
+<https://www.whitman.edu/mathematics/java_tutorial/java/objects/inheritance.html>`_
+for a quick introduction. If you want to learn more about FSMs, see `this link
+<https://flaviocopes.com/finite-state-machines/>`_.
+
+To test your Role, you'll have to write a Tactic that uses it, and put that
+Tactic into a Play. This is a little complicated. Look at the Defense Play you
+modified earlier. The Goalie Tactic in this play is really just a wrapper for
+the Goalie Role (as in, it doesn't do much but call the Goalie Role and ask it
+what to do). This is how your Runner Role should be included. Put it in the
+Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner.
+
+There are many ways to assign a Role to a given robot (see the design doc
+linked above for more detail). In this case, assign robot 1 to be our runner.
+(That's our most in-shape robot, so they can handle the extra miles.) Do this
+the same way that the Goalie Role always picks robot 0 to be the goalie.
+
+You may have noticed there's a lot of file-finding in this section. Use the
+option in your IDE or text editor that allows you to see a full folder at once.
+For instance, in VS Code, there is an option to open a full folder, which
+displays all the subfolders and files in the left toolbar. If you open
+``robocup-software/rj_gameplay`` like this, it should be a lot easier to
+navigate these files.
+
+If you've read this whole section and are feeling a little intimidated, that's
+normal. The paragraphs above form a nice to-do list for you to follow. Just try
+your best, one step at a time, and eventually you'll have a working piece of
+software to be proud of. 
+
+To reinforce that message, you'll use this same modified Defense Play again
+later on, so you'll get to savor your success again!
 
 4. ROS CLI Basics
 -----------------
