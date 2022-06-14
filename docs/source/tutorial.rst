@@ -2,16 +2,16 @@ Tutorial
 ========
 
 This page is meant to teach new RoboCup Software members the basics of what
-they'll need to contribute to the team. It will introduce the Robot Operating
-System (ROS), the command-line, GitHub, git, Python, C++, and the general shape
-of our stack. Upon completion of this tutorial, you'll have the knowledge and
-trust of your teammates to implement new features on your own.
+they'll need to contribute. It will introduce the Robot Operating System (ROS),
+the command-line, GitHub, git, Python, C++, and the general shape of our stack.
+Upon completion of this tutorial, you'll have the knowledge and trust of your
+teammates to implement new features on your own.
 
 No prior experience is assumed. However, a bit of stubbornness is required.
 RoboCup SW has seen many members without any prior CS experience become valued
 contributors, and many talented CS majors quit within a few weeks.
 
-The tutorial is structured as follows:
+The tutorial is structured as follows.
 
 .. contents::
 
@@ -47,10 +47,13 @@ for help.
 0. Command-Line Basics
 ----------------------
 
-If you've never heard of or used the command-line before, this website is
-lengthy, but wonderful for beginners:
+If you've never heard of or used the command-line before, `this website
+<https://ubuntu.com/tutorials/command-line-for-beginners#1-overview>`_ is
+wonderful for beginners.
 
-https://ubuntu.com/tutorials/command-line-for-beginners#1-overview
+.. image::
+
+   ./_static/ubuntu_cli_tutorial.png
 
 The rest of this tutorial assumes you have working knowledge of the
 command-line: how to run an executable, change directories, move files, run
@@ -74,14 +77,14 @@ Some tips about learning how to use commands:
 
 See "Getting Started". That page will assume you have the Command-Line Basics
 from above, as well as a working knowledge of Git (which you can get either
-`online <https://rogerdudler.github.io/git-guide/>`_ or from the Contributing
+`online <https://rogerdudler.github.io/git-guide/>`_ or from the "Contributing"
 page).
 
 2. GitHub Basics
 ----------------
 
-Now that you have everything installed, understand basic command-line
-usage, and have seen git before, let's get started using GitHub.
+Now that you have everything installed and understand the basics of the
+command-line and git, let's get started using GitHub.
 
 .. Note::
 
@@ -92,13 +95,17 @@ First, use git to create a new branch under this naming scheme:
 
 .. code-block:: bash
 
-   git checkout -b "<your name>/robocup-sw-tutorial"
+   git checkout -b "<your-name>/robocup-sw-tutorial"
+
+For instance, the author's branch would be named
+``kevin-fu/robocup-sw-tutorial``.
 
 Then take a look at the defense play in
 ``rj_gameplay/rj_gameplay/play/defense.py``. Launch soccer (our UI) and the
-ER-force simulator, then select this play as the test play to see it in action.
-Click the green checkmark. You should see 3 robots form a wall, 2 robots mark
-the opposing team, and 1 robot play goalie. 
+ER-force simulator, same way as you did in the installation guide, then select
+this play as the test play to see it in action. Click the green checkmark in
+our UI. You should see 3 robots form a wall, 2 robots mark the opposing team,
+and 1 robot play goalie. 
 
 Figure out which line(s) to change so that 4 robots form a wall instead of 3.
 When done, take a screenshot of the four wallers.
@@ -106,7 +113,7 @@ When done, take a screenshot of the four wallers.
 Now that you've made a change to the repo, run ``git status``. You should see
 that whatever files you changed show up in red, which indicates that they are
 unstaged. Stage the files you changed with ``git add`` (Google this if unsure
-how, or see the previous section on git), then commit them like so:
+how, or see the previous section on git), then commit them:
 
 .. code-block:: bash
 
@@ -134,23 +141,23 @@ do), and Google if needed.
 Finally, go to our GitHub page, click the "Pull Requests" tab, and create a new
 draft pull request for your branch. When it asks you to fill in the PR
 description, you can delete the template and write something simple like
-"Completes RC SW tutorials". Add that screenshot of your four-waller setup as a
+"Completes RC SW tutorials." Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
 3. rj_gameplay and Python
 -------------------------
 
 In this section, you'll be tasked with creating a new Python class to give our
-robots some new tricks on the field. This section will be the most coding-heavy
-that you've seen thus far. 
+robots some new tricks on the field. This section is one of two coding-heavy
+sections, and should present a significant challenge.
 
  * If you don't know Python, but you've coded in some other language before,
    Python is likely an easier language to learn than the one you already know.
    (Just look at some of the .py files in this repo and you'll see.) 
  * If you've never coded before this club, hopefully you are in CS 1301/1371,
    and you'll start learning how to code very shortly. In that case, skip to
-   section #4 for now, and come back here at the end of section #5 when it
-   becomes necessary to have this section done. 
+   section #4 for now, continue working, and come back here at the end of
+   section #5 when it becomes necessary to have this section done. 
  * If you've never coded before and you're not in an introductory CS course,
    you'll have to go through a Python tutorial like `this one
    <https://docs.python.org/3/tutorial/>`_ to learn the ropes.
@@ -188,6 +195,8 @@ the Goalie Role (as in, it doesn't do much but call the Goalie Role and ask it
 what to do). This is how your Runner Role should be included. Put it in the
 Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner.
 
+// TODO: stp picture here
+
 There are many ways to assign a Role to a given robot (see the design doc
 linked above for more detail). In this case, assign robot 1 to be our runner.
 (That's our most in-shape robot, so they can handle the extra miles.) Do this
@@ -203,20 +212,20 @@ navigate these files.
 If you've read this whole section and are feeling a little intimidated, that's
 normal. The paragraphs above form a nice to-do list for you to follow. Just try
 your best, one step at a time, and eventually you'll have a working piece of
-software to be proud of. 
-
-To reinforce that message, you'll use this same modified Defense Play again
-later on, so you'll get to savor your success again!
+software to be proud of. You'll use this same Runner Role again later on, so
+you'll get to savor your success then!
 
 4. ROS CLI Basics
 -----------------
 
-This section is our variation of the ROS 2 `"Beginner: CLI Tools" tutorials
-<https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>`_. We do
-things slightly differently (and don't use all of the ROS 2 features described
-in those tutorials), so this is intended to supplement those docs.
+This section is our variation of the ROS 2 `"Beginner: CLI Tools"
+<https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>`_ tutorials.
+We do things slightly differently (and don't use all of the ROS 2 features
+described in those tutorials), so this is intended to keep you from having to
+read all of those docs.
 
-Before we get started, read all of the short "Background" sections for these pages:
+However, those docs are obviously still the source of truth on ROS. Before we
+get started, read all of the short "Background" sections for these pages:
  * Understanding ROS 2 nodes
  * Understanding ROS 2 topics
  * Understanding ROS 2 services
@@ -271,6 +280,8 @@ stack when you ran ``./util/ubuntu-setup``; if not, see `this guide
 <http://wiki.ros.org/rqt/UserGuide/Install/Groovy>`_.) You should see a blank
 GUI pop up.
 
+// TODO: blank GUI pic
+
 To replicate what we did in the last section, go to the top, click Plugins >
 Topics > Topic Monitor. This allows you to see both a list of all topics, and
 see the most recent message published to any topic (by clicking the checkbox).
@@ -279,8 +290,8 @@ Now find and launch the Node Graph. You should see a large, complex node
 diagram pop up. If you don't see something large and complex, make sure you
 have both our AI and the ER-Force simulator running.
 
-Zoom in to some of the complexity. You should notice and most of the nodes are
-actually just duplicated across robot numbers. (For instance, notice there is a
+Zoom in on the Node Graph. You should notice and most of the nodes are actually
+just duplicated across robot numbers. (For instance, notice there is a
 ``/planning/trajectory/robot_*`` topic for each robot.) Find the two arrows
 that are labelled with robot 0's robot intent and figure out which nodes
 publish and subscribe to that topic. Post your answer as a GitHub comment on
@@ -297,19 +308,65 @@ via Slack. Feel free to play around with any other params you see!
 6. ROS and C++
 --------------
 
-this is our version of the node tutorials
+Much like the last section, this section is our version of an official ROS
+tutorial. This time we'll reprise `Writing a simple publisher and subscriber
+(C++)
+<http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_.
+Before continuing, read the "Background" section of that tutorial, and brush up
+on any of the readings from section 4 that you need to. Ignore
+"Prerequisites"--our workspace is already set up for you, and we'll walk
+through instructions for building your code here.
 
-create a node
+This section is by far the most difficult of the tutorial. If you've made it
+this far, though, you should have everything you need for this section *except
+for* C++ knowledge. This is a real hurdle. If you already have Java or C
+experience, the syntax is similar enough to where you'll be able to work
+through this section, even if it takes you some time. If you aren't so lucky,
+read through the sections "Basics of C++", "Program structure", and "Classes"
+of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
 
-see google docs 9
+In this section, you'll be creating a SoccerMom node that gets the team color
+and picks a fruit to match. Our robots have to stay motivated somehow!
+
+You can find the team color by subscribing to the relevant topic (this should
+become obvious after looking at the list of topics). To "pick a fruit", publish
+a `standard string msg
+<http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html>`_ to a new
+topic `/team_fruit`. 
+ * When our team color is yellow, publish "banana" to `/team_fruit`.
+ * When our team color is blue, publish "blueberries" to `/team_fruit`.
+
+Often in C++ you'll see the use of a header file, which ends in `.hpp`, and a
+source file, which ends in `.cpp`. Header files contain all the function
+declarations and comments explaining their use. Source files contain the
+function definitions--that is, the code that actually makes the functions work.
+This allows for many files to share access to the same methods or classes
+without copy-pasting their entire implementation by importing the right header
+files.
+
+That may have confused you. Let's take a look at a real example in our codebase
+to make this more understandable.
+
+// TODO: using rj_vision_receiver? planner_node.hpp/cpp? manual_control_node?
+
+// describe where to look for examples of publishers/subscribers
+// explain which parts of the .hpp are actually relevant to setting up the node
+// explain where they should put stuff into the build system (do this yourself
+to make sure it's right)
+
+To test, change our team color using the UI by going to the top menu bar and
+clicking Field > Team Color. You should see the team color change in the top
+right corner of our UI. Screenshot proof that your `/team_fruit` topic is
+publishing the right fruit for both options, and post as a comment to your PR.
 
 7. Conclusion
 -------------
 
 Finally, tag your software lead for review on your pull request. For your final
-comment, leave feedback on anything that confused you in this tutorial. Your
-software lead will either request changes, meaning they have some feedback for
-you to adjust your PR, or approve it, meaning your changes are ready to merge.
+comment, leave feedback on anything that confused you in this tutorial. When
+reviewing your PR, your software lead will either request changes, meaning they
+have some feedback for you to adjust your PR, or approve it, meaning your
+changes are ready to merge.
 
 However, this time, upon approval, **CLOSE your pull request. Do not merge
 it.** Since this is only a tutorial project, there's no need to add it to the
