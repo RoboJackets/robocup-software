@@ -36,6 +36,8 @@ from rj_gameplay.play import (  # noqa: F401
     kickoff_play,
     line_up,
     offense,
+    penalty_defense,
+    penalty_offense,
 )
 
 NUM_ROBOTS = 16

@@ -5,4 +5,6 @@ keepaway.Keepaway()
 kickoff_play.PrepareKickoff()
 kickoff_play.Kickoff()
 kickoff_play.DefendKickoff()
+penalty_defense.PenaltyDefense()
+penalty_offense.PenaltyOffense()
 None

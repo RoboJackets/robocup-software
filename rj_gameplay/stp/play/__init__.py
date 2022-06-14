@@ -134,7 +134,7 @@ class Play(ABC):
                 print(
                     f"Tactic {tactic} denied: {len(tactic.role_requests)} requested roles, but only {numRobotsAvailable} robots available"
                 )
-        # calculation needs to be done after robots and roles have finalized
+        # seeker calculation needs to be done after robots and roles have finalized
         for robot in world_state.our_robots:
             if robot not in used_robots and robot.visible:
                 unused_robots.add(robot)
