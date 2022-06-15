@@ -2,7 +2,7 @@ Contributing
 ============
 This guide targets new members who are keen on contributing to the
 project. This guide will focus on the overall picture of effective coding and
-contributions as well as writing documentation. It is not intended to be a technical guide. Please refer to the tutorial docs for intial understanding of the technical skillset needed for RoboCup.
+contributions as well as writing documentation. It is not intended to be a technical guide. Please refer to the tutorial docs for initial understanding of the technical skillset needed for RoboCup.
 
 If you don't have an overall idea of what the competition is like and what its
 goals are, you can brush up at the `RoboCup Wiki <http://wiki.robojackets.org/w/RoboCup>`_.
@@ -166,7 +166,7 @@ regarding the validation the caller performs ahead of time.
 If the overall set of code is complex and new, consider editing or adding to
 the docs.
 
-For more information on writing Sphinx docstrings, you can learn more information `here <https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html>`_.
+For more information on writing Sphinx docstrings, you can learn more `here <https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html>`_.
 
 Text file types that are not supported by doxygen or Sphinx should still be documented using what ever commenting style that format supports.
 
@@ -174,13 +174,13 @@ Text file types that are not supported by doxygen or Sphinx should still be docu
 
 In order to keep the code more readable, code should be formatted and styled
 uniformly. This would be difficult to coordinate across multiple users, so we
-have a program that automatically restyles the code for you. Our precommit hook runs `make pretty-lines` which auto-formats the code.
+have a program that automatically restyles the code for you. Our precommit hook runs ``make pretty-lines``` which auto-formats the code.
 
 .. note::
 
     You may have to readd the foramtting changes, and commit again.
 
-You can check if the style is passing by running `make checkstyle`. If there are no errors, then you are good to go.
+You can check if the style is passing by running ``make checkstyle``. If there are no errors, then you are good to go.
 
 If you've done all this successfully, you are now an official contributor.
 
@@ -204,9 +204,13 @@ it in the toctree in ``docs/source/index.rst``. (Toctree = table of contents
 tree.) The toctree will preserve the order given.
 
 You can check your work by asking whoever maintains these docs (as of 2022,
-Kevin Fu) to add your branch as a version on the ReadTheDocs dashboard. They
-should go to the webpage, add a version that points to the new doc development
-branch, and build that version, then give you the link.
+Kevin Fu) to add your branch as a version on the ReadTheDocs dashboard.
+
+.. note::
+
+    If you are maintaining these docs, you must install the requirements in ``docs/requirements.txt``.
+
+They should go to the webpage, add a version that points to the new doc development branch, and build that version, then give you the link.
 
 .. note::
 
