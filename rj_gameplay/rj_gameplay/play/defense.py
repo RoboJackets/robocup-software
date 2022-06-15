@@ -6,7 +6,6 @@ import stp.rc
 import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
-from stp.role.assignment.naive import NaiveRoleAssignment
 
 from rj_gameplay.tactic import goalie_tactic, nmark_tactic, wall_tactic
 

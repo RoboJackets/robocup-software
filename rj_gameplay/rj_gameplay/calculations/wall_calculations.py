@@ -5,11 +5,8 @@ from typing import Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
 import numpy as np
 import stp.action as action
-import stp.global_parameters as global_parameters
 import stp.rc as rc
 import stp.role as role
-import stp.skill as skill
-import stp.tactic as tactic
 from stp.utils.constants import BallConstants, RobotConstants
 
 import rj_gameplay.eval
