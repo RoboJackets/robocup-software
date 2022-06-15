@@ -1,0 +1,8 @@
+defense.Defense()
+offense.Offense()
+line_up.LineUp()
+keepaway.Keepaway()
+kickoff_play.PrepareKickoff()
+kickoff_play.Kickoff()
+kickoff_play.DefendKickoff()
+None
