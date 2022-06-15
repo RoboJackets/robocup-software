@@ -73,6 +73,8 @@ public:
 
     void setUseRefChecked(bool use_ref);
 
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_play_pub_;
+
 private Q_SLOTS:
     void addLayer(int i, const QString& name, bool checked);
     void updateViews();
@@ -147,8 +149,6 @@ private Q_SLOTS:
     void on_debugLayers_itemChanged(QListWidgetItem* item);
     void on_debugLayers_customContextMenuRequested(const QPoint& pos);
 
-    void playIndicatorStatus(bool color);
-
     // Fast Ref Buttons
     void on_fastHalt_clicked();
     void on_fastStop_clicked();
@@ -160,6 +160,10 @@ private Q_SLOTS:
     void on_fastDirectYellow_clicked();
     void on_fastIndirectBlue_clicked();
     void on_fastIndirectYellow_clicked();
+
+    // Testing
+    void on_addToTable_clicked();
+    void on_testRun_clicked();
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
