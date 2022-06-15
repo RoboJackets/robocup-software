@@ -195,7 +195,9 @@ the Goalie Role (as in, it doesn't do much but call the Goalie Role and ask it
 what to do). This is how your Runner Role should be included. Put it in the
 Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner.
 
-// TODO: stp picture here
+.. image::
+
+   ./_static/basic_defense.drawio.png
 
 There are many ways to assign a Role to a given robot (see the design doc
 linked above for more detail). In this case, assign robot 1 to be our runner.
@@ -280,7 +282,9 @@ stack when you ran ``./util/ubuntu-setup``; if not, see `this guide
 <http://wiki.ros.org/rqt/UserGuide/Install/Groovy>`_.) You should see a blank
 GUI pop up.
 
-// TODO: blank GUI pic
+.. image::
+
+   ./_static/blank_rqt.png
 
 To replicate what we did in the last section, go to the top, click Plugins >
 Topics > Topic Monitor. This allows you to see both a list of all topics, and
