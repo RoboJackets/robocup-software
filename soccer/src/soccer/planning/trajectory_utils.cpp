@@ -38,7 +38,7 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
 
     // get set of obstacles that hit the start position
-    // TODO(Kevin): make sure Replanner doesn't start paths in obstacles
+    // NOTE: make sure Replanner doesn't start in an obstacle
     const auto& start_hits = obstacles.hit_set(cursor.value().position());
 
     // store last position on cursor's path & if the last pos was in an obstacle

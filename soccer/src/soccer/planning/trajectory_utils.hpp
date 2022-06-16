@@ -38,9 +38,8 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
  * @return                 Whether or not there is a collision.
  */
 bool trajectory_hits_dynamic(const Trajectory& trajectory,
-                           const std::vector<DynamicObstacle>& obstacles,
-                           RJ::Time start_time,
-                           rj_geometry::Circle* out_hit_obstacle,
-                           RJ::Time* out_hit_time);
+                             const std::vector<DynamicObstacle>& obstacles, RJ::Time start_time,
+                             rj_geometry::Circle* out_hit_obstacle = nullptr,
+                             RJ::Time* out_hit_time = nullptr);
 
 }  // namespace planning

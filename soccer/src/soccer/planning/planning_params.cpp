@@ -29,7 +29,7 @@ DEFINE_NS_FLOAT64(
     "Position error threshold (m), a partial replan will be forced if we are not within this "
     "amount of the planned trajectory.");
 
-DEFINE_NS_BOOL(kPlanningParamModule, rrt, enable_debug_drawing, true,
+DEFINE_NS_BOOL(kPlanningParamModule, rrt, enable_debug_drawing, false,
                "Whether to enable RRT debug drawing");
 DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, step_size, 0.15, "Step size for RRT (m)");
 DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, goal_bias, 0.3,

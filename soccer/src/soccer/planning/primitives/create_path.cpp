@@ -15,10 +15,7 @@ namespace planning::CreatePath {
 
 Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                   const MotionConstraints& motion_constraints, RJ::Time start_time,
-                  const std::vector<Point>& intermediate_points,
-                  rj_drawing::RosDebugDrawer* debug_drawer) {
-    // TODO(Kevin): sometimes motion planning crashes somewhere in here when
-    // you put an obstacle on its goal pos, why?
+                  const std::vector<Point>& intermediate_points) {
     std::vector<Point> points;
     points.push_back(start.position);
     for (const Point& pt : intermediate_points) {
@@ -37,7 +34,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles,
-               const std::vector<Point>& bias_waypoints, rj_drawing::RosDebugDrawer* debug_drawer) {
+               const std::vector<Point>& bias_waypoints) {
     // if at goal, return current pose as trajectory
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -57,8 +54,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
         (!static_obs_collision_found &&
-         !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
-                                  nullptr))) {
+         !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time))) {
         return straight_trajectory;
     }
 
@@ -69,20 +65,19 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // check if robot is not right on an obstacle
     if (start.position.dist_to(hit_pt) > 2.0 * kRobotRadius) {
         // then, iteratively create a two-line-segment path around the
-        // first obstacle, with a certain STEP_SIZE and MAX_ITERATIONS
+        // first obstacle, with a certain step_size and max_iterations
         // and greedily pick first traj that works (in a given max range)
 
         path_points.push_back(start.position);
         Point dir = (hit_pt - start.position).normalized();
 
-        // TODO(Kevin): ros param this
-        float STEP_SIZE = kRobotRadius;
-        Point ccw_offset = dir.perp_ccw().normalized(STEP_SIZE);
-        Point cw_offset = dir.perp_cw().normalized(STEP_SIZE);
-
-        // if we can't find a piecewise trajectory X robot widths away, give up and use RRT
-        // TODO(Kevin): ros param this
-        int MAX_ITERATIONS = (10 * kRobotRadius) / STEP_SIZE;
+        // TODO(Kevin): ros param these
+        float step_size = kRobotRadius;
+        Point ccw_offset = dir.perp_ccw().normalized(step_size);
+        Point cw_offset = dir.perp_cw().normalized(step_size);
+        int max_iterations =
+            (10 * kRobotRadius) / step_size;  // if we can't find a piecewise trajectory X robot
+                                              // widths away, give up and use RRT
 
         // setup data structures for iterative search
         std::vector<Point> intermediate_points;
@@ -92,7 +87,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
         // iteratively search as described above
         // start at at least 1 robot diameter away
-        for (int i = 2; i < MAX_ITERATIONS; i++) {
+        for (int i = 2; i < max_iterations; i++) {
             points_to_check[0] = hit_pt + i * ccw_offset;
             points_to_check[1] = hit_pt + i * cw_offset;
 
@@ -104,12 +99,10 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
                 bool collision_found =
                     trajectory_hits_static(maybe_traj, static_obstacles, start_time) ||
-                    trajectory_hits_dynamic(maybe_traj, dynamic_obstacles, start_time, nullptr,
-                                            nullptr);
+                    trajectory_hits_dynamic(maybe_traj, dynamic_obstacles, start_time);
 
                 if (!collision_found) {
-                    // TODO(Kevin): dynamic obstacles need to be accounted for
-                    // return first path that works
+                    // return first path that has no collisions
                     return maybe_traj;
                 }
             }
@@ -117,20 +110,18 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     }
 
     // if iterative search can't find a good path, use RRT
-    path_points = generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
-
-    // fill in velocities along path to get Trajectory
-    Trajectory path{{}};
+    // and attempt to avoid dynamic collisions when doing so
+    Trajectory path{{}};  // fill in velocities along path to get Trajectory
     constexpr int kAttemptsToAvoidDynamics = 10;
     for (int i = 0; i < kAttemptsToAvoidDynamics; i++) {
+        path_points = generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
         BezierPath post_bezier(path_points, start.velocity, goal.velocity, motion_constraints);
 
         path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
                                 motion_constraints, start_time);
 
         Circle hit_circle;
-        if (!trajectory_hits_dynamic(path, dynamic_obstacles, path.begin_time(), &hit_circle,
-                                     nullptr)) {
+        if (!trajectory_hits_dynamic(path, dynamic_obstacles, path.begin_time(), &hit_circle)) {
             break;
         }
 
