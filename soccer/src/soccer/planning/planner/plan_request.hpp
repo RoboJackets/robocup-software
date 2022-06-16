@@ -103,9 +103,12 @@ struct PlanRequest {
 };
 
 /**
- * Add opponent robots as circles in static_obstacles, but shift the circle off-center depending
- * on their current velocity. Also, inflate safety margin based on robot velocity. (see
- * section 2.5:
+ * Create static circle obstacle for one of the robots.
+ *
+ * Shift the circle off-center depending on their robot's current velocity.
+ * Also, inflate circle radius based on robot velocity.
+ *
+ * (see section 2.5:
  * https://ssl.robocup.org/wp-content/uploads/2019/03/2019_ETDP_TIGERs_Mannheim.pdf)
  *
  * At 0 m/s, obstacle center = opp robot position
@@ -121,8 +124,7 @@ struct PlanRequest {
  * @param obs_center center Point of new obs
  * @param obs_radius radius of new obs
  */
-void calc_their_robot_obs(const RobotState& robot, rj_geometry::Point& obs_center,
-                          double& obs_radius);
+void calc_static_robot_obs(const RobotState& robot, std::shared_ptr<rj_geometry::Circle>& obs_ptr);
 
 /**
  * Fill the obstacle fields.

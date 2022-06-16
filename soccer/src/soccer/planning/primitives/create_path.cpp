@@ -127,7 +127,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
         // Inflate the radius slightly so we don't try going super close to
         // it and hitting it again.
-        hit_circle.radius(hit_circle.radius() * 1.5f);
+        hit_circle.radius(hit_circle.radius() * 1.05f);
         obstacles.add(std::make_shared<Circle>(hit_circle));
     }
 
