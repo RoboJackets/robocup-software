@@ -262,11 +262,22 @@ class GameplayNode(Node):
         self.update_world_state()
 
         raw_test_play_str = str(self.get_parameter("test_play").value)
-        if raw_test_play_str != "None" or raw_test_play_str != "{0}.{1}".format(
-            self._test_play.__class__.__module__, self._test_play.__class__.__name__
-        ):
-            play_str = raw_test_play_str[raw_test_play_str.find(".") + 1 :]
-            self._test_play = eval(play_str)
+
+        if raw_test_play_str == "None":
+            # if str is None, switch to None
+            self._test_play = None
+        else:
+            new_play_str = "rj_gameplay.play." + raw_test_play_str
+            curr_play_str = "{0}.{1}()".format(
+                self._test_play.__class__.__module__, self._test_play.__class__.__name__
+            )
+
+            if new_play_str.strip() != curr_play_str.strip():
+                print("SWITCHING PLAY")
+                # if new test play str doesn't match current test play, update it
+                # otherwise keep it (for statefulness)
+                play_str = raw_test_play_str[raw_test_play_str.find(".") + 1 :]
+                self._test_play = eval(play_str)
 
         if self.world_state is not None:
             if self._test_play is None:
