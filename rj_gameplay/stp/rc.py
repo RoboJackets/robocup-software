@@ -446,37 +446,32 @@ class Field:
         return their_goal_post_coord
 
     @property
-    def top_left_field_loc(self) -> np.ndarray:
+    def our_left_corner(self) -> np.ndarray:
         """
-        Convenience function for getting the top left corner field location
-        Note: each coordinate starts from top left and continues normal order
-        :return: the location of the top left corner of the field
-        """
-        return np.array([self.__field_x_left_coord, self.__length_m])
-
-    @property
-    def top_right_field_loc(self) -> np.ndarray:
-        """
-        Convenience function for getting the top left corner field location
-        :return: the location of the top left corner of the field
-        """
-        return np.array([self.__field_x_right_coord, self.__length_m])
-
-    @property
-    def bot_left_field_loc(self) -> np.ndarray:
-        """
-        Convenience function for getting the top left corner field location
-        :return: the location of the top left corner of the field
+        :return: the coords of the left corner of our side of the field
         """
         return np.array([self.__field_x_left_coord, 0.0])
 
     @property
-    def bot_right_field_loc(self) -> np.ndarray:
+    def our_right_corner(self) -> np.ndarray:
         """
-        Convenience function for getting the top left corner field location
-        :return: the location of the top left corner of the field
+        :return: the coords of the right corner of our side of the field
         """
         return np.array([self.__field_x_right_coord, 0.0])
+
+    @property
+    def their_left_corner(self) -> np.ndarray:
+        """
+        :return: the coords of the left corner of their side of the field
+        """
+        return np.array([self.__field_x_left_coord, self.__length_m])
+
+    @property
+    def their_right_corner(self) -> np.ndarray:
+        """
+        :return: the coords of the right corner of their side of the field
+        """
+        return np.array([self.__field_x_right_coord, self.__length_m])
 
     @property
     def floor_width_m(self) -> float:
