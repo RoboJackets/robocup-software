@@ -6,6 +6,7 @@ Contains TestPlaySelector, GameplayNode, and main() which spins GameplayNode
 and allows the PlaySelector to be changed between Test and other forms.
 """
 
+import importlib
 from typing import List, Optional, Set
 
 import numpy as np
@@ -28,15 +29,6 @@ from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
 
 import rj_gameplay.play_selector as play_selector
-
-# ignore "unused import" error
-from rj_gameplay.play import (  # noqa: F401
-    defense,
-    keepaway,
-    kickoff_play,
-    line_up,
-    offense,
-)
 
 NUM_ROBOTS = 16
 
@@ -63,6 +55,24 @@ class GameplayNode(Node):
         file = open("config/plays.txt")
         self.plays: Set = set(file.read().splitlines())
         file.close()
+
+        # dynamically import plays based on name in config/plays.txt
+        # https://stackoverflow.com/questions/44492803/dynamic-import-how-to-import-from-module-name-from-variable/44492879#44492879
+        for play in self.plays:
+            if play == "None":
+                # None = our choice for "no test play"
+                continue
+            module_name = "rj_gameplay.play." + play[: play.find(".")]
+            print(module_name)
+            module = importlib.import_module(module_name)
+            globals().update(
+                {n: getattr(module, n) for n in module.__all__}
+                if hasattr(module, "__all__")
+                else {
+                    k: v for (k, v) in module.__dict__.items() if not k.startswith("_")
+                }
+            )
+            print(globals())
 
         self.declare_parameter("test_play", "None")
 
@@ -251,10 +261,12 @@ class GameplayNode(Node):
         """
         self.update_world_state()
 
-        if str(self.get_parameter("test_play").value) != "None" or "{0}.{1}".format(
+        raw_test_play_str = str(self.get_parameter("test_play").value)
+        if raw_test_play_str != "None" or raw_test_play_str != "{0}.{1}".format(
             self._test_play.__class__.__module__, self._test_play.__class__.__name__
         ):
-            self._test_play = eval(str(self.get_parameter("test_play").value))
+            play_str = raw_test_play_str[raw_test_play_str.find(".") + 1 :]
+            self._test_play = eval(play_str)
 
         if self.world_state is not None:
             if self._test_play is None:
