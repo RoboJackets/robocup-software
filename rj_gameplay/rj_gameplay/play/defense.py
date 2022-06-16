@@ -48,3 +48,4 @@ class Defense(stp.play.Play):
         elif self._state == State.ACTIVE:
             # return robot intents from assigned tactics back to gameplay node
             return self.get_robot_intents(world_state)
+            # return []

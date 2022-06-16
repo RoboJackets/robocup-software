@@ -276,6 +276,8 @@ class GameplayNode(Node):
                 for i in range(len(self.world_state.our_robots)):
                     if intents[i] is not None:
                         # if intent given by gameplay, publish it
+                        # ensure that intent's priority maps to id (lower is better)
+                        intents[i].priority = i
                         self.robot_intent_pubs[i].publish(intents[i])
                     else:
                         # otherwise, send empty (to stop previous intents)
