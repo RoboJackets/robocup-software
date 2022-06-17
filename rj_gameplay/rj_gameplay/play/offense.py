@@ -59,13 +59,7 @@ class Offense(stp.play.Play):
             self.prioritized_tactics = [
                 goalie_tactic.GoalieTactic(world_state, 0),
                 striker_tactic.StrikerTactic(world_state),
-                wall_tactic.WallTactic(world_state, num_wallers),
-                # seek.Seek(
-                #     world_state,
-                #     4,
-                #     DiamondFormation(world_state).get_regions,
-                #     DiamondFormation(world_state).get_centroids,
-                # ),
+                wall_tactic.WallTactic(world_state, 3),
             ]
 
             self.assign_roles(world_state)

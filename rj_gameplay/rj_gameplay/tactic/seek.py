@@ -13,21 +13,27 @@ class Seek(stp.tactic.Tactic):
         self,
         world_state: stp.rc.WorldState,
         num_seekers: int,
-        formations: List,
-        centroids: List,
+        formation: stp.formations.Formations,
     ):
         super().__init__(world_state)
 
-        formation = formations
-        centroid_list = centroids
+        regions = formation.get_regions
+        centroid_list = formation.get_centroids
         self._used_regions = []
         self._used_centroids = []
         self._num_seekers = num_seekers
+        # TODO: make seeker be able to handle more robots than formation regions available OR make formations have more regions
+        """
+        This section of the code is clunky due to the constraint of formations. Currently, if there are more robots seeking than formation regions, it will assign multiple robots to regions by resetting the available regions.
 
+        At the time of this role creation, we are in Divison B, which is why this is not a big issue. In the future, this must be handled according to the todo above.
+        """
+        reset = 0
         for i in range(self._num_seekers):
-            if i not in range(len(formation)):
-                break
-            my_region = formation[i]
+            if i not in range(len(regions)):
+                i = reset
+                reset += 1 if reset < 4 else 0
+            my_region = regions[i]
             self._used_regions.append(my_region)
             centroid = centroid_list[i]
             self._used_centroids.append(centroid)
