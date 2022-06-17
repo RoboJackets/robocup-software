@@ -2,11 +2,14 @@
 
 #include <vector>
 
+#include <rj_constants/constants.hpp>
+
 #include "planning/instant.hpp"
 #include "planning/planner/planner.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
 #include "planning/trajectory_utils.hpp"
+#include "rj_geometry/point.hpp"
 #include "rrt_util.hpp"
 
 using namespace rj_geometry;
@@ -57,6 +60,25 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
         CreatePath::rrt(params.start.linear_motion(), params.goal, params.constraints.mot,
                         params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
 
+    // if the initial path is empty, the goal must be blocked
+    // try to shift the goal_point until it is no longer blocked
+    int max_tries = 10;  // try max this many times before giving up (and sending NOP)
+    LinearMotionInstant almost_goal = params.goal;
+    rj_geometry::Point shift_dir = (params.start.position() - params.goal.position).normalized();
+    double shift_size = 2.0 * kRobotRadius;
+
+    for (int i = 0; i < max_tries; i++) {
+        if (!path.empty()) {
+            break;
+        }
+
+        almost_goal.position += shift_dir * shift_size;
+
+        path =
+            CreatePath::rrt(params.start.linear_motion(), almost_goal, params.constraints.mot,
+                            params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
+    }
+
     if (!path.empty()) {
         if (path.begin_time() > path.end_time()) {
             throw std::runtime_error("Invalid trajectory");
@@ -87,7 +109,8 @@ Trajectory Replanner::check_better(const Replanner::PlanParams& params, Trajecto
 }
 
 Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous) {
-    rj_geometry::Point goal_point = params.goal.position;
+    rj_geometry::Point goal_point = params.goal.position;  // TODO: why does this one not need ()
+    rj_geometry::Point start_point = params.start.position();
 
     if (!previous.empty() && !previous.time_created().has_value()) {
         throw std::invalid_argument(
