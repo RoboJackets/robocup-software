@@ -63,7 +63,6 @@ class GameplayNode(Node):
                 # None = our choice for "no test play"
                 continue
             module_name = "rj_gameplay.play." + play[: play.find(".")]
-            print(module_name)
             module = importlib.import_module(module_name)
             globals().update(
                 {n: getattr(module, n) for n in module.__all__}
@@ -72,7 +71,6 @@ class GameplayNode(Node):
                     k: v for (k, v) in module.__dict__.items() if not k.startswith("_")
                 }
             )
-            print(globals())
 
         self.declare_parameter("test_play", "None")
 

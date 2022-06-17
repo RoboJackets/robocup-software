@@ -32,8 +32,6 @@ class OneRobot(stp.play.Play):
         self.robot_id = 0
         self.robot = None
 
-        # self.face_point = np.array([0.0, 0.0])
-
     def tick(
         self,
         world_state: stp.rc.WorldState,
@@ -68,7 +66,7 @@ class OneRobot(stp.play.Play):
 
         # TODO: only making this intent change when the move skill is reinitialized produces much smoother behavior, but makes our planning unable to respond to moving obstacles
         # I think skills should be in C++, so we can actually use the replanner (currently all planning is from scratch because we send fresh move intents every tick)
-        intents[0] = self.move_skill.tick(world_state)
+        intents[self.robot_id] = self.move_skill.tick(world_state)
 
         return intents
 
