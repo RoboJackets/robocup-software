@@ -36,6 +36,13 @@ explore in other locations such as scrap paper. Once you have several solutions,
 you can pick the one you like the best, and more neatly copy the work on to the
 test you will hand in.
 
+.. figure:: https://git-scm.com/book/en/v2/images/basic-branching-1.png
+   :width: 80%
+   :align: center
+   :alt: Example of Master Branch
+
+   Example of Master Branch
+
 Our master branch which is named ``ros2`` can be found `here <https://github.com/RoboJackets/robocup-software>`_.
 The code in latest ``ros2`` is always neat and untouched. It can always compile. When you first clone our codebase from git to view the simulator and soccer, you are using the code in ``ros2``. It is in all respects, the master copy from which all other contributions are derived. Even if you are eventually given permission to write to master, you should never do so.
 
@@ -48,6 +55,13 @@ progress confused. You should use one (or several) peices of paper for each
 problem you are trying to solve, but should never use one sheet for multiple
 questions.
 
+.. figure:: https://git-scm.com/book/en/v2/images/basic-branching-2.png
+   :width: 80%
+   :align: center
+   :alt: Creating new branch
+
+   Creating new branch
+
 For RoboCup you should create a new branch for every new item you'd like to work
 on and for every bug or issue you have to fix. This ensures that the ``ros2`` branch stays clean. You should never solve more than one issue at a time.
 
@@ -57,6 +71,13 @@ If you read the previous sections, you may be a little overwhelmed. This section
 will describe how these elements interact to form a coherent workflow that will
 allow you to make contributions more easily. You can view an overall diagram of
 how data moves between team members and GitHub.
+
+.. figure:: https://www.git-scm.com/book/en/v2/images/small-team-flow.png
+   :width: 80%
+   :align: center
+   :alt: Multiple developer Git workflow
+
+   Multiple developer Git workflow
 
 Clone the repository from the link in the master section of the doc. You now have a copy of your repository's master branch available to you. When
 you have an idea of what you'd like to contribute, create a new branch before
@@ -79,7 +100,7 @@ If there are any conflics Git can't resolve automatically, it is
 your job to `resolve <https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_ those errors. By merging changes into your contribution, rather than the other way around, you ensure the act of bringing your code into the team's repository will go smoothly. This helps when another member of the team reviews your code as well.
 
 Now that you have a merged branch, you should push the branch to your GitHub.
-From GitHub, you can make a `pull request <https://help.github.com/articles/using-pull-requests/>`_ from your repository against the team's repository.
+From GitHub, you can make a `pull request <https://help.github.com/articles/using-pull-requests/>`_ from your repository against the team's repository. `Here <https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging>`_ is an additional resource for git branching.
 
 .. note::
 
@@ -174,7 +195,7 @@ Text file types that are not supported by doxygen or Sphinx should still be docu
 
 In order to keep the code more readable, code should be formatted and styled
 uniformly. This would be difficult to coordinate across multiple users, so we
-have a program that automatically restyles the code for you. Our precommit hook runs ``make pretty-lines``` which auto-formats the code.
+have a program that automatically restyles the code for you. Our precommit hook runs ``make pretty-lines`` which auto-formats the code.
 
 .. note::
 
