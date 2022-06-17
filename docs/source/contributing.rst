@@ -63,7 +63,8 @@ questions.
    Creating new branch
 
 For RoboCup you should create a new branch for every new item you'd like to work
-on and for every bug or issue you have to fix. This ensures that the ``ros2`` branch stays clean. You should never solve more than one issue at a time.
+on and for every bug or issue you have to fix. This ensures that the ``ros2`` branch stays clean. You should never solve more than one issue at a time. `Here <https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging>`_ is an additional resource for git branching.
+
 
 **Overall Workflow**
 
@@ -100,7 +101,7 @@ If there are any conflics Git can't resolve automatically, it is
 your job to `resolve <https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_ those errors. By merging changes into your contribution, rather than the other way around, you ensure the act of bringing your code into the team's repository will go smoothly. This helps when another member of the team reviews your code as well.
 
 Now that you have a merged branch, you should push the branch to your GitHub.
-From GitHub, you can make a `pull request <https://help.github.com/articles/using-pull-requests/>`_ from your repository against the team's repository. `Here <https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging>`_ is an additional resource for git branching.
+From GitHub, you can make a `pull request <https://help.github.com/articles/using-pull-requests/>`_ from your repository against the team's repository.
 
 .. note::
 
@@ -108,7 +109,7 @@ From GitHub, you can make a `pull request <https://help.github.com/articles/usin
 
 Pull Requests(PR)
 ~~~~~~~~~~~~~~~~~
-Pull requests are how we are able to review each others changes to the master branch. It lets you tell others what changes you would like to make to ``ros2``.You can choose to create a pull request that is ready for review or draft a pull request. These draft PRs do not need to have reviewers assigned nor can it be merged into the master branch.
+Pull requests are how we are able to review each others changes to the master branch. It helps you communicate your changes to ``ros2``. You can choose to create a pull request that is ready for review or draft a pull request. These draft PRs do not need to have reviewers assigned nor can it be merged into the master branch.
 
 Once your PR is ready for review, assign a team member to review the PR. This will notify the team member that you are ready to have your contribution reviewed. Requirements for pull request standards are listed in several sections below. The team member may ask that you fix or touch up some things before the request is accepted. This is normal and common. Once the pull request meets standards, the older member will approve it, and you changes will be complete.
 
