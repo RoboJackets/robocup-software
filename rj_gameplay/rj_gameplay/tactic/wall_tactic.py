@@ -70,6 +70,9 @@ class WallTactic(stp.tactic.Tactic):
         ]
 
         # assign points furthest from vert center of field first
+        #
+        # the first condition (regarding ball's x coord) ensures that the wall
+        # dir doesn't toggle rapidly when ball is near x=0
         if (abs(ball_pt[0]) > 0.5) and abs(end_pts[1][0]) > abs(end_pts[0][0]):
             end_pts[0], end_pts[1] = end_pts[1], end_pts[0]
 
