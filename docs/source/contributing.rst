@@ -94,7 +94,7 @@ your code.
 
 .. tip::
 
-    If the work done on the branch stretches over a long period, it is good practice to merge the master branch often into your personal branch.
+    If the work done on the branch stretches over a long period, it is good practice to frequently merge the master branch into your personal branch.
 
 If there are any conflics Git can't resolve automatically, it is
 your job to `resolve <https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_ those errors. By merging changes into your contribution, rather than the other way around, you ensure the act of bringing your code into the team's repository will go smoothly. This helps when another member of the team reviews your code as well.
@@ -104,7 +104,7 @@ From GitHub, you can make a `pull request <https://help.github.com/articles/usin
 
 .. note::
 
-    A link to a edit a pull request is also automatically generated when the branch is pushed in the command line. You can also use this link to create the pull request.
+    A link to a edit a pull request is also automatically generated when the branch is pushed in the command line. You can use this link to create the pull request.
 
 Pull Requests(PR)
 ~~~~~~~~~~~~~~~~~
