@@ -9,7 +9,7 @@ class BallPlacementClient(Node):
 
     def __init__(self):
         super().__init__("ball_placement_client")
-        self._action_client = ActionClient(self, BallPlacement, "manipulate")
+        self._action_client = ActionClient(self, BallPlacement, "ball_placement")
         self._goal_handle = None
         self.curr_feedback = None
         self.curr_result = None
