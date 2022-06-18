@@ -63,6 +63,8 @@ rosidl_generate_interfaces(
   srv/SetGameSettings.srv
   srv/SimPlacement.srv
   srv/SetManual.srv
+  # Actions
+  action/BallPlacement.action
   DEPENDENCIES
   std_msgs
   builtin_interfaces

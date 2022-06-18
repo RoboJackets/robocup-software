@@ -25,9 +25,11 @@ from rj_msgs import msg
 from rj_msgs.msg import EmptyMotionCommand, RobotIntent
 from std_msgs.msg import String as StringMsg
 from stp.action import IAction
+from stp.gameplay_executor import GameplayExecutor
 from stp.global_parameters import GlobalParameterClient
 
 import rj_gameplay.play_selector as play_selector
+from rj_gameplay.client import ball_placement_client
 
 # ignore "unused import" error
 from rj_gameplay.play import (  # noqa: F401
@@ -57,6 +59,7 @@ class GameplayNode(Node):
     ) -> None:
         rclpy.init()
         super().__init__("gameplay_node")
+        self.ball_placement_client = ball_placement_client.BallPlacementClient()
 
         self._test_play = None
         self._curr_play = None
@@ -140,7 +143,6 @@ class GameplayNode(Node):
         self.robot_statuses: List[conv.RobotStatus] = (
             [conv.RobotStatus()] * NUM_ROBOTS * 2
         )
-        self.ball_placement = None
 
         self.global_parameter_client = GlobalParameterClient(
             self, "global_parameter_server"
@@ -537,4 +539,12 @@ class GameplayNode(Node):
 def main():
     my_play_selector = play_selector.PlaySelector()
     gameplay = GameplayNode(my_play_selector)
-    rclpy.spin(gameplay)
+    executor = GameplayExecutor()
+    executor.add_solo_node(node=gameplay)
+    clients: list = list()
+    clients.append(gameplay.ball_placement_client)
+    executor.add_pool_nodes(clients)
+
+    executor.spin()
+    # TODO: shut down properly?
+    executor.shutdown()

@@ -1,0 +1,8 @@
+# Goal
+BallPlacement ball_placement
+---
+# Result
+bool is_done
+---
+# Feedback
+builtin_interfaces/Duration est_time_remaining
