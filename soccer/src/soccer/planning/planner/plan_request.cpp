@@ -4,17 +4,17 @@ namespace planning {
 
 std::shared_ptr<rj_geometry::Circle> calc_static_robot_obs(const RobotState& robot) {
     // params for obstacle shift
-    double obs_center_shift = 0.2;      // robot radiuses / m/s increase in speed
-    double obs_radius_inflation = 0.2;  // robot radiuses / m/s increase in speed
+    double obs_center_shift = 0.05;     // robot radiuses / m/s increase in speed
+    double obs_radius_inflation = 0.3;  // robot radiuses / m/s increase in speed
 
     // shift obs center off robot
     double vel_mag = robot.velocity.linear().mag();
     rj_geometry::Point unit_vel = robot.velocity.linear().normalized(
         kRobotRadius);  // put velocity in terms of robot radiuses
-    rj_geometry::Point obs_center = robot.pose.position() + (unit_vel * vel_mag * 0.2);
+    rj_geometry::Point obs_center = robot.pose.position() + (unit_vel * vel_mag * obs_center_shift);
 
     // inflate obs radius if needed
-    double safety_margin = vel_mag * 0.2;
+    double safety_margin = vel_mag * obs_radius_inflation;
     double obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
     return std::make_shared<rj_geometry::Circle>(obs_center, obs_radius);
 }
