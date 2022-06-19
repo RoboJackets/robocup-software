@@ -124,6 +124,7 @@ struct PlanRequest {
  * ...
  *
  * @param robot ptr to robot that needs obstacle made
+ * @return shared_ptr to new Circle obstacle with inflated radius and center
  */
 std::shared_ptr<rj_geometry::Circle> calc_static_robot_obs(const RobotState& robot);
 
