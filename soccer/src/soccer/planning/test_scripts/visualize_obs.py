@@ -3,13 +3,12 @@ import numpy as np
 
 
 def create_static_obs(robot_radius, robot_center, robot_velocity):
-    obs_center_shift = 0.05
-    obs_radius_inflation = 0.3
+    obs_center_shift = 0.5
+    obs_radius_inflation = 0.5
+
+    obs_center = robot_center + (robot_velocity * robot_radius * obs_center_shift)
 
     vel_mag = np.linalg.norm(robot_velocity)
-    unit_vel = robot_velocity / (vel_mag + 1e-9)
-    obs_center = robot_center + (unit_vel * obs_center_shift * vel_mag)
-
     safety_margin = vel_mag * obs_radius_inflation
     obs_radius = robot_radius + robot_radius * safety_margin
 
@@ -45,8 +44,8 @@ def main():
     # fig.savefig('plotcircles.png')
     ax.set_aspect("equal", adjustable="box")
     plt.axis("square")
-    plt.xlim(-5 * robot_radius, 5 * robot_radius)
-    plt.ylim(-5 * robot_radius, 5 * robot_radius)
+    plt.xlim(-10 * robot_radius, 10 * robot_radius)
+    plt.ylim(-10 * robot_radius, 10 * robot_radius)
     plt.show()
 
 
