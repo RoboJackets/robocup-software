@@ -110,7 +110,6 @@ Trajectory Replanner::check_better(const Replanner::PlanParams& params, Trajecto
 
 Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous) {
     rj_geometry::Point goal_point = params.goal.position;
-    rj_geometry::Point start_point = params.start.position();
 
     if (!previous.empty() && !previous.time_created().has_value()) {
         throw std::invalid_argument(
