@@ -1,5 +1,5 @@
 # Goal
-BallPlacement ball_placement
+rj_geometry_msgs/Point goal_pt
 ---
 # Result
 bool is_done
