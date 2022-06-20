@@ -22,7 +22,7 @@ PlannerNode::PlannerNode()
     robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         auto planner =
-            std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
+            std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
         robots_planners_.emplace_back(std::move(planner));
     }
 }
@@ -37,14 +37,14 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
           fmt::format("planning_{}", robot_id)} {
-    planners_.push_back(std::make_unique<PathTargetPlanner>());
-    planners_.push_back(std::make_unique<SettlePlanner>());
-    planners_.push_back(std::make_unique<CollectPlanner>());
-    planners_.push_back(std::make_unique<LineKickPlanner>());
-    planners_.push_back(std::make_unique<PivotPathPlanner>());
+    planners_.push_back(std::make_shared<PathTargetPlanner>());
+    planners_.push_back(std::make_shared<SettlePlanner>());
+    planners_.push_back(std::make_shared<CollectPlanner>());
+    planners_.push_back(std::make_shared<LineKickPlanner>());
+    planners_.push_back(std::make_shared<PivotPathPlanner>());
 
     // The empty planner should always be last.
-    planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
+    planners_.push_back(std::make_shared<EscapeObstaclesPathPlanner>());
 
     // Set up ROS
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
@@ -125,12 +125,14 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
         // If this planner could possibly plan for this command, try to make
         // a plan.
         if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
+            current_planner_ = planner;
             trajectory = planner->plan(request);
         }
 
         // If it fails, or if the planner was not used, the trajectory will
         // still be empty. Reset the planner.
         if (trajectory.empty()) {
+            current_planner_ = nullptr;
             planner->reset();
         } else {
             if (!trajectory.angles_valid()) {
@@ -163,9 +165,19 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
 
     return trajectory;
 }
+
 bool PlannerForRobot::robot_alive() const {
     return shared_state_->world_state()->our_robots.at(robot_id_).visible &&
            RJ::now() < shared_state_->world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+}
+
+bool PlannerForRobot::is_done() const {
+    // no segfaults
+    if (current_planner_ == nullptr) {
+        return false;
+    }
+
+    return current_planner_->is_done();
 }
 
 }  // namespace planning

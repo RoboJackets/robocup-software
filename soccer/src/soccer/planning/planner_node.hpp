@@ -164,8 +164,14 @@ private:
      */
     [[nodiscard]] bool robot_alive() const;
 
+    /*
+     * @return true if current planner is done, false otherwise.
+     */
+    bool is_done() const;
+
     rclcpp::Node* node_;
-    std::vector<std::unique_ptr<Planner>> planners_;
+    std::vector<std::shared_ptr<Planner>> planners_;
+    std::shared_ptr<Planner> current_planner_;
 
     int robot_id_;
     TrajectoryCollection* robot_trajectories_;
@@ -188,7 +194,7 @@ public:
     PlannerNode();
 
 private:
-    std::vector<std::unique_ptr<PlannerForRobot>> robots_planners_;
+    std::vector<std::shared_ptr<PlannerForRobot>> robots_planners_;
     TrajectoryCollection robot_trajectories_;
     SharedStateInfo shared_state_;
     ::params::LocalROS2ParamProvider param_provider_;

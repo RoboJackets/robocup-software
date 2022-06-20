@@ -42,6 +42,11 @@ public:
      */
     virtual void reset() {}
 
+    /*
+     * @return true if planner is done, false otherwise.
+     */
+    bool is_done() const { return false; };
+
     /**
      * Get a user-readable name for this planner.
      */
