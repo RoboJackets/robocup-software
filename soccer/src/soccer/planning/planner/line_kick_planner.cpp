@@ -252,4 +252,6 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     return path;
 }
 
+bool LineKickPlanner::is_done() const { return false; }
+
 }  // namespace planning

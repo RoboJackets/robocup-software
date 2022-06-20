@@ -163,6 +163,11 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
 
     debug_draw_.publish();
 
+    // TODO(Kevin): delete this debug print
+    if (this->is_done()) {
+        SPDLOG_ERROR("{} is_done", current_planner_->name());
+    }
+
     return trajectory;
 }
 

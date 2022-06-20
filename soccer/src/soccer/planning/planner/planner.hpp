@@ -45,7 +45,7 @@ public:
     /*
      * @return true if planner is done, false otherwise.
      */
-    bool is_done() const { return false; };
+    virtual bool is_done() const = 0;
 
     /**
      * Get a user-readable name for this planner.

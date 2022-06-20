@@ -48,6 +48,8 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     return trajectory;
 }
 
+bool PathTargetPlanner::is_done() const { return false; }
+
 AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {
     auto angle_override = std::get<PathTargetCommand>(request.motion_command).angle_override;
     if (std::holds_alternative<TargetFacePoint>(angle_override)) {

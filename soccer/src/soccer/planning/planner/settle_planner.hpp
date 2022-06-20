@@ -29,6 +29,7 @@ public:
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override;
+    bool is_done() const override;
 
     static void create_configuration(Configuration* cfg);
 

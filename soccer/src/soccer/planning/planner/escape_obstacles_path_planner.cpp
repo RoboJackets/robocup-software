@@ -91,4 +91,6 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
     return goal;
 }
 
+bool EscapeObstaclesPathPlanner::is_done() const { return false; }
+
 }  // namespace planning

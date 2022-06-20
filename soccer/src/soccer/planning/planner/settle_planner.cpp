@@ -536,4 +536,6 @@ void SettlePlanner::reset() {
     previous_ = Trajectory{};
 }
 
+bool SettlePlanner::is_done() const { return false; }
+
 }  // namespace planning

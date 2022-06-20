@@ -394,4 +394,6 @@ void CollectPlanner::reset() {
     path_coarse_target_initialized_ = false;
 }
 
+bool CollectPlanner::is_done() const { return false; }
+
 }  // namespace planning

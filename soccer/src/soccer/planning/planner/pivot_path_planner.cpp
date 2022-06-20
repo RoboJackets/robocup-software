@@ -98,4 +98,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     return path;
 }
 
+bool PivotPathPlanner::is_done() const { return false; }
+
 }  // namespace planning

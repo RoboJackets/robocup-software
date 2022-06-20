@@ -48,6 +48,7 @@ public:
     static double step_size() { return escape::PARAM_step_size; }
 
     void reset() override { previous_target_ = std::nullopt; }
+    bool is_done() const override;
 
 private:
     PathTargetPlanner planner_;

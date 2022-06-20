@@ -78,4 +78,6 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
+bool InterceptPlanner::is_done() const { return false; }
+
 }  // namespace planning

@@ -20,6 +20,7 @@ public:
 
     Trajectory plan(const PlanRequest& request) override;
     void reset() override { previous_ = Trajectory(); }
+    bool is_done() const override;
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;

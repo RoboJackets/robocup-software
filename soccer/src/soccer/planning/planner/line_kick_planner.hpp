@@ -30,6 +30,7 @@ public:
         target_kick_pos_ = std::nullopt;
         reuse_path_count_ = 0;
     }
+    bool is_done() const override;
 
 private:
     Trajectory prev_path_;

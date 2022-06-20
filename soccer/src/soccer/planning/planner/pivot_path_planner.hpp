@@ -21,6 +21,7 @@ public:
         cached_pivot_target_ = std::nullopt;
         cached_pivot_point_ = std::nullopt;
     }
+    bool is_done() const override;
 
 private:
     Trajectory previous_;
