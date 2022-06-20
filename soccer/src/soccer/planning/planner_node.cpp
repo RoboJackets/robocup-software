@@ -88,6 +88,9 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     std::array<const Trajectory*, kNumShells> planned_trajectories = {};
 
     for (int i = 0; i < kNumShells; i++) {
+        // TODO(Kevin): check that priority works (seems like
+        // robot_trajectories_ is passed on init, when no planning has occured
+        // yet)
         const auto& [trajectory, priority] = robot_trajectories_hold.at(i);
         if (i != robot_id_ && priority >= intent.priority) {
             planned_trajectories.at(i) = trajectory.get();

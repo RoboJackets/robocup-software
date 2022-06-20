@@ -126,6 +126,11 @@ private:
     WorldState last_world_state_;
 };
 
+/**
+ * Interface for one robot's planning, or RobotIntent to Trajectory (path +
+ * velocities) translation. Planner node makes N PlannerForRobots and handles
+ * them all.
+ */
 class PlannerForRobot {
 public:
     PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories,
@@ -139,9 +144,24 @@ public:
     ~PlannerForRobot() = default;
 
 private:
+    /**
+     * Create a PlanRequest based on the given RobotIntent. This is how
+     * RobotIntents end up in the right planner (e.g. how a Pivot skill
+     * goes to PivotPath planner).
+     */
     PlanRequest make_request(const RobotIntent& intent);
+
+    /*
+     * Get a Trajectory based on the PlanRequest by ticking through all
+     * available planners (planners each implement an
+     * "is_applicable(PlanRequest.motion_command)").
+     */
     Trajectory plan_for_robot(const planning::PlanRequest& request);
 
+    /*
+     * Check that robot is visible in world_state and that world_state has been
+     * updated recently.
+     */
     [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
@@ -160,6 +180,9 @@ private:
     rj_drawing::RosDebugDrawer debug_draw_;
 };
 
+/**
+ * ROS node that spawns many PlannerForRobots and helps coordinate them.
+ */
 class PlannerNode : public rclcpp::Node {
 public:
     PlannerNode();
