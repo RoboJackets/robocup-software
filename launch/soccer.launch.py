@@ -148,6 +148,14 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(str(launch_dir / "global_param_server.launch.py"))
     )
 
+    ball_placement = Node(
+            package="rj_robocup",
+            executable="ball_placement_server_node",
+            output="screen",
+            parameters=[config],
+            on_exit=Shutdown(),
+    )
+
     return LaunchDescription(
         [
             DeclareLaunchArgument("team_flag", default_value="-y"),

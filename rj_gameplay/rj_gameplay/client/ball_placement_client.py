@@ -16,7 +16,7 @@ class BallPlacementClient(Node):
 
     def send_goal(self, ball_placement: BallPlacement):
         goal_msg = BallPlacement.Goal()
-        goal_msg.ball_placement = ball_placement
+        goal_msg.goal_pt = ball_placement
 
         self._action_client.wait_for_server()
 
