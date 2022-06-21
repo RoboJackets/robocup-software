@@ -12,7 +12,6 @@ import stp.tactic as tactic
 from rj_msgs.msg import RobotIntent
 from stp.role.assignment.naive import NaiveRoleAssignment
 
-from rj_gameplay.calculations import wall_calculations
 from rj_gameplay.tactic import (
     dumb_tactic,
     goalie_tactic,
