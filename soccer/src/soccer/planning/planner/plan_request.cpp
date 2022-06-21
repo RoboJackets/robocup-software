@@ -5,7 +5,7 @@ namespace planning {
 std::shared_ptr<rj_geometry::Circle> calc_static_robot_obs(const RobotState& robot) {
     // params for obstacle shift
     double obs_center_shift = 0.5;
-    double obs_radius_inflation = 1;
+    double obs_radius_inflation = 1.0;
 
     // shift obs center off robot
     rj_geometry::Point obs_center =
