@@ -165,6 +165,7 @@ def generate_launch_description():
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
             DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
+            ball_placement,
             config_server,
             global_param_server,
             soccer,

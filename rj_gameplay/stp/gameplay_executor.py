@@ -2,7 +2,6 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
-import rclpy
 from rclpy.executors import Executor
 from rclpy.node import Node
 
