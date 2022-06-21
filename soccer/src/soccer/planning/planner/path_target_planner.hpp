@@ -20,7 +20,12 @@ public:
 
     Trajectory plan(const PlanRequest& request) override;
     void reset() override { previous_ = Trajectory(); }
+
     bool is_done() const override;
+
+    // vars to tell if is_done
+    std::optional<rj_geometry::Point> cached_start_pt_;
+    std::optional<rj_geometry::Point> cached_goal_pt_;
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;

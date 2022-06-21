@@ -165,7 +165,7 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
 
     // TODO(Kevin): delete this debug print
     if (this->is_done()) {
-        SPDLOG_ERROR("{} is_done", current_planner_->name());
+        SPDLOG_ERROR("robot {}'s {} is_done", robot_id_, current_planner_->name());
     }
 
     return trajectory;

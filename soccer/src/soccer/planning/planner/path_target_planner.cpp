@@ -30,6 +30,9 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     LinearMotionInstant goal_instant = command.goal;
     Point goal_point = goal_instant.position;
 
+    cached_start_pt_ = request.start.position();
+    cached_goal_pt_ = goal_point;
+
     // Debug drawing
     if (request.debug_drawer != nullptr) {
         request.debug_drawer->draw_circle(Circle(goal_point, static_cast<float>(draw_radius)),
@@ -48,7 +51,11 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     return trajectory;
 }
 
-bool PathTargetPlanner::is_done() const { return false; }
+bool PathTargetPlanner::is_done() const {
+    if (!cached_start_pt_.has_value() || !cached_goal_pt_.has_value()) return false;
+
+    return cached_start_pt_.value().dist_to(cached_goal_pt_.value()) < 1e-2;
+}
 
 AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {
     auto angle_override = std::get<PathTargetCommand>(request.motion_command).angle_override;
