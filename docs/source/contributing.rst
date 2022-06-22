@@ -203,7 +203,7 @@ The following is the docstring format:
      */
     """
 
-Smaller commments about specific lines of code should be include in the ``.cpp`` files.
+Smaller commments about specific lines of code should be included in the ``.cpp`` files.
 
 **Style and Formatting**
 
@@ -242,9 +242,9 @@ You can check your work by building locally or asking whoever maintains these do
 
 **Local Building**
 
-Locally building the docs is a troublesome process to check your branch's changes. Unless you are the person who maintains the docs, it would not be worth the trouble. However, this section explains how to locally build our docs.
+Locally building the docs is a troublesome process to check your branch's changes. Unless you are the person who maintains the docs, it is not worth the trouble. However, this section explains how to locally build our docs.
 
-You must install all of the dependencies in ``docs/requirements.txt`` file. After doing so, change directories to the docs folder in our code base and ``make html``. This will create multiple build files that should NOT be commited to your branch nor ``ros2``.
+You must install all of the dependencies in ``docs/requirements.txt`` file. After doing so, change directories to the ``docs`` folder in our code base and ``make html``. This will create multiple build files that should NOT be commited to your branch nor ``ros2``.
 
 .. note::
 
@@ -252,7 +252,7 @@ You must install all of the dependencies in ``docs/requirements.txt`` file. Afte
 
 This will generate the docs with the changes made from your branch. When commiting to your branch, make sure to exclude the build files.
 
-**RTD Branch Pointer**
+**Branch Version**
 
 The dcoumentation maintainer should go to the webpage, activate a version that points to the new doc development branch, and build that version, then give you the link.
 
