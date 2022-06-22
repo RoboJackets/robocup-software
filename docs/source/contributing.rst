@@ -204,6 +204,7 @@ The following is the docstring format:
     """
 
 Smaller commments about specific lines of code should be include in the ``.cpp`` files.
+
 **Style and Formatting**
 
 In order to keep the code more readable, code should be formatted and styled
@@ -241,13 +242,19 @@ You can check your work by building locally or asking whoever maintains these do
 
 **Local Building**
 
+Locally building the docs is a troublesome process to check your branch's changes. Unless you are the person who maintains the docs, it would not be worth the trouble. However, this section explains how to locally build our docs.
+
+You must install all of the dependencies in ``docs/requirements.txt`` file. After doing so, change directories to the docs folder in our code base and ``make html``. This will create multiple build files that should NOT be commited to your branch nor ``ros2``.
+
 .. note::
 
-    If you are maintaining these docs, you must install the requirements in ``docs/requirements.txt``.
+    DO NOT COMMIT THE BUILD FILES GENERATED WHEN LOCALLY BUILDING!
+
+This will generate the docs with the changes made from your branch. When commiting to your branch, make sure to exclude the build files.
 
 **RTD Branch Pointer**
 
-They should go to the webpage, add a version that points to the new doc development branch, and build that version, then give you the link.
+The dcoumentation maintainer should go to the webpage, activate a version that points to the new doc development branch, and build that version, then give you the link.
 
 .. note::
 
