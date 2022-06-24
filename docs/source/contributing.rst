@@ -2,7 +2,7 @@ Contributing
 ============
 This guide targets new members who are keen on contributing to the
 project. This guide will focus on the overall picture of effective coding and
-contributions as well as writing documentation. It is not intended to be a technical guide. Please refer to the tutorial docs for initial understanding of the technical skillset needed for RoboCup.
+contributions as well as writing documentation. It is not intended to be a technical guide. Please refer to the tutorial docs for initial understanding of the technical skill-set needed for RoboCup.
 
 If you don't have an overall idea of what the competition is like and what its
 goals are, you can brush up at the `RoboCup Wiki <http://wiki.robojackets.org/w/RoboCup>`_.
@@ -51,7 +51,7 @@ The code in latest ``ros2`` is always neat and untouched. It can always compile.
 Branches are like pieces of scrap paper. You can use them to organize your work
 and solutions to the test questions. You should not have work regarding
 different problems mixed across several pieces of paper; you may get your
-progress confused. You should use one (or several) peices of paper for each
+progress confused. You should use one (or several) pieces of paper for each
 problem you are trying to solve, but should never use one sheet for multiple
 questions.
 
@@ -97,7 +97,7 @@ your code.
 
     If the work done on the branch stretches over a long period, it is good practice to frequently merge the master branch into your personal branch.
 
-If there are any conflics Git can't resolve automatically, it is
+If there are any conflicts Git can't resolve automatically, it is
 your job to `resolve <https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_ those errors. By merging changes into your contribution, rather than the other way around, you ensure the act of bringing your code into the team's repository will go smoothly. This helps when another member of the team reviews your code as well.
 
 Now that you have a merged branch, you should push the branch to your GitHub.
@@ -129,7 +129,7 @@ If your request isn't accepted right away, don't take it personally. Often your 
 **Continuous Integration**
 
 Continuous Integration (CI) is a tool to help auto-detect problems before they
-are merged into the main respository and have a chance to cause problems. Every
+are merged into the main repository and have a chance to cause problems. Every
 time you submit a pull request, our CI tools run and will assign a passing
 or failing mark to the request. If the CI fails, you will need to fix the error in your code before the code review.
 
@@ -187,7 +187,7 @@ For more information on writing Sphinx docstrings, see `this link <https://sphin
 
 **C++**
 
-The guide for C++ docstrings is followed by most C++ files in our codebase. Include the doctrings in the ``.hpp`` files.
+The guide for C++ docstrings is followed by most C++ files in our codebase. Include the docstrings in the ``.hpp`` files.
 
 The following is the docstring format:
 
@@ -195,7 +195,7 @@ The following is the docstring format:
 
     """
     /**
-     * @brief [Breif Summary of Method]
+     * @brief [Brief Summary of Method]
      *
      * @param [ParamName] [ParamDescription]
      *
@@ -203,17 +203,17 @@ The following is the docstring format:
      */
     """
 
-Smaller commments about specific lines of code should be included in the ``.cpp`` files.
+Smaller comments about specific lines of code should be included in the ``.cpp`` files.
 
 **Style and Formatting**
 
 In order to keep the code more readable, code should be formatted and styled
 uniformly. This would be difficult to coordinate across multiple users, so we
-have a program that automatically restyles the code for you. Our precommit hook runs ``make pretty-lines`` which auto-formats the code.
+have a program that automatically restyles the code for you. Our pre-commit hook runs ``make pretty-lines`` which auto-formats the code.
 
 .. note::
 
-    You may have to readd the foramtting changes, and commit again.
+    You may have to readd the formatting changes, and commit again.
 
 You can check if the style is passing by running ``make checkstyle``. If there are no errors, then you are good to go.
 
@@ -240,25 +240,25 @@ tree.) The toctree will preserve the order given.
 
 You can check your work by building locally or asking whoever maintains these docs (as of 2022, Kevin Fu) to add your branch as a version on the ReadTheDocs dashboard.
 
+**Building via RTD**
+
+The documentation maintainer should go to the ReadTheDocs dashboard for our repo, activate the version that points to the new doc development branch, and build that version, then give you the link once it builds.
+
+.. note::
+
+    It may take a few minutes for your changes to show up.
+
 **Local Building**
 
-Locally building the docs is a troublesome process to check your branch's changes. Unless you are the person who maintains the docs, it is not worth the trouble. However, this section explains how to locally build our docs.
+This section explains how to locally build our docs. Locally building the docs is not worth the trouble unless you don't have access to the RTD dashboard and whoever does can't be reached.
 
-You must install all of the dependencies in ``docs/requirements.txt`` file. After doing so, change directories to the ``docs`` folder in our code base and ``make html``. This will create multiple build files that should NOT be commited to your branch nor ``ros2``.
+You must install all of the dependencies in ``docs/requirements.txt`` file. This can be done with the  ``python3 -m pip install -r requirements.txt`` command. After doing so, change directories to the ``docs`` folder in our code base and ``make html``. This will create multiple build files that should NOT be committed to your branch nor ``ros2``.
 
 .. note::
 
     DO NOT COMMIT THE BUILD FILES GENERATED WHEN LOCALLY BUILDING!
 
-This will generate the docs with the changes made from your branch. When commiting to your branch, make sure to exclude the build files.
-
-**Branch Version**
-
-The dcoumentation maintainer should go to the webpage, activate a version that points to the new doc development branch, and build that version, then give you the link.
-
-.. note::
-
-    It may take a few minutes for your changes to show up.
+This will generate the docs with the changes made from your branch. When committing to your branch, make sure to exclude the build files.
 
 Finally, if you look at the source files for these docs, you'll notice they are
 nicely formatted to have a max line length of 80 chars. With Vim you can do
