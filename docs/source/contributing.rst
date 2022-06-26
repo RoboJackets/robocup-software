@@ -97,7 +97,7 @@ your code.
 
     If the work done on the branch stretches over a long period, it is good practice to frequently merge the master branch into your personal branch.
 
-If there are any conflicts Git can't resolve automatically, it is
+If there are any conflicts that Git can't resolve automatically, it is
 your job to `resolve <https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_ those errors. By merging changes into your contribution, rather than the other way around, you ensure the act of bringing your code into the team's repository will go smoothly. This helps when another member of the team reviews your code as well.
 
 Now that you have a merged branch, you should push the branch to your GitHub.
@@ -105,7 +105,7 @@ From GitHub, you can make a `pull request <https://help.github.com/articles/usin
 
 .. note::
 
-    A link to a edit a pull request is also automatically generated when the branch is pushed in the command line. You can use this link to create the pull request.
+    A link to a edit a pull request is also automatically generated when the branch is pushed via the command line. You can use this link to create the pull request.
 
 Pull Requests (PR)
 ~~~~~~~~~~~~~~~~~
@@ -256,7 +256,7 @@ You must install all of the dependencies in ``docs/requirements.txt`` file. This
 
 .. note::
 
-    DO NOT COMMIT THE BUILD FILES GENERATED WHEN LOCALLY BUILDING!
+    DO NOT COMMIT THE BUILD FILES GENERATED WHEN LOCALLY BUILDING! Although .gitignore may take care of this issue, it is not a good practice to knowingly commit thousands of files that you have not worked on.
 
 This will generate the docs with the changes made from your branch. When committing to your branch, make sure to exclude the build files.
 
