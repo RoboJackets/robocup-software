@@ -61,7 +61,7 @@ class DiamondFormation(stp.formations.Formations):
     def get_centroids(self) -> List:
         """
         Convenience function for getting center of each region in get_regions()
-        :return: list of region centroids for X_formation
+        :return: list of region centroids for DiamondFormation
         """
         centroids = []
         regions = self.get_regions
