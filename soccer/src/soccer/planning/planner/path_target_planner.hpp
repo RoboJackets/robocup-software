@@ -1,10 +1,13 @@
 #pragma once
-#include <rj_geometry/shape_set.hpp>
 #include <vector>
 
+#include <rj_geometry/shape_set.hpp>
+
 #include "planner.hpp"
+#include "planning/instant.hpp"
 #include "planning/primitives/replanner.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
+#include "rj_geometry/pose.hpp"
 
 namespace planning {
 
@@ -24,8 +27,8 @@ public:
     bool is_done() const override;
 
     // vars to tell if is_done
-    std::optional<rj_geometry::Point> cached_start_pt_;
-    std::optional<rj_geometry::Point> cached_goal_pt_;
+    std::optional<LinearMotionInstant> cached_start_instant_;
+    std::optional<LinearMotionInstant> cached_goal_instant_;
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;
