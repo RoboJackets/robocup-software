@@ -62,8 +62,9 @@ class PrepPenaltyOff(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics.append(prep_move.PrepMove(world_state))
             num_liners = len(world_state.our_visible_robots) - 1
-            start_pt = np.array([-2.0, 1.5])
-            end_pt = np.array([2.0, 1.5])
+            # 7.5 metres to opponent's goal (6 metres to penalty line, 1 metre behind line, then spare distance to be safe)
+            start_pt = np.array([-2.4, 1.5])
+            end_pt = np.array([2.4, 1.5])
             self.prioritized_tactics.append(
                 line_tactic.LineTactic(world_state, num_liners, start_pt, end_pt)
             )
