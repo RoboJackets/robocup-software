@@ -29,8 +29,8 @@ class PenaltyDefense(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             num_liners = len(world_state.our_visible_robots) - 1
-            start_pt = np.array([-3.0, 0.5])
-            end_pt = np.array([-3.0, 5.5])
+            start_pt = np.array([-1.8, 1.5])
+            end_pt = np.array([1.8, 1.5])
             self.prioritized_tactics.append(
                 line_tactic.LineTactic(world_state, num_liners, start_pt, end_pt)
             )
