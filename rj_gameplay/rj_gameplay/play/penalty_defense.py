@@ -29,9 +29,9 @@ class PenaltyDefense(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             num_liners = len(world_state.our_visible_robots) - 1
-            # 7.5 metres to the opponent goal (esigned so that 5 robots can be on the line before the penalty is taken)
-            start_pt = np.array([-1.8, 1.5])
-            end_pt = np.array([1.8, 1.5])
+            # 7.5 metres to our goal (esigned so that 5 robots can be at least 1 metre behind the penalty line before the penalty is taken)
+            start_pt = np.array([-1.8, 7.5])
+            end_pt = np.array([1.8, 7.5])
             self.prioritized_tactics.append(
                 line_tactic.LineTactic(world_state, num_liners, start_pt, end_pt)
             )
