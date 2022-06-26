@@ -1,14 +1,16 @@
 #pragma once
 
-#include <rj_protos/Point.pb.h>
+#include <cmath>
+#include <sstream>
+#include <string>
 
 #include <Eigen/Dense>
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
-#include <cmath>
+
+#include <rj_geometry/util.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
-#include <sstream>
-#include <string>
+#include <rj_protos/Point.pb.h>
 
 namespace rj_geometry {
 
@@ -375,7 +377,14 @@ public:
         return acos(std::max(std::min(angle, 1.0), -1.0));
     }
 
-    [[nodiscard]] bool nearly_equals(Point other) const;
+    [[nodiscard]] bool nearly_equals(Point other, float tolerance = 1e-4) const {
+        return nearly_equal(static_cast<float>(x()), static_cast<float>(other.x()), tolerance) &&
+               nearly_equal(static_cast<float>(y()), static_cast<float>(other.y()), tolerance);
+    }
+
+    static bool nearly_equals(const Point& a, const Point& b, double tolerance = 1e-4) {
+        return a.nearly_equals(b, tolerance);
+    }
 
     [[nodiscard]] std::string to_string() const {
         std::stringstream str;

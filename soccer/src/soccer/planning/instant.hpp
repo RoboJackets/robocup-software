@@ -28,6 +28,12 @@ struct LinearMotionInstant {
     rj_geometry::Point position;
     rj_geometry::Point velocity;
 
+    static bool nearly_equals(const LinearMotionInstant& a, const LinearMotionInstant& b,
+                              double position_tolerance = 1e-4, double velocity_tolerance = 1e-4) {
+        return rj_geometry::Point::nearly_equals(a.position, b.position, position_tolerance) &&
+               rj_geometry::Point::nearly_equals(a.velocity, b.velocity, velocity_tolerance);
+    }
+
     friend std::ostream& operator<<(std::ostream& stream,
                                     const LinearMotionInstant& instant) {
         return stream << "LinearMotionInstant(position=" << instant.position
