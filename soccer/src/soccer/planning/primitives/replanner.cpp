@@ -65,9 +65,9 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
     int max_tries = 10;  // try max this many times before giving up (and sending NOP)
     rj_geometry::Point shift_dir = (params.start.position() - params.goal.position).normalized();
     LinearMotionInstant almost_goal = params.goal;
-    // start iterating 4 robot lengths off of the blocked point
-    almost_goal.position += 4.0 * kRobotRadius * shift_dir;
-    double shift_size = 2.0 * kRobotRadius;
+    // start iterating a little bit off of the blocked point
+    almost_goal.position += 1.0 * kRobotRadius * shift_dir;
+    double shift_size = 1.0 * kRobotRadius;
 
     for (int i = 0; i < max_tries; i++) {
         if (!path.empty()) {
