@@ -63,8 +63,10 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
     // if the initial path is empty, the goal must be blocked
     // try to shift the goal_point until it is no longer blocked
     int max_tries = 10;  // try max this many times before giving up (and sending NOP)
-    LinearMotionInstant almost_goal = params.goal + 4.0 * kRobotRadius * shift_dir;
     rj_geometry::Point shift_dir = (params.start.position() - params.goal.position).normalized();
+    LinearMotionInstant almost_goal = params.goal;
+    // start iterating 4 robot lengths off of the blocked point
+    almost_goal.position += 4.0 * kRobotRadius * shift_dir;
     double shift_size = 2.0 * kRobotRadius;
 
     for (int i = 0; i < max_tries; i++) {
