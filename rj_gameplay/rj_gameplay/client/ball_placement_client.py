@@ -5,7 +5,7 @@ from rj_msgs.action import BallPlacement
 
 
 class BallPlacementClient(Node):
-    """The manipulate action client"""
+    """The ball placement action client"""
 
     def __init__(self):
         super().__init__("ball_placement_client")
@@ -14,9 +14,12 @@ class BallPlacementClient(Node):
         self.curr_feedback = None
         self.curr_result = None
 
-    def send_goal(self, ball_placement: BallPlacement):
+        # TODO: save curr goal and do not resend if the points are the same
+        self.curr_goal = None
+
+    def send_goal(self, goal_pt: Point):
         goal_msg = BallPlacement.Goal()
-        goal_msg.goal_pt = ball_placement
+        goal_msg.goal_pt = goal_pt
 
         self._action_client.wait_for_server()
 

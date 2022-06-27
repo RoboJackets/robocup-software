@@ -7,6 +7,7 @@ import stp.situation as situation
 
 import rj_gameplay.situation.decision_tree.plays as situations
 from rj_gameplay.play import (  # defend_restart,; defensive_clear,; keepaway,; prep_penalty_offense,; restart,
+    ball_placement,
     defense,
     kickoff_play,
     offense,
@@ -189,7 +190,11 @@ class PlaySelector(situation.IPlaySelector):
         game_info = world_state.game_info
         heuristics = HeuristicInformation(world_state, game_info)
 
-        if game_info.is_kickoff():
+        if game_info.is_free_placement():
+            if game_info.our_restart:
+                self.situation = situations.Stop()
+                self.curr_play = ball_placement.BallPlacement()
+        elif game_info.is_kickoff():
             if game_info.our_restart:
                 if game_info.is_setup():
                     self.situation = situations.PrepareKickoff()

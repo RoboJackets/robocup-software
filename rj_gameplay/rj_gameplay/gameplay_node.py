@@ -22,6 +22,7 @@ from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.qos import QoSProfile
 from rj_geometry_msgs import msg as geo_msg
+from rj_geometry_msgs.msg import Point
 from rj_msgs import msg
 from rj_msgs.msg import EmptyMotionCommand, RobotIntent
 from std_msgs.msg import String as StringMsg
@@ -31,6 +32,7 @@ from stp.global_parameters import GlobalParameterClient
 
 import rj_gameplay.play_selector as play_selector
 from rj_gameplay.client import ball_placement_client
+from rj_gameplay.play import ball_placement
 
 NUM_ROBOTS = 16
 
@@ -291,7 +293,16 @@ class GameplayNode(Node):
             else:
                 self._curr_play = self._test_play
 
-            intents = self._curr_play.tick(self.world_state)
+            # TODO: bad design,
+            #  but unresolvable without refactoring gameplay again
+            if type(self._curr_play) is ball_placement.BallPlacement:
+                intents = None
+                game_info = self.world_state.game_info
+                goal_array: np.array = game_info.ball_placement()
+                goal_pt: Point = Point(x=goal_array[0], y=goal_array[1])
+                self.ball_placement_client.send_goal(goal_pt)
+            else:
+                intents = self._curr_play.tick(self.world_state)
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):
@@ -304,6 +315,9 @@ class GameplayNode(Node):
                         empty_command = EmptyMotionCommand()
                         empty_intent.motion_command.empty_command = [empty_command]
                         self.robot_intent_pubs[i].publish(empty_intent)
+            else:
+                # probably using action client instead
+                ...
 
             field = self.world_state.field
             game_info = self.build_game_info()

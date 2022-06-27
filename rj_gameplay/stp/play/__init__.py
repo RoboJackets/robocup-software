@@ -23,6 +23,7 @@ import stp.skill
 import stp.tactic
 import stp.utils.enum
 import stp.utils.typed_key_dict
+from rclpy.node import Node
 from rj_msgs.msg import RobotIntent
 from stp.formations.diamond_formation import DiamondFormation
 
@@ -60,11 +61,11 @@ class Play(ABC):
 
         self.prioritized_tactics: List[stp.tactic.Tactic] = []
         self.approved_prioritized_tactics: List[stp.tactic.Tactic] = []
+        self.client = None
 
     @abstractmethod
     def tick(
-        self,
-        world_state: stp.rc.WorldState,
+        self, world_state: stp.rc.WorldState, client: Optional[Node] = None
     ) -> List[RobotIntent]:
 
         """Performs one "tick" of the specified play.
@@ -76,6 +77,7 @@ class Play(ABC):
 
 
         :param world_state: Current state of the world.
+        :param client: Action client used by play.
         :return: list of robot intents where index = robot_id
         """
         ...
