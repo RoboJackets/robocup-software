@@ -127,9 +127,8 @@ private:
 };
 
 /**
- * Interface for one robot's planning, or RobotIntent to Trajectory (path +
- * velocities) translation. Planner node makes N PlannerForRobots and handles
- * them all.
+ * Interface for one robot's planning, which for us is a RobotIntent to Trajectory
+ * translation. Planner node makes N PlannerForRobots and handles them all.
  */
 class PlannerForRobot {
 public:
@@ -145,21 +144,32 @@ public:
 
 private:
     /**
-     * Create a PlanRequest based on the given RobotIntent. This is how
-     * RobotIntents end up in the right planner (e.g. how a Pivot skill
-     * goes to PivotPath planner).
+     * @brief Create a PlanRequest based on the given RobotIntent.
+     *
+     * @details This is how gameplay's RobotIntents end up in the right planner (e.g.
+     * how a Pivot skill goes to PivotPath planner).
+     *
+     * @param intent RobotIntent msg
+     *
+     * @return PlanRequest based on input RobotIntent
      */
     PlanRequest make_request(const RobotIntent& intent);
 
     /*
-     * Get a Trajectory based on the PlanRequest by ticking through all
-     * available planners (planners each implement an
-     * "is_applicable(PlanRequest.motion_command)").
+     * @brief Get a Trajectory based on the PlanRequest by ticking through all
+     * available planners.
+     *
+     * @details (Each planner implements an "is_applicable(PlanRequest.motion_command)").
+     *
+     * @param request PlanRequest that needs a motion plan made
+     *
+     * @return Trajectory (timestamped series of poses & twists) that satisfies
+     * the PlanRequest as well as possible
      */
     Trajectory plan_for_robot(const planning::PlanRequest& request);
 
     /*
-     * Check that robot is visible in world_state and that world_state has been
+     * @brief Check that robot is visible in world_state and that world_state has been
      * updated recently.
      */
     [[nodiscard]] bool robot_alive() const;

@@ -203,7 +203,7 @@ TEST(Point, normalized) {
 }
 
 TEST(Point, nearly_equals) {
-    float test_tolerance = 1e-4;
+    double test_tolerance = 1e-4;
     EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0, 5), test_tolerance));
     EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 - test_tolerance / 2, 5 + test_tolerance / 2),
                                           test_tolerance));

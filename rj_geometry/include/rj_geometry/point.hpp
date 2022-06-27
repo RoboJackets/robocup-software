@@ -377,7 +377,7 @@ public:
         return acos(std::max(std::min(angle, 1.0), -1.0));
     }
 
-    [[nodiscard]] bool nearly_equals(Point other, float tolerance = 1e-4) const {
+    bool nearly_equals(Point other, double tolerance = 1e-4) const {
         return nearly_equal(static_cast<float>(x()), static_cast<float>(other.x()), tolerance) &&
                nearly_equal(static_cast<float>(y()), static_cast<float>(other.y()), tolerance);
     }
