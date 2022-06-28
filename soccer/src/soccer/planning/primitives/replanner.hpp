@@ -15,6 +15,7 @@ namespace planning {
  * @brief Handles the replanning strategy for an RRT plan generator.
  *
  * This is used to avoid constantly replanning.
+ * TODO(Kevin): gameplay constantly replans bc it spawns new replanner every time, fix that
  */
 class Replanner {
 public:
