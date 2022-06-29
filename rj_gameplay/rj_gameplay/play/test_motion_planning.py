@@ -8,7 +8,7 @@ import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
 
-from rj_gameplay.skill import move
+from rj_gameplay.skill import capture, move
 
 
 class State(Enum):
@@ -157,5 +157,39 @@ class AllBots(stp.play.Play):
             # tick move skills to fill RobotIntents
             for i, move_skill in enumerate(self._move_skills):
                 intents[i] = self._move_skills[i].tick(world_state)
+
+        return intents
+
+
+class CaptureBall(stp.play.Play):
+    """
+    Make robot 0 capture the ball.
+
+    Directly overrides the STP architecture to send RI to gameplay.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._state = "capturing"
+        self.capture_skill = None
+
+        self.robot_id = 0
+        self.robot = None
+
+    def tick(
+        self,
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
+
+        self.robot = world_state.our_robots[self.robot_id]
+        intents = [None for _ in range(16)]
+
+        # None on INIT and state changes
+        if self.capture_skill is None:
+            self.capture_skill = capture.Capture(self.robot)
+
+        # TODO: only making this intent change when the move skill is reinitialized produces much smoother behavior, but makes our planning unable to respond to moving obstacles
+        # I think skills should be in C++, so we can actually use the replanner (currently all planning is from scratch because we send fresh move intents every tick)
+        intents[self.robot_id] = self.capture_skill.tick(world_state)
 
         return intents
