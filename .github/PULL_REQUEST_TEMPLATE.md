@@ -2,7 +2,7 @@
 Describe your pull request.
 
 ## Associated / Resolved Issue
-Resolves # or link to clickup card
+Resolves # or [ClickUp card](link-to-clickup-card)
 
 ## Design Documents
 [Link](link-to-design-doc)
@@ -14,13 +14,18 @@ Resolves # or link to clickup card
 3. Step 3
 
 ## Key Files to Review
-Main PR-related files
+Group 1
+ * File 1
+ * File 2
+Group 2
+ * File 3
+ * File 4
 
 ## Review Checklist
 
-- [ ] **Docstrings**: All methods and classes should have the file appropriate docstrings which follow the guidelines in the "Contributing" page of our docs.
+- [ ] **Docstrings**: All methods and classes should have the file appropriate docstrings which follow the guidelines in the ["Contributing" page](https://rj-rc-software.readthedocs.io/en/latest/contributing.html) of our docs.
 - [ ] **Remove extra print statements**: Any print statements used for debugging should be removed
-- [ ]
+- [ ] **Tag reviewers**: Tag some people for review and ping them on Slack
 
 **Expected result:**???
 
