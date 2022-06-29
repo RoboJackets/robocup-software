@@ -176,10 +176,14 @@ In general, a typical ``Sphinx`` docstring has the following format:
     :rtype: [ReturnType]
     """
 
-Each function should have documentation containing its purpose, what
+Each class and method should have documentation containing its purpose, what
 parameters it takes, and what values it returns. Error handling should be
 described as well: what errors will it produce, and what assumptions it makes
 regarding the validation the caller performs ahead of time.
+
+.. note::
+
+    Inherited methods in subclasses do not need to have a docstring. Ensure that the docstrings are included in the superclass. If helper methods are created in the subclass, they should have docstrings.
 
 If the issue you are working on is a large refactor or a new concept to the codebase, consider editing or adding to the Our Stack page in our docs.
 
@@ -198,7 +202,7 @@ The following is the docstring format:
      * @brief [Brief Summary of Method]
      *
      * @param [ParamName] [ParamDescription]
-     *
+     * @detail [DetailDescription]
      * @return [ReturnDescription]
      */
     """
