@@ -3,6 +3,7 @@
 #include "planning/instant.hpp"
 #include "planning/planner/planner.hpp"
 #include "planning/primitives/replanner.hpp"
+#include "rj_geometry/point.hpp"
 
 namespace planning {
 
@@ -74,6 +75,11 @@ private:
 
     rj_geometry::Point path_coarse_target_;
     bool path_coarse_target_initialized_ = false;
+
+    // is_done vars
+    std::optional<LinearMotionInstant> cached_start_instant_;
+    std::optional<rj_geometry::Point> cached_robot_pos_;
+    std::optional<rj_geometry::Point> cached_ball_pos_;
 };
 
 }  // namespace planning
