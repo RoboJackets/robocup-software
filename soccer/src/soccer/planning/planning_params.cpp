@@ -36,9 +36,9 @@ DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, goal_bias, 0.3,
                   "Chance that the RRT will extend directly towards the goal (unitless)");
 DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, waypoint_bias, 0.5,
                   "Chance that the RRT will extend directly towards a waypoint (unitless)");
-DEFINE_NS_INT64(kPlanningParamModule, rrt, min_iterations, 0,
+DEFINE_NS_INT64(kPlanningParamModule, rrt, min_iterations, 50,
                 "Minimum number of RRT iterations to run (unused without RRT* enabled)");
-DEFINE_NS_INT64(kPlanningParamModule, rrt, max_iterations, 250,
+DEFINE_NS_INT64(kPlanningParamModule, rrt, max_iterations, 500,
                 "Maximum number of RRT iterations to run before giving up");
 
 DEFINE_NS_FLOAT64(

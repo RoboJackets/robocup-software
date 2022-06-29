@@ -13,7 +13,7 @@ namespace planning {
 
 Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
-    rj_geometry::ShapeSet static_obstacles;
+    ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     auto command = std::get<PathTargetCommand>(request.motion_command);
