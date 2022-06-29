@@ -30,7 +30,7 @@ public:
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override;
-    bool is_done() const override;
+    [[nodiscard]] bool is_done() const override;
 
 private:
     // Restarts the state machine if our calculations are whack

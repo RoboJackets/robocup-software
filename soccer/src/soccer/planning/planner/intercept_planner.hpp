@@ -19,6 +19,6 @@ public:
 
     Trajectory plan(const PlanRequest& request) override;
 
-    bool is_done() const override;
+    [[nodiscard]] bool is_done() const override;
 };
 }  // namespace planning

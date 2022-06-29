@@ -34,6 +34,6 @@ static inline T sign(T f) {
 }
 
 // TODO(1485): Make this smaller once we figure out why test are failing in O3.
-static bool nearly_equal(float a, float b, float tolerance = 1e-4) {
+static bool nearly_equal(double a, double b, double tolerance = 1e-4) {
     return std::fabs(a - b) < tolerance;
 }
