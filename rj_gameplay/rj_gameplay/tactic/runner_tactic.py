@@ -19,22 +19,19 @@ class RunnerTactic(stp.tactic.Tactic):
     :type pts: np.ndarray
     """
 
-    def __init__(self, world_state: stp.rc.WorldState, runner_id: int, pts: np.ndarray):
+    def __init__(self, world_state: stp.rc.WorldState, runner_id: int):
         # special case where we want robot 1 to be the runner, from init
         super().__init__(world_state)
-        self.move_points = pts
-        for pt in self.move_points:
-            self._role_requests.append(
-                (stp.role.cost.PickRobotById(runner_id), runner_role.Runner)
-            )
+        self._role_requests.append(
+            (stp.role.cost.PickRobotById(runner_id), runner_role.Runner)
+        )
 
     def init_roles(self, world_state: stp.rc.WorldState) -> None:
         # only has one role, but it's easier to copy-paste the structure
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
-            pt = self.move_points[i]
             if role is runner_role.Runner:
-                self.assigned_roles.append(role(robot, pt))
+                self.assigned_roles.append(role(robot))
 
     def tick(
         self, world_state: stp.rc.WorldState

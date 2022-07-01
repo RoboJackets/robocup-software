@@ -132,7 +132,7 @@ class Play(ABC):
                     - numOfInvisibleRobots
                 )
                 print(
-                    f"Tactic {tactic} denied: {len(tactic.role_requests)} requested roles, but only {numRobotsAvailable} robots available"
+                    f"Tactic {tactic} denied: {len(tactic.role_requests)} requested roles, but only {len(world_state.our_visible_robots) - numRobotsAvailable} robots available"
                 )
         # seeker calculation needs to be done after robots and roles have finalized
         for robot in world_state.our_robots:

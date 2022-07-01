@@ -15,11 +15,18 @@ class Runner(stp.role.Role):
     :type target_point: (, optional)
     """
 
-    def __init__(self, robot: stp.rc.Robot, target_point) -> None:
+    def __init__(self, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
 
-        self.target_point = target_point
-        self.face_point = target_point
+        self.curr = 0
+        self.target_points = [
+            world_state.field.our_left_corner,
+            world_state.field.our_right_corner,
+            world_state.field.their_right_corner,
+            world_state.field.their_left_corner,
+        ]
+        self.target_point = self.target_points[0]
+        self.face_point = self.target_point
 
         self.move_skill = None
 
@@ -36,6 +43,20 @@ class Runner(stp.role.Role):
         if face_point is not None:
             self.face_point = face_point
             skill_needs_update = True
+
+        if (
+            self.move_skill is not None
+            and self.move_skill.is_done(world_state)
+            and self.target_points
+        ):
+            skill_needs_update = True
+            if self.curr < len(self.target_points) - 1:
+                self.target_point = self.target_points[self.curr + 1]
+                self.curr += 1
+            else:
+                self.target_point = self.target_points[0]
+                self.curr = 0
+            self.move_skill = None
 
         # create skill with correct target & face_point
         if skill_needs_update:
