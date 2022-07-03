@@ -37,9 +37,6 @@ find_package(PythonLibs 3.2 REQUIRED)
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
 
-# libusb
-find_package(libusb-1.0 REQUIRED)
-
 # SDL2
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
