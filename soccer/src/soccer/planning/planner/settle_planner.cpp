@@ -536,6 +536,18 @@ void SettlePlanner::reset() {
     previous_ = Trajectory{};
 }
 
-bool SettlePlanner::is_done() const { return false; }
+bool SettlePlanner::is_done() const {
+    // FSM: Intercept -> Dampen
+    // (see process_state_transition())
+    if (current_state_ != SettlePlannerStates::Dampen) {
+        return false;
+    }
+
+    // Dampen is done when the ball is slow-ish, let collect handle actually
+    // taking possession
+    // TODO(Kevin): consider making settle + collect one planner
+    double SETTLE_BALL_SPEED_THRESHOLD = 0.75;
+    return average_ball_vel_.mag() < SETTLE_BALL_SPEED_THRESHOLD;
+}
 
 }  // namespace planning

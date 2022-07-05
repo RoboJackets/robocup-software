@@ -405,17 +405,8 @@ void CollectPlanner::reset() {
 }
 
 bool CollectPlanner::is_done() const {
-    if (current_state_ == CourseApproach) {
-        SPDLOG_WARN("course \n");
-    } else if (current_state_ == FineApproach) {
-        SPDLOG_WARN("fine \n");
-    } else if (current_state_ == Control) {
-        SPDLOG_WARN("control \n");
-    } else {
-        SPDLOG_WARN("??? \n");
-    }
-
     // FSM: CourseApproach -> FineApproach -> Control
+    // (see process_state_transition())
     if (current_state_ != Control) {
         return false;
     }
