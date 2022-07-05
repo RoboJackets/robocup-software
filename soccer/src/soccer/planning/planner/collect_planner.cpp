@@ -87,8 +87,8 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
         // estimate, but downweight the new value heavily
         //
         // e.g. new_avg_vel = (0.8 * avg_vel) + (0.2 * new_vel)
-        average_ball_vel_ = collect::PARAM_target_point_lowpass_gain * average_ball_vel_ +
-                            (1 - collect::PARAM_target_point_lowpass_gain) * ball.velocity;
+        average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity,
+                                                  collect::PARAM_target_point_lowpass_gain);
     }
 
     // Approach direction is the direction we move towards the ball and through
