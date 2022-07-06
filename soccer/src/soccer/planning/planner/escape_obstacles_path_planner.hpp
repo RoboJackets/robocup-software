@@ -32,6 +32,8 @@ public:
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
+    // if no other planners apply, this one does (see the order of planners in
+    // planner_node.cpp)
     [[nodiscard]] bool is_applicable(
         const MotionCommand& /* command */) const override {
         return true;
