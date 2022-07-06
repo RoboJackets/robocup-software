@@ -4,10 +4,9 @@ import time
 from typing import Optional
 
 import stp.rc as rc
-import stp.role as role
 import stp.skill as skill
 from rj_msgs import msg
-from rj_msgs.msg import RobotIntent, SettleMotionCommand
+from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.skill import capture, settle
 
