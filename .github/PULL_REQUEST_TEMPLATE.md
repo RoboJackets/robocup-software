@@ -19,6 +19,7 @@ Resolves # or [ClickUp card](link-to-clickup-card)
 Group 1
  * File 1
  * File 2
+
 Group 2
  * File 3
  * File 4
