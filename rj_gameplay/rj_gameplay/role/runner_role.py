@@ -15,7 +15,7 @@ class Runner(stp.role.Role):
     :type target_point: (, optional)
     """
 
-    def __init__(self, robot: stp.rc.Robot) -> None:
+    def __init__(self, world_state: stp.rc.WorldState, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
 
         self.curr = 0

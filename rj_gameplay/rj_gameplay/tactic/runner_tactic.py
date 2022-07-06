@@ -31,7 +31,7 @@ class RunnerTactic(stp.tactic.Tactic):
         for i, robot in enumerate(self.assigned_robots):
             role = self._role_requests[i][1]
             if role is runner_role.Runner:
-                self.assigned_roles.append(role(robot))
+                self.assigned_roles.append(role(world_state, robot))
 
     def tick(
         self, world_state: stp.rc.WorldState
