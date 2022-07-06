@@ -7,7 +7,7 @@ Resolves # or [ClickUp card](link-to-clickup-card)
 ## Design Documents
 [Link](link-to-design-doc)
 
-## Steps to test
+## Steps to Test
 ### Test Case 1
 1. Step 1
 2. Step 2
