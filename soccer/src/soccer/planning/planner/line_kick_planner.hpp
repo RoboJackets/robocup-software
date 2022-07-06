@@ -37,6 +37,13 @@ private:
     bool final_approach_ = false;
     std::optional<rj_geometry::Point> target_kick_pos_;
     int reuse_path_count_ = 0;
+
+    // ball velocity filtering vars
+    rj_geometry::Point average_ball_vel_;
+    bool average_ball_vel_initialized_ = false;
+
+    // TODO(Kevin): ros params here
+    double IS_DONE_BALL_VEL = 0.5;  // m/s
 };
 
 }  // namespace planning
