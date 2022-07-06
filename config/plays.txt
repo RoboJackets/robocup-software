@@ -8,5 +8,5 @@ penalty_defense.PenaltyDefense()
 penalty_offense.PenaltyOffense()
 test_motion_planning.OneRobot()
 test_motion_planning.AllBots()
-test_motion_planning.CaptureBall()
+test_motion_planning.KickBall()
 None

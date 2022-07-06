@@ -16,7 +16,7 @@ class Pivot(skill.Skill):
         pivot_point: np.ndarray = None,
         target_point: np.ndarray = None,
         dribble_speed: float = 1.0,
-        threshold: float = 0.2,
+        threshold: float = 0.05,
         priority: int = 1,
     ):
         self.robot = robot
@@ -48,7 +48,6 @@ class Pivot(skill.Skill):
         if self.robot is None:
             return False
         angle_threshold = self.threshold
-        angle_threshold = 0.05
         stopped_threshold = (
             5 * self.threshold
         )  # We don't _really_ care about this when we're kicking, if not for latency

@@ -37,8 +37,6 @@ class Capture(skill.Skill):
         return intent
 
     def is_done(self, world_state) -> bool:
-        return False
-
         ball_speed = np.linalg.norm(world_state.ball.vel)
 
         ball_pos = world_state.ball.pos
@@ -47,9 +45,9 @@ class Capture(skill.Skill):
 
         dist_to_ball = np.linalg.norm(robot_pos - ball_pos)
 
-        ball_slow = ball_speed < 0.01
+        ball_slow = ball_speed < 0.05
         ball_close = (
-            dist_to_ball - (RobotConstants.RADIUS + BallConstants.RADIUS) < 0.01
+            dist_to_ball - (RobotConstants.RADIUS + BallConstants.RADIUS) < 0.03
         )
 
         return ball_slow and ball_close
