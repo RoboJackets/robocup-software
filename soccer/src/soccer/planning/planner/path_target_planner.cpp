@@ -74,7 +74,6 @@ bool PathTargetPlanner::is_done() const {
     // may be related to issue #1506?
     double position_tolerance = 1e-2 * temp_correction;
     double velocity_tolerance = 1e-1 * temp_correction;
-    return false;
     return LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
                                               cached_goal_instant_.value(), position_tolerance,
                                               velocity_tolerance);
