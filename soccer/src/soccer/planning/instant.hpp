@@ -28,6 +28,16 @@ struct LinearMotionInstant {
     rj_geometry::Point position;
     rj_geometry::Point velocity;
 
+    /**
+     * @brief Return true if LinearMotionInstant a and b are nearly equal.
+     *
+     * @param a LinearMotionInstant a
+     * @param b LinearMotionInstant b
+     * @param position_tolerance tolerance on position component of LinearMotionInstant
+     * @param velocity_tolerance tolerance on velocity component of LinearMotionInstant
+     * @return True if a and b are within position_tolerance of each other AND velocity_tolerance of
+     * each other
+     */
     static bool nearly_equals(const LinearMotionInstant& a, const LinearMotionInstant& b,
                               double position_tolerance = 1e-4, double velocity_tolerance = 1e-4) {
         return rj_geometry::Point::nearly_equals(a.position, b.position, position_tolerance) &&
