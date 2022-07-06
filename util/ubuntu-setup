@@ -152,10 +152,6 @@ fi
 MACH=$(uname -m)
 unset DPKG_FLAGS
 
-echo "-- Installing udev rules"
-cp -f "$BASE"/util/robocup.rules /etc/udev/rules.d/
-udevadm control --reload || true # reload rules
-
 echo "-- Installing required packages"
 
 PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
