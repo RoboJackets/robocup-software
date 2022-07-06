@@ -1,19 +1,14 @@
 import argparse
 import sys
 import time
-from abc import ABC, abstractmethod
 from typing import Optional
 
 import numpy as np
-import py_trees
 import stp.action as action
 import stp.rc as rc
-import stp.role as role
 import stp.skill as skill
 from rj_msgs.msg import CollectMotionCommand, RobotIntent
 from stp.utils.constants import BallConstants, RobotConstants
-
-import rj_gameplay.eval as eval
 
 
 class Capture(skill.Skill):

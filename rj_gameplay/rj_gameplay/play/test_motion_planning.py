@@ -8,7 +8,7 @@ import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
 
-from rj_gameplay.skill import capture, move, pivot_kick
+from rj_gameplay.skill import move, pivot_kick
 
 
 class State(Enum):
