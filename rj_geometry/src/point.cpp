@@ -2,5 +2,6 @@
 #include <rj_geometry/util.hpp>
 
 namespace rj_geometry {
-// TODO: delete this file
+// TODO(Kevin): delete this file
+// did not do it yet because build system make me sad
 }  // namespace rj_geometry
