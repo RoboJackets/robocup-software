@@ -177,7 +177,7 @@ private:
     /*
      * @return true if current planner is done, false otherwise.
      */
-    bool is_done() const;
+    [[nodiscard]] bool is_done() const;
 
     rclcpp::Node* node_;
     std::vector<std::shared_ptr<Planner>> planners_;
