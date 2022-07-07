@@ -24,7 +24,7 @@ public:
     Trajectory plan(const PlanRequest& request) override;
     void reset() override { previous_ = Trajectory(); }
 
-    bool is_done() const override;
+    [[nodiscard]] bool is_done() const override;
 
     // vars to tell if is_done
     std::optional<LinearMotionInstant> cached_start_instant_;
