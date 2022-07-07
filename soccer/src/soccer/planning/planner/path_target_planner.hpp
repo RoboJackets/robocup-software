@@ -26,10 +26,6 @@ public:
 
     [[nodiscard]] bool is_done() const override;
 
-    // vars to tell if is_done
-    std::optional<LinearMotionInstant> cached_start_instant_;
-    std::optional<LinearMotionInstant> cached_goal_instant_;
-
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;
 
@@ -38,6 +34,10 @@ private:
         const PlanRequest& request);
 
     Trajectory previous_;
+
+    // vars to tell if is_done
+    std::optional<LinearMotionInstant> cached_start_instant_;
+    std::optional<LinearMotionInstant> cached_goal_instant_;
 };
 
 }  // namespace planning
