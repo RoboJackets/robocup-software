@@ -61,21 +61,22 @@ class Move(stp.skill.Skill):
         return intent
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        threshold = 0.3
+        position_tolerance = 1e-2
+        velocity_tolerance = 1e-1
         if self.robot.id is None or world_state is None:
             return False
-        elif (
-            math.sqrt(
-                (world_state.our_robots[self.robot.id].pose[0] - self.target_point[0])
-                ** 2
-                + (world_state.our_robots[self.robot.id].pose[1] - self.target_point[1])
-                ** 2
-            )
-            < threshold
-        ):
-            return True
-        else:
-            return False
+
+        # only linear for now (so this is technically not pose, which
+        # includes angular position)
+        robot_pt = world_state.our_robots[self.robot.id].pose[:2]
+        goal_pt = self.target_point
+        robot_vel = world_state.our_robots[self.robot.id].twist[:2]
+        goal_vel = self.target_vel
+
+        return (
+            np.linalg.norm(robot_pt - goal_pt) < position_tolerance
+            and np.linalg.norm(robot_vel - goal_vel) < velocity_tolerance
+        )
 
     def __str__(self):
         ignore_ball_str = ", ignoring ball" if self.ignore_ball else ""

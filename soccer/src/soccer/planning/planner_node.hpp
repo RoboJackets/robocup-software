@@ -126,6 +126,10 @@ private:
     WorldState last_world_state_;
 };
 
+/**
+ * Interface for one robot's planning, which for us is a RobotIntent to Trajectory
+ * translation. Planner node makes N PlannerForRobots and handles them all.
+ */
 class PlannerForRobot {
 public:
     PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories,
@@ -139,13 +143,45 @@ public:
     ~PlannerForRobot() = default;
 
 private:
+    /**
+     * @brief Create a PlanRequest based on the given RobotIntent.
+     *
+     * @details This is how gameplay's RobotIntents end up in the right planner (e.g.
+     * how a Pivot skill goes to PivotPath planner).
+     *
+     * @param intent RobotIntent msg
+     *
+     * @return PlanRequest based on input RobotIntent
+     */
     PlanRequest make_request(const RobotIntent& intent);
+
+    /*
+     * @brief Get a Trajectory based on the PlanRequest by ticking through all
+     * available planners.
+     *
+     * @details (Each planner implements an "is_applicable(PlanRequest.motion_command)").
+     *
+     * @param request PlanRequest that needs a motion plan made
+     *
+     * @return Trajectory (timestamped series of poses & twists) that satisfies
+     * the PlanRequest as well as possible
+     */
     Trajectory plan_for_robot(const planning::PlanRequest& request);
 
+    /*
+     * @brief Check that robot is visible in world_state and that world_state has been
+     * updated recently.
+     */
     [[nodiscard]] bool robot_alive() const;
 
+    /*
+     * @return true if current planner is done, false otherwise.
+     */
+    [[nodiscard]] bool is_done() const;
+
     rclcpp::Node* node_;
-    std::vector<std::unique_ptr<Planner>> planners_;
+    std::vector<std::shared_ptr<Planner>> planners_;
+    std::shared_ptr<Planner> current_planner_;
 
     int robot_id_;
     TrajectoryCollection* robot_trajectories_;
@@ -160,12 +196,15 @@ private:
     rj_drawing::RosDebugDrawer debug_draw_;
 };
 
+/**
+ * ROS node that spawns many PlannerForRobots and helps coordinate them.
+ */
 class PlannerNode : public rclcpp::Node {
 public:
     PlannerNode();
 
 private:
-    std::vector<std::unique_ptr<PlannerForRobot>> robots_planners_;
+    std::vector<std::shared_ptr<PlannerForRobot>> robots_planners_;
     TrajectoryCollection robot_trajectories_;
     SharedStateInfo shared_state_;
     ::params::LocalROS2ParamProvider param_provider_;

@@ -32,6 +32,8 @@ public:
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
+    // if no other planners apply, this one does (see the order of planners in
+    // planner_node.cpp)
     [[nodiscard]] bool is_applicable(
         const MotionCommand& /* command */) const override {
         return true;
@@ -48,6 +50,7 @@ public:
     static double step_size() { return escape::PARAM_step_size; }
 
     void reset() override { previous_target_ = std::nullopt; }
+    [[nodiscard]] bool is_done() const override;
 
 private:
     PathTargetPlanner planner_;

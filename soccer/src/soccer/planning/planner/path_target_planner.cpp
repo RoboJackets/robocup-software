@@ -2,10 +2,12 @@
 
 #include <utility>
 
+#include <spdlog/spdlog.h>
+
 #include "planning/instant.hpp"
-#include "planning/trajectory.hpp"
 #include "planning/planner/plan_request.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
+#include "planning/trajectory.hpp"
 
 using namespace rj_geometry;
 
@@ -30,6 +32,10 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     LinearMotionInstant goal_instant = command.goal;
     Point goal_point = goal_instant.position;
 
+    // Cache the start and goal instants for is_done()
+    cached_goal_instant_ = goal_instant;
+    cached_start_instant_ = request.start.linear_motion();
+
     // Debug drawing
     if (request.debug_drawer != nullptr) {
         request.debug_drawer->draw_circle(Circle(goal_point, static_cast<float>(draw_radius)),
@@ -46,6 +52,31 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
 
     previous_ = trajectory;
     return trajectory;
+}
+
+bool PathTargetPlanner::is_done() const {
+    if (!cached_start_instant_.has_value() || !cached_goal_instant_.has_value()) {
+        return false;
+    }
+
+    // maximum difference in position and velocity that we can still
+    // consider close enough (in m)
+    // TODO(#1913): connect gameplay to planner is_done to avoid two diff threshold params
+    double temp_correction = 1.2;  // be X% more generous than gameplay so we can see change
+
+    // TODO(Kevin): also, should enforce the desired angle
+    // right now there is a convoluted chain
+    // PathTargetPlanner->Replanner->plan_angles which plans angles depending
+    // on AngleFunction (either desired face point or desired face angle).
+    // nowhere in the chain is there a check if PathTargetPlanner actually is
+    // getting to the desired angle.
+    //
+    // may be related to issue #1506?
+    double position_tolerance = 1e-2 * temp_correction;
+    double velocity_tolerance = 1e-1 * temp_correction;
+    return LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
+                                              cached_goal_instant_.value(), position_tolerance,
+                                              velocity_tolerance);
 }
 
 AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {

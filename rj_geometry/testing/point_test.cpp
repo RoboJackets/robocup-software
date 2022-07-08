@@ -203,14 +203,17 @@ TEST(Point, normalized) {
 }
 
 TEST(Point, nearly_equals) {
-    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0, 5)));
-    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 - kFloatEpsilon / 2, 5 + kFloatEpsilon / 2)));
-    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 + kFloatEpsilon / 2, 5 - kFloatEpsilon / 2)));
+    double test_tolerance = 1e-4;
+    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0, 5), test_tolerance));
+    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 - test_tolerance / 2, 5 + test_tolerance / 2),
+                                          test_tolerance));
+    EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 + test_tolerance / 2, 5 - test_tolerance / 2),
+                                          test_tolerance));
 
-    EXPECT_FALSE(
-        Point(0, 5).nearly_equals(Point(0 - kFloatEpsilon * 1.1, 5 + kFloatEpsilon * 1.1)));
-    EXPECT_FALSE(
-        Point(0, 5).nearly_equals(Point(0 + kFloatEpsilon * 1.1, 5 - kFloatEpsilon * 1.1)));
+    EXPECT_FALSE(Point(0, 5).nearly_equals(
+        Point(0 - test_tolerance * 1.1, 5 + test_tolerance * 1.1), test_tolerance));
+    EXPECT_FALSE(Point(0, 5).nearly_equals(
+        Point(0 + test_tolerance * 1.1, 5 - test_tolerance * 1.1), test_tolerance));
 }
 // TODO(ashaw596) Add tests for angle_to and angle_between once those changes are
 // merged

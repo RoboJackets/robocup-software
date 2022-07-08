@@ -30,9 +30,11 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
                const ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles,
                const std::vector<Point>& bias_waypoints) {
+    // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
     }
+
     // maybe we don't need an RRT
     Trajectory straight_trajectory =
         CreatePath::simple(start, goal, motion_constraints, start_time);

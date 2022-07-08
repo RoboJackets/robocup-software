@@ -1,20 +1,14 @@
-from abc import ABC, abstractmethod
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
 import sys
 import time
-from rj_msgs.msg import RobotIntent, CollectMotionCommand
+from typing import Optional
 
-import stp.skill as skill
-import stp.role as role
+import numpy as np
 import stp.action as action
 import stp.rc as rc
-from typing import Optional
-import numpy as np
-
-from stp.utils.constants import RobotConstants
+import stp.skill as skill
+from rj_msgs.msg import CollectMotionCommand, RobotIntent
+from stp.utils.constants import BallConstants, RobotConstants
 
 
 class Capture(skill.Skill):
@@ -46,8 +40,10 @@ class Capture(skill.Skill):
 
         dist_to_ball = np.linalg.norm(robot_pos - ball_pos)
 
-        ball_slow = ball_speed < 1.0
-        ball_close = dist_to_ball < RobotConstants.RADIUS * 1.3
+        ball_slow = ball_speed < 0.05
+        ball_close = (
+            dist_to_ball - (RobotConstants.RADIUS + BallConstants.RADIUS) < 0.03
+        )
 
         return ball_slow and ball_close
 
