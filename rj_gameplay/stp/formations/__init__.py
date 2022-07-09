@@ -11,8 +11,8 @@ class Formations(ABC):
         self.y_3quarter: float = self.field_y - self.y_quarter
         self.box_xright: float = world_state.field.def_area_x_right_coord
         self.box_xleft: float = world_state.field.def_area_x_left_coord
-        self.field_xleft: float = world_state.field.bot_left_field_loc[0]
-        self.field_xright: float = world_state.field.bot_right_field_loc[0]
+        self.field_xleft: float = world_state.field.our_left_corner[0]
+        self.field_xright: float = world_state.field.our_right_corner[0]
         self.goalpost_left: float = world_state.field.our_goal_post_coordinates[0][0]
         self.goalpost_right: float = world_state.field.our_goal_post_coordinates[1][0]
         self.their_def_area_short_dist_m: float = (

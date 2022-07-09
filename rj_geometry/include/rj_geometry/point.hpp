@@ -1,14 +1,16 @@
 #pragma once
 
-#include <rj_protos/Point.pb.h>
+#include <cmath>
+#include <sstream>
+#include <string>
 
 #include <Eigen/Dense>
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
-#include <cmath>
+
+#include <rj_geometry/util.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
-#include <sstream>
-#include <string>
+#include <rj_protos/Point.pb.h>
 
 namespace rj_geometry {
 
@@ -375,7 +377,29 @@ public:
         return acos(std::max(std::min(angle, 1.0), -1.0));
     }
 
-    [[nodiscard]] bool nearly_equals(Point other) const;
+    /*
+     * @brief Return true if this point is close enough to another Point.
+     *
+     * @param other Point to compare with this point
+     * @tolerance maximum allowed difference in x/y coord to be considered equal
+     * @return true if x/y of this Point are both less than tolerance away from other
+     */
+    [[nodiscard]] bool nearly_equals(Point other, double tolerance = 1e-4) const {
+        return nearly_equal(static_cast<float>(x()), static_cast<float>(other.x()), tolerance) &&
+               nearly_equal(static_cast<float>(y()), static_cast<float>(other.y()), tolerance);
+    }
+
+    /*
+     * @brief Return true if points a and b are close enough to each other.
+     *
+     * @param a Point a
+     * @param b Point b
+     * @tolerance maximum allowed difference in x/y coord to be considered equal
+     * @return true if x/y of Point a are both less than tolerance away from Point b
+     */
+    static bool nearly_equals(const Point& a, const Point& b, double tolerance = 1e-4) {
+        return a.nearly_equals(b, tolerance);
+    }
 
     [[nodiscard]] std::string to_string() const {
         std::stringstream str;

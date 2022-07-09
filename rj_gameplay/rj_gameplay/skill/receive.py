@@ -1,19 +1,14 @@
-from abc import ABC, abstractmethod
-
-import rj_gameplay.eval as eval
 import argparse
-import py_trees
 import sys
 import time
-import numpy as np
 from typing import Optional
 
-import stp.skill as skill
-import stp.role as role
-from rj_gameplay.skill import settle, capture
-from rj_msgs.msg import RobotIntent, SettleMotionCommand
 import stp.rc as rc
+import stp.skill as skill
 from rj_msgs import msg
+from rj_msgs.msg import RobotIntent
+
+from rj_gameplay.skill import capture, settle
 
 
 class Receive(skill.Skill):
@@ -38,7 +33,6 @@ class Receive(skill.Skill):
             return self.settle.tick(world_state)
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-
         return self.capture.is_done(world_state)
 
     def __str__(self):

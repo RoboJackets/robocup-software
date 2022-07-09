@@ -67,6 +67,8 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     double target_angle = pivot_point.angle_to(final_position);
     double angle_change = fix_angle_radians(target_angle - start_angle);
 
+    cached_angle_change_ = angle_change;
+
     constexpr double kMaxInterpolationRadians = 10 * M_PI / 180;
     const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationRadians);
 
@@ -96,6 +98,14 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     previous_ = path;
     return path;
+}
+
+bool PivotPathPlanner::is_done() const {
+    if (!cached_angle_change_.has_value()) {
+        return false;
+    }
+
+    return cached_angle_change_.value() < IS_DONE_ANGLE_CHANGE_THRESH;
 }
 
 }  // namespace planning

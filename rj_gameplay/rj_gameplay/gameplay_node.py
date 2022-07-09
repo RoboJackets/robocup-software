@@ -6,7 +6,8 @@ Contains TestPlaySelector, GameplayNode, and main() which spins GameplayNode
 and allows the PlaySelector to be changed between Test and other forms.
 """
 
-from typing import List, Optional, Tuple
+import importlib
+from typing import List, Optional, Set
 
 import numpy as np
 import rclpy
@@ -16,7 +17,9 @@ import stp.rc as rc
 import stp.situation as situation
 import stp.skill
 import stp.utils.world_state_converter as conv
+from rcl_interfaces.msg import SetParametersResult
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 from rclpy.qos import QoSProfile
 from rj_geometry_msgs import msg as geo_msg
 from rj_msgs import msg
@@ -26,15 +29,6 @@ from stp.action import IAction
 from stp.global_parameters import GlobalParameterClient
 
 import rj_gameplay.play_selector as play_selector
-
-# ignore "unused import" error
-from rj_gameplay.play import (  # noqa: F401
-    defense,
-    keepaway,
-    kickoff_play,
-    line_up,
-    offense,
-)
 
 NUM_ROBOTS = 16
 
@@ -48,18 +42,44 @@ class GameplayNode(Node):
     def __init__(
         self,
         play_selector: situation.IPlaySelector,
-        test_play: Optional[stp.play.Play] = None,
         # TODO: see whether or not world_state is ever not None here
         world_state: Optional[rc.WorldState] = None,
     ) -> None:
         rclpy.init()
         super().__init__("gameplay_node")
 
-        # do not change this line, change the test play passed in at bottom of file
-        self._curr_play = test_play
+        self._test_play = None
+        self._curr_play = None
         self._curr_situation = None
-        # force test play to overwrite play selector if given
-        self._using_test_play = test_play is not None
+
+        file = open("config/plays.txt")
+        self.plays: Set = set(file.read().splitlines())
+        file.close()
+
+        # dynamically import plays based on name in config/plays.txt
+        # https://stackoverflow.com/questions/44492803/dynamic-import-how-to-import-from-module-name-from-variable/44492879#44492879
+        for play in self.plays:
+            if play == "None":
+                # None = our choice for "no test play"
+                continue
+            module_name = "rj_gameplay.play." + play[: play.find(".")]
+            module = importlib.import_module(module_name)
+            globals().update(
+                {n: getattr(module, n) for n in module.__all__}
+                if hasattr(module, "__all__")
+                else {
+                    k: v for (k, v) in module.__dict__.items() if not k.startswith("_")
+                }
+            )
+
+        self.declare_parameter("test_play", "None")
+
+        self.add_on_set_parameters_callback(self.update_test_play)
+
+        """uncomment the below line and use the local param server
+        if we need a more robust param setup.
+        Right now this is overengineering though:"""
+        # local_parameters.register_parameters(self)
 
         self.world_state_sub = self.create_subscription(
             msg.WorldState,
@@ -131,7 +151,6 @@ class GameplayNode(Node):
         self.global_parameter_client = GlobalParameterClient(
             self, "global_parameter_server"
         )
-        local_parameters.register_parameters(self)
 
         # publish def_area_obstacles, global obstacles
         self.def_area_obstacles_pub = self.create_publisher(
@@ -147,6 +166,11 @@ class GameplayNode(Node):
         self.debug_text_pub = self.create_publisher(
             StringMsg, "/gameplay/debug_text", 10
         )
+
+        self.test_play_sub = self.create_subscription(
+            StringMsg, "test_play", self.set_test_play_callback, 1
+        )
+
         self.play_selector: situation.IPlaySelector = play_selector
 
     def set_play_state(self, play_state: msg.PlayState):
@@ -160,7 +184,6 @@ class GameplayNode(Node):
         Publishes the string that shows up in the behavior tree in the Soccer UI.
         """
         debug_text = ""
-        debug_text += f"WorldState: {self.world_state}\n\n"
         debug_text += f"Play: {self._curr_play}\n\n"
 
         # situation is a long, ugly type: shorten before printing
@@ -169,8 +192,8 @@ class GameplayNode(Node):
         debug_text += f"Situation: {short_situation}\n\n"
 
         with np.printoptions(precision=3, suppress=True):
-            for i, tactic in enumerate(self._curr_play.prioritized_tactics):
-                debug_text += f"{i+1}. {tactic}\n\n"
+            for i, tactic in enumerate(self._curr_play.approved_prioritized_tactics):
+                debug_text = f"{i+1}. {tactic}\n\n" + debug_text
         self.debug_text_pub.publish(StringMsg(data=debug_text))
 
     def create_partial_world_state(self, msg: msg.WorldState) -> None:
@@ -235,8 +258,25 @@ class GameplayNode(Node):
         """
         self.update_world_state()
 
+        raw_test_play_str = str(self.get_parameter("test_play").value)
+
+        if raw_test_play_str == "None":
+            # if str is None, switch to None
+            self._test_play = None
+        else:
+            new_play_str = "rj_gameplay.play." + raw_test_play_str
+            curr_play_str = "{0}.{1}()".format(
+                self._test_play.__class__.__module__, self._test_play.__class__.__name__
+            )
+
+            if new_play_str.strip() != curr_play_str.strip():
+                # if new test play str doesn't match current test play, update it
+                # otherwise keep it (for statefulness)
+                play_str = raw_test_play_str[raw_test_play_str.find(".") + 1 :]
+                self._test_play = eval(play_str)
+
         if self.world_state is not None:
-            if not self._using_test_play:
+            if self._test_play is None:
                 new_situation, new_play = self.play_selector.select(self.world_state)
 
                 # if play/situation hasn't changed, keep old play
@@ -245,6 +285,8 @@ class GameplayNode(Node):
                 ) != type(new_situation):
                     self._curr_play = new_play
                     self._curr_situation = new_situation
+            else:
+                self._curr_play = self._test_play
 
             intents = self._curr_play.tick(self.world_state)
 
@@ -479,6 +521,29 @@ class GameplayNode(Node):
     def clear_override_actions(self) -> None:
         self.override_actions = [None] * NUM_ROBOTS
 
+    def update_test_play(self, parameter_list) -> SetParametersResult:
+        """
+        Checks all gameplay node parameters to see if they are valid.
+        Right now test_play is the only one.
+        It should be a string in the plays set.
+        If we use the local param server later, move this logic there.
+        """
+        rejected_parameters = (
+            param
+            for param in parameter_list
+            if param.name == "test_play"
+            and param.type_ is Parameter.Type.STRING
+            and str(param.value) not in self.plays
+        )
+        was_success = not any(rejected_parameters)
+        return SetParametersResult(successful=(was_success))
+
+    def set_test_play_callback(self, test_play_msg: StringMsg):
+        new_test_play = rclpy.parameter.Parameter(
+            "test_play", Parameter.Type.STRING, test_play_msg.data
+        )
+        self.set_parameters([new_test_play])
+
     def shutdown(self) -> None:
         """
         destroys node
@@ -489,11 +554,5 @@ class GameplayNode(Node):
 
 def main():
     my_play_selector = play_selector.PlaySelector()
-
-    # change this line to test different plays (set to None if no desired test play)
-
-    # test_play = defense.Defense()
-    test_play = None
-
-    gameplay = GameplayNode(my_play_selector, test_play)
+    gameplay = GameplayNode(my_play_selector)
     rclpy.spin(gameplay)

@@ -1,0 +1,12 @@
+defense.Defense()
+offense.Offense()
+keepaway.Keepaway()
+kickoff_play.PrepareKickoff()
+kickoff_play.Kickoff()
+kickoff_play.DefendKickoff()
+penalty_defense.PenaltyDefense()
+penalty_offense.PenaltyOffense()
+test_motion_planning.OneRobot()
+test_motion_planning.AllBots()
+test_motion_planning.KickBall()
+None

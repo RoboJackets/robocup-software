@@ -32,7 +32,9 @@ class SeekerRole(stp.role.Role):
         # line-of-sight calculations
         # (LOS is maximized by making dot product of angle between unit vectors as close to 0 as possible)
         ball_dir = lambda pos: pos - world_state.ball.pos
-        ball_dir_norm = lambda pos: ball_dir(pos) / np.linalg.norm(ball_dir(pos))
+        ball_dir_norm = lambda pos: ball_dir(pos) / (
+            1e-9 + np.linalg.norm(ball_dir(pos))
+        )
         opps_to_ball = [
             ball_dir_norm(opp_robot.pose[0:2]) for opp_robot in world_state.their_robots
         ]

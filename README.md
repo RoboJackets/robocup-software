@@ -1,7 +1,10 @@
 # GT RoboJackets RoboCup SSL
-NEW DOCUMENTATION: https://rj-rc-software.rtfd.io
 
-Everything below this line is extremely out of date.
+## NEW DOCUMENTATION
+
+https://rj-rc-software.rtfd.io
+
+## Everything below this line is extremely out of date.
 
 [![16.04 Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
 

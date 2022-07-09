@@ -15,9 +15,6 @@ from typing import (
     TypeVar,
 )
 
-from rj_gameplay.role import unassigned_role
-from rj_msgs.msg import RobotIntent
-
 import stp.action
 import stp.rc
 import stp.role
@@ -26,6 +23,10 @@ import stp.skill
 import stp.tactic
 import stp.utils.enum
 import stp.utils.typed_key_dict
+from rj_msgs.msg import RobotIntent
+from stp.formations.diamond_formation import DiamondFormation
+
+from rj_gameplay.tactic import seek
 
 PropT = TypeVar("PropT")
 
@@ -58,8 +59,6 @@ class Play(ABC):
         # that kicks the problem down to forcing roles to have a RoleAssign property, I suppose
 
         self.prioritized_tactics: List[stp.tactic.Tactic] = []
-        self.prioritized_roles: List[stp.role.Role] = []
-        self.unassigned_roles: List[unassigned_role.UnassignedRole] = []
         self.approved_prioritized_tactics: List[stp.tactic.Tactic] = []
 
     @abstractmethod
@@ -74,6 +73,7 @@ class Play(ABC):
             1. Determine if role assignment is necessary.
             2. If so, perform role assignment with self.assign_roles().
             3. Tick Tactics to aggregate robot_intents with self.get_robot_intents().
+
 
         :param world_state: Current state of the world.
         :return: list of robot intents where index = robot_id
@@ -91,6 +91,7 @@ class Play(ABC):
         """
 
         used_robots = set()
+        unused_robots = set()
         for tactic in self.prioritized_tactics:
             # Will temporarily hold tactic roles. If any roles cannot be filled, the list will be emptied and an error debug message appears
             robots_for_tactic = []
@@ -133,10 +134,19 @@ class Play(ABC):
                 print(
                     f"Tactic {tactic} denied: {len(tactic.role_requests)} requested roles, but only {numRobotsAvailable} robots available"
                 )
-
+        # seeker calculation needs to be done after robots and roles have finalized
         for robot in world_state.our_robots:
-            if robot not in used_robots:
-                self.unassigned_roles.append(unassigned_role.UnassignedRole(robot))
+            if robot not in used_robots and robot.visible:
+                unused_robots.add(robot)
+
+        # make a seek tactic for each of the unassigned robots
+        formation = DiamondFormation(world_state)
+
+        seek_tactic = seek.Seek(world_state, len(unused_robots), formation)
+        if len(unused_robots) > 0:
+            seek_tactic.set_assigned_robots(unused_robots)
+            self.approved_prioritized_tactics.append(seek_tactic)
+            seek_tactic.init_roles(world_state)
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Has to be called after assigned_roles has been called.

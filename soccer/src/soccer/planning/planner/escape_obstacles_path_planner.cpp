@@ -23,8 +23,6 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
         // Keep moving, but slow down the current velocity. This allows us to
         // keep continuity when we have short disruptions in planners (i.e.
         // single frame delay).
-        // TODO(#1464): When the assignment delay is fixed, remove this horrible
-        // hack by using Twist::Zero() instead of start_instant.velocity * 0.8
         Trajectory result{
             {RobotInstant{start_instant.pose, start_instant.velocity * 0.0, start_instant.stamp}}};
         result.mark_angles_valid();
@@ -89,6 +87,13 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
     }
 
     return goal;
+}
+
+bool EscapeObstaclesPathPlanner::is_done() const {
+    // Since this is the lowest priority planner, PlannerForRobot automatically
+    // switches to a more suitable planner when needed.
+    // (see planner_node.cpp)
+    return false;
 }
 
 }  // namespace planning
