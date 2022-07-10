@@ -77,12 +77,18 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
     }
 
     // Initialize the filter to the ball velocity so there's less ramp up
+    // TODO(Kevin): add an issue # here
+    // TODO: when ball velocity = 0 but ball is not in mouth (due to bouncing), this fails
     if (!average_ball_vel_initialized_) {
         average_ball_vel_ = ball.velocity;
         average_ball_vel_initialized_ = true;
     } else {
-        average_ball_vel_ = collect::PARAM_target_point_lowpass_gain * average_ball_vel_ +
-                            (1 - collect::PARAM_target_point_lowpass_gain) * ball.velocity;
+        // Add the newest ball velocity measurement to the average velocity
+        // estimate, but downweight the new value heavily
+        //
+        // e.g. new_avg_vel = (0.8 * avg_vel) + (0.2 * new_vel)
+        average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity,
+                                                  collect::PARAM_target_point_lowpass_gain);
     }
 
     // Approach direction is the direction we move towards the ball and through
@@ -330,6 +336,10 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
                                                                .norm();
     LinearMotionInstant target{target_pos};
 
+    // save for is_done()
+    cached_robot_pos_ = start.position();
+    cached_ball_pos_ = ball.position;
+
     // Try to use the RRTPlanner to generate the path first
     // It reaches the target better for some reason
     std::vector<Point> start_end_points{start.position(), target.position};
@@ -392,6 +402,27 @@ void CollectPlanner::reset() {
     approach_direction_created_ = false;
     control_path_created_ = false;
     path_coarse_target_initialized_ = false;
+}
+
+bool CollectPlanner::is_done() const {
+    // FSM: CourseApproach -> FineApproach -> Control
+    // (see process_state_transition())
+    if (current_state_ != Control) {
+        return false;
+    }
+
+    // control state is done when the ball is slowed AND in mouth
+    // TODO(Kevin): make these into ROS planning params
+    double ball_slow_cutoff = 0.01;  // m/s = ~10% robot radius/s
+    bool ball_is_slow = average_ball_vel_initialized_ && average_ball_vel_.mag() < ball_slow_cutoff;
+
+    // ideal ball-mouth distance = 1 kRobotRadius + 1 kBallRadius
+    // give some leeway with ball_in_mouth_cutoff
+    double ball_in_mouth_cutoff = 0.01;
+    double dist_to_ball = (cached_robot_pos_.value() - cached_ball_pos_.value()).mag();
+    bool ball_in_mouth = dist_to_ball - (kRobotRadius + kBallRadius) < ball_in_mouth_cutoff;
+
+    return ball_is_slow && ball_in_mouth;
 }
 
 }  // namespace planning

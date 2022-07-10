@@ -2,11 +2,14 @@
 
 #include <vector>
 
+#include <rj_constants/constants.hpp>
+
 #include "planning/instant.hpp"
 #include "planning/planner/planner.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
 #include "planning/trajectory_utils.hpp"
+#include "rj_geometry/point.hpp"
 #include "rrt_util.hpp"
 
 using namespace rj_geometry;
@@ -56,6 +59,27 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
     Trajectory path =
         CreatePath::rrt(params.start.linear_motion(), params.goal, params.constraints.mot,
                         params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
+
+    // if the initial path is empty, the goal must be blocked
+    // try to shift the goal_point until it is no longer blocked
+    int max_tries = 10;  // try max this many times before giving up (and sending NOP)
+    rj_geometry::Point shift_dir = (params.start.position() - params.goal.position).normalized();
+    LinearMotionInstant almost_goal = params.goal;
+    // start iterating a little bit off of the blocked point
+    almost_goal.position += 1.0 * kRobotRadius * shift_dir;
+    double shift_size = 1.0 * kRobotRadius;
+
+    for (int i = 0; i < max_tries; i++) {
+        if (!path.empty()) {
+            break;
+        }
+
+        almost_goal.position += shift_dir * shift_size;
+
+        path =
+            CreatePath::rrt(params.start.linear_motion(), almost_goal, params.constraints.mot,
+                            params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
+    }
 
     if (!path.empty()) {
         if (path.begin_time() > path.end_time()) {

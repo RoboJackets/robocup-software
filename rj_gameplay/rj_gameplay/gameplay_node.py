@@ -274,7 +274,6 @@ class GameplayNode(Node):
             )
 
             if new_play_str.strip() != curr_play_str.strip():
-                print("SWITCHING PLAY")
                 # if new test play str doesn't match current test play, update it
                 # otherwise keep it (for statefulness)
                 play_str = raw_test_play_str[raw_test_play_str.find(".") + 1 :]

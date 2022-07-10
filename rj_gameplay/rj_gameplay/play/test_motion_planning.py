@@ -8,7 +8,7 @@ import stp.role
 import stp.role.cost
 from rj_msgs.msg import RobotIntent
 
-from rj_gameplay.skill import move
+from rj_gameplay.skill import move, pivot_kick
 
 
 class State(Enum):
@@ -157,5 +157,46 @@ class AllBots(stp.play.Play):
             # tick move skills to fill RobotIntents
             for i, move_skill in enumerate(self._move_skills):
                 intents[i] = self._move_skills[i].tick(world_state)
+
+        return intents
+
+
+class KickBall(stp.play.Play):
+    """
+    Make robot 0 capture, then kick the ball.
+
+    Directly overrides the STP architecture to send RI to gameplay.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._state = "capturing"
+        self.capture_skill = None
+        self.pivot_kick_skill = None
+
+        self.robot_id = 0
+        self.robot = None
+
+    def tick(
+        self,
+        world_state: stp.rc.WorldState,
+    ) -> List[RobotIntent]:
+
+        self.robot = world_state.our_robots[self.robot_id]
+        intents = [None for _ in range(16)]
+        my_robot_intent = None
+
+        # None on INIT and state changes
+        if self.pivot_kick_skill is None:
+            self.pivot_kick_skill = pivot_kick.PivotKick(
+                robot=self.robot,
+                target_point=np.array([0.0, 6.0]),
+                chip=True,
+                kick_speed=5.0,
+            )
+        else:
+            my_robot_intent = self.pivot_kick_skill.tick(world_state)
+
+        intents[self.robot_id] = my_robot_intent
 
         return intents

@@ -37,9 +37,6 @@ find_package(PythonLibs 3.2 REQUIRED)
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
 
-# libusb
-find_package(libusb-1.0 REQUIRED)
-
 # SDL2
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
@@ -47,7 +44,7 @@ pkg_search_module(SDL2 REQUIRED sdl2)
 # Pthread
 find_package(Threads REQUIRED)
 
-# Boost Python
+# Boost
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
@@ -55,39 +52,6 @@ find_package(
         Boost
         COMPONENTS system
         REQUIRED)
-
-# find boost python This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and
-# 'python' on OS X
-set(FOUND_A_BOOST_PYTHON FALSE)
-# Find the matching boost python implementation
-set(version ${PYTHONLIBS_VERSION_STRING})
-
-string(
-        REGEX
-        REPLACE "[^0-9]"
-        ""
-        boost_py_version
-        "${version}")
-# Get first two numbers of python string
-string(
-        REGEX MATCH
-        "^[0-9][0-9]"
-        boost_py_version
-        "${boost_py_version}")
-
-foreach(possible_name python3 python-py${boost_py_version} python)
-  find_package(
-          Boost
-          COMPONENTS ${possible_name}
-          QUIET)
-  if(Boost_FOUND)
-    set(FOUND_A_BOOST_PYTHON TRUE)
-    break()
-  endif()
-endforeach()
-if(NOT FOUND_A_BOOST_PYTHON)
-  message(FATAL_ERROR "Unable to find a suitable version of boost python")
-endif()
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)

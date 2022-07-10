@@ -13,6 +13,7 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
+    // TODO(Kevin): ros params here
     const float approach_speed = 0.25;
 
     const float ball_avoid_distance = 0.05;
@@ -33,6 +34,20 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     const auto& motion_constraints = plan_request.constraints.mot;
     const auto& rotation_constraints = plan_request.constraints.rot;
     const auto& ball = plan_request.world_state->ball;
+
+    // track ball velocity to know if done or not
+    if (!average_ball_vel_initialized_) {
+        average_ball_vel_ = ball.velocity;
+        average_ball_vel_initialized_ = true;
+    } else {
+        // Add the newest ball velocity measurement to the average velocity
+        // estimate, but downweight the new value heavily
+        //
+        // e.g. new_avg_vel = (0.8 * avg_vel) + (0.2 * new_vel)
+        //
+        // TODO(Kevin): make this gain a ROS param like collect
+        average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity, 0.8);
+    }
 
     if (prev_path_.empty()) {
         final_approach_ = false;
@@ -75,8 +90,8 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     }
 #endif
 
-    // TODO(Kyle): This is laughably high
-    if (ball.velocity.mag() < 10.0) {
+    // only plan line kick if not is_done
+    if (!this->is_done()) {
         LinearMotionInstant target{ball.position,
                                    (command.target - ball.position).normalized(approach_speed)};
 
@@ -134,6 +149,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     }
 
     return Trajectory{};
+    // (Kevin) pretty sure everything under this line is not used
 
     if (!prev_path_.empty() && target_kick_pos_) {
         auto previous_duration_remaining = prev_path_.end_time() - start_instant.stamp;
@@ -250,6 +266,12 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     path.stamp(RJ::now());
     prev_path_ = path;
     return path;
+}
+
+bool LineKickPlanner::is_done() const {
+    // if ball is fast, assume we have kicked it correctly
+    // (either way we can't go recapture it)
+    return average_ball_vel_.mag() > IS_DONE_BALL_VEL;
 }
 
 }  // namespace planning

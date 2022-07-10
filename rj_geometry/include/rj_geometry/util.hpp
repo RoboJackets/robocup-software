@@ -34,8 +34,14 @@ static inline T sign(T f) {
 }
 
 // TODO(1485): Make this smaller once we figure out why test are failing in O3.
-// static const float FLOAT_EPSILON = 0.00001;
-static const float kFloatEpsilon = 1e-4;
-static bool nearly_equal(float a, float b) {
-    return std::fabs(a - b) < kFloatEpsilon;
+/*
+ * @brief Return true if doubles a and b are close enough to each other.
+ *
+ * @param a double a
+ * @param b double b
+ * @tolerance maximum allowed difference in x/y coord to be considered equal
+ * @return true if x/y of double a are both less than tolerance away from double b
+ */
+static bool nearly_equal(double a, double b, double tolerance = 1e-4) {
+    return std::fabs(a - b) < tolerance;
 }

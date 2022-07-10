@@ -47,28 +47,14 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
     bi_rrt.setStartState(start);
     bi_rrt.setGoalState(goal);
 
-    if (straight_line) {
-        // TODO(#1511): Replace this with a check that a straight line doesn't
-        // hit any static obstacles. Set the step size to be the distance
-        // between the start and goal.
-        bi_rrt.setStepSize(state_space->distance(start, goal));
-        // Plan straight toward the goal.
-        bi_rrt.setGoalBias(1);
-        // Try up to five times. If unsuccessful after five tries, there
-        // probably doesn't exist
-        // a straight path.
-        bi_rrt.setMinIterations(0);
-        bi_rrt.setMaxIterations(5);
-    } else {
-        bi_rrt.setStepSize(rrt::PARAM_step_size);
-        bi_rrt.setMinIterations(rrt::PARAM_min_iterations);
-        bi_rrt.setMaxIterations(rrt::PARAM_max_iterations);
-        bi_rrt.setGoalBias(rrt::PARAM_goal_bias);
+    bi_rrt.setStepSize(rrt::PARAM_step_size);
+    bi_rrt.setMinIterations(rrt::PARAM_min_iterations);
+    bi_rrt.setMaxIterations(rrt::PARAM_max_iterations);
+    bi_rrt.setGoalBias(rrt::PARAM_goal_bias);
 
-        if (!waypoints.empty()) {
-            bi_rrt.setWaypoints(waypoints);
-            bi_rrt.setWaypointBias(rrt::PARAM_waypoint_bias);
-        }
+    if (!waypoints.empty()) {
+        bi_rrt.setWaypoints(waypoints);
+        bi_rrt.setWaypointBias(rrt::PARAM_waypoint_bias);
     }
 
     bool success = bi_rrt.run();
@@ -82,12 +68,6 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
 
 vector<Point> generate_rrt(Point start, Point goal, const ShapeSet& obstacles,
                            const vector<Point>& waypoints) {
-    // note: we could just use state_space.transition_valid() for the straight
-    // line test, but this runs quicker
-    vector<Point> straight = run_rrt_helper(start, goal, obstacles, waypoints, true);
-    if (!straight.empty()) {
-        return std::move(straight);
-    }
     return run_rrt_helper(start, goal, obstacles, waypoints, false);
 }
 

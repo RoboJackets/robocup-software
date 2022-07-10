@@ -76,9 +76,9 @@ class LineKick(skill.Skill):
         KICK_DOT_THRESHOLD = 0.4
         KICK_BALL_SPEED_THRESHOLD = 0.9
 
-        # TODO: make pivot kick and line kick inherit from some common kick superclass to make this cleaner
         if self.robot is None:
             return False
+
         ball_vel_unit = world_state.ball.vel / np.linalg.norm(world_state.ball.vel)
         heading_angle = world_state.our_robots[self.robot.id].pose[2]
         heading_vect = np.array([np.cos(heading_angle), np.sin(heading_angle)])
