@@ -32,6 +32,7 @@ on your adblocker to support their free documentation hosting.
    faq.rst
    contributing.rst
    meta_docs.rst
+   utilities.rst
 
 .. note::
 
