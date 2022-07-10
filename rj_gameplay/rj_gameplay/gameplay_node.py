@@ -280,15 +280,23 @@ class GameplayNode(Node):
                 self._test_play = eval(play_str)
 
         if self.world_state is not None:
+            # if we don't have a test play, use play_selector
             if self._test_play is None:
-                new_situation, new_play = self.play_selector.select(self.world_state)
+                # sometimes game_info is None while world_state is not None
+                # don't do anything if we don't know what the game state is
+                if self.world_state.game_info is None:
+                    return
 
-                # if play/situation hasn't changed, keep old play
+                # if play selector wants to keep the same play, don't
+                # re-instantiate the Play object
+                new_situation, new_play = self.play_selector.select(self.world_state)
                 if type(self._curr_play) is not type(new_play) or type(
                     self._curr_situation
                 ) != type(new_situation):
                     self._curr_play = new_play
                     self._curr_situation = new_situation
+
+            # else, use the test play
             else:
                 self._curr_play = self._test_play
 
