@@ -1,7 +1,7 @@
 Utilities
 ===================================================
 This page will contain high-level documentation on the various utilities in RJ RoboCup Software.
-Utilities will be classified as anything that is not directly run when you launch soccer.
+Utilities will be classified as anything that is not directly run after you launch soccer.
 
 Sourcing ros2
 ---------------------------------------------------
