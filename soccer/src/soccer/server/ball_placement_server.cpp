@@ -60,6 +60,16 @@ void BallPlacementServer ::execute(const std::shared_ptr<GoalHandleBallPlacement
 
     while (true) {
         // TODO: plan here, change while loop condition if needed
+        // see this GH comment chain:
+        // https://github.com/RoboJackets/robocup-software/pull/1909#discussion_r901173122
+        //
+        // each of these steps blocks the future steps in the chain
+        // 0) find ball->goal_pt vector
+        // 0b) make other robots move out of vector path?? (check rules on if allowed)
+        // 1) move robot A to behind ball + move robot B to right behind ball placement pt
+        // 2) line kick robot A->B + turn on B dribbler (maybe should consider doing the backwards
+        // capture drive here?) 3) have B capture ball onto point if necessary (in case of bounce)
+        // 4) send SUCCESS to client
         std::shared_ptr<BallPlacement::Result> result = std::make_shared<BallPlacement::Result>();
 
         std::shared_ptr<BallPlacement::Feedback> feedback =
