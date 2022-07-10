@@ -14,26 +14,23 @@ class BallPlacementClient(Node):
         self.curr_feedback = None
         self.curr_result = None
 
-        # TODO: save curr goal and do not resend if the points are the same
         self.curr_goal_pt = None
 
     def send_goal(self, goal_pt: Point):
         goal_msg = BallPlacement.Goal()
         goal_msg.goal_pt = goal_pt
 
-        # save goal_pt so we can check if it's a duplicate
-        if self.curr_goal_pt is None:
-            self.curr_goal_pt = goal_pt
-
-        self._action_client.wait_for_server()
-
-        # only send if the goal has changed
+        # only send goal to server if the goal has changed
         seen_goal_before = (
             self.curr_goal_pt is not None
             and self.curr_goal_pt.x == goal_pt.x
             and self.curr_goal_pt.y == goal_pt.y
         )
         if not seen_goal_before:
+            self.curr_goal_pt = goal_pt
+
+            self._action_client.wait_for_server()
+
             self._send_goal_future = self._action_client.send_goal_async(
                 goal_msg, feedback_callback=self.feedback_callback
             )
@@ -44,10 +41,10 @@ class BallPlacementClient(Node):
     def goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
-            self.get_logger().info("Goal rejected :(")
+            # self.get_logger().info("Goal rejected :(")
             return
 
-        self.get_logger().info("Goal accepted :)")
+        # self.get_logger().info("Goal accepted :)")
         self._goal_handle = goal_handle
 
         self._get_result_future = goal_handle.get_result_async()

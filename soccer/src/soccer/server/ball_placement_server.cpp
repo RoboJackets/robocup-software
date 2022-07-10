@@ -20,13 +20,31 @@ BallPlacementServer ::BallPlacementServer(const rclcpp::NodeOptions& options)
 rclcpp_action::GoalResponse BallPlacementServer ::handle_goal(
     const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const BallPlacement::Goal> goal) {
     (void)uuid;
-    // TODO: reject if current goal pt is the same as new goal pt
-    return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+
+    // NOTE: the goal_pt will be in our sim's coordinate frame (origin
+    // at center of our goal, field oriented portrait mode), but will
+    // be set by the ref in the league's frame (origin at center field,
+    // field oriented landscape mode)
+    rj_geometry::Point new_goal_pt = rj_geometry::Point(goal->goal_pt.x, goal->goal_pt.y);
+
+    // reject duplicate goal pt requests from the client
+    if (was_given_goal_pt_ && new_goal_pt.nearly_equals(curr_goal_pt_)) {
+        SPDLOG_INFO("handle_goal: rejecting duplicate goal");
+        return rclcpp_action::GoalResponse::REJECT;
+        // or accept and execute new goal requests from the client
+    } else {
+        curr_goal_pt_ = new_goal_pt;
+        was_given_goal_pt_ = true;
+        SPDLOG_INFO("handle_goal: saved new_goal_pt: ({}, {})", curr_goal_pt_.x(),
+                    curr_goal_pt_.y());
+        return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+    }
 }
 
 rclcpp_action::CancelResponse BallPlacementServer ::handle_cancel(
     const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     (void)goal_handle;
+    was_given_goal_pt_ = false;
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
@@ -39,12 +57,6 @@ void BallPlacementServer ::handle_accepted(
 
 void BallPlacementServer ::execute(const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     std::shared_ptr<const BallPlacement::Goal> goal = goal_handle->get_goal();
-    // NOTE: the goal_pt will be in our sim's coordinate frame (origin
-    // at center of our goal, field oriented portrait mode), but will
-    // be set by the ref in the league's frame (origin at center field,
-    // field oriented landscape mode)
-    auto goal_pt = goal->goal_pt;
-    SPDLOG_INFO("{}, {}", goal_pt.x, goal_pt.y);
 
     while (true) {
         // TODO: plan here, change while loop condition if needed
@@ -64,6 +76,9 @@ void BallPlacementServer ::execute(const std::shared_ptr<GoalHandleBallPlacement
             result->is_done = true;
             goal_handle->succeed(result);
             /* std::cout << "Server succeeded!" << std::endl; */
+
+            // TODO: on completion of goal, reset was_given_goal_pt_ state
+            /* was_given_goal_pt_ = false; */
             break;
         }
     }

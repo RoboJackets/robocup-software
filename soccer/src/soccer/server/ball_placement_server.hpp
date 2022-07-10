@@ -16,6 +16,7 @@
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_msgs/action/ball_placement.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
@@ -38,5 +39,9 @@ private:
         const std::shared_ptr<GoalHandleBallPlacement> goal_handle);
     void handle_accepted(const std::shared_ptr<GoalHandleBallPlacement> goal_handle);
     void execute(const std::shared_ptr<GoalHandleBallPlacement> goal_handle);
+
+    // to keep track of duplicate goal pt requests
+    rj_geometry::Point curr_goal_pt_;
+    bool was_given_goal_pt_ = false;
 };
 }  // namespace server
