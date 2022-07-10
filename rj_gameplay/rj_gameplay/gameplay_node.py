@@ -306,6 +306,12 @@ class GameplayNode(Node):
                 intents = None
                 game_info = self.world_state.game_info
                 goal_array: np.array = game_info.ball_placement()
+                if goal_array is None:
+                    print("ERROR: goal_array is None!")
+                    print(
+                        "make sure you have SSL Game Controller open and have set a ball placement pt"
+                    )
+                    return
                 goal_pt: Point = Point(x=goal_array[0], y=goal_array[1])
                 self.ball_placement_client.send_goal(goal_pt)
             else:

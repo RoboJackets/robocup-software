@@ -15,21 +15,31 @@ class BallPlacementClient(Node):
         self.curr_result = None
 
         # TODO: save curr goal and do not resend if the points are the same
-        self.curr_goal = None
+        self.curr_goal_pt = None
 
     def send_goal(self, goal_pt: Point):
         goal_msg = BallPlacement.Goal()
         goal_msg.goal_pt = goal_pt
 
+        # save goal_pt so we can check if it's a duplicate
+        if self.curr_goal_pt is None:
+            self.curr_goal_pt = goal_pt
+
         self._action_client.wait_for_server()
 
-        # send goal and tell the AC what to do when it gets feedback
-        self._send_goal_future = self._action_client.send_goal_async(
-            goal_msg, feedback_callback=self.feedback_callback
+        # only send if the goal has changed
+        seen_goal_before = (
+            self.curr_goal_pt is not None
+            and self.curr_goal_pt.x == goal_pt.x
+            and self.curr_goal_pt.y == goal_pt.y
         )
+        if not seen_goal_before:
+            self._send_goal_future = self._action_client.send_goal_async(
+                goal_msg, feedback_callback=self.feedback_callback
+            )
 
-        # call method once we know if the goal was accepted
-        self._send_goal_future.add_done_callback(self.goal_response_callback)
+            # call method once we know if the goal was accepted
+            self._send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
         goal_handle = future.result()
@@ -45,6 +55,8 @@ class BallPlacementClient(Node):
 
     def get_result_callback(self, future):
         self.curr_result = future.result().result
+        # TODO: clear state of goal pt when done
+        # self.curr_goal_pt = None
 
     def feedback_callback(self, feedback_msg):
         self.curr_feedback = feedback_msg.feedback
@@ -54,6 +66,7 @@ class BallPlacementClient(Node):
         self._goal_handle = None
         if len(cancel_response.goals_canceling) > 0:
             # goal successfully canceled
+            self.curr_goal_pt = None
             return cancel_response
         else:
             return cancel_response
@@ -63,3 +76,4 @@ class BallPlacementClient(Node):
             return
         future = self._goal_handle.cancel_goal_async()
         future.add_done_callback(self.cancel_done)
+        self.curr_goal_pt = None
