@@ -29,10 +29,10 @@ on your adblocker to support their free documentation hosting.
    self
    getting_started.rst
    our_stack.rst
+   utilities.rst
    faq.rst
    contributing.rst
    meta_docs.rst
-   utilities.rst
 
 .. note::
 
