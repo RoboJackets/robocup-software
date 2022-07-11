@@ -23,7 +23,13 @@ If you are adding a new C++ file, it is best to just follow the existing format 
 
 Debugging C++ Code
 --------------------------------------------------
+Setting up a debugger for our C++ side code is actually quite simple! In particular, I have had success using `LLDB <https://lldb.llvm.org/>`_, 
+made by the same group that develops the clang compiler. 
+As of summer 2022, the ubuntu-setup script installs clang-10 using a script which also includes lldb-10 (so you should not need to install anything new for this). All you need to do is start soccer or sim in one terminal tab, and in another tab, run ``sudo lldb-10 -n name_of_particular_proc``. 
 
+How do you find this particular name? Well it depends on what file/node you wish to debug. As of the time of writing this article, we do not use any ros2 node composition, so each node is its own process. Looking in the soccer launch file a node's "executable_name" corresponds to the process name to place after ``-n``. Another method to find the process names of nodes is to run ``top`` in a new terminal tab and look in there.
+
+There is also another method which involves commenting out the node you want to run in the launch files and running it separately in a new terminal tab with a debugging prefix. This method is slower and not as consistent, so I won't explain it anymore here. Though check out ``util/debug-cpp.sh`` if you are curious or if the first method I explained above stops working for some reason.
 
 Continous Integration 
 --------------------------------------------------
