@@ -9,12 +9,19 @@ BallPlacementServer ::BallPlacementServer(const rclcpp::NodeOptions& options)
     : Node("ball_placement_server", options) {
     using namespace std::placeholders;
 
+    // set up ActionServer + callbacks
     this->action_server_ = rclcpp_action::create_server<BallPlacement>(
         this->get_node_base_interface(), this->get_node_clock_interface(),
         this->get_node_logging_interface(), this->get_node_waitables_interface(), "ball_placement",
         std::bind(&BallPlacementServer::handle_goal, this, _1, _2),
         std::bind(&BallPlacementServer::handle_cancel, this, _1),
         std::bind(&BallPlacementServer::handle_accepted, this, _1));
+
+    // set up trajectory publishers to actually move robots
+    trajectory_pub_0_ = this->create_publisher<planning::Trajectory::Msg>(
+        planning::topics::trajectory_pub(0), rclcpp::QoS(1).transient_local());
+    trajectory_pub_1_ = this->create_publisher<planning::Trajectory::Msg>(
+        planning::topics::trajectory_pub(1), rclcpp::QoS(1).transient_local());
 }
 
 rclcpp_action::GoalResponse BallPlacementServer ::handle_goal(
@@ -70,6 +77,22 @@ void BallPlacementServer ::execute(const std::shared_ptr<GoalHandleBallPlacement
         // 2) line kick robot A->B + turn on B dribbler (maybe should consider doing the backwards
         // capture drive here?) 3) have B capture ball onto point if necessary (in case of bounce)
         // 4) send SUCCESS to client
+        //
+        // if there is a bot in the way, debug print for now (later can dribble ball to side and
+        // then pass)
+        //
+        // also, while doing it, send some kind of feedback to client
+
+        // see PlannerForRobot::make_request()
+        // either make a PlannerForRobot object or reimplement that logic here
+        // and explain in a comment why that clunky design is best
+        //
+        // if using planners to create Trajectories, need to
+        // 1) make the obj
+        // 2) format as a PlanRequest
+        //
+        // when sending PlanRequest ignore every obstacle except other robots
+
         std::shared_ptr<BallPlacement::Result> result = std::make_shared<BallPlacement::Result>();
 
         std::shared_ptr<BallPlacement::Feedback> feedback =

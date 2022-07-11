@@ -22,6 +22,9 @@
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <world_state.hpp>
 
+#include "planning/planner/plan_request.hpp"
+#include "planning/trajectory.hpp"
+
 namespace server {
 class BallPlacementServer : public rclcpp::Node {
 public:
@@ -32,6 +35,7 @@ public:
     ~BallPlacementServer() = default;
 
 private:
+    // TODO(Alex): docstrings
     rclcpp_action::Server<BallPlacement>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const BallPlacement::Goal> goal);
@@ -43,5 +47,14 @@ private:
     // to keep track of duplicate goal pt requests
     rj_geometry::Point curr_goal_pt_;
     bool was_given_goal_pt_ = false;
+
+    // to publish trajectories
+    // TODO: check RobotStatus?
+    // TODO: sub to world_state (needed for obstacles)
+    // planner_node does this magically through shared_state, which is mutex updated
+    // at line 46 of planner_node.hpp
+    // maybe use SharedStateInfo in this node, see line 20 of planner_node.cpp for init
+    rclcpp::Publisher<planning::Trajectory::Msg>::SharedPtr trajectory_pub_0_;
+    rclcpp::Publisher<planning::Trajectory::Msg>::SharedPtr trajectory_pub_1_;
 };
 }  // namespace server
