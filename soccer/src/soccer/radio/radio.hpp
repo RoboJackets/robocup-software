@@ -24,9 +24,9 @@ DECLARE_FLOAT64(kRadioParamModule, timeout);
 /**
  * @brief Sends and receives information to/from our robots.
  *
- * @details This is the abstract superclass for USBRadio and SimRadio, which do
- * the actual work - this just declares the interface and handles sending stop commands when no new
- * commands come in for a while.
+ * @details This is the abstract superclass for network_radio and sim_radio
+ * which do the actual work - this just declares the interface and handles
+ * sending stop commands when no new commands come in for a while.
  */
 class Radio : public rclcpp::Node {
 public:

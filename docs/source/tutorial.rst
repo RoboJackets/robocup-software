@@ -91,7 +91,7 @@ command-line and git, let's get started using GitHub.
    git is a command line version-control tool. GitHub is a website to host
    shared files, and is well-integrated with git, but is not the same thing.
 
-First, use git to create a new branch under this naming scheme: 
+First, use git to create a new branch under this naming scheme:
 
 .. code-block:: bash
 
@@ -105,7 +105,7 @@ Then take a look at the defense play in
 ER-force simulator, same way as you did in the installation guide, then select
 this play as the test play to see it in action. Click the green checkmark in
 our UI. You should see 3 robots form a wall, 2 robots mark the opposing team,
-and 1 robot play goalie. 
+and 1 robot play goalie.
 
 Figure out which line(s) to change so that 4 robots form a wall instead of 3.
 When done, take a screenshot of the four wallers.
@@ -153,11 +153,11 @@ sections, and should present a significant challenge.
 
  * If you don't know Python, but you've coded in some other language before,
    Python is likely an easier language to learn than the one you already know.
-   (Just look at some of the .py files in this repo and you'll see.) 
+   (Just look at some of the .py files in this repo and you'll see.)
  * If you've never coded before this club, hopefully you are in CS 1301/1371,
    and you'll start learning how to code very shortly. In that case, skip to
    section #4 for now, continue working, and come back here at the end of
-   section #5 when it becomes necessary to have this section done. 
+   section #5 when it becomes necessary to have this section done.
  * If you've never coded before and you're not in an introductory CS course,
    you'll have to go through a Python tutorial like `this one
    <https://docs.python.org/3/tutorial/>`_ to learn the ropes.
@@ -298,8 +298,7 @@ Zoom in on the Node Graph. You should notice and most of the nodes are actually
 just duplicated across robot numbers. (For instance, notice there is a
 ``/planning/trajectory/robot_*`` topic for each robot.) Find the two arrows
 that are labelled with robot 0's robot intent and figure out which nodes
-publish and subscribe to that topic. Post your answer as a GitHub comment on
-your PR.
+publish and subscribe to that topic(Hint: There are **two** nodes that are subscribed to this topic. Remember that nodes "listen in" to the data in the topic!) Post your answer as a GitHub comment on your PR.
 
 We can also use rqt to dynamically change the behavior of our robots. Pull up
 the Dynamic Reconfigure menu and click the control params. Run your runner play
@@ -327,7 +326,7 @@ for* C++ knowledge. This is a real hurdle. If you already have Java or C
 experience, the syntax is similar enough to where you'll be able to work
 through this section, even if it takes you some time. If you aren't so lucky,
 read through the sections "Basics of C++", "Program structure", and "Classes"
-of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
+of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best. **Read the rest of this section before starting.**
 
 In this section, you'll be creating a SoccerMom node that gets the team color
 and picks a fruit to match. Our robots have to stay motivated somehow!
@@ -336,32 +335,55 @@ You can find the team color by subscribing to the relevant topic (this should
 become obvious after looking at the list of topics). To "pick a fruit", publish
 a `standard string msg
 <http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html>`_ to a new
-topic `/team_fruit`. 
+topic `/team_fruit`.
  * When our team color is yellow, publish "banana" to `/team_fruit`.
  * When our team color is blue, publish "blueberries" to `/team_fruit`.
 
 Often in C++ you'll see the use of a header file, which ends in `.hpp`, and a
 source file, which ends in `.cpp`. Header files contain all the function
-declarations and comments explaining their use. Source files contain the
+declarations and docstrings explaining their use. Source files contain the
 function definitions--that is, the code that actually makes the functions work.
 This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
-files.
+files. For more information, check `this<https://cplusplus.com/articles/Gw6AC542/>`_ resource.
 
 That may have confused you. Let's take a look at a real example in our codebase
-to make this more understandable.
+to make this more understandable. Find the radio.cpp and radio.hpp files in our codebase. In the last section, you used ``rqt`` to launch the Node Graph. One of the nodes that subscribe and publish to various topics is ``/radio``, and these files are the source of that node. Although looking at this file may be overwhelming, direct your attention to the key sections of the file that create the node. This will assist you in creating your own node.
 
-// TODO: using rj_vision_receiver? planner_node.hpp/cpp? manual_control_node?
+**Key Sections**
 
-// describe where to look for examples of publishers/subscribers
-// explain which parts of the .hpp are actually relevant to setting up the node
-// explain where they should put stuff into the build system (do this yourself
-to make sure it's right)
+* There are multiple `#include`s in both files. Reference between the ROS tutorial above and your objective to determine which files are needed for your node.
+* Both files are enclosed under `namespace`. Look at other header-source file pairs in ``robocup-software/soccer/src`` and determine what affects the namespace. Set this up for your SoccerMom node under a folder called tutorial.
+* The header file includes important information regarding class structure and inheritance (inheritance is important since the each node inherits from the rclcpp::Node class). Moreover, it has a call to the source constructor in the public access space.
+* Explore all the aspects of these files that applies to your task in this section. Compare the similarities and differences between the subscribers and publishers in these files vs. the ROS tutorial.
+* Notice the docstrings for the radio header file. It explains that it's the abstract superclass of the network_radio and sim_radio node. If you are unfamiliar with the concept of abstraction, `here<https://www.pythontutorial.net/python-oop/python-abstract-class/>` is more information. When exploring these two nodes, you will discover a third file named "node"_main.cpp which contains the main function for its respective node. This structure is intended to make writing the CMakeLists.txt file for the directory easier.
+
+While those files give you a peek into structuring your node files, they don't give you insight into how our build system works. When your compiler is building our code base, `CMake<https://cmake.org/overview/>`_ allows you to forgo the need to maintain settings specific to your compiler/build environment. As a result, you need to add your node to the appropriate CMake files.
+
+CMakeLists.txt files are used to make standard build files for the directory. It locates files, libraries, and executables to support complex directory hierarchies. Locate the CMakeLists.txt file in ``robocup-software/soccer/src/soccer``.
+
+**Key Sections**
+
+* Notice all the source files in the ``ROBOCUP_LIB_SRC``. You will find the radio files that you explored earlier along with other crucial source files that aid in motion control, soccer ui, etc. You will get familiar with these files as you conitnue to contribute to the codebase.
+* Many of the nodes have an environment variable set for their "node"_main.cpp. (HINT: There is a connection between the nodes that have these variables and the nodes that are returned by the ROS CLI)
+* Each of the nodes that have a source variable are added in the CMake file as `target_sources`
+
+.. note::
+
+   Since you have made changes to the C++ part of our codebase, you must build it again to test your node. This may take a while, so be patient and proactive with your changes. If you forgot how to build the codebase, go to the Getting Started page.
 
 To test, change our team color using the UI by going to the top menu bar and
 clicking Field > Team Color. You should see the team color change in the top
 right corner of our UI. Screenshot proof that your `/team_fruit` topic is
 publishing the right fruit for both options, and post as a comment to your PR.
+
+Similar to the python section, there's a lot of file-finding in this part. Use the option in your IDE or text editor that allows you to see a full folder at once.For instance, in VS Code, there is an option to open a full folder, which
+displays all the subfolders and files in the left toolbar. If you open
+``robocup-software/rj_gameplay`` like this, it should be a lot easier to
+navigate these files.
+
+If you've read this whole section and are feeling a little intimidated, that's
+normal. The paragraphs above form a nice guide and checklist for you to follow. Just try your best, one step at a time, and eventually you'll have a working piece of software to be proud of.
 
 7. Conclusion
 -------------
