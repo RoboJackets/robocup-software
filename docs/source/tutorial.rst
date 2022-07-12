@@ -345,7 +345,7 @@ declarations and docstrings explaining their use. Source files contain the
 function definitions--that is, the code that actually makes the functions work.
 This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
-files. For more information, check `this<https://cplusplus.com/articles/Gw6AC542/>`_ resource.
+files. For more information, check `this <https://cplusplus.com/articles/Gw6AC542/>`_ resource.
 
 That may have confused you. Let's take a look at a real example in our codebase
 to make this more understandable. Find the radio.cpp and radio.hpp files in our codebase. In the last section, you used ``rqt`` to launch the Node Graph. One of the nodes that subscribe and publish to various topics is ``/radio``, and these files are the source of that node. Although looking at this file may be overwhelming, direct your attention to the key sections of the file that create the node. This will assist you in creating your own node.
@@ -356,15 +356,15 @@ to make this more understandable. Find the radio.cpp and radio.hpp files in our 
 * Both files are enclosed under `namespace`. Look at other header-source file pairs in ``robocup-software/soccer/src`` and determine what affects the namespace. Set this up for your SoccerMom node under a folder called tutorial.
 * The header file includes important information regarding class structure and inheritance (inheritance is important since the each node inherits from the rclcpp::Node class). Moreover, it has a call to the source constructor in the public access space.
 * Explore all the aspects of these files that applies to your task in this section. Compare the similarities and differences between the subscribers and publishers in these files vs. the ROS tutorial.
-* Notice the docstrings for the radio header file. It explains that it's the abstract superclass of the network_radio and sim_radio node. If you are unfamiliar with the concept of abstraction, `here<https://www.pythontutorial.net/python-oop/python-abstract-class/>` is more information. When exploring these two nodes, you will discover a third file named "node"_main.cpp which contains the main function for its respective node. This structure is intended to make writing the CMakeLists.txt file for the directory easier.
+* Notice the docstrings for the radio header file. It explains that it's the abstract superclass of the network_radio and sim_radio node. If you are unfamiliar with the concept of abstraction, `here <https://www.pythontutorial.net/python-oop/python-abstract-class/>` is more information. When exploring these two nodes, you will discover a third file named "node"_main.cpp which contains the main function for its respective node. This structure is intended to make writing the CMakeLists.txt file for the directory easier.
 
-While those files give you a peek into structuring your node files, they don't give you insight into how our build system works. When your compiler is building our code base, `CMake<https://cmake.org/overview/>`_ allows you to forgo the need to maintain settings specific to your compiler/build environment. As a result, you need to add your node to the appropriate CMake files.
+While those files give you a peek into structuring your node files, they don't give you insight into how our build system works. When your compiler is building our code base, `CMake <https://cmake.org/overview/>`_ allows you to forgo the need to maintain settings specific to your compiler/build environment. As a result, you need to add your node to the appropriate CMake files.
 
 CMakeLists.txt files are used to make standard build files for the directory. It locates files, libraries, and executables to support complex directory hierarchies. Locate the CMakeLists.txt file in ``robocup-software/soccer/src/soccer``.
 
 **Key Sections**
 
-* Notice all the source files in the ``ROBOCUP_LIB_SRC``. You will find the radio files that you explored earlier along with other crucial source files that aid in motion control, soccer ui, etc. You will get familiar with these files as you conitnue to contribute to the codebase.
+* Notice all the source files in the ``ROBOCUP_LIB_SRC``. You will find the radio files that you explored earlier along with other crucial source files that aid in motion control, soccer ui, etc. You will get familiar with these files as you continue to contribute to the codebase.
 * Many of the nodes have an environment variable set for their "node"_main.cpp. (HINT: There is a connection between the nodes that have these variables and the nodes that are returned by the ROS CLI)
 * Each of the nodes that have a source variable are added in the CMake file as `target_sources`
 
