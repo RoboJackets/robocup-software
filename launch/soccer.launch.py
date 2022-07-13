@@ -14,10 +14,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import (
-    LaunchConfiguration,
-    PythonExpression,
-)
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 
 def generate_launch_description():
@@ -144,6 +141,14 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    soccermom = Node(
+        package="rj_robocup",
+        executable="soccermom_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
     global_param_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(str(launch_dir / "global_param_server.launch.py"))
     )
@@ -169,5 +174,6 @@ def generate_launch_description():
             internal_ref_receiver,
             external_ref_receiver,
             gameplay,
+            soccermom,
         ]
     )

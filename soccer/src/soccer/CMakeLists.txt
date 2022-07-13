@@ -62,6 +62,7 @@ set(ROBOCUP_LIB_SRC
     ui/sim_field_view.cpp
     ui/strip_chart.cpp
     ui/style_sheet_manager.cpp
+    tutorial/soccermom_node.cpp
     world_state.cpp
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp
@@ -112,6 +113,8 @@ set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
+set(SOCCERMOM_SRC tutorial/soccermom_node_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -151,6 +154,9 @@ target_sources(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_SRC})
 
 # ---- global_param_server_node ----
 target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_SRC})
+
+# ---- soccermom ----
+target_sources(soccermom_node PRIVATE ${SOCCERMOM_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
