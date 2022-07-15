@@ -356,6 +356,32 @@ to make this more understandable. Find the radio.cpp and radio.hpp files in our 
 * Both files are enclosed under `namespace`. Look at other header-source file pairs in ``robocup-software/soccer/src`` and determine what affects the namespace. Set this up for your SoccerMom node under a folder called tutorial.
 * The header file includes important information regarding class structure and inheritance (inheritance is important since the each node inherits from the rclcpp::Node class). Moreover, it has a call to the source constructor in the public access space.
 * Explore all the aspects of these files that applies to your task in this section. Compare the similarities and differences between the subscribers and publishers in these files vs. the ROS tutorial.
+* You will notice many unique operations and expressions in our codebase that you might not have experience with. For instance in the radio.cpp file, find the following expression:
+
+.. code-block::
+
+   create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
+            control::topics::manipulator_setpoint_pub(i), rclcpp::QoS(1),
+            [this, i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {  // NOLINT
+                manipulators_cached_.at(i) = *manipulator;
+            });
+
+A `lambda expression` is used in place of the topic callback function in the ROS tutorial. The lambda expression allows you to pass in-line function objects and requires less lines of code when compared to having another function. I HIGHLY recommend that you google and visit the following resources to learn more about this topic.
+
+    - `<https://www.programiz.com/cpp-programming/lambda-expression>`_
+    - `<https://riptutorial.com/cplusplus/example/1854/what-is-a-lambda-expression->`_
+
+Another topic you may not be accustomed to is the arrow operation "->". For example:
+
+.. code-block::
+
+   robot_status_pubs_.at(robot_id)->publish(robot_status);
+
+The arrow operator is used to point the value on the right side of the arrow, usually an element of a structure or class, and assign it to the variable pointer name on the left side of arrow. Again, I HIGHLY recommend that you google and visit the following resources to learn more about this topic.
+
+    - `<https://www.journaldev.com/44327/arrow-operator-c-plus-plus>`_
+    - `<https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/>`_
+
 * Notice the docstrings for the radio header file. It explains that it's the abstract superclass of the network_radio and sim_radio node. If you are unfamiliar with the concept of abstraction, `here <https://www.pythontutorial.net/python-oop/python-abstract-class/>` is more information. When exploring these two nodes, you will discover a third file named "node"_main.cpp which contains the main function for its respective node. This structure is intended to make writing the CMakeLists.txt file for the directory easier.
 
 While those files give you a peek into structuring your node files, they don't give you insight into how our build system works. When your compiler is building our code base, `CMake <https://cmake.org/overview/>`_ allows you to forgo the need to maintain settings specific to your compiler/build environment. As a result, you need to add your node to the appropriate CMake files.
@@ -368,6 +394,20 @@ CMakeLists.txt files are used to make standard build files for the directory. It
 * Many of the nodes have an environment variable set for their "node"_main.cpp. (HINT: There is a connection between the nodes that have these variables and the nodes that are returned by the ROS CLI)
 * Each of the nodes that have a source variable are added in the CMake file as `target_sources`
 
+You may have started noticing the pattern of adding to the key sections of the CMake files. You need to find the parts of the file where the other nodes are located and follow the format for your own node. While it is important to understand the meaning of each section, you will eventually learn as you gain experience. As explained earlier, CMake files are build files for the directory. So check if you need to make additions to the ``robocup-software/soccer/src`` and ``robocup-software/soccer`` CMake files. Follow the pattern mentioned above.
+
+You're almost there! One more step to go before acquiring all the necessities to create your own node. Launch files in ROS are a convenient way of starting up multiple nodes, setting initial parameters, and other requirements. Find the launch directory and explore the file that would pertain to where your node would be located. As you already know, follow the pattern for the other nodes that are functionally similar to your node.
+
+Now you have everything you need to know to create the SoccerMom node. Take your time since this is the other code heavy section of this tutorial. Remember, when you run into issues, your order of question-asking should be:
+
+#. Google
+
+#. Fellow new members
+
+#. Software lead
+
+#. Anyone the SW lead takes advice from
+
 .. note::
 
    Since you have made changes to the C++ part of our codebase, you must build it again to test your node. This may take a while, so be patient and proactive with your changes. If you forgot how to build the codebase, go to the Getting Started page.
@@ -377,7 +417,7 @@ clicking Field > Team Color. You should see the team color change in the top
 right corner of our UI. Screenshot proof that your `/team_fruit` topic is
 publishing the right fruit for both options, and post as a comment to your PR.
 
-Similar to the python section, there's a lot of file-finding in this part. Use the option in your IDE or text editor that allows you to see a full folder at once.For instance, in VS Code, there is an option to open a full folder, which
+Similar to the python section, there's a lot of file-finding in this part. Use the option in your IDE or text editor that allows you to see a full folder at once. For instance, in VS Code, there is an option to open a full folder, which
 displays all the subfolders and files in the left toolbar. If you open
 ``robocup-software/rj_gameplay`` like this, it should be a lot easier to
 navigate these files.
