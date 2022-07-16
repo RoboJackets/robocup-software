@@ -53,8 +53,8 @@ finds that velocity trajectory which we can then return as the current
 trajectory as the robot.
 
 At the highest level of planning, we have several different planners which the
-planning_node selects based on what kind of skill gameplay requested. The
-have different behavior and based on the their names you can kind of get an
+planning_node selects based on what kind of skill gameplay requested. They
+have different behaviors and based on the their names you can kind of get an
 idea of what each would be used for. They are all located
 in ``soccer/src/soccer/planning/planner``.
 
