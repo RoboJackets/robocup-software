@@ -148,6 +148,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
         return path;
     }
 
+    planner_is_done_ = true;
     return Trajectory{};
     // (Kevin) pretty sure everything under this line is not used
 
@@ -269,9 +270,14 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
 }
 
 bool LineKickPlanner::is_done() const {
-    // if ball is fast, assume we have kicked it correctly
+    // if ball is "fast", assume we have kicked it correctly
     // (either way we can't go recapture it)
-    return average_ball_vel_.mag() > IS_DONE_BALL_VEL;
+    bool ball_is_fast = average_ball_vel_.mag() > IS_DONE_BALL_VEL;
+    // if ball is far away, and somehow our filter didn't catch the speed
+    // change, assume optimistically that we were the ones who kicked it away
+    // (gameplay will reassign roles regardless)
+    // TODO(Kevin): investigate why this didn't work for ball placement
+    return ball_is_fast || planner_is_done_;
 }
 
 }  // namespace planning

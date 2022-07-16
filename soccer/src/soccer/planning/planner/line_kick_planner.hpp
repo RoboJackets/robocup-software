@@ -44,6 +44,7 @@ private:
 
     // TODO(Kevin): ros params here
     double IS_DONE_BALL_VEL = 0.5;  // m/s
+    bool planner_is_done_ = false;
 };
 
 }  // namespace planning
