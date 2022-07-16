@@ -85,7 +85,14 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
-    rj_geometry::ShapeSet real_obstacles = global_obstacles;
+    rj_geometry::ShapeSet real_obstacles;
+    // TODO(Kevin): this should be based on only if the current state is ball placement but I'm not
+    // sure how to handle that right now the better long-term solution would be to make the ball
+    // path not a global obstacle buta special one like def_area_obstacles see GameplayNode for
+    // where all these obstacles are published from
+    if (robot_id_ != 0 && robot_id_ != 1) {
+        real_obstacles.add(global_obstacles);
+    }
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
     if (!is_goalie) {
         virtual_obstacles.add(def_area_obstacles);

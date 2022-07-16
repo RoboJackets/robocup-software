@@ -34,22 +34,6 @@
 namespace server {
 class BallPlacementServer : public rclcpp::Node {
 public:
-    // TODO: plan here, change while loop condition if needed
-    // see this GH comment chain:
-    // https://github.com/RoboJackets/robocup-software/pull/1909#discussion_r901173122
-    //
-    // each of these steps blocks the future steps in the chain
-    // 0) find ball->goal_pt vector
-    // 0b) make other robots move out of vector path?? (check rules on if allowed)
-    // 1) move robot A to behind ball + move robot B to right behind ball placement pt
-    // 2) line kick robot A->B + turn on B dribbler (maybe should consider doing the backwards
-    // capture drive here?) 3) have B capture ball onto point if necessary (in case of bounce)
-    // 4) send SUCCESS to client
-    //
-    // if there is a bot in the way, debug print for now (later can dribble ball to side and
-    // then pass)
-    //
-    // also, while doing it, send some kind of feedback to client
     enum BallPlacementState { INIT, MOVING_TO_SPOTS, PASSING, ADJUSTING, DONE };
 
     using BallPlacement = rj_msgs::action::BallPlacement;
@@ -79,9 +63,17 @@ private:
     // this should all be gameplay lmao
     rclcpp::Publisher<rj_msgs::msg::RobotIntent>::SharedPtr robot_intent_0_pub_;
     rclcpp::Publisher<rj_msgs::msg::RobotIntent>::SharedPtr robot_intent_1_pub_;
+
     rclcpp::Subscription<rj_msgs::msg::IsDone>::SharedPtr is_done_0_sub_;
     rclcpp::Subscription<rj_msgs::msg::IsDone>::SharedPtr is_done_1_sub_;
-    bool latest_is_done_0_ = false;
-    bool latest_is_done_1_ = false;
+    bool last_is_done_0_ = false;
+    bool last_is_done_1_ = false;
+
+    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    WorldState last_world_state_;
+
+    // to track desired start positions pre-kick
+    rj_geometry::Point robot_0_spot_;
+    rj_geometry::Point robot_1_spot_;
 };
 }  // namespace server

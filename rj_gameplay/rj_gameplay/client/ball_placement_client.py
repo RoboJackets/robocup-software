@@ -21,6 +21,7 @@ class BallPlacementClient(Node):
         goal_msg.goal_pt = goal_pt
 
         # only send goal to server if the goal has changed
+        # TODO: make client cancel + resend goal if pt changes!
         seen_goal_before = (
             self.curr_goal_pt is not None
             and self.curr_goal_pt.x == goal_pt.x

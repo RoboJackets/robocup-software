@@ -17,24 +17,32 @@ BallPlacementServer::BallPlacementServer(const rclcpp::NodeOptions& options)
         std::bind(&BallPlacementServer::handle_cancel, this, _1),
         std::bind(&BallPlacementServer::handle_accepted, this, _1));
 
-    // set up robot planners
-    /* robot_planner_0_ = std::make_shared<planning::PlannerForRobot>(0, this, &robot_trajectories_,
-     * &shared_state_); */
-    /* robot_planner_1_ = std::make_shared<planning::PlannerForRobot>(1, this, &robot_trajectories_,
-     * &shared_state_); */
-
+    // setup robot intent pubs
     robot_intent_0_pub_ = this->create_publisher<RobotIntent::Msg>(
         gameplay::topics::robot_intent_pub(0), rclcpp::QoS(1).transient_local());
     robot_intent_1_pub_ = this->create_publisher<RobotIntent::Msg>(
         gameplay::topics::robot_intent_pub(1), rclcpp::QoS(1).transient_local());
 
+    // save latest is_done status every time subs are updated
     // TODO: macro for is_done topic name like other topics (see above)?
     is_done_0_sub_ = this->create_subscription<rj_msgs::msg::IsDone>(
         "planning/is_done/robot_0", rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::IsDone::SharedPtr msg) { latest_is_done_0_ = msg->is_done; });
+        [this](rj_msgs::msg::IsDone::SharedPtr msg) {  // NOLINT
+            last_is_done_0_ = msg->is_done;
+        });
     is_done_1_sub_ = this->create_subscription<rj_msgs::msg::IsDone>(
         "planning/is_done/robot_1", rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::IsDone::SharedPtr msg) { latest_is_done_1_ = msg->is_done; });
+        [this](rj_msgs::msg::IsDone::SharedPtr msg) {  // NOLINT
+            last_is_done_1_ = msg->is_done;
+        });
+
+    // save latest world_state status every time sub is updated
+    // TODO: does this have to be mutex locked or is that just planner node?
+    world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
+        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
+        [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
+            last_world_state_ = rj_convert::convert_from_ros(*world_state);
+        });
 }
 
 rclcpp_action::GoalResponse BallPlacementServer::handle_goal(
@@ -76,6 +84,8 @@ void BallPlacementServer::handle_accepted(
 }
 
 void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
+    // TODO: make this cancel on HALT/STOP update somehow
+
     // rate-limit loop to 1ms per iteration
     rclcpp::Rate loop_rate(1);
 
@@ -95,34 +105,70 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
         switch (current_state_) {
             case INIT: {
                 SPDLOG_INFO("INIT");
-                // create and send robot request to relevant PlannerForRobot
-                RobotIntent robot_intent_0;
-                planning::PathTargetCommand path_target{
-                    planning::LinearMotionInstant(rj_geometry::Point(1.0, 2.0),
-                                                  rj_geometry::Point(0.0, 0.0)),
-                    planning::TargetFacePoint{rj_geometry::Point(1.0, 2.0)}};
+                // find ball->goal_pt vector
+                BallState ball = last_world_state_.ball;
+                rj_geometry::Point goal_pt = rj_convert::convert_from_ros(goal->goal_pt);
+                rj_geometry::Point ball_to_goal_dir = (goal_pt - ball.position).norm();
 
-                robot_intent_0.motion_command = path_target;
-                robot_intent_0.is_active = true;
-                robot_intent_0_pub_->publish(rj_convert::convert_to_ros(robot_intent_0));
+                // make other robots move out of vector path?? (check rules on if allowed)
+                // for now if there is a robot in the way, ignore it
+                // (TODO: later can dribble ball to side and then pass)
 
-                if (latest_is_done_0_) {
-                    current_state_ = MOVING_TO_SPOTS;
-                }
+                // how many robot_rads off the exact points each robot should sit (min 1.0)
+                const double slack_const = 1.5;
+
+                // set desired robot 0 pt to kicker spot (slightly behind ball)
+                robot_0_spot_ = ball.position - ball_to_goal_dir * (slack_const * kRobotRadius);
+                // set desired robot 1 pt to receiver spot (slightly behind goal_pt)
+                robot_1_spot_ = goal_pt + ball_to_goal_dir * (slack_const * kRobotRadius);
+
+                // change state
+                current_state_ = MOVING_TO_SPOTS;
                 break;
             }
             case MOVING_TO_SPOTS: {
                 SPDLOG_INFO("MOVING_TO_SPOTS");
+                // move robot 0 to behind ball, facing robot 1
+                RobotIntent robot_intent_0;
+                planning::PathTargetCommand pt_0{
+                    planning::LinearMotionInstant(robot_0_spot_, rj_geometry::Point(0.0, 0.0)),
+                    planning::TargetFacePoint{robot_1_spot_}};
+                robot_intent_0.motion_command = pt_0;
 
+                // move robot 1 to right behind ball placement pt, facing robot 0
+                RobotIntent robot_intent_1;
+                planning::PathTargetCommand pt_1{
+                    planning::LinearMotionInstant(robot_1_spot_, rj_geometry::Point(0.0, 0.0)),
+                    planning::TargetFacePoint{robot_0_spot_}};
+                robot_intent_1.motion_command = pt_1;
+
+                // publish both robot intents, await completion
+                robot_intent_0.is_active = true;
+                robot_intent_0_pub_->publish(rj_convert::convert_to_ros(robot_intent_0));
+
+                robot_intent_1.is_active = true;
+                robot_intent_1_pub_->publish(rj_convert::convert_to_ros(robot_intent_1));
+
+                // when both moves are done, go to next state
+                if (last_is_done_0_ && last_is_done_1_) {
+                    current_state_ = PASSING;
+                }
                 break;
             }
             case PASSING: {
+                SPDLOG_INFO("PASSING");
+                // 2) line kick robot A->B + turn on B dribbler (maybe should consider doing the
+                // backwards capture drive here?)
                 break;
             }
             case ADJUSTING: {
+                SPDLOG_INFO("ADJUSTING");
+                /* 3) have B capture ball onto point if necessary (in case of bounce) */
                 break;
             }
             case DONE: {
+                SPDLOG_INFO("DONE");
+
                 // when done, send success result
                 if (rclcpp::ok()) {
                     result->is_done = true;
