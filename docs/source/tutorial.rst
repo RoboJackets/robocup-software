@@ -16,9 +16,9 @@ The tutorial is structured as follows.
 .. contents::
 
 There are some gaps intentionally left in the tutorial. This is to force you to
-problem-solve on your own, simulating what it feels like to write a new
-feature. If the tutorial was simply a bulleted list of commands to type, it
-would not prove that you're ready to work on something meaningful on your own.
+problem-solve on your own, simulating what it feels like to write a new feature.
+If the tutorial was simply a bulleted list of commands to type, it would not
+prove that you're ready to work on something meaningful on your own.
 
 When you run into issues, your order of question-asking should be:
 
@@ -41,8 +41,8 @@ When you run into issues, your order of question-asking should be:
 This is not because older members don't want to help you, but because if older
 members helped every new member with every question, they wouldn't have time to
 make our robots better (nor would you learn as much). So try to resolve your
-issue yourself, and expect to be asked "what have you tried already?" when you ask
-for help.
+issue yourself, and expect to be asked "what have you tried already?" when you
+ask for help.
 
 0. Command-Line Basics
 ----------------------
@@ -66,11 +66,11 @@ Some tips about learning how to use commands:
    commands. For instance, you can find words in any file in a directory using
    ``grep``: try ``man grep`` to see its full potential.
  * ``[command or executable] --help`` will almost always return a prompt that
-   tells you what the command does, and how you can modify it with options.
-   Many custom command-line tools will have a --help output, if they don't have
-   a man page.
- * Of course, you can also simply Google a command you don't understand, or
-   look up something like "how to search for a filename with command line".
+   tells you what the command does, and how you can modify it with options. Many
+   custom command-line tools will have a --help output, if they don't have a man
+   page.
+ * Of course, you can also simply Google a command you don't understand, or look
+   up something like "how to search for a filename with command line".
 
 1. Installation
 ---------------
@@ -103,9 +103,9 @@ For instance, the author's branch would be named
 Then take a look at the defense play in
 ``rj_gameplay/rj_gameplay/play/defense.py``. Launch soccer (our UI) and the
 ER-force simulator, same way as you did in the installation guide, then select
-this play as the test play to see it in action. Click the green checkmark in
-our UI. You should see 3 robots form a wall, 2 robots mark the opposing team,
-and 1 robot play goalie.
+this play as the test play to see it in action. Click the green checkmark in our
+UI. You should see 3 robots form a wall, 2 robots mark the opposing team, and 1
+robot play goalie.
 
 Figure out which line(s) to change so that 4 robots form a wall instead of 3.
 When done, take a screenshot of the four wallers.
@@ -121,8 +121,8 @@ how, or see the previous section on git), then commit them:
 
 .. note::
 
-   <commit msg> should be a present-tense description of what you've changed.
-   In this case, "change to 4 wallers" is fine.
+   <commit msg> should be a present-tense description of what you've changed. In
+   this case, "change to 4 wallers" is fine.
 
    Without the -m flag, git commit will open a nano, a text editor, and ask you
    to type in a commit msg. -m is a bit faster.
@@ -134,9 +134,9 @@ this, make sure you have everything installed correctly per the installation
 guide.)
 
 Now that you've committed, run ``git push`` to push your changes to the remote
-server. This is how GitHub sees your changes. If you run into any errors at
-this step, read the error logs carefully (they often tell you what to
-do), and Google if needed.
+server. This is how GitHub sees your changes. If you run into any errors at this
+step, read the error logs carefully (they often tell you what to do), and Google
+if needed.
 
 Finally, go to our GitHub page, click the "Pull Requests" tab, and create a new
 draft pull request for your branch. When it asks you to fill in the PR
@@ -163,25 +163,25 @@ sections, and should present a significant challenge.
    <https://docs.python.org/3/tutorial/>`_ to learn the ropes.
 
 Your task is to create a Runner Role that can make any arbitrary robot run
-around the perimeter of the field. This should hopefully distract the other
-team and keep them from being able to score on us. **Read the rest of this
-section before starting.**
+around the perimeter of the field. This should hopefully distract the other team
+and keep them from being able to score on us. **Read the rest of this section
+before starting.**
 
 The coordinates of the field are in the ``world_state`` object that is passed
 through every single gameplay element. Search the ``rj_gameplay`` folder for
 ``world_state.field`` to figure out how to get those coordinates--you will
-eventually find the file where the field coords are passed in, and from there
-it will be obvious how to use them. Do this search with ``grep``, not by hand.
+eventually find the file where the field coords are passed in, and from there it
+will be obvious how to use them. Do this search with ``grep``, not by hand.
 
 A Role defines a complex, single-robot behavior, like the Goalie, or a Passer.
 See the Design Docs linked in `this PR
 <https://github.com/RoboJackets/robocup-software/pull/1811>`_ for more detail.
-The superclass for all Roles is defined in
-``rj_gameplay/stp/role/__init__.py``, and the subclasses that define actual
-Roles are in ``rj_gameplay/rj_gameplay/role/``. All roles use a finite state
-machine, or FSM, which is really just a good mental model for writing programs
-that change over the course of time. Look at the existing files to figure out
-how to structure and implement your role to use an FSM.
+The superclass for all Roles is defined in ``rj_gameplay/stp/role/__init__.py``,
+and the subclasses that define actual Roles are in
+``rj_gameplay/rj_gameplay/role/``. All roles use a finite state machine, or FSM,
+which is really just a good mental model for writing programs that change over
+the course of time. Look at the existing files to figure out how to structure
+and implement your role to use an FSM.
 
 If you've never heard of a superclass before, see `this website
 <https://www.whitman.edu/mathematics/java_tutorial/java/objects/inheritance.html>`_
@@ -199,10 +199,10 @@ Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner.
 
    ./_static/basic_defense.drawio.png
 
-There are many ways to assign a Role to a given robot (see the design doc
-linked above for more detail). In this case, assign robot 1 to be our runner.
-(That's our most in-shape robot, so they can handle the extra miles.) Do this
-the same way that the Goalie Role always picks robot 0 to be the goalie.
+There are many ways to assign a Role to a given robot (see the design doc linked
+above for more detail). In this case, assign robot 1 to be our runner. (That's
+our most in-shape robot, so they can handle the extra miles.) Do this the same
+way that the Goalie Role always picks robot 0 to be the goalie.
 
 You may have noticed there's a lot of file-finding in this section. Use the
 option in your IDE or text editor that allows you to see a full folder at once.
@@ -221,8 +221,8 @@ you'll get to savor your success then!
 -----------------
 
 This section is our variation of the ROS 2 `"Beginner: CLI Tools"
-<https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>`_ tutorials.
-We do things slightly differently (and don't use all of the ROS 2 features
+<https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>`_ tutorials. We
+do things slightly differently (and don't use all of the ROS 2 features
 described in those tutorials), so this is intended to keep you from having to
 read all of those docs.
 
@@ -237,9 +237,9 @@ get started, read all of the short "Background" sections for these pages:
 The background sections put together are only a couple hundred words, and
 contain very neat animated diagrams that we can't recreate here.
 
-Now that you have some background on what ROS is and how it works, let's
-explore how we use ROS in our stack. (ROS is used in place of ROS 2 in the rest
-of these docs, just know that we are referencing ROS 2 every time.)
+Now that you have some background on what ROS is and how it works, let's explore
+how we use ROS in our stack. (ROS is used in place of ROS 2 in the rest of these
+docs, just know that we are referencing ROS 2 every time.)
 
 First, open up our stack, same as you did in the installation guide. Then run
 
@@ -259,8 +259,8 @@ Feel free to try echoing other topics to see what they're publishing.
 
 Now run ``ros2 topic info`` on the same topic to see what message type that
 topic is publishing, and how many publishers and subscribers are listening to
-it. For this topic, the message type is a subset of ``rj_msgs/``, which means
-we wrote our own custom .msg file that this topic uses.
+it. For this topic, the message type is a subset of ``rj_msgs/``, which means we
+wrote our own custom .msg file that this topic uses.
 
 Your task for this section is to find the file that defines the message type
 used by ``/gameplay/robot_intent/robot_0``. This will take you a long time if
@@ -290,15 +290,17 @@ To replicate what we did in the last section, go to the top, click Plugins >
 Topics > Topic Monitor. This allows you to see both a list of all topics, and
 see the most recent message published to any topic (by clicking the checkbox).
 
-Now find and launch the Node Graph. You should see a large, complex node
-diagram pop up. If you don't see something large and complex, make sure you
-have both our AI and the ER-Force simulator running.
+Now find and launch the Node Graph. You should see a large, complex node diagram
+pop up. If you don't see something large and complex, make sure you have both
+our AI and the ER-Force simulator running.
 
 Zoom in on the Node Graph. You should notice and most of the nodes are actually
 just duplicated across robot numbers. (For instance, notice there is a
-``/planning/trajectory/robot_*`` topic for each robot.) Find the two arrows
-that are labelled with robot 0's robot intent and figure out which nodes
-publish and subscribe to that topic(Hint: There are **two** nodes that are subscribed to this topic. Remember that nodes "listen in" to the data in the topic!) Post your answer as a GitHub comment on your PR.
+``/planning/trajectory/robot_*`` topic for each robot.) Find the two arrows that
+are labelled with robot 0's robot intent and figure out which nodes publish and
+subscribe to that topic(Hint: There are **two** nodes that are subscribed to
+this topic. Remember that nodes "listen in" to the data in the topic!) Post your
+answer as a GitHub comment on your PR.
 
 We can also use rqt to dynamically change the behavior of our robots. Pull up
 the Dynamic Reconfigure menu and click the control params. Run your runner play
@@ -317,16 +319,17 @@ tutorial. This time we'll reprise `Writing a simple publisher and subscriber
 <http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_.
 Before continuing, read the "Background" section of that tutorial, and brush up
 on any of the readings from section 4 that you need to. Ignore
-"Prerequisites"--our workspace is already set up for you, and we'll walk
-through instructions for building your code here.
+"Prerequisites"--our workspace is already set up for you, and we'll walk through
+instructions for building your code here.
 
 This section is by far the most difficult of the tutorial. If you've made it
 this far, though, you should have everything you need for this section *except
 for* C++ knowledge. This is a real hurdle. If you already have Java or C
-experience, the syntax is similar enough to where you'll be able to work
-through this section, even if it takes you some time. If you aren't so lucky,
-read through the sections "Basics of C++", "Program structure", and "Classes"
-of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best. **Read the rest of this section before starting.**
+experience, the syntax is similar enough to where you'll be able to work through
+this section, even if it takes you some time. If you aren't so lucky, read
+through the sections "Basics of C++", "Program structure", and "Classes" of `the
+C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best. **Read
+the rest of this section before starting.**
 
 In this section, you'll be creating a SoccerMom node that gets the team color
 and picks a fruit to match. Our robots have to stay motivated somehow!
@@ -345,60 +348,116 @@ declarations and docstrings explaining their use. Source files contain the
 function definitions--that is, the code that actually makes the functions work.
 This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
-files. For more information, check `this <https://cplusplus.com/articles/Gw6AC542/>`_ resource.
+files. For more information, check `this
+<https://cplusplus.com/articles/Gw6AC542/>`_ resource.
 
-That may have confused you. Let's take a look at a real example in our codebase
-to make this more understandable. Find the radio.cpp and radio.hpp files in our codebase. In the last section, you used ``rqt`` to launch the Node Graph. One of the nodes that subscribe and publish to various topics is ``/radio``, and these files are the source of that node. Although looking at this file may be overwhelming, direct your attention to the key sections of the file that create the node. This will assist you in creating your own node.
+Let's take a look at a real example in our codebase to make this more
+understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
+last section, you used ``rqt`` to launch the Node Graph. One of the nodes that
+subscribe and publish to various topics is ``/radio``, and these files are the
+source of that node. Although looking at this file may be overwhelming, direct
+your attention to the key sections of the file that create the node. This will
+assist you in creating your own node.
 
 **Key Sections**
 
-* There are multiple `#include`s in both files. Reference between the ROS tutorial above and your objective to determine which files are needed for your node.
-* Both files are enclosed under `namespace`. Look at other header-source file pairs in ``robocup-software/soccer/src`` and determine what affects the namespace. Set this up for your SoccerMom node under a folder called tutorial.
-* The header file includes important information regarding class structure and inheritance (inheritance is important since the each node inherits from the rclcpp::Node class). Moreover, it has a call to the source constructor in the public access space.
-* Explore all the aspects of these files that applies to your task in this section. Compare the similarities and differences between the subscribers and publishers in these files vs. the ROS tutorial.
-* You will notice many unique operations and expressions in our codebase that you might not have experience with. For instance in the radio.cpp file, find the following expression:
+* There are multiple `#include`s in both files. Reference between the ROS
+  tutorial above and your objective to determine which files are needed for your
+  node.
+* Both files are enclosed under `namespace`. Look at other header-source file
+  pairs in ``robocup-software/soccer/src`` and determine what affects the
+  namespace. Set this up for your SoccerMom node under a folder called tutorial.
+* The header file includes important information regarding class structure and
+  inheritance (inheritance is important since the each node inherits from the
+  rclcpp::Node class). Moreover, it has a call to the source constructor in the
+  public access space.
+* Explore all the aspects of these files that applies to your task in this
+  section. Compare the similarities and differences between the subscribers and
+  publishers in these files vs. the ROS tutorial.
+* You will notice many unique operations and expressions in our codebase that
+  you might not have experience with. For instance in the radio.cpp file, find
+  the following expression:
 
 .. code-block::
 
    create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
-            control::topics::manipulator_setpoint_pub(i), rclcpp::QoS(1),
-            [this, i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {  // NOLINT
+            control::topics::manipulator_setpoint_pub(i), rclcpp::QoS(1), [this,
+            i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {  //
+            NOLINT
                 manipulators_cached_.at(i) = *manipulator;
             });
 
-A `lambda expression` is used in place of the topic callback function in the ROS tutorial. The lambda expression allows you to pass in-line function objects and requires less lines of code when compared to having another function. I HIGHLY recommend that you google and visit the following resources to learn more about this topic.
+A ``lambda expression`` is used in place of the topic callback function in the ROS
+tutorial. The lambda expression allows you to pass in-line function objects and
+requires less lines of code when compared to having another function. I HIGHLY
+recommend that you google and visit the following resources to learn more about
+this topic.
 
     - `<https://www.programiz.com/cpp-programming/lambda-expression>`_
     - `<https://riptutorial.com/cplusplus/example/1854/what-is-a-lambda-expression->`_
 
-Another topic you may not be accustomed to is the arrow operation "->". For example:
+Another topic you may not be accustomed to is the arrow operation "->". For
+example:
 
 .. code-block::
 
    robot_status_pubs_.at(robot_id)->publish(robot_status);
 
-The arrow operator is used to point the value on the right side of the arrow, usually an element of a structure or class, and assign it to the variable pointer name on the left side of arrow. Again, I HIGHLY recommend that you google and visit the following resources to learn more about this topic.
+The arrow operator is used to access a method or element of an object, when given a pointer to that object. Above, ``robot_status_pubs_`` is a list of pointers to ROS publisher objects. Calling `->publish(robot_status)` on one element in that list publishes a robot status using that specific publisher.
 
-    - `<https://www.journaldev.com/44327/arrow-operator-c-plus-plus>`_
-    - `<https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/>`_
+    - `<https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`
 
-* Notice the docstrings for the radio header file. It explains that it's the abstract superclass of the network_radio and sim_radio node. If you are unfamiliar with the concept of abstraction, `here <https://www.pythontutorial.net/python-oop/python-abstract-class/>` is more information. When exploring these two nodes, you will discover a third file named "node"_main.cpp which contains the main function for its respective node. This structure is intended to make writing the CMakeLists.txt file for the directory easier.
+* Notice the docstrings for the radio header file. It explains that it's the
+  abstract superclass of the network_radio and sim_radio node. If you are
+  unfamiliar with the concept of abstraction, `here
+  <https://www.pythontutorial.net/python-oop/python-abstract-class/>`_ is more
+  information. When exploring these two nodes, you will discover a third file
+  named "node"_main.cpp which contains the main function for its respective
+  node. This structure is intended to make writing the CMakeLists.txt file for
+  the directory easier.
 
-While those files give you a peek into structuring your node files, they don't give you insight into how our build system works. When your compiler is building our code base, `CMake <https://cmake.org/overview/>`_ allows you to forgo the need to maintain settings specific to your compiler/build environment. As a result, you need to add your node to the appropriate CMake files.
+While those files give you a peek into structuring your node files, they don't
+give you insight into how our build system works. When your compiler is building
+our code base, `CMake <https://cmake.org/overview/>`_ allows you to forgo the
+need to maintain settings specific to your compiler/build environment. As a
+result, you need to add your node to the appropriate CMake files.
 
-CMakeLists.txt files are used to make standard build files for the directory. It locates files, libraries, and executables to support complex directory hierarchies. Locate the CMakeLists.txt file in ``robocup-software/soccer/src/soccer``.
+CMakeLists.txt files are used to make standard build files for the directory. It
+locates files, libraries, and executables to support complex directory
+hierarchies. Locate the CMakeLists.txt file in
+``robocup-software/soccer/src/soccer``.
 
 **Key Sections**
 
-* Notice all the source files in the ``ROBOCUP_LIB_SRC``. You will find the radio files that you explored earlier along with other crucial source files that aid in motion control, soccer ui, etc. You will get familiar with these files as you continue to contribute to the codebase.
-* Many of the nodes have an environment variable set for their "node"_main.cpp. (HINT: There is a connection between the nodes that have these variables and the nodes that are returned by the ROS CLI)
-* Each of the nodes that have a source variable are added in the CMake file as `target_sources`
+* Notice all the source files in the ``ROBOCUP_LIB_SRC``. You will find the
+  radio files that you explored earlier along with other crucial source files
+  that aid in motion control, soccer ui, etc. You will get familiar with these
+  files as you continue to contribute to the codebase.
+* Many of the nodes have an environment variable set for their "node"_main.cpp.
+  (HINT: There is a connection between the nodes that have these variables and
+  the nodes that are returned by the ROS CLI)
+* Each of the nodes that have a source variable are added in the CMake file as
+  `target_sources`
 
-You may have started noticing the pattern of adding to the key sections of the CMake files. You need to find the parts of the file where the other nodes are located and follow the format for your own node. While it is important to understand the meaning of each section, you will eventually learn as you gain experience. As explained earlier, CMake files are build files for the directory. So check if you need to make additions to the ``robocup-software/soccer/src`` and ``robocup-software/soccer`` CMake files. Follow the pattern mentioned above.
+You may have started noticing the pattern of adding to the key sections of the
+CMake files. You need to find the parts of the file where the other nodes are
+located and follow the format for your own node. While it is important to
+understand the meaning of each section, you will eventually learn as you gain
+experience. As explained earlier, CMake files are build files for the directory.
+So check if you need to make additions to the ``robocup-software/soccer/src``
+and ``robocup-software/soccer`` CMake files. Follow the pattern mentioned above.
 
-You're almost there! One more step to go before acquiring all the necessities to create your own node. Launch files in ROS are a convenient way of starting up multiple nodes, setting initial parameters, and other requirements. Find the launch directory and explore the file that would pertain to where your node would be located. As you already know, follow the pattern for the other nodes that are functionally similar to your node.
+You're almost there! The final file you will have to add to is the launch file.
+Launch files in ROS are a convenient way of starting up multiple nodes, setting
+initial parameters, and other requirements. Find the ``robocup-software/launch``
+directory and explore the file that would pertain to where your node would be
+located. (HINT: Your node would be located in ``robocup-software/soccer``) As
+you already know, follow the pattern for the other nodes that are functionally
+similar to your node.
 
-Now you have everything you need to know to create the SoccerMom node. Take your time since this is the other code heavy section of this tutorial. Remember, when you run into issues, your order of question-asking should be:
+Now you have everything you need to know to create the SoccerMom node. Take your
+time since this is the other code heavy section of this tutorial. Remember, when
+you run into issues, your order of question-asking should be:
 
 #. Google
 
@@ -410,20 +469,25 @@ Now you have everything you need to know to create the SoccerMom node. Take your
 
 .. note::
 
-   Since you have made changes to the C++ part of our codebase, you must build it again to test your node. This may take a while, so be patient and proactive with your changes. If you forgot how to build the codebase, go to the Getting Started page.
+   Since you have made changes to the C++ part of our codebase, you must build
+   it again to test your node. This may take a while, so be patient and
+   proactive with your changes. If you forgot how to build the codebase, go to
+   the Getting Started page.
 
 To test, change our team color using the UI by going to the top menu bar and
 clicking Field > Team Color. You should see the team color change in the top
 right corner of our UI. Screenshot proof that your `/team_fruit` topic is
 publishing the right fruit for both options, and post as a comment to your PR.
 
-Similar to the python section, there's a lot of file-finding in this part. Use the option in your IDE or text editor that allows you to see a full folder at once. For instance, in VS Code, there is an option to open a full folder, which
-displays all the subfolders and files in the left toolbar. If you open
-``robocup-software/rj_gameplay`` like this, it should be a lot easier to
-navigate these files.
+Similar to the python section, there's a lot of file-finding in this part. Use
+the option in your IDE or text editor that allows you to see a full folder at
+once. For instance, in VS Code, there is an option to open a full folder, which
+displays all the subfolders and files in the left toolbar.
 
 If you've read this whole section and are feeling a little intimidated, that's
-normal. The paragraphs above form a nice guide and checklist for you to follow. Just try your best, one step at a time, and eventually you'll have a working piece of software to be proud of.
+normal. The paragraphs above form a nice guide and checklist for you to follow.
+Just try your best, one step at a time, and eventually you'll have a working
+piece of software to be proud of.
 
 7. Conclusion
 -------------
@@ -434,8 +498,8 @@ reviewing your PR, your software lead will either request changes, meaning they
 have some feedback for you to adjust your PR, or approve it, meaning your
 changes are ready to merge.
 
-However, this time, upon approval, **CLOSE your pull request. Do not merge
-it.** Since this is only a tutorial project, there's no need to add it to the
+However, this time, upon approval, **CLOSE your pull request. Do not merge it.**
+Since this is only a tutorial project, there's no need to add it to the
 codebase.
 
 Congratulations! This was a long journey, but if you've made it this far, you
