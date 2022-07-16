@@ -93,13 +93,23 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
     std::shared_ptr<const BallPlacement::Goal> goal = goal_handle->get_goal();
     std::shared_ptr<BallPlacement::Result> result = std::make_shared<BallPlacement::Result>();
 
-    while (true) {
+    // get goal_pt (won't change unless goal changes)
+    rj_geometry::Point goal_pt = rj_convert::convert_from_ros(goal->goal_pt);
+
+    bool not_done_yet = true;
+    while (not_done_yet) {
         // if the ActionClient is trying to cancel the goal, cancel it, terminate early
         if (goal_handle->is_canceling()) {
-            result->is_done = true;
+            result->is_done = false;
             goal_handle->canceled(result);
             return;
         }
+
+        // publish feedback (necessary even if feedback is empty)
+        std::shared_ptr<BallPlacement::Feedback> feedback =
+            std::make_shared<BallPlacement::Feedback>();
+        feedback->est_time_remaining = rclcpp::Duration(1.0);
+        goal_handle->publish_feedback(feedback);
 
         // otherwise, follow existing state machine to completion
         switch (current_state_) {
@@ -107,7 +117,6 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
                 SPDLOG_INFO("INIT");
                 // find ball->goal_pt vector
                 BallState ball = last_world_state_.ball;
-                rj_geometry::Point goal_pt = rj_convert::convert_from_ros(goal->goal_pt);
                 rj_geometry::Point ball_to_goal_dir = (goal_pt - ball.position).norm();
 
                 // make other robots move out of vector path?? (check rules on if allowed)
@@ -118,9 +127,9 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
                 const double slack_const = 1.5;
 
                 // set desired robot 0 pt to kicker spot (slightly behind ball)
-                robot_0_spot_ = ball.position - ball_to_goal_dir * (slack_const * kRobotRadius);
+                robot_0_start_pt_ = ball.position - ball_to_goal_dir * (slack_const * kRobotRadius);
                 // set desired robot 1 pt to receiver spot (slightly behind goal_pt)
-                robot_1_spot_ = goal_pt + ball_to_goal_dir * (slack_const * kRobotRadius);
+                robot_1_start_pt_ = goal_pt + ball_to_goal_dir * (slack_const * kRobotRadius);
 
                 // change state
                 current_state_ = MOVING_TO_SPOTS;
@@ -131,15 +140,15 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
                 // move robot 0 to behind ball, facing robot 1
                 RobotIntent robot_intent_0;
                 planning::PathTargetCommand pt_0{
-                    planning::LinearMotionInstant(robot_0_spot_, rj_geometry::Point(0.0, 0.0)),
-                    planning::TargetFacePoint{robot_1_spot_}};
+                    planning::LinearMotionInstant(robot_0_start_pt_, rj_geometry::Point(0.0, 0.0)),
+                    planning::TargetFacePoint{robot_1_start_pt_}};
                 robot_intent_0.motion_command = pt_0;
 
                 // move robot 1 to right behind ball placement pt, facing robot 0
                 RobotIntent robot_intent_1;
                 planning::PathTargetCommand pt_1{
-                    planning::LinearMotionInstant(robot_1_spot_, rj_geometry::Point(0.0, 0.0)),
-                    planning::TargetFacePoint{robot_0_spot_}};
+                    planning::LinearMotionInstant(robot_1_start_pt_, rj_geometry::Point(0.0, 0.0)),
+                    planning::TargetFacePoint{robot_0_start_pt_}};
                 robot_intent_1.motion_command = pt_1;
 
                 // publish both robot intents, await completion
@@ -149,50 +158,148 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
                 robot_intent_1.is_active = true;
                 robot_intent_1_pub_->publish(rj_convert::convert_to_ros(robot_intent_1));
 
-                // when both moves are done, go to next state
+                // when both moves are done, wipe robot intents, go to next state
                 if (last_is_done_0_ && last_is_done_1_) {
+                    RobotIntent stop_intent;
+                    stop_intent.is_active = false;
+                    robot_intent_0_pub_->publish(rj_convert::convert_to_ros(stop_intent));
+                    robot_intent_1_pub_->publish(rj_convert::convert_to_ros(stop_intent));
                     current_state_ = PASSING;
                 }
                 break;
             }
             case PASSING: {
                 SPDLOG_INFO("PASSING");
-                // 2) line kick robot A->B + turn on B dribbler (maybe should consider doing the
-                // backwards capture drive here?)
+                BallState ball = last_world_state_.ball;
+                if (!has_kicked_) {
+                    // line kick robot 0 -> 1
+                    RobotIntent intent;
+                    intent.motion_command = planning::LineKickCommand{goal_pt};
+                    // TODO: these should really be bound to the KickCommand, not the RobotIntent
+                    intent.kick_speed = 2.0;  // TODO: base kick speed on dist to target
+                    intent.shoot_mode = RobotIntent::ShootMode::KICK;
+                    intent.trigger_mode = RobotIntent::TriggerMode::IMMEDIATE;
+                    intent.is_active = true;
+
+                    // robot 0 should only kick if ball is stopped
+                    if (ball.velocity.mag() > 0.3) {
+                        intent.is_active = false;
+                    }
+
+                    robot_intent_0_pub_->publish(rj_convert::convert_to_ros(intent));
+                }
+
+                // should turn on receiver's dribbler, and have it drive backwards
+                // to stop the ball right on the point, but we have no planner
+                // for "backstop the ball onto this exact pt". should write one
+                // for better passing. or at least have a dribbler-on planner
+                //
+                // instead we have ADJUSTING, which calls collect planner to
+                // try and get the ball over the pt
+                //
+                // TODO(Kevin): write dribbler-on planner
+                // TODO(Kevin): write true passing receive planner (where it backstops to a point)
+
+                // TODO(Kevin): figure out why line kick's is_done() doesn't work
+                /*
+                SPDLOG_INFO("is robot 0 done? {}", last_is_done_0_);
+                // when robot 0 is done kicking, wipe intent, go to next state
+                if (last_is_done_0_) {
+                    RobotIntent stop_intent;
+                    stop_intent.is_active = false;
+                    robot_intent_0_pub_->publish(rj_convert::convert_to_ros(stop_intent));
+                    current_state_ = DONE;
+                }
+                */
+
+                // when the ball is close to goal, go to next state
+                // TODO: (this could deadlock if the line kick is bad and the ball
+                // doesn't end up where it should...)
+                if (ball.position.nearly_equals(goal_pt, BALL_PLACEMENT_TOLERANCE_)) {
+                    RobotIntent stop_intent;
+                    stop_intent.is_active = false;
+                    robot_intent_0_pub_->publish(rj_convert::convert_to_ros(stop_intent));
+                    current_state_ = RETREAT;
+                }
                 break;
             }
-            case ADJUSTING: {
-                SPDLOG_INFO("ADJUSTING");
-                /* 3) have B capture ball onto point if necessary (in case of bounce) */
+            case RETREAT: {
+                SPDLOG_INFO("RETREAT");
+
+                rj_geometry::Point ball_pt = last_world_state_.ball.position;
+                if (!end_pts_sent_) {
+                    // move robots 1.0 m in dir away from ball
+                    //
+                    // in reality this should be a signal to move back to normal
+                    // STOP behavior, but we have circumvented the rest of gameplay
+                    // so that won't be feasible
+                    rj_geometry::Point robot_0_pt =
+                        last_world_state_.our_robots.at(0).pose.position();
+                    rj_geometry::Point ball_robot_0_dir = (robot_0_pt - ball_pt).norm();
+                    robot_0_end_pt_ = robot_0_pt + ball_robot_0_dir * 1.0;
+
+                    rj_geometry::Point robot_1_pt =
+                        last_world_state_.our_robots.at(1).pose.position();
+                    rj_geometry::Point ball_robot_1_dir = (robot_1_pt - ball_pt).norm();
+                    robot_1_end_pt_ = robot_1_pt + ball_robot_1_dir * 1.0;
+
+                    RobotIntent robot_intent_0;
+                    planning::PathTargetCommand pt_0{
+                        planning::LinearMotionInstant(robot_0_end_pt_,
+                                                      rj_geometry::Point(0.0, 0.0)),
+                        planning::TargetFacePoint{goal_pt}};
+                    robot_intent_0.motion_command = pt_0;
+
+                    // move robot 1 to right behind ball placement pt, facing robot 0
+                    RobotIntent robot_intent_1;
+                    planning::PathTargetCommand pt_1{
+                        planning::LinearMotionInstant(robot_1_end_pt_,
+                                                      rj_geometry::Point(0.0, 0.0)),
+                        planning::TargetFacePoint{goal_pt}};
+                    robot_intent_1.motion_command = pt_1;
+
+                    // publish both robot intents, await completion
+                    robot_intent_0.is_active = true;
+                    robot_intent_0_pub_->publish(rj_convert::convert_to_ros(robot_intent_0));
+
+                    robot_intent_1.is_active = true;
+                    robot_intent_1_pub_->publish(rj_convert::convert_to_ros(robot_intent_1));
+                    end_pts_sent_ = true;
+                }
+
+                // when both moves are done, wipe robot intents, go to next state
+                if (end_pts_sent_ && last_is_done_0_ && last_is_done_1_) {
+                    RobotIntent stop_intent;
+                    stop_intent.is_active = false;
+                    robot_intent_0_pub_->publish(rj_convert::convert_to_ros(stop_intent));
+                    robot_intent_1_pub_->publish(rj_convert::convert_to_ros(stop_intent));
+                    current_state_ = DONE;
+                }
                 break;
             }
             case DONE: {
                 SPDLOG_INFO("DONE");
-
-                // when done, send success result
-                if (rclcpp::ok()) {
-                    result->is_done = true;
-                    goal_handle->succeed(result);
-                    std::cout << "Server succeeded!" << std::endl;
-
-                    // TODO: on completion of goal, reset was_given_goal_pt_ state
-                    /* was_given_goal_pt_ = false; */
-                }
-                break;
-            }
-            default: {
-                // TODO: how to handle invalid state here?
+                not_done_yet = false;
                 break;
             }
         }
 
-        // TODO: how to populate feedback, what to put in?
-        /* std::shared_ptr<BallPlacement::Feedback> feedback =
-         * std::make_shared<BallPlacement::Feedback>(); */
-        /* goal_handle->publish_feedback(feedback); */
-
         // rate-limit loop
         loop_rate.sleep();
+    }
+
+    SPDLOG_INFO("not_done_yet {}", not_done_yet);
+    // after done, send success result
+    if (rclcpp::ok()) {
+        result->is_done = true;
+        goal_handle->succeed(result);
+        SPDLOG_INFO("Server succeeded!");
+
+        // on completion of goal, reset was_given_goal_pt_ state
+        was_given_goal_pt_ = false;
+
+        // reset FSM also for next ball placement
+        current_state_ = INIT;
     }
 }
 

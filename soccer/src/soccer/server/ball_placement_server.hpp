@@ -10,6 +10,8 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 
 // rj includes
+#include <rclcpp/duration.hpp>
+
 #include <planning/planner/motion_command.hpp>
 #include <radio/robot_status.hpp>
 #include <rj_common/utils.hpp>
@@ -34,7 +36,7 @@
 namespace server {
 class BallPlacementServer : public rclcpp::Node {
 public:
-    enum BallPlacementState { INIT, MOVING_TO_SPOTS, PASSING, ADJUSTING, DONE };
+    enum BallPlacementState { INIT, MOVING_TO_SPOTS, PASSING, RETREAT, DONE };
 
     using BallPlacement = rj_msgs::action::BallPlacement;
     using GoalHandleBallPlacement = rclcpp_action::ServerGoalHandle<BallPlacement>;
@@ -51,6 +53,9 @@ private:
         const std::shared_ptr<GoalHandleBallPlacement> goal_handle);
     void handle_accepted(const std::shared_ptr<GoalHandleBallPlacement> goal_handle);
     void execute(const std::shared_ptr<GoalHandleBallPlacement> goal_handle);
+
+    // TODO: what is the ball placement tolerance, per rules?
+    const double BALL_PLACEMENT_TOLERANCE_ = 0.1;  // m
 
     // to keep track of duplicate goal pt requests
     rj_geometry::Point curr_goal_pt_;
@@ -73,7 +78,15 @@ private:
     WorldState last_world_state_;
 
     // to track desired start positions pre-kick
-    rj_geometry::Point robot_0_spot_;
-    rj_geometry::Point robot_1_spot_;
+    rj_geometry::Point robot_0_start_pt_;
+    rj_geometry::Point robot_1_start_pt_;
+
+    // to ensure only kicks once
+    bool has_kicked_ = false;
+
+    // to track desired end positions post ball placement
+    rj_geometry::Point robot_0_end_pt_;
+    rj_geometry::Point robot_1_end_pt_;
+    bool end_pts_sent_ = false;
 };
 }  // namespace server
