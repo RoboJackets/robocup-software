@@ -79,7 +79,9 @@ private:
     // this should all be gameplay lmao
     rclcpp::Publisher<rj_msgs::msg::RobotIntent>::SharedPtr robot_intent_0_pub_;
     rclcpp::Publisher<rj_msgs::msg::RobotIntent>::SharedPtr robot_intent_1_pub_;
-
     rclcpp::Subscription<rj_msgs::msg::IsDone>::SharedPtr is_done_0_sub_;
+    rclcpp::Subscription<rj_msgs::msg::IsDone>::SharedPtr is_done_1_sub_;
+    bool latest_is_done_0_ = false;
+    bool latest_is_done_1_ = false;
 };
 }  // namespace server
