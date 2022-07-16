@@ -5,7 +5,7 @@
 namespace server {
 using BallPlacement = rj_msgs::action::BallPlacement;
 using GoalHandleBallPlacement = rclcpp_action::ServerGoalHandle<BallPlacement>;
-BallPlacementServer ::BallPlacementServer(const rclcpp::NodeOptions& options)
+BallPlacementServer::BallPlacementServer(const rclcpp::NodeOptions& options)
     : Node("ball_placement_server", options) {
     using namespace std::placeholders;
 
@@ -17,14 +17,28 @@ BallPlacementServer ::BallPlacementServer(const rclcpp::NodeOptions& options)
         std::bind(&BallPlacementServer::handle_cancel, this, _1),
         std::bind(&BallPlacementServer::handle_accepted, this, _1));
 
-    // set up trajectory publishers to actually move robots
-    trajectory_pub_0_ = this->create_publisher<planning::Trajectory::Msg>(
-        planning::topics::trajectory_pub(0), rclcpp::QoS(1).transient_local());
-    trajectory_pub_1_ = this->create_publisher<planning::Trajectory::Msg>(
-        planning::topics::trajectory_pub(1), rclcpp::QoS(1).transient_local());
+    // set up robot planners
+    /* robot_planner_0_ = std::make_shared<planning::PlannerForRobot>(0, this, &robot_trajectories_,
+     * &shared_state_); */
+    /* robot_planner_1_ = std::make_shared<planning::PlannerForRobot>(1, this, &robot_trajectories_,
+     * &shared_state_); */
+
+    robot_intent_0_pub_ = this->create_publisher<RobotIntent::Msg>(
+        gameplay::topics::robot_intent_pub(0), rclcpp::QoS(1).transient_local());
+    robot_intent_1_pub_ = this->create_publisher<RobotIntent::Msg>(
+        gameplay::topics::robot_intent_pub(1), rclcpp::QoS(1).transient_local());
+
+    // TODO: macro here for topic name like other topics?
+    is_done_0_sub_ = this->create_subscription<rj_msgs::msg::IsDone>(
+        "planning/is_done/robot_0", rclcpp::QoS(1).transient_local(),
+        [this](rj_msgs::msg::IsDone::SharedPtr msg) {
+            if (msg->is_done) {
+                SPDLOG_INFO("robot 0 is done");
+            }
+        });
 }
 
-rclcpp_action::GoalResponse BallPlacementServer ::handle_goal(
+rclcpp_action::GoalResponse BallPlacementServer::handle_goal(
     const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const BallPlacement::Goal> goal) {
     (void)uuid;
 
@@ -48,72 +62,79 @@ rclcpp_action::GoalResponse BallPlacementServer ::handle_goal(
     }
 }
 
-rclcpp_action::CancelResponse BallPlacementServer ::handle_cancel(
+rclcpp_action::CancelResponse BallPlacementServer::handle_cancel(
     const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     (void)goal_handle;
     was_given_goal_pt_ = false;
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
-void BallPlacementServer ::handle_accepted(
+void BallPlacementServer::handle_accepted(
     const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     // this needs to return quickly to avoid blocking the executor, so spin up a new thread
     using namespace std::placeholders;
     std::thread{std::bind(&BallPlacementServer::execute, this, _1), goal_handle}.detach();
 }
 
-void BallPlacementServer ::execute(const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
+void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
+    // create ptrs to Goal, Feedback, Result objects per ActionServer API
     std::shared_ptr<const BallPlacement::Goal> goal = goal_handle->get_goal();
+    std::shared_ptr<BallPlacement::Result> result = std::make_shared<BallPlacement::Result>();
+    // TODO: how to populate feedback, and where to publish it?
+    /* std::shared_ptr<BallPlacement::Feedback> feedback =
+     * std::make_shared<BallPlacement::Feedback>(); */
+    /* goal_handle->publish_feedback(feedback); */
 
-    while (true) {
-        // TODO: plan here, change while loop condition if needed
-        // see this GH comment chain:
-        // https://github.com/RoboJackets/robocup-software/pull/1909#discussion_r901173122
-        //
-        // each of these steps blocks the future steps in the chain
-        // 0) find ball->goal_pt vector
-        // 0b) make other robots move out of vector path?? (check rules on if allowed)
-        // 1) move robot A to behind ball + move robot B to right behind ball placement pt
-        // 2) line kick robot A->B + turn on B dribbler (maybe should consider doing the backwards
-        // capture drive here?) 3) have B capture ball onto point if necessary (in case of bounce)
-        // 4) send SUCCESS to client
-        //
-        // if there is a bot in the way, debug print for now (later can dribble ball to side and
-        // then pass)
-        //
-        // also, while doing it, send some kind of feedback to client
+    // if the ActionClient is trying to cancel the goal, cancel it, terminate early
+    if (goal_handle->is_canceling()) {
+        result->is_done = true;
+        goal_handle->canceled(result);
+        return;
+    }
 
-        // see PlannerForRobot::make_request()
-        // either make a PlannerForRobot object or reimplement that logic here
-        // and explain in a comment why that clunky design is best
-        //
-        // if using planners to create Trajectories, need to
-        // 1) make the obj
-        // 2) format as a PlanRequest
-        //
-        // when sending PlanRequest ignore every obstacle except other robots
+    // otherwise, follow existing state machine to completion
+    switch (current_state_) {
+        case INIT: {
+            SPDLOG_INFO("INIT");
+            // create and send robot request to relevant PlannerForRobot
+            RobotIntent robot_intent_0;
+            planning::PathTargetCommand path_target{
+                planning::LinearMotionInstant(rj_geometry::Point(1.0, 2.0),
+                                              rj_geometry::Point(0.0, 0.0)),
+                planning::TargetFacePoint{rj_geometry::Point(1.0, 2.0)}};
 
-        std::shared_ptr<BallPlacement::Result> result = std::make_shared<BallPlacement::Result>();
-
-        std::shared_ptr<BallPlacement::Feedback> feedback =
-            std::make_shared<BallPlacement::Feedback>();
-        goal_handle->publish_feedback(feedback);
-
-        if (goal_handle->is_canceling()) {
-            result->is_done = true;
-            goal_handle->canceled(result);
-            return;
+            robot_intent_0.motion_command = path_target;
+            robot_intent_0.is_active = true;
+            robot_intent_0_pub_->publish(rj_convert::convert_to_ros(robot_intent_0));
+            SPDLOG_INFO("published robot intent 0");
+            break;
         }
+        case MOVING_TO_SPOTS: {
+            break;
+        }
+        case PASSING: {
+            break;
+        }
+        case ADJUSTING: {
+            break;
+        }
+        case DONE: {
+            // when done, send success result
+            if (rclcpp::ok()) {
+                result->is_done = true;
+                goal_handle->succeed(result);
+                std::cout << "Server succeeded!" << std::endl;
 
-        if (rclcpp::ok()) {
-            result->is_done = true;
-            goal_handle->succeed(result);
-            /* std::cout << "Server succeeded!" << std::endl; */
-
-            // TODO: on completion of goal, reset was_given_goal_pt_ state
-            /* was_given_goal_pt_ = false; */
+                // TODO: on completion of goal, reset was_given_goal_pt_ state
+                /* was_given_goal_pt_ = false; */
+            }
+            break;
+        }
+        default: {
+            // TODO: how to handle invalid state here?
             break;
         }
     }
 }
+
 }  // namespace server

@@ -36,7 +36,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       shared_state_{shared_state},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
-          fmt::format("planning_{}", robot_id)} {
+          fmt::format("planning_{}", robot_id_)} {
     planners_.push_back(std::make_shared<PathTargetPlanner>());
     planners_.push_back(std::make_shared<SettlePlanner>());
     planners_.push_back(std::make_shared<CollectPlanner>());
@@ -48,21 +48,28 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
 
     // Set up ROS
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
-        planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
+        planning::topics::trajectory_pub(robot_id_), rclcpp::QoS(1).transient_local());
+    // TODO: add macro for this to topic_names.hpp? (see above Trajectory)
+    is_done_pub_ = node_->create_publisher<rj_msgs::msg::IsDone>(
+        "planning/is_done/robot_" + std::to_string(robot_id_), rclcpp::QoS(1).transient_local());
+    // 16ms = 60 hz (ish)
+    timer_ =
+        node_->create_wall_timer(16ms, std::bind(&PlannerForRobot::refresh_plan_request, this));
+
     intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
-        gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
+        gameplay::topics::robot_intent_pub(robot_id_), rclcpp::QoS(1),
+        // this is the callback executed when a RobotIntent is received
         [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT
             if (robot_alive()) {
-                auto plan_request = make_request(rj_convert::convert_from_ros(*intent));
-                auto trajectory = plan_for_robot(plan_request);
-                trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
-                robot_trajectories_->put(robot_id_,
-                                         std::make_shared<Trajectory>(std::move(trajectory)),
-                                         intent->priority);
+                // save robot intent
+                if (intent != nullptr) {
+                    null_robot_intent = false;
+                    latest_robot_intent_ = intent;
+                }
             }
         });
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
-        radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
+        radio::topics::robot_status_pub(robot_id_), rclcpp::QoS(1),
         [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
             had_break_beam_ = status->has_ball_sense;
         });
@@ -163,11 +170,6 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
 
     debug_draw_.publish();
 
-    // TODO(Kevin): delete this debug print
-    if (this->is_done()) {
-        SPDLOG_ERROR("robot {}'s {} is_done", robot_id_, current_planner_->name());
-    }
-
     return trajectory;
 }
 
@@ -183,6 +185,26 @@ bool PlannerForRobot::is_done() const {
     }
 
     return current_planner_->is_done();
+}
+
+void PlannerForRobot::refresh_plan_request() {
+    if (null_robot_intent) {
+        return;
+    }
+
+    // create + pub a Trajectory from the last RobotIntent
+    auto plan_request = make_request(rj_convert::convert_from_ros(*latest_robot_intent_));
+    auto trajectory = plan_for_robot(plan_request);
+    trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+
+    // add that Trajectory to the shared_trajectories
+    robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
+                             latest_robot_intent_->priority);
+
+    // publish is_done status of robot
+    rj_msgs::msg::IsDone msg;
+    msg.is_done = this->is_done();
+    is_done_pub_->publish(msg);
 }
 
 }  // namespace planning

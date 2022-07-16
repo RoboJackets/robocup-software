@@ -7,6 +7,7 @@
 #include <context.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/is_done.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
@@ -15,6 +16,7 @@
 #include "planner/planner.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
+#include "std_msgs/msg/bool.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
 
@@ -179,9 +181,15 @@ private:
      */
     [[nodiscard]] bool is_done() const;
 
+    // TODO(Kevin) docs here
+    void refresh_plan_request();
+    rclcpp::TimerBase::SharedPtr timer_;
+
     rclcpp::Node* node_;
     std::vector<std::shared_ptr<Planner>> planners_;
     std::shared_ptr<Planner> current_planner_;
+    bool null_robot_intent = true;
+    std::shared_ptr<RobotIntent::Msg> latest_robot_intent_;
 
     int robot_id_;
     TrajectoryCollection* robot_trajectories_;
@@ -192,6 +200,7 @@ private:
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_pub_;
+    rclcpp::Publisher<rj_msgs::msg::IsDone>::SharedPtr is_done_pub_;
 
     rj_drawing::RosDebugDrawer debug_draw_;
 };

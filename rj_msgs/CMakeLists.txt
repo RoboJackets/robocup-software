@@ -43,6 +43,7 @@ rosidl_generate_interfaces(
   msg/LineKickMotionCommand.msg
   msg/InterceptMotionCommand.msg
   msg/MotionCommand.msg
+  msg/IsDone.msg
 
   msg/RawProtobuf.msg
   msg/RobotIntent.msg
@@ -55,6 +56,7 @@ rosidl_generate_interfaces(
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+
   # Services
   srv/ListJoysticks.srv
   srv/QuickCommands.srv
