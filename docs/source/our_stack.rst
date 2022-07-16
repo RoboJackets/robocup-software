@@ -25,6 +25,16 @@ ends, the callback method is entered:
         timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
 
+Motion Control
+--------------
+A lot of the motion control is done on robot by the firmware, but part of the
+motion control is handled by software. See the ``control`` directory,
+``motion_control.cpp`` uses PID to correct robot position. The PID
+controller implementation is not in software, but it is in the
+`fshare repository <https://github.com/RoboJackets/robocup-fshare>`_.
+Correction of robot velocity is done by robot firmware (the code that runs on
+each robot's microcontroller) in the separate firmware repository.
+
 Motion Planning
 ---------------
 Motion planning is about generating a path from a robots current position and
@@ -51,16 +61,6 @@ in ``soccer/src/soccer/planning/planner``.
 This is not an extensive explanation of everything planning does, looking
 through the ``planning`` folder will show you everything else, but it's a
 good start.
-
-Motion Control
---------------
-A lot of the motion control is done on robot by the firmware, but part of the
-motion control is handled by software. See the ``control`` directory,
-``motion_control.cpp`` uses PID to correct robot position. The PID
-controller implementation is not in software, but it is in the
-`fshare repository <https://github.com/RoboJackets/robocup-fshare>`_.
-Correction of robot velocity is done by robot firmware (the code that runs on
-each robot's microcontroller) in the separate firmware repository.
 
 Processor
 ---------
@@ -114,16 +114,4 @@ There are two parts to vision, both equally important: receiver and filter.
 First, receiver gets frames from the simulator or camera. It does some
 updating, then sends that to the filter. Filter uses a kalman filter to
 estimate the current world state and then publishes that as a built world
-state message which is then published for the rest of codebase to use:
-
-.. code-block:: c++
-
-        VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool
-us_blue) const {
-        return rj_msgs::build<WorldStateMsg>()
-        .last_update_time(rj_convert::convert_to_ros(\world_
-        .last_update_time()))
-        .their_robots(build_robot_state_msgs(!us_blue))
-        .our_robots(build_robot_state_msgs(us_blue))
-        .ball(build_ball_state_msg());
-        }
+state message which is then published for the rest of codebase to use.
