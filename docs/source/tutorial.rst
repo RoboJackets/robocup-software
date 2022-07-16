@@ -387,11 +387,11 @@ assist you in creating your own node.
                 manipulators_cached_.at(i) = *manipulator;
             });
 
-A ``lambda expression`` is used in place of the topic callback function in the ROS
-tutorial. The lambda expression allows you to pass in-line function objects and
-requires less lines of code when compared to having another function. I HIGHLY
-recommend that you google and visit the following resources to learn more about
-this topic.
+A ``lambda expression`` is used in place of the topic callback function in the
+ROS tutorial. The lambda expression allows you to pass in-line function objects
+and requires less lines of code when compared to having another function. I
+HIGHLY recommend that you google and visit the following resources to learn more
+about this topic.
 
     - `<https://www.programiz.com/cpp-programming/lambda-expression>`_
     - `<https://riptutorial.com/cplusplus/example/1854/what-is-a-lambda-expression->`_
@@ -403,7 +403,10 @@ example:
 
    robot_status_pubs_.at(robot_id)->publish(robot_status);
 
-The arrow operator is used to access a method or element of an object, when given a pointer to that object. Above, ``robot_status_pubs_`` is a list of pointers to ROS publisher objects. Calling `->publish(robot_status)` on one element in that list publishes a robot status using that specific publisher.
+The arrow operator is used to access a method or element of an object, when
+given a pointer to that object. Above, ``robot_status_pubs_`` is a list of
+pointers to ROS publisher objects. Calling `->publish(robot_status)` on one
+element in that list publishes a robot status using that specific publisher.
 
     - `<https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`
 
