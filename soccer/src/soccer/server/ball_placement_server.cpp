@@ -73,6 +73,7 @@ rclcpp_action::CancelResponse BallPlacementServer::handle_cancel(
     const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     (void)goal_handle;
     was_given_goal_pt_ = false;
+    current_state_ = BallPlacementState::INIT;
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
@@ -167,6 +168,8 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
                 break;
             }
             case DONE: {
+                // TODO : add another state to back up .5 m from the ball
+                //   this is part of the rules
                 SPDLOG_INFO("DONE");
 
                 // when done, send success result

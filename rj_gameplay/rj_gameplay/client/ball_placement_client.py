@@ -21,13 +21,16 @@ class BallPlacementClient(Node):
         goal_msg.goal_pt = goal_pt
 
         # only send goal to server if the goal has changed
-        # TODO: make client cancel + resend goal if pt changes!
         seen_goal_before = (
             self.curr_goal_pt is not None
             and self.curr_goal_pt.x == goal_pt.x
             and self.curr_goal_pt.y == goal_pt.y
         )
         if not seen_goal_before:
+            if self.curr_goal_pt is not None:
+                # cancel goal if the new ball placement point is different
+                self.cancel_goal()
+
             self.curr_goal_pt = goal_pt
 
             self._action_client.wait_for_server()
@@ -53,8 +56,7 @@ class BallPlacementClient(Node):
 
     def get_result_callback(self, future):
         self.curr_result = future.result().result
-        # TODO: clear state of goal pt when done
-        # self.curr_goal_pt = None
+        self.curr_goal_pt = None
 
     def feedback_callback(self, feedback_msg):
         self.curr_feedback = feedback_msg.feedback
