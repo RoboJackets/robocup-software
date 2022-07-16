@@ -18,7 +18,7 @@ system with a play selector that chooses a play based on world state. Then
 that play assigns roles, roles select a tactic based on their progress, and
 tactic select an atomic skill to perform. The gameplay loop is set to tick at
 60Hz. The below code block is how currently that is done. Each time the timer
-ends, the callback method is entered.
+ends, the callback method is entered:
 
 .. code-block:: python
 
@@ -114,16 +114,16 @@ There are two parts to vision, both equally important: receiver and filter.
 First, receiver gets frames from the simulator or camera. It does some
 updating, then sends that to the filter. Filter uses a kalman filter to
 estimate the current world state and then publishes that as a built world
-state message:
+state message which is then published for the rest of codebase to use:
 
 .. code-block:: c++
 
         VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool
 us_blue) const {
-            return rj_msgs::build<WorldStateMsg>()
-                .last_update_time(rj_convert::convert_to_ros(\world_
-.last_update_time()))
-                .their_robots(build_robot_state_msgs(!us_blue))
-                .our_robots(build_robot_state_msgs(us_blue))
-                .ball(build_ball_state_msg());
+        return rj_msgs::build<WorldStateMsg>()
+        .last_update_time(rj_convert::convert_to_ros(\world_
+        .last_update_time()))
+        .their_robots(build_robot_state_msgs(!us_blue))
+        .our_robots(build_robot_state_msgs(us_blue))
+        .ball(build_ball_state_msg());
         }
