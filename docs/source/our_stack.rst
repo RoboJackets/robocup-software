@@ -19,9 +19,12 @@ that play assigns roles, roles select a tactic based on their progress, and
 tactic select an atomic skill to perform. The gameplay loop is set to tick at
 60Hz. The below code block is how currently that is done. Each time the timer
 ends, the callback method is entered.
+
 .. code-block:: python
+
         timer_period = 1 / 60  # seconds
         self.timer = self.create_timer(timer_period, self.gameplay_tick)
+
 Motion Planning
 ---------------
 Motion planning is about generating a path from a robots current position and
@@ -48,6 +51,7 @@ in ``soccer/src/soccer/planning/planner``.
 This is not an extensive explanation of everything planning does, looking
 through the ``planning`` folder will show you everything else, but it's a
 good start.
+
 Motion Control
 --------------
 A lot of the motion control is done on robot by the firmware, but part of the
@@ -57,12 +61,14 @@ controller implementation is not in software, but it is in the
 `fshare repository <https://github.com/RoboJackets/robocup-fshare>`_.
 Correction of robot velocity is done by robot firmware (the code that runs on
 each robot's microcontroller) in the separate firmware repository.
+
 Processor
 ---------
 It is defined in ``soccer/src/soccer/processor.cpp``, and it basically just
 starts a bunch of temp nodes and then has an infinite loop to update the
 context. Context is used to update the ui. It is good that most other nodes
 are not dependent on this loop.
+
 Radio
 -----
 See the ``/radio`` directory. We have a sim radio for when playing virtual
@@ -77,6 +83,7 @@ to. When soccer eventually receives a robot status message from a robot, it
 adds the robot id to an ip map. Now our software knows how to reach that
 robot id. If that robot doesn't send any robot status in a while, it will
 disconnect and disappear from the UI (when running with real robots).
+
 Referee
 -------
 Referee controls the match state. We have an internal referee which can send
@@ -99,6 +106,7 @@ After the view, all the C++ files act as the view-model for each view.
 Some of them are quite messy and do not follow our naming conventions,
 but if you follow the pattern of other methods, then you should be able to
 add new functionality to any part of our ui.
+
 Vision
 ------
 There are two parts to vision, both equally important: receiver and filter.
@@ -107,7 +115,9 @@ First, receiver gets frames from the simulator or camera. It does some
 updating, then sends that to the filter. Filter uses a kalman filter to
 estimate the current world state and then publishes that as a built world
 state message:
+
 .. code-block:: c++
+
         VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool
 us_blue) const {
             return rj_msgs::build<WorldStateMsg>()
