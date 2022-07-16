@@ -73,7 +73,6 @@ rclcpp_action::CancelResponse BallPlacementServer::handle_cancel(
     const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     (void)goal_handle;
     was_given_goal_pt_ = false;
-    current_state_ = BallPlacementState::INIT;
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
@@ -81,6 +80,7 @@ void BallPlacementServer::handle_accepted(
     const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     // this needs to return quickly to avoid blocking the executor, so spin up a new thread
     using namespace std::placeholders;
+    current_state_ = INIT;
     std::thread{std::bind(&BallPlacementServer::execute, this, _1), goal_handle}.detach();
 }
 
@@ -230,7 +230,7 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
                 rj_geometry::Point ball_pt = last_world_state_.ball.position;
                 if (!end_pts_sent_) {
                     // move robots >=0.5 m in dir away from ball (per rules)
-                    double retreat_dist = 0.6;  // m
+                    double retreat_dist = 0.1 + 0.5 + kRobotRadius;  // m
 
                     // in reality this should be a signal to move back to normal
                     // STOP behavior, but we have circumvented the rest of gameplay
