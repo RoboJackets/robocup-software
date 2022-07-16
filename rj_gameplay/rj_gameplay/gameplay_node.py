@@ -55,6 +55,7 @@ class GameplayNode(Node):
 
         self._test_play = None
         self._curr_play = None
+        self._prev_play = None
         self._curr_situation = None
 
         file = open("config/plays.txt")
@@ -280,6 +281,10 @@ class GameplayNode(Node):
                 self._test_play = eval(play_str)
 
         if self.world_state is not None:
+            # store previous play to make sure ball placement is cancelled
+            # when the state changes
+            self._prev_play = self._curr_play
+
             # if we don't have a test play, use play_selector
             if self._test_play is None:
                 # sometimes game_info is None while world_state is not None
@@ -316,6 +321,9 @@ class GameplayNode(Node):
                 self.ball_placement_client.send_goal(goal_pt)
             else:
                 intents = self._curr_play.tick(self.world_state)
+
+            if type(self._prev_play) is ball_placement.BallPlacement:
+                self.ball_placement_client.cancel_goal()
 
             if intents:
                 for i in range(len(self.world_state.our_robots)):

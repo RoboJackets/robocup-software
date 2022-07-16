@@ -73,6 +73,7 @@ rclcpp_action::CancelResponse BallPlacementServer::handle_cancel(
     const std::shared_ptr<GoalHandleBallPlacement> goal_handle) {
     (void)goal_handle;
     was_given_goal_pt_ = false;
+    current_state_ = BallPlacementState::INIT;
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
@@ -228,20 +229,21 @@ void BallPlacementServer::execute(const std::shared_ptr<GoalHandleBallPlacement>
 
                 rj_geometry::Point ball_pt = last_world_state_.ball.position;
                 if (!end_pts_sent_) {
-                    // move robots 1.0 m in dir away from ball
-                    //
+                    // move robots >=0.5 m in dir away from ball (per rules)
+                    double retreat_dist = 0.6;  // m
+
                     // in reality this should be a signal to move back to normal
                     // STOP behavior, but we have circumvented the rest of gameplay
                     // so that won't be feasible
                     rj_geometry::Point robot_0_pt =
                         last_world_state_.our_robots.at(0).pose.position();
                     rj_geometry::Point ball_robot_0_dir = (robot_0_pt - ball_pt).norm();
-                    robot_0_end_pt_ = robot_0_pt + ball_robot_0_dir * 1.0;
+                    robot_0_end_pt_ = robot_0_pt + ball_robot_0_dir * retreat_dist;
 
                     rj_geometry::Point robot_1_pt =
                         last_world_state_.our_robots.at(1).pose.position();
                     rj_geometry::Point ball_robot_1_dir = (robot_1_pt - ball_pt).norm();
-                    robot_1_end_pt_ = robot_1_pt + ball_robot_1_dir * 1.0;
+                    robot_1_end_pt_ = robot_1_pt + ball_robot_1_dir * retreat_dist;
 
                     RobotIntent robot_intent_0;
                     planning::PathTargetCommand pt_0{

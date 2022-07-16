@@ -1,13 +1,10 @@
-from enum import Enum, auto
 from typing import List, Optional
 
-import numpy as np
 import stp
 import stp.rc
 import stp.role
 import stp.role.cost
 from rclpy.node import Node
-from rj_geometry_msgs.msg import Point
 from rj_msgs.msg import RobotIntent
 
 
