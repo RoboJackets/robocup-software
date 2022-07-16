@@ -8,7 +8,7 @@ We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
 are on an Ubuntu 20.04 machine before continuing. Alternatively for
 Windows users, using WSL2 with Ubuntu 20.04 will work, the steps to set this
 up can be found `here <https://ubuntu
-.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_
+.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_.
 
 First, clone the repository from GitHub:
 
