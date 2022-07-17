@@ -21,8 +21,7 @@ setup script to install all required dependencies:
 
 .. code-block:: bash
 
-    cd robocup-software
-    ./util/ubuntu-setup && ./util/git-setup
+    cd robocup-software ./util/ubuntu-setup && ./util/git-setup
 
 
 Running The First Time
@@ -44,13 +43,12 @@ Run the following code line by line
 
 .. code-block:: sh
 
-    mkdir build && cd build
-    cmake ..
-    make simulator-cli
+    mkdir build && cd build cmake .. make simulator-cli
 
 This builds an executable in ``framework/build/bin``.
 
-Open a new terminal window and change directory into ``framework/build/bin``. In this folder, there should be a file named ``simulator-cli``.
+Open a new terminal window and change directory into ``framework/build/bin``. In
+this folder, there should be a file named ``simulator-cli``.
 
 Run this file by doing the following
 
@@ -66,8 +64,7 @@ where the latest working version of our codebase exists. (See "Github" doc.
 
 .. code-block:: bash
 
-    git pull
-    git checkout ros2
+    git pull git checkout ros2
 
 Then, source the ROS setup file. This ensures your shell can use ROS commands.
 
@@ -103,8 +100,8 @@ Again, if you're on zsh, source the ``.zsh`` version instead:
 
     source install/setup.zsh
 
-Now we are good to go. As a sanity check, the following command should print
-out ``rj_robocup``:
+Now we are good to go. As a sanity check, the following command should print out
+``rj_robocup``:
 
 .. code-block:: bash
 
@@ -128,8 +125,8 @@ Now that you know how to source dependencies, build, and run our code, you can
 take advantage of some neat shortcuts. These shortcuts all depend on the
 following knowledge:
 
-Sourcing only needs to happen every time a new terminal is opened, and
-building only needs to happen when C++ or launch.py files are changed.
+Sourcing only needs to happen every time a new terminal is opened, and building
+only needs to happen when C++ or launch.py files are changed.
 
 (Python is not a compiled language; thus, those files do not need to be built
 when changed.)
@@ -141,14 +138,13 @@ terminal, you can launch sim with:
 
 .. code-block:: bash
 
-   . ./source.bash
-   make run-sim
+   . ./source.bash make run-sim
 
 ``source.bash`` is an alias for the two source commands in the above section,
 and ``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
 
-Since Python is not compiled, if you're exclusively working on Python files,
-and staying in one terminal, it's likely that you'll mostly only need:
+Since Python is not compiled, if you're exclusively working on Python files, and
+staying in one terminal, it's likely that you'll mostly only need:
 
 .. code-block:: bash
 
@@ -161,8 +157,7 @@ with:
 
 .. code-block:: bash
 
-   make again
-   . ./source.bash
+   make again . ./source.bash
 
 The ``source.bash`` line is necessary to source the file in ``install/``, which
 is refreshed on each build. (Note: this does not build any CMake-related files,
@@ -173,9 +168,9 @@ details, but in short:
 
 .. code-block:: bash
 
-   make all         # builds with full debugging symbols
-   make debug       # alias for make all
-   make all-release # builds with 0 debugging symbols
-   make perf        # builds with some debugging symbols; preferred method
+   make all         # builds with full debugging symbols make debug       #
+   alias for make all make all-release # builds with 0 debugging symbols make
+   perf        # builds with some debugging symbols; preferred method
 
-TODO(Kevin): add description of running on field comp (move that md file over too)
+TODO(Kevin): add description of running on field comp (move that md file over
+too)
