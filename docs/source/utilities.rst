@@ -10,7 +10,7 @@ Sourcing ros2
 Run ``./source.bash`` to automatically detect whether your shell is using zsh
 or bash and source that respective setup file (they are located in ``/install``).
 Additionally, we would recommend adding ``source /opt/ros/foxy/setup.zsh`` to
-your ``.zshrc`` if using zsh or to your ``.bashrc``. So you don't have to
+your ``.zshrc`` if using zsh or to your ``.bashrc`` so you don't have to
 type that out each time you open a new terminal. When in the future we
 transition to a different ROS version, you can update that line to the path
 of the new version.
@@ -27,7 +27,7 @@ Build System
 --------------------------------------------------
 We use cmake and ninja. We prefer using clang as the C++ compiler compared to
 gcc, but either will work.
-Most of the details on the high-level construction of out build system can
+Most of the details on the high-level construction of our build system can
 been ascertained by reading the root ``CMakeLists.txt``.
 If you are adding a new C++ file, it is best to just follow the existing
 format by reading through ``CMakeLists.txt`` in the relevant directories.
@@ -52,20 +52,19 @@ the process name to place after ``-n``.
 Another method to find the process names of nodes is to run ``top`` in a new
 terminal tab and look in there.
 
-And how do you use lldb?
+**How do you use lldb?**
 Google what you want to do and follow the top result or follow the lldb
 tutorial on their website.
 CS2110 and CS2200 will introduce you to gdb which is another debugger for
-C/C++ and if you already know that,
+C/C++; if you already know that,
 the commands are basically the same (the syntax is different in many places
 though).
 
 There is also another method which involves commenting out the node you want
 to run in the launch files and running it separately in a new terminal tab
 with a debugging prefix. This method is slower and not as consistent, so I
-won't explain it anymore here. Though check out ``util/debug-cpp.sh`` if you
-are curious or if the first method I explained above stops working for some
-reason.
+won't explain it here. Check out ``util/debug-cpp.sh`` if you
+are curious, or if the first method I explained stops working.
 
 Continuous Integration
 --------------------------------------------------
