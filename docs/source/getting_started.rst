@@ -23,8 +23,7 @@ install all required dependencies:
 
 .. code-block:: bash
 
-    cd robocup-software
-    ./util/ubuntu-setup && ./util/git-setup
+    cd robocup-software ./util/ubuntu-setup && ./util/git-setup
 
 To simulate the vision data we'd get from a real field camera setup, we'll use
 ER-Force's simulator. For that, clone their repo, and ``cd`` into it.
@@ -38,9 +37,7 @@ Then, build their code with the following:
 
 .. code-block:: sh
 
-    mkdir build && cd build
-    cmake ..
-    make simulator-cli
+    mkdir build && cd build cmake .. make simulator-cli
 
 This builds an executable in ``framework/build/bin``. Like any other
 executable, it can be run with ``[filepath-to-executable]``. Since we're
@@ -55,6 +52,7 @@ Note also that the absolute filepath works from any directory:
 .. code-block:: sh
 
    ~/framework/build/bin/simulator-cli
+
 
 We're a Division B team, so add the flag `-g` and the option `2020B` to use the
 Division B field dimensions, like so:
@@ -73,8 +71,7 @@ where the latest working version of our codebase exists. (See "Github" doc.
 
 .. code-block:: bash
 
-    git pull
-    git checkout ros2
+    git pull git checkout ros2
 
 Then, source the ROS setup file. This allows your shell to use ROS commands.
 
@@ -101,8 +98,8 @@ the ``robocup-software`` directory:
 
 (Again, if you're on zsh, source the ``.zsh`` version instead.)
 
-Now we are good to go. As a sanity check, the following command should print
-out ``rj_robocup``:
+Now we are good to go. As a sanity check, the following command should print out
+``rj_robocup``:
 
 .. code-block:: bash
 
@@ -141,14 +138,13 @@ terminal, you can launch sim with:
 
 .. code-block:: bash
 
-   . ./source.bash
-   make run-sim
+   . ./source.bash make run-sim
 
 ``source.bash`` is an alias for the two source commands you saw above, and
 ``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
 
-Since Python is not compiled, if you're exclusively working on Python files,
-and staying in one terminal, it's likely that you'll mostly only need:
+Since Python is not compiled, if you're exclusively working on Python files, and
+staying in one terminal, it's likely that you'll mostly only need:
 
 .. code-block:: bash
 
@@ -161,8 +157,7 @@ machine, though, you can build again more quickly with:
 
 .. code-block:: bash
 
-   make again
-   . ./source.bash
+   make again . ./source.bash
 
 The ``source.bash`` line is necessary to source the file in ``install/``, which
 is refreshed on each build. (**Note:** this does not build any CMake-related
@@ -173,9 +168,9 @@ details, but in short:
 
 .. code-block:: bash
 
-   make all         # builds with full debugging symbols
-   make debug       # alias for make all
-   make all-release # builds with 0 debugging symbols
-   make perf        # builds with some debugging symbols; preferred method
+   make all         # builds with full debugging symbols make debug       #
+   alias for make all make all-release # builds with 0 debugging symbols make
+   perf        # builds with some debugging symbols; preferred method
 
-TODO(Kevin): add description of running on field comp (move that md file over too)
+TODO(Kevin): add description of running on field comp (move that md file over
+too)
