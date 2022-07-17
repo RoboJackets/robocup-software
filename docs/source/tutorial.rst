@@ -408,7 +408,8 @@ given a pointer to that object. Above, ``robot_status_pubs_`` is a list of
 pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
 element in that list publishes a robot status using that specific publisher.
 
-    - `https://www.tutorialspoint.com/cplusplus/cpp_member_operators <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`_
+    - `https://www.tutorialspoint.com/cplusplus/cpp_member_operators
+      <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`_
 
 * Notice the docstrings for the radio header file. It explains that it's the
   abstract superclass of the network_radio and sim_radio node. If you are
@@ -444,11 +445,11 @@ hierarchies. Locate the CMakeLists.txt file in
 
 You may have started noticing the pattern of adding to the key sections of the
 CMake files. You need to find the parts of the file where the other nodes are
-located and follow the format for your own node. You will eventually learn as
-you gain experience. As explained earlier, CMake files are build files for the
-directory. So check if you need to make additions to the
-``robocup-software/soccer/src`` and ``robocup-software/soccer`` CMake files.
-Follow the pattern mentioned above.
+located and follow the format for your own node. For now, it's okay if you don't
+understand everything that's going on. You will eventually learn as you gain
+experience. As explained earlier, CMake files are build files for the directory.
+So check if you need to make additions to the ``robocup-software/soccer/src``
+and ``robocup-software/soccer`` CMake files. Follow the pattern mentioned above.
 
 You're almost there! The final file you will have to add to is the launch file.
 Launch files in ROS are a convenient way of starting up multiple nodes, setting
