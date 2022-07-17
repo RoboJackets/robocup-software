@@ -408,8 +408,7 @@ given a pointer to that object. Above, ``robot_status_pubs_`` is a list of
 pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
 element in that list publishes a robot status using that specific publisher.
 
-    - .. _`C++ Arrow Operator resource`:
-  https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator
+    - `https://www.tutorialspoint.com/cplusplus/cpp_member_operators <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`_
 
 * Notice the docstrings for the radio header file. It explains that it's the
   abstract superclass of the network_radio and sim_radio node. If you are
