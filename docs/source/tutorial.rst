@@ -361,7 +361,7 @@ assist you in creating your own node.
 
 **Key Sections**
 
-* There are multiple `#include`s in both files. Reference between the ROS
+* There are multiple ``#include``s in both files. Reference between the ROS
   tutorial above and your objective to determine which files are needed for your
   node.
 * Both files are enclosed under `namespace`. Look at other header-source file
@@ -405,17 +405,18 @@ example:
 
 The arrow operator is used to access a method or element of an object, when
 given a pointer to that object. Above, ``robot_status_pubs_`` is a list of
-pointers to ROS publisher objects. Calling `->publish(robot_status)` on one
+pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
 element in that list publishes a robot status using that specific publisher.
 
-    - `<https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`
+    - .. _`C++ Arrow Operator resource`:
+  https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator
 
 * Notice the docstrings for the radio header file. It explains that it's the
   abstract superclass of the network_radio and sim_radio node. If you are
   unfamiliar with the concept of abstraction, `here
   <https://www.pythontutorial.net/python-oop/python-abstract-class/>`_ is more
   information. When exploring these two nodes, you will discover a third file
-  named "node"_main.cpp which contains the main function for its respective
+  named <node>_main.cpp which contains the main function for its respective
   node. This structure is intended to make writing the CMakeLists.txt file for
   the directory easier.
 
@@ -436,7 +437,7 @@ hierarchies. Locate the CMakeLists.txt file in
   radio files that you explored earlier along with other crucial source files
   that aid in motion control, soccer ui, etc. You will get familiar with these
   files as you continue to contribute to the codebase.
-* Many of the nodes have an environment variable set for their "node"_main.cpp.
+* Many of the nodes have an environment variable set for their <node>_main.cpp.
   (HINT: There is a connection between the nodes that have these variables and
   the nodes that are returned by the ROS CLI)
 * Each of the nodes that have a source variable are added in the CMake file as
@@ -444,11 +445,11 @@ hierarchies. Locate the CMakeLists.txt file in
 
 You may have started noticing the pattern of adding to the key sections of the
 CMake files. You need to find the parts of the file where the other nodes are
-located and follow the format for your own node. While it is important to
-understand the meaning of each section, you will eventually learn as you gain
-experience. As explained earlier, CMake files are build files for the directory.
-So check if you need to make additions to the ``robocup-software/soccer/src``
-and ``robocup-software/soccer`` CMake files. Follow the pattern mentioned above.
+located and follow the format for your own node. You will eventually learn as
+you gain experience. As explained earlier, CMake files are build files for the
+directory. So check if you need to make additions to the
+``robocup-software/soccer/src`` and ``robocup-software/soccer`` CMake files.
+Follow the pattern mentioned above.
 
 You're almost there! The final file you will have to add to is the launch file.
 Launch files in ROS are a convenient way of starting up multiple nodes, setting
