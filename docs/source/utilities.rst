@@ -1,19 +1,39 @@
 Utilities
 ===================================================
-This page will contain high-level documentation on the various utilities in
-RJ RoboCup Software.
-Utilities will be classified as anything that is not directly run after you
-launch soccer.
+This page will contain high-level documentation on the various utilities for RJ
+RoboCup Software. Utilities are everything not directly necessary to launch
+our AI program, soccer (what a confusing name).
 
-Sourcing ros2
----------------------------------------------------
-Run ``./source.bash`` to automatically detect whether your shell is using zsh
-or bash and source that respective setup file (they are located in ``/install``).
-Additionally, we would recommend adding ``source /opt/ros/foxy/setup.zsh`` to
-your ``.zshrc`` if using zsh or to your ``.bashrc`` so you don't have to
-type that out each time you open a new terminal. When in the future we
-transition to a different ROS version, you can update that line to the path
-of the new version.
+External Referee
+--------------------------------------------------
+First, read the Referee section of the Our Stack page. This will give you some
+background on what the SSL Game Controller does. This program is given by the
+league and helps simulate what it will be like at competition, where the
+(human) referee sits at a different computer to the one that runs our software
+and gives game commands from there.
+
+Installation is simple. First, create an empty directory named
+``ssl-game-controller`` at the same level as your clone of
+``robocup-software``:
+
+~/coding/robocup/
+├── robocup-software/
+├── ssl-game-controller/
+
+Then, download the latest release binary in the `SSL GC repo
+<https://github.com/RoboCup-SSL/ssl-game-controller>`_ and put it into that
+folder. Finally, make the release binary executable by ``cd``ing to the
+``ssl-game-controller`` repo and running ``chmod +x <name of release binary>``.
+
+When you want to launch the game controller, ``cd`` to your
+``ssl-game-controller`` directory and run the release binary with ``./<name of
+release binary>``. (You can tab-complete this by typing ``./`` and then hitting
+tab.) The binary will output a message saying it has launched the UI at a
+specific URL--click that link to open the UI. 
+
+.. image:: ./_static/ssl-gc-ui.png
+
+Operation instructions can be found in the FAQ of the SSL GC repo.
 
 Launch
 --------------------------------------------------
