@@ -82,11 +82,13 @@ disconnect and disappear from the UI (when running with real robots).
 
 Referee
 -------
-Referee controls the match state. We have an internal referee which can send
-quick commands like stop and start from our UI, so we don't always have to
-launch the game controller. When we do want to use the game controller
-though, the external referee handles that by listening for game events and
-updates on specific ports designated by the league.
+The referee node captures the match state and distributes it to the rest of the
+system. We have two referee nodes: external referee, which takes commands from
+the `SSL Game Controller
+<https://github.com/RoboCup-SSL/ssl-game-controller>`_, and internal referee,
+which takes commands from our internal UI, so we don't always have to launch
+the game controller. The specific ports and message formats for referee
+messages are designated by the league.
 
 UI
 --
