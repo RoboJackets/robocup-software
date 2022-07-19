@@ -12,13 +12,23 @@ from rj_gameplay.tactic import line_tactic, prep_move, striker_tactic
 
 
 class State(Enum):
+    """This is a class that represents the status of the PenaltyOffense play."""
     INIT = auto()
     ACTIVE = auto()
 
 
 # TODO: add a shared state between these two classes somehow
 class PenaltyOffense(stp.play.Play):
-    """striker + line up rest of robots"""
+    """This is a play that represents the lineup procedure in the event that our team has been awarded a penalty kick. 
+       Per rule 3 in Section 5.3.5 of the RoboCup SSL Playbook (https://robocup-ssl.github.io/ssl-rules/sslrules.html#_penalty_kick),
+       "Throughout the penalty kick procedure, all other robots have to be 1m behind the ball such that they do not interfere the penalty kick procedure".
+       As such, this play lines up 5 offensive robots such that they are at least 1m behind the ball and assigns a striker to take the penalty.
+
+    :param state: An enum value that represents the current state of the play.
+    :type state: class:`State`
+    :param world_state: Contains the states of all aspects of the match.
+    :type world_state: class:`stp.rc.WorldState`
+    """
 
     def __init__(self):
         super().__init__()
@@ -47,7 +57,14 @@ class PenaltyOffense(stp.play.Play):
 
 
 class PrepPenaltyOff(stp.play.Play):
-    """prepare striker + line up all robots"""
+    """This class, when called, prepares the PenaltyOffense play by lining up 5 offensive robots such that they are at least 1m behind the ball 
+    and assigns a striker to take the penalty.
+
+    :param state: An enum value that represents the current state of the play.
+    :type state: class:`State`
+    :param world_state: Contains the states of all aspects of the match.
+    :type world_state: class:`stp.rc.WorldState`
+    """
 
     def __init__(self):
         super().__init__()
