@@ -10,13 +10,22 @@ from rj_msgs.msg import RobotIntent
 
 from rj_gameplay.tactic import goalie_tactic, line_tactic
 
-
 class State(Enum):
+    """This class represents the state of the PenaltyDefense play."""
     INIT = auto()
     ACTIVE = auto()
 
 
 class PenaltyDefense(stp.play.Play):
+    """This is a play that represents the lineup procedure in the event that an opposing team has been awarded a penalty kick. 
+       Per rule 3 in Section 5.3.5 of the RoboCup SSL Playbook (https://robocup-ssl.github.io/ssl-rules/sslrules.html#_penalty_kick),
+       "Throughout the penalty kick procedure, all other robots have to be 1m behind the ball such that they do not interfere the penalty kick procedure".
+
+    :param state: An enum value that represents the current state of the play.
+    :type state: class:`State`
+    :param world_state: Contains the states of all aspects of the match.
+    :type world_state: class:`stp.rc.WorldState`
+    """
     def __init__(self):
         super().__init__()
         self._state = State.INIT
