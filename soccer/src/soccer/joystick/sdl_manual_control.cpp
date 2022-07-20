@@ -56,7 +56,11 @@ ControllerCommand KeyboardController::get_command() const {
         command.kick_power = kick_power_;
     }
 
-    command.dribble_power = dribble_power_;
+    if (key_down(keystate, SDL_SCANCODE_SPACE) || key_down(keystate, SDL_SCANCODE_RSHIFT)) {
+        command.dribble_power = 1.0;
+    } else {
+    	command.dribble_power = dribble_power_;
+    }
 
     return command;
 }
