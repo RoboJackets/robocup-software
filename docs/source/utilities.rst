@@ -6,11 +6,12 @@ our AI program, soccer (what a confusing name).
 
 External Referee
 --------------------------------------------------
-First, read the Referee section of the Our Stack page. This will give you some
-background on what the SSL Game Controller does. This program is given by the
-league and helps simulate what it will be like at competition, where the
-(human) referee sits at a different computer to the one that runs our software
-and gives game commands from there.
+First, read the Referee section of the Our Stack page and `this section
+<https://robocup-ssl.github.io/ssl-rules/sslrules.html#_game_controller>`_ of
+the rulebook. This will give you some background on what the SSL Game
+Controller does. This program is given by the league and helps simulate what it
+will be like at competition, where the (human) referee sits at a different
+computer to the one that runs our software and gives game commands from there.
 
 Installation is simple. First, create an empty directory named
 ``ssl-game-controller`` at the same level as your clone of
