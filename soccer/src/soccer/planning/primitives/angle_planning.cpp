@@ -137,8 +137,8 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
     // Fill in the trajectory
     auto instant_it = trajectory->instants_begin();
     for (int i = 0; i < trajectory->num_instants(); ++i, ++instant_it) {
-        instant_it->heading() = 0.0; // target_angles.at(i);
-        instant_it->angular_velocity() = 0.0; //  velocity.at(i);
+        instant_it->heading() = target_angles.at(i);
+        instant_it->angular_velocity() = velocity.at(i);
     }
 
     trajectory->mark_angles_valid();
