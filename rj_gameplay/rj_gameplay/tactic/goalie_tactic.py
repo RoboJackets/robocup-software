@@ -42,7 +42,7 @@ class GoalieTactic(stp.tactic.Tactic):
         for i in range(len(self.assigned_roles)):
             role = self.assigned_roles[i]
 
-            print("assigned role:", role, role.robot)
+            # print("assigned role:", role, role.robot)
 
             # TODO: figure out why this prevents sim crash
             if role.robot is not None:

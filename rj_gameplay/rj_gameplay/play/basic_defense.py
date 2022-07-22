@@ -35,11 +35,10 @@ class BasicDefense(stp.play.Play):
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
 
-        #print(self._state)
         if self._state == State.INIT:
-            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 4))
-            self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 2))
-            #self.prioritized_tactics.append(nmark_tactic.NMarkTactic(world_state, 2))
+            self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+            # self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 2))
+            # self.prioritized_tactics.append(nmark_tactic.NMarkTactic(world_state, 2))
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)

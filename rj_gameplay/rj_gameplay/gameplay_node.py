@@ -223,9 +223,11 @@ class GameplayNode(Node):
                 intents = self.test_play.tick(self.world_state)
                 curr_play = self.test_play
 
+            # print(intents)
             if intents:
                 for i in range(len(self.world_state.our_robots)):
                     if intents[i] is not None:
+                        # print(f"intent i {i} {intents[i]}")
                         rip_i = self.robot_intent_pubs[i]
                         rip_i.publish(intents[i])
 

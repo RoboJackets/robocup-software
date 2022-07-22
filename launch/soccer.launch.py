@@ -109,7 +109,7 @@ def generate_launch_description():
             DeclareLaunchArgument("team_flag", default_value=""),
             DeclareLaunchArgument("sim_flag", default_value=""),
             DeclareLaunchArgument("ref_flag", default_value=""),
-            DeclareLaunchArgument("direction_flag", default_value="plus"),
+            DeclareLaunchArgument("direction_flag", default_value="minus"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,

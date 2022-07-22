@@ -63,6 +63,7 @@ class Move(stp.skill.Skill):
         intent.motion_command.path_target_command = [path_command]
         intent.is_active = True
 
+        print(f"robot id in move? {self.robot}")
         # TODO: motion planning is a lot more stable when not being spammed with repeat intents, use Action Client/Server to avoid re-requests when the intent is the same
         return intent
 

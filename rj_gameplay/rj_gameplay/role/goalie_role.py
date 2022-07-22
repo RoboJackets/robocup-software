@@ -91,10 +91,25 @@ class GoalieRole(stp.role.Role):
         goal_pos = world_state.field.our_goal_loc
         towards_goal = goal_pos - ball_pos
 
+        # TODO(Kevin): don't merge this, delete this please
+        self.brick = True
+        print("reached brick")
         if self.brick:
+            # find vector from ball to "center" of our half
+            center = np.array([0.0, 2.0])
+            ball_pt = world_state.ball.pos
+            ball_to_center_vec = center - ball_pt
+            print(ball_pt)
+            print(ball_to_center_vec)
+
+            # move robot to halfway between ball and center pt
+            halfway_pt = ball_pt + 0.5 * ball_to_center_vec
+            print(f"halfway_pt {halfway_pt}")
+
             self.move_skill = move.Move(
                 robot=self.robot,
-                target_point=world_state.field.our_goal_loc,
+                # target_point=halfway_pt,
+                target_point=center,
                 face_point=world_state.ball.pos,
             )
             return self.move_skill.tick(world_state)
@@ -156,6 +171,7 @@ class GoalieRole(stp.role.Role):
             )
 
             return self.pivot_kick_skill.tick(world_state)
+
 
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         # goalie always active
