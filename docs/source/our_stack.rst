@@ -97,18 +97,25 @@ are not dependent on this loop.
 
 Radio
 -----
-See the ``/radio`` directory. We have a sim radio for when using virtual
+See the ``/radio`` directory. We have two different radio implementations
+that inherit from a base class: a sim radio for virtual
 matches or testing locally, and a network radio for when we run on real
-hardware. It sends commands to our robots using the league designated ports
-for yellow and blue when in sim mode. The simulation packets are standardized
-by the league and in the ``rj_protos`` directory (the ones with the ssl
-prefix).
+hardware.
+
+Sim radio sends commands to our robots using the
+league designated ports for yellow and blue. We can take advantage of this
+to simulate matches against ourselves (see the sim2play launch file for
+example) or play other teams virtually without hardware. The simulation packets
+are standardized by the league and are located in the ``rj_protos`` directory
+(the ones with the ssl prefix).
 
 The network radio expects each robot to know the ip address of where to send
-to. When soccer eventually receives a robot status message from a robot, it
+to (the field computer or comp laptop). When soccer eventually receives a robot
+status message from a robot, it
 adds the robot id to an ip map. Now our software knows how to reach that
-robot id. If that robot doesn't send any robot status in a while, it will
-disconnect and disappear from the UI (when running with real robots).
+robot id! If that robot doesn't send any robot status in a while, network
+radio will disconnect that robot and that robot id will disappear from the UI
+(when running with real robots).
 
 Referee
 -------
@@ -132,7 +139,7 @@ lot of time.
 
 After the view, all the C++ files act as the view-model for each view.
 Some of them are quite messy and do not follow our naming conventions; however,
- if you follow the common method patterns, you should be able to
+if you follow the common method patterns, you should be able to
 add new functionality to any part of our ui.
 
 Vision
