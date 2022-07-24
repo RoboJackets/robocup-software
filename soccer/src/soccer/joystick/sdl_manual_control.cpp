@@ -22,16 +22,16 @@ ControllerCommand KeyboardController::get_command() const {
 
     const auto* keystate = SDL_GetKeyboardState(nullptr);
     if (key_down(keystate, SDL_SCANCODE_W)) {
-        command.translation.y() = 0.3;
+        command.translation.y() = 1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_S)) {
-        command.translation.y() = -0.3;
+        command.translation.y() = -1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_A)) {
-        command.translation.x() = -0.3;
+        command.translation.x() = -1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_D)) {
-        command.translation.x() = 0.3;
+        command.translation.x() = 1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_Q)) {
         command.rotation = 1;
