@@ -14,6 +14,13 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
+// this IP should be where vision receiver pubs to (for scrim-2022 this matched ext ref)
+// port should be 10006
+// see PR #1887 for last time this file was used w/ external interface
+// run ifconfig to see list of interfaces on this computer
+//
+// NOTE: on field comp, make sure this port is kSharedVisionPortDoubleNew
+// on sim, make sure this port is kSimVisionPort
 DEFINE_INT64(kVisionReceiverParamModule, port, kSharedVisionPortDoubleNew,
              "The port used for the vision receiver.")
 DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "", "The hardware interface to use.")
