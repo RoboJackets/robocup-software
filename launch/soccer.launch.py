@@ -67,6 +67,7 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    # spawn manual node only if use_manual_control is True
     manual = Node(
         condition=IfCondition(PythonExpression([use_manual_control])),
         package="rj_robocup",
