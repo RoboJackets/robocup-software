@@ -25,7 +25,6 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
     if (!a_end.position().near_point(b_begin.position(), 1e-6) ||
         !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6) ||
         a_end.stamp != b_begin.stamp) {
-        SPDLOG_WARN("FUCKING RAAAAWWWWWW {} {}", a_end.pose.heading(), b_begin.pose.heading());
         a_end = b.first();
         // throw std::invalid_argument(
         // "Cannot splice trajectories a and b, where a.last() != b.first()");
