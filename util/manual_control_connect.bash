@@ -1,5 +1,5 @@
 #!/bin/bash 
- 
+
 display_help()
 {
     echo "Usage: $0 [-h] [-r 0] [-c keyboard-controller] [-C True]"
@@ -9,9 +9,16 @@ display_help()
     echo "  -r   Control robot_id manually (default: 0)."
     echo "  -c   Connect controller (default: keyboard-controller)."
     echo "  -C   Connect flag, set to False to disconnect (default: True)."
+    echo
+    echo "(Note: at least 1 arg must be given to avoid showing this help message.)"
     # never do anything after displaying help msg
-    exit
+    exit 0
 }
+
+# if no args given, display help msg above
+if [[ $# -eq 0 ]] ; then
+  display_help
+fi
 
 # if -h is first flag, display help msg above and exit
 # otherwise, take in args per the help msg above, then call the ros2 service
