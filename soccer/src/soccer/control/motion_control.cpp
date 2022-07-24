@@ -15,11 +15,11 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.5,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 0.2,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 3.5,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 0.2,
                "Maximum velocity limit (motion control) (m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 15.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 1.0,
                "Maximum angular velocity limit (motion control) (rad/s)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 6.0,
                "Kp for rotation ((rad/s)/rad)");
@@ -169,9 +169,8 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
 void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
-    target_vel.linear().clamp(PARAM_max_velocity);
-    target_vel.angular() =
-        std::clamp(target_vel.angular(), -PARAM_max_angular_velocity, PARAM_max_angular_velocity);
+    target_vel.linear().clamp(0.2);
+    target_vel.angular() = std::clamp(target_vel.angular(), -1.0, 1.0);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
