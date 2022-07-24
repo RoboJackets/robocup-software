@@ -89,4 +89,4 @@ are curious, or if the first method I explained stops working.
 
 Continuous Integration
 --------------------------------------------------
-We use github actions. The configuration for that can be found in ``.github/workflows``.
+We use Github Actions. The configuration for that can be found in ``.github/workflows``.
