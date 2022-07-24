@@ -14,10 +14,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import (
-    LaunchConfiguration,
-    PythonExpression,
-)
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 
 def generate_launch_description():
@@ -38,12 +35,15 @@ def generate_launch_description():
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
+    # TODO(Alex): why are there two defaults? here and at bottom of file in
+    # DeclareLaunchArgument calls
     use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
     use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-b")
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     direction_flag = LaunchConfiguration("direction_flag", default="plus")
+    use_manual_control = LaunchConfiguration("use_manual_control", default="False")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
@@ -64,6 +64,14 @@ def generate_launch_description():
         output="screen",
         arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
         parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    manual = Node(
+        condition=IfCondition(PythonExpression([use_manual_control])),
+        package="rj_robocup",
+        executable="manual_control_node",
+        output="screen",
         on_exit=Shutdown(),
     )
 
@@ -156,6 +164,7 @@ def generate_launch_description():
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
             DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
+            DeclareLaunchArgument("use_manual_control", default_value="False"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,
@@ -169,5 +178,6 @@ def generate_launch_description():
             internal_ref_receiver,
             external_ref_receiver,
             gameplay,
+            manual,
         ]
     )
