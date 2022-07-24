@@ -38,8 +38,8 @@ change the robot ID, like so:
 ```
 Other options for args can be found in the source code: `soccer/src/soccer/joystick/`.
 
-After you run this utility script, our program will output a confirmation that
-the connection was successful. 
+After you run this utility script, you will see printed confirmation in the
+first terminal where you launched soccer.
 
 For keyboard control, keep focus on the small black window (as in, you should
 click on that window if you can't see it).
