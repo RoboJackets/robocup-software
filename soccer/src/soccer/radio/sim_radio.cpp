@@ -24,6 +24,7 @@ namespace radio {
 //
 // NOTE: on field comp, make sure this hardcoded IP is "172.16.1.1" (router IP)
 // on sim, make sure this hardcoded IP is "127.0.0.1" (localhost)
+// TODO(Kevin) this is dumb
 DEFINE_STRING(kRadioParamModule, interface, "172.16.1.1", "The interface for sim radio operation");
 
 static SimulatorCommand convert_placement_to_proto(

@@ -21,6 +21,8 @@ constexpr auto kVisionReceiverParamModule = "vision_receiver";
 //
 // NOTE: on field comp, make sure this port is kSharedVisionPortDoubleNew
 // on sim, make sure this port is kSimVisionPort
+//
+// TODO(Kevin): this is dumb
 DEFINE_INT64(kVisionReceiverParamModule, port, kSharedVisionPortDoubleNew,
              "The port used for the vision receiver.")
 DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "", "The hardware interface to use.")
