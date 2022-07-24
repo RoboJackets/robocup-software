@@ -26,7 +26,13 @@ adblocker to support their free documentation hosting.
    :maxdepth: 1
    :caption: Contents
 
-   self getting_started.rst our_stack.rst faq.rst contributing.rst meta_docs.rst
+   self
+   getting_started.rst
+   our_stack.rst
+   utilities.rst
+   faq.rst
+   contributing.rst
+   meta_docs.rst
 
 .. note::
 
