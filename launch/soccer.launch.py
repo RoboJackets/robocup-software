@@ -67,15 +67,6 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    # spawn manual node only if use_manual_control is True
-    manual = Node(
-        condition=IfCondition(PythonExpression([use_manual_control])),
-        package="rj_robocup",
-        executable="manual_control_node",
-        output="screen",
-        on_exit=Shutdown(),
-    )
-
     sim_radio = Node(
         condition=IfCondition(PythonExpression([use_sim_radio])),
         package="rj_robocup",
@@ -110,7 +101,18 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    # spawn manual node only if use_manual_control is True
+    manual = Node(
+        condition=IfCondition(PythonExpression([use_manual_control])),
+        package="rj_robocup",
+        executable="manual_control_node",
+        output="screen",
+        on_exit=Shutdown(),
+    )
+
+    # spawn gameplay only if manual is not on
     gameplay = Node(
+        condition=IfCondition(PythonExpression(["not ", use_manual_control])),
         package="rj_robocup",
         executable="gameplay_node",
         output="screen",
@@ -162,22 +164,23 @@ def generate_launch_description():
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
-            DeclareLaunchArgument("use_internal_ref", default_value="True"),
-            DeclareLaunchArgument("use_sim_radio", default_value="True"),
             DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
-            DeclareLaunchArgument("use_manual_control", default_value="False"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,
             soccer,
-            sim_radio,
-            network_radio,
             control,
             planner,
             vision_receiver,
             vision_filter,
+            # nodes below this line are XOR based on the header launch arg
+            DeclareLaunchArgument("use_sim_radio", default_value="True"),
+            sim_radio,
+            network_radio,
+            DeclareLaunchArgument("use_internal_ref", default_value="True"),
             internal_ref_receiver,
             external_ref_receiver,
+            DeclareLaunchArgument("use_manual_control", default_value="False"),
             gameplay,
             manual,
         ]
