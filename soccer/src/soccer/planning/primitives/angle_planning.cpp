@@ -70,8 +70,8 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
 
     // TODO(#1506): If we are unable to finish the motion in time at all,
     // profile all the way until the end, and then append points to the trajectory
-    // containing the remainder of the trapezoid motion. 
-    for (int i = static_cast<int>(velocity.size() - 1); i > 0; i--) { 
+    // containing the remainder of the trapezoid motion.
+    for (int i = static_cast<int>(velocity.size() - 1); i > 0; i--) {
         double next_heading = target_angles.at(i); double next_velocity = velocity.at(i);
 
         double target_heading = target_angles.at(i - 1);

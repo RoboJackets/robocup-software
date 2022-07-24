@@ -1,13 +1,13 @@
 #pragma once
 
+#include <spdlog/spdlog.h>
+
 #include <rj_common/utils.hpp>
 #include <rj_constants/constants.hpp>
 
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
-
-#include <spdlog/spdlog.h>
 
 namespace planning {
 
