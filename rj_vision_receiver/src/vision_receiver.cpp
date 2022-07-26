@@ -14,19 +14,6 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-// this IP should be where vision receiver pubs to (for scrim-2022 this matched ext ref)
-// port should be 10006
-// see PR #1887 for last time this file was used w/ external interface
-// run ifconfig to see list of interfaces on this computer
-//
-// NOTE: on field comp, make sure this port is kSharedVisionPortDoubleNew
-// on sim, make sure this port is kSimVisionPort
-//
-// TODO(Kevin): this is dumb
-DEFINE_INT64(kVisionReceiverParamModule, port, kSharedVisionPortDoubleNew,
-             "The port used for the vision receiver.")
-DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "", "The hardware interface to use.")
-
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
@@ -40,7 +27,24 @@ VisionReceiver::VisionReceiver()
       param_provider_(this, kVisionReceiverParamModule) {
     recv_buffer_.resize(65536);
 
-    set_port(PARAM_vision_interface, PARAM_port);
+    /* below, vision_interface should be IP where vision receiver pubs to (in
+     * scrim-2022 this was same IP as ext ref)
+     *
+     * run ifconfig to see list of interfaces on this computer
+     *
+     * port=10006 for real vision (per SSL rulebook)
+     * port=10020 for ER-force sim
+     *
+     * see PR #1887 for last time this file was used w/ external interface
+     */
+
+    // port number for vision receiver
+    this->get_parameter("port", param_port_);
+    // The hardware interface to use.
+    this->get_parameter("vision_interface", param_vision_interface_);
+
+    // set vision interface and port
+    set_port(param_vision_interface_, param_port_);
 
     raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);

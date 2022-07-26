@@ -126,5 +126,7 @@ private:
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
 
     params::LocalROS2ParamProvider param_provider_;
+    int param_port_;
+    std::string param_vision_interface_;
 };
 }  // namespace vision_receiver
