@@ -31,6 +31,9 @@ VisionReceiver::VisionReceiver()
       param_provider_(this, kVisionReceiverParamModule) {
     recv_buffer_.resize(65536);
 
+    SPDLOG_ERROR("PARAM_vision_interface: {}", PARAM_vision_interface);
+    SPDLOG_ERROR("PARAM_port: {}", PARAM_port);
+
     set_port(PARAM_vision_interface, PARAM_port);
 
     raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
@@ -79,12 +82,13 @@ void VisionReceiver::set_port(const std::string& interface, int port) {
     socket_.open(udp::v4());
     socket_.set_option(udp::socket::reuse_address(true));
 
-    socket_.set_option(udp::socket::reuse_address(true));
+    SPDLOG_ERROR("interface here {}", interface);
     if (!interface.empty()) {
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(),
             boost::asio::ip::address::from_string(interface).to_v4()));
     } else {
+	SPDLOG_ERROR("joining kSharedVisionAddress {}", kSharedVisionAddress);
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4()));
     }
