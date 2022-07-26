@@ -35,8 +35,9 @@ def generate_launch_description():
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
-    # TODO(Alex): why are there two defaults? here and at bottom of file in
-    # DeclareLaunchArgument calls
+    # there must be duplicate defaults in LaunchConfiguration and in DeclareLaunchArgument
+    #
+    # https://answers.ros.org/question/322874/ros2-what-is-different-between-declarelaunchargument-and-launchconfiguration/
     use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
     use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-b")
