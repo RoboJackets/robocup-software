@@ -24,7 +24,7 @@ DECLARE_FLOAT64(kRadioParamModule, timeout);
 /**
  * @brief Sends and receives information to/from our robots.
  *
- * @details This is the abstract superclass for USBRadio and SimRadio, which do
+ * @details This is the abstract superclass for NetworkRadio and SimRadio, which do
  * the actual work - this just declares the interface and handles sending stop commands when no new
  * commands come in for a while.
  */
@@ -39,6 +39,10 @@ protected:
                       const rj_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
     virtual void receive() = 0;
     virtual void switch_team(bool blue) = 0;
+
+    // should be used in both subclasses
+    // (Kevin can't find where network radio gets its IP from so currently is only sim radio)
+    std::string param_radio_interface_;
 
 private:
     void tick();

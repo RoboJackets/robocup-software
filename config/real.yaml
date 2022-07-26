@@ -99,24 +99,18 @@
     timeout: 0.1
     use_sim_time: false
 
-/sim_radio:
+/radio:
   ros__parameters:
     timeout: 0.25
-    interface: "172.19.0.0"
     use_sim_time: false
-
-/network_radio:
-  ros__parameters:
-    timeout: 0.25
-    interface: "172.19.0.0"
-    use_sim_time: false
+    # interface: "172.16.1.1"
 
 /vision_receiver:
   ros__parameters:
-    port: 10006 # 10020 comp setup
+    port: 10006
     hz: 120.0
     use_sim_time: false
-    vision_interface: "172.19.0.0"
+    interface: "172.25.0.11"
 
 /vision_filter:
   ros__parameters:

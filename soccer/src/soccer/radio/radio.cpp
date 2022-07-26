@@ -1,5 +1,7 @@
 #include "radio.hpp"
 
+#include <spdlog/spdlog.h>
+
 namespace radio {
 
 DEFINE_FLOAT64(kRadioParamModule, timeout, 0.25,
@@ -30,6 +32,9 @@ Radio::Radio()
                 send(i, *motion, manipulators_cached_.at(i));
             });
     }
+
+    this->get_parameter("interface", param_radio_interface_);
+    SPDLOG_ERROR("param_radio_interface_ {}", param_radio_interface_);
 
     tick_timer_ = create_wall_timer(std::chrono::milliseconds(16), [this]() { tick(); });
 }

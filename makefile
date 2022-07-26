@@ -62,19 +62,15 @@ run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 
 run-sim:
-	ros2 launch rj_robocup sim.launch.py
+	ros2 launch rj_robocup soccer.launch.py run_sim:=True
 
 run-sim-external:
-	ros2 launch rj_robocup sim.launch.py use_internal_ref:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=True use_internal_ref:=False
 
 run-sim-ex: run-sim-external
 
-# actually, config must be changed manually
-run-real-sim:
-	ros2 launch rj_robocup sim.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
-
 run-real:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False config_yaml:=real.yaml
 
 run-sim2play:
 	ros2 launch rj_robocup sim2play.launch.py

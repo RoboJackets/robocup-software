@@ -38,6 +38,9 @@ VisionReceiver::VisionReceiver()
      * see PR #1887 for last time this file was used w/ external interface
      */
 
+    // TODO(Kevin): since these are set on init, this does not allow us to
+    // dynamic reconfigure these values, which would be nice
+    
     // port number for vision receiver
     this->get_parameter("port", param_port_);
     // The hardware interface to use.
