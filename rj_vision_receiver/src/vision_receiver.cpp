@@ -44,7 +44,9 @@ VisionReceiver::VisionReceiver()
     // port number for vision receiver
     this->get_parameter("port", param_port_);
     // The hardware interface to use.
-    this->get_parameter("vision_interface", param_vision_interface_);
+    this->get_parameter("interface", param_vision_interface_);
+    SPDLOG_ERROR("port {}", param_port_);
+    SPDLOG_ERROR("vision_interface {}", param_vision_interface_);
 
     // set vision interface and port
     set_port(param_vision_interface_, param_port_);
@@ -95,12 +97,13 @@ void VisionReceiver::set_port(const std::string& interface, int port) {
     socket_.open(udp::v4());
     socket_.set_option(udp::socket::reuse_address(true));
 
-    socket_.set_option(udp::socket::reuse_address(true));
+    SPDLOG_ERROR("interface here {}", interface);
     if (!interface.empty()) {
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(),
             boost::asio::ip::address::from_string(interface).to_v4()));
     } else {
+	SPDLOG_ERROR("joining kSharedVisionAddress {}", kSharedVisionAddress);
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4()));
     }
