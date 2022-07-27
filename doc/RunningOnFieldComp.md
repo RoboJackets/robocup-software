@@ -13,39 +13,41 @@ In a new terminal, run `cd ~/robocup-software`, then run `git checkout ros2`.
 In a new terminal:
 
 1. `cd ~/robocup-software`
-2. launch manual.launch.py with the following commands: 
-
+2. Source ROS2 and our build files:
+```
+. ./source.bash
+```
+3. Launch soccer in manual control mode
 ``` 
-source /opt/ros/foxy/setup.bash 
-make perf 
-source install/setup.bash 
-ros2 launch rj_robocup manual.launch.py 
+make run-manual
 ```
 
 In a second new terminal:
 
-1. cd to robocup-software
-2. Input `source /opt/ros/foxy/setup.bash` 
-3. Input `source install/setup.bash`
-4. Launch rqt: `rqt`
+1. `cd ~/robocup-software`
+2. Source everything (see above)
+3. Run the utility script to connect a controller to a robot:
+```
+./util/manual_control_connect.bash
+```
 
-Then, within rqt:
-1. Go to Plugins > Services > Service Caller
-2. From the Service dropdown menu, `/list_joystick`, then click the call button
-   on the top right. Take note of the string given for keyboard at uuids or
-   controller input (e.g. `'keyboard-controller'` for kb). If it is not there, click the blue refresh button.
-3. From the Service dropdown menu, select `/select_manual`, then in this menu:
-   1. set the desired `robot_id` by clicking on the value under "Expression"
-      and typing the desired number (e.g. 1 for robot 1)
-   2. set `controller_uuid` to the string found in the list_joystick step,
-      surrounded with single quotes (e.g. 'keyboard-controller')
-   3. set `connect` to `True`, same method as previous two steps
-4. Hit call.
+This will output a help message. In nearly every case you will only have to
+change the robot ID, like so:
+```
+./util/manual_control_connect.bash -r 1
+```
+Other options for args can be found in the source code: `soccer/src/soccer/joystick/`.
 
-Keep focus on the black window (as in, you should click on that window if you
-can't see it). 
+After you run this utility script, you will see printed confirmation in the
+first terminal where you launched soccer.
 
-WASD to move the robot, QE to pivot, K to kick and J to chip.
+For keyboard control, keep focus on the small black window (as in, you should
+click on that window if you can't see it).
+ - WASD to move
+ - QE to pivot
+ - K to kick 
+ - J to chip
+ - Spacebar to dribble
 
 ## Launching Soccer
 

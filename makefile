@@ -54,31 +54,44 @@ all-release:
 # release: fast executable, no debug symbols
 release: all-release
 
-# run once build-release-debug/ exists from a previous build
+# run if build-release-debug/ exists from a previous build
+# and no CMake files or launch.py files have been changed
 again:
 	(cd build-release-debug/ && ninja install)
 
+# run soccer with default flags
 run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 
+# run sim with default flags
 run-sim:
 	ros2 launch rj_robocup sim.launch.py
 
+# run sim with external referee (SSL Game Controller)
 run-sim-external:
 	ros2 launch rj_robocup sim.launch.py use_internal_ref:=False
-
 run-sim-ex: run-sim-external
 
-# actually, config must be changed manually
-run-real-sim:
-	ros2 launch rj_robocup sim.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
-
+# run on real field computer with real robots
 run-real:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_internal_ref:=False use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False
 
+# run on real field computer with real robots and external ref (SSL GC)
+run-real-ex:
+	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_internal_ref:=False 
+
+# run on real field comp, with real robots and manual control node to override AI movement
+# use util/manual_control_connect.bash to connect
+run-manual:
+	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_manual_control:=True
+
+# ^ but with external ref (SSL GC)
+run-manual-ex:
+	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_manual_control:=True use_internal_ref:=False 
+
+# run sim2play (requires external referee)
 run-sim2play:
 	ros2 launch rj_robocup sim2play.launch.py
-
 run-sim2: run-sim2play
 
 # Run both C++ and python unit tests
