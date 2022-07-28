@@ -6,7 +6,7 @@ namespace planning {
 
 void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                  const AngleFunction& angle_function,
-                 const RotationConstraints& /* constraints */) {
+                 const RotationConstraints& constraints) {
     const RJ::Time start_time = start_instant.stamp;
 
     if (trajectory->empty()) {
@@ -61,7 +61,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
     // get back to the initial position in time. From there, fill the rest up
     // with a trapezoidal motion from the beginning.
 
-    /*
     Trapezoid::State initial{start_instant.heading(),
                              start_instant.angular_velocity()};
 
@@ -106,8 +105,8 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         velocity.at(i - 1) = prev_velocity;
     }
 
-    Trapezoid::State initial{start_instant.heading(),
-                             start_instant.angular_velocity()};
+    /* Trapezoid::State initial{start_instant.heading(), */
+    /*                          start_instant.angular_velocity()}; */
 
     // Trapezoidally profile the beginning of the path.
     for (int i = 0; i < trajectory->num_instants(); i++) {
@@ -132,7 +131,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         target_angles.at(i) = state.position;
         velocity.at(i) = state.velocity;
     }
-    */
 
     // Fill in the trajectory
     auto instant_it = trajectory->instants_begin();

@@ -61,8 +61,10 @@ class Move(stp.skill.Skill):
         return intent
 
     def is_done(self, world_state: rc.WorldState) -> bool:
-        position_tolerance = 1e-2
-        velocity_tolerance = 1e-1
+        # position_tolerance = 1e-2
+        # velocity_tolerance = 1e-1
+        position_tolerance = 0.25
+        velocity_tolerance = 0.25
         if self.robot.id is None or world_state is None:
             return False
 
