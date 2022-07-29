@@ -32,6 +32,8 @@ When you run into issues, your order of question-asking should be:
 
    * Seriously
 
+#. FAQ page in our docs (common errors and debug info)
+
 #. Fellow new members
 
 #. Software lead
@@ -193,7 +195,7 @@ Tactic into a Play. This is a little complicated. Look at the Defense Play you
 modified earlier. The Goalie Tactic in this play is really just a wrapper for
 the Goalie Role (as in, it doesn't do much but call the Goalie Role and ask it
 what to do). This is how your Runner Role should be included. Put it in the
-Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner.
+Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner. Remember to test often with the sim.
 
 .. image::
 
@@ -328,7 +330,7 @@ for* C++ knowledge. This is a real hurdle. If you already have Java or C
 experience, the syntax is similar enough to where you'll be able to work through
 this section, even if it takes you some time. If you aren't so lucky, read
 through the sections "Basics of C++", "Program structure", and "Classes" of `the
-C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best. **Read
+C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best. Multiple resources are provided in this section. Although you are encouraged to read them before starting the project, use them as you see fit. **Read
 the rest of this section before starting.**
 
 In this section, you'll be creating a SoccerMom node that gets the team color
@@ -350,6 +352,9 @@ This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
 files. For more information, check `this
 <https://cplusplus.com/articles/Gw6AC542/>`_ resource.
+
+File Structure
+~~~~~~~~~~~~~~
 
 Let's take a look at a real example in our codebase to make this more
 understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
@@ -389,9 +394,7 @@ assist you in creating your own node.
 
 A ``lambda expression`` is used in place of the topic callback function in the
 ROS tutorial. The lambda expression allows you to pass in-line function objects
-and requires less lines of code when compared to having another function. I
-HIGHLY recommend that you google and visit the following resources to learn more
-about this topic.
+and requires less lines of code when compared to having another function. These resources provide more information:
 
     - `<https://www.programiz.com/cpp-programming/lambda-expression>`_
     - `<https://riptutorial.com/cplusplus/example/1854/what-is-a-lambda-expression->`_
@@ -406,7 +409,7 @@ example:
 The arrow operator is used to access a method or element of an object, when
 given a pointer to that object. Above, ``robot_status_pubs_`` is a list of
 pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
-element in that list publishes a robot status using that specific publisher.
+element in that list publishes a robot status using that specific publisher. This resource provides more information:
 
     - `https://www.tutorialspoint.com/cplusplus/cpp_member_operators
       <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`_
@@ -425,6 +428,9 @@ give you insight into how our build system works. When your compiler is building
 our code base, `CMake <https://cmake.org/overview/>`_ allows you to forgo the
 need to maintain settings specific to your compiler/build environment. As a
 result, you need to add your node to the appropriate CMake files.
+
+Build System
+~~~~~~~~~~~~
 
 CMakeLists.txt files are used to make standard build files for the directory. It
 locates files, libraries, and executables to support complex directory
@@ -464,6 +470,8 @@ time since this is the other code heavy section of this tutorial. Remember, when
 you run into issues, your order of question-asking should be:
 
 #. Google
+
+#. FAQ page in our docs
 
 #. Fellow new members
 
