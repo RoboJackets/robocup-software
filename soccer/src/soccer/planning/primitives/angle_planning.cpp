@@ -98,6 +98,10 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                                   constraints.max_accel);
 
         double prev_velocity = next_velocity - acceleration * dt;
+        // clamp prev_velocity (this is what it gets as velocity)
+        prev_velocity = std::clamp(prev_velocity,
+                                  -constraints.max_speed,
+                                  constraints.max_speed);
         double prev_heading =
             next_heading - dt * (next_velocity + prev_velocity) / 2;
 
