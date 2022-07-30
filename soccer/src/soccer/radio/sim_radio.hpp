@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <queue>
 
 #include <boost/asio.hpp>
 
@@ -45,6 +46,7 @@ private:
     std::vector<RJ::Time> last_sent_diff_;
 
     bool blue_team_;
+    std::queue<std::string> latency_queue_;
 
     rclcpp::Service<rj_msgs::srv::SimPlacement>::SharedPtr sim_placement_service_;
 };

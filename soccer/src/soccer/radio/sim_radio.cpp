@@ -105,10 +105,6 @@ void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
     // Send a sim packet with a single robot. The simulator can handle many robots, but our commands
     // may come in at different times and it should be fine to just recalculate like this.
     // TODO(Kyle): Verify that this is okay.
-    if (RJ::now() - last_sent_diff_.at(robot_id) < 5.1ms) {
-        return;
-    }
-    last_sent_diff_.at(robot_id) = RJ::now();
     RobotCommand* sim_robot = sim_packet.add_robot_commands();
     ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot);
 
@@ -122,7 +118,19 @@ void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
     /*                  sim_robot->dribbler_speed()); */
     /* } */
 
-    socket_.send_to(buffer(out), robot_control_endpoint_);
+    if (latency_queue_.empty() || RJ::now() - last_sent_diff_.at(robot_id) < 40.1ms) {
+        latency_queue_.push(std::move(out));
+        return;
+    }
+
+    last_sent_diff_.at(robot_id) = RJ::now();
+
+    try {
+        socket_.send_to(buffer(latency_queue_.front()), robot_control_endpoint_);
+    } catch (boost::wrapexcept<boost::system::system_error>) {
+        return;
+    }
+    latency_queue_.pop();
 }
 
 void SimRadio::receive() { io_service_.poll(); }
