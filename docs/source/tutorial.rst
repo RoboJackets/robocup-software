@@ -387,7 +387,7 @@ As a brief overview to help you get started...
 * The header file also categorizes all variables and methods of the Radio
   class into ``public``, ``protected``, and ``private``. These are known
   as "access specifiers". `This
-  article<https://www.w3schools.com/cpp/cpp_access_specifiers.asp#:~:text=In%20C%2B%2B%2C%20there%20are,be%20accessed%20in%20inherited%20classes.>`_
+  article <https://www.w3schools.com/cpp/cpp_access_specifiers.asp#:~:text=In%20C%2B%2B%2C%20there%20are,be%20accessed%20in%20inherited%20classes.>`_
   sums them up nicely.
 
 * Both files are enclosed under a namespace. Namespaces are an organizational
@@ -415,7 +415,7 @@ don't want to reuse a function (since without a name, you can't reference that
 function anywhere else). and requires less lines of code when compared to
 having another function. 
 
-Read more `here<https://www.programiz.com/cpp-programming/lambda-expression>`_
+Read more `here <https://www.programiz.com/cpp-programming/lambda-expression>`_
 if you would like.
 
  * The existing codebase also makes heavy use of *pointers*. You will see this
@@ -431,21 +431,22 @@ pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
 element in that list publishes a robot status using that specific publisher.
 You will learn more about pointers when you take CS 2110, but if you want to
 get a headstart, see `this
-resource<https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm>`_.
+resource <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm>`_.
 
 * Finally, the docstrings in the radio header file state that the Radio class
-  abstract superclass of the network_radio and sim_radio nodes. If you are
+  abstract superclass of the network_radio and sim_radio nodes. (If you are
   unfamiliar with the concept of abstraction, `here
   <https://www.pythontutorial.net/python-oop/python-abstract-class/>`_ is more
-  information. Both NetworkRadio and SimRadio have an associated
-  <name>_main.cpp file (e.g. ``sim_radio_node_main``) which contains the main
-  function for its respective node. This structure is intended to make writing
-  the CMakeLists.txt file for the directory easier.
+  information.) The concrete subclasses are NetworkRadio and SimRadio.
 
-While this hopefully helps you write your .hpp/.cpp files, it doesn't explain
-how to compile and launch your new node. We use a tool called `CMake
-<https://cmake.org/overview/>`_ which helps compile C++ programs on a variety
-of different hardware architectures. 
+You might be wondering: okay, this is great, but how do I compile and run my
+new node?
+
+Well, both NetworkRadio and SimRadio have an associated <name>_main.cpp file
+(e.g. ``sim_radio_node_main``) which contains the main function for its
+respective node. This structure is intended to make writing the CMake files for
+the directory easier. We use `CMake <https://cmake.org/overview/>`_ to compile
+our C++ programs on a variety of different hardware architectures. 
 
 As a result, to compile and use your new node, you'll need to add your new
 source files to the right CMake files.
@@ -475,7 +476,6 @@ Let's start looking at all the magic CMake text that builds our cpp code:
   actually start: ``target_sources(sim_radio_node PRIVATE
   ${SIM_RADIO_NODE_SRC})``
 
-
 The rest is up to you. Keep using SimRadio as an example. Search through and
 find the parts of the CMake file where SimRadio is used, then follow that
 format for your own node. 
@@ -483,6 +483,7 @@ format for your own node.
 It's okay if you don't understand everything that's going on. (Honestly, CMake
 files are one of those things we re-learn when adding new nodes and forget
 almost immediately after.) Just match the existing patterns.
+
 
 Launching Your Node
 ~~~~~~~~~~~~~~~~~~~
@@ -533,7 +534,7 @@ clicking Field > Team Color. You should see the team color change in the top
 right corner of our UI. Screenshot proof that your `/team_fruit` topic is
 publishing the right fruit for both options, and post as a comment to your PR.
 
-Similar to the python section, there's a lot of file-finding in this part. Use
+Similar to the Python section, there's a lot of file-finding in this part. Use
 the option in your IDE or text editor that allows you to see a full folder at
 once. For instance, in VS Code, there is an option to open a full folder, which
 displays all the subfolders and files in the left toolbar.
