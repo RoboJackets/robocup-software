@@ -195,7 +195,8 @@ Tactic into a Play. This is a little complicated. Look at the Defense Play you
 modified earlier. The Goalie Tactic in this play is really just a wrapper for
 the Goalie Role (as in, it doesn't do much but call the Goalie Role and ask it
 what to do). This is how your Runner Role should be included. Put it in the
-Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner. Remember to test often with the sim.
+Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner. Remember to
+test often with the sim.
 
 .. image::
 
@@ -203,7 +204,7 @@ Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner. Remember to tes
 
 There are many ways to assign a Role to a given robot (see the design doc linked
 above for more detail). In this case, assign robot 1 to be our runner. (That's
-our most in-shape robot, so they can handle the extra miles.) Do this the same
+our most in-shape robot, so it can handle the extra miles.) Do this the same
 way that the Goalie Role always picks robot 0 to be the goalie.
 
 You may have noticed there's a lot of file-finding in this section. Use the
@@ -243,7 +244,8 @@ Now that you have some background on what ROS is and how it works, let's explore
 how we use ROS in our stack. (ROS is used in place of ROS 2 in the rest of these
 docs, just know that we are referencing ROS 2 every time.)
 
-First, open up our stack, same as you did in the installation guide. Then run
+First, open up our stack, same as you did in the installation guide. (Remember
+to source ROS2!) Then run
 
 .. code-block::
 
@@ -300,9 +302,8 @@ Zoom in on the Node Graph. You should notice and most of the nodes are actually
 just duplicated across robot numbers. (For instance, notice there is a
 ``/planning/trajectory/robot_*`` topic for each robot.) Find the two arrows that
 are labelled with robot 0's robot intent and figure out which nodes publish and
-subscribe to that topic(Hint: There are **two** nodes that are subscribed to
-this topic. Remember that nodes "listen in" to the data in the topic!) Post your
-answer as a GitHub comment on your PR.
+subscribe to that topic. Post your answer as a GitHub comment on your PR.
+(Hint: There are **two** nodes that subscribe to this topic.)
 
 We can also use rqt to dynamically change the behavior of our robots. Pull up
 the Dynamic Reconfigure menu and click the control params. Run your runner play
@@ -327,11 +328,15 @@ instructions for building your code here.
 This section is by far the most difficult of the tutorial. If you've made it
 this far, though, you should have everything you need for this section *except
 for* C++ knowledge. This is a real hurdle. If you already have Java or C
-experience, the syntax is similar enough to where you'll be able to work through
-this section, even if it takes you some time. If you aren't so lucky, read
-through the sections "Basics of C++", "Program structure", and "Classes" of `the
-C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best. Multiple resources are provided in this section. Although you are encouraged to read them before starting the project, use them as you see fit. **Read
-the rest of this section before starting.**
+experience, the syntax is similar enough to where you'll be able to work
+through this section, even if it takes you some time. If you aren't so lucky,
+read through the sections "Basics of C++", "Program structure", and "Classes"
+of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
+
+**Read the rest of this section before starting.**
+
+Objective
+~~~~~~~~~
 
 In this section, you'll be creating a SoccerMom node that gets the team color
 and picks a fruit to match. Our robots have to stay motivated somehow!
@@ -344,44 +349,55 @@ topic `/team_fruit`.
  * When our team color is yellow, publish "banana" to `/team_fruit`.
  * When our team color is blue, publish "blueberries" to `/team_fruit`.
 
+Creating a New Node
+~~~~~~~~~~~~~~~~~~~
+
 Often in C++ you'll see the use of a header file, which ends in `.hpp`, and a
 source file, which ends in `.cpp`. Header files contain all the function
 declarations and docstrings explaining their use. Source files contain the
 function definitions--that is, the code that actually makes the functions work.
 This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
-files. For more information, check `this
-<https://cplusplus.com/articles/Gw6AC542/>`_ resource.
+files. 
 
-File Structure
-~~~~~~~~~~~~~~
+(For more information, check out `this
+<https://cplusplus.com/articles/Gw6AC542/>`_ resource.)
 
 Let's take a look at a real example in our codebase to make this more
 understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
 last section, you used ``rqt`` to launch the Node Graph. One of the nodes that
 subscribe and publish to various topics is ``/radio``, and these files are the
-source of that node. Although looking at this file may be overwhelming, direct
-your attention to the key sections of the file that create the node. This will
-assist you in creating your own node.
+source of that node. 
 
-**Key Sections**
+Comparing the similarities and differences between the subscribers and
+publishers in these files vs. the ROS tutorial will help you learn what you can
+take directly from the ROS tutorial, and where you need to deviate from it.
 
-* There are multiple ``#include``s in both files. Reference between the ROS
-  tutorial above and your objective to determine which files are needed for your
-  node.
-* Both files are enclosed under `namespace`. Look at other header-source file
-  pairs in ``robocup-software/soccer/src`` and determine what affects the
-  namespace. Set this up for your SoccerMom node under a folder called tutorial.
-* The header file includes important information regarding class structure and
-  inheritance (inheritance is important since the each node inherits from the
-  rclcpp::Node class). Moreover, it has a call to the source constructor in the
-  public access space.
-* Explore all the aspects of these files that applies to your task in this
-  section. Compare the similarities and differences between the subscribers and
-  publishers in these files vs. the ROS tutorial.
-* You will notice many unique operations and expressions in our codebase that
-  you might not have experience with. For instance in the radio.cpp file, find
-  the following expression:
+As a brief overview to help you get started...
+
+* Notice the ``#includes`` at the top of both files. ``#includes`` are like
+  ``import`` statements from Java or Python (with slight differences that are
+  not terribly important for our purposes right now). Using ROS forces you to
+  include certain things; again, check out the ROS tutorial.
+
+* The header file defines Radio to be subclass of rclcpp::Node (see `: public
+  rclcpp::Node``). This means the Radio has access to all the
+  methods of rclcpp::Node (notice that Node is under namespace rclcpp!).
+
+* The header file also categorizes all variables and methods of the Radio
+  class into ``public``, ``protected``, and ``private``. These are known
+  as "access specifiers". `This
+  article<https://www.w3schools.com/cpp/cpp_access_specifiers.asp#:~:text=In%20C%2B%2B%2C%20there%20are,be%20accessed%20in%20inherited%20classes.>`_
+  sums them up nicely.
+
+* Both files are enclosed under a namespace. Namespaces are an organizational
+  tool in C++ which helps organize large codebases. For instance, the radio.hpp
+  file defines ``namespace radio``, so when other files use the ``SimRadio``
+  object, they reference ``radio::SimRadio``. Give your SoccerMom node a
+  ``tutorial`` namespace.
+
+* The existing codebase makes heavy use of *lambda expressions*. For instance,
+  in radio.cpp:
 
 .. code-block::
 
@@ -392,15 +408,18 @@ assist you in creating your own node.
                 manipulators_cached_.at(i) = *manipulator;
             });
 
-A ``lambda expression`` is used in place of the topic callback function in the
-ROS tutorial. The lambda expression allows you to pass in-line function objects
-and requires less lines of code when compared to having another function. These resources provide more information:
+Here, a lambda expression is used instead of the callback function that you'll
+see in the ROS tutorial. A lambda expression is just a concise way of defining
+a function without giving it a name. This is only suitable when you know you
+don't want to reuse a function (since without a name, you can't reference that
+function anywhere else). and requires less lines of code when compared to
+having another function. 
 
-    - `<https://www.programiz.com/cpp-programming/lambda-expression>`_
-    - `<https://riptutorial.com/cplusplus/example/1854/what-is-a-lambda-expression->`_
+Read more `here<https://www.programiz.com/cpp-programming/lambda-expression>`_
+if you would like.
 
-Another topic you may not be accustomed to is the arrow operation "->". For
-example:
+ * The existing codebase also makes heavy use of *pointers*. You will see this
+   in the use of the arrow operator, ``->``. For example:
 
 .. code-block::
 
@@ -409,65 +428,88 @@ example:
 The arrow operator is used to access a method or element of an object, when
 given a pointer to that object. Above, ``robot_status_pubs_`` is a list of
 pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
-element in that list publishes a robot status using that specific publisher. This resource provides more information:
+element in that list publishes a robot status using that specific publisher.
+You will learn more about pointers when you take CS 2110, but if you want to
+get a headstart, see `this
+resource<https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm>`_.
 
-    - `https://www.tutorialspoint.com/cplusplus/cpp_member_operators
-      <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm#:~:text=The%20(%2D%3E)%20arrow%20operator&text=The%20%2D%3E%20is%20called%20the%20arrow,pointer%2C%20use%20the%20arrow%20operator>`_
-
-* Notice the docstrings for the radio header file. It explains that it's the
-  abstract superclass of the network_radio and sim_radio node. If you are
+* Finally, the docstrings in the radio header file state that the Radio class
+  abstract superclass of the network_radio and sim_radio nodes. If you are
   unfamiliar with the concept of abstraction, `here
   <https://www.pythontutorial.net/python-oop/python-abstract-class/>`_ is more
-  information. When exploring these two nodes, you will discover a third file
-  named <node>_main.cpp which contains the main function for its respective
-  node. This structure is intended to make writing the CMakeLists.txt file for
-  the directory easier.
+  information. Both NetworkRadio and SimRadio have an associated
+  <name>_main.cpp file (e.g. ``sim_radio_node_main``) which contains the main
+  function for its respective node. This structure is intended to make writing
+  the CMakeLists.txt file for the directory easier.
 
-While those files give you a peek into structuring your node files, they don't
-give you insight into how our build system works. When your compiler is building
-our code base, `CMake <https://cmake.org/overview/>`_ allows you to forgo the
-need to maintain settings specific to your compiler/build environment. As a
-result, you need to add your node to the appropriate CMake files.
+While this hopefully helps you write your .hpp/.cpp files, it doesn't explain
+how to compile and launch your new node. We use a tool called `CMake
+<https://cmake.org/overview/>`_ which helps compile C++ programs on a variety
+of different hardware architectures. 
 
-Build System
-~~~~~~~~~~~~
+As a result, to compile and use your new node, you'll need to add your new
+source files to the right CMake files.
+
+Building Your Node
+~~~~~~~~~~~~~~~~~~
 
 CMakeLists.txt files are used to make standard build files for the directory. It
 locates files, libraries, and executables to support complex directory
 hierarchies. Locate the CMakeLists.txt file in
 ``robocup-software/soccer/src/soccer``.
 
-**Key Sections**
+Let's start looking at all the magic CMake text that builds our cpp code:
 
-* Notice all the source files in the ``ROBOCUP_LIB_SRC``. You will find the
-  radio files that you explored earlier along with other crucial source files
-  that aid in motion control, soccer ui, etc. You will get familiar with these
-  files as you continue to contribute to the codebase.
-* Many of the nodes have an environment variable set for their <node>_main.cpp.
-  (HINT: There is a connection between the nodes that have these variables and
-  the nodes that are returned by the ROS CLI)
-* Each of the nodes that have a source variable are added in the CMake file as
-  `target_sources`
+* Notice the source files under ``ROBOCUP_LIB_SRC``. You will find the
+  radio files that you explored earlier, along with all the other source
+  files we use (motion control, UI, etc.).
 
-You may have started noticing the pattern of adding to the key sections of the
-CMake files. You need to find the parts of the file where the other nodes are
-located and follow the format for your own node. For now, it's okay if you don't
-understand everything that's going on. You will eventually learn as you gain
-experience. As explained earlier, CMake files are build files for the directory.
-So check if you need to make additions to the ``robocup-software/soccer/src``
-and ``robocup-software/soccer`` CMake files. Follow the pattern mentioned above.
+* Many of the nodes have an environment variable set for their
+  <node>_main.cpp. For instance, SimRadio has the line
+  ``set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)``. This defines
+  ``SIM_RADIO_NODE_SRC`` to be the filepath
+  ``radio/sim_radio_node_main.cpp``. You will need a similar line for
+  your new node, with adjustments to the names.
 
-You're almost there! The final file you will have to add to is the launch file.
+* There is a corresponding ``target_sources`` line that SimRadio needs to
+  actually start: ``target_sources(sim_radio_node PRIVATE
+  ${SIM_RADIO_NODE_SRC})``
+
+
+The rest is up to you. Keep using SimRadio as an example. Search through and
+find the parts of the CMake file where SimRadio is used, then follow that
+format for your own node. 
+
+It's okay if you don't understand everything that's going on. (Honestly, CMake
+files are one of those things we re-learn when adding new nodes and forget
+almost immediately after.) Just match the existing patterns.
+
+Launching Your Node
+~~~~~~~~~~~~~~~~~~~
+
+You're almost there! The final file to get your node up and running is the
+``.launch`` file.
+
 Launch files in ROS are a convenient way of starting up multiple nodes, setting
 initial parameters, and other requirements. Find the ``robocup-software/launch``
-directory and explore the file that would pertain to where your node would be
-located. (HINT: Your node would be located in ``robocup-software/soccer``) As
-you already know, follow the pattern for the other nodes that are functionally
-similar to your node.
+directory and open the file that seems most relevant to your new node.
+(HINT: Your node should be located in ``robocup-software/soccer``.) 
 
-Now you have everything you need to know to create the SoccerMom node. Take your
-time since this is the other code heavy section of this tutorial. Remember, when
-you run into issues, your order of question-asking should be:
+Like the CMake section, this part is a lot of copying what already exists and
+changing it to match your new node's names. If you want to read more about ROS
+launch files, `the tutorial
+page<https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html>`_
+is a great place to start.
+
+
+Testing
+~~~~~~~
+
+Whew! What a section. If you've made it this far, you should have everything
+you need to create the SoccerMom node. 
+
+This section will probably take you a while. Remember, when you run into
+issues, your order of question-asking should be:
 
 #. Google
 
