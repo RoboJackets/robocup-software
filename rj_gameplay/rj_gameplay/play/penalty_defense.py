@@ -15,12 +15,10 @@ class State(Enum):
     INIT = auto()
     ACTIVE = auto()
 
-
 class PenaltyDefense(stp.play.Play):
-    """This is a play that represents the lineup procedure in the event that an opposing team has been awarded a penalty kick. 
+    """This is a play that represents the lineup procedure in the event that an opposing team has been awarded a penalty kick.
        Per rule 3 in Section 5.3.5 of the RoboCup SSL Playbook (https://robocup-ssl.github.io/ssl-rules/sslrules.html#_penalty_kick),
-       "Throughout the penalty kick procedure, all other robots have to be 1m behind the ball such that they do not interfere the penalty kick procedure".
-       As such, this play assigns one goalkeeper robot and lines up the remaining robots at least 1m behind the ball to prepare for the penalty. 
+       this play assigns one goalkeeper and lines up the other bots at least 1m behind the ball.
 
     :param state: An enum value that represents the current state of the play.
     :type state: class:`State`
