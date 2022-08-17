@@ -159,6 +159,19 @@ PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $PACKAGES
 
+#create a python virtual environment if needed
+py_env=rj_env
+if [ ! -e "$BASE/$py_env" ]; then
+    echo "Creating Python3 virtual environment: $py_env"
+	cd ../
+	python3 -m venv rj_env
+else
+    cd ../
+fi
+
+#activate python virtual environment
+source $BASE/$py_env/bin/activate
+
 # install python3 requirements
 python3 -m pip install pip==22.1
 pip3 install -r $BASE/util/requirements3.txt
