@@ -35,6 +35,7 @@ jobs:
           echo "::add-matcher::ci/clang.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
+          source rj_env/bin/activate
           make all
           echo "::remove-matcher owner=clang::"
 
@@ -43,6 +44,7 @@ jobs:
           echo "::add-matcher::ci/gtest.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
+          source rj_env/bin/activate
           ./install/lib/rj_robocup/test-soccer
           echo "::remove-matcher owner=gtest::"
 
@@ -51,6 +53,7 @@ jobs:
           echo "::add-matcher::ci/clang-tidy.json"
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
+          source rj_env/bin/activate
           DIFFBASE=${{ github.base_ref }} make checktidy-lines
           echo "::remove-matcher owner=clang-tidy::"
         if: always()
@@ -71,6 +74,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          source rj_env/bin/activate
           sudo python3 -m pip install pylint
           sudo ./util/ubuntu-setup --yes
 
@@ -86,6 +90,7 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
+          source rj_env/bin/activate
           echo "::add-matcher::ci/mypy.json"
           mypy --ignore-missing-imports rj_gameplay/rj_gameplay rj_gameplay/stp
           echo "::remove-matcher owner=mypy::"
@@ -106,6 +111,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          source rj_env/bin/activate
           sudo python3 -m pip install pylint
           sudo ./util/ubuntu-setup --yes
 
@@ -120,6 +126,7 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source install/setup.bash
+          source rj_env/bin/activate
           echo "::add-matcher::ci/pylint.json"
           pylint rj_gameplay/rj_gameplay rj_gameplay/stp
           echo "::remove-matcher owner=pylint-warning::"
@@ -149,6 +156,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update && apt-get -y install clang-format sudo git python3-pip
+          source rj_env/bin/activate
           sudo pip3 install --upgrade flake8-diff flake8 pip
 
       - name: Run clang-format

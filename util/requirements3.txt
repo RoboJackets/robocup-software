@@ -24,5 +24,3 @@ pre-commit # hook support
 sphinx
 sphinx_rtd_theme
 breathe
-
-python3-venv
