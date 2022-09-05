@@ -9,4 +9,4 @@
     port: 10006
     hz: 120.0
     use_sim_time: false
-    interface: "" # will auto-latch to kSharedVisionAddress
+    # vision_interface: "" # will auto-latch to kSharedVisionAddress

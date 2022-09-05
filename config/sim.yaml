@@ -105,7 +105,7 @@
     port: 10020
     hz: 120.0
     use_sim_time: false
-    interface: "127.0.0.1"
+    vision_interface: "127.0.0.1"
 
 /vision_filter:
   ros__parameters:
