@@ -45,7 +45,10 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         // Get a temporary copy of the previous state and modify it to have
         // the correct heading (we'll actually edit in-place later).
         LinearMotionInstant instant = trajectory->instant_at(i).linear_motion();
-        target_angles.at(i) = angle_function(instant, target_angles.at(i - 1), &gradient);
+        // TODO(Kevin): undo this change that makes angle planning irrelevant
+        target_angles.at(i) =
+            start_instant
+                .heading();  // angle_function(instant, target_angles.at(i - 1), &gradient);
         velocity.at(i) =
             trajectory->instant_at(i).linear_velocity().dot(rj_geometry::Point(gradient));
     }
