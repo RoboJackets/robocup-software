@@ -6,7 +6,7 @@ display_help()
     echo 
     echo "Options:"
     echo "  -h   Show this help message."
-    echo "  -r   Control robot_id manually (default: 0)."
+    echo "  -r   Select robot_id."
     echo "  -c   Connect controller (default: keyboard-controller)."
     echo "  -C   Connect flag, set to False to disconnect (default: True)."
     echo
