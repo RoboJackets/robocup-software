@@ -220,4 +220,3 @@ void MotionControl::stop(MotionSetpoint* setpoint) {
 }
 
 }  // namespace control
-
