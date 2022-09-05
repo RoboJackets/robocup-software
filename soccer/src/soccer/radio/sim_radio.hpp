@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cstdint>
-#include <queue>
 
 #include <boost/asio.hpp>
+#include <queue>
 
 #include <rj_common/time.hpp>
 #include <rj_msgs/srv/sim_placement.hpp>
