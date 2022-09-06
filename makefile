@@ -83,11 +83,7 @@ run-real-ex:
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
 run-manual:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_manual_control:=True
-
-# ^ but with external ref (SSL GC)
-run-manual-ex:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_manual_control:=True use_internal_ref:=False 
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True config_yaml:=real.yaml use_sim_radio:=False
 
 # run sim2play (requires external referee)
 run-sim2play:
