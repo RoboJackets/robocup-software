@@ -25,6 +25,7 @@ for arg in sys.argv:
     if arg.startswith("config_yaml:="):
         config_yaml = arg.split(":=")[-1]
 
+
 def generate_launch_description():
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
