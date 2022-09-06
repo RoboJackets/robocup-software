@@ -29,6 +29,9 @@ def generate_launch_description():
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
+    # there must be duplicate defaults in LaunchConfiguration and in DeclareLaunchArgument
+    #
+    # https://answers.ros.org/question/322874/ros2-what-is-different-between-declarelaunchargument-and-launchconfiguration/
     use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
     run_sim = LaunchConfiguration("run_sim", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-y")
@@ -36,6 +39,7 @@ def generate_launch_description():
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     direction_flag = LaunchConfiguration("direction_flag", default="plus")
+    use_manual_control = LaunchConfiguration("use_manual_control", default="False")
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
@@ -97,7 +101,18 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    # spawn manual node only if use_manual_control is True
+    manual = Node(
+        condition=IfCondition(PythonExpression([use_manual_control])),
+        package="rj_robocup",
+        executable="manual_control_node",
+        output="screen",
+        on_exit=Shutdown(),
+    )
+
+    # spawn gameplay only if manual is not on
     gameplay = Node(
+        condition=IfCondition(PythonExpression(["not ", use_manual_control])),
         package="rj_robocup",
         executable="gameplay_node",
         output="screen",
@@ -151,18 +166,24 @@ def generate_launch_description():
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
+            DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,
             soccer,
-            sim_radio,
-            network_radio,
             control,
             planner,
             vision_receiver,
             vision_filter,
+            # nodes below this line are XOR based on the header launch arg
+            DeclareLaunchArgument("use_sim_radio", default_value="True"),
+            sim_radio,
+            network_radio,
+            DeclareLaunchArgument("use_internal_ref", default_value="True"),
             internal_ref_receiver,
             external_ref_receiver,
+            DeclareLaunchArgument("use_manual_control", default_value="False"),
             gameplay,
+            manual,
         ]
     )

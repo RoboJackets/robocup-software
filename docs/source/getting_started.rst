@@ -1,11 +1,18 @@
 Getting Started
 ===============
 
+.. note:: 
+   If you are completely unfamiliar with the command line or basic git
+   usage, see the Tutorial page before proceeding. 
+
 Installation
 ------------
 
-We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you are
-on an Ubuntu 20.04 machine before continuing.
+We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
+are on an Ubuntu 20.04 machine before continuing. Alternatively for
+Windows users, using WSL2 with Ubuntu 20.04 will work. The steps to set this
+up can be found `here <https://ubuntu
+.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_.
 
 First, clone the repository from GitHub:
 
@@ -13,89 +20,85 @@ First, clone the repository from GitHub:
 
    git clone https://github.com/RoboJackets/robocup-software.git
 
-Then change directories (``cd``) to the repository you just cloned, and run the
-setup script to install all required dependencies:
+Then ``cd`` to the repository you just cloned, and run the setup scripts to
+install all required dependencies:
 
 .. code-block:: bash
 
     cd robocup-software ./util/ubuntu-setup && ./util/git-setup
 
-
-Running The First Time
-----------------------
-
-Let's run the stack! We'll use the ER-Force simulator to simulate the vision
-data we'd get from a real field camera setup. (Read the "Welcome" page if that
-sentence made no sense to you.)
-
-To download the ER-Force Simulator, git clone from the following repo:
+To simulate the vision data we'd get from a real field camera setup, we'll use
+ER-Force's simulator. For that, clone their repo, and ``cd`` into it.
 
 .. code-block:: sh
 
    git clone https://github.com/robotics-erlangen/framework.git
+   cd framework
 
-Change directory into the recently cloned repo
-
-Run the following code line by line
+Then, build their code with the following:
 
 .. code-block:: sh
 
     mkdir build && cd build cmake .. make simulator-cli
 
-This builds an executable in ``framework/build/bin``.
-
-Open a new terminal window and change directory into ``framework/build/bin``. In
-this folder, there should be a file named ``simulator-cli``.
-
-Run this file by doing the following
+This builds an executable in ``framework/build/bin``. Like any other
+executable, it can be run with ``[filepath-to-executable]``. Since we're
+already in the ``framework/build/`` directory, simply run:
 
 .. code-block:: sh
 
-    ./simulator-cli
+   ./bin/simulator-cli
 
-This will run the ER-Force Simulator to test your code
+Note also that the absolute filepath works from any directory:
+
+.. code-block:: sh
+
+   ~/framework/build/bin/simulator-cli
+
+
+We're a Division B team, so add the flag `-g` and the option `2020B` to use the
+Division B field dimensions, like so:
+
+.. code-block:: sh
+
+   ./bin/simulator-cli -g 2020B
+
+Sadly, this program has no output, so when you run it nothing will appear to
+happen. However, it will become obvious after you start our UI whether or not
+you've correctly started the simulator or not.
 
 Now, make sure you're on the most updated version of ``ros2`` branch. This is
 where the latest working version of our codebase exists. (See "Github" doc.
---TODO(Kevin): transfer this to docs--)
+--TODO(Prabhanjan): transfer this to docs--)
 
 .. code-block:: bash
 
     git pull git checkout ros2
 
-Then, source the ROS setup file. This ensures your shell can use ROS commands.
+Then, source the ROS setup file. This allows your shell to use ROS commands.
 
 .. code-block:: bash
 
     source /opt/ros/foxy/setup.bash
 
-If you're on zsh, source the ``.zsh`` version instead. (If you don't know what
+If you're on zsh, source ``setup.zsh`` instead. (If you don't know what
 zsh is, you're not on zsh.)
 
-.. code-block:: bash
-
-    source /opt/ros/foxy/setup.zsh
-
-Then build the codebase. This compiles all of our code.
+Then build the codebase. This compiles all of our code. On a VM, this step will
+take upwards of 15 minutes.
 
 .. code-block:: bash
 
    make perf
 
-(This step will take upwards of 15 minutes on a VM.)
-
-After building, we need to source our local setup. Run the following in the
-``robocup-software`` directory:
+After building, we need to source our custom ROS setup. Run the following in
+the ``robocup-software`` directory:
 
 .. code-block:: bash
 
     source install/setup.bash
 
-Again, if you're on zsh, source the ``.zsh`` version instead:
-
-.. code-block:: bash
-
-    source install/setup.zsh
+(Again, if you're on zsh, source the ``.zsh`` version instead.)
 
 Now we are good to go. As a sanity check, the following command should print out
 ``rj_robocup``:
@@ -104,7 +107,8 @@ Now we are good to go. As a sanity check, the following command should print out
 
     ros2 pkg list | grep rj_robocup
 
-To run sim, run the following:
+To launch our stack, which contains our AI that sends commands to the
+simulator, plus a UI to show what's happening, run the following:
 
 .. code-block:: bash
 
@@ -112,21 +116,22 @@ To run sim, run the following:
 
 If everything is working properly, you should see the following window show up.
 
-.. image:: ./_static/soccer.png
+.. image:: 
+
+   ./_static/soccer.png
 
 
-Running Again
--------------
+Shortcuts
+---------
 
 Now that you know how to source dependencies, build, and run our code, you can
 take advantage of some neat shortcuts. These shortcuts all depend on the
 following knowledge:
 
 Sourcing only needs to happen every time a new terminal is opened, and building
-only needs to happen when C++ or launch.py files are changed.
-
-(Python is not a compiled language; thus, those files do not need to be built
-when changed.)
+only needs to happen when C++ or launch.py files are changed. (Python is not a
+compiled language; thus, most of those files do not need to be built when
+changed.)
 
 So, after you've built once, the ``install/setup.bash`` script will exist in
 your version of the repo, and you won't have to build again until you make
@@ -137,8 +142,8 @@ terminal, you can launch sim with:
 
    . ./source.bash make run-sim
 
-``source.bash`` is an alias for the two source commands in the above section,
-and ``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
+``source.bash`` is an alias for the two source commands you saw above, and
+``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
 
 Since Python is not compiled, if you're exclusively working on Python files, and
 staying in one terminal, it's likely that you'll mostly only need:
@@ -149,16 +154,16 @@ staying in one terminal, it's likely that you'll mostly only need:
 
 However, if you're working on C++ or launch files (or if someone else changes
 them on a different branch and you want their changes), you'll need to build
-again. If you've already built once, though, you can build again more quickly
-with:
+again to see your changes take effect. If you've already built once on your
+machine, though, you can build again more quickly with:
 
 .. code-block:: bash
 
    make again . ./source.bash
 
 The ``source.bash`` line is necessary to source the file in ``install/``, which
-is refreshed on each build. (Note: this does not build any CMake-related files,
-so if you're editing those, use ``make perf`` as usual.)
+is refreshed on each build. (**Note:** this does not build any CMake-related
+files, so if you're editing those, use ``make perf`` as usual.)
 
 There are a few different ways to build our code. See the makefile for more
 details, but in short:
