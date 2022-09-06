@@ -82,12 +82,12 @@ work.
 In a new terminal: `cd ~/ssl-vision` `./bin/vision `
 
 This should pull up a GUI of the ssl-vision system. In said GUI, start capture
-by going to the left sidebar and clicking the arrows to dropdown: (If you can't
-see these buttons, try scrolling to the right with the bar on bottom.)
+by going to the left sidebar and clicking the arrows to dropdown: 
 
 `Thread 0 -> Image Capture -> Capture Control -> Start Capture`
 
-Then push `start`. Do the same for Thread 1 for full-field coverage.
+Then push the `start` button. (If you can't see this button, try scrolling to the right with the bar on bottom.)
+Do the same for Thread 1 for full-field coverage.
 
 If our system isn't picking up on vision's input, try:
 1. restarting soccer
