@@ -32,6 +32,8 @@ adblocker to support their free documentation hosting.
    our_stack.rst
    faq.rst
    contributing.rst
+   utilities.rst
+   fieldcomp_operation.rst
    meta_docs.rst
 
 .. note::
