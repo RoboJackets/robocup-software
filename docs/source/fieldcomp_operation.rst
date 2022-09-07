@@ -73,6 +73,7 @@ Open Ref
 --------
 
 In a new terminal:
+
 1. ``cd ~/ssl-game-controller``
 2. ``./ssl-game-controller_v2.12.7_linux_amd64`` (Just hit tab after typing ssl)
 3. Click open link on the line that states ``UI is available at http://...``
@@ -87,7 +88,7 @@ Assuming you have soccer running (see top section), you need the
 league-provided vision software to give our gameplay system what it needs to
 work.
 
-In a new terminal: ``cd ~/ssl-vision`` ``./bin/vision``
+In a new terminal: (``cd ~/ssl-vision && ./bin/vision``)
 
 This should pull up a GUI of the ssl-vision system. In said GUI, start capture
 by going to the left sidebar and clicking the arrows to dropdown:
@@ -104,5 +105,7 @@ If our system isn't picking up on vision's input, try:
 If the graphical client doesn't show any robots, vision is broken and something
 is terribly wrong. Give an experienced software member a shout.
 
-If you are the experienced member or there is not an experienced member to help, you can try using [this guide](https://github.com/RoboJackets/robocup-computer-config/blob/main/ssl-vision/config-howto.md) in our computer-config repo to fix vision.
+If you are the experienced member or there is not an experienced member to help,
+you can try using
+`this guide <https://github.com/RoboJackets/robocup-computer-config/blob/main/ssl-vision/config-howto.md>`_ in our computer-config repo to fix vision.
 
