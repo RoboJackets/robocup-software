@@ -24,9 +24,10 @@ void apply_hold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
 }
 
 Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory& previous) {
+    auto latency = 40ms;
     std::vector<Point> bias_waypoints;
     for (auto cursor = previous.cursor(params.start.stamp); cursor.has_value();
-         cursor.advance(100ms)) {
+         cursor.advance(latency)) {
         bias_waypoints.push_back(cursor.value().position());
     }
 
@@ -146,9 +147,9 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
                                 &hit_time);
 
     if (should_partial_replan) {
-        if (hit_time - start_time < partial_replan_lead_time() * 2) {
-            return full_replan(params);
-        }
+        /* if (hit_time - start_time < partial_replan_lead_time() * 2) { */
+        /*     return full_replan(params); */
+        /* } */
         return partial_replan(params, previous_trajectory);
     }
 
