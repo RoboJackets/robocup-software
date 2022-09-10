@@ -4,28 +4,28 @@ namespace planning {
 
 DEFINE_FLOAT64(kPlanningParamModule, timeout, 0.1, "Timeout for vision data to reach planning (s)");
 
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 3.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 1.0,
                   "Maximum translational speed for planning (m/s)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 3.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 1.0,
                   "Maximum translational acceleration for planning (m/s^2)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 10.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 1.0,
                   "Maximum rotational speed for planning (rad/s)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel, 10.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel, 1.0,
                   "Maximum rotational acceleration for planning (rad/s^2)");
 
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, replanner, pos_change_threshold, 0.025,
+    kPlanningParamModule, replanner, pos_change_threshold, 0.055,
     "Position target threshold (m); if the change in position from the originally planned "
     "target is smaller than this amount no replanning will occur.");
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, replanner, vel_change_threshold, 0.025,
+    kPlanningParamModule, replanner, vel_change_threshold, 0.055,
     "Velocity target threshold (m/s); if the change in velocity from the originally planned "
     "target is smaller than this amount no replanning will occur.");
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, replanner, partial_replan_lead_time, 0.1,
+    kPlanningParamModule, replanner, partial_replan_lead_time, 0.5,
     "Portion of the path (seconds) that will not be changed in the case of a partial replan");
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, replanner, off_path_threshold, 0.1,
+    kPlanningParamModule, replanner, off_path_threshold, 0.5,
     "Position error threshold (m), a partial replan will be forced if we are not within this "
     "amount of the planned trajectory.");
 

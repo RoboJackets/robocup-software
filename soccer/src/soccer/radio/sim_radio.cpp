@@ -118,7 +118,7 @@ void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
     /*                  sim_robot->dribbler_speed()); */
     /* } */
 
-    if (latency_queue_.empty() || RJ::now() - last_sent_diff_.at(robot_id) < 40.1ms) {
+    if (latency_queue_.empty() || RJ::now() - last_sent_diff_.at(robot_id) < 40ms) {
         latency_queue_.push(std::move(out));
         return;
     }
