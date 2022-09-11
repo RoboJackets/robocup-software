@@ -5,8 +5,7 @@
 namespace planning {
 
 void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
-                 const AngleFunction& angle_function,
-                 const RotationConstraints& /* constraints */) {
+                 const AngleFunction& angle_function, const RotationConstraints& constraints) {
     const RJ::Time start_time = start_instant.stamp;
 
     if (trajectory->empty()) {
@@ -107,7 +106,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
     }
      */
 
-    /*
     Trapezoid::State initial{start_instant.heading(),
                              start_instant.angular_velocity()};
 
@@ -134,12 +132,11 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         target_angles.at(i) = state.position;
         velocity.at(i) = state.velocity;
     }
-     */
 
     // Fill in the trajectory
     auto instant_it = trajectory->instants_begin();
     for (int i = 0; i < trajectory->num_instants(); ++i, ++instant_it) {
-        instant_it->heading() = target_angles.at(i);
+        instant_it->heading() = target_angles.at(0);  // target_angles.at(i);
         instant_it->angular_velocity() = velocity.at(i);
     }
 

@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include <spdlog/spdlog.h>
+
 #include <rj_constants/constants.hpp>
 
 #include "planning/instant.hpp"
@@ -24,9 +26,10 @@ void apply_hold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
 }
 
 Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory& previous) {
+    auto latency = 1ms;  // 40ms;
     std::vector<Point> bias_waypoints;
     for (auto cursor = previous.cursor(params.start.stamp); cursor.has_value();
-         cursor.advance(100ms)) {
+         cursor.advance(latency)) {
         bias_waypoints.push_back(cursor.value().position());
     }
 
@@ -123,6 +126,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (previous.empty() || veered_off_path(previous, params.start, now) ||
         goal_changed(previous.last().linear_motion(), params.goal)) {
+        SPDLOG_ERROR("fully replanning 1");
         return full_replan(params);
     }
 
@@ -144,11 +148,14 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
                                &hit_time) ||
         trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
                                 &hit_time);
+    should_partial_replan = true;
 
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
+            SPDLOG_ERROR("fully replanning 2");
             return full_replan(params);
         }
+        SPDLOG_ERROR("partial replanning");
         return partial_replan(params, previous_trajectory);
     }
 
@@ -158,16 +165,19 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         std::optional<RobotInstant> now_instant = previous_trajectory.evaluate(now);
         if (now_instant) {
             params.start = *now_instant;
+            SPDLOG_ERROR("fully replanning 3");
             return full_replan(params);
         }
     }
 
     if (now - previous_created_time > kCheckBetterDeltaTime &&
         time_remaining > partial_replan_lead_time() * 2) {
+        SPDLOG_ERROR("check better");
         return check_better(params, previous_trajectory);
     }
 
     previous_trajectory.stamp(RJ::now());
+    SPDLOG_ERROR("return prev traj");
     return previous_trajectory;
 }
 

@@ -15,13 +15,13 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 1.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.0,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 1.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 0.4,
                "Maximum velocity limit (motion control) (m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 3.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 1.0,
                "Maximum angular velocity limit (motion control) (rad/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 3.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 1.0,
                "Kp for rotation ((rad/s)/rad)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
                "Ki for rotation ((rad/s)/(rad*s))");
@@ -29,7 +29,7 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0,
                "Kd for rotation ((rad/s)/(rad/s))");
 DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
              "Windup limit for rotation (unknown units)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 3.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 8.0,
                "Kp for translation ((m/s)/m)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
                "Ki for translation ((m/s)/(m*s))");
@@ -94,7 +94,8 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     // We run this at 60Hz, so we want to do motion control off of the goal
     // position for the next frame. Evaluate the trajectory there.
     RJ::Seconds dt(1.0 / 60);
-    RJ::Time eval_time = state.timestamp + dt;
+    RJ::Seconds latency(/* 40 * 0.01 */ 0.0);
+    RJ::Time eval_time = state.timestamp + dt + latency;
 
     std::optional<RobotInstant> maybe_target = trajectory.evaluate(eval_time);
     bool at_end = eval_time > trajectory.end_time();
@@ -131,6 +132,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
     // Apply the correction and rotate into the world frame.
     Twist result_world = velocity_target + correction;
+    // TODO: check this rotation
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
 
