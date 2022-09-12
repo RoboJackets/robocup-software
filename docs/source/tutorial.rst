@@ -11,6 +11,13 @@ No prior experience is assumed. However, a bit of stubbornness is required.
 RoboCup SW has seen many members without any prior CS experience become valued
 contributors, and many talented CS majors quit within a few weeks.
 
+**Note: you must have Ubuntu 20.04 installed in some capacity to use our
+stack.** Most new members do this with a VM, which is the quickest way. Google
+"how to install Ubuntu VM on <your current OS>" and follow a tutorial online.
+If you decide to stick with RoboCup long-term, it might be worth your time to
+invest in a used laptop that only has Ubuntu 20.04 and your RoboCup files
+installed.
+
 The tutorial is structured as follows.
 
 .. contents::
