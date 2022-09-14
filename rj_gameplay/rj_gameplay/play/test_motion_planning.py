@@ -61,7 +61,7 @@ class OneRobot(stp.play.Play):
             self.move_skill = move.Move(
                 robot=self.robot,
                 target_point=self.target_point,
-                # face_point=self.face_point,
+                face_point=self.face_point,
             )
 
         # TODO: only making this intent change when the move skill is reinitialized produces much smoother behavior, but makes our planning unable to respond to moving obstacles
