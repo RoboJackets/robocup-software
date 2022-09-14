@@ -41,16 +41,16 @@ class OneRobot(stp.play.Play):
         intents = [None for _ in range(16)]
 
         if self._state == State.NEAR:
-            self.target_point = np.array([2.0, 2.0])
-            self.face_point = self.target_point
+            self.target_point = np.array([1.0, 3.5])
+            self.face_point = np.array([0.0, 6.0])
 
             if self.move_skill is not None and self.move_skill.is_done(world_state):
                 self._state = State.FAR
                 self.move_skill = None
 
         elif self._state == State.FAR:
-            self.target_point = np.array([-2.0, 2.0])
-            self.face_point = self.target_point
+            self.target_point = np.array([-1.0, 3.5])
+            self.face_point = np.array([0.0, 6.0])
 
             if self.move_skill is not None and self.move_skill.is_done(world_state):
                 self._state = State.NEAR
