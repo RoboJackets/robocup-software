@@ -57,7 +57,7 @@ ControllerCommand KeyboardController::get_command() const {
     }
 
     if (key_down(keystate, SDL_SCANCODE_SPACE) || key_down(keystate, SDL_SCANCODE_RSHIFT)) {
-        command.dribble_power = 255.0;  // max is 255
+        command.dribble_power = MAX_DRIBBLE_POWER;
     } else {
         command.dribble_power = dribble_power_;
     }
