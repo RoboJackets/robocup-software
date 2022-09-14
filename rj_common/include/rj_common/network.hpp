@@ -33,7 +33,7 @@
 static const std::string kRefereeAddress = "224.5.23.1";
 static const std::string kSharedVisionAddress = "224.5.23.2";
 
-static const int kSimVisionPort = 10006;  // was 10020 before 1-30-2022
+static const int kSimVisionPort = 10020;  // was 10020 before 1-30-2022
 static const int kSimBlueStatusPort = 30011;
 static const int kSimYellowStatusPort = 30012;
 static const int kSimCommandPort = 10300;
