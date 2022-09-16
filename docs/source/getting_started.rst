@@ -39,7 +39,9 @@ Then, build their code with the following:
 
 .. code-block:: sh
 
-    mkdir build && cd build cmake .. make simulator-cli
+    mkdir build && cd build
+    cmake ..
+    make simulator-cli
 
 This builds an executable in ``framework/build/bin``. Like any other
 executable, it can be run with ``[filepath-to-executable]``. Since we're
@@ -67,9 +69,10 @@ Sadly, this program has no output, so when you run it nothing will appear to
 happen. However, it will become obvious after you start our UI whether or not
 you've correctly started the simulator or not.
 
-Now, make sure you're on the most updated version of ``ros2`` branch. This is
-where the latest working version of our codebase exists. (See "Github" doc.
---TODO(Prabhanjan): transfer this to docs--)
+In another terminal, change directories back into ``robocup-software``.
+Make sure you're on the most updated version of ``ros2`` branch. This is
+where the latest working version of our codebase exists. (See Contributing page for
+more information).
 
 .. code-block:: bash
 
