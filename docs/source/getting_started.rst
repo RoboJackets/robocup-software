@@ -39,9 +39,9 @@ Then, build their code with the following:
 
 .. code-block:: sh
 
-    mkdir build
-    cd build cmake 
-    make simulator-cli
+    mkdir build && cd build
+    cmake ..
+    make
 
 This builds an executable in ``framework/build/bin``. Like any other
 executable, it can be run with ``[filepath-to-executable]``. Since we're
