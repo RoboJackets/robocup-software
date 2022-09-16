@@ -41,7 +41,7 @@ Then, build their code with the following:
 
     mkdir build && cd build
     cmake ..
-    make
+    make simulator-cli
 
 This builds an executable in ``framework/build/bin``. Like any other
 executable, it can be run with ``[filepath-to-executable]``. Since we're
