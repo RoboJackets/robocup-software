@@ -29,7 +29,7 @@ class OneRobot(stp.play.Play):
         self._state = State.NEAR
         self.move_skill = None
 
-        self.robot_id = 0
+        self.robot_id = 1
         self.robot = None
 
     def tick(
@@ -174,7 +174,7 @@ class KickBall(stp.play.Play):
         self.capture_skill = None
         self.pivot_kick_skill = None
 
-        self.robot_id = 0
+        self.robot_id = 1
         self.robot = None
 
     def tick(

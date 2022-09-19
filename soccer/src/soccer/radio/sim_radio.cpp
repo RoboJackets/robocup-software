@@ -85,7 +85,7 @@ SimRadio::SimRadio(bool blue_team)
      * on sim, make sure this IP is "127.0.0.1" (localhost)
      */
 
-    SPDLOG_ERROR("sim radio param_radio_interface_ {}", param_radio_interface_);
+    SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
     address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
