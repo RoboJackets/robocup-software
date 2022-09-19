@@ -8,17 +8,26 @@
 
 #include "packet_convert.hpp"
 #include "rj_geometry/util.hpp"
+#include <spdlog/spdlog.h>
+#include <boost/asio.hpp>
 
 using namespace boost::asio;
 using ip::udp;
 
 namespace radio {
 
-NetworkRadio::NetworkRadio(int server_port)
-    : socket_(context_, udp::endpoint(udp::v4(), server_port)),
+NetworkRadio::NetworkRadio()
+    : socket_(io_service_),
       recv_buffer_{},
       send_buffers_(kNumShells) {
     connections_.resize(kNumShells);
+
+    this->get_parameter("server_port", param_server_port_);
+    SPDLOG_ERROR("Radio param_server_port_: {}", param_server_port_);
+
+    socket_.open(udp::v4());
+    socket_.bind(udp::endpoint(udp::v4(), param_server_port_));
+
     start_receive();
 }
 
@@ -73,7 +82,7 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
 
 void NetworkRadio::receive() {
     // Let boost::asio handle callbacks
-    context_.poll();
+    io_service_.poll();
 }
 
 void NetworkRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {

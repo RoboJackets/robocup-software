@@ -98,6 +98,7 @@
   ros__parameters:
     timeout: 0.25
     use_sim_time: false
+    server_port: 25564
     # interface: "172.16.1.1" # TODO: why is this here?
 
 /vision_receiver:
