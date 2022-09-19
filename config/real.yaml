@@ -4,15 +4,15 @@
 
 /control:
   ros__parameters:
-    max_acceleration: 1.5
-    max_velocity: 2.0
+    max_acceleration: 1.0
+    max_velocity: 1.0
     rotation_kd: 0.0
     rotation_ki: 0.0
-    rotation_kp: 8.0
+    rotation_kp: 0.0
     rotation_windup: 0
-    translation_kd: 0.0
+    translation_kd: 0.3
     translation_ki: 0.0
-    translation_kp: 4.0
+    translation_kp: 0.6
     translation_windup: 0
     use_sim_time: false
 
