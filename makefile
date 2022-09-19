@@ -60,6 +60,8 @@ again:
 	(cd build-release-debug/ && ninja install)
 
 # run soccer with default flags
+# TODO: lots of the default flags are for sim, except run_sim
+# fix this so defaults launch sim, with special cases for real
 run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 

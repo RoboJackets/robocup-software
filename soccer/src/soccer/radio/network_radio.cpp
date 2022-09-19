@@ -1,5 +1,6 @@
 #include "network_radio.hpp"
 
+#include <boost/asio.hpp>
 #include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
 
@@ -8,18 +9,13 @@
 
 #include "packet_convert.hpp"
 #include "rj_geometry/util.hpp"
-#include <spdlog/spdlog.h>
-#include <boost/asio.hpp>
 
 using namespace boost::asio;
 using ip::udp;
 
 namespace radio {
 
-NetworkRadio::NetworkRadio()
-    : socket_(io_service_),
-      recv_buffer_{},
-      send_buffers_(kNumShells) {
+NetworkRadio::NetworkRadio() : socket_(io_service_), recv_buffer_{}, send_buffers_(kNumShells) {
     connections_.resize(kNumShells);
 
     this->get_parameter("server_port", param_server_port_);
