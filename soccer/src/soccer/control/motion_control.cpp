@@ -15,7 +15,7 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 1.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 10.0,
                "Maximum acceleration limit (motion control) (m/s^2)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 1.0,
                "Maximum velocity limit (motion control) (m/s)");
