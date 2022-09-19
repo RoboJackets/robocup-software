@@ -1,0 +1,13 @@
+/radio:
+  ros__parameters:
+    timeout: 0.25
+    use_sim_time: false
+    interface: "127.0.0.1"
+
+/vision_receiver:
+  ros__parameters:
+    port: 10020  # ER-Force sim uses this port
+    hz: 120.0
+    use_sim_time: false
+    vision_interface: "127.0.0.1"
+

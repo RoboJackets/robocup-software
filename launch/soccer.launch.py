@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
@@ -16,14 +17,24 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 
-import sys
-
 # this is the only way to pass in the config file to be used in generate_launch_description()
 # https://answers.ros.org/question/376816/how-to-pass-command-line-arguments-to-a-launch-file/
-config_yaml = "sim.yaml"
+
+# (replace sim_ with real_ for real field comp operation)
+#
+# TODO: couple param files with the relevant flag?
+# e.g. use_sim_radio=T => sim_network_params.yaml
+#      run_sim=T => sim_params.yaml
+#
+main_config_yaml = "sim_params.yaml"
 for arg in sys.argv:
-    if arg.startswith("config_yaml:="):
-        config_yaml = arg.split(":=")[-1]
+    if arg.startswith("main_config_yaml:="):
+        main_config_yaml = arg.split(":=")[-1]
+
+network_config_yaml = "sim_network_params.yaml"
+for arg in sys.argv:
+    if arg.startswith("network_config_yaml:="):
+        network_config_yaml = arg.split(":=")[-1]
 
 
 def generate_launch_description():
@@ -46,8 +57,12 @@ def generate_launch_description():
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
     )
 
-    config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", config_yaml
+    main_config = os.path.join(
+        get_package_share_directory("rj_robocup"), "config", main_config_yaml
+    )
+
+    network_config = os.path.join(
+        get_package_share_directory("rj_robocup"), "config", network_config_yaml
     )
 
     soccer = Node(
@@ -55,7 +70,7 @@ def generate_launch_description():
         executable="soccer",
         output="screen",
         arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -64,7 +79,7 @@ def generate_launch_description():
         executable="config_server",
         output="screen",
         arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -73,7 +88,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="sim_radio_node",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -82,7 +97,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="network_radio_node",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -90,7 +105,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="control_node",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -98,7 +113,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="planner_node",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -117,7 +132,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="gameplay_node",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         emulate_tty=True,
         on_exit=Shutdown(),
     )
@@ -126,7 +141,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="vision_receiver",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -135,7 +150,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="internal_referee_node",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -144,7 +159,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="external_referee_node",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -152,7 +167,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="rj_vision_filter",
         output="screen",
-        parameters=[config],
+        parameters=[main_config, network_config],
         on_exit=Shutdown(),
     )
 
@@ -167,7 +182,10 @@ def generate_launch_description():
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
-            DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
+            DeclareLaunchArgument("main_config_yaml", default_value="sim_params.yaml"),
+            DeclareLaunchArgument(
+                "network_config_yaml", default_value="sim_network_params.yaml"
+            ),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,

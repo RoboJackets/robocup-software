@@ -4,15 +4,15 @@
 
 /control:
   ros__parameters:
-    max_acceleration: 1.0
-    max_velocity: 1.0
+    max_acceleration: 1.5
+    max_velocity: 2.0
     rotation_kd: 0.0
     rotation_ki: 0.0
-    rotation_kp: 0.0
+    rotation_kp: 8.0
     rotation_windup: 0
-    translation_kd: 0.3
+    translation_kd: 0.0
     translation_ki: 0.0
-    translation_kp: 0.6
+    translation_kp: 4.0
     translation_windup: 0
     use_sim_time: false
 
@@ -94,20 +94,6 @@
     timeout: 0.1
     use_sim_time: false
 
-/radio:
-  ros__parameters:
-    timeout: 0.25
-    use_sim_time: false
-    server_port: 25564
-    # interface: "172.16.1.1" # TODO: why is this here?
-
-/vision_receiver:
-  ros__parameters:
-    port: 10006
-    hz: 120.0
-    use_sim_time: false
-    # vision_interface: "" # will auto-latch to kSharedVisionAddress
-
 /vision_filter:
   ros__parameters:
     ball:
@@ -162,3 +148,4 @@
       ball_merger_power: 1.5
     world_robot:
       robot_merger_power: 1.5
+
