@@ -14,14 +14,6 @@
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
-// this IP should be where vision receiver pubs to (for scrim-2022 this matched ext ref)
-// port should be 10006
-// see PR #1887 for last time this file was used w/ external interface
-// run ifconfig to see list of interfaces on this computer
-DEFINE_INT64(kVisionReceiverParamModule, port, kSimVisionPort,
-             "The port used for the vision receiver.")
-DEFINE_STRING(kVisionReceiverParamModule, vision_interface, "", "The hardware interface to use.")
-
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
@@ -35,7 +27,29 @@ VisionReceiver::VisionReceiver()
       param_provider_(this, kVisionReceiverParamModule) {
     recv_buffer_.resize(65536);
 
-    set_port(PARAM_vision_interface, PARAM_port);
+    /* below, vision_interface should be IP where vision receiver pubs to (in
+     * scrim-2022 this was same IP as ext ref)
+     *
+     * run ifconfig to see list of interfaces on this computer
+     *
+     * port=10006 for real vision (per SSL rulebook)
+     * port=10020 for ER-force sim
+     *
+     * see PR #1887 for last time this file was used w/ external interface
+     */
+
+    // TODO(Kevin): since these are set on init, this does not allow us to
+    // dynamic reconfigure these values, which would be nice
+
+    // port number for vision receiver
+    this->get_parameter("port", param_port_);
+    // The hardware interface to use.
+    this->get_parameter("interface", param_vision_interface_);
+    SPDLOG_INFO("VisionReceiver port: {}", param_port_);
+    SPDLOG_INFO("VisionReceiver vision_interface: {}", param_vision_interface_);
+
+    // set vision interface and port
+    set_port(param_vision_interface_, param_port_);
 
     raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
@@ -83,12 +97,12 @@ void VisionReceiver::set_port(const std::string& interface, int port) {
     socket_.open(udp::v4());
     socket_.set_option(udp::socket::reuse_address(true));
 
-    socket_.set_option(udp::socket::reuse_address(true));
     if (!interface.empty()) {
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(),
             boost::asio::ip::address::from_string(interface).to_v4()));
     } else {
+        SPDLOG_INFO("VisionReceiver joining kSharedVisionAddress: {}", kSharedVisionAddress);
         socket_.set_option(boost::asio::ip::multicast::join_group(
             boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4()));
     }

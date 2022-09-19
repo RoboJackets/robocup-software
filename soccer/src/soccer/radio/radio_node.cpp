@@ -1,5 +1,3 @@
-#include "radio_node.hpp"
-
 #include <gameplay/gameplay_module.hpp>
 #include <rj_common/network.hpp>
 
@@ -12,6 +10,7 @@ RadioNode::RadioNode(Context* context, bool simulation, bool blue_team) : contex
     last_radio_rx_time_ = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
     simulation_ = simulation;
     was_blue_team_ = blue_team;
+    // TODO(#1935): where the hell does NetworkRadio get its IP from?
     radio_ = simulation_ ? static_cast<Radio*>(new SimRadio(context_, blue_team))
                          : static_cast<Radio*>(new NetworkRadio(kNetworkRadioServerPort));
 }

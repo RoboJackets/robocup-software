@@ -69,10 +69,10 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
     int num_trapezoid_samples = trajectory->num_instants();
 
     // TODO(#1506): If we are unable to finish the motion in time at all,
-    profile all the way until the end, and then append points to the trajectory
-    containing the remainder of the trapezoid motion. for (int i =
-    static_cast<int>(velocity.size() - 1); i > 0; i--) { double next_heading =
-    target_angles.at(i); double next_velocity = velocity.at(i);
+    // profile all the way until the end, and then append points to the trajectory
+    // containing the remainder of the trapezoid motion.
+    for (int i = static_cast<int>(velocity.size() - 1); i > 0; i--) {
+        double next_heading = target_angles.at(i); double next_velocity = velocity.at(i);
 
         double target_heading = target_angles.at(i - 1);
         double delta = fix_angle_radians(next_heading - target_heading);
@@ -105,9 +105,7 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         target_angles.at(i - 1) = prev_heading;
         velocity.at(i - 1) = prev_velocity;
     }
-     */
 
-    /*
     Trapezoid::State initial{start_instant.heading(),
                              start_instant.angular_velocity()};
 
@@ -134,7 +132,7 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         target_angles.at(i) = state.position;
         velocity.at(i) = state.velocity;
     }
-     */
+    */
 
     // Fill in the trajectory
     auto instant_it = trajectory->instants_begin();
