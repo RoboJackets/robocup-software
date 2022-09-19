@@ -4,15 +4,15 @@
 
 /control:
   ros__parameters:
-    max_acceleration: 1.5
-    max_velocity: 2.0
+    max_acceleration: 1.0
+    max_velocity: 1.0
     rotation_kd: 0.0
     rotation_ki: 0.0
-    rotation_kp: 8.0
+    rotation_kp: 0.0
     rotation_windup: 0
-    translation_kd: 0.0
+    translation_kd: 0.3
     translation_ki: 0.0
-    translation_kp: 4.0
+    translation_kp: 0.6
     translation_windup: 0
     use_sim_time: false
 
@@ -38,16 +38,11 @@
         robot_radius: 0.09
     use_sim_time: false
 
-/external_referee:
-  ros__parameters:
-    team_name: RoboJackets
-    interface: "172.19.0.0"
-    use_sim_time: false
-
 /internal_referee:
   ros__parameters:
     team_name: RoboJackets
     use_sim_time: false
+
 /planner:
   ros__parameters:
     collect:
@@ -99,24 +94,18 @@
     timeout: 0.1
     use_sim_time: false
 
-/sim_radio:
+/radio:
   ros__parameters:
     timeout: 0.25
-    interface: "172.19.0.0"
     use_sim_time: false
-
-/network_radio:
-  ros__parameters:
-    timeout: 0.25
-    interface: "172.19.0.0"
-    use_sim_time: false
+    # interface: "172.16.1.1" # TODO: why is this here?
 
 /vision_receiver:
   ros__parameters:
-    port: 10006 # 10020 comp setup
+    port: 10006
     hz: 120.0
     use_sim_time: false
-    vision_interface: "172.19.0.0"
+    # vision_interface: "" # will auto-latch to kSharedVisionAddress
 
 /vision_filter:
   ros__parameters:
@@ -172,4 +161,3 @@
       ball_merger_power: 1.5
     world_robot:
       robot_merger_power: 1.5
-

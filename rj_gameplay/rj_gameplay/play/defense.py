@@ -39,9 +39,10 @@ class Defense(stp.play.Play):
                 wall_tactic.WallTactic(world_state, num_wallers)
             )
             num_markers = len(world_state.our_visible_robots) - (1 + num_wallers)
-            self.prioritized_tactics.append(
-                nmark_tactic.NMarkTactic(world_state, num_markers)
-            )
+            if num_markers > 1:
+                self.prioritized_tactics.append(
+                    nmark_tactic.NMarkTactic(world_state, num_markers)
+                )
             self.assign_roles(world_state)
             self._state = State.ACTIVE
             return self.get_robot_intents(world_state)

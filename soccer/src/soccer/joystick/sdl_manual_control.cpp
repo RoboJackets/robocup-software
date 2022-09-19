@@ -22,16 +22,16 @@ ControllerCommand KeyboardController::get_command() const {
 
     const auto* keystate = SDL_GetKeyboardState(nullptr);
     if (key_down(keystate, SDL_SCANCODE_W)) {
-        command.translation.y() = 1;
+        command.translation.y() = 1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_S)) {
-        command.translation.y() = -1;
+        command.translation.y() = -1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_A)) {
-        command.translation.x() = -1;
+        command.translation.x() = -1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_D)) {
-        command.translation.x() = 1;
+        command.translation.x() = 1.0;
     }
     if (key_down(keystate, SDL_SCANCODE_Q)) {
         command.rotation = 1;
@@ -56,7 +56,11 @@ ControllerCommand KeyboardController::get_command() const {
         command.kick_power = kick_power_;
     }
 
-    command.dribble_power = dribble_power_;
+    if (key_down(keystate, SDL_SCANCODE_SPACE) || key_down(keystate, SDL_SCANCODE_RSHIFT)) {
+        command.dribble_power = MAX_DRIBBLE_POWER;
+    } else {
+        command.dribble_power = 0.0;
+    }
 
     return command;
 }
