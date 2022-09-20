@@ -86,6 +86,13 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    soccer_mom_node = Node(
+        package="rj_robocup",
+        executable="soccer_mom_node",
+        output="screen",
+        on_exit=Shutdown(),
+    )
+
     control = Node(
         package="rj_robocup",
         executable="control_node",
@@ -177,6 +184,7 @@ def generate_launch_description():
             # nodes below this line are XOR based on the header launch arg
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
             sim_radio,
+            soccer_mom_node,
             network_radio,
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             internal_ref_receiver,
