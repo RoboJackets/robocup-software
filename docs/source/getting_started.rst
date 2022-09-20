@@ -115,7 +115,7 @@ simulator, plus a UI to show what's happening, run the following:
 
 .. code-block:: bash
 
-    ros2 launch rj_robocup sim.launch.py
+    ros2 launch rj_robocup soccer.launch.py
 
 If everything is working properly, you should see the following window show up.
 
