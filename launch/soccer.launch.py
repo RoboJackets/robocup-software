@@ -14,10 +14,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import (
-    LaunchConfiguration,
-    PythonExpression,
-)
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 
 def generate_launch_description():
@@ -40,6 +37,7 @@ def generate_launch_description():
 
     use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
     use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
+    use_soccer_mom = LaunchConfiguration("use_soccer_mom", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-b")
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
@@ -71,6 +69,15 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression([use_sim_radio])),
         package="rj_robocup",
         executable="sim_radio_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    soccer_mom = Node(
+        condition=IfCondition(PythonExpression([use_soccer_mom])),
+        package="rj_robocup",
+        executable="soccer_mom_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
@@ -155,12 +162,14 @@ def generate_launch_description():
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
+            DeclareLaunchArgument("use_soccer_mom", default_value="True"),
             DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,
             soccer,
             sim_radio,
+            soccer_mom,
             network_radio,
             control,
             planner,

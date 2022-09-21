@@ -48,6 +48,7 @@ set(ROBOCUP_LIB_SRC
     radio/packet_convert.cpp
     radio/sim_radio.cpp
     radio/radio.cpp
+    radio/SoccerMom.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
     referee/internal_referee.cpp
@@ -90,6 +91,8 @@ set(SOCCER_TEST_SRC
     test_main.cpp
         logger_test.cpp)
 
+set(SOCCER_MOM_NODE_SRC radio/SoccerMom_main.cpp)
+
 set(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
 
 set(LOG_VIEWER_UIS ui/qt/LogViewer.ui)
@@ -121,6 +124,8 @@ target_sources(robocup PRIVATE ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 # Set the directory so AUTOUIC know where to find .ui files
 set(UI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt)
 set_target_properties(robocup PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # ---- soccer ----
 target_sources(soccer PRIVATE main.cpp)

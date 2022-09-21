@@ -118,6 +118,7 @@ add_executable(external_referee_node)
 add_executable(planner_node)
 add_executable(control_node)
 add_executable(sim_radio_node)
+add_executable(soccer_mom_node)
 add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
@@ -219,6 +220,9 @@ set(MANUAL_CONTROL_NODE_DEPS_LIBRARIES robocup)
 set(GLOBAL_PARAM_SERVER_NODE_DEPS_SYSTEM_LIBRARIES)
 set(GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES robocup)
 
+set(SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES)
+set(SOCCER_MOM_NODE_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -233,6 +237,9 @@ target_link_libraries(robocup PUBLIC ${ROBOCUP_DEPS_SYSTEM_LIBRARIES} ${ROBOCUP_
 ament_target_dependencies(robocup PUBLIC rj_geometry_msgs)
 ament_target_dependencies(robocup PUBLIC rj_drawing_msgs)
 ament_target_dependencies(robocup PUBLIC rj_msgs)
+
+target_link_libraries(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${SOCCER_MOM_NODE_DEPS_LIBRARIES})
 
 # ---- rj_vision_filter ----
 target_link_libraries(rj_vision_filter PRIVATE robocup ${RJ_VISION_FILTER_DEPS_LIBRARIES} ${RJ_VISION_FILTER_DEPS_SYSTEM_LIBRARIES})
@@ -317,6 +324,7 @@ install(
         planner_node
         control_node
         sim_radio_node
+        soccer_mom_node
         network_radio_node
         manual_control_node
         global_param_server_node
