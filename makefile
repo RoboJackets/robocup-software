@@ -104,6 +104,11 @@ run-sim2play:
 	ros2 launch rj_robocup sim2play.launch.py
 run-sim2: run-sim2play
 
+run-real2play:
+	ros2 launch rj_robocup real2play.launch.py
+
+run-real2: run-real2play
+
 # Run both C++ and python unit tests
 tests: test-cpp test-python
 test-cpp: test-soccer
