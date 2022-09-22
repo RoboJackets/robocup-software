@@ -52,7 +52,8 @@ static const int kSharedVisionPortSinglePrimary = 10002;
 // Secondary Single-sized field port with old Protobuf protocol
 static const int kSharedVisionPortSingleSecondary = 10004;
 
-static constexpr int kNetworkRadioServerPort = 25565;
+// This param is now a ROS param loaded via launch file.
+// static constexpr int kNetworkRadioServerPort = 25565;
 static constexpr int kRobotEndpointPort = 25566;
 
 // Double-sized field port with old Protobuf protocol
