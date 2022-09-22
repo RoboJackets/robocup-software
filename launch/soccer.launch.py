@@ -27,16 +27,10 @@ from launch.substitutions import (
 # (replace sim_ with real_ for real field comp operation)
 #
 # TODO: couple param files with the relevant flag?
-#
-main_config_yaml = "sim_params.yaml"
+param_config_yaml = "sim_params.yaml"
 for arg in sys.argv:
-    if arg.startswith("main_config_yaml:="):
-        main_config_yaml = arg.split(":=")[-1]
-
-# network_config_yaml = "sim_network_params.yaml"
-# for arg in sys.argv:
-#     if arg.startswith("network_config_yaml:="):
-#         network_config_yaml = arg.split(":=")[-1]
+    if arg.startswith("param_config_yaml:="):
+        param_config_yaml = arg.split(":=")[-1]
 
 
 def generate_launch_description():
@@ -73,21 +67,16 @@ def generate_launch_description():
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
     )
 
-    main_config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", main_config_yaml
+    param_config = os.path.join(
+        get_package_share_directory("rj_robocup"), "config", param_config_yaml
     )
-
-    # TODO: remove this
-    # network_config = os.path.join(
-    #     get_package_share_directory("rj_robocup"), "config", network_config_yaml
-    # )
 
     soccer = Node(
         package="rj_robocup",
         executable="soccer",
         output="screen",
         arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -96,7 +85,7 @@ def generate_launch_description():
         executable="config_server",
         output="screen",
         arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -105,7 +94,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="sim_radio_node",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -115,7 +104,7 @@ def generate_launch_description():
         executable="network_radio_node",
         output="screen",
         parameters=[
-            main_config,
+            param_config,
             {"server_port": LaunchConfiguration("server_port")},
         ],
         on_exit=Shutdown(),
@@ -125,7 +114,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="control_node",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -133,7 +122,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="planner_node",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -152,7 +141,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="gameplay_node",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         emulate_tty=True,
         on_exit=Shutdown(),
     )
@@ -161,7 +150,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="vision_receiver",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -170,7 +159,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="internal_referee_node",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -179,7 +168,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="external_referee_node",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -187,7 +176,7 @@ def generate_launch_description():
         package="rj_robocup",
         executable="rj_vision_filter",
         output="screen",
-        parameters=[main_config],
+        parameters=[param_config],
         on_exit=Shutdown(),
     )
 
@@ -203,10 +192,7 @@ def generate_launch_description():
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
-            DeclareLaunchArgument("main_config_yaml", default_value="sim_params.yaml"),
-            # DeclareLaunchArgument(
-            #     "network_config_yaml", default_value="sim_network_params.yaml"
-            # ),
+            DeclareLaunchArgument("param_config_yaml", default_value="sim_params.yaml"),
             stdout_linebuf_envvar,
             config_server,
             global_param_server,

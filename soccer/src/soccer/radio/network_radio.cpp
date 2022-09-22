@@ -19,8 +19,9 @@ NetworkRadio::NetworkRadio() : socket_(io_service_), recv_buffer_{}, send_buffer
     connections_.resize(kNumShells);
 
     this->get_parameter("server_port", param_server_port_);
-    SPDLOG_ERROR("Radio param_server_port_: {}", param_server_port_);
+    SPDLOG_INFO("Radio param_server_port_: {}", param_server_port_);
 
+    // socket must be opened before it can be bound to an endpoint
     socket_.open(udp::v4());
     socket_.bind(udp::endpoint(udp::v4(), param_server_port_));
 
