@@ -75,37 +75,35 @@ run-sim-external:
 
 run-sim-ex: run-sim-external
 
+# run on real field computer with real robots and internal ref (our UI)
 run-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False main_config_yaml:=real_params.yaml network_config_yaml:=real_network_params.yaml use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False main_config_yaml:=real_params.yaml use_sim_radio:=False
 
 # run on real field computer with real robots and external ref (SSL GC)
 run-real-ex:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False config_yaml:=real_params.yaml network_config_yaml:=real_network_params.yaml use_sim_radio:=False use_internal_ref:=False 
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False config_yaml:=real_params.yaml use_sim_radio:=False use_internal_ref:=False 
 
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
 run-manual:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True config_yaml:=real_params.yaml network_config_yaml:=real_network_params.yaml use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True config_yaml:=real_params.yaml use_sim_radio:=False
 
+# same as run-real, with different server port
 run-alt-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False main_config_yaml:=real_params.yaml network_config_yaml:=alt_real_network_params.yaml use_sim_radio:=False
-
-# run on real field computer with real robots and external ref (SSL GC)
-run-alt-real-ex:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False config_yaml:=real_params.yaml network_config_yaml:=alt_real_network_params.yaml use_sim_radio:=False use_internal_ref:=False 
-
-# run on real field comp, with real robots and manual control node to override AI movement
-# use util/manual_control_connect.bash to connect
-run-alt-manual:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True config_yaml:=real_params.yaml network_config_yaml:=alt_real_network_params.yaml use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False main_config_yaml:=real_params.yaml use_sim_radio:=False server_port:=25564
 
 # run sim2play (requires external referee)
 run-sim2play:
 	ros2 launch rj_robocup sim2play.launch.py
 run-sim2: run-sim2play
 
+# control two teams of robots at once on the field
+# 
+# as of 9/22/22, hardcoded for one team's server port=25565 (the one-team
+# default), other=25564
 run-real2play:
-	ros2 launch rj_robocup real2play.launch.py
+	chmod +x ./launch/real2play.bash
+	./launch/real2play.bash
 
 run-real2: run-real2play
 

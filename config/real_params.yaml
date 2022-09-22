@@ -94,6 +94,21 @@
     timeout: 0.1
     use_sim_time: false
 
+/radio:
+  ros__parameters:
+    timeout: 0.25
+    use_sim_time: false
+    # server_port: output port from field comp's perspective
+    # IP address will auto-latch to Ubiquiti cloud key's IP per UDP v4 protocol
+    # (as in, the field comp simply broadcasts to the Ubiquiti IP, on server_port)
+
+/vision_receiver:
+  ros__parameters:
+    port: 10006
+    hz: 120.0
+    use_sim_time: false
+    # vision_interface: "" # will auto-latch to kSharedVisionAddress
+
 /vision_filter:
   ros__parameters:
     ball:
