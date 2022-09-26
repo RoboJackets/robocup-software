@@ -65,29 +65,25 @@ run-soccer:
 
 # run sim with default flags
 run-sim:
-	ros2 launch rj_robocup sim.launch.py
+	ros2 launch rj_robocup soccer.launch.py run_sim:=True
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
-	ros2 launch rj_robocup sim.launch.py use_internal_ref:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=True use_internal_ref:=False
+
 run-sim-ex: run-sim-external
 
-# run on real field computer with real robots
 run-real:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False config_yaml:=real.yaml use_sim_radio:=False
 
 # run on real field computer with real robots and external ref (SSL GC)
 run-real-ex:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_internal_ref:=False 
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False config_yaml:=real.yaml use_sim_radio:=False use_internal_ref:=False 
 
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
 run-manual:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_manual_control:=True
-
-# ^ but with external ref (SSL GC)
-run-manual-ex:
-	ros2 launch rj_robocup soccer.launch.py config_yaml:=real.yaml use_sim_radio:=False use_manual_control:=True use_internal_ref:=False 
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True config_yaml:=real.yaml use_sim_radio:=False
 
 # run sim2play (requires external referee)
 run-sim2play:

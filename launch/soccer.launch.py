@@ -16,22 +16,17 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 
+import sys
+
+# this is the only way to pass in the config file to be used in generate_launch_description()
+# https://answers.ros.org/question/376816/how-to-pass-command-line-arguments-to-a-launch-file/
+config_yaml = "sim.yaml"
+for arg in sys.argv:
+    if arg.startswith("config_yaml:="):
+        config_yaml = arg.split(":=")[-1]
+
 
 def generate_launch_description():
-    # see ros2/launch source code to see how this works
-    # right now, it doesn't work, lc never adds config_yaml
-    # thus it always returns default, see source code
-    config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
-    lc = LaunchContext(noninteractive=True)
-    slc = SetLaunchConfiguration(config_yaml, config_yaml)
-    slc.execute(lc)
-
-    config = os.path.join(
-        get_package_share_directory("rj_robocup"),
-        "config",
-        (lc.perform_substitution(config_yaml)),
-    )
-
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
 
@@ -39,8 +34,9 @@ def generate_launch_description():
     #
     # https://answers.ros.org/question/322874/ros2-what-is-different-between-declarelaunchargument-and-launchconfiguration/
     use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
-    use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
+    run_sim = LaunchConfiguration("run_sim", default="True")
     team_flag = LaunchConfiguration("team_flag", default="-b")
+    # TODO: figure out what the hell sim_flag does
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     direction_flag = LaunchConfiguration("direction_flag", default="plus")
@@ -48,6 +44,10 @@ def generate_launch_description():
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
+    )
+
+    config = os.path.join(
+        get_package_share_directory("rj_robocup"), "config", config_yaml
     )
 
     soccer = Node(
@@ -69,7 +69,7 @@ def generate_launch_description():
     )
 
     sim_radio = Node(
-        condition=IfCondition(PythonExpression([use_sim_radio])),
+        condition=IfCondition(PythonExpression([run_sim])),
         package="rj_robocup",
         executable="sim_radio_node",
         output="screen",
@@ -78,7 +78,7 @@ def generate_launch_description():
     )
 
     network_radio = Node(
-        condition=IfCondition(PythonExpression(["not ", use_sim_radio])),
+        condition=IfCondition(PythonExpression(["not ", run_sim])),
         package="rj_robocup",
         executable="network_radio_node",
         output="screen",
@@ -165,6 +165,8 @@ def generate_launch_description():
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
+            DeclareLaunchArgument("use_internal_ref", default_value="True"),
+            DeclareLaunchArgument("run_sim", default_value="True"),
             DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
             stdout_linebuf_envvar,
             config_server,

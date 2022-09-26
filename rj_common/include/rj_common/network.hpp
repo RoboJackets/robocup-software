@@ -6,7 +6,7 @@
 //
 // Vision:  Shared or simulated.
 //    Shared vision is the system used in competition.  It sends multicast data
-//    to 224.5.20.2 port 10002.
+//    to 224.5.23.2 port 10002.
 //    Simulated vision is sent by our simulator to 127.0.0.1 ports 10000 and
 //    10001.
 //      The data sent to the two simulated vision ports is identical
@@ -33,7 +33,7 @@
 static const std::string kRefereeAddress = "224.5.23.1";
 static const std::string kSharedVisionAddress = "224.5.23.2";
 
-static const int kSimVisionPort = 10020;
+static const int kSimVisionPort = 10020;  // was 10020 before 1-30-2022
 static const int kSimBlueStatusPort = 30011;
 static const int kSimYellowStatusPort = 30012;
 static const int kSimCommandPort = 10300;
@@ -53,6 +53,7 @@ static const int kSharedVisionPortSinglePrimary = 10002;
 static const int kSharedVisionPortSingleSecondary = 10004;
 
 static constexpr int kNetworkRadioServerPort = 25565;
+static constexpr int kRobotEndpointPort = 25566;
 
 // Double-sized field port with old Protobuf protocol
 // static const int SharedVisionPortDoubleOld = 10005;
