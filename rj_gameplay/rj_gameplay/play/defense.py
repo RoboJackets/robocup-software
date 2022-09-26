@@ -35,17 +35,23 @@ class Defense(stp.play.Play):
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
 <<<<<<< HEAD
+<<<<<<< HEAD
             num_wallers = min(4, len(world_state.our_visible_robots) - 1)
             #bruh
             self.prioritized_tactics.append(
                 wall_tactic.WallTactic(world_state, num_wallers)
             )
 =======
+=======
+>>>>>>> 9043f5c20f4663c6578a2837a70b6162e0bac382
             num_wallers = min(3, len(world_state.our_visible_robots) - 1)
             if num_wallers > 1:
                 self.prioritized_tactics.append(
                     wall_tactic.WallTactic(world_state, num_wallers)
                 )
+<<<<<<< HEAD
+>>>>>>> 9043f5c20f4663c6578a2837a70b6162e0bac382
+=======
 >>>>>>> 9043f5c20f4663c6578a2837a70b6162e0bac382
             num_markers = len(world_state.our_visible_robots) - (1 + num_wallers)
             if num_markers > 1:
