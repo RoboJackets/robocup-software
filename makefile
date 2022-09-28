@@ -94,7 +94,8 @@ run-alt-real:
 
 # run sim2play (requires external referee)
 run-sim2play:
-	ros2 launch rj_robocup sim2play.launch.py
+	chmod +x ./launch/sim2play.bash
+	./launch/sim2play.bash
 run-sim2: run-sim2play
 
 # control two teams of robots at once on the field
