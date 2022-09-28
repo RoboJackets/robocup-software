@@ -22,6 +22,10 @@ NetworkRadio::NetworkRadio() : socket_(io_service_), recv_buffer_{}, send_buffer
     SPDLOG_INFO("Radio param_server_port_: {}", param_server_port_);
 
     // socket must be opened before it can be bound to an endpoint
+
+    // (Kevin) I don't understand networking well enough, but I believe putting
+    // udp::v4() instead of an address here means the field comp links to the
+    // Ubiquiti router
     socket_.open(udp::v4());
     socket_.bind(udp::endpoint(udp::v4(), param_server_port_));
 
