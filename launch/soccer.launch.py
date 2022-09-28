@@ -23,57 +23,65 @@ from launch.substitutions import (
 
 
 def generate_launch_description():
-    bringup_dir = Path(get_package_share_directory("rj_robocup"))
-    launch_dir = bringup_dir / "launch"
+    """
+    Launch files, though written in Python, are not normal Python scripts.
 
-    # there must be duplicate defaults in LaunchConfiguration and in DeclareLaunchArgument
-    #
-    # https://answers.ros.org/question/322874/ros2-what-is-different-between-declarelaunchargument-and-launchconfiguration/
-    use_manual_control = LaunchConfiguration("use_manual_control", default="False")
+    Think of them as .yaml files that happen to use Python syntax. Since they
+    are statically built before being used, they are unable to log debug info
+    or use control-flow constructs like if-else.
 
-    team_flag = LaunchConfiguration("team_flag", default="-b")
-    direction_flag = LaunchConfiguration("direction_flag", default="plus")
+    https://docs.ros.org/en/foxy/How-To-Guides/Launch-file-different-formats.html
+    """
 
-    run_sim = LaunchConfiguration("run_sim", default="True")
-    # TODO: figure out what the hell sim_flag does
-    sim_flag = LaunchConfiguration("sim_flag", default="-sim")
-
-    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
-    ref_flag = LaunchConfiguration("ref_flag", default="-noref")
-
-    # args that can be set from cmd line
-    # https://docs.ros.org/en/foxy/How-To-Guides/Launch-file-different-formats.html
-    # TODO: match above args to this style of declaring args, since this is cleaner
-    # or smth like:
-    # server_port_la = DeclareLaunchArgument(...)
-    # server_port_lc = LaunchConfiguration(...)
-    # so it's clearer what should match
+    # LaunchConfiguration objects are like uninitialized variables, e.g.
+    #  > bool run_sim;
+    # to be later filled in by a LaunchArgument
 
     # output port from field comp's perspective (NetworkRadio only)
     # IP address will auto-latch to Ubiquiti cloud key's IP per UDP v4 protocol
-    server_port = DeclareLaunchArgument(
-        "server_port", default_value=TextSubstitution(text="25565")
-    )
+    server_port = LaunchConfiguration("server_port")
+
+    use_manual_control = LaunchConfiguration("use_manual_control")
+
+    team_flag = LaunchConfiguration("team_flag")
+    direction_flag = LaunchConfiguration("direction_flag")
+
+    run_sim = LaunchConfiguration("run_sim")
+    sim_flag = LaunchConfiguration("sim_flag")
+
+    use_internal_ref = LaunchConfiguration("use_internal_ref")
+    ref_flag = LaunchConfiguration("ref_flag")
 
     param_config = LaunchConfiguration("param_config")
     param_config_filepath = LaunchConfiguration("param_config_filepath")
 
+    # make debug text buffer to console
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
     )
 
+    # bring up global_param_server
+    # TODO: delete global_param_server.launch.py and merge?
+    bringup_dir = Path(get_package_share_directory("rj_robocup"))
+    launch_dir = bringup_dir / "launch"
     global_param_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(str(launch_dir / "global_param_server.launch.py"))
     )
 
     return LaunchDescription(
         [
-            server_port,
+            # LaunchArguments are declared here to be filled in by CLI arg, e.g.
+            #  > ros2 launch rj_robocup soccer.launch.py run_sim:=True direction_flag:=plus
+            # will launch soccer with run_sim=True, direction_flag=+x
+            DeclareLaunchArgument(
+                "server_port", default_value=TextSubstitution(text="25565")
+            ),
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
+            DeclareLaunchArgument("sim_flag", default_value="-sim"),
             DeclareLaunchArgument("param_config", default_value="sim_params.yaml"),
             DeclareLaunchArgument(
                 "param_config_filepath",
@@ -89,6 +97,14 @@ def generate_launch_description():
             DeclareLaunchArgument("use_manual_control", default_value="False"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
             stdout_linebuf_envvar,
+            # spawn all nodes in our system
+            Node(
+                package="rj_robocup",
+                executable="vision_receiver",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
             Node(
                 package="rj_robocup",
                 executable="config_server",
@@ -157,13 +173,7 @@ def generate_launch_description():
                 emulate_tty=True,
                 on_exit=Shutdown(),
             ),
-            Node(
-                package="rj_robocup",
-                executable="vision_receiver",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
+            # spawn internal_ref/external_ref based on internal_ref LaunchArgument
             Node(
                 condition=IfCondition(PythonExpression([use_internal_ref])),
                 package="rj_robocup",
