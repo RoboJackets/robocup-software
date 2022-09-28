@@ -26,20 +26,23 @@ def generate_launch_description():
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
     use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
     use_sim_radio = LaunchConfiguration("use_sim_radio", default="True")
-    config_yaml = LaunchConfiguration("config_yaml", default="sim.yaml")
+    param_config_yaml = LaunchConfiguration(
+        "param_config_yaml", default="sim_params.yaml"
+    )
 
     soccer_launch_path = str(launch_dir / "soccer.launch.py")
 
     soccer_yellow = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(soccer_launch_path),
         launch_arguments={
+            "run_sim": "True",
             "team_flag": "-y",
             "sim_flag": "-sim",
             "ref_flag": ref_flag,
             "direction_flag": "plus",
             "use_internal_ref": use_internal_ref,
             "use_sim_radio": use_sim_radio,
-            "config_yaml": config_yaml,
+            "param_config_yaml": param_config_yaml,
         }.items(),
     )
 
@@ -54,7 +57,7 @@ def generate_launch_description():
             "direction_flag": "minus",
             "use_internal_ref": use_internal_ref,
             "use_sim_radio": use_sim_radio,
-            "config_yaml": config_yaml,
+            "param_config_yaml": param_config_yaml,
         }.items(),
     )
 

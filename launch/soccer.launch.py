@@ -40,14 +40,17 @@ def generate_launch_description():
     # there must be duplicate defaults in LaunchConfiguration and in DeclareLaunchArgument
     #
     # https://answers.ros.org/question/322874/ros2-what-is-different-between-declarelaunchargument-and-launchconfiguration/
-    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
-    run_sim = LaunchConfiguration("run_sim", default="True")
+    use_manual_control = LaunchConfiguration("use_manual_control", default="False")
+
     team_flag = LaunchConfiguration("team_flag", default="-b")
+    direction_flag = LaunchConfiguration("direction_flag", default="plus")
+
+    run_sim = LaunchConfiguration("run_sim", default="True")
     # TODO: figure out what the hell sim_flag does
     sim_flag = LaunchConfiguration("sim_flag", default="-sim")
+
+    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
     ref_flag = LaunchConfiguration("ref_flag", default="-noref")
-    direction_flag = LaunchConfiguration("direction_flag", default="plus")
-    use_manual_control = LaunchConfiguration("use_manual_control", default="False")
 
     # args that can be set from cmd line
     # https://docs.ros.org/en/foxy/How-To-Guides/Launch-file-different-formats.html
