@@ -101,6 +101,7 @@
     # server_port: output port from field comp's perspective
     # IP address will auto-latch to Ubiquiti cloud key's IP per UDP v4 protocol
     # (as in, the field comp simply broadcasts to the Ubiquiti IP, on server_port)
+    # defaults to 25565, can be set as launch arg (see soccer.launch.py, makefile)
 
 /vision_receiver:
   ros__parameters:
