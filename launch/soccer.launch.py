@@ -70,7 +70,8 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            # LaunchArguments are declared here to be filled in by CLI arg, e.g.
+            # LaunchArguments are declared here to be filled in by CLI arg,
+            # e.g.
             #  > ros2 launch rj_robocup soccer.launch.py run_sim:=True direction_flag:=plus
             # will launch soccer with run_sim=True, direction_flag=+x
             DeclareLaunchArgument(
@@ -97,7 +98,14 @@ def generate_launch_description():
             DeclareLaunchArgument("use_manual_control", default_value="False"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
             stdout_linebuf_envvar,
-            # spawn all nodes in our system
+
+            # Node spawns all of the ROS nodes, defined in main() of various
+            # cpp files, e.g. vision_receiver.cpp, planner_node_main.cpp
+            # Each of these take in the results of various
+            # LaunchConfiguration/Arguments above, e.g. param_config_filepath
+            #
+            # Note the order doesn't matter here: ROS nodes launch in some
+            # random order (there are Executors to change that)
             Node(
                 package="rj_robocup",
                 executable="vision_receiver",
