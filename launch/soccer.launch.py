@@ -1,5 +1,4 @@
 import os
-import sys
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
@@ -39,7 +38,7 @@ def generate_launch_description():
 
     # output port from field comp's perspective (NetworkRadio only)
     # IP address will auto-latch to Ubiquiti cloud key's IP per UDP v4 protocol
-    server_port = LaunchConfiguration("server_port")
+    LaunchConfiguration("server_port")
 
     use_manual_control = LaunchConfiguration("use_manual_control")
 
