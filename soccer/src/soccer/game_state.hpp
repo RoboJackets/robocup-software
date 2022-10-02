@@ -19,7 +19,7 @@ public:
 
     enum State {
         Halt,           // Robots must not move
-        Stop,           // Robots must stay 500mm away from ball
+        Stop,           // Robots must stay 500mm away from ball + max speed of robots < 1.5 m/s
         Setup,          // Robots not on starting team must stay 500mm away from ball
         Ready,          // A robot on the starting team may kick the ball
         Playing,        // Normal play
@@ -28,6 +28,15 @@ public:
     };
 
     // Types of restarts
+    /*
+    enum Restart {
+        Normal,         // Attacker may manipulate the ball (matches cannot be resumed directly via normal start)
+        Kick-Off,       // Ball Placed in center of field and robots must move to their side of field
+        Free Kick,      // Ball is placed at location outside of play and one kicker may touch the ball (goal kicks and corner kicks are mapped here)
+        Force Start,    // Game immediately resumes play
+        Penalty Kick,   // Ball is placed by human see 5.3.5 Penalty Kick (https://robocup-ssl.github.io/ssl-rules/sslrules.html#_referee_commands)
+    }
+    */
     enum Restart { None, Kickoff, Direct, Indirect, Penalty, Placement };
 
     [[nodiscard]] State state() const { return state_; }

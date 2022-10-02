@@ -22,12 +22,14 @@ rosidl_generate_interfaces(
   # Messages
   msg/BallState.msg
   msg/BallPlacement.msg
+  msg/Coach.msg
   msg/DetectionBall.msg
   msg/DetectionFrame.msg
   msg/DetectionRobot.msg
   msg/FieldDimensions.msg
   msg/FieldOrientation.msg
   msg/GameSettings.msg
+  msg/GlobalOverride.msg
   msg/Goalie.msg
   msg/ManipulatorSetpoint.msg
   msg/MatchState.msg
