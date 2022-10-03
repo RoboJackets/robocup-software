@@ -5,21 +5,22 @@ using std::placeholders::_1;
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_pub_ = this->create_publisher<rj_msgs::msg::Coach>("/strategy/coach", 10);
     playstate_change_timer_ = this->create_wall_timer(
-        100ms, std::bind(&CoachNode::check_for_playstate_change(), this));
+        100ms, std::bind(&CoachNode::check_for_playstate_change, this));
     playstate_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10, std::bind(&CoachNode::playstate_callback, this, _1));
 
-    PlayState temp_play_state;
-    temp_play_state.state = PlayState::State::Halt;
-    temp_play_state.restart = PlayState::Restart::Kickoff;
-    temp_play_state.our_restart = true
-    temp_play_state.placement_point = Point{0, 0};
+    current_play_state_.state = PlayState::State::Halt;
+    current_play_state_.restart = PlayState::Restart::Kickoff;
+    current_play_state_.our_restart = true;
 
-    current_play_state_ = temp_play_state
+    rj_geometry_msgs::msg::Point temp_point;
+    temp_point.x = -1;
+    temp_point.y = -1;
+    current_play_state_.placement_point = temp_point;
 }
 
 void CoachNode::playstate_callback(rj_msgs::msg::PlayState::SharedPtr msg) {
-    current_play_state_ = msg;
+    current_play_state_ = *msg;
     playstate_has_changed_ = true;
 }
 

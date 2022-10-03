@@ -94,6 +94,13 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    coach = Node(
+        package="rj_robocup",
+        executable="coach_node",
+        output="screen",
+        on_exit=Shutdown(),
+    )
+
     planner = Node(
         package="rj_robocup",
         executable="planner_node",
@@ -186,5 +193,6 @@ def generate_launch_description():
             DeclareLaunchArgument("use_manual_control", default_value="False"),
             gameplay,
             manual,
+            coach,
         ]
     )
