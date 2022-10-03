@@ -1,4 +1,4 @@
-//#pragma once
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -18,6 +18,14 @@ enum match_situation {
     in_play,
 };
 
+/**
+ * @brief The coach node subscribes to the /referee/playstate topic and translates this data
+ * into pertinant information before sending it to another topic (/strategy/coach) for the robots
+ * to use.
+ * 
+ * In short, this node takes the referee information and standardizes it for consumption of the robots.
+ * 
+ */
 class CoachNode : public rclcpp::Node {
 public:
     CoachNode(const rclcpp::NodeOptions& options);
