@@ -3,10 +3,10 @@
 using std::placeholders::_1;
 
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
-    coach_pub_ = this->create_publisher<rj_msgs::msg::Coach>("/strategy/coach", 10);
+    coach_pub_ = this->create_publisher<rj_msgs::msg::CoachStateInterpretation>("/strategy/coach", 10);
     playstate_change_timer_ = this->create_wall_timer(
         100ms, [this]() {
-        check_for_playstate_change();   }));
+        check_for_playstate_change();   });
 
     playstate_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
@@ -22,7 +22,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.placement_point = temp_point;
 }
 
-void CoachNode::playstate_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+void CoachNode::playstate_callback(rj_msgs::msg::PlayState::SharedPtr msg) {
     current_play_state_ = *msg;
     playstate_has_changed_ = true;
 }

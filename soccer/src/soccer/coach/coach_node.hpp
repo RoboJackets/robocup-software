@@ -3,7 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_geometry_msgs/msg/point.hpp>
-#include <rj_msgs/msg/coach.hpp>
+#include <rj_msgs/msg/coach_state_interpretation.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 
@@ -31,7 +31,7 @@ public:
     CoachNode(const rclcpp::NodeOptions& options);
 
 private:
-    rclcpp::Publisher<rj_msgs::msg::Coach>::SharedPtr coach_pub_;
+    rclcpp::Publisher<rj_msgs::msg::CoachStateInterpretation>::SharedPtr coach_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr playstate_sub_;
     rclcpp::TimerBase::SharedPtr playstate_change_timer_;
 
