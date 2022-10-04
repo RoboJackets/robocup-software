@@ -29,7 +29,7 @@ void CoachNode::playstate_callback(const rj_msgs::msg::PlayState::SharedPtr& msg
 
 void CoachNode::check_for_playstate_change() {
     if (playstate_has_changed_) {
-        rj_msgs::msg::CoachRefInterpretation coach_message;
+        rj_msgs::msg::CoachStateInterpretation coach_message;
 
         switch (current_play_state_.restart) {
             case PlayState::Restart::Placement:
