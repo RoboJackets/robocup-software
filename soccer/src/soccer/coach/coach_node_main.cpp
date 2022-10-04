@@ -1,5 +1,6 @@
-#include "coach_node.hpp"
 #include <rj_utils/logging.hpp>
+
+#include "coach_node.hpp"
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);

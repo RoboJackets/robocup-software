@@ -2,29 +2,29 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_msgs/msg/play_state.hpp>
+#include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_msgs/msg/coach.hpp>
 #include <rj_msgs/msg/global_override.hpp>
-
-#include <rj_geometry_msgs/msg/point.hpp>
+#include <rj_msgs/msg/play_state.hpp>
 
 #include "game_state.hpp"
 
-enum match_situation {
-    ball_placement, // ball placement on a restart restart.ball_placement
-    kickoff, // simple kickoff (start game/match/play)
-    free_kick, // either direct or indirect free kicks (direct and indirect are outdated terms)
-    penalty_kick, // penalty kick restarts
-    in_play, // normal play
+enum MatchSituation {
+    ball_placement,  // ball placement on a restart restart.ball_placement
+    kickoff,         // simple kickoff (start game/match/play)
+    free_kick,     // either direct or indirect free kicks (direct and indirect are outdated terms)
+    penalty_kick,  // penalty kick restarts
+    in_play,       // normal play
 };
 
 /**
  * @brief The coach node subscribes to the /referee/playstate topic and translates this data
- * into pertinant information before sending it to another topic (/strategy/coach) for the robots
+ * into pertinent information before sending it to another topic (/strategy/coach) for the robots
  * to use.
- * 
- * In short, this node takes the referee information and standardizes it for consumption of the robots.
- * 
+ *
+ * In short, this node takes the referee information and standardizes it for consumption of the
+ * robots.
+ *
  */
 class CoachNode : public rclcpp::Node {
 public:
