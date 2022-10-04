@@ -36,17 +36,16 @@ static const int kKickVerifyTimeMs = 250;
 // the ref halts/stops, make this false
 static const bool kCancelBallPlaceOnHalt = true;
 
-DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
-              "The team name we should use when automatically assigning team "
-              "colors from referee");
-
 // this IP addr should be where the external ref sends messages
 // see PR #1887 for last time this file was used w/ external interface
 // run ifconfig to see list of interfaces on this computer
 DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1", "The interface for referee operation");
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
-    set_team_name(PARAM_team_name);
+
+    this->get_parameter("team_name", param_team_name_);
+    SPDLOG_INFO("ExternalReferee team_name: {}", param_team_name_);
+    set_team_name(param_team_name_);
 
     raw_ref_pub_ = create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, 10);
 

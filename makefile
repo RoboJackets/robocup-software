@@ -77,20 +77,20 @@ run-sim-ex: run-sim-external
 
 # run on real field computer with real robots and internal ref (our UI)
 run-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False param_config_yaml:=real_params.yaml use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False
 
 # run on real field computer with real robots and external ref (SSL GC)
 run-real-ex:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False param_config_yaml:=real_params.yaml use_sim_radio:=False use_internal_ref:=False 
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False 
 
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
 run-manual:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True param_config_yaml:=real_params.yaml use_sim_radio:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True use_sim_radio:=False
 
 # same as run-real, with different server port
 run-alt-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False param_config_yaml:=real_params.yaml use_sim_radio:=False server_port:=25564
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets
 
 # run sim2play (requires external referee)
 run-sim2play:

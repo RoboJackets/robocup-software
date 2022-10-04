@@ -68,6 +68,8 @@ private:
     void receive_packet(const boost::system::error_code& error, size_t num_bytes);
 
     std::optional<Command> last_command_;
+
+    std::string param_team_name_;
 };
 
 void spin_external_referee();

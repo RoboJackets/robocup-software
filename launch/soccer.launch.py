@@ -39,6 +39,7 @@ def generate_launch_description():
     # output port from field comp's perspective (NetworkRadio only)
     # IP address will auto-latch to Ubiquiti cloud key's IP per UDP v4 protocol
     LaunchConfiguration("server_port")
+    LaunchConfiguration("team_name")
 
     use_manual_control = LaunchConfiguration("use_manual_control")
 
@@ -76,13 +77,21 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 "server_port", default_value=TextSubstitution(text="25565")
             ),
+            DeclareLaunchArgument(
+                "team_name", default_value=TextSubstitution(text="RoboJackets")
+            ),
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
             DeclareLaunchArgument("sim_flag", default_value="-sim"),
-            DeclareLaunchArgument("param_config", default_value="sim_params.yaml"),
+            DeclareLaunchArgument("param_config", default_value=PythonExpression(["sim_params.yaml if ", run_sim, " else 'real_params.yaml'"])),
+            DeclareLaunchArgument("use_manual_control", default_value="False"),
+            DeclareLaunchArgument("use_sim_radio", default_value="True"),
+
+            # this launch arg shouldn't be used, is solely dependent on run_sim
+            # (above, param_config is defined by run_sim)
             DeclareLaunchArgument(
                 "param_config_filepath",
                 default_value=[
@@ -94,8 +103,6 @@ def generate_launch_description():
                     param_config,
                 ],
             ),
-            DeclareLaunchArgument("use_manual_control", default_value="False"),
-            DeclareLaunchArgument("use_sim_radio", default_value="True"),
             stdout_linebuf_envvar,
 
             # Node spawns all of the ROS nodes, defined in main() of various
@@ -194,7 +201,10 @@ def generate_launch_description():
                 package="rj_robocup",
                 executable="external_referee_node",
                 output="screen",
-                parameters=[param_config_filepath],
+                parameters=[
+                    param_config_filepath,
+                    {"team_name": LaunchConfiguration("team_name")},
+                ],
                 on_exit=Shutdown(),
             ),
             Node(
