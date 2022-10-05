@@ -3,9 +3,10 @@
 using std::placeholders::_1;
 
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
-    coach_pub_ = this->create_publisher<rj_msgs::msg::CoachStateInterpretation>("/strategy/coach", 10);
-    play_state_change_timer_ = this->create_wall_timer(
-        100ms, [this]() { check_for_play_state_change();   });
+    coach_pub_ =
+        this->create_publisher<rj_msgs::msg::CoachStateInterpretation>("/strategy/coach", 10);
+    play_state_change_timer_ =
+        this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
@@ -51,7 +52,9 @@ void CoachNode::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
     if (!possessing_) {
         for (rj_msgs::msg::RobotState robotState : msg->our_robots) {
             // There definitely has to be a better way, but this works...
-            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y).dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) < kRobotDiameter) {
+            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y)
+                    .dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) <
+                kRobotDiameter) {
                 possessing_ = true;
                 play_state_has_changed_ = true;
                 return;
@@ -60,7 +63,9 @@ void CoachNode::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
     } else {
         for (rj_msgs::msg::RobotState robotState : msg->their_robots) {
             // See above...
-            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y).dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) < kRobotDiameter) {
+            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y)
+                    .dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) <
+                kRobotDiameter) {
                 possessing_ = false;
                 play_state_has_changed_ = true;
                 return;

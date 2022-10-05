@@ -2,24 +2,23 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_constants/constants.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_msgs/msg/coach_state_interpretation.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/play_state.hpp>
-#include <rj_msgs/msg/world_state.hpp>
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
-
-#include <rj_constants/constants.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 
 #include "game_state.hpp"
 
 enum MatchSituation {
-    ball_placement,  // ball placement on a restart restart.ball_placement
-    kickoff,         // simple kickoff (start game/match/play)
-    free_kick,     // either direct or indirect free kicks (direct and indirect are outdated terms)
-    penalty_kick,  // penalty kick restarts
-    in_play,       // normal play
+    ball_placement, // ball placement on a restart restart.ball_placement
+    kickoff,        // simple kickoff (start game/match/play)
+    free_kick,      // either direct or indirect free kicks (direct and indirect are outdated terms)
+    penalty_kick,   // penalty kick restarts
+    in_play,        // normal play
 };
 
 /**
@@ -39,7 +38,8 @@ private:
     rclcpp::Publisher<rj_msgs::msg::CoachStateInterpretation>::SharedPtr coach_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kRobotsPerTeam * 2];
+    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr
+        robot_status_subs_[kRobotsPerTeam * 2];
     rclcpp::TimerBase::SharedPtr play_state_change_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
