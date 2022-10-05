@@ -4,13 +4,16 @@ using std::placeholders::_1;
 
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_pub_ = this->create_publisher<rj_msgs::msg::CoachStateInterpretation>("/strategy/coach", 10);
-    playstate_change_timer_ = this->create_wall_timer(
-        100ms, [this]() {
-        check_for_playstate_change();   });
+    play_state_change_timer_ = this->create_wall_timer(
+        100ms, [this]() { check_for_play_state_change();   });
 
-    playstate_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
-        [this](rj_msgs::msg::PlayState::SharedPtr msg) { playstate_callback(msg); });
+        [this](rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
+
+    world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
+        "/vision_filter/world_state", 10,
+        [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
@@ -22,13 +25,38 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.placement_point = temp_point;
 }
 
-void CoachNode::playstate_callback(rj_msgs::msg::PlayState::SharedPtr msg) {
+void CoachNode::play_state_callback(rj_msgs::msg::PlayState::SharedPtr msg) {
     current_play_state_ = *msg;
-    playstate_has_changed_ = true;
+    play_state_has_changed_ = true;
 }
 
-void CoachNode::check_for_playstate_change() {
-    if (playstate_has_changed_) {
+void CoachNode::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
+    // EDGE-CASE NOTE: If robots from both teams are bordering the ball possession will likely
+    // switch repeatedly
+    // TODO: subscribe to RoboStatuses in Radio to get has_ball_sense values
+    if (!possessing_) {
+        for (rj_msgs::msg::RobotState robotState : msg->our_robots) {
+            // There definitely has to be a better way, but this works...
+            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y).dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) < kRobotDiameter) {
+                possessing_ = true;
+                play_state_has_changed_ = true;
+                return;
+            }
+        }
+    } else {
+        for (rj_msgs::msg::RobotState robotState : msg->their_robots) {
+            // See above...
+            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y).dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) < kRobotDiameter) {
+                possessing_ = false;
+                play_state_has_changed_ = true;
+                return;
+            }
+        }
+    }
+}
+
+void CoachNode::check_for_play_state_change() {
+    if (play_state_has_changed_) {
         rj_msgs::msg::CoachStateInterpretation coach_message;
 
         switch (current_play_state_.restart) {
@@ -51,8 +79,6 @@ void CoachNode::check_for_playstate_change() {
             coach_message.match_situation = MatchSituation::in_play;
         }
 
-        // TODO: get possession from wherever possession is from
-
         rj_msgs::msg::GlobalOverride override;
 
         switch (current_play_state_.state) {
@@ -72,8 +98,10 @@ void CoachNode::check_for_playstate_change() {
         // publish new necessary information
         coach_message.override = override;
 
+        coach_message.our_possession = possessing_;
+
         coach_pub_->publish(coach_message);
 
-        playstate_has_changed_ = false;
+        play_state_has_changed_ = false;
     }
 }

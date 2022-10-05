@@ -6,6 +6,10 @@
 #include <rj_msgs/msg/coach_state_interpretation.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/play_state.hpp>
+#include <rj_msgs/msg/world_state.hpp>
+#include <rj_msgs/msg/robot_state.hpp>
+
+#include <rj_constants/constants.hpp>
 
 #include "game_state.hpp"
 
@@ -32,12 +36,15 @@ public:
 
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachStateInterpretation>::SharedPtr coach_pub_;
-    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr playstate_sub_;
-    rclcpp::TimerBase::SharedPtr playstate_change_timer_;
+    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::TimerBase::SharedPtr play_state_change_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
-    bool playstate_has_changed_ = true;
+    bool possessing_ = false;
+    bool play_state_has_changed_ = true;
 
-    void playstate_callback(rj_msgs::msg::PlayState::SharedPtr msg);
-    void check_for_playstate_change();
+    void play_state_callback(rj_msgs::msg::PlayState::SharedPtr msg);
+    void world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg);
+    void check_for_play_state_change();
 };
