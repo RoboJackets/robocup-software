@@ -1,5 +1,5 @@
 # Goal
-rj_geometry_msgs/RobotIntent robot_intent
+rj_msgs/RobotIntent robot_intent
 ---
 # Result
 bool is_done

@@ -2,6 +2,7 @@
 
 #include <rj_constants/topic_names.hpp>
 #include <ros_debug_drawer.hpp>
+#include <spdlog/spdlog.h>
 
 #include "instant.hpp"
 #include "planning/planner/collect_planner.hpp"
@@ -13,17 +14,72 @@
 
 namespace planning {
 
+using RobotMove = rj_msgs::action::RobotMove;
+using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
+
 PlannerNode::PlannerNode()
-    : rclcpp::Node("planner", rclcpp::NodeOptions{}
-                                  .automatically_declare_parameters_from_overrides(true)
-                                  .allow_undeclared_parameters(true)),
+    : rclcpp::Node("planner",  rclcpp::NodeOptions{}
+                                    .automatically_declare_parameters_from_overrides(true)
+                                    .allow_undeclared_parameters(true)),
       shared_state_(this),
       param_provider_{this, kPlanningParamModule} {
+
+    // for _1, _2 etc. below
+    using namespace std::placeholders;
+    
+    // set up ActionServer + callbacks
+    this->action_server_ = rclcpp_action::create_server<RobotMove>(
+        this->get_node_base_interface(), this->get_node_clock_interface(),
+        this->get_node_logging_interface(), this->get_node_waitables_interface(), 
+        "robot_move",
+        std::bind(&PlannerNode::handle_goal, this, _1, _2),
+        std::bind(&PlannerNode::handle_cancel, this, _1),
+        std::bind(&PlannerNode::handle_accepted, this, _1));
+
+    // set up PlannerForRobot objects
     robots_planners_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         auto planner =
             std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
         robots_planners_.emplace_back(std::move(planner));
+    }
+}
+
+rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUUID & uuid,
+                                        std::shared_ptr<const RobotMove::Goal> goal) {
+    (void)uuid;
+
+    // TODO: fill this in
+    SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
+    return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+}
+
+rclcpp_action::CancelResponse PlannerNode::handle_cancel(const std::shared_ptr<GoalHandleRobotMove> goal_handle) { 
+    (void)goal_handle;
+    std::shared_ptr<const RobotMove::Goal> goal = goal_handle->get_goal();
+    SPDLOG_ERROR("action server canceled goal from robot: {}", goal->robot_intent.robot_id);
+    return rclcpp_action::CancelResponse::ACCEPT;
+}
+
+void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
+     // this needs to return quickly to avoid blocking the executor, so spin up a new thread
+    using namespace std::placeholders;
+    std::thread{std::bind(&PlannerNode::execute, this, _1), goal_handle}.detach();
+}
+
+
+void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
+    // rate-limit loop to 1ms per iteration
+    /* rclcpp::Rate loop_rate(1); */
+
+    // create ptrs to Goal, Result objects per ActionServer API
+    std::shared_ptr<const RobotMove::Goal> goal = goal_handle->get_goal();
+    std::shared_ptr<RobotMove::Result> result = std::make_shared<RobotMove::Result>();
+
+    if (rclcpp::ok()) {
+        result->is_done = true;
+        goal_handle->succeed(result);
+        SPDLOG_ERROR("done executing");
     }
 }
 

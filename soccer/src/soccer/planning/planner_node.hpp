@@ -3,11 +3,14 @@
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
+// for ROS actions
+#include <rclcpp_action/rclcpp_action.hpp>
 
 #include <context.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
+#include <rj_msgs/action/robot_move.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
@@ -201,13 +204,25 @@ private:
  */
 class PlannerNode : public rclcpp::Node {
 public:
-    PlannerNode();
+     PlannerNode();
+
+    using RobotMove = rj_msgs::action::RobotMove;
+    using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:
     std::vector<std::shared_ptr<PlannerForRobot>> robots_planners_;
     TrajectoryCollection robot_trajectories_;
     SharedStateInfo shared_state_;
     ::params::LocalROS2ParamProvider param_provider_;
+
+    // setup ActionServer for RobotMove.action
+    rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
+    rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
+                                            std::shared_ptr<const RobotMove::Goal> goal);
+    rclcpp_action::CancelResponse handle_cancel(
+        const std::shared_ptr<GoalHandleRobotMove> goal_handle);
+    void handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
+    void execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
 };
 
 }  // namespace planning
