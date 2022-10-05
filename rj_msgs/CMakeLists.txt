@@ -46,7 +46,6 @@ rosidl_generate_interfaces(
   msg/LineKickMotionCommand.msg
   msg/InterceptMotionCommand.msg
   msg/MotionCommand.msg
-  msg/IsDone.msg
 
   msg/RawProtobuf.msg
   msg/RobotIntent.msg
