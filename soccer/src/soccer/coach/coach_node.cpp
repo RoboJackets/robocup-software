@@ -15,6 +15,21 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         "/vision_filter/world_state", 10,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
+    // initialize all of the robot status subscriptions
+    // initialize our robots
+    for (int i = 0; i < kRobotsPerTeam; i++) {
+        robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
+            fmt::format("/radio/robot_status/robot_{}", i), 10,
+            [this](rj_msgs::msg::RobotStatus::SharedPtr msg) { ball_sense_callback(msg, true); });
+    }
+
+    // initialize their robots
+    for (int i = kRobotsPerTeam; i < kRobotsPerTeam * 2; i++) {
+        robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
+            fmt::format("/radio/robot_status/robot_{}", i), 10,
+            [this](rj_msgs::msg::RobotStatus::SharedPtr msg) { ball_sense_callback(msg, false); });
+    }
+
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
     current_play_state_.our_restart = true;
@@ -33,7 +48,6 @@ void CoachNode::play_state_callback(rj_msgs::msg::PlayState::SharedPtr msg) {
 void CoachNode::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
     // EDGE-CASE NOTE: If robots from both teams are bordering the ball possession will likely
     // switch repeatedly
-    // TODO: subscribe to RoboStatuses in Radio to get has_ball_sense values
     if (!possessing_) {
         for (rj_msgs::msg::RobotState robotState : msg->our_robots) {
             // There definitely has to be a better way, but this works...
@@ -51,6 +65,20 @@ void CoachNode::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
                 play_state_has_changed_ = true;
                 return;
             }
+        }
+    }
+}
+
+void CoachNode::ball_sense_callback(rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team) {
+    if (our_team && !possessing_) {
+        if (msg->has_ball_sense) {
+            possessing_ = true;
+            play_state_has_changed_ = true;
+        }
+    } else if (!our_team && possessing_) {
+        if (msg->has_ball_sense) {
+            possessing_ = false;
+            play_state_has_changed_ = true;
         }
     }
 }
