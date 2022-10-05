@@ -98,6 +98,8 @@ void CoachNode::check_for_play_state_change() {
         // publish new necessary information
         coach_message.override = override;
 
+        coach_message.our_possession = possessing_;
+
         coach_pub_->publish(coach_message);
 
         play_state_has_changed_ = false;
