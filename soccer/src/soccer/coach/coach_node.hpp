@@ -14,11 +14,11 @@
 #include "game_state.hpp"
 
 enum MatchSituation {
-    ball_placement, // ball placement on a restart restart.ball_placement
-    kickoff,        // simple kickoff (start game/match/play)
-    free_kick,      // either direct or indirect free kicks (direct and indirect are outdated terms)
-    penalty_kick,   // penalty kick restarts
-    in_play,        // normal play
+    ball_placement,  // ball placement on a restart restart.ball_placement
+    kickoff,         // simple kickoff (start game/match/play)
+    free_kick,       // either direct or indirect free kicks (direct and indirect are outdated terms)
+    penalty_kick,    // penalty kick restarts
+    in_play,         // normal play
 };
 
 /**

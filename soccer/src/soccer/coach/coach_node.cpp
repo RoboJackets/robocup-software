@@ -1,7 +1,5 @@
 #include "coach_node.hpp"
 
-using std::placeholders::_1;
-
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_pub_ =
         this->create_publisher<rj_msgs::msg::CoachStateInterpretation>("/strategy/coach", 10);
@@ -21,7 +19,9 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     for (int i = 0; i < kRobotsPerTeam; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
             fmt::format("/radio/robot_status/robot_{}", i), 10,
-            [this](rj_msgs::msg::RobotStatus::SharedPtr msg) { ball_sense_callback(msg, true); });
+            [this](const rj_msgs::msg::RobotStatus::SharedPtr msg) {
+                ball_sense_callback(msg, true);
+            });
     }
 
     // initialize their robots
@@ -50,9 +50,9 @@ void CoachNode::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
     // EDGE-CASE NOTE: If robots from both teams are bordering the ball possession will likely
     // switch repeatedly
     if (!possessing_) {
-        for (rj_msgs::msg::RobotState robotState : msg->our_robots) {
+        for (rj_msgs::msg::RobotState robot_state : msg->our_robots) {
             // There definitely has to be a better way, but this works...
-            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y)
+            if (rj_geometry::Point(robot_state.pose.position.x, robot_state.pose.position.y)
                     .dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) <
                 kRobotDiameter) {
                 possessing_ = true;
@@ -61,9 +61,9 @@ void CoachNode::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
             }
         }
     } else {
-        for (rj_msgs::msg::RobotState robotState : msg->their_robots) {
+        for (rj_msgs::msg::RobotState robot_state : msg->their_robots) {
             // See above...
-            if (rj_geometry::Point(robotState.pose.position.x, robotState.pose.position.y)
+            if (rj_geometry::Point(robot_state.pose.position.x, robot_state.pose.position.y)
                     .dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) <
                 kRobotDiameter) {
                 possessing_ = false;
