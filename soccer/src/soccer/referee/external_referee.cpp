@@ -42,7 +42,6 @@ static const bool kCancelBallPlaceOnHalt = true;
 DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1", "The interface for referee operation");
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
-
     this->get_parameter("team_name", param_team_name_);
     SPDLOG_INFO("ExternalReferee team_name: {}", param_team_name_);
     set_team_name(param_team_name_);
