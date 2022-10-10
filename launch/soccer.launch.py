@@ -86,7 +86,7 @@ def generate_launch_description():
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
             DeclareLaunchArgument("sim_flag", default_value="-sim"),
-            DeclareLaunchArgument("param_config", default_value=PythonExpression(["sim_params.yaml if ", run_sim, " else 'real_params.yaml'"])),
+            DeclareLaunchArgument("param_config", default_value=PythonExpression(["'sim_params.yaml' if ", run_sim, " else 'real_params.yaml'"])),
             DeclareLaunchArgument("use_manual_control", default_value="False"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
 

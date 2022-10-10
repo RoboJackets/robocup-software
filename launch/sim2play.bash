@@ -9,7 +9,7 @@
 # [sim_radio_node-8]   what():  bind: Address already in use
 
 trap "exit" INT
-ROS_DOMAIN_ID=0 ros2 launch rj_robocup soccer.launch.py team_flag:=-b direction_flag:=minus &
+ROS_DOMAIN_ID=0 ros2 launch rj_robocup soccer.launch.py run_sim:=True team_flag:=-b direction_flag:=minus &
 sleep 1
-ROS_DOMAIN_ID=1 ros2 launch rj_robocup soccer.launch.py &
+ROS_DOMAIN_ID=1 ros2 launch rj_robocup soccer.launch.py run_sim:=True &
 wait
