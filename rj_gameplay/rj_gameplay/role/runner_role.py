@@ -33,7 +33,7 @@ class RunnerRole(stp.role.Role):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return False
     
-    def next_point(self, world_state: stp.rc.WorldState):
+    def next_point(self, world_state: stp.rc.WorldState) -> np.ndarray:
         if ((self.target_point == world_state.field.our_right_corner).all()):
             return world_state.field.our_left_corner
         if ((self.target_point == world_state.field.our_left_corner).all()):
