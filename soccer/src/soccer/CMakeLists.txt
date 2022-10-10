@@ -113,7 +113,7 @@ set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
-set(ROBOT_ACTION_CLIENT_NODE_SRC robot_action_client/robot_action_client.cpp)
+set(ROBOT_ACTION_CLIENT_NODE_SRC robot_action_client/robot_action_client_main.cpp)
 
 # ======================================================================
 # Add sources
