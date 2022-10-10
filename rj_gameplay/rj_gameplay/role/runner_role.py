@@ -15,15 +15,15 @@ class RunnerRole(stp.role.Role):
 
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         # current_pos = world_state.our_robots[self.robot_id].pose
+        if (self.move_skill is None or self.move_skill.is_done(world_state)):
+            self.target_point = self.next_point(world_state)
         
-        self.target_point = world_state.field.our_left_corner
-        
-        # assign move skill
-        self.move_skill = move.Move(
-            robot=self.robot,
-            target_point=self.target_point,
-            face_point=self.target_point
-        )
+            # assign move skill
+            self.move_skill = move.Move(
+                robot=self.robot,
+                target_point=self.target_point,
+                face_point=self.target_point
+            )
 
         intent = self.move_skill.tick(world_state)
 
@@ -33,4 +33,12 @@ class RunnerRole(stp.role.Role):
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return False
     
-    
+    def next_point(self, world_state: stp.rc.WorldState):
+        if ((self.target_point == world_state.field.our_right_corner).all()):
+            return world_state.field.our_left_corner
+        if ((self.target_point == world_state.field.our_left_corner).all()):
+            return world_state.field.their_left_corner
+        if ((self.target_point == world_state.field.their_left_corner).all()):
+            return world_state.field.their_right_corner
+        
+        return world_state.field.our_right_corner
