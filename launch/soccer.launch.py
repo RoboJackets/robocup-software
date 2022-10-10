@@ -14,177 +14,205 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
-
-import sys
-
-# this is the only way to pass in the config file to be used in generate_launch_description()
-# https://answers.ros.org/question/376816/how-to-pass-command-line-arguments-to-a-launch-file/
-config_yaml = "sim.yaml"
-for arg in sys.argv:
-    if arg.startswith("config_yaml:="):
-        config_yaml = arg.split(":=")[-1]
+from launch.substitutions import (
+    LaunchConfiguration,
+    PythonExpression,
+    TextSubstitution,
+)
 
 
 def generate_launch_description():
-    bringup_dir = Path(get_package_share_directory("rj_robocup"))
-    launch_dir = bringup_dir / "launch"
+    """
+    Launch files, though written in Python, are not normal Python scripts.
 
-    # there must be duplicate defaults in LaunchConfiguration and in DeclareLaunchArgument
-    #
-    # https://answers.ros.org/question/322874/ros2-what-is-different-between-declarelaunchargument-and-launchconfiguration/
-    use_internal_ref = LaunchConfiguration("use_internal_ref", default="True")
-    run_sim = LaunchConfiguration("run_sim", default="True")
-    team_flag = LaunchConfiguration("team_flag", default="-b")
-    # TODO: figure out what the hell sim_flag does
-    sim_flag = LaunchConfiguration("sim_flag", default="-sim")
-    ref_flag = LaunchConfiguration("ref_flag", default="-noref")
-    direction_flag = LaunchConfiguration("direction_flag", default="plus")
-    use_manual_control = LaunchConfiguration("use_manual_control", default="False")
+    Think of them as .yaml files that happen to use Python syntax. Since they
+    are statically built before being used, they are unable to log debug info
+    or use control-flow constructs like if-else.
 
+    https://docs.ros.org/en/foxy/How-To-Guides/Launch-file-different-formats.html
+    """
+
+    # LaunchConfiguration objects are like uninitialized variables, e.g.
+    #  > bool run_sim;
+    # to be later filled in by a LaunchArgument
+
+    # output port from field comp's perspective (NetworkRadio only)
+    # IP address will auto-latch to Ubiquiti cloud key's IP per UDP v4 protocol
+    LaunchConfiguration("server_port")
+    LaunchConfiguration("team_name")
+
+    use_manual_control = LaunchConfiguration("use_manual_control")
+
+    team_flag = LaunchConfiguration("team_flag")
+    direction_flag = LaunchConfiguration("direction_flag")
+
+    run_sim = LaunchConfiguration("run_sim")
+    sim_flag = LaunchConfiguration("sim_flag")
+
+    use_internal_ref = LaunchConfiguration("use_internal_ref")
+    ref_flag = LaunchConfiguration("ref_flag")
+
+    param_config = LaunchConfiguration("param_config")
+    param_config_filepath = LaunchConfiguration("param_config_filepath")
+
+    # make debug text buffer to console
     stdout_linebuf_envvar = SetEnvironmentVariable(
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
     )
 
-    config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", config_yaml
-    )
-
-    soccer = Node(
-        package="rj_robocup",
-        executable="soccer",
-        output="screen",
-        arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    config_server = Node(
-        package="rj_robocup",
-        executable="config_server",
-        output="screen",
-        arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    sim_radio = Node(
-        condition=IfCondition(PythonExpression([run_sim])),
-        package="rj_robocup",
-        executable="sim_radio_node",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    network_radio = Node(
-        condition=IfCondition(PythonExpression(["not ", run_sim])),
-        package="rj_robocup",
-        executable="network_radio_node",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    control = Node(
-        package="rj_robocup",
-        executable="control_node",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    planner = Node(
-        package="rj_robocup",
-        executable="planner_node",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    # spawn manual node only if use_manual_control is True
-    manual = Node(
-        condition=IfCondition(PythonExpression([use_manual_control])),
-        package="rj_robocup",
-        executable="manual_control_node",
-        output="screen",
-        on_exit=Shutdown(),
-    )
-
-    # spawn gameplay only if manual is not on
-    gameplay = Node(
-        condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-        package="rj_robocup",
-        executable="gameplay_node",
-        output="screen",
-        parameters=[config],
-        emulate_tty=True,
-        on_exit=Shutdown(),
-    )
-
-    vision_receiver = Node(
-        package="rj_robocup",
-        executable="vision_receiver",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    internal_ref_receiver = Node(
-        condition=IfCondition(PythonExpression([use_internal_ref])),
-        package="rj_robocup",
-        executable="internal_referee_node",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    external_ref_receiver = Node(
-        condition=IfCondition(PythonExpression(["not ", use_internal_ref])),
-        package="rj_robocup",
-        executable="external_referee_node",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
-    vision_filter = Node(
-        package="rj_robocup",
-        executable="rj_vision_filter",
-        output="screen",
-        parameters=[config],
-        on_exit=Shutdown(),
-    )
-
+    # bring up global_param_server
+    # TODO: delete global_param_server.launch.py and merge?
+    bringup_dir = Path(get_package_share_directory("rj_robocup"))
+    launch_dir = bringup_dir / "launch"
     global_param_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(str(launch_dir / "global_param_server.launch.py"))
     )
 
     return LaunchDescription(
         [
+            # LaunchArguments are declared here to be filled in by CLI arg,
+            # e.g.
+            #  > ros2 launch rj_robocup soccer.launch.py run_sim:=True direction_flag:=plus
+            # will launch soccer with run_sim=True, direction_flag=+x
+            DeclareLaunchArgument(
+                "server_port", default_value=TextSubstitution(text="25565")
+            ),
+            DeclareLaunchArgument(
+                "team_name", default_value=TextSubstitution(text="RoboJackets")
+            ),
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
-            DeclareLaunchArgument("config_yaml", default_value="sim.yaml"),
-            stdout_linebuf_envvar,
-            config_server,
-            global_param_server,
-            soccer,
-            control,
-            planner,
-            vision_receiver,
-            vision_filter,
-            # nodes below this line are XOR based on the header launch arg
-            DeclareLaunchArgument("use_sim_radio", default_value="True"),
-            sim_radio,
-            network_radio,
-            DeclareLaunchArgument("use_internal_ref", default_value="True"),
-            internal_ref_receiver,
-            external_ref_receiver,
+            DeclareLaunchArgument("sim_flag", default_value="-sim"),
+            DeclareLaunchArgument("param_config", default_value=PythonExpression(["'sim_params.yaml' if ", run_sim, " else 'real_params.yaml'"])),
             DeclareLaunchArgument("use_manual_control", default_value="False"),
-            gameplay,
-            manual,
+            DeclareLaunchArgument("use_sim_radio", default_value="True"),
+
+            # this launch arg shouldn't be used, is solely dependent on run_sim
+            # (above, param_config is defined by run_sim)
+            DeclareLaunchArgument(
+                "param_config_filepath",
+                default_value=[
+                    TextSubstitution(
+                        text=os.path.join(
+                            get_package_share_directory("rj_robocup"), "config", ""
+                        )
+                    ),
+                    param_config,
+                ],
+            ),
+            stdout_linebuf_envvar,
+
+            # Node spawns all of the ROS nodes, defined in main() of various
+            # cpp files, e.g. vision_receiver.cpp, planner_node_main.cpp
+            # Each of these take in the results of various
+            # LaunchConfiguration/Arguments above, e.g. param_config_filepath
+            #
+            # Note the order doesn't matter here: ROS nodes launch in some
+            # random order (there are Executors to change that)
+            Node(
+                package="rj_robocup",
+                executable="vision_receiver",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
+                executable="config_server",
+                output="screen",
+                arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            global_param_server,
+            Node(
+                package="rj_robocup",
+                executable="soccer",
+                output="screen",
+                arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                condition=IfCondition(PythonExpression([run_sim])),
+                package="rj_robocup",
+                executable="sim_radio_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                condition=IfCondition(PythonExpression(["not ", run_sim])),
+                package="rj_robocup",
+                executable="network_radio_node",
+                output="screen",
+                parameters=[
+                    param_config_filepath,
+                    {"server_port": LaunchConfiguration("server_port")},
+                ],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
+                executable="control_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
+                executable="planner_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            # spawn manual node only if use_manual_control is True
+            Node(
+                condition=IfCondition(PythonExpression([use_manual_control])),
+                package="rj_robocup",
+                executable="manual_control_node",
+                output="screen",
+                on_exit=Shutdown(),
+            ),
+            # spawn gameplay only if manual is not on
+            Node(
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+                package="rj_robocup",
+                executable="gameplay_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                emulate_tty=True,
+                on_exit=Shutdown(),
+            ),
+            # spawn internal_ref/external_ref based on internal_ref LaunchArgument
+            Node(
+                condition=IfCondition(PythonExpression([use_internal_ref])),
+                package="rj_robocup",
+                executable="internal_referee_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                condition=IfCondition(PythonExpression(["not ", use_internal_ref])),
+                package="rj_robocup",
+                executable="external_referee_node",
+                output="screen",
+                parameters=[
+                    param_config_filepath,
+                    {"team_name": LaunchConfiguration("team_name")},
+                ],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
+                executable="rj_vision_filter",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
         ]
     )

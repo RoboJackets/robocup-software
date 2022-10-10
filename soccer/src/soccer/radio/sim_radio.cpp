@@ -77,14 +77,17 @@ SimRadio::SimRadio(bool blue_team)
         last_sent_diff_.emplace_back(RJ::now());
     }
 
-    /* IP addr our radio should end to
+    /* IP addr our radio should bind to
      * see PR #1887 for last time this file was used w/ external interface
      * run ifconfig to see list of interfaces on this computer
 
      * NOTE: on field comp, make sure this IP is "172.16.1.1" (router IP)
      * on sim, make sure this IP is "127.0.0.1" (localhost)
      */
-
+    // TODO(Kevin): this default shouldn't be necessary, but sim2play refuses to accept the param
+    // file probably an issue with the hacky way I got param files to dynamically load
+    std::string localhost = "127.0.0.1";
+    this->get_parameter_or("interface", param_radio_interface_, localhost);
     SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
     address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
