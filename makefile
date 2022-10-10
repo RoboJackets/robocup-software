@@ -90,7 +90,7 @@ run-manual:
 
 # same as run-real, with different server port
 run-alt-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets
+	ROS_DOMAIN_ID=2 ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets team_flag:=-b
 
 # run sim2play (requires external referee)
 run-sim2play:
