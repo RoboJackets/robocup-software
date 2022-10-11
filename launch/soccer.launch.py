@@ -214,6 +214,7 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
+<<<<<<< HEAD
             Node(
                 package="rj_robocup",
                 executable="robot_action_client_node",
@@ -221,5 +222,7 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
+=======
+>>>>>>> 36a52a0bc7... restore two team control (#1937)
         ]
     )
