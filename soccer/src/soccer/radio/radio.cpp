@@ -33,9 +33,6 @@ Radio::Radio()
             });
     }
 
-    this->get_parameter("interface", param_radio_interface_);
-    SPDLOG_INFO("Radio param_radio_interface_: {}", param_radio_interface_);
-
     tick_timer_ = create_wall_timer(std::chrono::milliseconds(16), [this]() { tick(); });
 }
 

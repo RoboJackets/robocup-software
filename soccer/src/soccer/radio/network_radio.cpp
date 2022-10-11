@@ -1,5 +1,6 @@
 #include "network_radio.hpp"
 
+#include <boost/asio.hpp>
 #include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
 
@@ -14,11 +15,20 @@ using ip::udp;
 
 namespace radio {
 
-NetworkRadio::NetworkRadio(int server_port)
-    : socket_(context_, udp::endpoint(udp::v4(), server_port)),
-      recv_buffer_{},
-      send_buffers_(kNumShells) {
+NetworkRadio::NetworkRadio() : socket_(io_service_), recv_buffer_{}, send_buffers_(kNumShells) {
     connections_.resize(kNumShells);
+
+    this->get_parameter("server_port", param_server_port_);
+    SPDLOG_INFO("Radio param_server_port_: {}", param_server_port_);
+
+    // socket must be opened before it can be bound to an endpoint
+
+    // (Kevin) I don't understand networking well enough, but I believe putting
+    // udp::v4() instead of an address here means the field comp links to the
+    // Ubiquiti router
+    socket_.open(udp::v4());
+    socket_.bind(udp::endpoint(udp::v4(), param_server_port_));
+
     start_receive();
 }
 
@@ -73,7 +83,7 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
 
 void NetworkRadio::receive() {
     // Let boost::asio handle callbacks
-    context_.poll();
+    io_service_.poll();
 }
 
 void NetworkRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {

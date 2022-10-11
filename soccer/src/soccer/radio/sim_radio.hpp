@@ -40,8 +40,7 @@ private:
     boost::asio::ip::udp::socket socket_;
 
     // created based on ROS param given from Radio superclass
-    // look for: "param_radio_interface_"
-    std::string interface_;
+    std::string param_radio_interface_;
     boost::asio::ip::address_v4 address_;
     boost::asio::ip::udp::endpoint sim_control_endpoint_;
     boost::asio::ip::udp::endpoint robot_control_endpoint_;

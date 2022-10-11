@@ -22,7 +22,7 @@ namespace radio {
  */
 class NetworkRadio : public Radio {
 public:
-    NetworkRadio(int server_port);
+    NetworkRadio();
 
 protected:
     void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
@@ -45,8 +45,9 @@ protected:
 
     void start_receive();
 
-    boost::asio::io_service context_;
+    boost::asio::io_service io_service_;
     boost::asio::ip::udp::socket socket_;
+    int param_server_port_;
 
     // Written by `async_receive_from`.
     std::array<char, rtp::ReverseSize> recv_buffer_;

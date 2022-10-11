@@ -40,10 +40,6 @@ protected:
     virtual void receive() = 0;
     virtual void switch_team(bool blue) = 0;
 
-    // should be used in both subclasses
-    // (Kevin can't find where network radio gets its IP from so currently is only sim radio)
-    std::string param_radio_interface_;
-
 private:
     void tick();
 
