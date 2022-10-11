@@ -23,8 +23,6 @@ namespace robot_action_client
   {
     using namespace std::placeholders;
 
-    this->timer_->cancel();
-
     if (!this->client_ptr_->wait_for_action_server()) {
       SPDLOG_ERROR("Action server not available after waiting");
       rclcpp::shutdown();
