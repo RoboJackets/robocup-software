@@ -6,7 +6,7 @@ DEFINE_FLOAT64(kPlanningParamModule, timeout, 0.1, "Timeout for vision data to r
 
 DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 1.5,
                   "Maximum translational speed for planning (m/s)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 1.5,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 1.0,
                   "Maximum translational acceleration for planning (m/s^2)");
 DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 3.0,
                   "Maximum rotational speed for planning (rad/s)");
