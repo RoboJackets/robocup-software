@@ -17,15 +17,15 @@ using rj_geometry::Twist;
 
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 1.0,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 1.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 1.5,
                "Maximum velocity limit (motion control) (m/s)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 3.0,
                "Maximum angular velocity limit (motion control) (rad/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 0.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 0.20,
                "Kp for rotation ((rad/s)/rad)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
                "Ki for rotation ((rad/s)/(rad*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.1,
                "Kd for rotation ((rad/s)/(rad/s))");
 DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
              "Windup limit for rotation (unknown units)");

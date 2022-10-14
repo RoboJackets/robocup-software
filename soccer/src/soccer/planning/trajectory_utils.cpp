@@ -27,15 +27,18 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
     // we hit a 5 second trajectory. If our trajectory is longer than that,
     // something is probably wrong, but we'll still handle it (just scale dt
     // accordingly).
+    // TODO : above comment is a bit misleading
     // TODO(#1525): Make these config variables.
     constexpr int kMaxIterations = 100;
     constexpr RJ::Seconds kExpectedDt{0.05};
+    constexpr RJ::Seconds kEndTimeDt{1.0};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
+    RJ::Time end_time{start_time + kEndTimeDt};
 
     const auto& start_hits = obstacles.hit_set(cursor.value().position());
-    while (cursor.has_value()) {
+    while (cursor.has_value() && cursor.time() < end_time) {
         RobotInstant instant = cursor.value();
 
         // Only count hits that we didn't start in.
@@ -83,9 +86,11 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
     // TODO(#1525): Make these config variables.
     constexpr int kMaxIterations = 100;
     constexpr RJ::Seconds kExpectedDt{0.05};
+    constexpr RJ::Seconds kEndTimeDt{1.0};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
     RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
+    RJ::Time end_time{start_time + kEndTimeDt};
 
     // The time of the earliest hit, if there is one. This is needed so that
     // we get the _first_ time we hit an obstacle, not necessarily the time we
@@ -104,7 +109,8 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
 
         // Only use the trajectory cursor in the loop condition; we use the
         // static position after the obstacle cursor runs off the end.
-        for (auto cursor_obstacle = obs.path->cursor_begin(); cursor.has_value();
+        for (auto cursor_obstacle = obs.path->cursor_begin();
+             cursor.has_value() && cursor.time() < end_time;
              cursor_obstacle.advance(dt), cursor.advance(dt)) {
             // If the earlier calculated hit was before this point, stop looking
             // at this obstacle.
