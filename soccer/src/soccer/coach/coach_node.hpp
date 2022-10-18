@@ -37,17 +37,17 @@ public:
 
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachStateInterpretation>::SharedPtr coach_state_pub_;
-    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kRobotsPerTeam];
+    rclcpp::Subscription<rj_msgs::msg::PlayState>::ConstSharedPtr play_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::WorldState>::ConstSharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::ConstSharedPtr robot_status_subs_[kRobotsPerTeam];
     rclcpp::TimerBase::SharedPtr play_state_change_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
 
-    void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg);
-    void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
-    void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr& msg, bool our_team);
+    void play_state_callback(rj_msgs::msg::PlayState::ConstSharedPtr msg);
+    void world_state_callback(rj_msgs::msg::WorldState::ConstSharedPtr msg);
+    void ball_sense_callback(rj_msgs::msg::RobotStatus::ConstSharedPtr msg, bool our_team);
     void check_for_play_state_change();
 };

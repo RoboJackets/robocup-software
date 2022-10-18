@@ -8,18 +8,18 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
-        [this](const rj_msgs::msg::PlayState::SharedPtr& msg) { play_state_callback(msg); });
+        [this](rj_msgs::msg::PlayState::ConstSharedPtr msg) { play_state_callback(msg); });
 
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
-        [this](const rj_msgs::msg::WorldState::SharedPtr& msg) { world_state_callback(msg); });
+        [this](rj_msgs::msg::WorldState::ConstSharedPtr msg) { world_state_callback(msg); });
 
     // initialize all of the robot status subscriptions
     // initialize our robots
     for (int i = 0; i < kRobotsPerTeam; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
             fmt::format("/radio/robot_status/robot_{}", i), 10,
-            [this](const rj_msgs::msg::RobotStatus::SharedPtr& msg) {
+            [this](rj_msgs::msg::RobotStatus::ConstSharedPtr msg) {
                 ball_sense_callback(msg, true);
             });
     }
@@ -34,12 +34,12 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.placement_point = temp_point;
 }
 
-void CoachNode::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+void CoachNode::play_state_callback(rj_msgs::msg::PlayState::ConstSharedPtr msg) {
     current_play_state_ = *msg;
     play_state_has_changed_ = true;
 }
 
-void CoachNode::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
+void CoachNode::world_state_callback(rj_msgs::msg::WorldState::ConstSharedPtr msg) {
     // EDGE-CASE NOTE: If robots from both teams are bordering the ball possession will likely
     // TODO: (https://app.clickup.com/t/31w0jay)
     // switch repeatedly
@@ -68,7 +68,7 @@ void CoachNode::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& 
     }
 }
 
-void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr& msg,
+void CoachNode::ball_sense_callback(rj_msgs::msg::RobotStatus::ConstSharedPtr msg,
                                     bool our_team) {
     if (our_team && !possessing_) {
         if (msg->has_ball_sense) {
