@@ -1,8 +1,9 @@
 #include "planner_node.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <rj_constants/topic_names.hpp>
 #include <ros_debug_drawer.hpp>
-#include <spdlog/spdlog.h>
 
 #include "instant.hpp"
 #include "planning/planner/collect_planner.hpp"
@@ -18,20 +19,18 @@ using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 PlannerNode::PlannerNode()
-    : rclcpp::Node("planner",  rclcpp::NodeOptions{}
-                                    .automatically_declare_parameters_from_overrides(true)
-                                    .allow_undeclared_parameters(true)),
+    : rclcpp::Node("planner", rclcpp::NodeOptions{}
+                                  .automatically_declare_parameters_from_overrides(true)
+                                  .allow_undeclared_parameters(true)),
       shared_state_(this),
       param_provider_{this, kPlanningParamModule} {
-
     // for _1, _2 etc. below
     using namespace std::placeholders;
-    
+
     // set up ActionServer + callbacks
     this->action_server_ = rclcpp_action::create_server<RobotMove>(
         this->get_node_base_interface(), this->get_node_clock_interface(),
-        this->get_node_logging_interface(), this->get_node_waitables_interface(), 
-        "robot_move",
+        this->get_node_logging_interface(), this->get_node_waitables_interface(), "robot_move",
         std::bind(&PlannerNode::handle_goal, this, _1, _2),
         std::bind(&PlannerNode::handle_cancel, this, _1),
         std::bind(&PlannerNode::handle_accepted, this, _1));
@@ -45,8 +44,8 @@ PlannerNode::PlannerNode()
     }
 }
 
-rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUUID & uuid,
-                                        std::shared_ptr<const RobotMove::Goal> goal) {
+rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUUID& uuid,
+                                                     std::shared_ptr<const RobotMove::Goal> goal) {
     (void)uuid;
 
     // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
@@ -55,7 +54,8 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
-rclcpp_action::CancelResponse PlannerNode::handle_cancel(const std::shared_ptr<GoalHandleRobotMove> goal_handle) { 
+rclcpp_action::CancelResponse PlannerNode::handle_cancel(
+    const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     (void)goal_handle;
     std::shared_ptr<const RobotMove::Goal> goal = goal_handle->get_goal();
     SPDLOG_ERROR("action server canceled goal from robot: {}", goal->robot_intent.robot_id);
@@ -63,11 +63,10 @@ rclcpp_action::CancelResponse PlannerNode::handle_cancel(const std::shared_ptr<G
 }
 
 void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
-     // this needs to return quickly to avoid blocking the executor, so spin up a new thread
+    // this needs to return quickly to avoid blocking the executor, so spin up a new thread
     using namespace std::placeholders;
     std::thread{std::bind(&PlannerNode::execute, this, _1), goal_handle}.detach();
 }
-
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // rate-limit loop to 1ms per iteration
@@ -78,9 +77,15 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
     std::shared_ptr<RobotMove::Result> result = std::make_shared<RobotMove::Result>();
 
     int robot_id = goal->robot_intent.robot_id;
-    robots_planners_[robot_id]->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
-    
+    robots_planners_[robot_id]->execute_trajectory(
+        rj_convert::convert_from_ros(goal->robot_intent));
+
     // TODO: send feedback here
+    std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
+    RJ::Seconds time_left = robots_planners_[robot_id]->get_time_left();
+
+    feedback->time_left = rj_convert::convert_to_ros(time_left);
+    goal_handle->publish_feedback(feedback);
 
     if (rclcpp::ok()) {
         result->is_done = true;
@@ -117,7 +122,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     /* intent_sub_ = node_->create_subscription<RobotIntent::Msg>( */
     /*     gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1), */
     /*     [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT */
-                  // removed from here
+    // removed from here
     /*     }); */
 
     // Keep this sub for ball sense and possession
@@ -133,10 +138,15 @@ void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
         auto plan_request = make_request(intent);
         auto trajectory = plan_for_robot(plan_request);
         trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
-        robot_trajectories_->put(robot_id_,
-                                 std::make_shared<Trajectory>(std::move(trajectory)),
+        robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
                                  intent.priority);
     }
+}
+
+RJ::Seconds PlannerForRobot::get_time_left() const {
+    // TODO(p-nayak): why does this say 3s even when the robot is on its point?
+    auto latest_traj = robot_trajectories_->get(robot_id_);
+    return latest_traj->end_time() - RJ::now();
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {

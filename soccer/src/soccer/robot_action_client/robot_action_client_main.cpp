@@ -1,6 +1,5 @@
-#include "robot_action_client.hpp"
 #include "global_params.hpp"
-
+#include "robot_action_client.hpp"
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);

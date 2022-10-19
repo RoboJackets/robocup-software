@@ -7,10 +7,11 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 
 #include <context.hpp>
+#include <rj_common/time.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
-#include <rj_msgs/action/robot_move.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
@@ -37,8 +38,17 @@ public:
     }
 
     void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
+        // associate a (Trajectory, priority) tuple with a robot id
         std::lock_guard lock(lock_);
         robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
+    }
+
+    std::shared_ptr<const Trajectory> get(int robot_id) {
+        // return the most recent Trajectory associated with a robot id
+        // TODO(Kevin): return priority?
+        std::lock_guard lock(lock_);
+        auto traj_tuple = robot_trajectories_.at(robot_id);
+        return std::get<0>(traj_tuple);
     }
 
 private:
@@ -146,14 +156,18 @@ public:
     ~PlannerForRobot() = default;
 
     /**
-     * TODO: better doc
+     * Entry point for the planner node's ActionServer.
      *
-     * called by the action server planner node
-     *
-     * does make_request and plan_for_robot
+     * Creates and publishes a Trajectory based on the given RobotIntent.
      */
     void execute_trajectory(const RobotIntent& intent);
 
+    /**
+     * @return RJ::Seconds time left for the trajectory to complete
+     *
+     * Note: RJ::Seconds is an alias for std::chrono::duration<double>.
+     */
+    RJ::Seconds get_time_left() const;
 
 private:
     /**
@@ -214,7 +228,7 @@ private:
  */
 class PlannerNode : public rclcpp::Node {
 public:
-     PlannerNode();
+    PlannerNode();
 
     using RobotMove = rj_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
