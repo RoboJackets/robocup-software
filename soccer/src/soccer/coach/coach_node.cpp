@@ -46,9 +46,12 @@ void CoachNode::world_state_callback(rj_msgs::msg::WorldState::ConstSharedPtr ms
     if (!possessing_) {
         for (rj_msgs::msg::RobotState robot_state : msg->our_robots) {
             // There definitely has to be a better way, but this works...
-            if (rj_geometry::Point(robot_state.pose.position.x, robot_state.pose.position.y)
-                    .dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) <
-                kRobotDiameter) {
+            const rj_geometry::Point robot_position = rj_convert::convert_from_ros(robot_state.pose.position);
+
+            const rj_geometry::Point ball_position = rj_convert::convert_from_ros(msg->ball.position);
+
+
+            if (rj_geometry::Point::nearly_equals(robot_position, ball_position, kRobotDiameter)) {
                 possessing_ = true;
                 play_state_has_changed_ = true;
                 return;

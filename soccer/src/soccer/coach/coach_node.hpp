@@ -10,6 +10,7 @@
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_geometry/point.hpp>
 
 #include "game_state.hpp"
 
