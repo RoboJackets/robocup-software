@@ -3,6 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_constants/constants.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_msgs/msg/coach_state_interpretation.hpp>
 #include <rj_msgs/msg/global_override.hpp>
@@ -10,7 +11,6 @@
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_geometry/point.hpp>
 
 #include "game_state.hpp"
 
@@ -40,7 +40,8 @@ private:
     rclcpp::Publisher<rj_msgs::msg::CoachStateInterpretation>::SharedPtr coach_state_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::ConstSharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::ConstSharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::ConstSharedPtr robot_status_subs_[kRobotsPerTeam];
+    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::ConstSharedPtr
+        robot_status_subs_[kRobotsPerTeam];
     rclcpp::TimerBase::SharedPtr play_state_change_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
