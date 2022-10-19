@@ -48,6 +48,8 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
                                                      std::shared_ptr<const RobotMove::Goal> goal) {
     (void)uuid;
 
+    // TODO(p-nayak): REJECT duplicate goal requests so we aren't constantly replanning them
+
     // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
 
     SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
@@ -64,33 +66,51 @@ rclcpp_action::CancelResponse PlannerNode::handle_cancel(
 
 void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // this needs to return quickly to avoid blocking the executor, so spin up a new thread
+    // execute() will block (loop) until completion (either success or canceled by client)
     using namespace std::placeholders;
     std::thread{std::bind(&PlannerNode::execute, this, _1), goal_handle}.detach();
 }
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // rate-limit loop to 1ms per iteration
-    /* rclcpp::Rate loop_rate(1); */
+    rclcpp::Rate loop_rate(1);
 
     // create ptrs to Goal, Result objects per ActionServer API
     std::shared_ptr<const RobotMove::Goal> goal = goal_handle->get_goal();
     std::shared_ptr<RobotMove::Result> result = std::make_shared<RobotMove::Result>();
 
+    // get correct PlannerForRobot object for this robot_id
     int robot_id = goal->robot_intent.robot_id;
-    robots_planners_[robot_id]->execute_trajectory(
-        rj_convert::convert_from_ros(goal->robot_intent));
+    std::shared_ptr<PlannerForRobot> my_robot_planner = robots_planners_[robot_id];
 
-    // TODO: send feedback here
-    std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-    RJ::Seconds time_left = robots_planners_[robot_id]->get_time_left();
+    // loop until goal is done (SUCCEEDED or CANCELED)
+    bool not_done_yet = true;  // yes, this is necessary (compiler optimizes out while(true))
+    while (not_done_yet) {
+        // if the ActionClient is trying to cancel the goal, cancel it & terminate early
+        if (goal_handle->is_canceling()) {
+            result->is_done = false;
+            goal_handle->canceled(result);
+            return;
+        }
 
-    feedback->time_left = rj_convert::convert_to_ros(time_left);
-    goal_handle->publish_feedback(feedback);
+        // pub Trajectory based on the RobotIntent
+        my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
 
-    if (rclcpp::ok()) {
-        result->is_done = true;
-        goal_handle->succeed(result);
-        SPDLOG_ERROR("done executing");
+        // send feedback
+        std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
+        RJ::Seconds time_left = my_robot_planner->get_time_left();
+        feedback->time_left = rj_convert::convert_to_ros(time_left);
+        goal_handle->publish_feedback(feedback);
+
+        // when done, tell client goal is done, break loop
+        // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
+        if (my_robot_planner->is_done()) {
+            if (rclcpp::ok()) {
+                result->is_done = true;
+                goal_handle->succeed(result);
+                return;
+            }
+        }
     }
 }
 
@@ -113,19 +133,10 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     // The empty planner should always be last.
     planners_.push_back(std::make_shared<EscapeObstaclesPathPlanner>());
 
-    // Set up ROS
-
-    // This will need to be rewritten or repurposed after the execute method
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
         planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
 
-    /* intent_sub_ = node_->create_subscription<RobotIntent::Msg>( */
-    /*     gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1), */
-    /*     [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT */
-    // removed from here
-    /*     }); */
-
-    // Keep this sub for ball sense and possession
+    // for ball sense and possession
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
         radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
         [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
@@ -138,6 +149,7 @@ void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
         auto plan_request = make_request(intent);
         auto trajectory = plan_for_robot(plan_request);
         trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+        // store all latest trajectories in a mutex-locked shared map
         robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
                                  intent.priority);
     }
@@ -243,11 +255,6 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
 
     debug_draw_.publish();
-
-    // TODO(Kevin): delete this debug print
-    if (this->is_done()) {
-        SPDLOG_ERROR("robot {}'s {} is_done", robot_id_, current_planner_->name());
-    }
 
     return trajectory;
 }

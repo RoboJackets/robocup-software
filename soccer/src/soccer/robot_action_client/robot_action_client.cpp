@@ -21,6 +21,9 @@ RobotActionClient::RobotActionClient()
 }
 
 void RobotActionClient::send_goal() {
+    // for now, only send one goal
+    this->timer_->cancel();
+
     using namespace std::placeholders;
 
     if (!this->client_ptr_->wait_for_action_server()) {
@@ -33,8 +36,14 @@ void RobotActionClient::send_goal() {
     rj_msgs::msg::RobotIntent intent;
     intent.robot_id = 2;
     auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
+
     auto pt = rj_geometry::Point(2.0, 3.0);
     ptmc.target.position = rj_convert::convert_to_ros(pt);
+    auto vel = rj_geometry::Point(0.0, 0.0);
+    ptmc.target.velocity = rj_convert::convert_to_ros(vel);
+    auto face_pt = rj_geometry::Point(1.0, 1.0);
+    ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
+
     intent.motion_command.path_target_command = {ptmc};
     goal_msg.robot_intent = intent;
 
@@ -68,6 +77,7 @@ void RobotActionClient::feedback_callback(
 void RobotActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
+            SPDLOG_ERROR("Goal succeeded!");
             break;
         case rclcpp_action::ResultCode::ABORTED:
             SPDLOG_ERROR("Goal was aborted");

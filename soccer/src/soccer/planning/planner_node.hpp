@@ -169,6 +169,11 @@ public:
      */
     RJ::Seconds get_time_left() const;
 
+    /*
+     * @return true if current planner is done, false otherwise.
+     */
+    [[nodiscard]] bool is_done() const;
+
 private:
     /**
      * @brief Create a PlanRequest based on the given RobotIntent.
@@ -200,11 +205,6 @@ private:
      * updated recently.
      */
     [[nodiscard]] bool robot_alive() const;
-
-    /*
-     * @return true if current planner is done, false otherwise.
-     */
-    [[nodiscard]] bool is_done() const;
 
     rclcpp::Node* node_;
     std::vector<std::shared_ptr<Planner>> planners_;
@@ -240,12 +240,19 @@ private:
     ::params::LocalROS2ParamProvider param_provider_;
 
     // setup ActionServer for RobotMove.action
+    // follows the standard AS protocol, see ROS2 docs & RobotMove.action
     rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const RobotMove::Goal> goal);
     rclcpp_action::CancelResponse handle_cancel(
         const std::shared_ptr<GoalHandleRobotMove> goal_handle);
     void handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
+
+    /*
+     * @brief Upon being given a RobotIntent, publish an appropriate
+     * Trajectory, send time remaining as feedback, and return success when
+     * done. Blocking (as in, will loop until complete).
+     */
     void execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
 };
 
