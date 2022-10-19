@@ -55,10 +55,10 @@ void CoachNode::world_state_callback(rj_msgs::msg::WorldState::ConstSharedPtr ms
         }
     } else {
         for (rj_msgs::msg::RobotState robot_state : msg->their_robots) {
-            // See above...
-            if (rj_geometry::Point(robot_state.pose.position.x, robot_state.pose.position.y)
-                    .dist_to(rj_geometry::Point(msg->ball.position.x, msg->ball.position.y)) <
-                kRobotDiameter) {
+            if (rj_geometry::Point::nearly_equals(
+                    rj_convert::convert_from_ros(robot_state.pose.position),
+                    rj_convert::convert_from_ros(msg->ball.position),
+                    kRobotDiameter)) {
                 possessing_ = false;
                 play_state_has_changed_ = true;
                 return;
