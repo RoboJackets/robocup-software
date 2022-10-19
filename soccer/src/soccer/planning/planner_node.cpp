@@ -49,7 +49,8 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
                                         std::shared_ptr<const RobotMove::Goal> goal) {
     (void)uuid;
 
-    // TODO: fill this in
+    // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
+
     SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
@@ -75,6 +76,11 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
     // create ptrs to Goal, Result objects per ActionServer API
     std::shared_ptr<const RobotMove::Goal> goal = goal_handle->get_goal();
     std::shared_ptr<RobotMove::Result> result = std::make_shared<RobotMove::Result>();
+
+    int robot_id = goal->robot_intent.robot_id;
+    robots_planners_[robot_id]->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
+    
+    // TODO: send feedback here
 
     if (rclcpp::ok()) {
         result->is_done = true;
@@ -103,25 +109,34 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     planners_.push_back(std::make_shared<EscapeObstaclesPathPlanner>());
 
     // Set up ROS
+
+    // This will need to be rewritten or repurposed after the execute method
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
         planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
-    intent_sub_ = node_->create_subscription<RobotIntent::Msg>(
-        gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1),
-        [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT
-            if (robot_alive()) {
-                auto plan_request = make_request(rj_convert::convert_from_ros(*intent));
-                auto trajectory = plan_for_robot(plan_request);
-                trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
-                robot_trajectories_->put(robot_id_,
-                                         std::make_shared<Trajectory>(std::move(trajectory)),
-                                         intent->priority);
-            }
-        });
+
+    /* intent_sub_ = node_->create_subscription<RobotIntent::Msg>( */
+    /*     gameplay::topics::robot_intent_pub(robot_id), rclcpp::QoS(1), */
+    /*     [this](RobotIntent::Msg::SharedPtr intent) {  // NOLINT */
+                  // removed from here
+    /*     }); */
+
+    // Keep this sub for ball sense and possession
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
         radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
         [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
             had_break_beam_ = status->has_ball_sense;
         });
+}
+
+void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
+    if (robot_alive()) {
+        auto plan_request = make_request(intent);
+        auto trajectory = plan_for_robot(plan_request);
+        trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+        robot_trajectories_->put(robot_id_,
+                                 std::make_shared<Trajectory>(std::move(trajectory)),
+                                 intent.priority);
+    }
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {

@@ -1,4 +1,8 @@
 #include "robot_action_client.hpp"
+// #include "planning/planner/motion_command.hpp"
+#include <rj_msgs/msg/empty_motion_command.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
 
 namespace robot_action_client
 {
@@ -29,8 +33,14 @@ namespace robot_action_client
     }
 
     auto goal_msg = RobotMove::Goal();
+
     rj_msgs::msg::RobotIntent intent;
     intent.robot_id = 2;
+    auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
+    auto pt = rj_geometry::Point(2.0, 3.0);
+    ptmc.target.position = rj_convert::convert_to_ros(pt);
+    intent.motion_command.path_target_command = {ptmc};
+    goal_msg.robot_intent = intent;
 
     SPDLOG_ERROR("Sending goal");
 

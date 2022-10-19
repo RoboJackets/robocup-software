@@ -145,6 +145,16 @@ public:
 
     ~PlannerForRobot() = default;
 
+    /**
+     * TODO: better doc
+     *
+     * called by the action server planner node
+     *
+     * does make_request and plan_for_robot
+     */
+    void execute_trajectory(const RobotIntent& intent);
+
+
 private:
     /**
      * @brief Create a PlanRequest based on the given RobotIntent.
