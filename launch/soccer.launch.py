@@ -86,10 +86,14 @@ def generate_launch_description():
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
             DeclareLaunchArgument("sim_flag", default_value="-sim"),
-            DeclareLaunchArgument("param_config", default_value=PythonExpression(["'sim_params.yaml' if ", run_sim, " else 'real_params.yaml'"])),
+            DeclareLaunchArgument(
+                "param_config",
+                default_value=PythonExpression(
+                    ["'sim_params.yaml' if ", run_sim, " else 'real_params.yaml'"]
+                ),
+            ),
             DeclareLaunchArgument("use_manual_control", default_value="False"),
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
-
             # this launch arg shouldn't be used, is solely dependent on run_sim
             # (above, param_config is defined by run_sim)
             DeclareLaunchArgument(
@@ -104,7 +108,6 @@ def generate_launch_description():
                 ],
             ),
             stdout_linebuf_envvar,
-
             # Node spawns all of the ROS nodes, defined in main() of various
             # cpp files, e.g. vision_receiver.cpp, planner_node_main.cpp
             # Each of these take in the results of various
@@ -216,7 +219,7 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_robocup",
-                executable="robot_action_client_node",
+                executable="agent_action_client_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
