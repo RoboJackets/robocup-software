@@ -181,15 +181,16 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             # spawn gameplay only if manual is not on
-            Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-                package="rj_robocup",
-                executable="gameplay_node",
-                output="screen",
-                parameters=[param_config_filepath],
-                emulate_tty=True,
-                on_exit=Shutdown(),
-            ),
+            # TODO: replace with ActionClients
+            # Node(
+            #     condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+            #     package="rj_robocup",
+            #     executable="gameplay_node",
+            #     output="screen",
+            #     parameters=[param_config_filepath],
+            #     emulate_tty=True,
+            #     on_exit=Shutdown(),
+            # ),
             # spawn internal_ref/external_ref based on internal_ref LaunchArgument
             Node(
                 condition=IfCondition(PythonExpression([use_internal_ref])),
