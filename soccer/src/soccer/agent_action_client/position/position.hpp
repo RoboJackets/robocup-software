@@ -13,8 +13,8 @@
 
 namespace strategy {
 /*
- * Position handles strategy logic (currently handled by behavior tree). The
- * goal is to isolate the strategy from the ROS interfacing, so we can swap
+ * Position is an abstract superclass. Its subclasses handle strategy logic.
+ * The goal is to isolate the strategy from the ROS interfacing, so we can swap
  * Position classes fluidly. (Google "Strategy Design Pattern".)
  *
  * A good analogy is how the Planner Node uses the various Planner objects

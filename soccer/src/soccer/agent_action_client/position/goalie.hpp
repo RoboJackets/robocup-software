@@ -14,6 +14,7 @@
 
 namespace strategy {
 
+// TODO: docstring
 class Goalie : public Position {
 public:
     Goalie();
@@ -22,7 +23,7 @@ public:
 
 protected:
 private:
-    // temp
+    // temp to move back and forth
     int move_ct = 0;
 };
 
