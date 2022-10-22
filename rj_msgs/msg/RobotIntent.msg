@@ -1,3 +1,5 @@
+uint8 robot_id
+
 uint8 SHOOT_MODE_KICK = 0
 uint8 SHOOT_MODE_CHIP = 1
 

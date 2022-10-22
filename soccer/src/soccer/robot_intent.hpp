@@ -9,6 +9,8 @@
 #include "planning/rotation_command.hpp"
 
 struct RobotIntent {
+    int8_t robot_id = 0;
+
     using Msg = rj_msgs::msg::RobotIntent;
     enum class ShootMode { KICK, CHIP };
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
@@ -34,6 +36,7 @@ template <>
 struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
     static rj_msgs::msg::RobotIntent to_ros(const RobotIntent& from) {
         return rj_msgs::build<rj_msgs::msg::RobotIntent>()
+            .robot_id(static_cast<uint8_t>(from.robot_id))
             .motion_command(convert_to_ros(from.motion_command))
             .local_obstacles(convert_to_ros(from.local_obstacles))
             .shoot_mode(static_cast<uint8_t>(from.shoot_mode))
@@ -46,6 +49,7 @@ struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
 
     static RobotIntent from_ros(const rj_msgs::msg::RobotIntent& from) {
         RobotIntent result;
+        result.robot_id = static_cast<uint8_t>(from.robot_id);
         result.motion_command = convert_from_ros(from.motion_command);
         result.local_obstacles = convert_from_ros(from.local_obstacles);
         result.shoot_mode = static_cast<RobotIntent::ShootMode>(from.shoot_mode);
