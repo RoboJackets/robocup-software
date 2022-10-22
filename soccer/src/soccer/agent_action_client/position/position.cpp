@@ -4,29 +4,30 @@ namespace strategy {
 
 Position::Position() {
     position_name_ = "Position";
-    SPDLOG_ERROR("pos name {}", position_name_);
+    SPDLOG_INFO("pos name {}", position_name_);
 }
 
-rj_msgs::msg::RobotIntent Position::get_task() {
-    rj_msgs::msg::RobotIntent intent;
-    intent.robot_id = 2;
-    auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
+void Position::tell_is_done() { is_done_ = true; }
 
-    auto pt = rj_geometry::Point(2.0, 3.0);
-    ptmc.target.position = rj_convert::convert_to_ros(pt);
-    auto vel = rj_geometry::Point(0.0, 0.0);
-    ptmc.target.velocity = rj_convert::convert_to_ros(vel);
-    auto face_pt = rj_geometry::Point(1.0, 1.0);
-    ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
+void Position::tell_time_left(double time_left) { time_left_ = time_left; }
 
-    intent.motion_command.path_target_command = {ptmc};
-    return intent;
-}
-
-void Position::tell_done() { is_done_ = true; }
-
-void Position::tell_time_left(RJ::Seconds time_left) { time_left = time_left; }
-
+// TODO: use goal_canceled_ info
 void Position::tell_goal_canceled() { goal_canceled_ = true; }
+
+bool Position::check_is_done() {
+    if (is_done_) {
+        is_done_ = false;
+        return true;
+    }
+    return false;
+}
+
+bool Position::check_goal_canceled() {
+    if (goal_canceled_) {
+        goal_canceled_ = false;
+        return true;
+    }
+    return false;
+}
 
 }  // namespace strategy

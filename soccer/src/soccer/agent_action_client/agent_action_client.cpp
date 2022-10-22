@@ -12,19 +12,43 @@ AgentActionClient::AgentActionClient()
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
-    // create a Position class to delegate most decision-making to
-    // (Strategy Design Pattern)
-    // TODO: move this once coach node merged
-    current_position_ = Position();
+    world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
+        "vision_filter/world_state", 1, [this](rj_msgs::msg::WorldState::SharedPtr msg) {
+            /*
+            auto ball_state = rj_convert::convert_from_ros(msg->ball);
+            if (spin_kick_detector(ball_state.position)) {
+                send();
+            }
+            */
+        });
 
-    // TODO: rm this once coach node merged
-    timer_ = create_wall_timer(std::chrono::milliseconds(500),
-                               std::bind(&AgentActionClient::send_goal, this));
+    // TODO: move this once coach node merged
+    current_position_ = std::make_unique<Goalie>();
+
+    // TODO: link to planning hz
+    // TODO: change this once coach node merged
+    //
+    // TODO: if timer is too fast, planner crashes, any fix?
+    int hz = 4;
+    get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
+                                        std::bind(&AgentActionClient::get_task, this));
+}
+
+void AgentActionClient::get_task() {
+    // TODO: change this default to defense? or NOP?
+    if (current_position_ == nullptr) {
+        current_position_ = std::make_unique<Goalie>();
+    }
+
+    auto task = current_position_->get_task();
+    if (task != latest_task_) {
+        latest_task_ = task;
+        send_goal();
+    }
 }
 
 void AgentActionClient::send_goal() {
-    // for now, only send one goal
-    timer_->cancel();
+    SPDLOG_INFO("latest_task_: {}", latest_task_.robot_id);
 
     using namespace std::placeholders;
 
@@ -34,7 +58,7 @@ void AgentActionClient::send_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = current_position_.get_task();
+    goal_msg.robot_intent = latest_task_;
 
     SPDLOG_ERROR("Sending goal");
 
@@ -51,6 +75,7 @@ void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
     auto goal_handle = future.get();
     if (!goal_handle) {
+        current_position_->tell_goal_canceled();
         SPDLOG_ERROR("Goal was rejected by server");
     } else {
         SPDLOG_INFO("Goal accepted by server, waiting for result");
@@ -59,13 +84,16 @@ void AgentActionClient::goal_response_callback(
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    auto time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    SPDLOG_INFO("Time left: {}", time_left);
+    double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
+    // SPDLOG_INFO("Time left: {}", time_left);
+    current_position_->tell_time_left(time_left);
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
+            // TODO: handle other return codes
+            current_position_->tell_is_done();
             SPDLOG_ERROR("Goal succeeded!");
             break;
         case rclcpp_action::ResultCode::ABORTED:

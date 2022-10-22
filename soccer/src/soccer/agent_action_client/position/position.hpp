@@ -15,7 +15,7 @@ namespace strategy {
 /*
  * Position handles strategy logic (currently handled by behavior tree). The
  * goal is to isolate the strategy from the ROS interfacing, so we can swap
- * Position classes fluidly.
+ * Position classes fluidly. (Google "Strategy Design Pattern".)
  *
  * A good analogy is how the Planner Node uses the various Planner objects
  * (PathTargetPlanner, etc.). The Planner objects take in a plan request and
@@ -29,18 +29,24 @@ public:
 
     // communication with AC
     // TODO: heavily coupled, how fix?
-    void tell_done();
-    void tell_time_left(RJ::Seconds time_left);
+    void tell_is_done();
+    void tell_time_left(double time_left);
     void tell_goal_canceled();
 
-    rj_msgs::msg::RobotIntent get_task();
+    virtual rj_msgs::msg::RobotIntent get_task() = 0;
 
 protected:
-private:
     std::string position_name_;
 
     bool is_done_;
-    RJ::Seconds time_left_;
+    double time_left_;
     bool goal_canceled_;
+
+    // return value of is_done_ and set to false
+    bool check_is_done();
+    bool check_goal_canceled();
+
+private:
 };
+
 }  // namespace strategy

@@ -9,12 +9,15 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/time.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
+#include "agent_action_client/position/goalie.hpp"
 #include "agent_action_client/position/position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "world_state.hpp"
 
 namespace strategy {
 
@@ -29,18 +32,19 @@ public:
     using RobotMove = rj_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
+    // TODO: make robot_id, spin up N ACs
     AgentActionClient();
 
 private:
     // TODO: sub to worldstate, give callback access to Position
+    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // TODO(Kevin): sub to coach node, once merged
     // TODO(Kevin): move this folder to strategy/, once coach merged
-    // TODO(Kevin): trip goal requests on coach, not on timer
-    rclcpp::TimerBase::SharedPtr timer_;
 
-    Position current_position_;
+    std::unique_ptr<Position> current_position_;
 
     // ROS ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;
@@ -55,6 +59,10 @@ private:
      * @brief send a goal to the planning ActionServer, based on the Position's get_task().
      */
     void send_goal();
+
+    rclcpp::TimerBase::SharedPtr get_task_timer_;
+    void get_task();
+    rj_msgs::msg::RobotIntent latest_task_;
 
 };  // class AgentActionClient
 
