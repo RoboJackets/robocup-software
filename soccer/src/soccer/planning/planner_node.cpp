@@ -73,7 +73,7 @@ void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goa
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // rate-limit loop to 1ms per iteration
-    rclcpp::Rate loop_rate(1);
+    rclcpp::Rate loop_rate(1ms);
 
     // create ptrs to Goal, Result objects per ActionServer API
     std::shared_ptr<const RobotMove::Goal> goal = goal_handle->get_goal();
@@ -84,8 +84,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
     std::shared_ptr<PlannerForRobot> my_robot_planner = robots_planners_[robot_id];
 
     // loop until goal is done (SUCCEEDED or CANCELED)
-    bool not_done_yet = true;  // yes, this is necessary (compiler optimizes out while(true))
-    while (not_done_yet) {
+    for (;;) {
         // if the ActionClient is trying to cancel the goal, cancel it & terminate early
         if (goal_handle->is_canceling()) {
             result->is_done = false;
@@ -111,6 +110,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
                 return;
             }
         }
+        loop_rate.sleep();
     }
 }
 
