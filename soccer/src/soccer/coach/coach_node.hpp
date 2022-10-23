@@ -40,7 +40,7 @@ private:
     rclcpp::Publisher<rj_msgs::msg::CoachStateInterpretation>::SharedPtr coach_state_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kRobotsPerTeam];
+    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
     rclcpp::TimerBase::SharedPtr play_state_change_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;

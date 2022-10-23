@@ -15,8 +15,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     // initialize all of the robot status subscriptions
-    // initialize our robots
-    for (int i = 0; i < kRobotsPerTeam; i++) {
+    for (int i = 0; i < kNumShells; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
             fmt::format("/radio/robot_status/robot_{}", i), 10,
             [this](const rj_msgs::msg::RobotStatus::SharedPtr msg) {
