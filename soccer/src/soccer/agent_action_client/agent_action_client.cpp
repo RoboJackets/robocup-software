@@ -14,12 +14,7 @@ AgentActionClient::AgentActionClient()
 
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
         "vision_filter/world_state", 1, [this](rj_msgs::msg::WorldState::SharedPtr msg) {
-            /*
-            auto ball_state = rj_convert::convert_from_ros(msg->ball);
-            if (spin_kick_detector(ball_state.position)) {
-                send();
-            }
-            */
+            world_state_callback(msg);
         });
 
     // TODO: move this once coach node merged
@@ -32,6 +27,15 @@ AgentActionClient::AgentActionClient()
     int hz = 3;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
+}
+
+void AgentActionClient::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
+    if (current_position_ == nullptr) {
+        return;
+    }
+
+    WorldState world_state = rj_convert::convert_from_ros(*msg);
+    current_position_->update_world_state(world_state);
 }
 
 void AgentActionClient::get_task() {

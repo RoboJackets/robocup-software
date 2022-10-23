@@ -10,6 +10,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "world_state.hpp"
 
 namespace strategy {
 /*
@@ -32,6 +33,7 @@ public:
     void tell_is_done();
     void tell_time_left(double time_left);
     void tell_goal_canceled();
+    void update_world_state(WorldState world_state);
 
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
 
@@ -41,6 +43,7 @@ protected:
     bool is_done_;
     double time_left_;
     bool goal_canceled_;
+    WorldState latest_world_state_;
 
     // return value of is_done_ and set to false
     bool check_is_done();

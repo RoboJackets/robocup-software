@@ -30,4 +30,8 @@ bool Position::check_goal_canceled() {
     return false;
 }
 
+void Position::update_world_state(WorldState world_state) {
+    latest_world_state_ = world_state;
+}
+
 }  // namespace strategy

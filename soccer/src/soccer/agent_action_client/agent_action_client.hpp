@@ -53,6 +53,7 @@ private:
                            const std::shared_ptr<const RobotMove::Feedback> feedback);
 
     void result_callback(const GoalHandleRobotMove::WrappedResult& result);
+    void world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg);
 
     // TODO: doc
     /*
