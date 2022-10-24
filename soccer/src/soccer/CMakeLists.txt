@@ -47,7 +47,7 @@ set(ROBOCUP_LIB_SRC
     radio/network_radio.cpp
     radio/packet_convert.cpp
     radio/sim_radio.cpp
-    coach/coach_node.cpp
+    strategy/coach/coach_node.cpp
     radio/radio.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
@@ -108,7 +108,7 @@ set(CONTROL_NODE_SRC control/control_node_main.cpp)
 
 set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
-set(COACH_NODE_SRC coach/coach_node_main.cpp)
+set(COACH_NODE_SRC strategy/coach/coach_node_main.cpp)
 
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
