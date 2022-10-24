@@ -19,6 +19,9 @@ find_package(builtin_interfaces REQUIRED)
 # This creates the target rj_msgs__rosidl_typesupport_cpp
 rosidl_generate_interfaces(
   rj_msgs
+  # Actions
+  action/RobotMove.action
+
   # Messages
   msg/BallState.msg
   msg/BallPlacement.msg
