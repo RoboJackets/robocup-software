@@ -46,9 +46,14 @@ public:
     std::shared_ptr<const Trajectory> get(int robot_id) {
         // return the most recent Trajectory associated with a robot id
         // TODO(Kevin): return priority?
-        std::lock_guard lock(lock_);
-        auto traj_tuple = robot_trajectories_.at(robot_id);
-        return std::get<0>(traj_tuple);
+        try {
+            std::lock_guard lock(lock_);
+            auto traj_tuple = robot_trajectories_.at(robot_id);
+            return std::get<0>(traj_tuple);
+        } catch (std::exception& exception) {
+            std::cout << exception.what() << std::endl;
+            return nullptr;
+        }
     }
 
 private:
@@ -167,7 +172,7 @@ public:
      *
      * Note: RJ::Seconds is an alias for std::chrono::duration<double>.
      */
-    RJ::Seconds get_time_left() const;
+    [[nodiscard]] std::optional<RJ::Seconds> get_time_left() const;
 
     /*
      * @return true if current planner is done, false otherwise.

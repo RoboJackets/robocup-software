@@ -99,9 +99,10 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
         // send feedback
         std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-        RJ::Seconds time_left = my_robot_planner->get_time_left();
-        feedback->time_left = rj_convert::convert_to_ros(time_left);
-        goal_handle->publish_feedback(feedback);
+        if (auto time_left = my_robot_planner->get_time_left()) {
+            feedback->time_left = rj_convert::convert_to_ros(time_left.value());
+            goal_handle->publish_feedback(feedback);
+        }
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
@@ -157,9 +158,12 @@ void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
     }
 }
 
-RJ::Seconds PlannerForRobot::get_time_left() const {
+std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     // TODO(p-nayak): why does this say 3s even when the robot is on its point?
     auto latest_traj = robot_trajectories_->get(robot_id_);
+    if (!latest_traj) {
+        return std::nullopt;
+    }
     return latest_traj->end_time() - RJ::now();
 }
 

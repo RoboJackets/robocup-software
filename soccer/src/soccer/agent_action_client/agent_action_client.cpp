@@ -24,7 +24,7 @@ AgentActionClient::AgentActionClient()
     // TODO: change this once coach node merged
     // note: planner node seems to crash if this rate is too high, some kind of memory issue
     // bit confusing as it shouldn't be sending every tick
-    int hz = 3;
+    int hz = 60;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 }
