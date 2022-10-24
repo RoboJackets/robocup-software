@@ -82,6 +82,7 @@ add_executable(external_referee_node)
 add_executable(planner_node)
 add_executable(control_node)
 add_executable(sim_radio_node)
+add_executable(soccer_mom_node)
 add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
@@ -171,6 +172,9 @@ set(REFEREE_NODE_DEPS_LIBRARIES robocup)
 set(RADIO_NODE_DEPS_SYSTEM_LIBRARIES)
 set(RADIO_NODE_DEPS_LIBRARIES robocup)
 
+set(SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES)
+set(SOCCER_MOM_NODE_DEPS_LIBRARIES robocup)
+
 set(CONTROL_NODE_DEPS_SYSTEM_LIBRARIES)
 set(CONTROL_NODE_DEPS_LIBRARIES robocup)
 
@@ -224,6 +228,10 @@ target_link_libraries(sim_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
 # -- network_radio_node --
 target_link_libraries(network_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
         ${RADIO_NODE_DEPS_LIBRARIES})
+
+# -- soccer_mom_node --
+target_link_libraries(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${SOCCER_MOM_NODE_DEPS_LIBRARIES})
 
 # -- control_node --
 target_link_libraries(control_node PRIVATE ${CONTROL_NODE_DEPS_SYSTEM_LIBRARIES}
@@ -282,6 +290,7 @@ install(
         control_node
         sim_radio_node
         network_radio_node
+        soccer_mom_node
         manual_control_node
         global_param_server_node
         DESTINATION lib/${CMAKE_PROJECT_NAME})

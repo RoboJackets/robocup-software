@@ -104,3 +104,9 @@ static inline std::string robot_status_pub(int robot_id) {
 }
 
 }  // namespace radio::topics
+
+namespace tutorial::topics {
+
+constexpr auto kSoccerMomFruitPub = "team_fruit";
+
+} // namespace tutorial::topics

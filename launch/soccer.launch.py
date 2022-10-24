@@ -76,6 +76,15 @@ def generate_launch_description():
         parameters=[config],
         on_exit=Shutdown(),
     )
+    
+    soccer_mom = Node(
+        condition=IfCondition(PythonExpression([run_sim])),
+        package="rj_robocup",
+        executable="soccer_mom_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
 
     network_radio = Node(
         condition=IfCondition(PythonExpression(["not ", run_sim])),
@@ -180,6 +189,7 @@ def generate_launch_description():
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
             sim_radio,
             network_radio,
+            soccer_mom,
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             internal_ref_receiver,
             external_ref_receiver,
