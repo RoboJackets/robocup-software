@@ -12,6 +12,8 @@ find_package(
   COMPONENTS Core Network Widgets
   REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(rj_msgs REQUIRED)
 
 # ======================================================================
@@ -53,6 +55,8 @@ ament_target_dependencies(
   rj_common
   PUBLIC
   rclcpp
+  rclcpp_action
+  rclcpp_components
   rj_msgs)
 
 # Add a test runner target "test_rj_common" to run all tests in this directory
