@@ -15,11 +15,11 @@ class State(Enum):
     ACTIVE = auto()
 
 
-class Defense(stp.play.Play):
+class RunnerPlay(stp.play.Play):
     """Play that consists of:
     - 1 Goalie
-    - 5 Wallers
-    TODO: add 2 aggressive markers, go down to 3 Wallers
+    - 1 Runner
+    - 4 Wallers
     """
 
     def __init__(self):
@@ -34,12 +34,12 @@ class Defense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            #self.prioritized_tactics.append(runner_tactic.RunnerTactic(world_state, 1))
+            self.prioritized_tactics.append(runner_tactic.RunnerTactic(world_state, 1))
             num_wallers = min(4, len(world_state.our_visible_robots) - 1)
             self.prioritized_tactics.append(
                 wall_tactic.WallTactic(world_state, num_wallers)
             )
-            num_markers = len(world_state.our_visible_robots) - (1 + num_wallers)
+            num_markers = len(world_state.our_visible_robots) #- (1 + num_wallers)
             if num_markers > 1:
                 self.prioritized_tactics.append(
                     nmark_tactic.NMarkTactic(world_state, num_markers)
