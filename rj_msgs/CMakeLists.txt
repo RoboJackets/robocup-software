@@ -55,6 +55,8 @@ rosidl_generate_interfaces(
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+  
+  msg/TeamFruit.msg
   # Services
   srv/ListJoysticks.srv
   srv/QuickCommands.srv

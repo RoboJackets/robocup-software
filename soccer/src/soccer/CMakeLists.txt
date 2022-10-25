@@ -68,6 +68,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/referee_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
+    soccer_mom/soccer_mom.cpp
         )
 
 set(SOCCER_TEST_SRC
@@ -112,6 +113,8 @@ set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
+set(SOCCER_MOM_NODE_SRC soccer_mom/soccer_mom_node_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -143,7 +146,7 @@ target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
 # ---- sim_radio_node ----
 target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
-# ---- sim_radio_node ----
+# ---- network_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
 
 # ---- manual_control_node ----
@@ -154,6 +157,9 @@ target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_S
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+
+# ---- soccer_mom_node ----
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # ---- testing ----
 if(BUILD_TESTING)

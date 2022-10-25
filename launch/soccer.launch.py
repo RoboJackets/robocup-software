@@ -155,6 +155,15 @@ def generate_launch_description():
         parameters=[config],
         on_exit=Shutdown(),
     )
+    
+    soccer_mom = Node(
+#        condition=IfCondition(PythonExpression([run_sim])),
+        package="rj_robocup",
+        executable="soccer_mom_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
 
     global_param_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(str(launch_dir / "global_param_server.launch.py"))
@@ -186,5 +195,6 @@ def generate_launch_description():
             DeclareLaunchArgument("use_manual_control", default_value="False"),
             gameplay,
             manual,
+            soccer_mom
         ]
     )

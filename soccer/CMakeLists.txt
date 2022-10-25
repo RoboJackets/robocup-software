@@ -85,6 +85,7 @@ add_executable(sim_radio_node)
 add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
+add_executable(soccer_mom_node)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -183,6 +184,10 @@ set(MANUAL_CONTROL_NODE_DEPS_LIBRARIES robocup)
 set(GLOBAL_PARAM_SERVER_NODE_DEPS_SYSTEM_LIBRARIES)
 set(GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES robocup)
 
+set(SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES)
+set(SOCCER_MOM_NODE_DEPS_LIBRARIES robocup)
+
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -240,6 +245,10 @@ target_link_libraries(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_DEPS_SYS
 # -- global_param_server_node --
 target_link_libraries(global_param_server_node PRIVATE ${GLOBAL_PARAM_SERVER_NODE_DEPS_SYSTEM_LIBRARIES}
         ${GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES})
+        
+# -- soccer_mom_node --
+target_link_libraries(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${SOCCER_MOM_NODE_DEPS_LIBRARIES})
 
 # ======================================================================
 # Testing
@@ -284,6 +293,7 @@ install(
         network_radio_node
         manual_control_node
         global_param_server_node
+        soccer_mom_node
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(
