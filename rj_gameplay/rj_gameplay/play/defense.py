@@ -34,7 +34,7 @@ class Defense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
-            num_wallers = min(3, len(world_state.our_visible_robots) - 1)
+            num_wallers = min(4, len(world_state.our_visible_robots) - 1)
             self.prioritized_tactics.append(
                 wall_tactic.WallTactic(world_state, num_wallers)
             )
