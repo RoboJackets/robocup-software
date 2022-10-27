@@ -40,19 +40,10 @@ public:
     void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
         // associate a (Trajectory, priority) tuple with a robot id
         std::lock_guard lock(lock_);
-        robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
-    }
-
-    std::shared_ptr<const Trajectory> get(int robot_id) {
-        // return the most recent Trajectory associated with a robot id
-        // TODO(Kevin): return priority?
         try {
-            std::lock_guard lock(lock_);
-            auto traj_tuple = robot_trajectories_.at(robot_id);
-            return std::get<0>(traj_tuple);
+            robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
         } catch (std::exception& exception) {
             std::cout << exception.what() << std::endl;
-            return nullptr;
         }
     }
 

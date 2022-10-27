@@ -72,7 +72,6 @@ void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goa
 }
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
-    // rate-limit loop to 1ms per iteration
     // TODO: rate-limit loop to whatever hz planning is limited to
     auto delay = std::chrono::milliseconds(1000 / 60);
     rclcpp::Rate loop_rate(delay);
@@ -160,7 +159,10 @@ void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
 
 std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     // TODO(p-nayak): why does this say 3s even when the robot is on its point?
-    auto latest_traj = robot_trajectories_->get(robot_id_);
+    // get the Traj out of the relevant [Trajectory, priority] tuple in
+    // robot_trajectories_
+    const auto latest_trajs = robot_trajectories_->get();
+    const auto& [latest_traj, priority] = latest_trajs.at(robot_id_);
     if (!latest_traj) {
         return std::nullopt;
     }
