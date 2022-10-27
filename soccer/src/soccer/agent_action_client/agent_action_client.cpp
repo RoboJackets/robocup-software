@@ -13,9 +13,8 @@ AgentActionClient::AgentActionClient()
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
-        "vision_filter/world_state", 1, [this](rj_msgs::msg::WorldState::SharedPtr msg) {
-            world_state_callback(msg);
-        });
+        "vision_filter/world_state", 1,
+        [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     // TODO: move this once coach node merged
     current_position_ = std::make_unique<Goalie>();
@@ -45,14 +44,31 @@ void AgentActionClient::get_task() {
     }
 
     auto task = current_position_->get_task();
-    if (task != latest_task_) {
-        latest_task_ = task;
-        send_goal();
+    if (task != last_task_) {
+        last_task_ = task;
+        send_new_goal();
     }
 }
 
-void AgentActionClient::send_goal() {
-    SPDLOG_INFO("latest_task_: {}", latest_task_.robot_id);
+/* void AgentActionClient::cancel_last_goal() { */
+/*     if (client_ptr_ == nullptr || last_goal_handle_ == nullptr) { */
+/*         return; */
+/*     } */
+/*     using namespace std::placeholders; */
+/*     auto cancel_future = client_ptr_->async_cancel_goal( */
+/*         last_goal_handle_, std::bind(&AgentActionClient::cancel_goal_callback, this, _1)); */
+/*     // TODO: do something with this future? */
+/* } */
+
+/* void AgentActionClient::cancel_goal_callback( */
+/*     rclcpp_action::Client<RobotMove>::CancelResponse::SharedPtr) { */
+/*     // TODO: worry about the cancelresponse? */
+/*     // TODO: would this generate race cond? */
+/*     last_goal_handle_ = nullptr; */
+/* } */
+
+void AgentActionClient::send_new_goal() {
+    SPDLOG_INFO("last_task_ from robot id: {}", last_task_.robot_id);
 
     using namespace std::placeholders;
 
@@ -62,7 +78,7 @@ void AgentActionClient::send_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = latest_task_;
+    goal_msg.robot_intent = last_task_;
 
     SPDLOG_ERROR("Sending goal");
 
@@ -89,7 +105,6 @@ void AgentActionClient::goal_response_callback(
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    // SPDLOG_INFO("Time left: {}", time_left);
     current_position_->tell_time_left(time_left);
 }
 

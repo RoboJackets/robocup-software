@@ -59,11 +59,19 @@ private:
     /*
      * @brief send a goal to the planning ActionServer, based on the Position's get_task().
      */
-    void send_goal();
+    void send_new_goal();
+
+    // TODO(#1957): add back this if needed, or delete
+    // cancel latest goal every time a new goal comes in, to avoid overloading memory with many
+    // threads
+    /* void cancel_last_goal(); */
+    // after goal is asynchronously canceled, reset last_goal_handle_
+    /* void cancel_goal_callback(rclcpp_action::Client<RobotMove>::CancelResponse::SharedPtr); */
+    /* GoalHandleRobotMove::SharedPtr last_goal_handle_; */
 
     rclcpp::TimerBase::SharedPtr get_task_timer_;
     void get_task();
-    rj_msgs::msg::RobotIntent latest_task_;
+    rj_msgs::msg::RobotIntent last_task_;
 
 };  // class AgentActionClient
 

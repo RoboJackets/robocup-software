@@ -27,6 +27,12 @@ namespace strategy {
 class Position {
 public:
     Position();
+    virtual ~Position() = default;
+
+    Position(Position&&) noexcept = default;
+    Position& operator=(Position&&) noexcept = default;
+    Position(const Position&) = default;
+    Position& operator=(const Position&) = default;
 
     // communication with AC
     // TODO: heavily coupled, how fix?
@@ -38,12 +44,15 @@ public:
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
 
 protected:
-    std::string position_name_;
+    std::string position_name_{"Position"};
 
-    bool is_done_;
-    double time_left_;
-    bool goal_canceled_;
-    WorldState latest_world_state_;
+    bool is_done_{};
+    double time_left_{};
+    bool goal_canceled_{};
+
+    WorldState last_world_state_;
+    mutable std::mutex world_state_mutex_;
+    [[nodiscard]] WorldState* world_state();
 
     // return value of is_done_ and set to false
     bool check_is_done();
