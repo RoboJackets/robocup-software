@@ -61,8 +61,7 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
     bool& is_executing = robot_task.is_executing;
     if (is_executing) {
         robot_task.new_task_waiting_signal = true;
-        robot_task.execute_cleared.wait(lock );
-        robot_task.new_task_waiting_signal = false;
+        robot_task.execute_cleared.wait(lock, [robot_task.new_task_waiting_signal] {return !robot_task.new_task_waiting_signal;});
     }
     is_executing = true;
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
@@ -109,8 +108,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
                 result->is_done = false;
                 goal_handle->abort(result);
                 new_task_ready = false;
-                lock.release();
-                robot_task.execute_cleared.notify_all();
+                robot_task.execute_cleared.notify_one();
                 break;
             }
 
