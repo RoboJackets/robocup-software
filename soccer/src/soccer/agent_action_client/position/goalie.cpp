@@ -14,37 +14,27 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     }
 
     rj_msgs::msg::RobotIntent intent;
-    intent.robot_id = 2;
-    auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-
-    double x = 2.0;
-    if (move_ct % 2 == 1) {
-        x = 4.0;
-    }
-
-    auto pt = rj_geometry::Point(x, 3.0);
-    ptmc.target.position = rj_convert::convert_to_ros(pt);
-    auto vel = rj_geometry::Point(0.0, 0.0);
-    ptmc.target.velocity = rj_convert::convert_to_ros(vel);
-    auto face_pt = rj_geometry::Point(1.0, 1.0);
-    ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
-
-    intent.motion_command.path_target_command = {ptmc};
-    return intent;
+    intent.robot_id = 0;
 
     // thread-safe getter
-    /* WorldState* world_state = this->world_state(); */
+    WorldState* world_state = this->world_state();
 
-    /* if (world_state == nullptr) { */
-    /*     rj_msgs::msg::RobotIntent intent; */
-    /*     intent.robot_id = 0; */
-    /*     auto empty = rj_msgs::msg::EmptyMotionCommand{}; */
-    /*     intent.motion_command.empty_command = {empty}; */
-    /*     return intent; */
-    /* } */
+    if (world_state == nullptr) {
+         auto empty = rj_msgs::msg::EmptyMotionCommand{};
+         intent.motion_command.empty_command = {empty};
+    } else {
+        auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
+        auto pt = get_block_pt(world_state);
+        ptmc.target.position = rj_convert::convert_to_ros(pt);
+        auto face_pt = rj_geometry::Point(1.0, 1.0);
+        ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
+        intent.motion_command.path_target_command = {ptmc};
+    }
+
+    return intent;
 }
 
-rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
+    rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
     // TODO: make intercept planner do what its header file does, so we don't need this
     // also, fix the intercept planner so we don't have to pass in the ball
     // point every tick
@@ -69,6 +59,7 @@ rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
     }
 
     rj_geometry::Point block_pt{cross_x, 0.0};
+    SPDLOG_INFO("block pt {}, {}", block_pt.x(), block_pt.y());
     return block_pt;
 }
 

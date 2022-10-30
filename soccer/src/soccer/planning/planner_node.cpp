@@ -47,12 +47,24 @@ PlannerNode::PlannerNode()
 rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                      std::shared_ptr<const RobotMove::Goal> goal) {
     (void)uuid;
+    auto delay = std::chrono::milliseconds(1000 / 60);
+    rclcpp::Rate loop_rate(delay);
 
     // TODO(p-nayak): REJECT duplicate goal requests so we aren't constantly replanning them
 
     // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
 
+    int robot_id = goal->robot_intent.robot_id;
     SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
+    auto& robot_task = server_task_states_.at(robot_id);
+    std::unique_lock lock{robot_task.mutex};
+    bool& is_executing = robot_task.is_executing;
+    if (is_executing) {
+        robot_task.new_task_waiting_signal = true;
+        robot_task.execute_cleared.wait(lock );
+        robot_task.new_task_waiting_signal = false;
+    }
+    is_executing = true;
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
@@ -84,36 +96,54 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
     int robot_id = goal->robot_intent.robot_id;
     std::shared_ptr<PlannerForRobot> my_robot_planner = robots_planners_[robot_id];
 
+    auto& robot_task = server_task_states_.at(robot_id);
+
     // loop until goal is done (SUCCEEDED or CANCELED)
     for (;;) {
-        // if the ActionClient is trying to cancel the goal, cancel it & terminate early
-        if (goal_handle->is_canceling()) {
-            result->is_done = false;
-            goal_handle->canceled(result);
-            return;
-        }
+        // check if there is a new goal
+        {
+            std::unique_lock lock{robot_task.mutex};
+            bool& new_task_ready = robot_task.new_task_waiting_signal;
 
-        // pub Trajectory based on the RobotIntent
-        my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
+            if (new_task_ready) {
+                result->is_done = false;
+                goal_handle->abort(result);
+                new_task_ready = false;
+                lock.release();
+                robot_task.execute_cleared.notify_all();
+                break;
+            }
 
-        // send feedback
-        std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-        if (auto time_left = my_robot_planner->get_time_left()) {
-            feedback->time_left = rj_convert::convert_to_ros(time_left.value());
-            goal_handle->publish_feedback(feedback);
-        }
+            // if the ActionClient is trying to cancel the goal, cancel it & terminate early
+            if (goal_handle->is_canceling()) {
+                result->is_done = false;
+                goal_handle->canceled(result);
+                break;
+            }
 
-        // when done, tell client goal is done, break loop
-        // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
-        if (my_robot_planner->is_done()) {
-            if (rclcpp::ok()) {
-                result->is_done = true;
-                goal_handle->succeed(result);
-                return;
+            // pub Trajectory based on the RobotIntent
+            my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
+
+            // send feedback
+            std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
+            if (auto time_left = my_robot_planner->get_time_left()) {
+                feedback->time_left = rj_convert::convert_to_ros(time_left.value());
+                goal_handle->publish_feedback(feedback);
+            }
+
+            // when done, tell client goal is done, break loop
+            // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
+            if (my_robot_planner->is_done()) {
+                if (rclcpp::ok()) {
+                    result->is_done = true;
+                    goal_handle->succeed(result);
+                    break;
+                }
             }
         }
         loop_rate.sleep();
     }
+    robot_task.is_executing = false;
 }
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,

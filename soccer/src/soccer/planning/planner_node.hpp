@@ -1,6 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <boost/interprocess/sync/interprocess_condition.hpp>
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
+#include <boost/interprocess/sync/scoped_lock.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 // for ROS actions
@@ -234,7 +237,6 @@ private:
     TrajectoryCollection robot_trajectories_;
     SharedStateInfo shared_state_;
     ::params::LocalROS2ParamProvider param_provider_;
-
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action
     rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
@@ -250,6 +252,18 @@ private:
      * done. Blocking (as in, will loop until complete).
      */
     void execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
+
+    struct ServerTaskState {
+        ServerTaskState() : mutex(), execute_cleared() {}
+        ~ServerTaskState() = default;
+        // make clear that there's no copy constructor
+        ServerTaskState(ServerTaskState const &state) = delete;
+        std::mutex mutex;
+        std::condition_variable execute_cleared;
+        bool is_executing{false};
+        bool new_task_waiting_signal{false};
+    };
+    std::array<ServerTaskState, kNumShells> server_task_states_;
 };
 
 }  // namespace planning
