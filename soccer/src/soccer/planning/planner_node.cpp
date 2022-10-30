@@ -59,9 +59,10 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
     auto& robot_task = server_task_states_.at(robot_id);
     std::unique_lock lock{robot_task.mutex};
     bool& is_executing = robot_task.is_executing;
+    bool& new_task_waiting_signal = robot_task.new_task_waiting_signal;
     if (is_executing) {
         robot_task.new_task_waiting_signal = true;
-        robot_task.execute_cleared.wait(lock, [robot_task.new_task_waiting_signal] {return !robot_task.new_task_waiting_signal;});
+        robot_task.execute_cleared.wait(lock, [new_task_waiting_signal] {return !new_task_waiting_signal;});
     }
     is_executing = true;
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
