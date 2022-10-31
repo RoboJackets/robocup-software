@@ -170,6 +170,12 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_robocup",
+                executable="testing_node",
+                output="screen",
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
                 executable="planner_node",
                 output="screen",
                 parameters=[param_config_filepath],

@@ -86,6 +86,7 @@ add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
 add_executable(coach_node)
+add_executable(testing_node)
 add_executable(robot_action_client_node)
 
 if(BUILD_TESTING)
@@ -173,6 +174,9 @@ set(REFEREE_NODE_DEPS_LIBRARIES robocup)
 set(COACH_NODE_DEPS_SYSTEM_LIBRARIES)
 set(COACH_NODE_DEPS_LIBRARIES robocup)
 
+set(TESTING_NODE_DEPS_SYSTEM_LIBRARIES)
+set(TESTING_NODE_DEPS_LIBRARIES robocup)
+
 set(RADIO_NODE_DEPS_SYSTEM_LIBRARIES)
 set(RADIO_NODE_DEPS_LIBRARIES robocup)
 
@@ -231,6 +235,9 @@ target_link_libraries(sim_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
 
 target_link_libraries(coach_node PRIVATE ${COACH_NODE_DEPS_SYSTEM_LIBRARIES}
         ${COACH_NODE_DEPS_LIBRARIES})
+
+target_link_libraries(testing_node PRIVATE ${TESTING_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${TESTING_NODE_DEPS_LIBRARIES})
 
 # -- network_radio_node --
 target_link_libraries(network_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
@@ -297,6 +304,7 @@ install(
         control_node
         sim_radio_node
         coach_node
+        testing_node
         network_radio_node
         manual_control_node
         global_param_server_node
