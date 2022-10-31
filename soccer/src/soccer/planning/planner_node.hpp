@@ -1,9 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <boost/interprocess/sync/interprocess_condition.hpp>
-#include <boost/interprocess/sync/interprocess_mutex.hpp>
-#include <boost/interprocess/sync/scoped_lock.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 // for ROS actions
@@ -254,7 +251,7 @@ private:
     void execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
 
     struct ServerTaskState {
-        ServerTaskState() : mutex(), execute_cleared() {}
+        ServerTaskState() = default;
         ~ServerTaskState() = default;
         // make clear that there's no copy constructor
         ServerTaskState(ServerTaskState const &state) = delete;

@@ -47,7 +47,7 @@ PlannerNode::PlannerNode()
 rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                      std::shared_ptr<const RobotMove::Goal> goal) {
     (void)uuid;
-    auto delay = std::chrono::milliseconds(1000 / 60);
+    auto delay = std::chrono::milliseconds(1000 / 120);
     rclcpp::Rate loop_rate(delay);
 
     // TODO(p-nayak): REJECT duplicate goal requests so we aren't constantly replanning them
@@ -57,13 +57,17 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
     int robot_id = goal->robot_intent.robot_id;
     SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
     auto& robot_task = server_task_states_.at(robot_id);
-    std::unique_lock lock{robot_task.mutex};
+    /* std::unique_lock lock{robot_task.mutex}; */
     bool& is_executing = robot_task.is_executing;
     bool& new_task_waiting_signal = robot_task.new_task_waiting_signal;
-    if (is_executing) {
-        robot_task.new_task_waiting_signal = true;
-        robot_task.execute_cleared.wait(lock, [new_task_waiting_signal] {return !new_task_waiting_signal;});
+    while (is_executing) {
+        // new_task_waiting_signal = true;
+        new_task_waiting_signal = true;
+        // robot_task.execute_cleared.wait(lock, [new_task_waiting_signal] {return !new_task_waiting_signal;});
+        //
+        loop_rate.sleep();
     }
+    new_task_waiting_signal = false;
     is_executing = true;
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
@@ -85,7 +89,7 @@ void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goa
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // TODO: rate-limit loop to whatever hz planning is limited to
-    auto delay = std::chrono::milliseconds(1000 / 60);
+    auto delay = std::chrono::milliseconds(1000 / 240);
     rclcpp::Rate loop_rate(delay);
 
     // create ptrs to Goal, Result objects per ActionServer API
@@ -102,14 +106,13 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
     for (;;) {
         // check if there is a new goal
         {
-            std::unique_lock lock{robot_task.mutex};
+            /* std::unique_lock lock{robot_task.mutex}; */
             bool& new_task_ready = robot_task.new_task_waiting_signal;
 
             if (new_task_ready) {
                 result->is_done = false;
                 goal_handle->abort(result);
-                new_task_ready = false;
-                robot_task.execute_cleared.notify_one();
+                // robot_task.execute_cleared.notify_one();
                 break;
             }
 
