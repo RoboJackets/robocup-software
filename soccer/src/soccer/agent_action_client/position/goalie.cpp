@@ -20,8 +20,8 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     WorldState* world_state = this->world_state();
 
     if (world_state == nullptr) {
-         auto empty = rj_msgs::msg::EmptyMotionCommand{};
-         intent.motion_command.empty_command = {empty};
+        auto empty = rj_msgs::msg::EmptyMotionCommand{};
+        intent.motion_command.empty_command = {empty};
     } else {
         auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
         auto pt = get_block_pt(world_state);
@@ -34,7 +34,7 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     return intent;
 }
 
-    rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
+rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
     // TODO: make intercept planner do what its header file does, so we don't need this
     // also, fix the intercept planner so we don't have to pass in the ball
     // point every tick

@@ -254,11 +254,9 @@ private:
         ServerTaskState() = default;
         ~ServerTaskState() = default;
         // make clear that there's no copy constructor
-        ServerTaskState(ServerTaskState const &state) = delete;
-        std::mutex mutex;
-        std::condition_variable execute_cleared;
-        bool is_executing{false};
-        bool new_task_waiting_signal{false};
+        ServerTaskState(ServerTaskState const& state) = delete;
+        std::atomic_bool is_executing{false};
+        std::atomic_bool new_task_waiting_signal{false};
     };
     std::array<ServerTaskState, kNumShells> server_task_states_;
 };

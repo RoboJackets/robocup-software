@@ -57,14 +57,10 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
     int robot_id = goal->robot_intent.robot_id;
     SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
     auto& robot_task = server_task_states_.at(robot_id);
-    /* std::unique_lock lock{robot_task.mutex}; */
-    bool& is_executing = robot_task.is_executing;
-    bool& new_task_waiting_signal = robot_task.new_task_waiting_signal;
+    auto& is_executing = robot_task.is_executing;
+    auto& new_task_waiting_signal = robot_task.new_task_waiting_signal;
     while (is_executing) {
-        // new_task_waiting_signal = true;
         new_task_waiting_signal = true;
-        // robot_task.execute_cleared.wait(lock, [new_task_waiting_signal] {return !new_task_waiting_signal;});
-        //
         loop_rate.sleep();
     }
     new_task_waiting_signal = false;
@@ -104,43 +100,38 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
     // loop until goal is done (SUCCEEDED or CANCELED)
     for (;;) {
+        auto& new_task_ready = robot_task.new_task_waiting_signal;
         // check if there is a new goal
-        {
-            /* std::unique_lock lock{robot_task.mutex}; */
-            bool& new_task_ready = robot_task.new_task_waiting_signal;
+        if (new_task_ready) {
+            result->is_done = false;
+            goal_handle->abort(result);
+            break;
+        }
 
-            if (new_task_ready) {
-                result->is_done = false;
-                goal_handle->abort(result);
-                // robot_task.execute_cleared.notify_one();
+        // if the ActionClient is trying to cancel the goal, cancel it & terminate early
+        if (goal_handle->is_canceling()) {
+            result->is_done = false;
+            goal_handle->canceled(result);
+            break;
+        }
+
+        // pub Trajectory based on the RobotIntent
+        my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
+
+        // send feedback
+        std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
+        if (auto time_left = my_robot_planner->get_time_left()) {
+            feedback->time_left = rj_convert::convert_to_ros(time_left.value());
+            goal_handle->publish_feedback(feedback);
+        }
+
+        // when done, tell client goal is done, break loop
+        // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
+        if (my_robot_planner->is_done()) {
+            if (rclcpp::ok()) {
+                result->is_done = true;
+                goal_handle->succeed(result);
                 break;
-            }
-
-            // if the ActionClient is trying to cancel the goal, cancel it & terminate early
-            if (goal_handle->is_canceling()) {
-                result->is_done = false;
-                goal_handle->canceled(result);
-                break;
-            }
-
-            // pub Trajectory based on the RobotIntent
-            my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
-
-            // send feedback
-            std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-            if (auto time_left = my_robot_planner->get_time_left()) {
-                feedback->time_left = rj_convert::convert_to_ros(time_left.value());
-                goal_handle->publish_feedback(feedback);
-            }
-
-            // when done, tell client goal is done, break loop
-            // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
-            if (my_robot_planner->is_done()) {
-                if (rclcpp::ok()) {
-                    result->is_done = true;
-                    goal_handle->succeed(result);
-                    break;
-                }
             }
         }
         loop_rate.sleep();
