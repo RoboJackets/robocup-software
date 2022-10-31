@@ -176,7 +176,7 @@ public:
      * adds the == operator
      */
     [[nodiscard]] bool operator==(Point other) const {
-        return x() == other.x() && y() == other.y();
+        return this->nearly_equals(other);
     }
 
     /**

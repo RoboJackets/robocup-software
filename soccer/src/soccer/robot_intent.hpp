@@ -28,6 +28,14 @@ struct RobotIntent {
     bool is_active = false;
 
     int8_t priority = 0;
+
+    bool operator==(const RobotIntent r){
+        // if motion_command is a PathTargetCommand
+        if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
+            return std::get<planning::PathTargetCommand>(motion_command) == std::get<planning::PathTargetCommand>(r.motion_command);
+        }
+        return this == &r;
+    }
 };
 
 namespace rj_convert {

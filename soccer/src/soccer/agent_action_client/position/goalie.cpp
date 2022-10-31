@@ -26,10 +26,15 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
         auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
         auto pt = get_block_pt(world_state);
         ptmc.target.position = rj_convert::convert_to_ros(pt);
-        auto face_pt = rj_geometry::Point(1.0, 1.0);
+
+        rj_geometry::Point ball_pos = world_state->ball.position;
+        auto face_pt = ball_pos;
         ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
+        ptmc.ignore_ball = true;
         intent.motion_command.path_target_command = {ptmc};
     }
+    // TODO: capture ball if vel is slow & ball is inside box
+    // (waiting on field pts to be given to world_state)
 
     return intent;
 }
@@ -71,7 +76,7 @@ rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) {
     rj_geometry::Point goal_pt{0.0, 0.0};
 
     // TODO: move closer/farther from ball as a linear % of distance from ball
-    double goalie_dist = 0.15;
+    double goalie_dist = 0.5;
     rj_geometry::Point idle_pt = (ball_pos - goal_pt).norm();
     idle_pt *= goalie_dist;
     // TODO: clamp y to 0
