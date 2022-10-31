@@ -85,7 +85,7 @@ void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goa
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // TODO: rate-limit loop to whatever hz planning is limited to
-    auto delay = std::chrono::milliseconds(1000 / 240);
+    auto delay = std::chrono::milliseconds(1000 / 120);
     rclcpp::Rate loop_rate(delay);
 
     // create ptrs to Goal, Result objects per ActionServer API

@@ -71,6 +71,8 @@ set(ROBOCUP_LIB_SRC
     agent_action_client/agent_action_client.cpp
     agent_action_client/position/position.cpp
     agent_action_client/position/goalie.cpp
+    agent_action_client/position/offense.cpp
+    agent_action_client/position/defense.cpp
         )
 
 set(SOCCER_TEST_SRC
