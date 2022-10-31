@@ -47,12 +47,24 @@ PlannerNode::PlannerNode()
 rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                      std::shared_ptr<const RobotMove::Goal> goal) {
     (void)uuid;
+    auto delay = std::chrono::milliseconds(1000 / 120);
+    rclcpp::Rate loop_rate(delay);
 
     // TODO(p-nayak): REJECT duplicate goal requests so we aren't constantly replanning them
 
     // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
 
+    int robot_id = goal->robot_intent.robot_id;
     SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
+    auto& robot_task = server_task_states_.at(robot_id);
+    auto& is_executing = robot_task.is_executing;
+    auto& new_task_waiting_signal = robot_task.new_task_waiting_signal;
+    while (is_executing) {
+        new_task_waiting_signal = true;
+        loop_rate.sleep();
+    }
+    new_task_waiting_signal = false;
+    is_executing = true;
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
@@ -73,7 +85,7 @@ void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goa
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // TODO: rate-limit loop to whatever hz planning is limited to
-    auto delay = std::chrono::milliseconds(1000 / 60);
+    auto delay = std::chrono::milliseconds(1000 / 240);
     rclcpp::Rate loop_rate(delay);
 
     // create ptrs to Goal, Result objects per ActionServer API
@@ -84,13 +96,23 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
     int robot_id = goal->robot_intent.robot_id;
     std::shared_ptr<PlannerForRobot> my_robot_planner = robots_planners_[robot_id];
 
+    auto& robot_task = server_task_states_.at(robot_id);
+
     // loop until goal is done (SUCCEEDED or CANCELED)
     for (;;) {
+        auto& new_task_ready = robot_task.new_task_waiting_signal;
+        // check if there is a new goal
+        if (new_task_ready) {
+            result->is_done = false;
+            goal_handle->abort(result);
+            break;
+        }
+
         // if the ActionClient is trying to cancel the goal, cancel it & terminate early
         if (goal_handle->is_canceling()) {
             result->is_done = false;
             goal_handle->canceled(result);
-            return;
+            break;
         }
 
         // pub Trajectory based on the RobotIntent
@@ -109,11 +131,12 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
             if (rclcpp::ok()) {
                 result->is_done = true;
                 goal_handle->succeed(result);
-                return;
+                break;
             }
         }
         loop_rate.sleep();
     }
+    robot_task.is_executing = false;
 }
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,

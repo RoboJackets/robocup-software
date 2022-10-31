@@ -39,13 +39,13 @@ private:
      * @return Point for Goalie to block a shot. Calls get_idle_pt() if ball is
      * slow or shot will miss the goal.
      */
-    rj_geometry::Point get_block_pt(WorldState* world_state);
+    static rj_geometry::Point get_block_pt(WorldState* world_state);
 
     /*
      * @return Point for Goalie to stand in when no shot is coming. Expects
      * ball to be slow.
      */
-    rj_geometry::Point get_idle_pt(WorldState* world_state);
+    static rj_geometry::Point get_idle_pt(WorldState* world_state);
 };
 
 }  // namespace strategy

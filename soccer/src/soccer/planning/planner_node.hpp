@@ -234,7 +234,6 @@ private:
     TrajectoryCollection robot_trajectories_;
     SharedStateInfo shared_state_;
     ::params::LocalROS2ParamProvider param_provider_;
-
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action
     rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
@@ -250,6 +249,16 @@ private:
      * done. Blocking (as in, will loop until complete).
      */
     void execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
+
+    struct ServerTaskState {
+        ServerTaskState() = default;
+        ~ServerTaskState() = default;
+        // make clear that there's no copy constructor
+        ServerTaskState(ServerTaskState const& state) = delete;
+        std::atomic_bool is_executing{false};
+        std::atomic_bool new_task_waiting_signal{false};
+    };
+    std::array<ServerTaskState, kNumShells> server_task_states_;
 };
 
 }  // namespace planning
