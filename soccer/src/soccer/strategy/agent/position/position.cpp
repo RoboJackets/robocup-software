@@ -33,12 +33,12 @@ void Position::update_world_state(WorldState world_state) {
     last_world_state_ = std::move(world_state);
 }
 
-// TODO: this is not thread-safe, does it need to be?
 void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
-    int match_situation = msg.match_situation;  // TODO: this is an enum, get from coach_node
-    bool our_possession = msg.our_possession;
-    rj_msgs::msg::GlobalOverride global_override = msg.global_override;
-    SPDLOG_INFO("match_situation {}, our_possession {}", match_situation, our_possession);
+    match_situation_ = msg.match_situation;
+    our_possession_ = msg.our_possession;
+    // TODO: how is planner supposed to get this global override info?
+    global_override_ = msg.global_override;
+    SPDLOG_INFO("match_situation {}, our_possession {}", match_situation_, our_possession_);
 }
 
 [[nodiscard]] WorldState* Position::world_state() {

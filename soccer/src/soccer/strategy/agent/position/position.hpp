@@ -53,6 +53,13 @@ protected:
     // field for tell_time_left() above
     double time_left_{};
 
+    // fields for coach_state
+    // TODO: this is not thread-safe, does it need to be?
+    // (if so match world_state below)
+    int match_situation_{};  // TODO: this is an enum, get from coach_node
+    bool our_possession_{};
+    rj_msgs::msg::GlobalOverride global_override_{};
+
     // make WorldState thread-safe
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
