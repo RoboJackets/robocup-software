@@ -8,6 +8,11 @@ rj_msgs::msg::RobotIntent Defense::get_task() {
     rj_msgs::msg::RobotIntent intent;
     intent.robot_id = 2;
 
+    if (check_is_done()) {
+        // toggle move pts
+        move_ct_++;
+    }
+
     // thread-safe getter
     WorldState* world_state = this->world_state();
 
@@ -15,9 +20,13 @@ rj_msgs::msg::RobotIntent Defense::get_task() {
         auto empty = rj_msgs::msg::EmptyMotionCommand{};
         intent.motion_command.empty_command = {empty};
     } else {
-        // move to a point
+        // oscillate between two points
         auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-        rj_geometry::Point pt{2.0, 3.0};
+        double x = -3.0;
+        if (move_ct_ % 2 == 1) {
+            x = 3.0;
+        }
+        rj_geometry::Point pt{x, 3.0};
         ptmc.target.position = rj_convert::convert_to_ros(pt);
 
         rj_geometry::Point ball_pos = world_state->ball.position;

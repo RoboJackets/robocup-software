@@ -13,11 +13,10 @@ rj_msgs::msg::RobotIntent Offense::get_task() {
 
     // TODO: move this nullptr check to the Position superclass
     if (world_state == nullptr) {
-        SPDLOG_INFO("empty");
+        SPDLOG_WARN("Empty WorldState!");
         auto empty = rj_msgs::msg::EmptyMotionCommand{};
         intent.motion_command.empty_command = {empty};
     } else {
-        SPDLOG_INFO("not empty");
         // FSM: kick -> move away -> repeat
         if (check_is_done()) {
             // switch from kicking -> not kicking or vice versa
@@ -27,14 +26,14 @@ rj_msgs::msg::RobotIntent Offense::get_task() {
         // when kicking, send kick
         // otherwise, send move command
         if (kicking_) {
-            // TODO: line kick is broken
+            // TODO(Kevin): line kick is broken, fix it
             /* auto lkmc = rj_msgs::msg::LineKickMotionCommand{}; */
             /* rj_geometry::Point ball_pos = world_state->ball.position; */
             /* lkmc.target = rj_convert::convert_to_ros(ball_pos); */
             /* intent.motion_command.line_kick_command = {lkmc}; */
 
             auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-            rj_geometry::Point back_pt{3.0, 1.0};
+            rj_geometry::Point back_pt{3.0, 6.0};
             ptmc.target.position = rj_convert::convert_to_ros(back_pt);
 
             // TODO(Kevin): this is still tick based, not event-driven, fix? or clarify somewhere
@@ -47,7 +46,7 @@ rj_msgs::msg::RobotIntent Offense::get_task() {
             intent.motion_command.path_target_command = {ptmc};
         } else {
             auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-            rj_geometry::Point back_pt{1.0, 1.0};
+            rj_geometry::Point back_pt{1.0, 7.0};
             ptmc.target.position = rj_convert::convert_to_ros(back_pt);
 
             rj_geometry::Point ball_pos = world_state->ball.position;

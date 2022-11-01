@@ -38,7 +38,6 @@ public:
     AgentActionClient();
 
 private:
-    // TODO: sub to worldstate, give callback access to Position
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
 
     // TODO(Kevin): communication module pub/sub here (e.g. passing)

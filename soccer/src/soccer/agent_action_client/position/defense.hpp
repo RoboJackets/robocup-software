@@ -31,6 +31,7 @@ public:
 
 protected:
 private:
+    int move_ct_ = 0;
 };
 
 }  // namespace strategy
