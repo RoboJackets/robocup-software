@@ -2,11 +2,17 @@
 
 namespace strategy {
 
-Defense::Defense() { position_name_ = "Defense"; }
+Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
 
 rj_msgs::msg::RobotIntent Defense::get_task() {
+    // init an intent with our robot id
     rj_msgs::msg::RobotIntent intent;
-    intent.robot_id = 2;
+    intent.robot_id = robot_id_;
+
+    // if world_state invalid, return empty_intent (filled by assert() call)
+    if (!assert_world_state_valid(intent)) {
+        return intent;
+    }
 
     if (check_is_done()) {
         // toggle move pts
@@ -16,25 +22,20 @@ rj_msgs::msg::RobotIntent Defense::get_task() {
     // thread-safe getter
     WorldState* world_state = this->world_state();
 
-    if (world_state == nullptr) {
-        auto empty = rj_msgs::msg::EmptyMotionCommand{};
-        intent.motion_command.empty_command = {empty};
-    } else {
-        // oscillate between two points
-        auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-        double x = -3.0;
-        if (move_ct_ % 2 == 1) {
-            x = 3.0;
-        }
-        rj_geometry::Point pt{x, 3.0};
-        ptmc.target.position = rj_convert::convert_to_ros(pt);
-
-        rj_geometry::Point ball_pos = world_state->ball.position;
-        auto face_pt = ball_pos;
-        ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
-        ptmc.ignore_ball = false;
-        intent.motion_command.path_target_command = {ptmc};
+    // oscillate between two points
+    auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
+    double x = -3.0;
+    if (move_ct_ % 2 == 1) {
+        x = 3.0;
     }
+    rj_geometry::Point pt{x, 3.0};
+    ptmc.target.position = rj_convert::convert_to_ros(pt);
+
+    rj_geometry::Point ball_pos = world_state->ball.position;
+    auto face_pt = ball_pos;
+    ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
+    ptmc.ignore_ball = false;
+    intent.motion_command.path_target_command = {ptmc};
 
     return intent;
 }

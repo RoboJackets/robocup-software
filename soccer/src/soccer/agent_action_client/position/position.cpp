@@ -2,13 +2,12 @@
 
 namespace strategy {
 
-Position::Position() {}
+Position::Position(int r_id) : robot_id_(r_id) {}
 
 void Position::tell_is_done() { is_done_ = true; }
 
 void Position::tell_time_left(double time_left) { time_left_ = time_left; }
 
-// TODO: use goal_canceled_ info
 void Position::tell_goal_canceled() { goal_canceled_ = true; }
 
 bool Position::check_is_done() {
@@ -38,6 +37,17 @@ void Position::update_world_state(WorldState world_state) {
     // thread-safe getter for world_state (see update_world_state())
     auto lock = std::lock_guard(world_state_mutex_);
     return &last_world_state_;
+}
+
+bool Position::assert_world_state_valid(rj_msgs::msg::RobotIntent& intent) {
+    WorldState* world_state = this->world_state();  // thread-safe getter
+    if (world_state == nullptr) {
+        SPDLOG_WARN("WorldState!");
+        auto empty = rj_msgs::msg::EmptyMotionCommand{};
+        intent.motion_command.empty_command = {empty};
+        return false;
+    }
+    return true;
 }
 
 }  // namespace strategy

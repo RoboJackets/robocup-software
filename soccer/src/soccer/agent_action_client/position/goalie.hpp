@@ -19,7 +19,7 @@ namespace strategy {
 // TODO: docstring
 class Goalie : public Position {
 public:
-    Goalie();
+    Goalie(int r_id);
     ~Goalie() override = default;
 
     Goalie(Goalie&&) noexcept = default;

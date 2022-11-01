@@ -2,19 +2,26 @@
 
 namespace strategy {
 
-Goalie::Goalie() {
+// TODO: lock Goalie id to id given by the ref
+Goalie::Goalie(int r_id) : Position(r_id) {
     position_name_ = "Goalie";
     SPDLOG_INFO("pos name {}", position_name_);
 }
 
 rj_msgs::msg::RobotIntent Goalie::get_task() {
+    // init an intent with our robot id
+    rj_msgs::msg::RobotIntent intent;
+    intent.robot_id = robot_id_;
+
+    // if world_state invalid, return empty_intent (filled by assert() call)
+    if (!assert_world_state_valid(intent)) {
+        return intent;
+    }
+
     if (check_is_done()) {
         SPDLOG_INFO("goalie says done!");
         move_ct++;
     }
-
-    rj_msgs::msg::RobotIntent intent;
-    intent.robot_id = 0;
 
     // thread-safe getter
     WorldState* world_state = this->world_state();

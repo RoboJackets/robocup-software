@@ -19,7 +19,7 @@ namespace strategy {
 // TODO: docstring
 class Defense : public Position {
 public:
-    Defense();
+    Defense(int r_id);
     ~Defense() override = default;
 
     Defense(Defense&&) noexcept = default;

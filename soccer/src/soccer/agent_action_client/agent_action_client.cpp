@@ -16,9 +16,6 @@ AgentActionClient::AgentActionClient()
         "vision_filter/world_state", 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
-    // TODO: move this once coach node merged
-    current_position_ = std::make_unique<Defense>();
-
     // TODO: link to planning hz
     // TODO: change this once coach node merged
     int hz = 120;
@@ -37,8 +34,9 @@ void AgentActionClient::world_state_callback(rj_msgs::msg::WorldState::SharedPtr
 
 void AgentActionClient::get_task() {
     // TODO: change this default to defense? or NOP?
+    // TODO: move this once coach node merged
     if (current_position_ == nullptr) {
-        current_position_ = std::make_unique<Defense>();
+        current_position_ = std::make_unique<Goalie>(2);
     }
 
     auto task = current_position_->get_task();
