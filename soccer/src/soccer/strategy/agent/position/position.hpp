@@ -23,7 +23,7 @@ namespace strategy {
  * (PathTargetPlanner, etc.). The Planner objects take in a plan request and
  * output a Trajectory. This class is sadly more coupled with the ActionClient
  * it lives in than the Planner objects, but this is necessary to have a
- * flexible agent while still giving access to ROS features.
+ * flexible agent that still has access to ROS info.
  */
 class Position {
 public:

@@ -12,13 +12,13 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
-#include "agent_action_client/position/defense.hpp"
-#include "agent_action_client/position/goalie.hpp"
-#include "agent_action_client/position/offense.hpp"
-#include "agent_action_client/position/position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "strategy/agent/position/defense.hpp"
+#include "strategy/agent/position/goalie.hpp"
+#include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/position.hpp"
 #include "world_state.hpp"
 
 namespace strategy {

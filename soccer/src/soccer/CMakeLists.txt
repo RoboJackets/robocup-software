@@ -68,11 +68,11 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/referee_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
-    agent_action_client/agent_action_client.cpp
-    agent_action_client/position/position.cpp
-    agent_action_client/position/goalie.cpp
-    agent_action_client/position/offense.cpp
-    agent_action_client/position/defense.cpp
+    strategy/agent/agent_action_client.cpp
+    strategy/agent/position/position.cpp
+    strategy/agent/position/goalie.cpp
+    strategy/agent/position/offense.cpp
+    strategy/agent/position/defense.cpp
         )
 
 set(SOCCER_TEST_SRC
@@ -117,7 +117,7 @@ set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
-set(AGENT_ACTION_CLIENT_NODE_SRC agent_action_client/agent_action_client_main.cpp)
+set(AGENT_ACTION_CLIENT_NODE_SRC strategy/agent/agent_action_client_main.cpp)
 
 # ======================================================================
 # Add sources
