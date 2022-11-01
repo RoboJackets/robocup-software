@@ -41,9 +41,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
 
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
-
-    // TODO(Kevin): sub to coach node, once merged
-    // TODO(Kevin): move this folder to strategy/, once coach merged
+    // TODO sub to coach
 
     std::unique_ptr<Position> current_position_;
 

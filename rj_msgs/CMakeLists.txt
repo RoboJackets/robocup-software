@@ -25,7 +25,7 @@ rosidl_generate_interfaces(
   # Messages
   msg/BallState.msg
   msg/BallPlacement.msg
-  msg/CoachStateInterpretation.msg
+  msg/CoachState.msg
   msg/DetectionBall.msg
   msg/DetectionFrame.msg
   msg/DetectionRobot.msg

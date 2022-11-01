@@ -2,7 +2,7 @@
 
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
-        this->create_publisher<rj_msgs::msg::CoachStateInterpretation>("/strategy/coach_state", 10);
+        this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
     play_state_change_timer_ =
         this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
 
@@ -76,7 +76,7 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
 
 void CoachNode::check_for_play_state_change() {
     if (play_state_has_changed_) {
-        rj_msgs::msg::CoachStateInterpretation coach_message;
+        rj_msgs::msg::CoachState coach_message;
 
         switch (current_play_state_.restart) {
             case PlayState::Restart::Placement:
