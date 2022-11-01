@@ -98,24 +98,24 @@ void CoachNode::check_for_play_state_change() {
             coach_message.match_situation = MatchSituation::in_play;
         }
 
-        rj_msgs::msg::GlobalOverride override;
+        rj_msgs::msg::GlobalOverride global_override;
 
         switch (current_play_state_.state) {
             case PlayState::State::Halt:
-                override.max_speed = 0;
-                override.min_dist_from_ball = 0;
+                global_override.max_speed = 0;
+                global_override.min_dist_from_ball = 0;
                 break;
             case PlayState::State::Stop:
-                override.max_speed = 1.5;
-                override.min_dist_from_ball = 0.5;
+                global_override.max_speed = 1.5;
+                global_override.min_dist_from_ball = 0.5;
                 break;
             case PlayState::State::Playing:
-                override.max_speed = -1;
-                override.min_dist_from_ball = 0;
+                global_override.max_speed = -1;
+                global_override.min_dist_from_ball = 0;
         }
 
         // publish new necessary information
-        coach_message.override = override;
+        coach_message.global_override = global_override;
 
         coach_message.our_possession = possessing_;
 

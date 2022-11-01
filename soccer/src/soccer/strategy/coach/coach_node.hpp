@@ -24,13 +24,12 @@ enum MatchSituation {
 };
 
 /**
- * @brief The coach node subscribes to the /referee/playstate topic and translates this data
- * into pertinent information before sending it to another topic (/strategy/coach) for the robots
- * to use.
- *
- * In short, this node takes the referee information and standardizes it for consumption of the
+ * @brief This node takes the referee information and standardizes it for consumption of the
  * individual robot agents.
  *
+ * The coach node subscribes to the /referee/playstate topic and translates this data
+ * into pertinent information before sending it to another topic (/strategy/coach) for the robots
+ * to use.
  */
 class CoachNode : public rclcpp::Node {
 public:

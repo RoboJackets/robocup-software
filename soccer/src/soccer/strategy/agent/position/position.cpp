@@ -33,6 +33,14 @@ void Position::update_world_state(WorldState world_state) {
     last_world_state_ = std::move(world_state);
 }
 
+// TODO: this is not thread-safe, does it need to be?
+void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
+    int match_situation = msg.match_situation;  // TODO: this is an enum, get from coach_node
+    bool our_possession = msg.our_possession;
+    rj_msgs::msg::GlobalOverride global_override = msg.global_override;
+    SPDLOG_INFO("match_situation {}, our_possession {}", match_situation, our_possession);
+}
+
 [[nodiscard]] WorldState* Position::world_state() {
     // thread-safe getter for world_state (see update_world_state())
     auto lock = std::lock_guard(world_state_mutex_);

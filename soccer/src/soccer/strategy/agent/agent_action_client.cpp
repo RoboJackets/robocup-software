@@ -16,6 +16,10 @@ AgentActionClient::AgentActionClient()
         "vision_filter/world_state", 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
+    coach_state_sub_ = create_subscription<rj_msgs::msg::CoachState>(
+        "strategy/coach_state", 1,
+        [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
+
     // TODO: link to planning hz
     // TODO: change this once coach node merged
     int hz = 120;
@@ -32,11 +36,19 @@ void AgentActionClient::world_state_callback(rj_msgs::msg::WorldState::SharedPtr
     current_position_->update_world_state(world_state);
 }
 
+void AgentActionClient::coach_state_callback(rj_msgs::msg::CoachState::SharedPtr msg) {
+    if (current_position_ == nullptr) {
+        return;
+    }
+
+    current_position_->update_coach_state(*msg);
+}
+
 void AgentActionClient::get_task() {
     // TODO: change this default to defense? or NOP?
     // TODO: move this once coach node merged
     if (current_position_ == nullptr) {
-        current_position_ = std::make_unique<Goalie>(2);
+        current_position_ = std::make_unique<Offense>(2);
     }
 
     auto task = current_position_->get_task();
@@ -64,8 +76,6 @@ void AgentActionClient::get_task() {
 /* } */
 
 void AgentActionClient::send_new_goal() {
-    SPDLOG_INFO("last_task_ from robot id: {}", last_task_.robot_id);
-
     using namespace std::placeholders;
 
     if (!client_ptr_->wait_for_action_server()) {
@@ -75,8 +85,6 @@ void AgentActionClient::send_new_goal() {
 
     auto goal_msg = RobotMove::Goal();
     goal_msg.robot_intent = last_task_;
-
-    SPDLOG_ERROR("Sending goal");
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback =
@@ -92,9 +100,6 @@ void AgentActionClient::goal_response_callback(
     auto goal_handle = future.get();
     if (!goal_handle) {
         current_position_->tell_goal_canceled();
-        SPDLOG_ERROR("Goal was rejected by server");
-    } else {
-        SPDLOG_INFO("Goal accepted by server, waiting for result");
     }
 }
 
@@ -109,19 +114,15 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
             current_position_->tell_is_done();
-            SPDLOG_ERROR("Goal succeeded!");
             break;
         case rclcpp_action::ResultCode::ABORTED:
-            SPDLOG_ERROR("Goal was aborted");
             return;
         case rclcpp_action::ResultCode::CANCELED:
-            SPDLOG_ERROR("Goal was canceled");
             return;
         default:
-            SPDLOG_ERROR("Unknown result code");
             return;
     }
-    SPDLOG_INFO("Result received: {}", result.result->is_done);
+    /* SPDLOG_INFO("Result received: {}", result.result->is_done); */
 }
 
 }  // namespace strategy

@@ -9,6 +9,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/time.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
@@ -38,10 +39,14 @@ public:
     AgentActionClient();
 
 private:
+    // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-
+    rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
-    // TODO sub to coach
+
+    // callbacks for subs
+    void world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg);
+    void coach_state_callback(rj_msgs::msg::CoachState::SharedPtr msg);
 
     std::unique_ptr<Position> current_position_;
 
@@ -52,7 +57,6 @@ private:
                            const std::shared_ptr<const RobotMove::Feedback> feedback);
 
     void result_callback(const GoalHandleRobotMove::WrappedResult& result);
-    void world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg);
 
     // TODO: doc
     /*

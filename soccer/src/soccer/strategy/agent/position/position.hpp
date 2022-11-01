@@ -5,7 +5,9 @@
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
+#include <rj_msgs/msg/global_override.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -40,6 +42,7 @@ public:
     void tell_time_left(double time_left);
     void tell_goal_canceled();
     void update_world_state(WorldState world_state);
+    void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
 

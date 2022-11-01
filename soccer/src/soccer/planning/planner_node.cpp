@@ -55,7 +55,6 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
     // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
 
     int robot_id = goal->robot_intent.robot_id;
-    SPDLOG_ERROR("robot id {} sent goal", goal->robot_intent.robot_id);
     auto& robot_task = server_task_states_.at(robot_id);
     auto& is_executing = robot_task.is_executing;
     auto& new_task_waiting_signal = robot_task.new_task_waiting_signal;
@@ -72,7 +71,6 @@ rclcpp_action::CancelResponse PlannerNode::handle_cancel(
     const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     (void)goal_handle;
     std::shared_ptr<const RobotMove::Goal> goal = goal_handle->get_goal();
-    SPDLOG_ERROR("action server canceled goal from robot: {}", goal->robot_intent.robot_id);
     return rclcpp_action::CancelResponse::ACCEPT;
 }
 
