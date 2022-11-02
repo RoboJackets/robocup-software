@@ -168,8 +168,8 @@ void PlannerForRobot::plan_hypothetical_robot_path(
     const auto intent = rj_convert::convert_from_ros(request->intent);
     auto plan_request = make_request(intent);
     auto trajectory = plan_for_robot(plan_request);
-    RJ::Seconds secondsLeft = trajectory.end_time() - RJ::now();
-    response->estimate = rj_convert::convert_to_ros(secondsLeft);
+    RJ::Seconds trajectoryDuration = trajectory.duration();
+    response->estimate = rj_convert::convert_to_ros(trajectoryDuration);
 }
 
 RJ::Seconds PlannerForRobot::get_time_left() const {

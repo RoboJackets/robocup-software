@@ -2,10 +2,11 @@
 
 TestingNode::TestingNode(const rclcpp::NodeOptions& options) : Node("testing_node", options) {
     test_client_ = this->create_client<rj_msgs::srv::PlanHypotheticalPath>("hypothetical_trajectory_robot_2");
+
+    test_client();
 }
 
 void TestingNode::test_client() {
-    SPDLOG_INFO("\033[94mStarting client test");
     rj_msgs::msg::RobotIntent intent;
     intent.robot_id = 2;
     auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
@@ -22,14 +23,21 @@ void TestingNode::test_client() {
     auto request = std::make_shared<rj_msgs::srv::PlanHypotheticalPath::Request>();
     request->intent = intent;
 
-    SPDLOG_INFO("\033[94mAbout to wait for service\033[0m");
-    while (!test_client_->wait_for_service(3s)) {
+    while (!test_client_->wait_for_service(1s)) {
         if (!rclcpp::ok()) {
             SPDLOG_ERROR("Interrupted while waiting for the service");
         }
     }
 
-    SPDLOG_INFO("\033[94mGetting results\033[0m");
-    auto result = test_client_->async_send_request(request);
-    SPDLOG_INFO("result: {}", rj_convert::convert_from_ros(result.get()->estimate).count());
+    test_client_->async_send_request(
+        request,
+        [this](std::shared_future<rj_msgs::srv::PlanHypotheticalPath::Response::SharedPtr> response) {
+            test_callback(response);
+        }
+    );
+}
+
+void TestingNode::test_callback(std::shared_future<rj_msgs::srv::PlanHypotheticalPath::Response::SharedPtr> response) {
+    auto time = rj_convert::convert_from_ros(response.get()->estimate);
+    SPDLOG_INFO("\033[94mRESULT: {}\033[0m", time.count());
 }

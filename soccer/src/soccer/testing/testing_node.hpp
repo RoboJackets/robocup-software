@@ -18,4 +18,5 @@ private:
     rclcpp::Client<rj_msgs::srv::PlanHypotheticalPath>::SharedPtr test_client_;
 
     void test_client();
+    void test_callback(std::shared_future<rj_msgs::srv::PlanHypotheticalPath::Response::SharedPtr> request);
 };
