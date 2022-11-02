@@ -1,5 +1,6 @@
 #include "coach_node.hpp"
 
+namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
@@ -124,3 +125,5 @@ void CoachNode::check_for_play_state_change() {
         play_state_has_changed_ = false;
     }
 }
+
+}  // namespace strategy

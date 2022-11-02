@@ -33,7 +33,7 @@ rj_msgs::msg::RobotIntent Offense::get_task() {
         /* intent.motion_command.line_kick_command = {lkmc}; */
 
         auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-        rj_geometry::Point back_pt{3.0, 6.0};
+        rj_geometry::Point back_pt{(8.0 * (robot_id_ * 0.1) - 4.0), 6.0};
         ptmc.target.position = rj_convert::convert_to_ros(back_pt);
 
         // TODO(Kevin): this is still tick based, not event-driven, fix? or clarify somewhere
@@ -46,7 +46,7 @@ rj_msgs::msg::RobotIntent Offense::get_task() {
         intent.motion_command.path_target_command = {ptmc};
     } else {
         auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-        rj_geometry::Point back_pt{1.0, 7.0};
+        rj_geometry::Point back_pt{(8.0 * (robot_id_ * 0.1) - 4.0), 2.0};
         ptmc.target.position = rj_convert::convert_to_ros(back_pt);
 
         rj_geometry::Point ball_pos = world_state->ball.position;

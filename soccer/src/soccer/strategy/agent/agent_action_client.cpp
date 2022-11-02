@@ -4,11 +4,19 @@ namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
-AgentActionClient::AgentActionClient()
-    : rclcpp::Node("agent_action_client_node",
+AgentActionClient::AgentActionClient() : AgentActionClient(0) {
+    // unclear why I need to explicitly create a default constructor, but compiler throws error when
+    // not here https://stackoverflow.com/questions/47704900/error-use-of-deleted-function
+}
+
+AgentActionClient::AgentActionClient(int r_id)
+    : robot_id_(r_id),
+      rclcpp::Node(fmt::format("agent_{}_action_client_node", r_id),
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)) {
+    SPDLOG_INFO("my robot_id_ {}", robot_id_);
+
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
@@ -20,9 +28,8 @@ AgentActionClient::AgentActionClient()
         "strategy/coach_state", 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
-    // TODO: link to planning hz
-    // TODO: change this once coach node merged
-    int hz = 120;
+    // TODO: make ROS param for this
+    int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 }
@@ -46,9 +53,15 @@ void AgentActionClient::coach_state_callback(rj_msgs::msg::CoachState::SharedPtr
 
 void AgentActionClient::get_task() {
     // TODO: change this default to defense? or NOP?
-    // TODO: move this once coach node merged
     if (current_position_ == nullptr) {
-        current_position_ = std::make_unique<Offense>(2);
+        // TODO: change this once coach node merged
+        if (robot_id_ == 0) {
+            current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 1) {
+            current_position_ = std::make_unique<Defense>(robot_id_);
+        } else {
+            current_position_ = std::make_unique<Offense>(robot_id_);
+        }
     }
 
     auto task = current_position_->get_task();

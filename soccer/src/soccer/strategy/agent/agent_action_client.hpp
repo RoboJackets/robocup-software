@@ -35,8 +35,9 @@ public:
     using RobotMove = rj_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
-    // TODO: make robot_id, spin up N ACs
     AgentActionClient();
+    AgentActionClient(int r_id);
+    ~AgentActionClient() = default;
 
 private:
     // ROS pub/subs
@@ -75,6 +76,10 @@ private:
     rclcpp::TimerBase::SharedPtr get_task_timer_;
     void get_task();
     rj_msgs::msg::RobotIntent last_task_;
+
+    // const because should never be changed, but initializer list will allow
+    // us to set this once initially
+    const int robot_id_;
 
 };  // class AgentActionClient
 

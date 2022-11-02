@@ -38,7 +38,7 @@ void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
     our_possession_ = msg.our_possession;
     // TODO: how is planner supposed to get this global override info?
     global_override_ = msg.global_override;
-    SPDLOG_INFO("match_situation {}, our_possession {}", match_situation_, our_possession_);
+    /* SPDLOG_INFO("match_situation {}, our_possession {}", match_situation_, our_possession_); */
 }
 
 [[nodiscard]] WorldState* Position::world_state() {

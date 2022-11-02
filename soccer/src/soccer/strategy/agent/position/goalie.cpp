@@ -3,10 +3,7 @@
 namespace strategy {
 
 // TODO: lock Goalie id to id given by the ref
-Goalie::Goalie(int r_id) : Position(r_id) {
-    position_name_ = "Goalie";
-    SPDLOG_INFO("pos name {}", position_name_);
-}
+Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
 rj_msgs::msg::RobotIntent Goalie::get_task() {
     // init an intent with our robot id
@@ -19,7 +16,6 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     }
 
     if (check_is_done()) {
-        SPDLOG_INFO("goalie says done!");
         move_ct++;
     }
 
@@ -71,7 +67,6 @@ rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
     }
 
     rj_geometry::Point block_pt{cross_x, 0.0};
-    SPDLOG_INFO("block pt {}, {}", block_pt.x(), block_pt.y());
     return block_pt;
 }
 
@@ -87,7 +82,6 @@ rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) {
     rj_geometry::Point idle_pt = (ball_pos - goal_pt).norm();
     idle_pt *= goalie_dist;
     // TODO: clamp y to 0
-    SPDLOG_INFO("idle pt {}, {}", idle_pt.x(), idle_pt.y());
 
     return idle_pt;
 }

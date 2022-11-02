@@ -47,7 +47,7 @@ PlannerNode::PlannerNode()
 rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUUID& uuid,
                                                      std::shared_ptr<const RobotMove::Goal> goal) {
     (void)uuid;
-    auto delay = std::chrono::milliseconds(1000 / 120);
+    auto delay = std::chrono::milliseconds(1000 / 60);
     rclcpp::Rate loop_rate(delay);
 
     // TODO(p-nayak): REJECT duplicate goal requests so we aren't constantly replanning them
@@ -83,7 +83,7 @@ void PlannerNode::handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goa
 
 void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle) {
     // TODO: rate-limit loop to whatever hz planning is limited to
-    auto delay = std::chrono::milliseconds(1000 / 120);
+    auto delay = std::chrono::milliseconds(1000 / 60);
     rclcpp::Rate loop_rate(delay);
 
     // create ptrs to Goal, Result objects per ActionServer API

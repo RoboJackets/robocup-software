@@ -14,6 +14,7 @@
 
 #include "game_state.hpp"
 
+namespace strategy {
 enum MatchSituation {
     ball_placement,  // ball placement on a restart restart.ball_placement
     kickoff,         // simple kickoff (start game/match/play)
@@ -51,3 +52,5 @@ private:
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void check_for_play_state_change();
 };
+
+}  // namespace strategy
