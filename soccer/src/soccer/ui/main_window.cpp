@@ -676,7 +676,7 @@ void MainWindow::updateStatus() {
         // External Ref is connected and should be used
         _ui.fastHalt->setEnabled(false);
         _ui.fastStop->setEnabled(false);
-        _ui.fastReady->setEnabled(false);
+        //_ui.fastReady->setEnabled(false);
         _ui.fastForceStart->setEnabled(false);
         _ui.fastKickoffBlue->setEnabled(false);
         _ui.fastKickoffYellow->setEnabled(false);
@@ -684,7 +684,7 @@ void MainWindow::updateStatus() {
     } else {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
-        _ui.fastReady->setEnabled(true);
+        //_ui.fastReady->setEnabled(true);
         _ui.fastForceStart->setEnabled(true);
         _ui.fastKickoffBlue->setEnabled(true);
         _ui.fastKickoffYellow->setEnabled(true);
@@ -1133,9 +1133,9 @@ void MainWindow::on_fastHalt_clicked() { send_quick_command(PlayState::halt()); 
 void MainWindow::on_fastStop_clicked() { send_quick_command(PlayState::stop()); }
 
 void MainWindow::on_fastReady_clicked() {
-    if (queued_command_) {
-        send_quick_command(*queued_command_);
-    }
+    //if (queued_command_) {
+        //send_quick_command(*queued_command_);
+    //}
 }
 
 void MainWindow::on_fastForceStart_clicked() { send_quick_command(PlayState::playing()); }
