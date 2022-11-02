@@ -1,6 +1,7 @@
 defense.Defense()
 offense.Offense()
 keepaway.Keepaway()
+testing.Testing()
 kickoff_play.PrepareKickoff()
 kickoff_play.Kickoff()
 kickoff_play.DefendKickoff()
