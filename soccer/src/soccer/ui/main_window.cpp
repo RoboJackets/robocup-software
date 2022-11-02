@@ -1133,8 +1133,8 @@ void MainWindow::on_fastHalt_clicked() { send_quick_command(PlayState::halt()); 
 void MainWindow::on_fastStop_clicked() { send_quick_command(PlayState::stop()); }
 
 void MainWindow::on_fastReady_clicked() {
-    //if (queued_command_) {
-        //send_quick_command(*queued_command_);
+    // if (queued_command_) {
+    // send_quick_command(*queued_command_);
     //}
 }
 
