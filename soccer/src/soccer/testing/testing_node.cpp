@@ -1,7 +1,8 @@
 #include "testing_node.hpp"
 
 TestingNode::TestingNode(const rclcpp::NodeOptions& options) : Node("testing_node", options) {
-    test_client_ = this->create_client<rj_msgs::srv::PlanHypotheticalPath>("hypothetical_trajectory_robot_2");
+    test_client_ =
+        this->create_client<rj_msgs::srv::PlanHypotheticalPath>("hypothetical_trajectory_robot_2");
 
     test_client();
 }
@@ -31,13 +32,14 @@ void TestingNode::test_client() {
 
     test_client_->async_send_request(
         request,
-        [this](std::shared_future<rj_msgs::srv::PlanHypotheticalPath::Response::SharedPtr> response) {
+        [this](
+            std::shared_future<rj_msgs::srv::PlanHypotheticalPath::Response::SharedPtr> response) {
             test_callback(response);
-        }
-    );
+        });
 }
 
-void TestingNode::test_callback(std::shared_future<rj_msgs::srv::PlanHypotheticalPath::Response::SharedPtr> response) {
+void TestingNode::test_callback(
+    std::shared_future<rj_msgs::srv::PlanHypotheticalPath::Response::SharedPtr> response) {
     auto time = rj_convert::convert_from_ros(response.get()->estimate);
     SPDLOG_INFO("\033[94mRESULT: {}\033[0m", time.count());
 }
