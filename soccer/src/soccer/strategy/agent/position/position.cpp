@@ -4,12 +4,6 @@ namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
-void Position::tell_is_done() { is_done_ = true; }
-
-void Position::tell_time_left(double time_left) { time_left_ = time_left; }
-
-void Position::tell_goal_canceled() { goal_canceled_ = true; }
-
 bool Position::check_is_done() {
     if (is_done_) {
         is_done_ = false;

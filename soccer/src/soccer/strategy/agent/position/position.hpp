@@ -14,6 +14,9 @@
 #include "rj_msgs/action/robot_move.hpp"
 #include "world_state.hpp"
 
+// tell compiler this class exists, but no need to import the whole header
+class AgentActionClient;
+
 namespace strategy {
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
@@ -38,13 +41,13 @@ public:
     Position& operator=(const Position&) = default;
 
     // communication with AC
-    void tell_is_done();
-    void tell_time_left(double time_left);
-    void tell_goal_canceled();
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
+
+    // this allows AgentActionClient to change private/protected members of this class
+    friend class AgentActionClient;
 
 protected:
     // should be overriden in subclass constructors
