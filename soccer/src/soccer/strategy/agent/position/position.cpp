@@ -47,15 +47,20 @@ void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
     return &last_world_state_;
 }
 
-bool Position::assert_world_state_valid(rj_msgs::msg::RobotIntent& intent) {
+bool Position::assert_world_state_valid() {
     WorldState* world_state = this->world_state();  // thread-safe getter
     if (world_state == nullptr) {
         SPDLOG_WARN("WorldState!");
-        auto empty = rj_msgs::msg::EmptyMotionCommand{};
-        intent.motion_command.empty_command = {empty};
         return false;
     }
     return true;
+}
+
+rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
+    rj_msgs::msg::RobotIntent intent{};
+    auto empty = rj_msgs::msg::EmptyMotionCommand{};
+    intent.motion_command.empty_command = {empty};
+    return intent;
 }
 
 }  // namespace strategy

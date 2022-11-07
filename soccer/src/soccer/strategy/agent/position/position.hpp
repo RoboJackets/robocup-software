@@ -75,10 +75,12 @@ protected:
      * before they have any world_state info to act on. Thus, we must return
      * NOPs to the robots until vision_filter node starts up.
      *
-     * @param intent EmptyMotionCommand added if world_state is invalid
      * @return false if world_state is invalid (nullptr), true otherwise
      */
-    bool assert_world_state_valid(rj_msgs::msg::RobotIntent& intent);
+    bool assert_world_state_valid();
+
+    // TODO: docs
+    rj_msgs::msg::RobotIntent get_empty_intent() const;
 
     /*
      * @brief getter for is_done that clears the flag before returning

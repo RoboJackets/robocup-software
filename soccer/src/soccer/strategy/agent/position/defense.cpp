@@ -9,9 +9,9 @@ rj_msgs::msg::RobotIntent Defense::get_task() {
     rj_msgs::msg::RobotIntent intent;
     intent.robot_id = robot_id_;
 
-    // if world_state invalid, return empty_intent (filled by assert() call)
-    if (!assert_world_state_valid(intent)) {
-        return intent;
+    // if world_state invalid, return empty_intent
+    if (!assert_world_state_valid()) {
+        return get_empty_intent();
     }
 
     if (check_is_done()) {
