@@ -32,6 +32,6 @@ class RunnerTactic(stp.tactic.Tactic):
             if role.robot is not None:
                 robot_intents.append((role.robot.id, role.tick(world_state)))
         return robot_intents
-    
+
     def is_done(self, world_state: stp.rc.WorldState) -> bool:
         return self.assigned_roles[0].is_done(world_state)
