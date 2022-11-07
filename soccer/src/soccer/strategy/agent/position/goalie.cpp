@@ -74,7 +74,6 @@ rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) const {
     // TODO: transfer field part of world_state
     // TODO: make this depend on team +/-x
     rj_geometry::Point ball_pos = world_state->ball.position;
-    rj_geometry::Point ball_vel = world_state->ball.velocity;
     rj_geometry::Point goal_pt{0.0, 0.0};
 
     // TODO: move closer/farther from ball as a linear % of distance from ball

@@ -71,23 +71,6 @@ void AgentActionClient::get_task() {
     }
 }
 
-/* void AgentActionClient::cancel_last_goal() { */
-/*     if (client_ptr_ == nullptr || last_goal_handle_ == nullptr) { */
-/*         return; */
-/*     } */
-/*     using namespace std::placeholders; */
-/*     auto cancel_future = client_ptr_->async_cancel_goal( */
-/*         last_goal_handle_, std::bind(&AgentActionClient::cancel_goal_callback, this, _1)); */
-/*     // TODO: do something with this future? */
-/* } */
-
-/* void AgentActionClient::cancel_goal_callback( */
-/*     rclcpp_action::Client<RobotMove>::CancelResponse::SharedPtr) { */
-/*     // TODO: worry about the cancelresponse? */
-/*     // TODO: would this generate race cond? */
-/*     last_goal_handle_ = nullptr; */
-/* } */
-
 void AgentActionClient::send_new_goal() {
     using namespace std::placeholders;
 

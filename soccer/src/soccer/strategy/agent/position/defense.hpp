@@ -22,11 +22,6 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    Defense(Defense&&) noexcept = default;
-    Defense& operator=(Defense&&) noexcept = default;
-    Defense(const Defense&) = default;
-    Defense& operator=(const Defense&) = default;
-
     rj_msgs::msg::RobotIntent get_task() override;
 
 protected:

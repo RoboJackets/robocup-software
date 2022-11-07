@@ -22,11 +22,6 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
-    Offense(Offense&&) noexcept = default;
-    Offense& operator=(Offense&&) noexcept = default;
-    Offense(const Offense&) = default;
-    Offense& operator=(const Offense&) = default;
-
     rj_msgs::msg::RobotIntent get_task() override;
 
 protected:

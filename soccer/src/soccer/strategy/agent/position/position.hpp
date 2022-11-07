@@ -35,11 +35,6 @@ public:
     Position(int r_id);
     virtual ~Position() = default;
 
-    Position(Position&&) noexcept = default;
-    Position& operator=(Position&&) noexcept = default;
-    Position(const Position&) = default;
-    Position& operator=(const Position&) = default;
-
     // communication with AC
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);

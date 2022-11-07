@@ -22,11 +22,6 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
-    Goalie(Goalie&&) noexcept = default;
-    Goalie& operator=(Goalie&&) noexcept = default;
-    Goalie(const Goalie&) = default;
-    Goalie& operator=(const Goalie&) = default;
-
     rj_msgs::msg::RobotIntent get_task() override;
 
 protected:
