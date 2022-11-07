@@ -46,8 +46,8 @@ private:
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
-    void world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg);
-    void coach_state_callback(rj_msgs::msg::CoachState::SharedPtr msg);
+    void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
+    void coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg);
 
     std::unique_ptr<Position> current_position_;
 
