@@ -59,6 +59,14 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    soccer_mom = Node(
+        package="rj_robocup",
+        executable="soccer_mom_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
     config_server = Node(
         package="rj_robocup",
         executable="config_server",
@@ -172,6 +180,7 @@ def generate_launch_description():
             config_server,
             global_param_server,
             soccer,
+            soccer_mom,
             control,
             planner,
             vision_receiver,

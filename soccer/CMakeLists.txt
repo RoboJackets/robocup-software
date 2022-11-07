@@ -83,6 +83,7 @@ add_executable(planner_node)
 add_executable(control_node)
 add_executable(sim_radio_node)
 add_executable(network_radio_node)
+add_executable(soccer_mom_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
 
@@ -205,6 +206,10 @@ ament_target_dependencies(rj_vision_filter PUBLIC ament_index_cpp)
 # ---- Soccer ----
 target_link_libraries(soccer PUBLIC ${SOCCER_DEPS_SYSTEM_LIBRARIES} ${SOCCER_DEPS_LIBRARIES})
 
+# ---- Soccer Mom ----
+target_link_libraries(soccer_mom_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${RADIO_NODE_DEPS_LIBRARIES})
+
 # ---- log_viewer ----
 target_link_libraries(log_viewer PRIVATE ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
         ${LOG_VIEWER_DEPS_LIBRARIES})
@@ -281,6 +286,7 @@ install(
         planner_node
         control_node
         sim_radio_node
+        soccer_mom_node
         network_radio_node
         manual_control_node
         global_param_server_node
