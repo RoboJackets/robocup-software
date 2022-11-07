@@ -14,6 +14,9 @@
 #include "rj_msgs/action/robot_move.hpp"
 #include "world_state.hpp"
 
+// tell compiler this class exists, but no need to import the whole header
+class AgentActionClient;
+
 namespace strategy {
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
@@ -32,19 +35,14 @@ public:
     Position(int r_id);
     virtual ~Position() = default;
 
-    Position(Position&&) noexcept = default;
-    Position& operator=(Position&&) noexcept = default;
-    Position(const Position&) = default;
-    Position& operator=(const Position&) = default;
-
     // communication with AC
-    void tell_is_done();
-    void tell_time_left(double time_left);
-    void tell_goal_canceled();
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
+
+    // this allows AgentActionClient to change private/protected members of this class
+    friend class AgentActionClient;
 
 protected:
     // should be overriden in subclass constructors
@@ -75,10 +73,12 @@ protected:
      * before they have any world_state info to act on. Thus, we must return
      * NOPs to the robots until vision_filter node starts up.
      *
-     * @param intent EmptyMotionCommand added if world_state is invalid
      * @return false if world_state is invalid (nullptr), true otherwise
      */
-    bool assert_world_state_valid(rj_msgs::msg::RobotIntent& intent);
+    bool assert_world_state_valid();
+
+    // TODO: docs
+    rj_msgs::msg::RobotIntent get_empty_intent() const;
 
     /*
      * @brief getter for is_done that clears the flag before returning

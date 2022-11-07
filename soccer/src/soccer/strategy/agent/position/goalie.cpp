@@ -10,9 +10,9 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     rj_msgs::msg::RobotIntent intent;
     intent.robot_id = robot_id_;
 
-    // if world_state invalid, return empty_intent (filled by assert() call)
-    if (!assert_world_state_valid(intent)) {
-        return intent;
+    // if world_state invalid, return empty_intent
+    if (!assert_world_state_valid()) {
+        return get_empty_intent();
     }
 
     if (check_is_done()) {
@@ -42,7 +42,7 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     return intent;
 }
 
-rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
+rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) const {
     // TODO: make intercept planner do what its header file does, so we don't need this
     // also, fix the intercept planner so we don't have to pass in the ball
     // point every tick
@@ -70,11 +70,10 @@ rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) {
     return block_pt;
 }
 
-rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) {
+rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) const {
     // TODO: transfer field part of world_state
     // TODO: make this depend on team +/-x
     rj_geometry::Point ball_pos = world_state->ball.position;
-    rj_geometry::Point ball_vel = world_state->ball.velocity;
     rj_geometry::Point goal_pt{0.0, 0.0};
 
     // TODO: move closer/farther from ball as a linear % of distance from ball
