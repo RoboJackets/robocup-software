@@ -147,7 +147,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         fmt::format("hypothetical_trajectory_robot_{}", robot_id),
         [this](const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request> request,
                std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response) {
-            plan_hypothetical_robot_path(request, response);
+            plan_hypothetical_robot_path(request, std::move(response));
         });
 }
 
@@ -168,8 +168,8 @@ void PlannerForRobot::plan_hypothetical_robot_path(
     const auto intent = rj_convert::convert_from_ros(request->intent);
     auto plan_request = make_request(intent);
     auto trajectory = plan_for_robot(plan_request);
-    RJ::Seconds trajectoryDuration = trajectory.duration();
-    response->estimate = rj_convert::convert_to_ros(trajectoryDuration);
+    RJ::Seconds trajectory_duration = trajectory.duration();
+    response->estimate = rj_convert::convert_to_ros(trajectory_duration);
 }
 
 RJ::Seconds PlannerForRobot::get_time_left() const {
