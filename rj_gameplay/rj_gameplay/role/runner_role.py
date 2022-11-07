@@ -4,15 +4,15 @@ from rj_gameplay.skill import move
 import numpy as np
 from rj_msgs.msg import RobotIntent
 
+
 class RunnerRole(stp.role.Role):
 
     def __init__(self, robot: stp.rc.Robot) -> None:
         super().__init__(robot)
         self.current_target = 0
-        self.target_points = [np.array([-3.0,9.0]), np.array([-3.0,0.0]), np.array([3.0,0.0]), np.array([3.0,9.0])]
+        self.target_points = [np.array([-3.0, 9.0]), np.array([-3.0, 0.0]), np.array([3.0, 0.0]), np.array([3.0, 9.0])]
         self.current_move = None
 
-    
     def tick(self, world_state: stp.rc.WorldState) -> RobotIntent:
         if self.current_move is None:
             target_point = self.target_points[self.current_target]

@@ -3,6 +3,7 @@ from rj_msgs.msg import RobotIntent
 from typing import List, Tuple
 from rj_gameplay.role import runner_role
 
+
 class RunnerTactic(stp.tactic.Tactic):
     def __init__(self, world_state: stp.rc.WorldState, runner_id: int):
         super().__init__(world_state)
