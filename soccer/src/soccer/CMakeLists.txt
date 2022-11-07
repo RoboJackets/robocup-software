@@ -48,6 +48,7 @@ set(ROBOCUP_LIB_SRC
     radio/packet_convert.cpp
     radio/sim_radio.cpp
     radio/radio.cpp
+    soccer-mom/soccer_mom.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
     referee/internal_referee.cpp
@@ -115,6 +116,8 @@ set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
 set(ROBOT_ACTION_CLIENT_NODE_SRC robot_action_client/robot_action_client_main.cpp)
 
+set(SOCCER_MOM_NODE_SRC soccer-mom/soccer_mom_node_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -157,6 +160,8 @@ target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_S
 
 # ---- robot_action_client_node ----
 target_sources(robot_action_client_node PRIVATE ${ROBOT_ACTION_CLIENT_NODE_SRC})
+
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
