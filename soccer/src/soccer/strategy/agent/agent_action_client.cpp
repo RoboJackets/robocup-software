@@ -28,13 +28,13 @@ AgentActionClient::AgentActionClient(int r_id)
         "strategy/coach_state", 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
-    // TODO: make ROS param for this
+    // TODO(Kevin): make ROS param for this
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 }
 
-void AgentActionClient::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
+void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
@@ -43,7 +43,7 @@ void AgentActionClient::world_state_callback(rj_msgs::msg::WorldState::SharedPtr
     current_position_->update_world_state(world_state);
 }
 
-void AgentActionClient::coach_state_callback(rj_msgs::msg::CoachState::SharedPtr msg) {
+void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
