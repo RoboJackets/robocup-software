@@ -16,6 +16,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "rj_msgs/srv/AgentCommunication.srv"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
@@ -43,6 +44,13 @@ private:
     // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
+
+    // server for receiving instructions from other agents
+    rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_server_;
+
+    // clients for receiving instructions from the other agents
+    rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_clients_[kNumShells];
+
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
@@ -64,6 +72,37 @@ private:
      * @brief send a goal to the planning ActionServer, based on the Position's get_task().
      */
     void send_new_goal();
+
+    /**
+     * @brief sends a robot communication to a specific robot
+     * 
+     * @param robot_id the robot to communicate with
+     */
+    void send_unicast(int&& robot_id);
+
+    /**
+     * @brief sends a robot communication to all robots
+     * 
+     */
+    void send_broadcast();
+
+    /**
+     * @brief sends a robot communication to a specific group of robots
+     * 
+     * @param robot_ids the robot ids to send communication to
+     */
+    void send_multicast(int&& robot_ids[]);
+
+    /**
+     * @brief sends a robot communication and accepts only the first response
+     * 
+     * *NOTE* this is not the exact same as anycast in IP routing, but pretty similar
+     * 
+     */
+    void send_anycast();
+
+    void receive_communication_callback(const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
+                                        std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response);
 
     // TODO(#1957): add back this if needed, or delete
     // cancel latest goal every time a new goal comes in, to avoid overloading memory with many

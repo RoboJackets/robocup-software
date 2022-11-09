@@ -23,6 +23,7 @@ rosidl_generate_interfaces(
   action/RobotMove.action
 
   # Messages
+  msg/AgentState.msg
   msg/BallState.msg
   msg/BallPlacement.msg
   msg/CoachState.msg
@@ -61,6 +62,7 @@ rosidl_generate_interfaces(
   msg/Trajectory.msg
   msg/WorldState.msg
   # Services
+  srv/AgentCommunication.srv
   srv/ListJoysticks.srv
   srv/QuickCommands.srv
   srv/QuickRestart.srv
