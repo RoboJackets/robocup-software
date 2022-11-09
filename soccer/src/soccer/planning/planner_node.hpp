@@ -172,8 +172,8 @@ public:
      * hypothetical path.
      */
     void plan_hypothetical_robot_path(
-        const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request> request,
-        std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response);
+        const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
+        std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response);
 
     /**
      * @return RJ::Seconds time left for the trajectory to complete
