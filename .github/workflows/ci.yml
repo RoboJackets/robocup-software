@@ -46,14 +46,14 @@ jobs:
           ./install/lib/rj_robocup/test-soccer
           echo "::remove-matcher owner=gtest::"
 
-      # - name: Run clang-tidy
-      #   run: |
-      #     echo "::add-matcher::ci/clang-tidy.json"
-      #     source /opt/ros/foxy/setup.bash
-      #     source install/setup.bash
-      #     DIFFBASE=${{ github.base_ref }} make checktidy-lines
-      #     echo "::remove-matcher owner=clang-tidy::"
-      #   if: always()
+      - name: Run clang-tidy
+        run: |
+          echo "::add-matcher::ci/clang-tidy.json"
+          source /opt/ros/foxy/setup.bash
+          source install/setup.bash
+          DIFFBASE=${{ github.base_ref }} make checktidy-lines
+          echo "::remove-matcher owner=clang-tidy::"
+        if: always()
 
   mypy:
     runs-on: ubuntu-latest
@@ -148,7 +148,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update && apt-get -y install clang-format clang-tidy sudo git python3-pip
+          apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
 
       # check formatting style (C++)
@@ -157,13 +157,6 @@ jobs:
           echo "::add-matcher::ci/clang-format.json"
           git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
           echo "::remove-matcher owner=clang-format::"
-
-      # check for code smells (C++)
-      - name: Run clang-tidy
-        run: |
-          echo "::add-matcher::ci/clang-tidy.json"
-          git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-tidy-diff.py -clang-tidy-binary clang-tidy -p1
-          echo "::remove-matcher owner=clang-tidy::"
 
       - name: Run flake8
         if: always()
