@@ -127,7 +127,8 @@ struct PlanRequest {
  * Numbers tuned by looking at output of planning/test_scripts/visualize_obs.py.
  *
  */
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center, double& obs_radius);
+void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
+                         double& obs_radius);
 
 /**
  * Fill the obstacle fields.

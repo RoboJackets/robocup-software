@@ -29,12 +29,17 @@ struct RobotIntent {
 
     int8_t priority = 0;
 
+    /*
+     * @brief overloads == to allow comparison of two RobotIntents with ==
+     */
     bool operator==(const RobotIntent r) {
         // if motion_command is a PathTargetCommand
         if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
             return std::get<planning::PathTargetCommand>(motion_command) ==
                    std::get<planning::PathTargetCommand>(r.motion_command);
         }
+        // TODO: fill in other motion command types
+        // (and perhaps think of a better design?)
         return this == &r;
     }
 };

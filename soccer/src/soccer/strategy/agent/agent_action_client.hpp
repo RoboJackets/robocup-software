@@ -59,7 +59,6 @@ private:
 
     void result_callback(const GoalHandleRobotMove::WrappedResult& result);
 
-    // TODO: doc
     /*
      * @brief send a goal to the planning ActionServer, based on the Position's get_task().
      */

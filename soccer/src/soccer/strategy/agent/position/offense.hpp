@@ -16,7 +16,10 @@
 
 namespace strategy {
 
-// TODO: docstring
+/*
+ * The Offense position handles general offensive tasks, like passing to
+ * teammates, moving to get open, or shooting on goal.
+ */
 class Offense : public Position {
 public:
     Offense(int r_id);
@@ -24,7 +27,6 @@ public:
 
     rj_msgs::msg::RobotIntent get_task() override;
 
-protected:
 private:
     bool kicking_{true};
     // TODO: strategy design pattern for BallHandler/Receiver
