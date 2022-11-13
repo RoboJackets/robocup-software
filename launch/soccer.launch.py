@@ -78,7 +78,7 @@ def generate_launch_description():
     )
 
     soccer_mom = Node(
-        condition=IfCondition(PythonExpression([run_sim])),
+        # condition=IfCondition(PythonExpression([run_sim])),
         package="rj_robocup",
         executable="soccer_mom_node",
         output="screen",

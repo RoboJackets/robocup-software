@@ -4,6 +4,8 @@
 #include "global_params.hpp"
 #include "soccer_mom_node.hpp"
 
+using namespace tutorial;
+
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
     rj_utils::set_spdlog_default_ros2("processor");
