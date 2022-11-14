@@ -8,6 +8,10 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
+#include <rj_msgs/msg/agent_to_pos_comm_request.hpp>
+#include <rj_msgs/msg/agent_to_pos_comm_response.hpp>
+#include <rj_msgs/msg/pos_to_agent_comm_request.hpp>
+#include <rj_msgs/msg/pos_to_agent_comm_response.hpp>
 
 #include "planning/planner/motion_command.hpp"
 #include "rj_common/time.hpp"
@@ -70,6 +74,11 @@ public:
      */
     void set_goal_canceled();
 
+    // Agent-to-Agent communication
+    rj_msgs::msg::PosToAgentCommRequest send_communication_request();
+    virtual void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response);
+    virtual rj_msgs::msg::AgentResponse receive_communication_request(rj_msgs::msg::AgentRequest request);
+
 protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
@@ -130,6 +139,19 @@ private:
      * @param intent a blank RobotIntent with this robot's ID filled in already
      */
     virtual std::optional<RobotIntent> derived_get_task(RobotIntent intent) = 0;
+
+    bool check_goal_canceled();
+    bool goal_canceled_{};
+
+    // const because should never be changed, but initializer list will allow
+    // us to set this once initially
+    const int robot_id_;
+
+    // Request 
+    rj_msgs::msg::PosToAgentCommRequest communication_request_{};
+
+private:
+>>>>>>> db17762a3d... create communication scaffolding / v1
 };
 
 }  // namespace strategy

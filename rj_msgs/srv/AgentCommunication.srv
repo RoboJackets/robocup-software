@@ -1,1 +1,3 @@
+AgentRequest agent_request
 ---
+AgentResponse agent_response

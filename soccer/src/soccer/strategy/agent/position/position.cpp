@@ -71,4 +71,17 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
+rj_msgs::msg::PosToAgentCommRequest Position::send_communication_request() {
+    return communication_request_;
+}
+
+void Position::receive_communication_response(rj_msgs::msg::PosToAgentCommResponse response) {
+    return;
+}
+
+rj_msgs::msg::AgentResponse Position::receive_communication_request(rj_msgs::msg::AgentRequest request) {
+    rj_msgs::msg::AgentResponse empty_response{};
+    return empty_response;
+}
+
 }  // namespace strategy
