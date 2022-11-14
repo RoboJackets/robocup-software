@@ -143,6 +143,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
             had_break_beam_ = status->has_ball_sense;
         });
 
+    // For hypothetical path planning
     hypothetical_path_service_ = node_->create_service<rj_msgs::srv::PlanHypotheticalPath>(
         fmt::format("hypothetical_trajectory_robot_{}", robot_id),
         [this](const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request> request,
