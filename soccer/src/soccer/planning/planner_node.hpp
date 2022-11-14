@@ -36,6 +36,7 @@ public:
         std::lock_guard lock(lock_);
         return robot_trajectories_;
     }
+    // TODO: add "copy()" function here
 
     void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
         // associate a (Trajectory, priority) tuple with a robot id
@@ -263,8 +264,8 @@ private:
         ServerTaskState(const ServerTaskState&& state) = delete;
         ServerTaskState& operator=(const ServerTaskState&& state) = delete;
 
-        std::atomic_bool is_executing{false};
-        std::atomic_bool new_task_waiting_signal{false};
+        volatile std::atomic_bool is_executing{false};
+        volatile std::atomic_bool new_task_waiting_signal{false};
     };
 
     // create an array, kNumShells long, of ServerTaskState structs for

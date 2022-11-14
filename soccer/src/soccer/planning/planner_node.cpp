@@ -206,6 +206,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         virtual_obstacles.add(def_area_obstacles);
     }
 
+    // make a copy instead of getting the actual shared_ptr to Trajectory
     const auto robot_trajectories_hold = robot_trajectories_->get();
     std::array<const Trajectory*, kNumShells> planned_trajectories = {};
 
