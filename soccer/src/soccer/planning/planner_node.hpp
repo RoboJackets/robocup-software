@@ -12,6 +12,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
@@ -64,6 +65,12 @@ public:
                 auto lock = std::lock_guard(mutex_);
                 last_world_state_ = rj_convert::convert_from_ros(*world_state);
             });
+        coach_state_sub_ = node->create_subscription<rj_msgs::msg::CoachState>(
+            "/strategy/coach_state", rclcpp::QoS(1),
+            [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
+                auto lock = std::lock_guard(mutex_);
+                last_min_dist_from_ball_ = coach_state->global_override.min_dist_from_ball;
+            });
     }
 
     [[nodiscard]] PlayState play_state() const {
@@ -90,6 +97,10 @@ public:
         auto lock = std::lock_guard(mutex_);
         return &last_world_state_;
     }
+    [[nodiscard]] float min_dist_from_ball() const {
+        auto lock = std::lock_guard(mutex_);
+        return &last_min_dist_from_ball_;
+    }
 
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
@@ -98,6 +109,8 @@ private:
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_sub_;
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
+
 
     mutable std::mutex mutex_;
     PlayState last_play_state_ = PlayState::halt();
@@ -106,6 +119,7 @@ private:
     rj_geometry::ShapeSet last_global_obstacles_;
     rj_geometry::ShapeSet last_def_area_obstacles_;
     WorldState last_world_state_;
+    float last_min_dist_from_ball_;
 };
 
 /**
