@@ -63,7 +63,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
         // Where should we store the ball trajectory?
         *out_ball_trajectory = in.world_state->ball.make_trajectory();
-        out_dynamic->emplace_back(kBallRadius, out_ball_trajectory);
+        out_dynamic->emplace_back(kBallRadius + in.min_dist_from_ball, out_ball_trajectory);
     }
 }
 
