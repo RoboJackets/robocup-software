@@ -11,7 +11,7 @@
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-
+#include <rj_msgs/msg/position.hpp>
 #include "game_state.hpp"
 
 namespace strategy {
@@ -22,6 +22,12 @@ enum MatchSituation {
                      // 10/2022)
     penalty_kick,    // penalty kick restarts
     in_play,         // normal play
+};
+
+enum Positions {
+    Goalie, 
+    Defense, 
+    Offense
 };
 
 /**
@@ -38,6 +44,7 @@ public:
 
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachState>::SharedPtr coach_state_pub_;
+    rclcpp::Publisher<rj_msgs::msg::Position>::SharedPtr positions_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
@@ -51,6 +58,7 @@ private:
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void check_for_play_state_change();
+    void assign_positions();
 };
 
 }  // namespace strategy

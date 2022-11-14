@@ -28,6 +28,10 @@ AgentActionClient::AgentActionClient(int r_id)
         "strategy/coach_state", 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
+    positions_sub_ = create_subscription<rj_msgs::msg::Position>(
+        "strategy/positions", 1,
+        [this](rj_msgs::msg::Position::SharedPtr msg) { get_task(msg); });
+
     // TODO(Kevin): make ROS param for this
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
@@ -51,20 +55,13 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
     current_position_->update_coach_state(*msg);
 }
 
-void AgentActionClient::get_task() {
+void AgentActionClient::get_task(const rj_msgs::msg::Position::SharedPtr& msg) {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
-        // TODO: change this once coach node merged
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
+        current_position_ = msg->client_positions.at(robot_id_);
     }
 
-    auto task = current_position_->get_task();
+    auto task = current_position_->get_task(*msg);
     if (task != last_task_) {
         last_task_ = task;
         send_new_goal();

@@ -54,12 +54,14 @@ rosidl_generate_interfaces(
   msg/RobotInstant.msg
   msg/RobotPlacement.msg
   msg/RobotState.msg
+  msg/Position.msg
   msg/RobotStatus.msg
   msg/PlayState.msg
   msg/TeamColor.msg
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+
   # Services
   srv/ListJoysticks.srv
   srv/QuickCommands.srv

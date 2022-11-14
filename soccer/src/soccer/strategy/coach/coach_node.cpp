@@ -1,11 +1,19 @@
 #include "coach_node.hpp"
+#include "strategy/agent/position/defense.hpp"
+#include "strategy/agent/position/goalie.hpp"
+#include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/position.hpp"
 
 namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
+
     play_state_change_timer_ =
         this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
+    
+    positions_pub_ = 
+        this->create_publisher<rj_msgs::msg::Position>("/strategy/positions", 10);
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
@@ -120,10 +128,29 @@ void CoachNode::check_for_play_state_change() {
 
         coach_message.our_possession = possessing_;
 
+        assign_positions();
+
         coach_state_pub_->publish(coach_message);
 
         play_state_has_changed_ = false;
     }
+}
+
+void CoachNode::assign_positions() {
+    rj_msgs::msg::Position positions_message;
+    positions_message.client_positions[0] = Positions::Goalie;
+    if(!possessing_) {
+        positions_message.client_positions[1] = Positions::Offense;
+        for (int i = 2; i < kNumShells; i++) {
+            positions_message.client_positions[i] = Positions::Defense;
+        }
+    } else {
+        positions_message.client_positions[1] = Positions::Defense;
+        for (int i = 2; i < kNumShells; i++) {
+            positions_message.client_positions[i] = Positions::Offense;
+        }
+    }
+    positions_pub_->publish(positions_message);
 }
 
 }  // namespace strategy
