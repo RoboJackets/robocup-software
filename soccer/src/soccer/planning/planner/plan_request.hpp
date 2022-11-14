@@ -103,7 +103,7 @@ struct PlanRequest {
     bool ball_sense = false;
 
     /**
-     * How far away to stay from the ball.
+     * How far away to stay from the ball, if the MotionCommand chooses to avoid the ball.
      */
     float min_dist_from_ball = 0;
 };
