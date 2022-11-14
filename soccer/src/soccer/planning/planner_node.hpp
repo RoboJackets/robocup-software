@@ -165,7 +165,7 @@ public:
 
     /*
      * @brief estimate the amount of time it would take for a robot to execute a robot intent
-     * SERVICE).
+     * (SERVICE).
      *
      * @param request Requested RobotIntent resulting in the hypothetical robot path.
      * @param response The response object that will contain the resultant time to completion of a
