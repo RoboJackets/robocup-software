@@ -14,6 +14,7 @@
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
