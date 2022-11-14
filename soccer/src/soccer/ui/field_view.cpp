@@ -704,9 +704,6 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
         painter.setPen(blackPen);
     }
     drawText(painter, QPointF(), QString::number(ID));
-    if (hasBall) {
-        drawText(painter, QPointF(), "D");   
-    }
     painter.restore();
 
     drawRobotHeading(&painter, pos, theta);
