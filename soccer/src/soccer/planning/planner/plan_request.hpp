@@ -29,7 +29,7 @@ struct PlanRequest {
                 rj_geometry::ShapeSet virtual_obstacles,
                 std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, int8_t priority = 0,
-                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false, float min_dist_from_ball = 0)
+                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -40,8 +40,7 @@ struct PlanRequest {
           priority(priority),
           world_state(world_state),
           debug_drawer(debug_drawer),
-          ball_sense(ball_sense),
-          min_dist_from_ball(min_dist_from_ball) {}
+          ball_sense(ball_sense) {}
 
     /**
      * The robot's starting state.
@@ -101,11 +100,6 @@ struct PlanRequest {
 
     // Whether the robot has a ball
     bool ball_sense = false;
-
-    /**
-     * How far away to stay from the ball.
-     */
-    float min_dist_from_ball = 0;
 };
 
 /**
@@ -146,8 +140,8 @@ std::shared_ptr<rj_geometry::Circle> calc_static_robot_obs(const RobotState& rob
  * @param out_dynamic an (empty) vector of dynamic obstacles to be populated.
  *  This will be filled with trajectories for our robots that have already been
  *  planned.
- * @param avoid_ball whether to avoid the ball. If this is true, out_ball_trajectory 
- *  should point to a valid trajectory.
+ * @param avoid_ball whether or not to avoid the ball. If this is true,
+ *  out_ball_trajectory should point to a valid trajectory.
  * @param ball_trajectory temporary storage for the ball trajectory. This must
  *  outlive the usage of out_dynamic. If avoid_ball == false, this should be
  *  nullptr.
