@@ -48,7 +48,6 @@ set(ROBOCUP_LIB_SRC
     radio/packet_convert.cpp
     radio/sim_radio.cpp
     strategy/coach/coach_node.cpp
-    testing/testing_node.cpp
     radio/radio.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
@@ -111,8 +110,6 @@ set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
 set(COACH_NODE_SRC strategy/coach/coach_node_main.cpp)
 
-set(TESTING_NODE_SRC testing/testing_node_main.cpp)
-
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
 set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
@@ -154,9 +151,6 @@ target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
 # ---- coach_node ----
 target_sources(coach_node PRIVATE ${COACH_NODE_SRC})
-
-# ---- testing_node ----
-target_sources(testing_node PRIVATE ${TESTING_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
