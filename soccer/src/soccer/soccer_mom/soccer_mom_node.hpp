@@ -28,21 +28,11 @@ public:
 protected:
 
 private:
-    // void tick();
-
-    
 
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr robot_fruit_pubs_;
 
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
-    
-    void switch_team(bool blue_team);
 
-
-    // rclcpp::TimerBase::SharedPtr tick_timer_;
-
-    // bool blue_team_ = false;
-    // ::params::LocalROS2ParamProvider blue_team;
 };
 
 }  // namespace tutorial

@@ -22,11 +22,13 @@ SoccerMom::SoccerMom()
 
     : Node("Soccer_Mom")
     {
-    robot_fruit_pubs_ = create_publisher<std_msgs::msg::String>("/team_fruit", rclcpp::QoS(1));
+    robot_fruit_pubs_ = create_publisher<std_msgs::msg::String>("team_fruit", 10);
     
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorPub, rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
+        [this](rj_msgs::msg::TeamColor::SharedPtr color) { 
+            
+                //If color is blue, publishes blueberries, else publishes bananas
                 auto message = std_msgs::msg::String();
                     if (color->is_blue == true) {
                         message.data = "Blueberries";
@@ -34,24 +36,12 @@ SoccerMom::SoccerMom()
                     } else {
                         message.data = "Bananas";
                         robot_fruit_pubs_->publish(message);
+
     };
         });
     }
 
 
-// void switch_team(bool blue_team) {
-
-//     auto message = std_msgs::msg::String();
-//     if (blue_team == true) {
-//         message.data = "Blueberries";
-//         this->robot_fruit_pubs_->publish(message);
-//     } else {
-//         message.data = "Banana";
-//         this->robot_fruit_pubs_->publish(message);
-//     }
-// }
-
 }
 
 
-  // namespace tutorial;

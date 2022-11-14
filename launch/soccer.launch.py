@@ -190,7 +190,6 @@ def generate_launch_description():
             sim_radio,
             network_radio,
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
-            soccer_mom,
             internal_ref_receiver,
             external_ref_receiver,
             DeclareLaunchArgument("use_manual_control", default_value="False"),
