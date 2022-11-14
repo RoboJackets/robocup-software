@@ -97,9 +97,6 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
             throw std::runtime_error("Empty trajectory in dynamic obstacle");
         }
 
-        // TODO: REMOVE THIS
-        obs.path->cursor_begin();
-
         cursor.seek(start_time);
 
         // Inflate obstacles by our robot's radius.
