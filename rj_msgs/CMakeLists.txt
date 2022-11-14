@@ -24,6 +24,9 @@ rosidl_generate_interfaces(
 
   # Messages
   msg/AgentState.msg
+  msg/AgentRequest.msg
+  msg/AgentResponse.msg
+  msg/AgentToPosCommResponse.msg
   msg/BallState.msg
   msg/BallPlacement.msg
   msg/CoachState.msg
@@ -57,6 +60,7 @@ rosidl_generate_interfaces(
   msg/RobotState.msg
   msg/RobotStatus.msg
   msg/PlayState.msg
+  msg/PosToAgentCommRequest.msg
   msg/TeamColor.msg
   msg/TeamInfo.msg
   msg/Trajectory.msg

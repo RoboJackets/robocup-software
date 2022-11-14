@@ -8,6 +8,10 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
+#include <rj_msgs/msg/agent_to_pos_comm_request.hpp>
+#include <rj_msgs/msg/agent_to_pos_comm_response.hpp>
+#include <rj_msgs/msg/pos_to_agent_comm_request.hpp>
+#include <rj_msgs/msg/pos_to_agent_comm_response.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -44,6 +48,11 @@ public:
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
+    // Agent-to-Agent communication
+    rj_msgs::msg::PosToAgentCommRequest send_communication_request();
+    virtual void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response);
+    virtual rj_msgs::msg::AgentResponse receive_communication_request(rj_msgs::msg::AgentRequest request);
+    
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
 
 protected:
@@ -97,6 +106,9 @@ protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
+
+    // Request 
+    rj_msgs::msg::PosToAgentCommRequest communication_request_{};
 
 private:
 };

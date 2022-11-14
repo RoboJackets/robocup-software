@@ -16,6 +16,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "rj_msgs/msg/agent_request.hpp"
+#include "rj_msgs/msg/agent_response.hpp"
+#include "rj_msgs/msg/agent_to_pos_comm_request.hpp"
+#include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
+#include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
+#include "rj_msgs/msg/pos_to_agent_comm_response.hpp"
 #include "rj_msgs/srv/AgentCommunication.srv"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goalie.hpp"
@@ -46,10 +52,10 @@ private:
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
 
     // server for receiving instructions from other agents
-    rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_server_;
+    rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
 
     // clients for receiving instructions from the other agents
-    rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_clients_[kNumShells];
+    rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_cli_[kNumShells];
 
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
@@ -78,31 +84,36 @@ private:
      * 
      * @param robot_id the robot to communicate with
      */
-    void send_unicast(int&& robot_id);
+    void send_unicast(int&& robot_id, rj_msgs::msg::AgentRequest request);
 
     /**
      * @brief sends a robot communication to all robots
      * 
      */
-    void send_broadcast();
+    void send_broadcast(rj_msgs::msg::AgentRequest request);
 
     /**
      * @brief sends a robot communication to a specific group of robots
      * 
      * @param robot_ids the robot ids to send communication to
      */
-    void send_multicast(int&& robot_ids[]);
+    void send_multicast(int&& robot_ids[], rj_msgs::msg::AgentRequest request);
 
     /**
-     * @brief sends a robot communication and accepts only the first response
+     * @brief the callback that handles receiving and dealing with received agent communication
      * 
-     * *NOTE* this is not the exact same as anycast in IP routing, but pretty similar
-     * 
+     * @param request the robot communication request from the other robot
+     * @param response the communication to return to the other robot
      */
-    void send_anycast();
-
     void receive_communication_callback(const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
                                         std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response);
+
+    /**
+     * @brief the callback that handles the response from any send transmissions to other agents.
+     * 
+     * @param response the contents of the response from the other agent.
+     */
+    void receive_response_callback(std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response);
 
     // TODO(#1957): add back this if needed, or delete
     // cancel latest goal every time a new goal comes in, to avoid overloading memory with many
@@ -115,6 +126,11 @@ private:
     rclcpp::TimerBase::SharedPtr get_task_timer_;
     void get_task();
     rj_msgs::msg::RobotIntent last_task_;
+
+    // Robot Communication
+    rclcpp::TimerBase::SharedPtr get_communication_timer_;
+    void get_communication();
+    rj_msgs::msg::PosToAgentCommRequest last_communication_;
 
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
