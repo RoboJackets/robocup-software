@@ -40,7 +40,7 @@ AgentActionClient::AgentActionClient(int r_id)
         robot_communication_cli_[i] = create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
 
-    // TODO: make ROS param for this
+    // TODO(Kevin): make ROS param for this
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
@@ -49,7 +49,7 @@ AgentActionClient::AgentActionClient(int r_id)
     get_communication_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz), [this](){ get_task(); });
 }
 
-void AgentActionClient::world_state_callback(rj_msgs::msg::WorldState::SharedPtr msg) {
+void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
@@ -58,7 +58,7 @@ void AgentActionClient::world_state_callback(rj_msgs::msg::WorldState::SharedPtr
     current_position_->update_world_state(world_state);
 }
 
-void AgentActionClient::coach_state_callback(rj_msgs::msg::CoachState::SharedPtr msg) {
+void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
@@ -86,23 +86,6 @@ void AgentActionClient::get_task() {
     }
 }
 
-/* void AgentActionClient::cancel_last_goal() { */
-/*     if (client_ptr_ == nullptr || last_goal_handle_ == nullptr) { */
-/*         return; */
-/*     } */
-/*     using namespace std::placeholders; */
-/*     auto cancel_future = client_ptr_->async_cancel_goal( */
-/*         last_goal_handle_, std::bind(&AgentActionClient::cancel_goal_callback, this, _1)); */
-/*     // TODO: do something with this future? */
-/* } */
-
-/* void AgentActionClient::cancel_goal_callback( */
-/*     rclcpp_action::Client<RobotMove>::CancelResponse::SharedPtr) { */
-/*     // TODO: worry about the cancelresponse? */
-/*     // TODO: would this generate race cond? */
-/*     last_goal_handle_ = nullptr; */
-/* } */
-
 void AgentActionClient::send_new_goal() {
     using namespace std::placeholders;
 
@@ -127,21 +110,21 @@ void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
     auto goal_handle = future.get();
     if (!goal_handle) {
-        current_position_->tell_goal_canceled();
+        current_position_->goal_canceled_ = true;
     }
 }
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    current_position_->tell_time_left(time_left);
+    current_position_->time_left_ = time_left;
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
-            current_position_->tell_is_done();
+            current_position_->is_done_ = true;
             break;
         case rclcpp_action::ResultCode::ABORTED:
             return;

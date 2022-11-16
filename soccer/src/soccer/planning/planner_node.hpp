@@ -250,14 +250,25 @@ private:
      */
     void execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
 
+    /*
+     * @brief Track the current state of a robot's task. This is how
+     * PlannerNode ensures each robot only has one task running.
+     */
     struct ServerTaskState {
         ServerTaskState() = default;
         ~ServerTaskState() = default;
-        // make clear that there's no copy constructor
-        ServerTaskState(ServerTaskState const& state) = delete;
+        // disallow copy/move operators
+        ServerTaskState(const ServerTaskState& state) = delete;
+        ServerTaskState& operator=(const ServerTaskState& state) = delete;
+        ServerTaskState(const ServerTaskState&& state) = delete;
+        ServerTaskState& operator=(const ServerTaskState&& state) = delete;
+
         std::atomic_bool is_executing{false};
         std::atomic_bool new_task_waiting_signal{false};
     };
+
+    // create an array, kNumShells long, of ServerTaskState structs for
+    // PlannerNode to use
     std::array<ServerTaskState, kNumShells> server_task_states_;
 };
 

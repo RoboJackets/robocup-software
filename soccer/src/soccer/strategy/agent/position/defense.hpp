@@ -16,20 +16,17 @@
 
 namespace strategy {
 
-// TODO: docstring
+/*
+ * The Defense position handles general defensive tasks, like intercepting
+ * passes, walling in front of our goal, and fighting for possession.
+ */
 class Defense : public Position {
 public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    Defense(Defense&&) noexcept = default;
-    Defense& operator=(Defense&&) noexcept = default;
-    Defense(const Defense&) = default;
-    Defense& operator=(const Defense&) = default;
-
     rj_msgs::msg::RobotIntent get_task() override;
 
-protected:
 private:
     int move_ct_ = 0;
 };

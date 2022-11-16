@@ -20,6 +20,8 @@
 #include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
 #include "rj_msgs/msg/pos_to_agent_comm_response.hpp"
 
+class AgentActionClient;
+
 namespace strategy {
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
@@ -29,24 +31,15 @@ namespace strategy {
  *
  * A good analogy is how the Planner Node uses the various Planner objects
  * (PathTargetPlanner, etc.). The Planner objects take in a plan request and
- * output a Trajectory. This class is sadly more coupled with the ActionClient
- * it lives in than the Planner objects, but this is necessary to have a
- * flexible agent that still has access to ROS info.
+ * output a Trajectory. Planner objects don't know anything about ROS; that is
+ * all handled by the Planner Node.
  */
 class Position {
 public:
     Position(int r_id);
     virtual ~Position() = default;
 
-    Position(Position&&) noexcept = default;
-    Position& operator=(Position&&) noexcept = default;
-    Position(const Position&) = default;
-    Position& operator=(const Position&) = default;
-
     // communication with AC
-    void tell_is_done();
-    void tell_time_left(double time_left);
-    void tell_goal_canceled();
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
@@ -56,6 +49,9 @@ public:
     virtual rj_msgs::msg::PosToAgentCommResponse receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request);
     
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
+
+    // this allows AgentActionClient to change private/protected members of this class
+    friend class AgentActionClient;
 
 protected:
     // should be overriden in subclass constructors
@@ -86,10 +82,14 @@ protected:
      * before they have any world_state info to act on. Thus, we must return
      * NOPs to the robots until vision_filter node starts up.
      *
-     * @param intent EmptyMotionCommand added if world_state is invalid
      * @return false if world_state is invalid (nullptr), true otherwise
      */
-    bool assert_world_state_valid(rj_msgs::msg::RobotIntent& intent);
+    bool assert_world_state_valid();
+
+    /*
+     * @brief return an empty robot intent for our robot_id_.
+     */
+    rj_msgs::msg::RobotIntent get_empty_intent() const;
 
     /*
      * @brief getter for is_done that clears the flag before returning
