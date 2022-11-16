@@ -1,3 +1,3 @@
 bool broadcast
-uint8[11] target_agents
+uint8[] target_agents # if broadcast, this can be empty
 AgentRequest request

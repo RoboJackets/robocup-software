@@ -24,9 +24,6 @@ rosidl_generate_interfaces(
 
   # Messages
   msg/AgentState.msg
-  msg/AgentRequest.msg
-  msg/AgentResponse.msg
-  msg/AgentToPosCommResponse.msg
   msg/BallState.msg
   msg/BallPlacement.msg
   msg/CoachState.msg
@@ -60,11 +57,27 @@ rosidl_generate_interfaces(
   msg/RobotState.msg
   msg/RobotStatus.msg
   msg/PlayState.msg
-  msg/PosToAgentCommRequest.msg
   msg/TeamColor.msg
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+
+  # Communication
+  msg/AgentRequest.msg
+  msg/AgentResponse.msg
+  msg/AgentToPosCommRequest.msg
+  msg/AgentToPosCommResponse.msg
+  msg/PosToAgentCommRequest.msg
+  msg/PosToAgentCommResponse.msg
+
+  # Agent Request Messages
+  msg/PassRequest.msg
+  msg/TestRequest.msg
+
+  # Agent Response Messages
+  msg/PassResponse.msg
+  msg/TestResponse.msg
+
   # Services
   srv/AgentCommunication.srv
   srv/ListJoysticks.srv
