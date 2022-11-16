@@ -75,12 +75,12 @@ rj_msgs::msg::PosToAgentCommRequest Position::send_communication_request() {
     return communication_request_;
 }
 
-void Position::receive_communication_response(rj_msgs::msg::PosToAgentCommResponse response) {
+void Position::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
     return;
 }
 
-rj_msgs::msg::AgentResponse Position::receive_communication_request(rj_msgs::msg::AgentRequest request) {
-    rj_msgs::msg::AgentResponse empty_response{};
+rj_msgs::msg::PosToAgentCommResponse Position::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
+    rj_msgs::msg::PosToAgentCommResponse empty_response{};
     return empty_response;
 }
 
