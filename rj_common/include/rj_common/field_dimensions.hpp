@@ -213,7 +213,7 @@ private:
     float goal_height_;
     float penalty_short_dist_;
     float penalty_long_dist_;
-    float arc_radius_;
+    //float arc_radius_;
     float center_radius_;
     float center_diameter_;
     float goal_flat_;

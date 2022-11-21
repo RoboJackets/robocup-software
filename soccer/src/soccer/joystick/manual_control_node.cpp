@@ -48,7 +48,7 @@ ManualControlNode::ManualControlNode()
                        request->connect ? std::make_optional(request->robot_id) : std::nullopt);
         });
 
-    for (int i = 0; i < kNumShells; i++) {
+    for (unsigned int i = 0; i < kNumShells; i++) {
         motion_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::MotionSetpoint>(
             control::topics::motion_setpoint_pub(i), 10));
         manipulator_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
