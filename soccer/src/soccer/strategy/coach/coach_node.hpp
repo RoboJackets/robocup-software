@@ -1,6 +1,7 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
+#include <rj_utils/logging.hpp>
 
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
@@ -11,7 +12,11 @@
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-
+#include <rj_msgs/msg/position.hpp>
+#include "strategy/agent/position/defense.hpp"
+#include "strategy/agent/position/goalie.hpp"
+#include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/position.hpp"
 #include "game_state.hpp"
 
 namespace strategy {

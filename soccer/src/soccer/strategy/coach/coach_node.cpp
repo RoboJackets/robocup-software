@@ -27,7 +27,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
     current_play_state_.our_restart = true;
-
+    assign_positions();
     rj_geometry_msgs::msg::Point temp_point;
     temp_point.x = -1;
     temp_point.y = -1;
@@ -119,6 +119,10 @@ void CoachNode::check_for_play_state_change() {
         coach_message.global_override = global_override;
 
         coach_message.our_possession = possessing_;
+
+        SPDLOG_INFO("We are about to assign positions");
+
+        assign_positions();
 
         coach_state_pub_->publish(coach_message);
 
