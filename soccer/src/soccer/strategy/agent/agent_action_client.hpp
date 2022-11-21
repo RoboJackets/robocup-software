@@ -11,6 +11,7 @@
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_msgs/msg/position.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rclcpp/rclcpp.hpp"
@@ -43,6 +44,7 @@ private:
     // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::Position>::SharedPtr positions_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
@@ -67,6 +69,7 @@ private:
 
     rclcpp::TimerBase::SharedPtr get_task_timer_;
     void get_task();
+    void update_position(const rj_msgs::msg::Position::SharedPtr& msg);
     rj_msgs::msg::RobotIntent last_task_;
 
     // const because should never be changed, but initializer list will allow

@@ -30,7 +30,7 @@ AgentActionClient::AgentActionClient(int r_id)
 
     positions_sub_ = create_subscription<rj_msgs::msg::Position>(
         "strategy/positions", 1,
-        [this](rj_msgs::msg::Position::SharedPtr msg) { get_task(msg); });
+        [this](rj_msgs::msg::Position::SharedPtr msg) { update_position(msg); });
 
     // TODO(Kevin): make ROS param for this
     int hz = 10;
@@ -55,16 +55,29 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
     current_position_->update_coach_state(*msg);
 }
 
-void AgentActionClient::get_task(const rj_msgs::msg::Position::SharedPtr& msg) {
+void AgentActionClient::get_task() {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
-        current_position_ = msg->client_positions.at(robot_id_);
+        return;
     }
 
-    auto task = current_position_->get_task(*msg);
+    auto task = current_position_->get_task();
     if (task != last_task_) {
         last_task_ = task;
         send_new_goal();
+    }
+}
+
+void AgentActionClient::update_position(const rj_msgs::msg::Position::SharedPtr& msg) {
+    if (current_position_ == nullptr) {
+        switch (msg->client_positions.at(robot_id_)) {
+            case 0:
+                current_position_ = std::make_unique<Goalie>(robot_id_);
+            case 1:
+                current_position_ = std::make_unique<Defense>(robot_id_);
+            case 2:
+                current_position_ = std::make_unique<Offense>(robot_id_);
+        };
     }
 }
 

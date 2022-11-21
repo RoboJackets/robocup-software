@@ -1,8 +1,4 @@
 #include "coach_node.hpp"
-#include "strategy/agent/position/defense.hpp"
-#include "strategy/agent/position/goalie.hpp"
-#include "strategy/agent/position/offense.hpp"
-#include "strategy/agent/position/position.hpp"
 
 namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
@@ -35,7 +31,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
     current_play_state_.our_restart = true;
-
+    assign_positions();
     rj_geometry_msgs::msg::Point temp_point;
     temp_point.x = -1;
     temp_point.y = -1;
@@ -127,6 +123,8 @@ void CoachNode::check_for_play_state_change() {
         coach_message.global_override = global_override;
 
         coach_message.our_possession = possessing_;
+
+        SPDLOG_INFO("We are about to assign positions");
 
         assign_positions();
 

@@ -167,17 +167,11 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_robocup",
-                executable="coach_node",
+                executable="planner_node",
                 output="screen",
+                parameters=[param_config_filepath],
                 on_exit=Shutdown(),
-            ),
-            # Node(
-            #     package="rj_robocup",
-            #     executable="planner_node",
-            #     output="screen",
-            #     parameters=[param_config_filepath],
-            #     on_exit=Shutdown(),
-            # ),
+             ),
             # spawn manual node only if use_manual_control is True
             Node(
                 condition=IfCondition(PythonExpression([use_manual_control])),
