@@ -14,6 +14,7 @@
 #include "planning/robot_constraints.hpp"
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
+#include "planning/trajectory_collection.hpp"
 
 namespace planning {
 
@@ -27,7 +28,7 @@ struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles,
-                std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
+                TrajectoryCollection *planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false)
         : start(start),
@@ -72,7 +73,7 @@ struct PlanRequest {
      * Trajectories for each of the robots that has already been planned.
      * nullptr for unplanned robots.
      */
-    std::array<const Trajectory*, kNumShells> planned_trajectories;
+    TrajectoryCollection *planned_trajectories;
 
     /**
      * The robot's shell ID. Used for debug drawing.

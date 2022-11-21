@@ -21,37 +21,9 @@
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
+#include "planning/trajectory_collection.hpp"
 
 namespace planning {
-
-/**
- * A collection of per-robot trajectories.
- */
-class TrajectoryCollection {
-public:
-    // Per-robot (trajectory, priority)
-    using Entry = std::tuple<std::shared_ptr<const Trajectory>, int>;
-
-    std::array<Entry, kNumShells> get() {
-        std::lock_guard lock(lock_);
-        return robot_trajectories_;
-    }
-    // TODO: add "copy()" function here
-
-    void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
-        // associate a (Trajectory, priority) tuple with a robot id
-        std::lock_guard lock(lock_);
-        try {
-            robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
-        } catch (std::exception& exception) {
-            std::cout << exception.what() << std::endl;
-        }
-    }
-
-private:
-    std::mutex lock_;
-    std::array<Entry, kNumShells> robot_trajectories_ = {};
-};
 
 class SharedStateInfo {
 public:

@@ -182,8 +182,7 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     // TODO(p-nayak): why does this say 3s even when the robot is on its point?
     // get the Traj out of the relevant [Trajectory, priority] tuple in
     // robot_trajectories_
-    const auto latest_trajs = robot_trajectories_->get();
-    const auto& [latest_traj, priority] = latest_trajs.at(robot_id_);
+    const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
     if (!latest_traj) {
         return std::nullopt;
     }
@@ -207,18 +206,21 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
 
     // make a copy instead of getting the actual shared_ptr to Trajectory
-    const auto robot_trajectories_hold = robot_trajectories_->get();
-    std::array<const Trajectory*, kNumShells> planned_trajectories = {};
+    /* std::array<std::optional<Trajectory>, kNumShells> planned_trajectories; */
 
-    for (int i = 0; i < kNumShells; i++) {
-        // TODO(Kevin): check that priority works (seems like
-        // robot_trajectories_ is passed on init, when no planning has occured
-        // yet)
-        const auto& [trajectory, priority] = robot_trajectories_hold.at(i);
-        if (i != robot_id_ && priority >= intent.priority) {
-            planned_trajectories.at(i) = trajectory.get();
-        }
-    }
+    /* for (int i = 0; i < kNumShells; i++) { */
+    /*     // TODO(Kevin): check that priority works (seems like */
+    /*     // robot_trajectories_ is passed on init, when no planning has occured */
+    /*     // yet) */
+    /*     const auto& [trajectory, priority] = robot_trajectories_->get(i); */
+    /*     if (i != robot_id_ && priority >= intent.priority) { */
+    /*         if (!trajectory) { */
+    /*             planned_trajectories[i] = std::nullopt; */
+    /*         } else { */
+    /*             planned_trajectories[i] = std::make_optional<const Trajectory>(*trajectory.get()); */
+    /*         } */
+    /*     } */
+    /* } */
 
     // TODO(Kyle): Send constraints from gameplay
     RobotConstraints constraints;
@@ -231,7 +233,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        constraints,
                        std::move(real_obstacles),
                        std::move(virtual_obstacles),
-                       planned_trajectories,
+                       robot_trajectories_,
                        static_cast<unsigned int>(robot_id_),
                        world_state,
                        intent.priority,
