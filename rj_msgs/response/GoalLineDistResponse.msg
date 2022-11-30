@@ -1,0 +1,1 @@
+float32 dist_from_goal_line

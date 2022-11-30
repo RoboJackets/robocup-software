@@ -79,7 +79,7 @@ public:
     // Agent-to-Agent communication
     rj_msgs::msg::PosToAgentCommRequest send_communication_request();
     virtual void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response);
-    
+
     virtual rj_msgs::msg::PosToAgentCommResponse receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request);
 
 protected:

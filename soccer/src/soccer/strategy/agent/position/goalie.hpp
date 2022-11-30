@@ -29,6 +29,11 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
+    rj_msgs::msg::RobotIntent get_task() override;
+
+    void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) override;
+    rj_msgs::msg::PosToAgentCommResponse receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) override;
+
 private:
     // temp
     int send_idle_ct_ = 0;

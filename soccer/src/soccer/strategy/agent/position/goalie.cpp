@@ -2,8 +2,16 @@
 
 namespace strategy {
 
+<<<<<<< HEAD
 // TODO(Kevin): lock Goalie id to id given by the ref
 Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
+=======
+// TODO: lock Goalie id to id given by the ref
+Goalie::Goalie(int r_id) : Position(r_id) { 
+    position_name_ = "Goalie";
+    set_goal_line_dist_request();
+}
+>>>>>>> 510d044d79... basic communication complete, next is testing
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
@@ -104,6 +112,23 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
         std::abs(cross_x) < 0.5;  // TODO(Kevin): add field to world_state to avoid hardcoding this
     bool ball_is_fast = ball_vel.mag() > 1.0;
     return ball_is_fast && shot_on_target;
+}
+
+void Goalie::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
+    // Do something
+    SPDLOG_INFO("\033[92mRobot {} is {} from the goal line\033[0m", response.robot_id, response.response.goal_line_dist_response[0].dist_from_goal_line);
+}
+
+rj_msgs::msg::PosToAgentCommResponse Goalie::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
+    // TODO: Do something
+}
+
+void Goalie::set_goal_line_dist_request() {
+    rj_msgs::msg::PosToAgentCommRequest request;
+    rj_msgs::msg::GoalLineDistRequest goal_line_request;
+    request.broadcast = true;
+    request.request.goal_line_dist_request = {goal_line_request};
+    communication_request_ = request;
 }
 
 }  // namespace strategy

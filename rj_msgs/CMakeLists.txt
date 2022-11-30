@@ -72,12 +72,17 @@ rosidl_generate_interfaces(
   msg/PosToAgentCommResponse.msg
 
   # Agent Request Messages
-  msg/PassRequest.msg
-  msg/TestRequest.msg
+  request/GoalLineDistRequest.msg
+  request/PassRequest.msg
+  request/PositionRequest.msg
+  request/TestRequest.msg
 
   # Agent Response Messages
-  msg/PassResponse.msg
-  msg/TestResponse.msg
+  response/GoalLineDistResponse.msg
+  response/PassResponse.msg
+  response/PositionResponse.msg
+  response/TestResponse.msg
+  response/Acknowledge.msg
 
   # Services
   srv/AgentCommunication.srv

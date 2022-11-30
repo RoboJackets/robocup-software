@@ -26,6 +26,9 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
+    void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) override;
+    rj_msgs::msg::PosToAgentCommResponse receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) override;
+
 private:
     int move_ct_ = 0;
 
