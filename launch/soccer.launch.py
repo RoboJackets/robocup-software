@@ -167,12 +167,6 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_robocup",
-                executable="coach_node",
-                output="screen",
-                on_exit=Shutdown(),
-            ),
-            Node(
-                package="rj_robocup",
                 executable="planner_node",
                 output="screen",
                 parameters=[param_config_filepath],
@@ -186,17 +180,23 @@ def generate_launch_description():
                 output="screen",
                 on_exit=Shutdown(),
             ),
-            # spawn gameplay only if manual is not on
-            # TODO: replace with ActionClients
-            # Node(
-            #     condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-            #     package="rj_robocup",
-            #     executable="gameplay_node",
-            #     output="screen",
-            #     parameters=[param_config_filepath],
-            #     emulate_tty=True,
-            #     on_exit=Shutdown(),
-            # ),
+            # spawn strategy only if manual is not on
+            Node(
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+                package="rj_robocup",
+                executable="agent_action_client_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+                package="rj_robocup",
+                executable="coach_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
             # spawn internal_ref/external_ref based on internal_ref LaunchArgument
             Node(
                 condition=IfCondition(PythonExpression([use_internal_ref])),
@@ -220,13 +220,6 @@ def generate_launch_description():
             Node(
                 package="rj_robocup",
                 executable="rj_vision_filter",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
-            Node(
-                package="rj_robocup",
-                executable="agent_action_client_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
