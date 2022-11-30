@@ -92,45 +92,53 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
     // hit the obstacle that happened to be first in the list.
     std::optional<RJ::Time> maybe_hit_time = std::nullopt;
 
-    for (const DynamicObstacle& obs : obstacles) {
-        if (obs.path->empty()) {
-            throw std::runtime_error("Empty trajectory in dynamic obstacle");
-        }
-
-        cursor.seek(start_time);
-
-        // Inflate obstacles by our robot's radius.
-        const double total_radius = obs.circle.radius() + kRobotRadius;
-
-        // Only use the trajectory cursor in the loop condition; we use the
-        // static position after the obstacle cursor runs off the end.
-        for (auto cursor_obstacle = obs.path->cursor_begin(); cursor.has_value();
-             cursor_obstacle.advance(dt), cursor.advance(dt)) {
-            // If the earlier calculated hit was before this point, stop looking
-            // at this obstacle.
-            if (maybe_hit_time.has_value() && maybe_hit_time.value() < cursor.time()) {
-                break;
+    try {
+        for (const DynamicObstacle& obs : obstacles) {
+            if (obs.path->empty()) {
+                throw std::runtime_error("Empty trajectory in dynamic obstacle");
             }
 
-            rj_geometry::Point obstacle_position;
-            if (cursor_obstacle.has_value()) {
-                obstacle_position = cursor_obstacle.value().position();
-            } else {
-                obstacle_position = obs.path->last().position();
-            }
+            // TODO: REMOVE THIS
+            obs.path->cursor_begin();
 
-            rj_geometry::Point robot_position = cursor.value().position();
+            cursor.seek(start_time);
 
-            if (robot_position.dist_to(obstacle_position) < total_radius) {
-                // We would already have broken out if we had an earlier
-                // obstacle (from the check above), so this is definitely the
-                // earliest one.
-                if (out_hit_obstacle != nullptr) {
-                    *out_hit_obstacle = rj_geometry::Circle(obstacle_position, obs.circle.radius());
+            // Inflate obstacles by our robot's radius.
+            const double total_radius = obs.circle.radius() + kRobotRadius;
+
+            // Only use the trajectory cursor in the loop condition; we use the
+            // static position after the obstacle cursor runs off the end.
+            for (auto cursor_obstacle = obs.path->cursor_begin(); cursor.has_value();
+                 cursor_obstacle.advance(dt), cursor.advance(dt)) {
+                // If the earlier calculated hit was before this point, stop looking
+                // at this obstacle.
+                if (maybe_hit_time.has_value() && maybe_hit_time.value() < cursor.time()) {
+                    break;
                 }
-                maybe_hit_time = cursor.time();
+
+                rj_geometry::Point obstacle_position;
+                if (cursor_obstacle.has_value()) {
+                    obstacle_position = cursor_obstacle.value().position();
+                } else {
+                    obstacle_position = obs.path->last().position();
+                }
+
+                rj_geometry::Point robot_position = cursor.value().position();
+
+                if (robot_position.dist_to(obstacle_position) < total_radius) {
+                    // We would already have broken out if we had an earlier
+                    // obstacle (from the check above), so this is definitely the
+                    // earliest one.
+                    if (out_hit_obstacle != nullptr) {
+                        *out_hit_obstacle =
+                            rj_geometry::Circle(obstacle_position, obs.circle.radius());
+                    }
+                    maybe_hit_time = cursor.time();
+                }
             }
         }
+    } catch (...) {
+        SPDLOG_ERROR("exception caught !!!");
     }
 
     if (maybe_hit_time.has_value() && out_hit_time != nullptr) {
