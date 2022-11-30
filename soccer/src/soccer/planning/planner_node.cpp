@@ -117,11 +117,11 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
 
         // send feedback
-        std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-        if (auto time_left = my_robot_planner->get_time_left()) {
-            feedback->time_left = rj_convert::convert_to_ros(time_left.value());
-            goal_handle->publish_feedback(feedback);
-        }
+        /* std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>(); */
+        /* if (auto time_left = my_robot_planner->get_time_left()) { */
+        /*     feedback->time_left = rj_convert::convert_to_ros(time_left.value()); */
+        /*     goal_handle->publish_feedback(feedback); */
+        /* } */
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
@@ -173,8 +173,8 @@ void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
         auto trajectory = plan_for_robot(plan_request);
         trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
         // store all latest trajectories in a mutex-locked shared map
-        robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
-                                 intent.priority);
+        /* robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)), */
+        /*                          intent.priority); */
     }
 }
 
@@ -182,11 +182,12 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     // TODO(p-nayak): why does this say 3s even when the robot is on its point?
     // get the Traj out of the relevant [Trajectory, priority] tuple in
     // robot_trajectories_
-    const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
-    if (!latest_traj) {
-        return std::nullopt;
-    }
-    return latest_traj->end_time() - RJ::now();
+    /* const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_); */
+    /* if (!latest_traj) { */
+    /*     return std::nullopt; */
+    /* } */
+    /* return latest_traj->end_time() - RJ::now(); */
+    return std::nullopt;
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
