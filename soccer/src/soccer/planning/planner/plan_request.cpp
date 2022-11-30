@@ -2,13 +2,15 @@
 
 namespace planning {
 
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center, double& obs_radius) {
+void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
+                         double& obs_radius) {
     // params for obstacle shift
     double obs_center_shift = 0.5;
     double obs_radius_inflation = 1.0;
 
     // shift obs center off robot
-    obs_center = robot.pose.position() + (robot.velocity.linear() * kRobotRadius * obs_center_shift);
+    obs_center =
+        robot.pose.position() + (robot.velocity.linear() * kRobotRadius * obs_center_shift);
 
     // inflate obs radius if needed
     double vel_mag = robot.velocity.linear().mag();

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "trajectory.hpp"
 #include <spdlog/spdlog.h>
+
+#include "trajectory.hpp"
 
 namespace planning {
 

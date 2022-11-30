@@ -12,9 +12,9 @@
 #include "planning/dynamic_obstacle.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
+#include "planning/trajectory_collection.hpp"
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
-#include "planning/trajectory_collection.hpp"
 
 namespace planning {
 
@@ -27,9 +27,8 @@ namespace planning {
 struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
-                rj_geometry::ShapeSet virtual_obstacles,
-                TrajectoryCollection *planned_trajectories, unsigned shell_id,
-                const WorldState* world_state, int8_t priority = 0,
+                rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
+                unsigned shell_id, const WorldState* world_state, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false)
         : start(start),
           motion_command(command),  // NOLINT
@@ -73,7 +72,7 @@ struct PlanRequest {
      * Trajectories for each of the robots that has already been planned.
      * nullptr for unplanned robots.
      */
-    TrajectoryCollection *planned_trajectories;
+    TrajectoryCollection* planned_trajectories;
 
     /**
      * The robot's shell ID. Used for debug drawing.
@@ -128,7 +127,8 @@ struct PlanRequest {
  * Numbers tuned by looking at output of planning/test_scripts/visualize_obs.py.
  *
  */
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center, double& obs_radius);
+void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
+                         double& obs_radius);
 
 /**
  * Fill the obstacle fields.

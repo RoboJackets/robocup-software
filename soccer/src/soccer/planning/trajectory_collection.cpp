@@ -14,10 +14,11 @@ Entry TrajectoryCollection::get(int robot_id) {
 }
 // TODO: add "copy()" function here
 
-void TrajectoryCollection::put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
+void TrajectoryCollection::put(int robot_id, std::shared_ptr<const Trajectory> trajectory,
+                               int priority) {
     // associate a (Trajectory, priority) tuple with a robot id
     std::lock_guard lock(entry_locks.at(robot_id));
     robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
 }
 
-}
+}  // namespace planning

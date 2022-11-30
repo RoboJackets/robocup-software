@@ -17,11 +17,11 @@
 #include "node.hpp"
 #include "planner/plan_request.hpp"
 #include "planner/planner.hpp"
+#include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
-#include "planning/trajectory_collection.hpp"
 
 namespace planning {
 

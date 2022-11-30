@@ -130,7 +130,8 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
                     // obstacle (from the check above), so this is definitely the
                     // earliest one.
                     if (out_hit_obstacle != nullptr) {
-                        *out_hit_obstacle = rj_geometry::Circle(obstacle_position, obs.circle.radius());
+                        *out_hit_obstacle =
+                            rj_geometry::Circle(obstacle_position, obs.circle.radius());
                     }
                     maybe_hit_time = cursor.time();
                 }
@@ -138,7 +139,6 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
         }
     } catch (...) {
         SPDLOG_ERROR("exception caught !!!");
-
     }
 
     if (maybe_hit_time.has_value() && out_hit_time != nullptr) {

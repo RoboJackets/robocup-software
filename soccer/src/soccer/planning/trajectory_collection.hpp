@@ -1,7 +1,7 @@
 #pragma once
 
-#include "trajectory.hpp"
 #include "rj_constants/constants.hpp"
+#include "trajectory.hpp"
 
 namespace planning {
 
@@ -25,4 +25,4 @@ private:
     std::array<Entry, kNumShells> robot_trajectories_ = {};
 };
 
-}
+}  // namespace planning
