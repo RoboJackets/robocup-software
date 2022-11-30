@@ -245,7 +245,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        world_state,
                        intent.priority,
                        &debug_draw_,
-                       had_break_beam_
+                       had_break_beam_,
                        min_dist_from_ball};
 }
 
