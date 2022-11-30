@@ -69,16 +69,24 @@ void AgentActionClient::get_task() {
 }
 
 void AgentActionClient::update_position(const rj_msgs::msg::Position::SharedPtr& msg) {
-    if (current_position_ == nullptr) {
-        switch (msg->client_positions.at(robot_id_)) {
-            case 0:
-                current_position_ = std::make_unique<Goalie>(robot_id_);
-            case 1:
-                current_position_ = std::make_unique<Defense>(robot_id_);
-            case 2:
-                current_position_ = std::make_unique<Offense>(robot_id_);
-        };
-    }
+    // TODO remove this debug 
+    /* for (int i = 0; i < 6; i++) { */
+    /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
+    /* } */
+    SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions.at(robot_id_));
+
+    switch (msg->client_positions.at(robot_id_)) {
+        case 0:
+            current_position_ = std::make_unique<Goalie>(robot_id_);
+            break;
+        case 1:
+            current_position_ = std::make_unique<Defense>(robot_id_);
+            break;
+        case 2:
+            current_position_ = std::make_unique<Offense>(robot_id_);
+            break;
+    };
+    // TODO: send acknowledgement back to coach node (w/ robot ID)
 }
 
 void AgentActionClient::send_new_goal() {
