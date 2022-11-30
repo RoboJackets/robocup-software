@@ -10,6 +10,7 @@ using Entry = std::tuple<std::shared_ptr<const Trajectory>, int>;
 
 /**
  * A collection of per-robot trajectories.
+// TODO (PR #1970): fix TrajectoryCollection
  */
 class TrajectoryCollection {
 public:
