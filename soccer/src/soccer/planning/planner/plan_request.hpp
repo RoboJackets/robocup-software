@@ -103,7 +103,6 @@ struct PlanRequest {
 };
 
 /**
- * TODO: fix this doc
  * Create static circle obstacle for one of the robots.
  *
  * Shift the circle off-center depending on their robot's current velocity.
@@ -126,8 +125,10 @@ struct PlanRequest {
  *
  * Numbers tuned by looking at output of planning/test_scripts/visualize_obs.py.
  *
+ * @param robot ptr to robot that needs obstacle made
+ * @return shared_ptr to new Circle obstacle with inflated radius and center
  */
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center, double& obs_radius);
+std::shared_ptr<rj_geometry::Circle> calc_static_robot_obs(const RobotState& robot);
 
 /**
  * Fill the obstacle fields.

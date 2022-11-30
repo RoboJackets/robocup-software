@@ -16,7 +16,10 @@
 
 namespace strategy {
 
-// TODO: docstring
+/*
+ * The Defense position handles goalie behavior: blocking shots, passing to teammates, and clearing
+ * the ball.
+ */
 class Goalie : public Position {
 public:
     Goalie(int r_id);
@@ -24,9 +27,7 @@ public:
 
     rj_msgs::msg::RobotIntent get_task() override;
 
-protected:
 private:
-    // TODO(#1957): fix this class
     // temp to move back and forth
     int move_ct = 0;
 

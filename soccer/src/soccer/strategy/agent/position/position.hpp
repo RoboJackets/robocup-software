@@ -26,9 +26,8 @@ namespace strategy {
  *
  * A good analogy is how the Planner Node uses the various Planner objects
  * (PathTargetPlanner, etc.). The Planner objects take in a plan request and
- * output a Trajectory. This class is sadly more coupled with the ActionClient
- * it lives in than the Planner objects, but this is necessary to have a
- * flexible agent that still has access to ROS info.
+ * output a Trajectory. Planner objects don't know anything about ROS; that is
+ * all handled by the Planner Node.
  */
 class Position {
 public:
@@ -77,7 +76,9 @@ protected:
      */
     bool assert_world_state_valid();
 
-    // TODO: docs
+    /*
+     * @brief return an empty robot intent for our robot_id_.
+     */
     rj_msgs::msg::RobotIntent get_empty_intent() const;
 
     /*

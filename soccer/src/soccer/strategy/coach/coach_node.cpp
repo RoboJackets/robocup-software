@@ -31,7 +31,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
     current_play_state_.our_restart = true;
-    assign_positions();
+    //assign_positions();
     rj_geometry_msgs::msg::Point temp_point;
     temp_point.x = -1;
     temp_point.y = -1;
@@ -136,6 +136,7 @@ void CoachNode::check_for_play_state_change() {
 
 void CoachNode::assign_positions() {
     rj_msgs::msg::Position positions_message;
+    SPDLOG_INFO("We are IN assign positions");
     positions_message.client_positions[0] = Positions::Goalie;
     if(!possessing_) {
         positions_message.client_positions[1] = Positions::Offense;
