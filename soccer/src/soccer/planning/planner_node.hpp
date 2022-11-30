@@ -126,7 +126,7 @@ public:
     }
     [[nodiscard]] float min_dist_from_ball() const {
         auto lock = std::lock_guard(mutex_);
-        return &last_min_dist_from_ball_;
+        return last_min_dist_from_ball_;
     }
 
 private:
