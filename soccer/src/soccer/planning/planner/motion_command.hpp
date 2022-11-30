@@ -17,7 +17,7 @@
 #include <rj_msgs/msg/settle_motion_command.hpp>
 #include <rj_msgs/msg/world_vel_motion_command.hpp>
 #include <world_state.hpp>
-
+#include <spdlog/spdlog.h>
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
 
@@ -43,8 +43,43 @@ struct TargetFacePoint {
     rj_geometry::Point face_point;
 };
 
-using AngleOverride =
-    std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
+using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
+
+static bool angleEquals(const AngleOverride &a, const AngleOverride &b) {
+    if (auto* a2 = std::get_if<TargetFaceTangent>(&a)) {
+        if (auto* b2 = std::get_if<TargetFaceTangent>(&b)) {
+            return true;
+        }
+        return false;
+    }
+    else if (auto* a2 = std::get_if<TargetFaceAngle>(&a)) {
+        if (auto* b2 = std::get_if<TargetFaceAngle>(&b)) {
+            return a2->target == b2->target;
+        }
+        return false;
+    }   
+    else if (auto* a2 = std::get_if<TargetFacePoint>(&a)) {
+        if (auto* b2 = std::get_if<TargetFacePoint>(&b)) {
+            return a2->face_point.angle() == b2->face_point.angle();
+        }
+        return false;
+    }
+    else
+        return false;
+}
+/*
+bool operator == (const TargetFaceTangent &a, const TargetFaceTangent &b) {
+    return true;
+}
+
+bool operator == (const TargetFaceAngle &a, const TargetFaceAngle &b) {
+    return a.target == b.target;
+}
+
+bool operator == (const TargetFacePoint &a, const TargetFacePoint &b) {
+    return a.angle == b.angle;
+}*/
+
 /**
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
@@ -57,7 +92,10 @@ struct PathTargetCommand {
         bool pos_eq = goal.position == ptc.goal.position;
         bool vel_eq = goal.velocity == ptc.goal.velocity;
         // TODO(Kevin): fix this to actually compare std::variants
-        bool angle_eq = true;
+        SPDLOG_INFO("ANGLE OVERRIDE: ", angle_override);
+        SPDLOG_INFO("ANGLE OVERRIDE OTHER: ", angle_override);
+        bool angle_eq = angleEquals(angle_override, ptc.angle_override);
+        SPDLOG_INFO("ANGLE OVERRIDE equals?: ", angle_eq);
         /* bool angle_eq = goal.velocity == ptc.goal.velocity; */
         bool ball_eq = ignore_ball == ptc.ignore_ball;
         return (pos_eq && vel_eq && angle_eq && ball_eq);
