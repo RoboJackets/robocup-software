@@ -59,4 +59,21 @@ rj_msgs::msg::RobotIntent Offense::get_task() {
     return intent;
 }
 
+void Offense::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
+    // TODO: Do something
+}
+
+rj_msgs::msg::PosToAgentCommResponse Offense::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
+    // TODO: Check that request is correct type
+    SPDLOG_INFO("\033[92mOFFENSE RECEIVING COMMUNICATION\033[0m");
+    // float distance_to_goal = this->world_state()->get_robot(true, robot_id_).pose.position().y();
+    float distance_to_goal = 2.25f;
+    rj_msgs::msg::GoalLineDistResponse distance_response{};
+    distance_response.dist_from_goal_line = distance_to_goal;
+    rj_msgs::msg::PosToAgentCommResponse comm_response{};
+    comm_response.response.goal_line_dist_response = {distance_response};
+    SPDLOG_INFO("\033[92mOFFENSE SENDING COMMUNICATION\033[0m");
+    return comm_response;
+}
+
 }  // namespace strategy

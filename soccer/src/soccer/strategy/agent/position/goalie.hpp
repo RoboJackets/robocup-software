@@ -27,9 +27,14 @@ public:
 
     rj_msgs::msg::RobotIntent get_task() override;
 
+    void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) override;
+    rj_msgs::msg::PosToAgentCommResponse receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) override;
+
 private:
     // temp to move back and forth
     int move_ct = 0;
+
+    void set_goal_line_dist_request();
 
     /*
      * @return Point for Goalie to block a shot. Calls get_idle_pt() if ball is

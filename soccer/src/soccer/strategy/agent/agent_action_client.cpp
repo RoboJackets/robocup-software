@@ -36,7 +36,7 @@ AgentActionClient::AgentActionClient(int r_id)
                     receive_communication_callback(request, response); });
 
     // Create clients
-    for (int i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         robot_communication_cli_[i] = create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
 
@@ -46,15 +46,18 @@ AgentActionClient::AgentActionClient(int r_id)
                                         std::bind(&AgentActionClient::get_task, this));
 
     int agent_communication_hz = 10;
-    get_communication_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz), [this](){ get_task(); });
+    get_communication_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this](){ get_communication(); });
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
+    WorldState world_state = rj_convert::convert_from_ros(*msg);
+    auto lock = std::lock_guard(world_state_mutex_);
+    last_world_state_ = std::move(world_state);
+
     if (current_position_ == nullptr) {
         return;
     }
 
-    WorldState world_state = rj_convert::convert_from_ros(*msg);
     current_position_->update_world_state(world_state);
 }
 
@@ -148,15 +151,31 @@ void AgentActionClient::get_communication() {
     }
 
     auto communication_request = current_position_->send_communication_request();
-    if (communication_request != last_communication_) {
-        last_communication_ = communication_request;
-        // Decode communication and use corresponding IP send method
+    rj_msgs::msg::AgentRequest request = communication_request.request;
+
+    bool robots_visible = false;
+    for (u_int8_t i = 0; i < kNumShells; i++) {
+        if (this->world_state()->get_robot(true, i).visible) {
+            robots_visible = true;
+            break;
+        }
     }
 
-    auto task = current_position_->get_task();
-    if (task != last_task_) {
-        last_task_ = task;
-        send_new_goal();
+    if (request != last_communication_ && robots_visible) {
+        last_communication_ = request;
+        if (communication_request.broadcast) {
+            SPDLOG_INFO("\033[92mSENDING BROADCAST\033[0m");
+            send_broadcast(request);
+        } else if (communication_request.num_targets > 1) {
+            std::vector<u_int8_t> targets(std::begin(communication_request.target_agents), std::end(communication_request.target_agents));
+            send_multicast(targets, request);
+        } else if (communication_request.num_targets == 1) {
+            send_unicast(communication_request.target_agents[0], request);
+        } else {
+            SPDLOG_WARN("BAD REQUEST NOT SENDING ANY COMMUNICATION");
+        }
+    } else if (!robots_visible) {
+        SPDLOG_INFO("\033[92mROBOTS ARE INVISIBLE\033[0m");
     }
 }
 
@@ -166,8 +185,8 @@ void AgentActionClient::send_unicast(int robot_id, rj_msgs::msg::AgentRequest ag
 
     robot_communication_cli_[robot_id]->async_send_request(
         request,
-        [this](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
-            receive_response_callback(response);
+        [this, robot_id](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
+            receive_response_callback(response, robot_id);
         }
     );
 }
@@ -176,25 +195,29 @@ void AgentActionClient::send_broadcast(rj_msgs::msg::AgentRequest agent_request)
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
     request->agent_request = agent_request;
 
-    for (int i = 0; i < kNumShells; i++) {
-        robot_communication_cli_[i]->async_send_request(
-            request,
-            [this](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
-                receive_response_callback(response);
-            }
-        );
+    for (size_t i = 0; i < kNumShells; i++) {
+        SPDLOG_INFO("\033[92mRobot visibility: {}\033[0m", this->world_state()->get_robot(true, i).visible);
+        if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
+            SPDLOG_INFO("\033[92mSENDING REQUEST TO AGENT: {}\033[0m", i);
+            robot_communication_cli_[i]->async_send_request(
+                request,
+                [this, i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
+                    receive_response_callback(response, i);
+                }
+            );
+        }
     }
 }
 
-void AgentActionClient::send_multicast(std::vector<int> robot_ids, rj_msgs::msg::AgentRequest agent_request) {
+void AgentActionClient::send_multicast(std::vector<u_int8_t> robot_ids, rj_msgs::msg::AgentRequest agent_request) {
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
     request->agent_request = agent_request;
 
     for (int i : robot_ids) {
         robot_communication_cli_[i]->async_send_request(
             request,
-            [this](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
-                receive_response_callback(response);
+            [this, i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
+                receive_response_callback(response, i);
             }
         );
     }
@@ -204,30 +227,29 @@ void AgentActionClient::receive_communication_callback(const std::shared_ptr<rj_
                                                         std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
-        // TODO: change this once coach node merged
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
+        rj_msgs::msg::AgentResponse agent_response{};
+        rj_msgs::msg::Acknowledge acknowledgement{};
+        acknowledgement.acknowledged = true;
+        agent_response.acknowledge_response = {acknowledgement};
+        response->agent_response = agent_response;
+    } else {
+        // Convert agent request into AgentToPosCommRequest
+        rj_msgs::msg::AgentToPosCommRequest agent_request{};
+        agent_request.agent_request = request->agent_request;
+
+        // Give the current position the request and receive the response to send back
+        rj_msgs::msg::PosToAgentCommResponse pos_to_agent_response = current_position_->receive_communication_request(agent_request);
+
+        // Convert PosToAgentCommResponse into AgentResponse
+        rj_msgs::msg::AgentResponse agent_response = pos_to_agent_response.response;
+
+        // Send the agent's response back to the client who asked
+        SPDLOG_INFO("\033[92mSENDING RESPONSE\033[0m");
+        response->agent_response = agent_response;
     }
-
-    // Convert agent request into AgentToPosCommRequest
-    rj_msgs::msg::AgentToPosCommRequest agent_request;
-
-    // Give the current position the request and receive the response to send back
-    rj_msgs::msg::PosToAgentCommResponse pos_to_agent_response = current_position_->receive_communication_request(agent_request);
-
-    // Convert AgentToPosCommRequest into AgentResponse
-    rj_msgs::msg::AgentResponse agent_response;
-
-    // Send the agent's response back to the client who asked
-    response->agent_response = agent_response;
 }
 
-void AgentActionClient::receive_response_callback(const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response) {
+void AgentActionClient::receive_response_callback(const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response, int robot_id) {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
         // TODO: change this once coach node merged
@@ -240,11 +262,21 @@ void AgentActionClient::receive_response_callback(const std::shared_future<rj_ms
         }
     }
 
+    SPDLOG_INFO("\033[92mRECEIVED RESPONSE FROM ROBOT: {}\033[0m", robot_id);
+
     // TODO: Convert AgentCommunicationResponse into AgentToPosResponse
-    rj_msgs::msg::AgentToPosCommResponse agent_to_position_response;
+    rj_msgs::msg::AgentToPosCommResponse agent_to_position_response{};
+    agent_to_position_response.robot_id = robot_id;
+    agent_to_position_response.response = response.get()->agent_response;
 
     // Relay information to the position
     current_position_->receive_communication_response(agent_to_position_response);
+}
+
+[[nodiscard]] WorldState* AgentActionClient::world_state() {
+    // thread-safe getter for world_state (see update_world_state())
+    auto lock =std::lock_guard(world_state_mutex_);
+    return &last_world_state_;
 }
 
 }  // namespace strategy

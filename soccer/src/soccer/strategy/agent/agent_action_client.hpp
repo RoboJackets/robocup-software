@@ -29,6 +29,7 @@
 #include "rj_msgs/msg/agent_request.hpp"
 #include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
 #include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
+#include "rj_msgs/msg/acknowledge.hpp"
 
 namespace strategy {
 
@@ -57,6 +58,13 @@ private:
 
     // clients for receiving instructions from the other agents
     rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_cli_[kNumShells];
+
+    WorldState last_world_state_;
+    mutable std::mutex world_state_mutex_;
+    /*
+    * @return thread-safe ptr to most recent world_state
+    */
+    [[nodiscard]] WorldState* world_state();
 
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
@@ -97,7 +105,7 @@ private:
      * 
      * @param robot_ids the robot ids to send communication to
      */
-    void send_multicast(std::vector<int> robot_ids, rj_msgs::msg::AgentRequest request);
+    void send_multicast(std::vector<u_int8_t> robot_ids, rj_msgs::msg::AgentRequest agent_request);
 
     /**
      * @brief the callback that handles receiving and dealing with received agent communication
@@ -113,7 +121,7 @@ private:
      * 
      * @param response the contents of the response from the other agent.
      */
-    void receive_response_callback(const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response);
+    void receive_response_callback(const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response, int robot_id);
 
     // TODO(#1957): add back this if needed, or delete
     // cancel latest goal every time a new goal comes in, to avoid overloading memory with many
@@ -130,7 +138,7 @@ private:
     // Robot Communication
     rclcpp::TimerBase::SharedPtr get_communication_timer_;
     void get_communication();
-    rj_msgs::msg::PosToAgentCommRequest last_communication_;
+    rj_msgs::msg::AgentRequest last_communication_;
 
     // const because should never be changed, but initializer list will allow
     // us to set this once initially

@@ -3,7 +3,10 @@
 namespace strategy {
 
 // TODO: lock Goalie id to id given by the ref
-Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
+Goalie::Goalie(int r_id) : Position(r_id) { 
+    position_name_ = "Goalie";
+    set_goal_line_dist_request();
+}
 
 rj_msgs::msg::RobotIntent Goalie::get_task() {
     // init an intent with our robot id
@@ -83,6 +86,23 @@ rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) const {
     // TODO: clamp y to 0
 
     return idle_pt;
+}
+
+void Goalie::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
+    // Do something
+    SPDLOG_INFO("\033[92mRobot {} is {} from the goal line\033[0m", response.robot_id, response.response.goal_line_dist_response[0].dist_from_goal_line);
+}
+
+rj_msgs::msg::PosToAgentCommResponse Goalie::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
+    // TODO: Do something
+}
+
+void Goalie::set_goal_line_dist_request() {
+    rj_msgs::msg::PosToAgentCommRequest request;
+    rj_msgs::msg::GoalLineDistRequest goal_line_request;
+    request.broadcast = true;
+    request.request.goal_line_dist_request = {goal_line_request};
+    communication_request_ = request;
 }
 
 }  // namespace strategy
