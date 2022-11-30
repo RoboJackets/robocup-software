@@ -43,7 +43,6 @@ private:
     // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
-    // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
@@ -64,8 +63,11 @@ private:
      */
     void send_new_goal();
 
-    rclcpp::TimerBase::SharedPtr get_task_timer_;
+    /*
+     * @brief calls and executes current_position_'s current desired task
+     */
     void get_task();
+    rclcpp::TimerBase::SharedPtr get_task_timer_;
     rj_msgs::msg::RobotIntent last_task_;
 
     // const because should never be changed, but initializer list will allow

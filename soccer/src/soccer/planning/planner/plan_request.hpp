@@ -103,8 +103,11 @@ struct PlanRequest {
 };
 
 /**
- * TODO: fix this doc
  * Create static circle obstacle for one of the robots.
+ *
+ * @param robot current RobotState to make an obstacle for
+ * @param obs_center outparam, Point representing new obstacle's center
+ * @param obs_radius outparam, double for new obstacle's radius
  *
  * Shift the circle off-center depending on their robot's current velocity.
  * Also, inflate circle radius based on robot velocity.
