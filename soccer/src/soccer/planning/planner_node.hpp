@@ -17,40 +17,13 @@
 #include "node.hpp"
 #include "planner/plan_request.hpp"
 #include "planner/planner.hpp"
+#include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
 
 namespace planning {
-
-/**
- * A collection of per-robot trajectories.
- */
-class TrajectoryCollection {
-public:
-    // Per-robot (trajectory, priority)
-    using Entry = std::tuple<std::shared_ptr<const Trajectory>, int>;
-
-    std::array<Entry, kNumShells> get() {
-        std::lock_guard lock(lock_);
-        return robot_trajectories_;
-    }
-
-    void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
-        // associate a (Trajectory, priority) tuple with a robot id
-        std::lock_guard lock(lock_);
-        try {
-            robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
-        } catch (std::exception& exception) {
-            std::cout << exception.what() << std::endl;
-        }
-    }
-
-private:
-    std::mutex lock_;
-    std::array<Entry, kNumShells> robot_trajectories_ = {};
-};
 
 class SharedStateInfo {
 public:
@@ -263,8 +236,8 @@ private:
         ServerTaskState(const ServerTaskState&& state) = delete;
         ServerTaskState& operator=(const ServerTaskState&& state) = delete;
 
-        std::atomic_bool is_executing{false};
-        std::atomic_bool new_task_waiting_signal{false};
+        volatile std::atomic_bool is_executing{false};
+        volatile std::atomic_bool new_task_waiting_signal{false};
     };
 
     // create an array, kNumShells long, of ServerTaskState structs for
