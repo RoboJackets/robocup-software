@@ -168,6 +168,14 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
             had_break_beam_ = status->has_ball_sense;
         });
+
+    // For hypothetical path planning
+    hypothetical_path_service_ = node_->create_service<rj_msgs::srv::PlanHypotheticalPath>(
+        fmt::format("hypothetical_trajectory_robot_{}", robot_id),
+        [this](const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request> request,
+               std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response) {
+            plan_hypothetical_robot_path(request, response);
+        });
 }
 
 void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
@@ -182,6 +190,16 @@ void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
                                  intent.priority);
         */
     }
+}
+
+void PlannerForRobot::plan_hypothetical_robot_path(
+    const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
+    std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
+    const auto intent = rj_convert::convert_from_ros(request->intent);
+    auto plan_request = make_request(intent);
+    auto trajectory = plan_for_robot(plan_request);
+    RJ::Seconds trajectory_duration = trajectory.duration();
+    response->estimate = rj_convert::convert_to_ros(trajectory_duration);
 }
 
 std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
