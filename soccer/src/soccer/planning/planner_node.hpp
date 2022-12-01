@@ -12,6 +12,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
+#include <rj_msgs/srv/plan_hypothetical_path.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
@@ -162,6 +163,18 @@ public:
      */
     void execute_trajectory(const RobotIntent& intent);
 
+    /*
+     * @brief estimate the amount of time it would take for a robot to execute a robot intent
+     * (SERVICE).
+     *
+     * @param request Requested RobotIntent resulting in the hypothetical robot path.
+     * @param response The response object that will contain the resultant time to completion of a
+     * hypothetical path.
+     */
+    void plan_hypothetical_robot_path(
+        const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
+        std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response);
+
     /**
      * @return RJ::Seconds time left for the trajectory to complete
      *
@@ -219,6 +232,7 @@ private:
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_pub_;
+    rclcpp::Service<rj_msgs::srv::PlanHypotheticalPath>::SharedPtr hypothetical_path_service_;
 
     rj_drawing::RosDebugDrawer debug_draw_;
 };

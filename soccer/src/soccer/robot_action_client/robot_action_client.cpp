@@ -71,7 +71,7 @@ void RobotActionClient::goal_response_callback(
 void RobotActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
     auto time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    SPDLOG_INFO("Time left: {}", time_left);
+    // SPDLOG_INFO("Time left: {}", time_left);
 }
 
 void RobotActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
