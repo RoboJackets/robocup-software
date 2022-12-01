@@ -65,8 +65,12 @@ again:
 run-soccer:
 	ros2 launch rj_robocup soccer.launch.py
 
-# run sim with default flags
+# run framework and sim simultaneously (via bash script)
 run-sim:
+	./launch/framework.bash
+
+# run sim with default flags
+run-sim-only:
 	ros2 launch rj_robocup soccer.launch.py run_sim:=True
 
 # run sim with external referee (SSL Game Controller)
