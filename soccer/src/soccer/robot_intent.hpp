@@ -38,7 +38,7 @@ struct RobotIntent {
             return std::get<planning::PathTargetCommand>(motion_command) ==
                    std::get<planning::PathTargetCommand>(r.motion_command);
         }
-        // TODO: fill in other motion command types (and maybe think of a
+        // TODO(Kevin): fill in other motion command types (and maybe think of a
         // better design?)
 
         // default to address equality
