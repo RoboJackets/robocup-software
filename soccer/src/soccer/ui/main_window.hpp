@@ -152,7 +152,6 @@ private Q_SLOTS:
     // Fast Ref Buttons
     void on_fastHalt_clicked();
     void on_fastStop_clicked();
-    void on_fastReady_clicked();
     void on_fastForceStart_clicked();
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
