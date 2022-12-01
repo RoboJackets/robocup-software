@@ -7,5 +7,5 @@ echo "launching ER-Force framework and our UI"
 # then find the location of simulator-cli in the home directory and run it with args -g 2020B (in background)
 # then run sim through makefile shortcut (in background)
 # finally wait, so that the simulator-cli process isn't lost/disowned when run-sim-only dies before it does.
-(trap 'kill 0' SIGINT; find ~ -name 'simulator-cli' -type f -exec '{}' -g 2020B ';' & make run-sim-only & wait)
+(trap 'kill 0' SIGINT; find ~ -name 'simulator-cli' -type f -exec '{}' -g 2020B ';' & make run-our-stack & wait)
 
