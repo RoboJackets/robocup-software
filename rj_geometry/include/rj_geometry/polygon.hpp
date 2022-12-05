@@ -52,7 +52,7 @@ public:
     std::string to_string() override {
         std::stringstream str;
         str << "Polygon<";
-        for (auto vertex: vertices) str << vertex << ", ";
+        for (auto vertex : vertices) str << vertex << ", ";
         str << ">";
         return str.str();
     }
