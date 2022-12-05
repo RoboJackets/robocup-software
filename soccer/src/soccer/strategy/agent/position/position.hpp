@@ -22,6 +22,19 @@
 #include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
 #include "rj_msgs/msg/pos_to_agent_comm_response.hpp"
 
+// Requests
+#include <rj_msgs/msg/pass_request.hpp>
+#include <rj_msgs/msg/position_request.hpp>
+#include <rj_msgs/msg/test_request.hpp>
+
+// Responses
+#include <rj_msgs/msg/acknowledge.hpp>
+#include <rj_msgs/msg/pass_response.hpp>
+#include <rj_msgs/msg/position_request.hpp>
+#include <rj_msgs/msg/test_response.hpp>
+
+class AgentActionClient;
+
 namespace strategy {
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
