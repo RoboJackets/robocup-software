@@ -2,7 +2,7 @@
 # 1 -> TestRequest
 # 2 -> PositionResponse
 # 3 -> PassResponse
-uint8 request_type # 0 -> TestRequest; 1 -> PassRequest; 2 -> PositionRequest; ...
+uint8 request_type
 # ACKNOWLEDGE REQUEST DOES (AND SHOULD NOT) EXIST
 TestRequest[<=1] test_request
 PositionRequest[<=1] position_request
