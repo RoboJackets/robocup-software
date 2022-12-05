@@ -194,7 +194,6 @@ void AgentActionClient::send_broadcast(rj_msgs::msg::AgentRequest agent_request)
 
     for (size_t i = 0; i < kNumShells; i++) {
         if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
-            SPDLOG_INFO("\033[92mSENDING REQUEST TO AGENT: {}\033[0m", i);
             robot_communication_cli_[i]->async_send_request(
                 request,
                 [this, i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
