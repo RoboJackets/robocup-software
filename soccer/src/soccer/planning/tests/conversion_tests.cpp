@@ -49,6 +49,10 @@ bool operator==(const Trajectory& a, const Trajectory& b) {
     return a.instants() == b.instants() && a.time_created() == b.time_created() &&
            a.angles_valid() == b.angles_valid();
 }
+bool operator==([[maybe_unused]] const GoalieIdleCommand& a,
+                [[maybe_unused]] const GoalieIdleCommand& b) {
+    return true;
+}
 
 namespace testing {
 
@@ -79,6 +83,9 @@ TEST(RosConversions, SettleCommand) {
 
 // NOLINTNEXTLINE
 TEST(RosConversions, CollectCommand) { test_lossless_convert_cpp_value(CollectCommand{}); }
+
+// NOLINTNEXTLINE
+TEST(RosConversions, GoalieIdleCommand) { test_lossless_convert_cpp_value(GoalieIdleCommand{}); }
 
 // NOLINTNEXTLINE
 TEST(RosConversions, LineKickCommand) {
