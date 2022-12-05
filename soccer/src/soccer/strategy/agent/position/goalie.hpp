@@ -40,6 +40,8 @@ private:
 
     // see Position superclass
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+    void set_position_request();
+    void set_test_request();
 
     // possible states of the Goalie
     enum State { BLOCKING, CLEARING, IDLING, BALL_NOT_FOUND };

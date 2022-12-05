@@ -30,6 +30,7 @@ public:
     rj_msgs::msg::PosToAgentCommResponse receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) override;
 
 private:
+    void set_test_multicast_request();
     int move_ct_ = 0;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;

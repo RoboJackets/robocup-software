@@ -44,7 +44,7 @@ AgentActionClient::AgentActionClient(int r_id)
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 
-    int agent_communication_hz = 10;
+    int agent_communication_hz = 60;
     get_communication_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this](){ get_communication(); });
 }
 
@@ -168,7 +168,6 @@ void AgentActionClient::get_communication() {
     if (request != last_communication_ && robots_visible) {
         last_communication_ = request;
         if (communication_request.broadcast) {
-            SPDLOG_INFO("\033[92mSENDING BROADCAST\033[0m");
             send_broadcast(request);
         } else if (communication_request.num_targets > 1) {
             std::vector<u_int8_t> targets(std::begin(communication_request.target_agents), std::end(communication_request.target_agents));
@@ -178,8 +177,6 @@ void AgentActionClient::get_communication() {
         } else {
             SPDLOG_WARN("BAD REQUEST NOT SENDING ANY COMMUNICATION");
         }
-    } else if (!robots_visible) {
-        SPDLOG_INFO("\033[92mROBOTS ARE INVISIBLE\033[0m");
     }
 }
 
@@ -200,7 +197,6 @@ void AgentActionClient::send_broadcast(rj_msgs::msg::AgentRequest agent_request)
     request->agent_request = agent_request;
 
     for (size_t i = 0; i < kNumShells; i++) {
-        SPDLOG_INFO("\033[92mRobot visibility: {}\033[0m", this->world_state()->get_robot(true, i).visible);
         if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
             SPDLOG_INFO("\033[92mSENDING REQUEST TO AGENT: {}\033[0m", i);
             robot_communication_cli_[i]->async_send_request(
@@ -239,7 +235,7 @@ void AgentActionClient::receive_communication_callback(const std::shared_ptr<rj_
     } else {
         // Convert agent request into AgentToPosCommRequest
         rj_msgs::msg::AgentToPosCommRequest agent_request{};
-        agent_request.agent_request = request->agent_request;
+        agent_request.request = request->agent_request;
 
         // Give the current position the request and receive the response to send back
         rj_msgs::msg::PosToAgentCommResponse pos_to_agent_response = current_position_->receive_communication_request(agent_request);
@@ -248,7 +244,6 @@ void AgentActionClient::receive_communication_callback(const std::shared_ptr<rj_
         rj_msgs::msg::AgentResponse agent_response = pos_to_agent_response.response;
 
         // Send the agent's response back to the client who asked
-        SPDLOG_INFO("\033[92mSENDING RESPONSE\033[0m");
         response->agent_response = agent_response;
     }
 }
@@ -266,9 +261,6 @@ void AgentActionClient::receive_response_callback(const std::shared_future<rj_ms
         }
     }
 
-    SPDLOG_INFO("\033[92mRECEIVED RESPONSE FROM ROBOT: {}\033[0m", robot_id);
-
-    // TODO: Convert AgentCommunicationResponse into AgentToPosResponse
     rj_msgs::msg::AgentToPosCommResponse agent_to_position_response{};
     agent_to_position_response.robot_id = robot_id;
     agent_to_position_response.response = response.get()->agent_response;
