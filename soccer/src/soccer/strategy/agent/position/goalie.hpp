@@ -17,7 +17,7 @@
 namespace strategy {
 
 /*
- * The Defense position handles goalie behavior: blocking shots, passing to teammates, and clearing
+ * The Goalie position handles goalie behavior: blocking shots, passing to teammates, and clearing
  * the ball.
  */
 class Goalie : public Position {

@@ -116,13 +116,15 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         // pub Trajectory based on the RobotIntent
         my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
 
+        /*
+        // TODO (PR #1970): fix TrajectoryCollection
         // send feedback
-        /* std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-         */
-        /* if (auto time_left = my_robot_planner->get_time_left()) { */
-        /*     feedback->time_left = rj_convert::convert_to_ros(time_left.value()); */
-        /*     goal_handle->publish_feedback(feedback); */
-        /* } */
+        std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
+        if (auto time_left = my_robot_planner->get_time_left()) {
+            feedback->time_left = rj_convert::convert_to_ros(time_left.value());
+            goal_handle->publish_feedback(feedback);
+        }
+        */
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
@@ -166,6 +168,14 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
             had_break_beam_ = status->has_ball_sense;
         });
+
+    // For hypothetical path planning
+    hypothetical_path_service_ = node_->create_service<rj_msgs::srv::PlanHypotheticalPath>(
+        fmt::format("hypothetical_trajectory_robot_{}", robot_id),
+        [this](const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request> request,
+               std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response) {
+            plan_hypothetical_robot_path(request, response);
+        });
 }
 
 void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
@@ -173,11 +183,23 @@ void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
         auto plan_request = make_request(intent);
         auto trajectory = plan_for_robot(plan_request);
         trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+        /*
+        // TODO (PR #1970): fix TrajectoryCollection
         // store all latest trajectories in a mutex-locked shared map
-        /* robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
-         */
-        /*                          intent.priority); */
+        robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
+                                 intent.priority);
+        */
     }
+}
+
+void PlannerForRobot::plan_hypothetical_robot_path(
+    const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
+    std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
+    const auto intent = rj_convert::convert_from_ros(request->intent);
+    auto plan_request = make_request(intent);
+    auto trajectory = plan_for_robot(plan_request);
+    RJ::Seconds trajectory_duration = trajectory.duration();
+    response->estimate = rj_convert::convert_to_ros(trajectory_duration);
 }
 
 std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
@@ -185,12 +207,14 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     // get the Traj out of the relevant [Trajectory, priority] tuple in
     // robot_trajectories_
 
+    /*
     // TODO (PR #1970): fix TrajectoryCollection
-    /* const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_); */
-    /* if (!latest_traj) { */
-    /*     return std::nullopt; */
-    /* } */
-    /* return latest_traj->end_time() - RJ::now(); */
+    const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
+    if (!latest_traj) {
+        return std::nullopt;
+    }
+    return latest_traj->end_time() - RJ::now();
+    */
     return std::nullopt;
 }
 
@@ -211,23 +235,26 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         virtual_obstacles.add(def_area_obstacles);
     }
 
+    /*
+    // TODO (PR #1970): fix TrajectoryCollection
     // make a copy instead of getting the actual shared_ptr to Trajectory
-    /* std::array<std::optional<Trajectory>, kNumShells> planned_trajectories; */
+    std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
 
-    /* for (int i = 0; i < kNumShells; i++) { */
-    /*     // TODO(Kevin): check that priority works (seems like */
-    /*     // robot_trajectories_ is passed on init, when no planning has occured */
-    /*     // yet) */
-    /*     const auto& [trajectory, priority] = robot_trajectories_->get(i); */
-    /*     if (i != robot_id_ && priority >= intent.priority) { */
-    /*         if (!trajectory) { */
-    /*             planned_trajectories[i] = std::nullopt; */
-    /*         } else { */
-    /*             planned_trajectories[i] = std::make_optional<const
-     * Trajectory>(*trajectory.get()); */
-    /*         } */
-    /*     } */
-    /* } */
+    for (int i = 0; i < kNumShells; i++) {
+        // TODO(Kevin): check that priority works (seems like
+        // robot_trajectories_ is passed on init, when no planning has occured
+        // yet)
+        const auto& [trajectory, priority] = robot_trajectories_->get(i);
+        if (i != robot_id_ && priority >= intent.priority) {
+            if (!trajectory) {
+                planned_trajectories[i] = std::nullopt;
+            } else {
+                planned_trajectories[i] = std::make_optional<const
+    Trajectory>(*trajectory.get());
+            }
+        }
+    }
+    */
 
     // TODO(Kyle): Send constraints from gameplay
     RobotConstraints constraints;
