@@ -73,7 +73,7 @@ SimRadio::SimRadio(bool blue_team)
       blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
-    for (unsigned long i = 0; i < kNumShells; ++i) {
+    for (size_t i = 0; i < kNumShells; ++i) {
         last_sent_diff_.emplace_back(RJ::now());
     }
 
@@ -169,7 +169,7 @@ void SimRadio::handle_receive(const std::string& data) {
 void SimRadio::stop_robots() {
     RobotControl sim_packet;
 
-    for (unsigned long shell = 0; shell < kNumShells; shell++) {
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         auto* sim_robot = sim_packet.add_robot_commands();
         sim_robot->set_id(shell);
         auto* local_velocity = sim_robot->mutable_move_command()->mutable_local_velocity();

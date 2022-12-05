@@ -145,7 +145,7 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
     // find an approximate ETA at each waypoint based on trapezoidal motion.
 
     double total_path_length = 0.0;
-    for (unsigned long i = 0; i < length - 1; i++) {
+    for (size_t i = 0; i < length - 1; i++) {
         total_path_length += (points[i] - points[i + 1]).mag();
     }
 

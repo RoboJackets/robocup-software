@@ -9,7 +9,7 @@ ParallelGradientAscent1D::ParallelGradientAscent1D(ParallelGradient1DConfig* con
     problems_.reserve(config_->ga_config.size());
 
     // Create list of problems
-    for (unsigned long i = 0; i < config_->ga_config.size(); i++) {
+    for (size_t i = 0; i < config_->ga_config.size(); i++) {
         problems_.push_back(GradientAscent1D(&config_->ga_config.at(i)));
     }
 }
@@ -35,7 +35,7 @@ void ParallelGradientAscent1D::execute() {
 
         // Assume ascending order for x_start
         // Remove any that are too close
-        for (unsigned long i = 0; i < problems_.size() - 1; i++) {
+        for (size_t i = 0; i < problems_.size() - 1; i++) {
             GradientAscent1D lower = problems_.at(i);
             GradientAscent1D upper = problems_.at(i + 1);
 

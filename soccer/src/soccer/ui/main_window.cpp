@@ -529,7 +529,7 @@ void MainWindow::updateViews() {
     /**************************************************************************/
     if (currentFrame != nullptr) {
         // update robot status list
-        for (unsigned long shell = 0; shell < kNumShells; shell++) {
+        for (size_t shell = 0; shell < kNumShells; shell++) {
             // Search for the corresponding references.
             auto maybe_rx = [&]() -> std::optional<std::reference_wrapper<const Packet::RadioRx>> {
                 for (int i = 0; i < currentFrame->radio_rx_size(); i++) {
@@ -662,7 +662,7 @@ void MainWindow::updateStatus() {
     // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
-    for (unsigned long i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         // The list starts with None so i is 1 higher than the shell id
         QStandardItem* item = goalieModel->item(i + 1);
         if (context_->world_state.our_robots.at(i).visible) {
@@ -852,7 +852,7 @@ void MainWindow::on_actionResetField_triggered() {
     grSim_Packet simPacket;
 
     grSim_Replacement* replacement = simPacket.mutable_replacement();
-    for (unsigned long i = 0; i < kRobotsPerTeam; ++i) {
+    for (size_t i = 0; i < kRobotsPerTeam; ++i) {
         auto* rob = replacement->add_robots();
 
         const int NUM_COLS = 2;
@@ -864,7 +864,7 @@ void MainWindow::on_actionResetField_triggered() {
         _ui.fieldView->set_robot_pose(rj_geometry::Pose(x_pos, y_pos, 0), i, true);
     }
 
-    for (unsigned long i = 0; i < kRobotsPerTeam; ++i) {
+    for (size_t i = 0; i < kRobotsPerTeam; ++i) {
         const int NUM_COLS = 2;
         const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
 

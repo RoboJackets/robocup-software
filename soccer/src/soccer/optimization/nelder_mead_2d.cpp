@@ -65,7 +65,7 @@ bool NelderMead2D::single_step() {
 
     // In rare case all posibilities are worse
     // Shrink all points but best
-    for (unsigned long i = 1; i < vertices_.size(); i++) {
+    for (size_t i = 1; i < vertices_.size(); i++) {
         std::get<1>(vertices_.at(i)) =
             best_point + config_.shrink_coeff * (std::get<1>(vertices_.at(i)) - best_score);
         std::get<0>(vertices_.at(i)) = (config_.f)(std::get<1>(vertices_.at(i)));
