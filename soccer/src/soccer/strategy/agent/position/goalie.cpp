@@ -5,7 +5,7 @@ namespace strategy {
 // TODO: lock Goalie id to id given by the ref
 Goalie::Goalie(int r_id) : Position(r_id) { 
     position_name_ = "Goalie";
-    set_goal_line_dist_request();
+    set_position_request();
 }
 
 rj_msgs::msg::RobotIntent Goalie::get_task() {
@@ -89,19 +89,60 @@ rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) const {
 }
 
 void Goalie::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
-    // Do something
-    SPDLOG_INFO("\033[92mRobot {} is {} from the goal line\033[0m", response.robot_id, response.response.goal_line_dist_response[0].dist_from_goal_line);
+    if (response.response.response_type == 1) {
+        SPDLOG_INFO("\033[92mRobot {} has sent the test response message: {}\033[0m", response.robot_id, response.response.test_response[0].message);
+    }else if (response.response.response_type == 2) {
+        switch (response.response.position_response[0].position) {
+        case 1:
+            SPDLOG_INFO("\033[93mRobot {} is playing defense\033[0m", response.robot_id);
+            break;
+        case 2:
+            SPDLOG_INFO("\033[93mRobot {} is playing offense\033[0m", response.robot_id);
+            break;
+        default:
+            SPDLOG_INFO("\033[93mRobot {} is playing an undefined role\033[0m", response.robot_id);
+            break;
+        }
+
+        if (response.robot_id == 1) {
+            set_test_request();
+        }
+    } else {
+        SPDLOG_INFO("\033[92mRobot {} has acknowledged the message\033[0m", response.robot_id);
+    }
 }
 
 rj_msgs::msg::PosToAgentCommResponse Goalie::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
-    // TODO: Do something
+    rj_msgs::msg::PosToAgentCommResponse comm_response{};
+    if (request.request.request_type == 1) {
+        rj_msgs::msg::TestResponse test_response{};
+        test_response.message = "The goalie has obtained your message";
+        comm_response.response.test_response = {test_response};
+        comm_response.response.response_type = 1;
+    } else {
+        rj_msgs::msg::Acknowledge acknowledge{};
+        comm_response.response.acknowledge_response = {acknowledge};
+        comm_response.response.response_type = 0;
+    }
+    return comm_response;
 }
 
-void Goalie::set_goal_line_dist_request() {
+void Goalie::set_position_request() {
     rj_msgs::msg::PosToAgentCommRequest request;
-    rj_msgs::msg::GoalLineDistRequest goal_line_request;
+    rj_msgs::msg::PositionRequest position_request{};
     request.broadcast = true;
-    request.request.goal_line_dist_request = {goal_line_request};
+    request.request.position_request = {position_request};
+    request.request.request_type = 2;
+    communication_request_ = request;
+}
+
+void Goalie::set_test_request() {
+    rj_msgs::msg::PosToAgentCommRequest request;
+    rj_msgs::msg::TestRequest test_request;
+    request.num_targets = 1;
+    request.target_agents = {2};
+    request.request.test_request = {test_request};
+    request.request.request_type = 1;
     communication_request_ = request;
 }
 

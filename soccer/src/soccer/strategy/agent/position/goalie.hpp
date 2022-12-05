@@ -34,7 +34,8 @@ private:
     // temp to move back and forth
     int move_ct = 0;
 
-    void set_goal_line_dist_request();
+    void set_position_request();
+    void set_test_request();
 
     /*
      * @return Point for Goalie to block a shot. Calls get_idle_pt() if ball is
