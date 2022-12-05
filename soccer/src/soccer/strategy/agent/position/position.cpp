@@ -79,7 +79,8 @@ void Position::receive_communication_response(rj_msgs::msg::AgentToPosCommRespon
     return;
 }
 
-rj_msgs::msg::PosToAgentCommResponse Position::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
+rj_msgs::msg::PosToAgentCommResponse Position::receive_communication_request(
+    rj_msgs::msg::AgentToPosCommRequest request) {
     rj_msgs::msg::PosToAgentCommResponse empty_response{};
     return empty_response;
 }

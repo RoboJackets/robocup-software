@@ -27,7 +27,8 @@ public:
     ~Offense() override = default;
 
     void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) override;
-    rj_msgs::msg::PosToAgentCommResponse receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) override;
+    rj_msgs::msg::PosToAgentCommResponse receive_communication_request(
+        rj_msgs::msg::AgentToPosCommRequest request) override;
 
 private:
     bool kicking_{true};

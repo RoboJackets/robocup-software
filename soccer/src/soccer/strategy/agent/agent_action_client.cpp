@@ -31,12 +31,14 @@ AgentActionClient::AgentActionClient(int r_id)
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
         [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
-                std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response) {
-                    receive_communication_callback(request, response); });
+               std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response) {
+            receive_communication_callback(request, response);
+        });
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
-        robot_communication_cli_[i] = create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
+        robot_communication_cli_[i] =
+            create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
 
     // TODO: make ROS param for this
@@ -45,7 +47,9 @@ AgentActionClient::AgentActionClient(int r_id)
                                         std::bind(&AgentActionClient::get_task, this));
 
     int agent_communication_hz = 60;
-    get_communication_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this](){ get_communication(); });
+    get_communication_timer_ =
+        create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz),
+                          [this]() { get_communication(); });
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -170,7 +174,8 @@ void AgentActionClient::get_communication() {
         if (communication_request.broadcast) {
             send_broadcast(request);
         } else if (communication_request.num_targets > 1) {
-            std::vector<u_int8_t> targets(std::begin(communication_request.target_agents), std::end(communication_request.target_agents));
+            std::vector<u_int8_t> targets(std::begin(communication_request.target_agents),
+                                          std::end(communication_request.target_agents));
             send_multicast(targets, request);
         } else if (communication_request.num_targets == 1) {
             send_unicast(communication_request.target_agents[0], request);
@@ -185,11 +190,9 @@ void AgentActionClient::send_unicast(int robot_id, rj_msgs::msg::AgentRequest ag
     request->agent_request = agent_request;
 
     robot_communication_cli_[robot_id]->async_send_request(
-        request,
-        [this, robot_id](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
-            receive_response_callback(response, robot_id);
-        }
-    );
+        request, [this, robot_id](
+                     const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                         response) { receive_response_callback(response, robot_id); });
 }
 
 void AgentActionClient::send_broadcast(rj_msgs::msg::AgentRequest agent_request) {
@@ -200,30 +203,30 @@ void AgentActionClient::send_broadcast(rj_msgs::msg::AgentRequest agent_request)
         if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
             robot_communication_cli_[i]->async_send_request(
                 request,
-                [this, i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
-                    receive_response_callback(response, i);
-                }
-            );
+                [this,
+                 i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                        response) { receive_response_callback(response, i); });
         }
     }
 }
 
-void AgentActionClient::send_multicast(std::vector<u_int8_t> robot_ids, rj_msgs::msg::AgentRequest agent_request) {
+void AgentActionClient::send_multicast(std::vector<u_int8_t> robot_ids,
+                                       rj_msgs::msg::AgentRequest agent_request) {
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
     request->agent_request = agent_request;
 
     for (int i : robot_ids) {
         robot_communication_cli_[i]->async_send_request(
             request,
-            [this, i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr> response) {
-                receive_response_callback(response, i);
-            }
-        );
+            [this,
+             i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                    response) { receive_response_callback(response, i); });
     }
 }
 
-void AgentActionClient::receive_communication_callback(const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
-                                                        std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
+void AgentActionClient::receive_communication_callback(
+    const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
+    std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
         rj_msgs::msg::AgentResponse agent_response{};
@@ -237,7 +240,8 @@ void AgentActionClient::receive_communication_callback(const std::shared_ptr<rj_
         agent_request.request = request->agent_request;
 
         // Give the current position the request and receive the response to send back
-        rj_msgs::msg::PosToAgentCommResponse pos_to_agent_response = current_position_->receive_communication_request(agent_request);
+        rj_msgs::msg::PosToAgentCommResponse pos_to_agent_response =
+            current_position_->receive_communication_request(agent_request);
 
         // Convert PosToAgentCommResponse into AgentResponse
         rj_msgs::msg::AgentResponse agent_response = pos_to_agent_response.response;
@@ -247,7 +251,9 @@ void AgentActionClient::receive_communication_callback(const std::shared_ptr<rj_
     }
 }
 
-void AgentActionClient::receive_response_callback(const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response, int robot_id) {
+void AgentActionClient::receive_response_callback(
+    const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
+    int robot_id) {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
         // TODO: change this once coach node merged
@@ -270,7 +276,7 @@ void AgentActionClient::receive_response_callback(const std::shared_future<rj_ms
 
 [[nodiscard]] WorldState* AgentActionClient::world_state() {
     // thread-safe getter for world_state (see update_world_state())
-    auto lock =std::lock_guard(world_state_mutex_);
+    auto lock = std::lock_guard(world_state_mutex_);
     return &last_world_state_;
 }
 

@@ -37,13 +37,15 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
 
 void Defense::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
     if (response.response.response_type == 1) {
-        SPDLOG_INFO("\033[91mRobot {} has sent the message: {}\033[0m", response.robot_id, response.response.test_response[0].message);
+        SPDLOG_INFO("\033[91mRobot {} has sent the message: {}\033[0m", response.robot_id,
+                    response.response.test_response[0].message);
     } else {
         SPDLOG_INFO("\033[93mRobot {} has acknowledged the message: {}\033[0m", response.robot_id);
     }
 }
 
-rj_msgs::msg::PosToAgentCommResponse Defense::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
+rj_msgs::msg::PosToAgentCommResponse Defense::receive_communication_request(
+    rj_msgs::msg::AgentToPosCommRequest request) {
     rj_msgs::msg::PosToAgentCommResponse comm_response{};
     if (request.request.request_type == 1) {
         rj_msgs::msg::TestResponse test_response{};
