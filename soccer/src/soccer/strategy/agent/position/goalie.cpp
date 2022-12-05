@@ -3,7 +3,7 @@
 namespace strategy {
 
 // TODO: lock Goalie id to id given by the ref
-Goalie::Goalie(int r_id) : Position(r_id) { 
+Goalie::Goalie(int r_id) : Position(r_id) {
     position_name_ = "Goalie";
     set_position_request();
 }
@@ -90,18 +90,20 @@ rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) const {
 
 void Goalie::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
     if (response.response.response_type == 1) {
-        SPDLOG_INFO("\033[92mRobot {} has sent the test response message: {}\033[0m", response.robot_id, response.response.test_response[0].message);
-    }else if (response.response.response_type == 2) {
+        SPDLOG_INFO("\033[92mRobot {} has sent the test response message: {}\033[0m",
+                    response.robot_id, response.response.test_response[0].message);
+    } else if (response.response.response_type == 2) {
         switch (response.response.position_response[0].position) {
-        case 1:
-            SPDLOG_INFO("\033[93mRobot {} is playing defense\033[0m", response.robot_id);
-            break;
-        case 2:
-            SPDLOG_INFO("\033[93mRobot {} is playing offense\033[0m", response.robot_id);
-            break;
-        default:
-            SPDLOG_INFO("\033[93mRobot {} is playing an undefined role\033[0m", response.robot_id);
-            break;
+            case 1:
+                SPDLOG_INFO("\033[93mRobot {} is playing defense\033[0m", response.robot_id);
+                break;
+            case 2:
+                SPDLOG_INFO("\033[93mRobot {} is playing offense\033[0m", response.robot_id);
+                break;
+            default:
+                SPDLOG_INFO("\033[93mRobot {} is playing an undefined role\033[0m",
+                            response.robot_id);
+                break;
         }
 
         if (response.robot_id == 1) {
@@ -112,7 +114,8 @@ void Goalie::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse
     }
 }
 
-rj_msgs::msg::PosToAgentCommResponse Goalie::receive_communication_request(rj_msgs::msg::AgentToPosCommRequest request) {
+rj_msgs::msg::PosToAgentCommResponse Goalie::receive_communication_request(
+    rj_msgs::msg::AgentToPosCommRequest request) {
     rj_msgs::msg::PosToAgentCommResponse comm_response{};
     if (request.request.request_type == 1) {
         rj_msgs::msg::TestResponse test_response{};

@@ -24,12 +24,11 @@
 #include "world_state.hpp"
 
 // Communication
-#include "rj_msgs/srv/agent_communication.hpp"
-#include "rj_msgs/msg/agent_request.hpp"
+#include "rj_msgs/msg/acknowledge.hpp"
 #include "rj_msgs/msg/agent_request.hpp"
 #include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
 #include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
-#include "rj_msgs/msg/acknowledge.hpp"
+#include "rj_msgs/srv/agent_communication.hpp"
 
 namespace strategy {
 
@@ -57,13 +56,14 @@ private:
     rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
 
     // clients for receiving instructions from the other agents
-    rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_cli_[kNumShells];
+    rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr
+        robot_communication_cli_[kNumShells];
 
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
     /*
-    * @return thread-safe ptr to most recent world_state
-    */
+     * @return thread-safe ptr to most recent world_state
+     */
     [[nodiscard]] WorldState* world_state();
 
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
@@ -89,39 +89,42 @@ private:
 
     /**
      * @brief sends a robot communication to a specific robot
-     * 
+     *
      * @param robot_id the robot to communicate with
      */
     void send_unicast(int robot_id, rj_msgs::msg::AgentRequest request);
 
     /**
      * @brief sends a robot communication to all robots
-     * 
+     *
      */
     void send_broadcast(rj_msgs::msg::AgentRequest request);
 
     /**
      * @brief sends a robot communication to a specific group of robots
-     * 
+     *
      * @param robot_ids the robot ids to send communication to
      */
     void send_multicast(std::vector<u_int8_t> robot_ids, rj_msgs::msg::AgentRequest agent_request);
 
     /**
      * @brief the callback that handles receiving and dealing with received agent communication
-     * 
+     *
      * @param request the robot communication request from the other robot
      * @param response the communication to return to the other robot
      */
-    void receive_communication_callback(const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
-                                        std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response);
+    void receive_communication_callback(
+        const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
+        std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response);
 
     /**
      * @brief the callback that handles the response from any send transmissions to other agents.
-     * 
+     *
      * @param response the contents of the response from the other agent.
      */
-    void receive_response_callback(const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response, int robot_id);
+    void receive_response_callback(
+        const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
+        int robot_id);
 
     // TODO(#1957): add back this if needed, or delete
     // cancel latest goal every time a new goal comes in, to avoid overloading memory with many
