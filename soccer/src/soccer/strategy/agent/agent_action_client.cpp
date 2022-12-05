@@ -52,9 +52,7 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
-        // TODO: change this once coach node merged
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {

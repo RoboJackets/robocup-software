@@ -22,7 +22,7 @@ rj_msgs::msg::RobotIntent Defense::get_task() {
     // thread-safe getter
     WorldState* world_state = this->world_state();
 
-    // oscillate between two points
+    // oscillate along horizontal line (temp)
     auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
     double x = -3.0;
     if (move_ct_ % 2 == 1) {
