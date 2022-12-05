@@ -149,7 +149,10 @@ terminal, you can launch sim with:
 
 ``source.bash`` is an alias for the two source commands you saw above, and
 ``make run-sim`` will launch both ER-Force's Framework (the physics simulator)
-and our stack (``ros2 launch rj_robocup sim.launch.py``).
+and our stack (``ros2 launch rj_robocup sim.launch.py``). 
+
+To stop this process (like any other) press CTRL-C in the command line. You may
+have to press CTRL-C twice.
 
 Since Python is not compiled, if you're exclusively working on Python files, and
 staying in one terminal, it's likely that you'll mostly only need:
