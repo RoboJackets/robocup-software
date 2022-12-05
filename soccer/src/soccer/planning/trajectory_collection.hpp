@@ -14,6 +14,10 @@ using Entry = std::tuple<std::shared_ptr<const Trajectory>, int>;
  */
 class TrajectoryCollection {
 public:
+    void lock(int robot_id);
+
+    void unlock(int robot_id);
+
     std::array<Entry, kNumShells> get();
 
     Entry get(int robot_id);
