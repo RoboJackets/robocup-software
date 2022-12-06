@@ -116,6 +116,7 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         default:
             return;
     }
+    /* SPDLOG_INFO("Result received: {}", result.result->is_done); */
 }
 
 }  // namespace strategy
