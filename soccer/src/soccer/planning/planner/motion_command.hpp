@@ -50,7 +50,7 @@ using AngleOverride =
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
 struct PathTargetCommand {
-    LinearMotionInstant goal;
+    LinearMotionInstant goal{};
     AngleOverride angle_override = TargetFaceTangent{};
     bool ignore_ball = false;
 

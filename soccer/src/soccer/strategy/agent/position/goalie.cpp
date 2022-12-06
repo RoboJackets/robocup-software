@@ -15,6 +15,16 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
         return get_empty_intent();
     }
 
+    // send idle command a few times in case it doesn't get picked up on init
+    if (send_idle_ct_ < 5) {
+        auto goalie_idle = rj_msgs::msg::GoalieIdleMotionCommand{};
+        intent.motion_command.goalie_idle_command = {goalie_idle};
+
+        send_idle_ct_++;
+        return intent;
+    }
+
+    /*
     if (check_is_done()) {
         move_ct++;
     }
@@ -40,6 +50,7 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     // (waiting on field pts to be given to world_state)
 
     return intent;
+    */
 }
 
 rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) const {
