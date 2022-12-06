@@ -12,7 +12,6 @@
 #include "planning/dynamic_obstacle.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
-#include "planning/trajectory_collection.hpp"
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
 
@@ -27,8 +26,9 @@ namespace planning {
 struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
-                rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
-                unsigned shell_id, const WorldState* world_state, int8_t priority = 0,
+                rj_geometry::ShapeSet virtual_obstacles,
+                std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
+                const WorldState* world_state, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false)
         : start(start),
           motion_command(command),  // NOLINT
@@ -72,7 +72,7 @@ struct PlanRequest {
      * Trajectories for each of the robots that has already been planned.
      * nullptr for unplanned robots.
      */
-    TrajectoryCollection* planned_trajectories;
+    std::array<const Trajectory*, kNumShells> planned_trajectories;
 
     /**
      * The robot's shell ID. Used for debug drawing.
@@ -105,10 +105,6 @@ struct PlanRequest {
 /**
  * Create static circle obstacle for one of the robots.
  *
- * @param robot current RobotState to make an obstacle for
- * @param obs_center outparam, Point representing new obstacle's center
- * @param obs_radius outparam, double for new obstacle's radius
- *
  * Shift the circle off-center depending on their robot's current velocity.
  * Also, inflate circle radius based on robot velocity.
  *
@@ -129,9 +125,10 @@ struct PlanRequest {
  *
  * Numbers tuned by looking at output of planning/test_scripts/visualize_obs.py.
  *
+ * @param robot ptr to robot that needs obstacle made
+ * @return shared_ptr to new Circle obstacle with inflated radius and center
  */
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
-                         double& obs_radius);
+std::shared_ptr<rj_geometry::Circle> calc_static_robot_obs(const RobotState& robot);
 
 /**
  * Fill the obstacle fields.

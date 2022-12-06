@@ -28,22 +28,6 @@ struct RobotIntent {
     bool is_active = false;
 
     int8_t priority = 0;
-
-    /*
-     * @brief overloads == to allow comparison of two RobotIntents with ==
-     */
-    bool operator==(const RobotIntent r) {
-        // if motion_command is a PathTargetCommand
-        if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
-            return std::get<planning::PathTargetCommand>(motion_command) ==
-                   std::get<planning::PathTargetCommand>(r.motion_command);
-        }
-        // TODO(Kevin): fill in other motion command types (and maybe think of a
-        // better design?)
-
-        // default to address equality
-        return this == &r;
-    }
 };
 
 namespace rj_convert {

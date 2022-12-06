@@ -7,7 +7,6 @@
 #include "debug_drawer.hpp"
 #include "instant.hpp"
 #include "planning/dynamic_obstacle.hpp"
-#include "spdlog/spdlog.h"
 
 namespace planning {
 
@@ -206,25 +205,15 @@ public:
     /**
      * @copydoc Trajectory::instants_end()
      */
-    [[nodiscard]] auto instants_end() const { return instants_.cend(); }
+    [[nodiscard]] auto instants_end() const { return instants_.end(); }
     /**
      * @copydoc Trajectory::instants_end()
      */
-    [[nodiscard]] auto instants_begin() {
-        if (instants_.empty() || instants_.begin() == instants_.end()) {
-            throw std::runtime_error("instants_ is empty, this cannot work!");
-        }
-        return instants_.begin();
-    }
+    [[nodiscard]] auto instants_begin() { return instants_.begin(); }
     /**
      * @copydoc Trajectory::instants_end()
      */
-    [[nodiscard]] auto instants_begin() const {
-        if (instants_.empty() || instants_.begin() == instants_.end()) {
-            throw std::runtime_error("instants_ is empty, this cannot work!");
-        }
-        return instants_.cbegin();
-    }
+    [[nodiscard]] auto instants_begin() const { return instants_.begin(); }
 
     /**
      * @brief Check if this is an empty path.
