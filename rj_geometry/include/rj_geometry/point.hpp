@@ -175,9 +175,7 @@ public:
      * compares two points to see if both x and y are the same
      * adds the == operator
      */
-    [[nodiscard]] bool operator==(Point other) const {
-        return x() == other.x() && y() == other.y();
-    }
+    [[nodiscard]] bool operator==(Point other) const { return this->nearly_equals(other); }
 
     /**
      * this is the negation of operator operator !=
