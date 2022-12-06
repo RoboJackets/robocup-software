@@ -13,20 +13,19 @@ public:
     using Msg = rj_geometry_msgs::msg::Circle;
 
     Circle() {
-        r_ = 0;
-        rsq_ = 0;
+        r_ = -1;
+        rsq_ = -1;
     }
 
     Circle(Point c, float r) {
         center = c;
         r_ = r;
-        rsq_ = r_ * r_;
+        rsq_ = -1;
     }
 
     Circle(const Circle& other) {
         center = other.center;
         r_ = other.radius();
-        rsq_ = r_ * r_;
     }
 
     Shape* clone() const override;
@@ -37,22 +36,30 @@ public:
 
     // Radius squared
     float radius_sq() const {
+        if (rsq_ < 0 && r_ >= 0) {
+            rsq_ = r_ * r_;
+        }
+
         return rsq_;
     }
 
     void radius_sq(float value) {
         rsq_ = value;
-        r_ = sqrtf(rsq_);
+        r_ = -1;
     }
 
     // Radius
     float radius() const {
+        if (r_ < 0 && rsq_ >= 0) {
+            r_ = sqrtf(rsq_);
+        }
+
         return r_;
     }
 
     void radius(float value) {
         r_ = value;
-        rsq_ = r_ * r_;
+        rsq_ = -1;
     }
 
     bool contains_point(Point pt) const override;
@@ -90,9 +97,9 @@ public:
 
 protected:
     // Radius
-    float r_;
+    mutable float r_;
 
     // Radius squared
-    float rsq_;
+    mutable float rsq_;
 };
 }

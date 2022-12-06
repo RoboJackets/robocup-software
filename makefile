@@ -62,11 +62,16 @@ again:
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
 # fix this so defaults launch sim, with special cases for real
-run-soccer:
-	ros2 launch rj_robocup soccer.launch.py
+# run-soccer:
+# 	ros2 launch rj_robocup soccer.launch.py
 
-# run sim with default flags
+# run ER-Force's framework and our stack simultaneously (via bash script)
 run-sim:
+	./launch/framework.bash
+
+# run our stack with default flags
+# TODO: actually name our software stack something
+run-our-stack:
 	ros2 launch rj_robocup soccer.launch.py run_sim:=True
 
 # run sim with external referee (SSL Game Controller)

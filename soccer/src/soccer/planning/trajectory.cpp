@@ -187,7 +187,7 @@ Trajectory::Cursor Trajectory::cursor(RJ::Time start_time) const {
     return Cursor{*this, start_time};
 }
 
-Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_begin()}; }
+Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_.begin()}; }
 
 void Trajectory::draw(DebugDrawer* drawer,
                       std::optional<rj_geometry::Point> alt_text_position) const {

@@ -1,9 +1,8 @@
 #include "coach_node.hpp"
 
-namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
-        this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
+        this->create_publisher<rj_msgs::msg::CoachStateInterpretation>("/strategy/coach_state", 10);
     play_state_change_timer_ =
         this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
 
@@ -77,7 +76,7 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
 
 void CoachNode::check_for_play_state_change() {
     if (play_state_has_changed_) {
-        rj_msgs::msg::CoachState coach_message;
+        rj_msgs::msg::CoachStateInterpretation coach_message;
 
         switch (current_play_state_.restart) {
             case PlayState::Restart::Placement:
@@ -99,24 +98,24 @@ void CoachNode::check_for_play_state_change() {
             coach_message.match_situation = MatchSituation::in_play;
         }
 
-        rj_msgs::msg::GlobalOverride global_override;
+        rj_msgs::msg::GlobalOverride override;
 
         switch (current_play_state_.state) {
             case PlayState::State::Halt:
-                global_override.max_speed = 0;
-                global_override.min_dist_from_ball = 0;
+                override.max_speed = 0;
+                override.min_dist_from_ball = 0;
                 break;
             case PlayState::State::Stop:
-                global_override.max_speed = 1.5;
-                global_override.min_dist_from_ball = 0.5;
+                override.max_speed = 1.5;
+                override.min_dist_from_ball = 0.5;
                 break;
             case PlayState::State::Playing:
-                global_override.max_speed = -1;
-                global_override.min_dist_from_ball = 0;
+                override.max_speed = -1;
+                override.min_dist_from_ball = 0;
         }
 
         // publish new necessary information
-        coach_message.global_override = global_override;
+        coach_message.override = override;
 
         coach_message.our_possession = possessing_;
 
@@ -125,5 +124,3 @@ void CoachNode::check_for_play_state_change() {
         play_state_has_changed_ = false;
     }
 }
-
-}  // namespace strategy
