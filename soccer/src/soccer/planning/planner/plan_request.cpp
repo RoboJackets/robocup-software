@@ -2,20 +2,20 @@
 
 namespace planning {
 
-std::shared_ptr<rj_geometry::Circle> calc_static_robot_obs(const RobotState& robot) {
+void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
+                         double& obs_radius) {
     // params for obstacle shift
     double obs_center_shift = 0.5;
     double obs_radius_inflation = 1.0;
 
     // shift obs center off robot
-    rj_geometry::Point obs_center =
+    obs_center =
         robot.pose.position() + (robot.velocity.linear() * kRobotRadius * obs_center_shift);
 
     // inflate obs radius if needed
     double vel_mag = robot.velocity.linear().mag();
     double safety_margin = vel_mag * obs_radius_inflation;
-    double obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
-    return std::make_shared<rj_geometry::Circle>(obs_center, obs_radius);
+    obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
 }
 
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
@@ -25,13 +25,17 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     out_static->add(in.field_obstacles);
     out_static->add(in.virtual_obstacles);
 
+    rj_geometry::Point obs_center{0.0, 0.0};
+    double obs_radius{1.0};
+
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
     for (size_t shell = 0; shell < kNumShells; shell++) {
         const RobotState& their_robot = in.world_state->their_robots.at(shell);
+        fill_robot_obstacle(their_robot, obs_center, obs_radius);
 
         if (their_robot.visible) {
-            out_static->add(calc_static_robot_obs(their_robot));
+            out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
         }
     }
 
@@ -44,14 +48,13 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             continue;
         }
 
-        std::shared_ptr<rj_geometry::Circle> obs_ptr = calc_static_robot_obs(robot);
-
-        if (out_dynamic != nullptr && in.planned_trajectories.at(shell) != nullptr) {
+        const Trajectory* ptr_to_traj = std::get<0>(in.planned_trajectories->get(shell)).get();
+        if (out_dynamic != nullptr && ptr_to_traj != nullptr) {
             // Dynamic obstacle
-            out_dynamic->emplace_back(obs_ptr->radius(), in.planned_trajectories.at(shell));
+            out_dynamic->emplace_back(obs_radius, ptr_to_traj);
         } else {
             // Static obstacle
-            out_static->add(obs_ptr);
+            out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
         }
     }
 

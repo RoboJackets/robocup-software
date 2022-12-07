@@ -12,49 +12,19 @@
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
+#include <rj_msgs/srv/plan_hypothetical_path.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
 #include "planner/plan_request.hpp"
 #include "planner/planner.hpp"
+#include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
 
 namespace planning {
-
-/**
- * A collection of per-robot trajectories.
- */
-class TrajectoryCollection {
-public:
-    // Per-robot (trajectory, priority)
-    using Entry = std::tuple<std::shared_ptr<const Trajectory>, int>;
-
-    std::array<Entry, kNumShells> get() {
-        std::lock_guard lock(lock_);
-        return robot_trajectories_;
-    }
-
-    void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority) {
-        // associate a (Trajectory, priority) tuple with a robot id
-        std::lock_guard lock(lock_);
-        robot_trajectories_.at(robot_id) = std::make_tuple(std::move(trajectory), priority);
-    }
-
-    std::shared_ptr<const Trajectory> get(int robot_id) {
-        // return the most recent Trajectory associated with a robot id
-        // TODO(Kevin): return priority?
-        std::lock_guard lock(lock_);
-        auto traj_tuple = robot_trajectories_.at(robot_id);
-        return std::get<0>(traj_tuple);
-    }
-
-private:
-    std::mutex lock_;
-    std::array<Entry, kNumShells> robot_trajectories_ = {};
-};
 
 class SharedStateInfo {
 public:
@@ -162,12 +132,24 @@ public:
      */
     void execute_trajectory(const RobotIntent& intent);
 
+    /*
+     * @brief estimate the amount of time it would take for a robot to execute a robot intent
+     * (SERVICE).
+     *
+     * @param request Requested RobotIntent resulting in the hypothetical robot path.
+     * @param response The response object that will contain the resultant time to completion of a
+     * hypothetical path.
+     */
+    void plan_hypothetical_robot_path(
+        const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
+        std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response);
+
     /**
      * @return RJ::Seconds time left for the trajectory to complete
      *
      * Note: RJ::Seconds is an alias for std::chrono::duration<double>.
      */
-    RJ::Seconds get_time_left() const;
+    [[nodiscard]] std::optional<RJ::Seconds> get_time_left() const;
 
     /*
      * @return true if current planner is done, false otherwise.
@@ -219,6 +201,7 @@ private:
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_pub_;
+    rclcpp::Service<rj_msgs::srv::PlanHypotheticalPath>::SharedPtr hypothetical_path_service_;
 
     rj_drawing::RosDebugDrawer debug_draw_;
 };
@@ -238,7 +221,6 @@ private:
     TrajectoryCollection robot_trajectories_;
     SharedStateInfo shared_state_;
     ::params::LocalROS2ParamProvider param_provider_;
-
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action
     rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
@@ -254,6 +236,27 @@ private:
      * done. Blocking (as in, will loop until complete).
      */
     void execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
+
+    /*
+     * @brief Track the current state of a robot's task. This is how
+     * PlannerNode ensures each robot only has one task running.
+     */
+    struct ServerTaskState {
+        ServerTaskState() = default;
+        ~ServerTaskState() = default;
+        // disallow copy/move operators
+        ServerTaskState(const ServerTaskState& state) = delete;
+        ServerTaskState& operator=(const ServerTaskState& state) = delete;
+        ServerTaskState(const ServerTaskState&& state) = delete;
+        ServerTaskState& operator=(const ServerTaskState&& state) = delete;
+
+        volatile std::atomic_bool is_executing{false};
+        volatile std::atomic_bool new_task_waiting_signal{false};
+    };
+
+    // create an array, kNumShells long, of ServerTaskState structs for
+    // PlannerNode to use
+    std::array<ServerTaskState, kNumShells> server_task_states_;
 };
 
 }  // namespace planning
