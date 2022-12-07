@@ -116,6 +116,7 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         default:
             return;
     }
+
 }
 
 }  // namespace strategy

@@ -54,10 +54,7 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
 
     // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
 
-    // On a new goal, get the current task for the given robot ID and kill it,
-    // then set the current task to the new goal. The complexity here is from
-    // the shared server_task_states_, which could be modified by any thread
-    // running handle_goal(). See PR #1958.
+
     int robot_id = goal->robot_intent.robot_id;
     auto& robot_task = server_task_states_.at(robot_id);
     auto& is_executing = robot_task.is_executing;
