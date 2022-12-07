@@ -50,6 +50,10 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
+std::string Position::get_name() {
+    return position_name_;
+}
+
 rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
     rj_msgs::msg::RobotIntent intent{};
     auto empty = rj_msgs::msg::EmptyMotionCommand{};

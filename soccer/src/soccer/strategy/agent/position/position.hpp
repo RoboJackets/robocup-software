@@ -37,6 +37,7 @@ public:
     // communication with AC
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
+    std::string get_name();
 
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
 
