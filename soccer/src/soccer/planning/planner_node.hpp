@@ -10,10 +10,10 @@
 #include <rj_common/time.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/action/robot_move.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
-#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
@@ -111,7 +111,6 @@ private:
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
-
 
     mutable std::mutex mutex_;
     PlayState last_play_state_ = PlayState::halt();
