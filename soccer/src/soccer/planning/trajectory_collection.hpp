@@ -10,7 +10,6 @@ using Entry = std::tuple<std::shared_ptr<const Trajectory>, int>;
 
 /**
  * A collection of per-robot trajectories.
-// TODO (PR #1970): fix TrajectoryCollection
  */
 class TrajectoryCollection {
 public:
@@ -20,9 +19,11 @@ public:
 
     void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority);
 
+    std::mutex& lock(int robot_id);
+
 private:
     std::mutex lock_;
-    std::array<std::mutex, kNumShells> entry_locks;
+    std::array<std::mutex, kNumShells> entry_locks_;
     std::array<Entry, kNumShells> robot_trajectories_ = {};
 };
 
