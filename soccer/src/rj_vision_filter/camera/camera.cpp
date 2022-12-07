@@ -302,7 +302,8 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     for (const CameraRobot& camera_robot : single_robot_list) {
         bool was_used = used_camera_robot.at(camera_robot_idx);
 
-        if (!was_used && single_kalman_robot_list.size() < (unsigned long) PARAM_max_num_kalman_robots) {
+        if (!was_used &&
+            single_kalman_robot_list.size() < (unsigned long)PARAM_max_num_kalman_robots) {
             single_kalman_robot_list.emplace_back(camera_id_, calc_time, camera_robot,
                                                   previous_world_robot);
         }
