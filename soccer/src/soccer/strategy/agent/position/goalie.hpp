@@ -38,8 +38,7 @@ private:
      *
      * Assumes ball is not slow.
      */
-    rj_geometry::Point get_block_pt(WorldState* world_state) const;
-    rj_geometry::Point get_idle_pt(WorldState* world_state) const;
+    rj_geometry::Point get_block_pt(WorldState* world_state, bool& needs_to_block) const;
 };
 
 }  // namespace strategy

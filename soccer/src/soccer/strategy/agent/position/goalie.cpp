@@ -15,54 +15,53 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
         return get_empty_intent();
     }
 
-    // send idle command a few times in case it doesn't get picked up on init
-    if (send_idle_ct_ < 5) {
-        auto goalie_idle = rj_msgs::msg::GoalieIdleMotionCommand{};
-        intent.motion_command.goalie_idle_command = {goalie_idle};
+    WorldState* world_state = this->world_state();  // thread-safe getter
+    bool needs_to_block = false;
+    auto block_pt = get_block_pt(world_state, needs_to_block);
 
-        send_idle_ct_++;
-        return intent;
-    }
-
-    /*
-    if (check_is_done()) {
-        move_ct++;
-    }
-
-    // thread-safe getter
-    WorldState* world_state = this->world_state();
-
-    if (world_state == nullptr) {
-        auto empty = rj_msgs::msg::EmptyMotionCommand{};
-        intent.motion_command.empty_command = {empty};
-    } else {
+    if (needs_to_block) {
+        // create PathTargetMotionCommand, set goal position to block_pt
         auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-        auto pt = get_block_pt(world_state);
-        ptmc.target.position = rj_convert::convert_to_ros(pt);
+        ptmc.target.position = rj_convert::convert_to_ros(block_pt);
 
+        // make goalie face the ball
         rj_geometry::Point ball_pos = world_state->ball.position;
         auto face_pt = ball_pos;
         ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
-        ptmc.ignore_ball = true;
+
+        ptmc.ignore_ball = true;  // allow goalie to intersect ball's path
+
+        // update intent
         intent.motion_command.path_target_command = {ptmc};
+    } else {
+        // send idle command a few times in case it doesn't get picked up on init
+        /* if (send_idle_ct_ < 3) { */
+        auto goalie_idle = rj_msgs::msg::GoalieIdleMotionCommand{};
+        intent.motion_command.goalie_idle_command = {goalie_idle};
+
+        /* send_idle_ct_++; */
+        /* return intent; */
+        /* } */
     }
+
     // TODO: capture ball if vel is slow & ball is inside box
     // (waiting on field pts to be given to world_state)
 
+    // TODO(Kevin): make this method std::optional, make AC send nothing on no intent
     return intent;
-    */
 }
 
-rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) const {
+rj_geometry::Point Goalie::get_block_pt(WorldState* world_state, bool& needs_to_block) const {
     // TODO: make intercept planner do what its header file does, so we don't need this
     // also, fix the intercept planner so we don't have to pass in the ball
     // point every tick
     rj_geometry::Point ball_pos = world_state->ball.position;
     rj_geometry::Point ball_vel = world_state->ball.velocity;
 
-    // if ball is slow, return the idle pt (no kick coming)
+    // if ball is slow, doesn't need to block
     if (ball_vel.mag() < 0.1) {
-        return get_idle_pt(world_state);
+        needs_to_block = false;
+        return rj_geometry::Point{-1, -1};  // intentionally invalid
     }
 
     // find x-coord that the ball would cross on the goal line
@@ -72,28 +71,15 @@ rj_geometry::Point Goalie::get_block_pt(WorldState* world_state) const {
     double cross_x = ball_pos.x() + ball_vel.x() * time_to_cross;
 
     // if shot is going out of goal, ignore it
-    // TODO: add field to world_state
-    if (std::abs(cross_x) > 0.6) {
-        return get_idle_pt(world_state);
+    if (std::abs(cross_x) > 0.6) {  // TODO: add field to world_state to avoid hardcoding
+        needs_to_block = false;
+        return rj_geometry::Point{-1, -1};  // intentionally invalid
     }
 
+    // otherwise, return point needed to block shot
+    needs_to_block = true;
     rj_geometry::Point block_pt{cross_x, 0.0};
     return block_pt;
-}
-
-rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) const {
-    // TODO: transfer field part of world_state
-    // TODO: make this depend on team +/-x
-    rj_geometry::Point ball_pos = world_state->ball.position;
-    rj_geometry::Point goal_pt{0.0, 0.0};
-
-    // TODO: move closer/farther from ball as a linear % of distance from ball
-    double goalie_dist = 0.5;
-    rj_geometry::Point idle_pt = (ball_pos - goal_pt).norm();
-    idle_pt *= goalie_dist;
-    // TODO: clamp y to 0
-
-    return idle_pt;
 }
 
 }  // namespace strategy

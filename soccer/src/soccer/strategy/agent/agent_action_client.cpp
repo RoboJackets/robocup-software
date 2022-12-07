@@ -64,6 +64,7 @@ void AgentActionClient::get_task() {
 
     auto task = current_position_->get_task();
     if (task != last_task_) {
+        /* SPDLOG_INFO("sending new task"); */
         last_task_ = task;
         send_new_goal();
     }
