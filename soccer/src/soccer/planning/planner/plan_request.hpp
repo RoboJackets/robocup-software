@@ -30,7 +30,7 @@ struct PlanRequest {
                 rj_geometry::ShapeSet virtual_obstacles,
                 std::array<const Trajectory*, kNumShells> planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, int8_t priority = 0,
-                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false, float min_dist_from_ball = 0, float min_dist_from_ball = 0)
+                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false, float min_dist_from_ball = 0)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
