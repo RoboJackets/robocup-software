@@ -29,7 +29,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     double obs_radius{1.0};
 
     // Add their robots as static obstacles (inflated based on velocity).
-    for (int shell = 0; shell < kNumShells; shell++) {
+    // See calc_static_robot_obs() docstring for more info.
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         const RobotState& their_robot = in.world_state->their_robots.at(shell);
         fill_robot_obstacle(their_robot, obs_center, obs_radius);
 
@@ -41,7 +42,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // Add our robots, either static or dynamic depending on whether they have
     // already been planned. In both cases, radius is based on velocity like
     // above for opp robots.
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         const auto& robot = in.world_state->our_robots.at(shell);
         if (!robot.visible || shell == in.shell_id) {
             continue;

@@ -37,7 +37,7 @@ PlannerNode::PlannerNode()
 
     // set up PlannerForRobot objects
     robots_planners_.reserve(kNumShells);
-    for (int i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         auto planner =
             std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
         robots_planners_.emplace_back(std::move(planner));
@@ -239,7 +239,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // make a copy instead of getting the actual shared_ptr to Trajectory
     std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
 
-    for (int i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         // TODO(Kevin): check that priority works (seems like
         // robot_trajectories_ is passed on init, when no planning has occured
         // yet)
