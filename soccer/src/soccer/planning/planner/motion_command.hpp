@@ -44,8 +44,7 @@ struct TargetFacePoint {
     rj_geometry::Point face_point;
 };
 
-using AngleOverride =
-    std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
+using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
 /**
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
@@ -227,6 +226,8 @@ ASSOCIATE_CPP_ROS(planning::CollectCommand, rj_msgs::msg::CollectMotionCommand);
 
 template <>
 struct RosConverter<planning::GoalieIdleCommand, rj_msgs::msg::GoalieIdleMotionCommand> {
+    // clang-format is disagreeing with itself here, so I disabled it for this block
+    // clang-format off
     static rj_msgs::msg::GoalieIdleMotionCommand to_ros(
         [[maybe_unused]] const planning::GoalieIdleCommand& from) {
         return rj_msgs::build<rj_msgs::msg::GoalieIdleMotionCommand>();
@@ -236,6 +237,7 @@ struct RosConverter<planning::GoalieIdleCommand, rj_msgs::msg::GoalieIdleMotionC
         [[maybe_unused]] const rj_msgs::msg::GoalieIdleMotionCommand& from) {
         return planning::GoalieIdleCommand{};
     }
+    // clang-format on
 };
 
 ASSOCIATE_CPP_ROS(planning::GoalieIdleCommand, rj_msgs::msg::GoalieIdleMotionCommand);

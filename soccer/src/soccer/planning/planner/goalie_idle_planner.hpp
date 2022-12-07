@@ -21,16 +21,18 @@ class GoalieIdlePlanner : public PlannerForCommandType<GoalieIdleCommand> {
 public:
     GoalieIdlePlanner() : PlannerForCommandType<GoalieIdleCommand>("goalie_idle") {}
 
+    /*
+     * From Planner superclass (see planner.hpp).
+     */
     Trajectory plan(const PlanRequest& plan_request) override;
+    void reset() override;
+    [[nodiscard]] bool is_done() const override;
 
     /*
      * @return Point for Goalie to stand in when no shot is coming. Expects
      * ball to be slow.
      */
-    rj_geometry::Point get_idle_pt(const WorldState* world_state) const;
-
-    void reset() override;
-    [[nodiscard]] bool is_done() const override;
+    static rj_geometry::Point get_idle_pt(const WorldState* world_state);
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;

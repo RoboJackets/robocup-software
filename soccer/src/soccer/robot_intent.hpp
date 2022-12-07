@@ -37,7 +37,8 @@ struct RobotIntent {
         if (std::holds_alternative<planning::PathTargetCommand>(motion_command)) {
             return std::get<planning::PathTargetCommand>(motion_command) ==
                    std::get<planning::PathTargetCommand>(r.motion_command);
-        } else if (std::holds_alternative<planning::GoalieIdleCommand>(motion_command)) {
+        }
+        if (std::holds_alternative<planning::GoalieIdleCommand>(motion_command)) {
             // if both are GoalieIdleCommands, they are equal (takes no fields)
             return std::holds_alternative<planning::GoalieIdleCommand>(r.motion_command);
         }

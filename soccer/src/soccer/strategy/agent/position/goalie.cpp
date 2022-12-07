@@ -51,7 +51,7 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
     return intent;
 }
 
-rj_geometry::Point Goalie::get_block_pt(WorldState* world_state, bool& needs_to_block) const {
+rj_geometry::Point Goalie::get_block_pt(WorldState* world_state, bool& needs_to_block) {
     // TODO: make intercept planner do what its header file does, so we don't need this
     // also, fix the intercept planner so we don't have to pass in the ball
     // point every tick
@@ -71,7 +71,7 @@ rj_geometry::Point Goalie::get_block_pt(WorldState* world_state, bool& needs_to_
     double cross_x = ball_pos.x() + ball_vel.x() * time_to_cross;
 
     // if shot is going out of goal, ignore it
-    if (std::abs(cross_x) > 0.6) {  // TODO: add field to world_state to avoid hardcoding
+    if (std::abs(cross_x) > 0.6) {  // TODO(Kevin): add field to world_state to avoid hardcoding
         needs_to_block = false;
         return rj_geometry::Point{-1, -1};  // intentionally invalid
     }

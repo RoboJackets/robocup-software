@@ -47,16 +47,15 @@ Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-rj_geometry::Point GoalieIdlePlanner::get_idle_pt(const WorldState* world_state) const {
+rj_geometry::Point GoalieIdlePlanner::get_idle_pt(const WorldState* world_state) {
     rj_geometry::Point ball_pos = world_state->ball.position;
-    // TODO: make this depend on team +/-x
+    // TODO(Kevin): make this depend on team +/-x
     rj_geometry::Point goal_pt{0.0, 0.0};
 
-    // TODO: move closer/farther from ball as a linear % of distance from ball
     double goalie_dist = 0.5;
     rj_geometry::Point idle_pt = (ball_pos - goal_pt).norm();
     idle_pt *= goalie_dist;
-    // TODO: clamp y to 0
+    // TODO(Kevin): clamp y to 0 so goalie doesn't go backwards
 
     return idle_pt;
 }
