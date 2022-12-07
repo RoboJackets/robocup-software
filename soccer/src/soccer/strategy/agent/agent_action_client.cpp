@@ -92,7 +92,7 @@ void AgentActionClient::update_position(const rj_msgs::msg::Position::SharedPtr&
     };
 
     if (next_position_->get_name() == current_position_->get_name()) {
-        current_position_ = *next_position_;
+        current_position_ = std::move(next_position_);
     }
 
     // TODO: send acknowledgement back to coach node (w/ robot ID)
