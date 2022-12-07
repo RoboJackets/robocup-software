@@ -9,8 +9,10 @@ std::array<Entry, kNumShells> TrajectoryCollection::get() {
 
 Entry TrajectoryCollection::get(int robot_id) {
     std::lock_guard(entry_locks.at(robot_id));
+    // TODO: return the whole tuple?
     return robot_trajectories_.at(robot_id);
 }
+// TODO: add "copy()" function here
 
 void TrajectoryCollection::put(int robot_id, std::shared_ptr<const Trajectory> trajectory,
                                int priority) {

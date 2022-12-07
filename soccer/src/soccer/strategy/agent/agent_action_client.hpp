@@ -71,7 +71,7 @@ private:
      */
     void get_task();
     rclcpp::TimerBase::SharedPtr get_task_timer_;
-    void get_task();
+    void update_position(const rj_msgs::msg::Position::SharedPtr& msg);
     rj_msgs::msg::RobotIntent last_task_;
 
     // const because should never be changed, but initializer list will allow

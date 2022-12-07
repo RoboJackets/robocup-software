@@ -11,10 +11,17 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         "/referee/play_state", 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
+    positions_pub_ = 
+        this->create_publisher<rj_msgs::msg::Position>("/strategy/positions", 10);
+
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
+    // TODO: sub to acknowledgement topic from AC
+    // save state of acknowledgements, only spam until some long time has passed, or ack received
+    /* ack_array[msg->ID] = true; */
+    
     // initialize all of the robot status subscriptions
     for (int i = 0; i < kNumShells; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
@@ -27,7 +34,6 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
     current_play_state_.our_restart = true;
-    assign_positions();
     rj_geometry_msgs::msg::Point temp_point;
     temp_point.x = -1;
     temp_point.y = -1;
@@ -76,6 +82,10 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
 }
 
 void CoachNode::check_for_play_state_change() {
+    assign_positions();
+
+    // TODO: assign positions on play state changes correctly
+
     if (play_state_has_changed_) {
         rj_msgs::msg::CoachState coach_message;
 
@@ -120,14 +130,29 @@ void CoachNode::check_for_play_state_change() {
 
         coach_message.our_possession = possessing_;
 
-        SPDLOG_INFO("We are about to assign positions");
-
-        assign_positions();
-
         coach_state_pub_->publish(coach_message);
 
         play_state_has_changed_ = false;
     }
+}
+
+
+void CoachNode::assign_positions() {
+    rj_msgs::msg::Position positions_message;
+    SPDLOG_INFO("We are IN assign positions");
+    positions_message.client_positions[0] = Positions::Goalie;
+    if(!possessing_) {
+        positions_message.client_positions[1] = Positions::Offense;
+        for (int i = 2; i < kNumShells; i++) {
+            positions_message.client_positions[i] = Positions::Defense;
+        }
+    } else {
+        positions_message.client_positions[1] = Positions::Defense;
+        for (int i = 2; i < kNumShells; i++) {
+            positions_message.client_positions[i] = Positions::Offense;
+        }
+    }
+    positions_pub_->publish(positions_message);
 }
 
 }  // namespace strategy
