@@ -62,15 +62,15 @@ struct PathTargetCommand {
             std::holds_alternative<TargetFaceTangent>(ptc.angle_override)) {
             angle_eq = &(angle_override) == &(ptc.angle_override);
         } else if (std::holds_alternative<TargetFaceAngle>(angle_override) &&
-            std::holds_alternative<TargetFaceAngle>(ptc.angle_override)) {
-            angle_eq = (std::get<TargetFaceAngle>(angle_override).target)
-                == (std::get<TargetFaceAngle>(ptc.angle_override).target);
+                   std::holds_alternative<TargetFaceAngle>(ptc.angle_override)) {
+            angle_eq = (std::get<TargetFaceAngle>(angle_override).target) ==
+                       (std::get<TargetFaceAngle>(ptc.angle_override).target);
         } else if (std::holds_alternative<TargetFacePoint>(angle_override) &&
-            std::holds_alternative<TargetFacePoint>(ptc.angle_override)) {
-            angle_eq = (std::get<TargetFacePoint>(angle_override).face_point)
-                == (std::get<TargetFacePoint>(ptc.angle_override).face_point);
+                   std::holds_alternative<TargetFacePoint>(ptc.angle_override)) {
+            angle_eq = (std::get<TargetFacePoint>(angle_override).face_point) ==
+                       (std::get<TargetFacePoint>(ptc.angle_override).face_point);
         }
-        
+
         /* bool angle_eq = goal.velocity == ptc.goal.velocity; */
         bool ball_eq = ignore_ball == ptc.ignore_ball;
         return (pos_eq && vel_eq && angle_eq && ball_eq);
