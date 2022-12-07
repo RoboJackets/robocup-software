@@ -54,7 +54,6 @@ rclcpp_action::GoalResponse PlannerNode::handle_goal(const rclcpp_action::GoalUU
 
     // planning::MotionCommand motion_command_ = goal->robot_intent.motion_command;
 
-
     int robot_id = goal->robot_intent.robot_id;
     auto& robot_task = server_task_states_.at(robot_id);
     auto& is_executing = robot_task.is_executing;
