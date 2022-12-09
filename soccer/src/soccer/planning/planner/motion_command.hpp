@@ -56,7 +56,7 @@ struct PathTargetCommand {
     bool operator==(const PathTargetCommand& ptc) {
         bool pos_eq = goal.position == ptc.goal.position;
         bool vel_eq = goal.velocity == ptc.goal.velocity;
-        // TODO(Kevin): fix this to actually compare std::variants
+        
         bool angle_eq = false;
         if (std::holds_alternative<TargetFaceTangent>(angle_override) &&
             std::holds_alternative<TargetFaceTangent>(ptc.angle_override)) {
@@ -71,7 +71,6 @@ struct PathTargetCommand {
                        (std::get<TargetFacePoint>(ptc.angle_override).face_point);
         }
 
-        /* bool angle_eq = goal.velocity == ptc.goal.velocity; */
         bool ball_eq = ignore_ball == ptc.ignore_ball;
         return (pos_eq && vel_eq && angle_eq && ball_eq);
     }
