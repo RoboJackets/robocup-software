@@ -59,7 +59,7 @@ struct PathTargetCommand {
         bool angle_eq = false;
         if (std::holds_alternative<TargetFaceTangent>(angle_override) &&
             std::holds_alternative<TargetFaceTangent>(ptc.angle_override)) {
-            angle_eq = &(angle_override) == &(ptc.angle_override);
+            angle_eq = (&angle_override == &ptc.angle_override);
         } else if (std::holds_alternative<TargetFaceAngle>(angle_override) &&
                    std::holds_alternative<TargetFaceAngle>(ptc.angle_override)) {
             angle_eq = (std::get<TargetFaceAngle>(angle_override).target) ==
