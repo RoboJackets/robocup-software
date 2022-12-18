@@ -20,28 +20,47 @@
 #include <world_state.hpp>
 
 #include "planning/instant.hpp"
+#include "planning/ros_conversions.hpp"
 #include "planning/trajectory.hpp"
 
 namespace planning {
+
 struct SettleCommand {
     std::optional<rj_geometry::Point> target;
+    friend bool operator==(const SettleCommand& a, const SettleCommand& b);
 };
-struct CollectCommand {};
+
+struct CollectCommand {
+    friend bool operator==([[maybe_unused]] const CollectCommand& a,
+                           [[maybe_unused]] const CollectCommand& b);
+};
+
 struct LineKickCommand {
     rj_geometry::Point target;
+    friend bool operator==(const LineKickCommand& a, const LineKickCommand& b);
 };
 
 /**
- * An empty "do-nothing" motion command.
+ * An empty "do-nothing" motion command. Used to HALT robots easily.
  */
-struct EmptyCommand {};
+struct EmptyCommand {
+    friend bool operator==([[maybe_unused]] const EmptyCommand& a,
+                           [[maybe_unused]] const EmptyCommand& b);
+};
 
-struct TargetFaceTangent {};
+struct TargetFaceTangent {
+    friend bool operator==([[maybe_unused]] const TargetFaceTangent& a,
+                           [[maybe_unused]] const TargetFaceTangent& b);
+};
+
 struct TargetFaceAngle {
     double target;
+    friend bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b);
 };
+
 struct TargetFacePoint {
     rj_geometry::Point face_point;
+    friend bool operator==(const TargetFacePoint& a, const TargetFacePoint& b);
 };
 
 using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
@@ -53,15 +72,7 @@ struct PathTargetCommand {
     AngleOverride angle_override = TargetFaceTangent{};
     bool ignore_ball = false;
 
-    bool operator==(const PathTargetCommand& ptc) {
-        bool pos_eq = goal.position == ptc.goal.position;
-        bool vel_eq = goal.velocity == ptc.goal.velocity;
-        // TODO(Kevin): fix this to actually compare std::variants
-        bool angle_eq = true;
-        /* bool angle_eq = goal.velocity == ptc.goal.velocity; */
-        bool ball_eq = ignore_ball == ptc.ignore_ball;
-        return (pos_eq && vel_eq && angle_eq && ball_eq);
-    }
+    friend bool operator==(const PathTargetCommand& a, const PathTargetCommand& b);
 };
 
 /**
@@ -69,6 +80,7 @@ struct PathTargetCommand {
  */
 struct WorldVelCommand {
     rj_geometry::Point world_vel;
+    friend bool operator==(const WorldVelCommand& a, const WorldVelCommand& b);
 };
 
 /**
@@ -79,6 +91,7 @@ struct WorldVelCommand {
 struct PivotCommand {
     rj_geometry::Point pivot_point;
     rj_geometry::Point pivot_target;
+    friend bool operator==(const PivotCommand& a, const PivotCommand& b);
 };
 
 /**
@@ -89,12 +102,16 @@ struct PivotCommand {
  */
 struct InterceptCommand {
     rj_geometry::Point target;
+    friend bool operator==(const InterceptCommand& a, const InterceptCommand& b);
 };
 
 /*
  * Make the Goalie track the ball when not saving shots.
  */
-struct GoalieIdleCommand {};
+struct GoalieIdleCommand {
+    friend bool operator==([[maybe_unused]] const GoalieIdleCommand& a,
+                           [[maybe_unused]] const GoalieIdleCommand& b);
+};
 
 using MotionCommand =
     std::variant<EmptyCommand, PathTargetCommand, WorldVelCommand, PivotCommand, SettleCommand,

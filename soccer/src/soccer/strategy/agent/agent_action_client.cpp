@@ -62,9 +62,13 @@ void AgentActionClient::get_task() {
         }
     }
 
-    auto task = current_position_->get_task();
-    if (task != last_task_) {
-        /* SPDLOG_INFO("sending new task"); */
+    rj_msgs::msg::RobotIntent task = current_position_->get_task();
+    // converting ROS msgs to our custom structs ensures our custom override of
+    // == is used, instead of the auto-generated override done by ROS
+    RobotIntent new_task = rj_convert::convert_from_ros(task);
+    RobotIntent old_task = rj_convert::convert_from_ros(last_task_);
+    if (new_task != old_task) {
+        SPDLOG_INFO("sending new task");
         last_task_ = task;
         send_new_goal();
     }

@@ -344,4 +344,12 @@ void Trajectory::Cursor::next_knot() {
     }
 }
 
+bool operator==(const Trajectory& a, const Trajectory& b) {
+    // Don't check debug text, as that doesn't get converted over ROS
+    return a.instants() == b.instants() && a.time_created() == b.time_created() &&
+           a.angles_valid() == b.angles_valid();
+}
+
+bool operator!=(const Trajectory& a, const Trajectory& b) { return !(a == b); }
+
 }  // namespace planning

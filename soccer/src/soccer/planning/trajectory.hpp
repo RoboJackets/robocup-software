@@ -317,6 +317,16 @@ public:
      */
     void stamp(RJ::Time time) { creation_stamp_ = time; }
 
+    /**
+     * @brief Allow comparison of Trajectory with ==
+     */
+    friend bool operator==(const Trajectory& a, const Trajectory& b);
+
+    /**
+     * @brief Allow comparison of Trajectory with !=
+     */
+    friend bool operator!=(const Trajectory& a, const Trajectory& b);
+
     /*
      * @brief Allows seeking to arbitrary positions in a Trajectory and
      *  incrementing by arbitrary steps.

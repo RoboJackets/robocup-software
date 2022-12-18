@@ -16,6 +16,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "robot_intent.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"

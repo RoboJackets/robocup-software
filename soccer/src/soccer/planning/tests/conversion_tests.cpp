@@ -3,55 +3,15 @@
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 #include "planning/planner/motion_command.hpp"
+#include "planning/ros_conversions.hpp"
 
 using rj_geometry::Point;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
-
-namespace planning {
+using namespace planning;
 
 bool operator==(const LinearMotionInstant& a, const LinearMotionInstant& b) {
     return a.velocity == b.velocity && a.position == b.position;
-}
-
-bool operator==([[maybe_unused]] const TargetFaceTangent& a,
-                [[maybe_unused]] const TargetFaceTangent& b) {
-    return true;
-}
-bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b) { return a.target == b.target; }
-bool operator==(const TargetFacePoint& a, const TargetFacePoint& b) {
-    return a.face_point == b.face_point;
-}
-
-bool operator==([[maybe_unused]] const EmptyCommand& a, [[maybe_unused]] const EmptyCommand& b) {
-    return true;
-}
-bool operator==(const PathTargetCommand& a, const PathTargetCommand& b) {
-    return a.goal == b.goal && a.angle_override == b.angle_override;
-}
-bool operator==(const WorldVelCommand& a, const WorldVelCommand& b) {
-    return a.world_vel == b.world_vel;
-}
-bool operator==(const PivotCommand& a, const PivotCommand& b) {
-    return a.pivot_target == b.pivot_target && a.pivot_point == b.pivot_point;
-}
-bool operator==(const SettleCommand& a, const SettleCommand& b) { return a.target == b.target; }
-bool operator==([[maybe_unused]] const CollectCommand& a,
-                [[maybe_unused]] const CollectCommand& b) {
-    return true;
-}
-bool operator==(const LineKickCommand& a, const LineKickCommand& b) { return a.target == b.target; }
-bool operator==(const InterceptCommand& a, const InterceptCommand& b) {
-    return a.target == b.target;
-}
-bool operator==(const Trajectory& a, const Trajectory& b) {
-    // Don't check debug text, as that doesn't get converted over ROS
-    return a.instants() == b.instants() && a.time_created() == b.time_created() &&
-           a.angles_valid() == b.angles_valid();
-}
-bool operator==([[maybe_unused]] const GoalieIdleCommand& a,
-                [[maybe_unused]] const GoalieIdleCommand& b) {
-    return true;
 }
 
 namespace testing {
@@ -128,4 +88,3 @@ TEST(RosConversions, Trajectory) {
 }
 
 }  // namespace testing
-}  // namespace planning
