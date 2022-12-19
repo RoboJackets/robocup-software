@@ -5,11 +5,14 @@
 namespace planning {
 
 /**
- * Planner which tries to intercept the path ball as quickly as possible
- * Whether this means moving and stopping in the path of the ball
- * or completely driving through and "slapping" the ball.
+ * @brief Planner for Goalie to block shots on goal.
  *
- * Mostly used for the goalie / defenders to block shots
+ * Tries to intercept the path ball as quickly as possible, whether this means
+ * moving and stopping in the path of the ball or completely driving through
+ * and "slapping" the ball.
+ *
+ * (Intercept is a legacy name from when this planner was designed for both
+ * Goalie and Defenders; BlockShotPlanner would be a better name now.)
  */
 
 class InterceptPlanner : public PlannerForCommandType<InterceptCommand> {

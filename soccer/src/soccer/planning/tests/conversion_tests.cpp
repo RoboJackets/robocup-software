@@ -8,7 +8,8 @@
 using rj_geometry::Point;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
-using namespace planning;
+
+namespace planning {
 
 bool operator==(const LinearMotionInstant& a, const LinearMotionInstant& b) {
     return a.velocity == b.velocity && a.position == b.position;
@@ -88,3 +89,4 @@ TEST(RosConversions, Trajectory) {
 }
 
 }  // namespace testing
+}  // namespace planning

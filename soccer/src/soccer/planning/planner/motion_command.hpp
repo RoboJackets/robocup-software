@@ -27,41 +27,43 @@ namespace planning {
 
 struct SettleCommand {
     std::optional<rj_geometry::Point> target;
-    friend bool operator==(const SettleCommand& a, const SettleCommand& b);
 };
 
-struct CollectCommand {
-    friend bool operator==([[maybe_unused]] const CollectCommand& a,
-                           [[maybe_unused]] const CollectCommand& b);
-};
+bool operator==(const SettleCommand& a, const SettleCommand& b);
+
+struct CollectCommand {};
+
+bool operator==([[maybe_unused]] const CollectCommand& a, [[maybe_unused]] const CollectCommand& b);
 
 struct LineKickCommand {
     rj_geometry::Point target;
-    friend bool operator==(const LineKickCommand& a, const LineKickCommand& b);
 };
+
+bool operator==(const LineKickCommand& a, const LineKickCommand& b);
 
 /**
  * An empty "do-nothing" motion command. Used to HALT robots easily.
  */
-struct EmptyCommand {
-    friend bool operator==([[maybe_unused]] const EmptyCommand& a,
-                           [[maybe_unused]] const EmptyCommand& b);
-};
+struct EmptyCommand {};
 
-struct TargetFaceTangent {
-    friend bool operator==([[maybe_unused]] const TargetFaceTangent& a,
-                           [[maybe_unused]] const TargetFaceTangent& b);
-};
+bool operator==([[maybe_unused]] const EmptyCommand& a, [[maybe_unused]] const EmptyCommand& b);
+
+struct TargetFaceTangent {};
+
+bool operator==([[maybe_unused]] const TargetFaceTangent& a,
+                [[maybe_unused]] const TargetFaceTangent& b);
 
 struct TargetFaceAngle {
     double target;
-    friend bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b);
 };
+
+bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b);
 
 struct TargetFacePoint {
     rj_geometry::Point face_point;
-    friend bool operator==(const TargetFacePoint& a, const TargetFacePoint& b);
 };
+
+bool operator==(const TargetFacePoint& a, const TargetFacePoint& b);
 
 using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
 /**
@@ -71,17 +73,18 @@ struct PathTargetCommand {
     LinearMotionInstant goal{};
     AngleOverride angle_override = TargetFaceTangent{};
     bool ignore_ball = false;
-
-    friend bool operator==(const PathTargetCommand& a, const PathTargetCommand& b);
 };
+
+bool operator==(const PathTargetCommand& a, const PathTargetCommand& b);
 
 /**
  * Move with a particular velocity.
  */
 struct WorldVelCommand {
     rj_geometry::Point world_vel;
-    friend bool operator==(const WorldVelCommand& a, const WorldVelCommand& b);
 };
+
+bool operator==(const WorldVelCommand& a, const WorldVelCommand& b);
 
 /**
  * Pivot around a given point, with a given target angle.
@@ -91,8 +94,9 @@ struct WorldVelCommand {
 struct PivotCommand {
     rj_geometry::Point pivot_point;
     rj_geometry::Point pivot_target;
-    friend bool operator==(const PivotCommand& a, const PivotCommand& b);
 };
+
+bool operator==(const PivotCommand& a, const PivotCommand& b);
 
 /**
  * Intercept a moving ball, disregarding whether or not we can actually capture
@@ -102,16 +106,17 @@ struct PivotCommand {
  */
 struct InterceptCommand {
     rj_geometry::Point target;
-    friend bool operator==(const InterceptCommand& a, const InterceptCommand& b);
 };
+
+bool operator==(const InterceptCommand& a, const InterceptCommand& b);
 
 /*
  * Make the Goalie track the ball when not saving shots.
  */
-struct GoalieIdleCommand {
-    friend bool operator==([[maybe_unused]] const GoalieIdleCommand& a,
-                           [[maybe_unused]] const GoalieIdleCommand& b);
-};
+struct GoalieIdleCommand {};
+
+bool operator==([[maybe_unused]] const GoalieIdleCommand& a,
+                [[maybe_unused]] const GoalieIdleCommand& b);
 
 using MotionCommand =
     std::variant<EmptyCommand, PathTargetCommand, WorldVelCommand, PivotCommand, SettleCommand,
