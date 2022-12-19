@@ -33,11 +33,13 @@ rj_msgs::msg::RobotIntent Goalie::get_task() {
 
         // update intent
         intent.motion_command.path_target_command = {ptmc};
+        intent.motion_command.name = "path_target";
     } else {
         // send idle command a few times in case it doesn't get picked up on init
         /* if (send_idle_ct_ < 3) { */
         auto goalie_idle = rj_msgs::msg::GoalieIdleMotionCommand{};
         intent.motion_command.goalie_idle_command = {goalie_idle};
+        intent.motion_command.name = "goalie_idle";
 
         /* send_idle_ct_++; */
         /* return intent; */

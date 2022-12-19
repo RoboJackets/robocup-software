@@ -14,6 +14,7 @@ set(ROBOCUP_LIB_SRC
     battery_profile.cpp
     global_params.cpp
     logger.cpp
+    robot_intent.cpp
     control/manipulator_control.cpp
     control/motion_control.cpp
     control/motion_control_node.cpp
