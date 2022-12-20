@@ -38,7 +38,11 @@ public:
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
-    virtual rj_msgs::msg::RobotIntent get_task() = 0;
+    /*
+     * @brief return a RobotIntent to be sent to PlannerNode; nullopt means no
+     * new task requested
+     */
+    virtual std::optional<rj_msgs::msg::RobotIntent> get_task() = 0;
 
     // this allows AgentActionClient to change private/protected members of this class
     friend class AgentActionClient;
