@@ -9,6 +9,7 @@
 #include "planning/planner/collect_planner.hpp"
 #include "planning/planner/escape_obstacles_path_planner.hpp"
 #include "planning/planner/goalie_idle_planner.hpp"
+#include "planning/planner/intercept_planner.hpp"
 #include "planning/planner/line_kick_planner.hpp"
 #include "planning/planner/path_target_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
@@ -152,6 +153,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
           fmt::format("planning_{}", robot_id)} {
     planners_.push_back(std::make_shared<GoalieIdlePlanner>());
+    planners_.push_back(std::make_shared<InterceptPlanner>());
     planners_.push_back(std::make_shared<PathTargetPlanner>());
     planners_.push_back(std::make_shared<SettlePlanner>());
     planners_.push_back(std::make_shared<CollectPlanner>());
@@ -285,6 +287,9 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
         // If this planner could possibly plan for this command, try to make
         // a plan.
         if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
+            if (request.shell_id == 0) {
+                SPDLOG_INFO("planner applied: {}", planner->name());
+            }
             current_planner_ = planner;
             trajectory = planner->plan(request);
         }

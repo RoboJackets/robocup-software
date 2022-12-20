@@ -41,9 +41,7 @@ bool operator==([[maybe_unused]] const CollectCommand& a,
     return true;
 }
 bool operator==(const LineKickCommand& a, const LineKickCommand& b) { return a.target == b.target; }
-bool operator==(const InterceptCommand& a, const InterceptCommand& b) {
-    return a.target == b.target;
-}
+bool operator==(const InterceptCommand& a, const InterceptCommand& b) { return true; }
 bool operator==(const Trajectory& a, const Trajectory& b) {
     // Don't check debug text, as that doesn't get converted over ROS
     return a.instants() == b.instants() && a.time_created() == b.time_created() &&
@@ -93,9 +91,7 @@ TEST(RosConversions, LineKickCommand) {
 }
 
 // NOLINTNEXTLINE
-TEST(RosConversions, InterceptCommand) {
-    test_lossless_convert_cpp_value(InterceptCommand{Point(1.0, 2.0)});
-}
+TEST(RosConversions, InterceptCommand) { test_lossless_convert_cpp_value(InterceptCommand{}); }
 
 // NOLINTNEXTLINE
 TEST(RosConversions, MotionCommand) {
@@ -105,7 +101,7 @@ TEST(RosConversions, MotionCommand) {
     test_lossless_convert_cpp_value(MotionCommand{path_target});
     test_lossless_convert_cpp_value(MotionCommand{WorldVelCommand{Point(1.0, 2.0)}});
     test_lossless_convert_cpp_value(MotionCommand{PivotCommand{Point(1.0, 2.0), Point(3.0, 4.0)}});
-    test_lossless_convert_cpp_value(MotionCommand{InterceptCommand{Point(1.0, 2.0)}});
+    test_lossless_convert_cpp_value(MotionCommand{InterceptCommand{}});
 }
 
 // NOLINTNEXTLINE
