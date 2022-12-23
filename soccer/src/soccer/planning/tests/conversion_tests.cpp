@@ -3,36 +3,13 @@
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 #include "planning/planner/motion_command.hpp"
+#include "planning/trajectory.hpp"
 
 using rj_geometry::Point;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
 namespace planning {
-
-bool operator==([[maybe_unused]] const EmptyCommand& a, [[maybe_unused]] const EmptyCommand& b) {
-    return true;
-}
-bool operator==(const WorldVelCommand& a, const WorldVelCommand& b) {
-    return a.world_vel == b.world_vel;
-}
-bool operator==(const PivotCommand& a, const PivotCommand& b) {
-    return a.pivot_target == b.pivot_target && a.pivot_point == b.pivot_point;
-}
-bool operator==(const SettleCommand& a, const SettleCommand& b) { return a.target == b.target; }
-bool operator==([[maybe_unused]] const CollectCommand& a,
-                [[maybe_unused]] const CollectCommand& b) {
-    return true;
-}
-bool operator==(const LineKickCommand& a, const LineKickCommand& b) { return a.target == b.target; }
-bool operator==(const InterceptCommand& a, const InterceptCommand& b) {
-    return a.target == b.target;
-}
-bool operator==(const Trajectory& a, const Trajectory& b) {
-    // Don't check debug text, as that doesn't get converted over ROS
-    return a.instants() == b.instants() && a.time_created() == b.time_created() &&
-           a.angles_valid() == b.angles_valid();
-}
 
 namespace testing {
 

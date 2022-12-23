@@ -105,7 +105,7 @@ protected:
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
-    // classes
+    // classes (must use thread-safe getter)
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
 
