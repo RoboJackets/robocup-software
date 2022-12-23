@@ -287,9 +287,6 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
         // If this planner could possibly plan for this command, try to make
         // a plan.
         if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
-            if (request.shell_id == 0) {
-                SPDLOG_INFO("planner applied: {}", planner->name());
-            }
             current_planner_ = planner;
             trajectory = planner->plan(request);
         }

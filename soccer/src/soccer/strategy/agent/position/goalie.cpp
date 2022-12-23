@@ -16,8 +16,8 @@ std::optional<rj_msgs::msg::RobotIntent> Goalie::get_task() {
     }
 
     WorldState* world_state = this->world_state();  // thread-safe getter
-    if (planning::InterceptPlanner::shot_on_goal_detected(world_state)) {
-        /* if (true) { */
+    if (shot_on_goal_detected(world_state)) {
+        /* if (world_state->ball.velocity.mag() > 1.0) { */
         // create PathTargetMotionCommand, set goal position to block_pt
         /*
         auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
@@ -37,6 +37,8 @@ std::optional<rj_msgs::msg::RobotIntent> Goalie::get_task() {
         */
 
         auto intercept_mc = rj_msgs::msg::InterceptMotionCommand{};
+        intercept_mc.target.x = 0.0;
+        intercept_mc.target.y = 0.1;
         intent.motion_command.intercept_command = {intercept_mc};
         intent.motion_command.name = "intercept";
         return intent;
@@ -56,6 +58,27 @@ std::optional<rj_msgs::msg::RobotIntent> Goalie::get_task() {
     // (waiting on field pts to be given to world_state)
 
     return std::nullopt;
+}
+
+bool Goalie::shot_on_goal_detected(WorldState* world_state) {
+    rj_geometry::Point ball_pos = world_state->ball.position;
+    rj_geometry::Point ball_vel = world_state->ball.velocity;
+
+    // find x-coord that the ball would cross on the goal line to figure out if
+    // shot is on target ((0, 0) is our goal, +y points out of goal)
+    //
+    // assumes ball vel will remain constant
+    // TODO(Kevin): account for acceleration?
+    if (ball_vel.y() == 0) {
+        return false;
+    }
+    double time_to_cross = std::abs(ball_pos.y() / ball_vel.y());
+    double cross_x = ball_pos.x() + ball_vel.x() * time_to_cross;
+
+    bool shot_on_target =
+        std::abs(cross_x) < 0.5;  // TODO(Kevin): add field to world_state to avoid hardcoding this
+    bool ball_is_fast = ball_vel.mag() > 1.0;
+    return ball_is_fast && shot_on_target;
 }
 
 }  // namespace strategy

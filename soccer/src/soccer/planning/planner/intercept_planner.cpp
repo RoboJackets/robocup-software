@@ -9,100 +9,75 @@
 namespace planning {
 
 Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
-    SPDLOG_INFO("got here!!");
-    // lots of this is duplicated from PathTargetPlanner, because there's not
-    // an easy way to convert from one PlanRequest to another
+    InterceptCommand command = std::get<InterceptCommand>(plan_request.motion_command);
 
-    // Collect obstacles
-    rj_geometry::ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
-    bool ignore_ball = true;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, ignore_ball,
-                   &ball_trajectory);
+    // Start state for the specified robot
+    RobotInstant start_instant = plan_request.start;
 
-    // If we start inside of an obstacle, give up and let another planner take
-    // care of it.
-    /* if (static_obstacles.hit(plan_request.start.position())) { */
-    /*     reset(); */
-    /*     return Trajectory{}; */
-    /* } */
+    // All the max velocity / acceleration constraints for translation /
+    // rotation
+    const MotionConstraints& motion_constraints = plan_request.constraints.mot;
 
-    // Create a new PathTargetCommand to fill in with desired block point (see
-    // get_block_pt for more details)
-    // TODO: make an easily usable PathTargetPlanner (non-templated)
-    auto command = PathTargetCommand{};
-    auto optional_block_pt = get_block_pt(plan_request.world_state);
-    if (!optional_block_pt.has_value()) {
-        SPDLOG_INFO("intercept_planner is done");
-        is_done_ = true;
-        return Trajectory{};
+    BallState ball = plan_request.world_state->ball;
+
+    // Time for ball to hit target point
+    // Target point is projected into ball velocity line
+    rj_geometry::Point target_pos_on_line;
+    RJ::Seconds ball_to_point_time = ball.query_seconds_near(command.target, &target_pos_on_line);
+
+    // vector from robot to target
+    rj_geometry::Point bot_to_target = (target_pos_on_line - start_instant.position());
+
+    // Max speed we can reach given the distance to target and constant
+    // acceleration If we don't constrain the speed, there is a velocity
+    // discontinuity in the middle of the path
+    double max_speed =
+        std::min(start_instant.linear_velocity().mag() +
+                     sqrt(2 * motion_constraints.max_acceleration * bot_to_target.mag()),
+                 motion_constraints.max_speed);
+
+    // Scale the end velocity by % of max velocity to see if we can reach the
+    // target at the same time as the ball
+    Trajectory trajectory;
+
+    int num_iterations = 20;
+    for (int i = 0; i <= num_iterations; i++) {
+        double mag = i * 0.05;
+
+        LinearMotionInstant final_stopping_motion{target_pos_on_line,
+                                                  mag * max_speed * bot_to_target.normalized()};
+
+        trajectory = CreatePath::simple(start_instant.linear_motion(), final_stopping_motion,
+                                        plan_request.constraints.mot, start_instant.stamp);
+
+        // First path where we can reach the point at or before the ball
+        // If the end velocity is not 0, you should reach the point as close
+        // to the ball time as possible to just ram it
+        if (trajectory.duration() <= ball_to_point_time) {
+            std::ostringstream debug_text_out;
+            debug_text_out.precision(2);
+            debug_text_out << "Time " << trajectory.duration().count();
+            trajectory.set_debug_text(debug_text_out.str());
+
+            plan_angles(&trajectory, start_instant, AngleFns::face_point(ball.position),
+                        plan_request.constraints.rot);
+            trajectory.stamp(RJ::now());
+            return trajectory;
+        }
     }
 
-    command.goal.position = optional_block_pt.value();
+    // We couldn't get to the target point in time
+    // Just give up and do the max velocity across ball velocity
+    // Which ends up being the path after the final loop
+    trajectory.set_debug_text("GivingUp");
 
-    // Make robot face ball
-    auto angle_function = AngleFns::face_point(plan_request.world_state->ball.position);
+    plan_angles(&trajectory, start_instant, AngleFns::face_point(ball.position),
+                plan_request.constraints.rot);
+    trajectory.stamp(RJ::now());
 
-    // call Replanner to generate a Trajectory
-    Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{plan_request.start, command.goal, static_obstacles, dynamic_obstacles,
-                              plan_request.constraints, angle_function, RJ::Seconds(3.0)},
-        std::move(previous_));
-
-    // Debug drawing
-    if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_circle(
-            rj_geometry::Circle(command.goal.position, static_cast<float>(draw_radius)),
-            draw_color);
-    }
-
-    // Cache current Trajectory, return
-    previous_ = trajectory;
-    /* trajectory.set_debug_text("GivingUp"); */
     return trajectory;
 }
 
-bool InterceptPlanner::is_done() const { return is_done_; }
-
-std::optional<rj_geometry::Point> InterceptPlanner::get_block_pt(const WorldState* world_state) {
-    if (!shot_on_goal_detected(world_state)) {
-        is_done_ = true;
-        return std::nullopt;
-    }
-
-    rj_geometry::Point ball_pos = world_state->ball.position;
-    rj_geometry::Point ball_vel = world_state->ball.velocity;
-
-    // find x-coord that the ball would cross on the goal line
-    // (0, 0) is our goal, +y points out of goal
-    // assume ball vel will remain constant
-    // TODO(Kevin): account for acceleration?
-    if (ball_vel.y() == 0) {
-        return std::nullopt;
-    }
-    double time_to_cross =
-        std::abs(ball_pos.y() / ball_vel.y());  // impossible for ball_vel.y() to be exactly 0
-    double cross_x = ball_pos.x() + ball_vel.x() * time_to_cross;
-
-    // if shot is off target, ignore it
-    // TODO(Kevin): add field to world_state to avoid hardcoding
-    // TODO(Kevin): add this to shot on goal calculations
-    if (std::abs(cross_x) > 0.5) {
-        is_done_ = true;
-        return std::nullopt;
-    }
-
-    // otherwise, return point needed to block shot
-    rj_geometry::Point block_pt{cross_x, 0.0};  // x coord was solved for y = 0
-    // TODO: move the y coord up if possible?
-    return block_pt;
-}
-
-bool InterceptPlanner::shot_on_goal_detected(const WorldState* world_state) {
-    // TODO: make this also check direction of fast ball
-    rj_geometry::Point ball_vel = world_state->ball.velocity;
-    return ball_vel.mag() > 0.2;
-}
+bool InterceptPlanner::is_done() const { return false; }
 
 }  // namespace planning

@@ -34,6 +34,11 @@ public:
 private:
     // temp
     int send_idle_ct_ = 0;
+
+    /*
+     * @return true if ball is heading towards goal at some minimum speed threshold
+     */
+    bool shot_on_goal_detected(WorldState* world_state);
 };
 
 }  // namespace strategy

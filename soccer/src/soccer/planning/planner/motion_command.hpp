@@ -82,12 +82,17 @@ struct PivotCommand {
 };
 
 /**
- * See intercept_planner.hpp.
+ * Intercept a moving ball, disregarding whether or not we can actually capture
+ * it.
+ *
+ * Designed for goal defense.
  */
-struct InterceptCommand {};
+struct InterceptCommand {
+    rj_geometry::Point target;
+};
 
 /*
- * See goalie_idle_planner.hpp.
+ * Make the Goalie track the ball when not saving shots.
  */
 struct GoalieIdleCommand {};
 
@@ -257,12 +262,13 @@ template <>
 struct RosConverter<planning::InterceptCommand, rj_msgs::msg::InterceptMotionCommand> {
     static rj_msgs::msg::InterceptMotionCommand to_ros([
         [maybe_unused]] const planning::InterceptCommand& from) {
-        return rj_msgs::build<rj_msgs::msg::InterceptMotionCommand>();
+        return rj_msgs::build<rj_msgs::msg::InterceptMotionCommand>().target(
+            convert_to_ros(from.target));
     }
 
     static planning::InterceptCommand from_ros([
         [maybe_unused]] const rj_msgs::msg::InterceptMotionCommand& from) {
-        return planning::InterceptCommand{};
+        return planning::InterceptCommand{convert_from_ros(from.target)};
     }
 };
 
