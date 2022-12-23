@@ -4,6 +4,21 @@ namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
+std::optional<RobotIntent> Position::get_task() {
+    // init an intent with our robot id
+    RobotIntent intent = RobotIntent{};
+    intent.robot_id = robot_id_;
+
+    // if world_state invalid, return empty_intent
+    if (!assert_world_state_valid()) {
+        intent.motion_command = planning::EmptyCommand{};
+        return intent;
+    }
+
+    // delegate to derived class to complete behavior
+    return derived_get_task(intent);
+}
+
 bool Position::check_is_done() {
     if (is_done_) {
         is_done_ = false;
@@ -48,13 +63,6 @@ bool Position::assert_world_state_valid() {
         return false;
     }
     return true;
-}
-
-rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
-    rj_msgs::msg::RobotIntent intent{};
-    auto empty = rj_msgs::msg::EmptyMotionCommand{};
-    intent.motion_command.empty_command = {empty};
-    return intent;
 }
 
 }  // namespace strategy

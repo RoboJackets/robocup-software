@@ -6,15 +6,16 @@ bool operator==(const RobotIntent& r1, const RobotIntent& r2) {
     // TODO: surely there is a way to iterate over all types and just do this?
     if (std::holds_alternative<planning::PathTargetCommand>(r1.motion_command) &&
         std::holds_alternative<planning::PathTargetCommand>(r2.motion_command)) {
-        // TODO: fix this? conversion_tests.cpp doesn't seem to be resolving this operator
-        /* return std::get<planning::PathTargetCommand>(r1.motion_command) == */
-        /*        std::get<planning::PathTargetCommand>(r2.motion_command); */
-        return true;
+        return std::get<planning::PathTargetCommand>(r1.motion_command) ==
+               std::get<planning::PathTargetCommand>(r2.motion_command);
+        /* return true; */
     }
 
     if (std::holds_alternative<planning::GoalieIdleCommand>(r1.motion_command) &&
         std::holds_alternative<planning::GoalieIdleCommand>(r2.motion_command)) {
-        return true;
+        return std::get<planning::GoalieIdleCommand>(r1.motion_command) ==
+               std::get<planning::GoalieIdleCommand>(r2.motion_command);
+        /* return true; */
     }
 
     // default to address equality

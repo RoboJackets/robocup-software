@@ -5,30 +5,20 @@ namespace strategy {
 // TODO(Kevin): lock Goalie id to id given by the ref
 Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
-std::optional<rj_msgs::msg::RobotIntent> Goalie::get_task() {
-    // init an intent with our robot id
-    rj_msgs::msg::RobotIntent intent;
-    intent.robot_id = robot_id_;
-
-    // if world_state invalid, return empty_intent
-    if (!assert_world_state_valid()) {
-        return get_empty_intent();
-    }
-
-    WorldState* world_state = this->world_state();  // thread-safe getter
+std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
+    WorldState* world_state = this->world_state();
     if (shot_on_goal_detected(world_state)) {
         // TODO(Kevin): fix intercept planner's is_done, then add in logic to
         // clear/pass ball once done intercepting
-        auto intercept_mc = rj_msgs::msg::InterceptMotionCommand{};
-        intercept_mc.target.x = 0.0;
-        intercept_mc.target.y = 0.1;
-        intent.motion_command.intercept_command = {intercept_mc};
-        intent.motion_command.name = "intercept";
+        auto intercept_cmd = planning::InterceptCommand{};
+        intercept_cmd.target = rj_geometry::Point{0.0, 0.1};
+        intent.motion_command = intercept_cmd;
+        /* intent.motion_command.name = "intercept"; */
         return intent;
     } else {
-        auto goalie_idle = rj_msgs::msg::GoalieIdleMotionCommand{};
-        intent.motion_command.goalie_idle_command = {goalie_idle};
-        intent.motion_command.name = "goalie_idle";
+        auto goalie_idle_cmd = planning::GoalieIdleCommand{};
+        intent.motion_command = goalie_idle_cmd;
+        /* intent.motion_command.name = "goalie_idle"; */
         return intent;
     }
 

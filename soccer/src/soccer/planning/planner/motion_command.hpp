@@ -37,12 +37,18 @@ struct LineKickCommand {
 struct EmptyCommand {};
 
 struct TargetFaceTangent {};
+bool operator==([[maybe_unused]] const TargetFaceTangent& a,
+                [[maybe_unused]] const TargetFaceTangent& b);
+
 struct TargetFaceAngle {
     double target;
 };
+bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b);
+
 struct TargetFacePoint {
     rj_geometry::Point face_point;
 };
+bool operator==(const TargetFacePoint& a, const TargetFacePoint& b);
 
 using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
 /**
@@ -63,6 +69,7 @@ struct PathTargetCommand {
         return (pos_eq && vel_eq && angle_eq && ball_eq);
     }
 };
+bool operator==(const PathTargetCommand& a, const PathTargetCommand& b);
 
 /**
  * Move with a particular velocity.
@@ -95,6 +102,8 @@ struct InterceptCommand {
  * Make the Goalie track the ball when not saving shots.
  */
 struct GoalieIdleCommand {};
+bool operator==([[maybe_unused]] const GoalieIdleCommand& a,
+                [[maybe_unused]] const GoalieIdleCommand& b);
 
 using MotionCommand =
     std::variant<EmptyCommand, PathTargetCommand, WorldVelCommand, PivotCommand, SettleCommand,

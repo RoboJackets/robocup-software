@@ -25,10 +25,10 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    std::optional<rj_msgs::msg::RobotIntent> get_task() override;
-
 private:
     int move_ct_ = 0;
+
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
 
 }  // namespace strategy

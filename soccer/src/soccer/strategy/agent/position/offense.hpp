@@ -25,11 +25,11 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
-    std::optional<rj_msgs::msg::RobotIntent> get_task() override;
-
 private:
     bool kicking_{true};
     // TODO: strategy design pattern for BallHandler/Receiver
+
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
 
 }  // namespace strategy

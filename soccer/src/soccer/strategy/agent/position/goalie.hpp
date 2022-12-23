@@ -29,11 +29,11 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
-    std::optional<rj_msgs::msg::RobotIntent> get_task() override;
-
 private:
     // temp
     int send_idle_ct_ = 0;
+
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     /*
      * @return true if ball is heading towards goal at some minimum speed threshold
