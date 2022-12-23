@@ -148,6 +148,15 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    soccer_mom = Node(
+        condition=IfCondition(PythonExpression([run_sim])),
+        package="rj_robocup",
+        executable="soccer_mom_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
     vision_filter = Node(
         package="rj_robocup",
         executable="rj_vision_filter",
@@ -186,5 +195,6 @@ def generate_launch_description():
             DeclareLaunchArgument("use_manual_control", default_value="False"),
             gameplay,
             manual,
+            soccer_mom
         ]
     )

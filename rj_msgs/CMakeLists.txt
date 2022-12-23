@@ -52,6 +52,7 @@ rosidl_generate_interfaces(
   msg/RobotStatus.msg
   msg/PlayState.msg
   msg/TeamColor.msg
+  msg/TeamFruit.msg
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg

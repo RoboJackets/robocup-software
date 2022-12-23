@@ -51,6 +51,7 @@ set(ROBOCUP_LIB_SRC
     referee/referee_base.cpp
     referee/external_referee.cpp
     referee/internal_referee.cpp
+    tutorial/soccer_mom.cpp
     debug_drawer.cpp
     ui/battery_widget.cpp
     ui/field_view.cpp
@@ -99,6 +100,8 @@ set(LOG_VIEWER_SRC log_viewer.cpp)
 set(EXTERNAL_REFEREE_NODE_SRC referee/external_referee_main.cpp)
 
 set(INTERNAL_REFEREE_NODE_SRC referee/internal_referee_main.cpp)
+
+set(SOCCER_MOM_NODE_SRC tutorial/soccer_mom_main.cpp)
 
 set(PLANNER_NODE_SRC planning/planner_node_main.cpp)
 
@@ -151,6 +154,9 @@ target_sources(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_SRC})
 
 # ---- global_param_server_node ----
 target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_SRC})
+
+# ---- soccer_mom_node ----
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})

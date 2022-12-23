@@ -1,0 +1,1 @@
+string team_fruit
