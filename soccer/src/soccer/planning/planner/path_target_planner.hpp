@@ -26,9 +26,6 @@ public:
 
     [[nodiscard]] bool is_done() const override;
 
-    double draw_radius = kRobotRadius;
-    QColor draw_color = Qt::black;
-
 private:
     [[nodiscard]] static AngleFunction get_angle_function(
         const PlanRequest& request);

@@ -36,12 +36,6 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     cached_goal_instant_ = goal_instant;
     cached_start_instant_ = request.start.linear_motion();
 
-    // Debug drawing
-    if (request.debug_drawer != nullptr) {
-        request.debug_drawer->draw_circle(Circle(goal_point, static_cast<float>(draw_radius)),
-                                          draw_color);
-    }
-
     AngleFunction angle_function = get_angle_function(request);
 
     // Call into the sub-object to actually execute the plan.
