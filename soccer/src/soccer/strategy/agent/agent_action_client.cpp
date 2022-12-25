@@ -111,21 +111,21 @@ void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
     auto goal_handle = future.get();
     if (!goal_handle) {
-        current_position_->goal_canceled_ = true;
+        current_position_->set_goal_canceled();
     }
 }
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    current_position_->time_left_ = time_left;
+    current_position_->set_time_left(time_left);
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
-            current_position_->is_done_ = true;
+            current_position_->set_is_done();
             break;
         case rclcpp_action::ResultCode::ABORTED:
             return;

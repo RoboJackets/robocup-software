@@ -16,9 +16,6 @@
 #include "robot_intent.hpp"
 #include "world_state.hpp"
 
-// tell compiler this class exists, but no need to import the whole header
-class AgentActionClient;
-
 namespace strategy {
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
@@ -36,13 +33,6 @@ public:
     Position(int r_id);
     virtual ~Position() = default;
 
-    // communication with AC
-    void update_world_state(WorldState world_state);
-    void update_coach_state(rj_msgs::msg::CoachState coach_state);
-
-    // this allows AgentActionClient to change private/protected members of this class
-    friend class AgentActionClient;
-
     /*
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
      * means no new task requested.
@@ -55,12 +45,43 @@ public:
      */
     std::optional<RobotIntent> get_task();
 
+    // communication with AC
+    void update_world_state(WorldState world_state);
+    void update_coach_state(rj_msgs::msg::CoachState coach_state);
+
+    /*
+     * @brief setter for time_left_
+     */
+    void set_time_left(double time_left);
+
+    /*
+     * @brief setter for is_done_
+     *
+     * Outside classes can only set to true, Position/derived classes can clear
+     * with check_is_done().
+     */
+    void set_is_done();
+
+    /*
+     * @brief setter for goal_canceled_
+     *
+     * Outside classes can only set to true, Position/derived classes can clear
+     * with check_is_done().
+     */
+    void set_goal_canceled();
+
 protected:
+    // const because should never be changed, but initializer list will allow
+    // us to set this once initially
+    const int robot_id_;
+
     // should be overriden in subclass constructors
     std::string position_name_{"Position"};
 
-    // field for tell_time_left() above
+    // common protected fields, derived classes can treat these as private fields
     double time_left_{};
+    bool is_done_{};
+    bool goal_canceled_{};
 
     // fields for coach_state
     // TODO: this is not thread-safe, does it need to be?
@@ -68,6 +89,18 @@ protected:
     int match_situation_{};  // TODO: this is an enum, get from coach_node
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
+
+    /*
+     * @brief getter for is_done that clears the flag before returning
+     * @return value of is_done before being cleared
+     */
+    bool check_is_done();
+
+    /*
+     * @brief getter for goal_canceled that clears the flag before returning
+     * @return value of goal_canceled before being cleared
+     */
+    bool check_goal_canceled();
 
     /*
      * @return thread-safe ptr to most recent world_state
@@ -84,24 +117,6 @@ protected:
      * @return false if world_state is invalid (nullptr), true otherwise
      */
     bool assert_world_state_valid();
-
-    /*
-     * @brief getter for is_done that clears the flag before returning
-     * @return value of is_done before being cleared
-     */
-    bool check_is_done();
-    bool is_done_{};
-
-    /*
-     * @brief getter for goal_canceled that clears the flag before returning
-     * @return value of goal_canceled before being cleared
-     */
-    bool check_goal_canceled();
-    bool goal_canceled_{};
-
-    // const because should never be changed, but initializer list will allow
-    // us to set this once initially
-    const int robot_id_;
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
