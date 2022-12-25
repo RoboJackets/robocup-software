@@ -1,18 +1,18 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/time.hpp>
-#include <rj_geometry/geometry_conversions.hpp>
-#include <rj_geometry/point.hpp>
+#include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 
 #include "planning/planner/motion_command.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
-#include "rj_msgs/action/robot_move.hpp"
+#include "rj_common/time.hpp"
+#include "rj_geometry/geometry_conversions.hpp"
+#include "rj_geometry/point.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
 

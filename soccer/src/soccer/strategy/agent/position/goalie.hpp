@@ -2,11 +2,11 @@
 
 #include <cmath>
 
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/time.hpp>
-#include <rj_geometry/geometry_conversions.hpp>
-#include <rj_geometry/point.hpp>
+#include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/goalie_idle_motion_command.hpp>
 #include <rj_msgs/msg/intercept_motion_command.hpp>
@@ -14,9 +14,9 @@
 
 #include "planning/planner/intercept_planner.hpp"
 #include "position.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
-#include "rj_msgs/action/robot_move.hpp"
+#include "rj_common/time.hpp"
+#include "rj_geometry/geometry_conversions.hpp"
+#include "rj_geometry/point.hpp"
 
 namespace strategy {
 
