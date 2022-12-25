@@ -2,27 +2,13 @@
 
 namespace planning {
 
-template <class T>
-bool are_equivalent(T const& l, T const& r) {
-    // (2) which will then delegate to T's overloaded==
-    return l == r;
-}
-bool are_equivalent(MotionCommand const& l, MotionCommand const& r) {
-    return std::visit(
-        [&](auto const& l, auto const& r) {
-            // (1) if types of l/r are the same, they will match to are_equivalent's signature
-            return are_equivalent(l, r);
-        },
-        l, r);
-}
-
-bool operator==(const MotionCommand& a, const MotionCommand& b) {
-    // if MotionCommand variant is type T, delegate the comparison to T's overloaded ==
-    // credit: https://devblogs.microsoft.com/oldnewthing/20190620-00/?p=102604#comment-135008
-    return are_equivalent(a, b);
-}
-
-// TODO(Kevin): do something similar for AngleOverride (also a variant)
+/* Kevin: there is some built-in operator== for std::variants that (1) checks
+ * the type of the variant and (2) if the types match, delegates to any
+ * overloaded operator== that compares some specific type of the variant.
+ *
+ * So MotionCommand and AngleOverride don't need an operator== explicitly;
+ * specifying one for each of the possible types of each works the same.
+ */
 
 bool operator==(const LinearMotionInstant& a, const LinearMotionInstant& b) {
     return a.velocity == b.velocity && a.position == b.position;

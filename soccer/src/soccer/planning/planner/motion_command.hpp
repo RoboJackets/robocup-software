@@ -3,6 +3,8 @@
 #include <variant>
 #include <vector>
 
+#include <spdlog/spdlog.h>
+
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
@@ -42,15 +44,26 @@ bool operator==(const LineKickCommand& a, const LineKickCommand& b);
 struct EmptyCommand {};
 bool operator==([[maybe_unused]] const EmptyCommand& a, [[maybe_unused]] const EmptyCommand& b);
 
+/*
+ * Make robot face along its path (for PTMC).
+ */
 struct TargetFaceTangent {};
 bool operator==([[maybe_unused]] const TargetFaceTangent& a,
                 [[maybe_unused]] const TargetFaceTangent& b);
 
+/*
+ * Make robot face a specific heading while traveling (for PTMC).
+ *
+ * TODO(?): heading based on what coord frame? global frame or robot-centric?
+ */
 struct TargetFaceAngle {
     double target;
 };
 bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b);
 
+/*
+ * Make robot face a specific point while traveling (for PTMC).
+ */
 struct TargetFacePoint {
     rj_geometry::Point face_point;
 };
@@ -58,7 +71,7 @@ bool operator==(const TargetFacePoint& a, const TargetFacePoint& b);
 
 using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
 /**
- * Move to a particular target with a particular velocity, avoiding obstacles.
+ * Move to a particular target with a particular ending velocity, avoiding obstacles.
  */
 struct PathTargetCommand {
     LinearMotionInstant goal{};

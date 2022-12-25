@@ -30,7 +30,11 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     planning::TargetFacePoint face_pt = planning::TargetFacePoint{};
     face_pt.face_point = ball_pos;
 
-    ptc.angle_override = face_pt;
+    if (!kicking_) {
+        ptc.angle_override = face_pt;
+    } else {
+        ptc.angle_override = planning::TargetFaceTangent{};
+    }
     ptc.ignore_ball = false;
 
     intent.motion_command = ptc;
