@@ -1,4 +1,3 @@
-string name
 EmptyMotionCommand[<=1] empty_command
 PathTargetMotionCommand[<=1] path_target_command
 WorldVelMotionCommand[<=1] world_vel_command

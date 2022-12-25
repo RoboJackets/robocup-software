@@ -4,6 +4,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include <planning/instant.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>

@@ -16,6 +16,10 @@ struct RobotIntent {
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
 
     planning::MotionCommand motion_command;
+    // useful for introspection
+    // (since MotionCommand is an std::variant, it is hard to figure out which
+    // specific type is being used)
+    std::string motion_command_name;
 
     /// Set of obstacles added by plays
     rj_geometry::ShapeSet local_obstacles;
@@ -44,6 +48,7 @@ struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
         return rj_msgs::build<rj_msgs::msg::RobotIntent>()
             .robot_id(static_cast<uint8_t>(from.robot_id))
             .motion_command(convert_to_ros(from.motion_command))
+            .motion_command_name(static_cast<std::string>(from.motion_command_name))
             .local_obstacles(convert_to_ros(from.local_obstacles))
             .shoot_mode(static_cast<uint8_t>(from.shoot_mode))
             .trigger_mode(static_cast<uint8_t>(from.trigger_mode))
@@ -57,6 +62,7 @@ struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
         RobotIntent result;
         result.robot_id = static_cast<uint8_t>(from.robot_id);
         result.motion_command = convert_from_ros(from.motion_command);
+        result.motion_command_name = static_cast<std::string>(from.motion_command_name);
         result.local_obstacles = convert_from_ros(from.local_obstacles);
         result.shoot_mode = static_cast<RobotIntent::ShootMode>(from.shoot_mode);
         result.trigger_mode = static_cast<RobotIntent::TriggerMode>(from.trigger_mode);

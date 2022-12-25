@@ -14,26 +14,24 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     WorldState* world_state = this->world_state();
 
     // oscillate along horizontal line (temp)
-    auto ptc = planning::PathTargetCommand{};
     double x = -3.0;
     if (move_ct_ % 2 == 1) {
         x = 3.0;
     }
+    rj_geometry::Point target_pt{x, 3.0};
 
-    rj_geometry::Point pt{x, 3.0};
-    ptc.goal.position = pt;
+    // stop at end of path
+    rj_geometry::Point target_vel{0.0, 0.0};
 
-    rj_geometry::Point vel{0.0, 0.0};
-    ptc.goal.velocity = vel;
+    // face ball
+    planning::AngleOverride angle_override = planning::TargetFacePoint{world_state->ball.position};
 
-    rj_geometry::Point ball_pos = world_state->ball.position;
-    planning::TargetFacePoint face_pt = planning::TargetFacePoint{};
-    face_pt.face_point = ball_pos;
+    // avoid ball
+    bool ignore_ball = false;
 
-    ptc.angle_override = face_pt;
-    ptc.ignore_ball = false;
-
-    intent.motion_command = ptc;
+    planning::LinearMotionInstant goal{target_pt, target_vel};
+    intent.motion_command = planning::PathTargetCommand{goal, angle_override, ignore_ball};
+    intent.motion_command_name = "path_target";
     return intent;
 }
 
