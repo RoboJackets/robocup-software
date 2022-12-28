@@ -4,8 +4,8 @@ Contributing
 This guide targets new members who are keen on contributing to the project.
 This guide will focus on the overall picture of effective coding and
 contributions. It is not intended to be a technical guide. Please refer to the
-tutorial docs for initial understanding of the technical skill-set needed for
-RoboCup.
+tutorial, "Our Stack", or the FAQ for better understanding of the technical
+skill-set needed for RoboCup.
 
 If you don't have an overall idea of what the competition is like and what its
 goals are, you can brush up at the `RoboCup Wiki
