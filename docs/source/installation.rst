@@ -1,12 +1,9 @@
-Getting Started
-===============
+Installation
+======================================
 
 .. note:: 
    If you are completely unfamiliar with the command line or basic git
    usage, see the Tutorial page before proceeding. 
-
-Installation
-------------
 
 We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
 are on an Ubuntu 20.04 machine before continuing. Alternatively for

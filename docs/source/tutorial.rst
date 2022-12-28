@@ -84,7 +84,7 @@ Some tips about learning how to use commands:
 1. Installation
 ---------------
 
-See "Getting Started". That page will assume you have the Command-Line Basics
+See "Installation". That page will assume you have the Command-Line Basics
 from above, as well as a working knowledge of Git (which you can get either
 `online <https://rogerdudler.github.io/git-guide/>`_ or from the "Contributing"
 page).

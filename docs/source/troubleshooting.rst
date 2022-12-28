@@ -1,5 +1,5 @@
-FAQ
-===
+Troubleshooting
+=============================
 
 General Troubleshooting
 -----------------------

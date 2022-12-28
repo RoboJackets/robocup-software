@@ -28,7 +28,7 @@ adblocker to support their free documentation hosting.
 
    self
    tutorial.rst
-   getting_started.rst
+   installation.rst
    our_stack.rst
    troubleshooting.rst
    contributing.rst
