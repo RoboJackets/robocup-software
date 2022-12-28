@@ -9,7 +9,8 @@ namespace planning {
  * Whether this means moving and stopping in the path of the ball
  * or completely driving through and "slapping" the ball.
  *
- * Mostly used for the goalie to block shots (w/ a target point of 0,0).
+ * Mostly used for the goalie to block shots (by giving it a target point of
+ * our goal).
  */
 
 class InterceptPlanner : public PlannerForCommandType<InterceptCommand> {
