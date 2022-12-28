@@ -1,5 +1,8 @@
 Tutorial
-========
+=============
+
+**Section 3 on rj_gameplay and Python is outdated as of 12/28/2022.**
+(The other sections still apply.)
 
 This page is meant to teach new RoboCup Software members the basics of what
 they'll need to contribute. It will introduce the Robot Operating System (ROS),
