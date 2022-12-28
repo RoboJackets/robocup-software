@@ -30,9 +30,9 @@ adblocker to support their free documentation hosting.
    tutorial.rst
    getting_started.rst
    our_stack.rst
-   faq.rst
+   troubleshooting.rst
    contributing.rst
-   utilities.rst
+   faq.rst
    fieldcomp_operation.rst
    meta_docs.rst
 

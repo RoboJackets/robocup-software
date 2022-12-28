@@ -1,17 +1,15 @@
 Contributing
 ============
-This guide targets new members who are keen on contributing to the project. This
-guide will focus on the overall picture of effective coding and contributions as
-well as writing documentation. It is not intended to be a technical guide.
-Please refer to the tutorial docs for initial understanding of the technical
-skill-set needed for RoboCup.
+
+This guide targets new members who are keen on contributing to the project.
+This guide will focus on the overall picture of effective coding and
+contributions. It is not intended to be a technical guide. Please refer to the
+tutorial docs for initial understanding of the technical skill-set needed for
+RoboCup.
 
 If you don't have an overall idea of what the competition is like and what its
 goals are, you can brush up at the `RoboCup Wiki
 <http://wiki.robojackets.org/w/RoboCup>`_.
-
-Code
-----
 
 To contribute to the codebase, you must know how to use Git, create Pull
 Requests, and document with docstrings. The following sections will give you
@@ -200,7 +198,7 @@ PR, and what the expected result should be.
 Docstrings
 ~~~~~~~~~~
 Code should be documented thoroughly. Generally speaking, you won't be here for
-more than 4(ish) years. Many students will come behind you and will need to use
+more than 4 years. Many students will come behind you and will need to use
 the code you've written.
 
 **Python**
@@ -280,74 +278,3 @@ runs ``make pretty-lines`` which auto-formats the code.
 You can check if the style is passing by running ``make checkstyle``. If there
 are no errors, then you are good to go.
 
-If you've done all this successfully, you are now an official contributor. Merge
-your PR!
-
-Docs
-----
-
-If you're writing documentation, you're probably pretty good at writing code and
-Googling your way through issues already. So here's some basic info that will
-help you figure out what you need to do on your own.
-
-Our docs are hosted by ReadTheDocs and are built from ReStructuredText
-(``.rst``) to HTML files. This build process is done by Sphinx. The Python-side
-API is done by a Sphinx extension named ``sphinx-autodoc``. As of the time of
-this writing, there is no C++-side API docs yet, but in theory Sphinx + Doxygen
-+ Breathe allow this functionality.
-
-When you edit documentation, you only need to edit the ``.rst`` files in
-docs/source/ and Sphinx will do the rest. If you add a new page, put it in the
-``docs/source/`` folder, and make sure it's a valid ``.rst`` file. Then link to
-it in the toctree in ``docs/source/index.rst``. (Toctree = table of contents
-tree.) The toctree will preserve the order given.
-
-You can check your work by building locally or asking whoever maintains these
-docs (as of 2022, Kevin Fu) to add your branch as a version on the ReadTheDocs
-dashboard.
-
-**Building via RTD**
-
-The documentation maintainer should go to the ReadTheDocs dashboard for our
-repo, activate the version that points to the new doc development branch, and
-build that version, then give you the link once it builds.
-
-.. note::
-
-    It may take a few minutes for your changes to show up.
-
-**Local Building**
-
-This section explains how to locally build our docs. Locally building the docs
-is not worth the trouble unless you don't have access to the RTD dashboard and
-whoever does can't be reached.
-
-You must install all of the dependencies in ``docs/requirements.txt`` file. This
-can be done with the  ``python3 -m pip install -r requirements.txt`` command.
-After doing so, change directories to the ``docs`` folder in our code base and
-``make html``. This will create multiple build files that should NOT be
-committed to your branch nor ``ros2``.
-
-.. note::
-
-    DO NOT COMMIT THE BUILD FILES GENERATED WHEN LOCALLY BUILDING! Although
-    .gitignore may take care of this issue, it is not a good practice to
-    knowingly commit thousands of files that you have not worked on.
-
-This will generate the docs with the changes made from your branch. When
-committing to your branch, make sure to exclude the build files.
-
-Finally, if you look at the source files for these docs, you'll notice they are
-nicely formatted to have a max line length of 80 chars. With Vim you can do that
-with a simple
-
-.. code-block::
-
-   gq<motion>
-
-For instance: ``gqq`` formats the current line. The above paragraph was
-formatted with ``gqap`` ("around paragraph"). Be careful of breaking links when
-you do this. (Modern IDEs should also have a similar feature, but clearly the
-author of these docs is a Vim user.)
-
-For more detail, read "Meta Docs", or use Google.
