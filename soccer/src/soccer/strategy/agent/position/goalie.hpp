@@ -8,6 +8,8 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
+#include <rj_msgs/msg/goalie_idle_motion_command.hpp>
+#include <rj_msgs/msg/path_target_motion_command.hpp>
 
 #include "position.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -28,20 +30,15 @@ public:
     rj_msgs::msg::RobotIntent get_task() override;
 
 private:
-    // temp to move back and forth
-    int move_ct = 0;
+    // temp
+    int send_idle_ct_ = 0;
 
     /*
-     * @return Point for Goalie to block a shot. Calls get_idle_pt() if ball is
-     * slow or shot will miss the goal.
+     * @return Point for Goalie to block a shot.
+     *
+     * Assumes ball is not slow.
      */
-    rj_geometry::Point get_block_pt(WorldState* world_state) const;
-
-    /*
-     * @return Point for Goalie to stand in when no shot is coming. Expects
-     * ball to be slow.
-     */
-    rj_geometry::Point get_idle_pt(WorldState* world_state) const;
+    static rj_geometry::Point get_block_pt(WorldState* world_state, bool& needs_to_block);
 };
 
 }  // namespace strategy

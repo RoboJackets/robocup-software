@@ -38,8 +38,13 @@ struct RobotIntent {
             return std::get<planning::PathTargetCommand>(motion_command) ==
                    std::get<planning::PathTargetCommand>(r.motion_command);
         }
-        // TODO(Kevin): fill in other motion command types (and maybe think of a
-        // better design?)
+        if (std::holds_alternative<planning::GoalieIdleCommand>(motion_command)) {
+            // if both are GoalieIdleCommands, they are equal (takes no fields)
+            return std::holds_alternative<planning::GoalieIdleCommand>(r.motion_command);
+        }
+
+        // TODO(Kevin): redesign this, there are too many equality checks
+        // needed in current state
 
         // default to address equality
         return this == &r;
