@@ -20,6 +20,7 @@ std::optional<rj_msgs::msg::RobotIntent> Goalie::get_task() {
         // TODO(Kevin): fix intercept planner's is_done, then add in logic to
         // clear/pass ball once done intercepting
         auto intercept_mc = rj_msgs::msg::InterceptMotionCommand{};
+        // TODO(Kevin): once field added in use goal pos instead of hardcoding
         intercept_mc.target.x = 0.0;
         intercept_mc.target.y = 0.1;
         intent.motion_command.intercept_command = {intercept_mc};
