@@ -110,14 +110,14 @@ In general, follow these guidelines:
 
     * Leave ROS msg interfacing strictly to ROS nodes.
     * When adding a new ROS msg type, create a C++ struct/class to represent that
-       msg type in C++ classes outside of ROS nodes. This will allow you to add
-       functionality that the ROS msg may not have. An example of this is
-       ``Trajectory.msg/trajectory.hpp``.
+      msg type in C++ classes outside of ROS nodes. This will allow you to add
+      functionality that the ROS msg may not have. An example of this is
+      ``Trajectory.msg/trajectory.hpp``.
     * At the bottom of your custom C++ struct/class, add a template method under
-       ``namespace rj_convert`` in order to convert to/from ROS easily. (Again, see
-       ``trajectory.hpp``.) This will generate two methods:
-       ``rj_convert::convert_to_ros()`` and ``rj_convert::convert_from_ros()`` for
-       ease of conversion.
+      ``namespace rj_convert`` in order to convert to/from ROS easily. (Again, see
+      ``trajectory.hpp``.) This will generate two methods:
+      ``rj_convert::convert_to_ros()`` and ``rj_convert::convert_from_ros()`` for
+      ease of conversion.
 
 What is a .launch file?
 --------------------------------------------------
