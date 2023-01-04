@@ -19,7 +19,7 @@ TEST(RosConversions, EmptyMotionCommand) { test_lossless_convert_cpp_value(Empty
 // NOLINTNEXTLINE
 TEST(RosConversions, PathTargetMotionCommand) {
     PathTargetMotionCommand path_target{LinearMotionInstant(Point(1.0, 2.0), Point(3.0, 4.0)),
-                                        TargetFacePoint{Point(1.0, 2.0)}};
+                                        FacePoint{Point(1.0, 2.0)}};
     test_lossless_convert_cpp_value(path_target);
 }
 
@@ -61,7 +61,7 @@ TEST(RosConversions, InterceptMotionCommand) {
 // NOLINTNEXTLINE
 TEST(RosConversions, MotionCommand) {
     PathTargetMotionCommand path_target{LinearMotionInstant(Point(1.0, 2.0), Point(3.0, 4.0)),
-                                        TargetFacePoint{Point(1.0, 2.0)}};
+                                        FacePoint{Point(1.0, 2.0)}};
     test_lossless_convert_cpp_value(MotionCommand{EmptyMotionCommand{}});
     test_lossless_convert_cpp_value(MotionCommand{path_target});
     test_lossless_convert_cpp_value(MotionCommand{WorldVelMotionCommand{Point(1.0, 2.0)}});

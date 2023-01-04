@@ -25,16 +25,16 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     rj_geometry::Point target_vel{0.0, 0.0};
 
     // face ball on way up, face path on way down
-    planning::AngleOverride angle_override = planning::TargetFaceBall{};
+    planning::PathTargetFaceOption face_option = planning::FaceBall{};
     if (kicking_) {
-        angle_override = planning::TargetFaceTangent{};
+        face_option = planning::FaceTarget{};
     }
 
     // avoid ball
     bool ignore_ball = false;
 
     planning::LinearMotionInstant goal{target_pt, target_vel};
-    intent.motion_command = planning::PathTargetMotionCommand{goal, angle_override, ignore_ball};
+    intent.motion_command = planning::PathTargetMotionCommand{goal, face_option, ignore_ball};
     intent.motion_command_name = "path_target";
     return intent;
 }

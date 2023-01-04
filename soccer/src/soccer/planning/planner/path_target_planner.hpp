@@ -29,12 +29,12 @@ public:
 private:
     /*
      * Get the right AngleFunction (for control) from the
-     * PTMC-specific AngleOverride options listed in
+     * PTMC-specific PathTargetFaceOption options listed in
      * motion_command.hpp.
      *
      * @param PlanRequest containing a PTMC
      * @return AngleFunction that corresponds to input
-     * AngleOverride in given PlanRequest
+     * PathTargetFaceOption in given PlanRequest
      */
     [[nodiscard]] static AngleFunction get_angle_function(
         const PlanRequest& request);

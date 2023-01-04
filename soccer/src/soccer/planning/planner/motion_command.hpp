@@ -49,42 +49,40 @@ bool operator==([[maybe_unused]] const EmptyMotionCommand& a,
 /*
  * Make robot face along its path (for PTMC).
  */
-struct TargetFaceTangent {};
-bool operator==([[maybe_unused]] const TargetFaceTangent& a,
-                [[maybe_unused]] const TargetFaceTangent& b);
+struct FaceTarget {};
+bool operator==([[maybe_unused]] const FaceTarget& a, [[maybe_unused]] const FaceTarget& b);
 
 /*
  * Make robot face a specific heading while traveling (for PTMC).
  *
  * TODO(?): heading based on what coord frame? global frame or robot-centric?
  */
-struct TargetFaceAngle {
+struct FaceAngle {
     double target;
 };
-bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b);
+bool operator==(const FaceAngle& a, const FaceAngle& b);
 
 /*
  * Make robot face a specific point while traveling (for PTMC).
  */
-struct TargetFacePoint {
+struct FacePoint {
     rj_geometry::Point face_point;
 };
-bool operator==(const TargetFacePoint& a, const TargetFacePoint& b);
+bool operator==(const FacePoint& a, const FacePoint& b);
 
 /*
  * Make robot face ball while traveling (for PTMC).
  */
-struct TargetFaceBall {};
-bool operator==([[maybe_unused]] const TargetFaceBall& a, [[maybe_unused]] const TargetFaceBall& b);
+struct FaceBall {};
+bool operator==([[maybe_unused]] const FaceBall& a, [[maybe_unused]] const FaceBall& b);
 
-using AngleOverride =
-    std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint, TargetFaceBall>;
+using PathTargetFaceOption = std::variant<FaceTarget, FaceAngle, FacePoint, FaceBall>;
 /**
  * Move to a particular target with a particular ending velocity, avoiding obstacles.
  */
 struct PathTargetMotionCommand {
     LinearMotionInstant goal{};
-    AngleOverride angle_override = TargetFaceTangent{};
+    PathTargetFaceOption face_option = FaceTarget{};
     bool ignore_ball = false;
 };
 bool operator==(const PathTargetMotionCommand& a, const PathTargetMotionCommand& b);
@@ -157,15 +155,15 @@ struct RosConverter<planning::PathTargetMotionCommand, rj_msgs::msg::PathTargetM
         rj_msgs::msg::PathTargetMotionCommand result;
         result.target = convert_to_ros(from.goal);
 
-        const auto* maybe_point = std::get_if<planning::TargetFacePoint>(&from.angle_override);
-        const auto* maybe_angle = std::get_if<planning::TargetFaceAngle>(&from.angle_override);
+        const auto* maybe_point = std::get_if<planning::FacePoint>(&from.face_option);
+        const auto* maybe_angle = std::get_if<planning::FaceAngle>(&from.face_option);
         if (maybe_point != nullptr) {
             rj_geometry_msgs::msg::Point face_point = convert_to_ros(maybe_point->face_point);
             result.override_face_point.push_back(face_point);
         } else if (maybe_angle != nullptr) {
             double face_angle = maybe_angle->target;
             result.override_angle.push_back(face_angle);
-        } else if (std::holds_alternative<planning::TargetFaceBall>(from.angle_override)) {
+        } else if (std::holds_alternative<planning::FaceBall>(from.face_option)) {
             result.face_ball = true;
         }
 
@@ -179,15 +177,15 @@ struct RosConverter<planning::PathTargetMotionCommand, rj_msgs::msg::PathTargetM
         planning::PathTargetMotionCommand result;
         result.goal = convert_from_ros(from.target);
         if (!from.override_angle.empty()) {
-            result.angle_override = planning::TargetFaceAngle{from.override_angle.front()};
+            result.face_option = planning::FaceAngle{from.override_angle.front()};
         } else if (!from.override_face_point.empty()) {
-            result.angle_override =
-                planning::TargetFacePoint{convert_from_ros(from.override_face_point.front())};
+            result.face_option =
+                planning::FacePoint{convert_from_ros(from.override_face_point.front())};
         } else if (from.face_ball) {
-            result.angle_override = planning::TargetFaceBall{};
+            result.face_option = planning::FaceBall{};
         } else {
-            // default to facing destination if no other AngleOverride given
-            result.angle_override = planning::TargetFaceTangent{};
+            // default to facing destination if no other PathTargetFaceOption given
+            result.face_option = planning::FaceTarget{};
         }
         result.ignore_ball = from.ignore_ball;
         return result;

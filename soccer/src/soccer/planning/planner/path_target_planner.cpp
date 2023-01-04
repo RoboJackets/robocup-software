@@ -72,19 +72,19 @@ bool PathTargetPlanner::is_done() const {
 }
 
 AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {
-    auto angle_override = std::get<PathTargetMotionCommand>(request.motion_command).angle_override;
+    auto face_option = std::get<PathTargetMotionCommand>(request.motion_command).face_option;
 
-    if (std::holds_alternative<TargetFacePoint>(angle_override)) {
-        return AngleFns::face_point(std::get<TargetFacePoint>(angle_override).face_point);
+    if (std::holds_alternative<FacePoint>(face_option)) {
+        return AngleFns::face_point(std::get<FacePoint>(face_option).face_point);
     }
 
-    if (std::holds_alternative<TargetFaceBall>(angle_override)) {
+    if (std::holds_alternative<FaceBall>(face_option)) {
         auto ball_pos = request.world_state->ball.position;
         return AngleFns::face_point(ball_pos);
     }
 
-    if (std::holds_alternative<TargetFaceAngle>(angle_override)) {
-        return AngleFns::face_angle(std::get<TargetFaceAngle>(angle_override).target);
+    if (std::holds_alternative<FaceAngle>(face_option)) {
+        return AngleFns::face_angle(std::get<FaceAngle>(face_option).target);
     }
 
     // default to facing tangent to path

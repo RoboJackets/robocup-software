@@ -6,7 +6,7 @@ namespace planning {
  * the type of the variant and (2) if the types match, delegates to any
  * overloaded operator== that compares some specific type of the variant.
  *
- * So MotionCommand and AngleOverride don't need an operator== explicitly;
+ * So MotionCommand and PathTargetFaceOption don't need an operator== explicitly;
  * specifying one for each of the possible types of each works the same.
  */
 
@@ -16,7 +16,7 @@ bool operator==(const LinearMotionInstant& a, const LinearMotionInstant& b) {
 }
 
 bool operator==(const PathTargetMotionCommand& a, const PathTargetMotionCommand& b) {
-    return a.goal == b.goal && a.angle_override == b.angle_override;
+    return a.goal == b.goal && a.face_option == b.face_option;
 }
 
 bool operator==([[maybe_unused]] const GoalieIdleMotionCommand& a,
@@ -24,17 +24,15 @@ bool operator==([[maybe_unused]] const GoalieIdleMotionCommand& a,
     return true;
 }
 
-bool operator==([[maybe_unused]] const TargetFaceTangent& a,
-                [[maybe_unused]] const TargetFaceTangent& b) {
+bool operator==([[maybe_unused]] const FaceTarget& a, [[maybe_unused]] const FaceTarget& b) {
     return true;
 }
-bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b) { return a.target == b.target; }
-bool operator==(const TargetFacePoint& a, const TargetFacePoint& b) {
+bool operator==(const FaceAngle& a, const FaceAngle& b) { return a.target == b.target; }
+bool operator==(const FacePoint& a, const FacePoint& b) {
     double tolerance = 0.1;
     return a.face_point.nearly_equals(b.face_point, tolerance);
 }
-bool operator==([[maybe_unused]] const TargetFaceBall& a,
-                [[maybe_unused]] const TargetFaceBall& b) {
+bool operator==([[maybe_unused]] const FaceBall& a, [[maybe_unused]] const FaceBall& b) {
     return true;
 }
 
