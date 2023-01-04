@@ -124,6 +124,11 @@ struct GoalieIdleMotionCommand {};
 bool operator==([[maybe_unused]] const GoalieIdleMotionCommand& a,
                 [[maybe_unused]] const GoalieIdleMotionCommand& b);
 
+/*
+ * Make the Goalie track the ball when not saving shots.
+ */
+struct GoalieIdleCommand {};
+
 using MotionCommand =
     std::variant<EmptyMotionCommand, PathTargetMotionCommand, WorldVelMotionCommand,
                  PivotMotionCommand, SettleMotionCommand, CollectMotionCommand,
