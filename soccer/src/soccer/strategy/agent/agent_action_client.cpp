@@ -62,11 +62,26 @@ void AgentActionClient::get_task() {
         }
     }
 
-    auto task = current_position_->get_task();
-    if (task != last_task_) {
-        /* SPDLOG_INFO("sending new task"); */
-        last_task_ = task;
-        send_new_goal();
+    auto optional_task = current_position_->get_task();
+    if (optional_task.has_value()) {
+        rj_msgs::msg::RobotIntent task = optional_task.value();
+
+        // note that this comparison uses the ROS built-in msg type
+        // so any custom operator== overloads written don't apply
+        // TODO(Kevin): fix this by making Positions return RobotIntent structs, not msgs
+        if (task != last_task_) {
+            /* if (robot_id_ == 0) { */
+            /*     SPDLOG_INFO("sending new task {}", task.motion_command.name); */
+            /* } */
+            last_task_ = task;
+            send_new_goal();
+        } else {
+            /* if (robot_id_ == 0) { */
+            /*     SPDLOG_INFO("NOT sending new task {}", task.motion_command.name); */
+            /* } */
+        }
+    } else {
+        /* SPDLOG_INFO("no new task"); */
     }
 }
 

@@ -25,7 +25,7 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    rj_msgs::msg::RobotIntent get_task() override;
+    std::optional<rj_msgs::msg::RobotIntent> get_task() override;
 
 private:
     int move_ct_ = 0;

@@ -4,7 +4,7 @@ namespace strategy {
 
 Offense::Offense(int r_id) : Position(r_id) { position_name_ = "Offense"; }
 
-rj_msgs::msg::RobotIntent Offense::get_task() {
+std::optional<rj_msgs::msg::RobotIntent> Offense::get_task() {
     // init an intent with our robot id
     rj_msgs::msg::RobotIntent intent;
     intent.robot_id = robot_id_;
