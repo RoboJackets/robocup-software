@@ -142,7 +142,8 @@ then link those files together and spit out a single executable.
 
 We use cmake and ninja. We prefer using clang as the C++ compiler compared to
 gcc, but either will work. If you've gone through the tutorial, you've already
-been using our build system with commands like `make perf` and `make again`!
+been using our build system with commands like ``make perf`` and ``make
+again``!
 
 Most of the details on the high-level construction of our build system can
 been ascertained by reading the root ``CMakeLists.txt``.
