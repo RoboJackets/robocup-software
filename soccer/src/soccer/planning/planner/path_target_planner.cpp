@@ -18,7 +18,7 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
-    auto command = std::get<PathTargetCommand>(request.motion_command);
+    auto command = std::get<PathTargetMotionCommand>(request.motion_command);
     fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
                    &ball_trajectory);
 
@@ -72,7 +72,7 @@ bool PathTargetPlanner::is_done() const {
 }
 
 AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {
-    auto angle_override = std::get<PathTargetCommand>(request.motion_command).angle_override;
+    auto angle_override = std::get<PathTargetMotionCommand>(request.motion_command).angle_override;
 
     if (std::holds_alternative<TargetFacePoint>(angle_override)) {
         return AngleFns::face_point(std::get<TargetFacePoint>(angle_override).face_point);

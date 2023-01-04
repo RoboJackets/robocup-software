@@ -10,12 +10,12 @@ std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     if (shot_on_goal_detected(world_state)) {
         // TODO(Kevin): fix intercept planner's is_done, then add in logic to
         // clear/pass ball once done intercepting
-        auto intercept_cmd = planning::InterceptCommand{rj_geometry::Point{0.0, 0.1}};
+        auto intercept_cmd = planning::InterceptMotionCommand{rj_geometry::Point{0.0, 0.1}};
         intent.motion_command = intercept_cmd;
         intent.motion_command_name = "intercept";
         return intent;
     } else {
-        auto goalie_idle_cmd = planning::GoalieIdleCommand{};
+        auto goalie_idle_cmd = planning::GoalieIdleMotionCommand{};
         intent.motion_command = goalie_idle_cmd;
         intent.motion_command_name = "goalie_idle";
         return intent;

@@ -27,7 +27,7 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     std::vector<DynamicObstacle> dynamic_obstacles;
     fill_obstacles(request, &static_obstacles, &dynamic_obstacles, false);
 
-    const auto& command = std::get<PivotCommand>(request.motion_command);
+    const auto& command = std::get<PivotMotionCommand>(request.motion_command);
 
     double radius = pivot::PARAM_radius_multiplier * kRobotRadius;
     auto pivot_point = command.pivot_point;

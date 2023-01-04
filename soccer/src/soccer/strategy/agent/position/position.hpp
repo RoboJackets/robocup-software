@@ -37,7 +37,7 @@ public:
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
      * means no new task requested.
      *
-     * Creates a RobotIntent with the right robot ID, then returns EmptyCommand
+     * Creates a RobotIntent with the right robot ID, then returns EmptyMotionCommand
      * if world_state is invalid, then delegates to derived classes.
      *
      * Uses the Template Method + non-virtual interface:

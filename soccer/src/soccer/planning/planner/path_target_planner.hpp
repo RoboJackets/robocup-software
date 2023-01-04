@@ -11,7 +11,7 @@
 
 namespace planning {
 
-class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
+class PathTargetPlanner : public PlannerForCommandType<PathTargetMotionCommand> {
 public:
     PathTargetPlanner() : PlannerForCommandType("PathTargetPlanner") {}
     ~PathTargetPlanner() override = default;

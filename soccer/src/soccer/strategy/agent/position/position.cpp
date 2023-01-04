@@ -11,7 +11,7 @@ std::optional<RobotIntent> Position::get_task() {
 
     // if world_state invalid, return empty_intent
     if (!assert_world_state_valid()) {
-        intent.motion_command = planning::EmptyCommand{};
+        intent.motion_command = planning::EmptyMotionCommand{};
         return intent;
     }
 

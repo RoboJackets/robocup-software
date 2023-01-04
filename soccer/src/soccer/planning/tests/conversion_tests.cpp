@@ -14,55 +14,60 @@ namespace planning {
 namespace testing {
 
 // NOLINTNEXTLINE
-TEST(RosConversions, EmptyMotionCommand) { test_lossless_convert_cpp_value(EmptyCommand{}); }
+TEST(RosConversions, EmptyMotionCommand) { test_lossless_convert_cpp_value(EmptyMotionCommand{}); }
 
 // NOLINTNEXTLINE
-TEST(RosConversions, PathTargetCommand) {
-    PathTargetCommand path_target{LinearMotionInstant(Point(1.0, 2.0), Point(3.0, 4.0)),
-                                  TargetFacePoint{Point(1.0, 2.0)}};
+TEST(RosConversions, PathTargetMotionCommand) {
+    PathTargetMotionCommand path_target{LinearMotionInstant(Point(1.0, 2.0), Point(3.0, 4.0)),
+                                        TargetFacePoint{Point(1.0, 2.0)}};
     test_lossless_convert_cpp_value(path_target);
 }
 
 // NOLINTNEXTLINE
-TEST(RosConversions, WorldVelCommand) {
-    test_lossless_convert_cpp_value(WorldVelCommand{Point(1.0, 2.0)});
+TEST(RosConversions, WorldVelMotionCommand) {
+    test_lossless_convert_cpp_value(WorldVelMotionCommand{Point(1.0, 2.0)});
 }
 
 // NOLINTNEXTLINE
-TEST(RosConversions, PivotCommand) {
-    test_lossless_convert_cpp_value(PivotCommand{Point(1.0, 2.0), Point(3.0, 4.0)});
+TEST(RosConversions, PivotMotionCommand) {
+    test_lossless_convert_cpp_value(PivotMotionCommand{Point(1.0, 2.0), Point(3.0, 4.0)});
 }
 
 // NOLINTNEXTLINE
-TEST(RosConversions, SettleCommand) {
-    test_lossless_convert_cpp_value(SettleCommand{Point(1.0, 2.0)});
+TEST(RosConversions, SettleMotionCommand) {
+    test_lossless_convert_cpp_value(SettleMotionCommand{Point(1.0, 2.0)});
 }
 
 // NOLINTNEXTLINE
-TEST(RosConversions, CollectCommand) { test_lossless_convert_cpp_value(CollectCommand{}); }
-
-// NOLINTNEXTLINE
-TEST(RosConversions, GoalieIdleCommand) { test_lossless_convert_cpp_value(GoalieIdleCommand{}); }
-
-// NOLINTNEXTLINE
-TEST(RosConversions, LineKickCommand) {
-    test_lossless_convert_cpp_value(LineKickCommand{Point(1.0, 2.0)});
+TEST(RosConversions, CollectMotionCommand) {
+    test_lossless_convert_cpp_value(CollectMotionCommand{});
 }
 
 // NOLINTNEXTLINE
-TEST(RosConversions, InterceptCommand) {
-    test_lossless_convert_cpp_value(InterceptCommand{Point(1.0, 2.0)});
+TEST(RosConversions, GoalieIdleMotionCommand) {
+    test_lossless_convert_cpp_value(GoalieIdleMotionCommand{});
+}
+
+// NOLINTNEXTLINE
+TEST(RosConversions, LineKickMotionCommand) {
+    test_lossless_convert_cpp_value(LineKickMotionCommand{Point(1.0, 2.0)});
+}
+
+// NOLINTNEXTLINE
+TEST(RosConversions, InterceptMotionCommand) {
+    test_lossless_convert_cpp_value(InterceptMotionCommand{Point(1.0, 2.0)});
 }
 
 // NOLINTNEXTLINE
 TEST(RosConversions, MotionCommand) {
-    PathTargetCommand path_target{LinearMotionInstant(Point(1.0, 2.0), Point(3.0, 4.0)),
-                                  TargetFacePoint{Point(1.0, 2.0)}};
-    test_lossless_convert_cpp_value(MotionCommand{EmptyCommand{}});
+    PathTargetMotionCommand path_target{LinearMotionInstant(Point(1.0, 2.0), Point(3.0, 4.0)),
+                                        TargetFacePoint{Point(1.0, 2.0)}};
+    test_lossless_convert_cpp_value(MotionCommand{EmptyMotionCommand{}});
     test_lossless_convert_cpp_value(MotionCommand{path_target});
-    test_lossless_convert_cpp_value(MotionCommand{WorldVelCommand{Point(1.0, 2.0)}});
-    test_lossless_convert_cpp_value(MotionCommand{PivotCommand{Point(1.0, 2.0), Point(3.0, 4.0)}});
-    test_lossless_convert_cpp_value(MotionCommand{InterceptCommand{Point(1.0, 2.0)}});
+    test_lossless_convert_cpp_value(MotionCommand{WorldVelMotionCommand{Point(1.0, 2.0)}});
+    test_lossless_convert_cpp_value(
+        MotionCommand{PivotMotionCommand{Point(1.0, 2.0), Point(3.0, 4.0)}});
+    test_lossless_convert_cpp_value(MotionCommand{InterceptMotionCommand{Point(1.0, 2.0)}});
 }
 
 // NOLINTNEXTLINE

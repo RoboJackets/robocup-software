@@ -15,12 +15,12 @@ bool operator==(const LinearMotionInstant& a, const LinearMotionInstant& b) {
     return a.velocity == b.velocity && a.position == b.position;
 }
 
-bool operator==(const PathTargetCommand& a, const PathTargetCommand& b) {
+bool operator==(const PathTargetMotionCommand& a, const PathTargetMotionCommand& b) {
     return a.goal == b.goal && a.angle_override == b.angle_override;
 }
 
-bool operator==([[maybe_unused]] const GoalieIdleCommand& a,
-                [[maybe_unused]] const GoalieIdleCommand& b) {
+bool operator==([[maybe_unused]] const GoalieIdleMotionCommand& a,
+                [[maybe_unused]] const GoalieIdleMotionCommand& b) {
     return true;
 }
 
@@ -38,23 +38,28 @@ bool operator==([[maybe_unused]] const TargetFaceBall& a,
     return true;
 }
 
-bool operator==([[maybe_unused]] const EmptyCommand& a, [[maybe_unused]] const EmptyCommand& b) {
+bool operator==([[maybe_unused]] const EmptyMotionCommand& a,
+                [[maybe_unused]] const EmptyMotionCommand& b) {
     return true;
 }
 
-bool operator==(const WorldVelCommand& a, const WorldVelCommand& b) {
+bool operator==(const WorldVelMotionCommand& a, const WorldVelMotionCommand& b) {
     return a.world_vel == b.world_vel;
 }
-bool operator==(const PivotCommand& a, const PivotCommand& b) {
+bool operator==(const PivotMotionCommand& a, const PivotMotionCommand& b) {
     return a.pivot_target == b.pivot_target && a.pivot_point == b.pivot_point;
 }
-bool operator==(const SettleCommand& a, const SettleCommand& b) { return a.target == b.target; }
-bool operator==([[maybe_unused]] const CollectCommand& a,
-                [[maybe_unused]] const CollectCommand& b) {
+bool operator==(const SettleMotionCommand& a, const SettleMotionCommand& b) {
+    return a.target == b.target;
+}
+bool operator==([[maybe_unused]] const CollectMotionCommand& a,
+                [[maybe_unused]] const CollectMotionCommand& b) {
     return true;
 }
-bool operator==(const LineKickCommand& a, const LineKickCommand& b) { return a.target == b.target; }
-bool operator==(const InterceptCommand& a, const InterceptCommand& b) {
+bool operator==(const LineKickMotionCommand& a, const LineKickMotionCommand& b) {
+    return a.target == b.target;
+}
+bool operator==(const InterceptMotionCommand& a, const InterceptMotionCommand& b) {
     return a.target == b.target;
 }
 

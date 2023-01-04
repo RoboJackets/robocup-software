@@ -21,8 +21,8 @@ Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
         return Trajectory();
     }
 
-    // Create a new PathTargetCommand to fill in with desired idle_pt
-    auto command = PathTargetCommand{};
+    // Create a new PathTargetMotionCommand to fill in with desired idle_pt
+    auto command = PathTargetMotionCommand{};
     auto idle_pt = get_idle_pt(plan_request.world_state);
     command.goal.position = idle_pt;
 
