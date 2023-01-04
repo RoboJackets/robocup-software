@@ -53,19 +53,18 @@ terminal tab and look in there.
 Google what you want to do and follow the top result or follow the lldb
 tutorial on their website.
 
-CS2110 and CS2200 will introduce you to gdb which is another debugger for
+CS2110 and CS2200 will introduce you to gdb, which is another debugger for
 C/C++; if you already know that, the commands are basically the same (the
 syntax is different in many places though).
 
 C++ is hard. Where can I get better at it?
 --------------------------------------------------
 
-One of the authors of these docs recommends
-`LearnCpp<https://www.learncpp.com/>`_. It is very thorough, and assumes no
-prior experience (though prior experience will help). This particular author
-went through ~80% of the site in a week to prepare for a C++ interview with a
-big robotics company, which is not the recommended approach. But it worked; he
-got the job!
+One of the authors of these docs recommends `LearnCpp
+<https://www.learncpp.com/>`_. It is very thorough, and assumes no prior
+experience. This particular author went through ~80% of the site in a week to
+prepare for a C++ interview with a self-driving car company. This is not the
+recommended approach, but it worked: he got the job!
 
 Why do we use ROS?
 --------------------------------------------------
@@ -82,11 +81,13 @@ packages. However, RoboCup SSL is such a weird robotics application that a lot
 of the most popular ROS tools don't help us. 
 
 For instance, there is a whole ROS2 package to handle `localization and sensor
-fusion<https://automaticaddison.com/sensor-fusion-using-the-robot-localization-package-ros-2/>`_,
+fusion
+<https://automaticaddison.com/sensor-fusion-using-the-robot-localization-package-ros-2/>`_,
 which is a challenging problem that someone has solved for you! However, we
 simply have no need to localize thanks to our competition's overhead camera.
 There's a ROS2 application to allow for 3D modeling and simulation called
-`Gazebo<https://automaticaddison.com/how-to-simulate-a-robot-using-gazebo-and-ros-2/>`_!
+`Gazebo
+<https://automaticaddison.com/how-to-simulate-a-robot-using-gazebo-and-ros-2/>`_!
 However, we have ER-force for physics simulation and our UI for visualization
 (or SSL Game Controller if that fails).
 
@@ -125,7 +126,8 @@ A .launch file is how ROS knows what nodes to launch and where to look for
 them.
 
 Our launch files are pretty similar to the ones introduced in `ROS wiki
-tutorials<https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html>`_,
+tutorials
+<https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html>`_,
 but we also use flags on launch to easily switch between certain nodes (for
 example we can switch between sim radio and network radio by setting a
 particular to the proper boolean value). Alias for common launch configurations
@@ -174,13 +176,13 @@ Installation is simple. First, create an empty directory named
 ``ssl-game-controller`` at the same level as your clone of
 ``robocup-software``::
 
-~/coding/robocup/
-├── robocup-software/
-├── ssl-game-controller/
+    ~/coding/robocup/
+    ├── robocup-software/
+    ├── ssl-game-controller/
 
 Then, download the latest release binary in the `SSL GC repo
 <https://github.com/RoboCup-SSL/ssl-game-controller>`_ and put it into that
-folder. Finally, make the release binary executable by ``cd``ing to the
+folder. Finally, make the release binary executable by ``cd`` ing to the
 ``ssl-game-controller`` repo and running ``chmod +x <name of release binary>``.
 
 When you want to launch the game controller, ``cd`` to your

@@ -10,11 +10,12 @@ If you're writing documentation, you're probably pretty good at writing code and
 Googling your way through issues already. So here's some basic info that will
 help you figure out what you need to do on your own.
 
-Our docs are hosted by ReadTheDocs and are built from ReStructuredText
-(``.rst``) to HTML files. This build process is done by Sphinx. The Python-side
-API is done by a Sphinx extension named ``sphinx-autodoc``. As of the time of
-this writing, there is no C++-side API docs yet, but in theory Sphinx + Doxygen
-+ Breathe allow this functionality.
+Our docs are hosted by ReadTheDocs and are built from `ReStructuredText
+<https://docutils.sourceforge.io/docs/user/rst/quickref.html>`_ (``.rst``) to
+HTML files. This build process is done by Sphinx. The Python-side API is done
+by a Sphinx extension named ``sphinx-autodoc``. As of the time of this writing,
+there is no C++-side API docs yet, but in theory Sphinx + Doxygen + Breathe
+allow this functionality.
 
 When you edit documentation, you only need to edit the ``.rst`` files in
 docs/source/ and Sphinx will do the rest. If you add a new page, put it in the
