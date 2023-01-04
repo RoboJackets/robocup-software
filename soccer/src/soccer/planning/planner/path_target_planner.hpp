@@ -27,6 +27,15 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
+    /*
+     * Get the right AngleFunction (for control) from the
+     * PTMC-specific AngleOverride options listed in
+     * motion_command.hpp.
+     *
+     * @param PlanRequest containing a PTMC
+     * @return AngleFunction that corresponds to input
+     * AngleOverride in given PlanRequest
+     */
     [[nodiscard]] static AngleFunction get_angle_function(
         const PlanRequest& request);
 

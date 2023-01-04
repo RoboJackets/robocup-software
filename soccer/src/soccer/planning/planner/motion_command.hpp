@@ -69,7 +69,14 @@ struct TargetFacePoint {
 };
 bool operator==(const TargetFacePoint& a, const TargetFacePoint& b);
 
-using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
+/*
+ * Make robot face ball while traveling (for PTMC).
+ */
+struct TargetFaceBall {};
+bool operator==([[maybe_unused]] const TargetFaceBall& a, [[maybe_unused]] const TargetFaceBall& b);
+
+using AngleOverride =
+    std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint, TargetFaceBall>;
 /**
  * Move to a particular target with a particular ending velocity, avoiding obstacles.
  */
@@ -154,6 +161,8 @@ struct RosConverter<planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionC
         } else if (maybe_angle != nullptr) {
             double face_angle = maybe_angle->target;
             result.override_angle.push_back(face_angle);
+        } else if (std::holds_alternative<planning::TargetFaceBall>(from.angle_override)) {
+            result.face_ball = true;
         }
 
         result.ignore_ball = from.ignore_ball;
@@ -169,7 +178,10 @@ struct RosConverter<planning::PathTargetCommand, rj_msgs::msg::PathTargetMotionC
         } else if (!from.override_face_point.empty()) {
             result.angle_override =
                 planning::TargetFacePoint{convert_from_ros(from.override_face_point.front())};
+        } else if (from.face_ball) {
+            result.angle_override = planning::TargetFaceBall{};
         } else {
+            // default to facing destination if no other AngleOverride given
             result.angle_override = planning::TargetFaceTangent{};
         }
         result.ignore_ball = from.ignore_ball;

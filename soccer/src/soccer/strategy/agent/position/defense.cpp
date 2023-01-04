@@ -24,7 +24,7 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     rj_geometry::Point target_vel{0.0, 0.0};
 
     // face ball
-    planning::AngleOverride angle_override = planning::TargetFacePoint{world_state->ball.position};
+    planning::AngleOverride angle_override = planning::TargetFaceBall{};
 
     // avoid ball
     bool ignore_ball = false;

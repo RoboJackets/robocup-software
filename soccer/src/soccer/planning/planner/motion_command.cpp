@@ -11,6 +11,7 @@ namespace planning {
  */
 
 bool operator==(const LinearMotionInstant& a, const LinearMotionInstant& b) {
+    // TODO: this should be in instant.hpp/cpp
     return a.velocity == b.velocity && a.position == b.position;
 }
 
@@ -29,7 +30,12 @@ bool operator==([[maybe_unused]] const TargetFaceTangent& a,
 }
 bool operator==(const TargetFaceAngle& a, const TargetFaceAngle& b) { return a.target == b.target; }
 bool operator==(const TargetFacePoint& a, const TargetFacePoint& b) {
-    return a.face_point == b.face_point;
+    double tolerance = 0.1;
+    return a.face_point.nearly_equals(b.face_point, tolerance);
+}
+bool operator==([[maybe_unused]] const TargetFaceBall& a,
+                [[maybe_unused]] const TargetFaceBall& b) {
+    return true;
 }
 
 bool operator==([[maybe_unused]] const EmptyCommand& a, [[maybe_unused]] const EmptyCommand& b) {
