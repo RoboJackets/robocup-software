@@ -35,10 +35,17 @@ private:
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
+    enum State { BLOCKING, CLEARING, IDLING };
+
     /*
      * @return true if ball is heading towards goal at some minimum speed threshold
      */
     bool shot_on_goal_detected(WorldState* world_state);
+
+    State update_state();
+    std::optional<RobotIntent> send_motion_cmd(RobotIntent intent);
+
+    State latest_state_ = IDLING;
 };
 
 }  // namespace strategy

@@ -15,7 +15,6 @@ AgentActionClient::AgentActionClient(int r_id)
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)) {
-    SPDLOG_INFO("my robot_id_ {}", robot_id_);
 
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
@@ -69,7 +68,9 @@ void AgentActionClient::get_task() {
         // note that because these are our RobotIntent structs, this comparison
         // uses our custom struct overloads
         if (task != last_task_) {
-            SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
+            if (robot_id_ == 0) {
+                SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
+            }
             last_task_ = task;
             send_new_goal();
         }
@@ -116,6 +117,9 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
             current_position_->set_is_done();
+            if (robot_id_ == 0) {
+                SPDLOG_INFO("Robot {} done", robot_id_, result.result->is_done);
+            }
             break;
         case rclcpp_action::ResultCode::ABORTED:
             return;
@@ -124,7 +128,6 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         default:
             return;
     }
-    /* SPDLOG_INFO("Result received: {}", result.result->is_done); */
 }
 
 }  // namespace strategy

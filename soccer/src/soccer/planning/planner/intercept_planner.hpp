@@ -19,5 +19,10 @@ public:
     Trajectory plan(const PlanRequest& request) override;
 
     [[nodiscard]] bool is_done() const override;
+
+private:
+    // for is_done
+    BallState latest_ball_state_;
+    rj_geometry::Point latest_robot_pos_;
 };
 }  // namespace planning
