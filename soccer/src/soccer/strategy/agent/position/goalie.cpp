@@ -50,6 +50,21 @@ std::optional<RobotIntent> Goalie::send_motion_cmd(RobotIntent intent) {
         auto line_kick_cmd = planning::LineKickMotionCommand{rj_geometry::Point{0.0, 4.5}};
         intent.motion_command = line_kick_cmd;
         intent.motion_command_name = "line kick";
+        // TODO(Kevin): the way this is set up makes it impossible to
+        // shoot on time without breakbeam
+        //
+        // because we switched RobotIntent to be the goal of an
+        // Action instead of pub'ing to
+        // gameplay/robot_intent/robot_*
+        // this no longer works
+        // (manipulator setpoint subs to that topic to send kick cmds to radio)
+        //
+        // instead, we can send ManipulatorSetpoint msgs out from PlannerNode
+        intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 100.0;
+        intent.is_active = true;
+
         return intent;
     }
 

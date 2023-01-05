@@ -166,6 +166,9 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
         planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
 
+    // TODO(Kevin): here, add ManipulatorSetpoint pub (see manipulator_control.*pp) to go straight
+    // to radio and do conversions
+
     // for ball sense and possession
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
         radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
