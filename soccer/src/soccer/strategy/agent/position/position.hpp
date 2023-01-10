@@ -15,6 +15,7 @@
 #include "world_state.hpp"
 
 // Communication
+#include "../communication/communication.hpp"
 #include "rj_msgs/msg/agent_to_pos_comm_request.hpp"
 #include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
 #include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
@@ -55,10 +56,10 @@ public:
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
     // Agent-to-Agent communication
-    rj_msgs::msg::PosToAgentCommRequest send_communication_request();
-    virtual void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response);
-    virtual rj_msgs::msg::PosToAgentCommResponse receive_communication_request(
-        rj_msgs::msg::AgentToPosCommRequest request);
+    communication::PosAgentRequestWrapper send_communication_request();
+    virtual void receive_communication_response(communication::AgentPosResponseWrapper response);
+    virtual communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request);
 
     virtual rj_msgs::msg::RobotIntent get_task() = 0;
 
@@ -122,7 +123,7 @@ protected:
     const int robot_id_;
 
     // Request
-    rj_msgs::msg::PosToAgentCommRequest communication_request_{};
+    communication::PosAgentRequestWrapper communication_request_;
 
 private:
 };

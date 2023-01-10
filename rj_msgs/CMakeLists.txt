@@ -65,10 +65,6 @@ rosidl_generate_interfaces(
   # Communication
   msg/AgentRequest.msg
   msg/AgentResponse.msg
-  msg/AgentToPosCommRequest.msg
-  msg/AgentToPosCommResponse.msg
-  msg/PosToAgentCommRequest.msg
-  msg/PosToAgentCommResponse.msg
 
   # Agent Request Messages
   request/PassRequest.msg

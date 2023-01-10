@@ -88,64 +88,64 @@ rj_geometry::Point Goalie::get_idle_pt(WorldState* world_state) const {
     return idle_pt;
 }
 
-void Goalie::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
-    if (response.response.response_type == 1) {
+void Goalie::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    if (response.response.response_type == communication::CommunicationType::test) {
         SPDLOG_INFO("\033[92mRobot {} has sent the test response message: {}\033[0m",
-                    response.robot_id, response.response.test_response[0].message);
-    } else if (response.response.response_type == 2) {
+                    response.from_robot_id, response.response.test_response[0].message);
+    } else if (response.response.response_type == communication::CommunicationType::position) {
         switch (response.response.position_response[0].position) {
             case 1:
-                SPDLOG_INFO("\033[93mRobot {} is playing defense\033[0m", response.robot_id);
+                SPDLOG_INFO("\033[93mRobot {} is playing defense\033[0m", response.from_robot_id);
                 break;
             case 2:
-                SPDLOG_INFO("\033[93mRobot {} is playing offense\033[0m", response.robot_id);
+                SPDLOG_INFO("\033[93mRobot {} is playing offense\033[0m", response.from_robot_id);
                 break;
             default:
                 SPDLOG_INFO("\033[93mRobot {} is playing an undefined role\033[0m",
-                            response.robot_id);
+                            response.from_robot_id);
                 break;
         }
 
-        if (response.robot_id == 1) {
+        if (response.from_robot_id == 1) {
             set_test_request();
         }
     } else {
-        SPDLOG_INFO("\033[92mRobot {} has acknowledged the message\033[0m", response.robot_id);
+        SPDLOG_INFO("\033[92mRobot {} has acknowledged the message\033[0m", response.from_robot_id);
     }
 }
 
-rj_msgs::msg::PosToAgentCommResponse Goalie::receive_communication_request(
-    rj_msgs::msg::AgentToPosCommRequest request) {
-    rj_msgs::msg::PosToAgentCommResponse comm_response{};
-    if (request.request.request_type == 1) {
+communication::PosAgentResponseWrapper Goalie::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response;
+    if (request.request.request_type == communication::CommunicationType::test) {
         rj_msgs::msg::TestResponse test_response{};
         test_response.message = "The goalie has obtained your message";
         comm_response.response.test_response = {test_response};
-        comm_response.response.response_type = 1;
+        comm_response.response.response_type = communication::CommunicationType::test;
     } else {
         rj_msgs::msg::Acknowledge acknowledge{};
         comm_response.response.acknowledge_response = {acknowledge};
-        comm_response.response.response_type = 0;
+        comm_response.response.response_type = communication::CommunicationType::acknowledge;
     }
     return comm_response;
 }
 
 void Goalie::set_position_request() {
-    rj_msgs::msg::PosToAgentCommRequest request;
+    communication::PosAgentRequestWrapper request;
     rj_msgs::msg::PositionRequest position_request{};
     request.broadcast = true;
     request.request.position_request = {position_request};
-    request.request.request_type = 2;
+    request.request.request_type = communication::CommunicationType::position;
     communication_request_ = request;
 }
 
 void Goalie::set_test_request() {
-    rj_msgs::msg::PosToAgentCommRequest request;
+    communication::PosAgentRequestWrapper request;
     rj_msgs::msg::TestRequest test_request;
-    request.num_targets = 1;
+    request.broadcast = false;
     request.target_agents = {2};
     request.request.test_request = {test_request};
-    request.request.request_type = 1;
+    request.request.request_type = communication::CommunicationType::test;
     communication_request_ = request;
 }
 

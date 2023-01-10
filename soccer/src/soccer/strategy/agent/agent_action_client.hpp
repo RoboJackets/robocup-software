@@ -24,6 +24,7 @@
 #include "world_state.hpp"
 
 // Communication
+#include "communication/communication.hpp"
 #include "rj_msgs/msg/acknowledge.hpp"
 #include "rj_msgs/msg/agent_request.hpp"
 #include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
