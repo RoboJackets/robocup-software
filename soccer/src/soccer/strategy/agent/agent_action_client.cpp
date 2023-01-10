@@ -173,14 +173,17 @@ void AgentActionClient::get_communication() {
         last_communication_ = request;
         if (communication_request.broadcast) {
             send_broadcast(request);
-        } else if (communication_request.num_targets > 1) {
-            std::vector<u_int8_t> targets(std::begin(communication_request.target_agents),
-                                          std::end(communication_request.target_agents));
-            send_multicast(targets, request);
-        } else if (communication_request.num_targets == 1) {
-            send_unicast(communication_request.target_agents[0], request);
         } else {
-            SPDLOG_WARN("BAD REQUEST NOT SENDING ANY COMMUNICATION");
+            try {
+                auto targets = communication_request.target_agents.value();
+                if (targets.size() > 1) {
+                    send_multicast(targets, request);
+                } else {
+                    send_unicast(targets[0], request);
+                }
+            } catch (const std::bad_optional_access& e) {
+                SPDLOG_WARN("BAD REQUEST: {}", e.what());
+            }
         }
     }
 }
@@ -236,11 +239,11 @@ void AgentActionClient::receive_communication_callback(
         response->agent_response = agent_response;
     } else {
         // Convert agent request into AgentToPosCommRequest
-        rj_msgs::msg::AgentToPosCommRequest agent_request{};
+        communication::AgentPosRequestWrapper agent_request;
         agent_request.request = request->agent_request;
 
         // Give the current position the request and receive the response to send back
-        rj_msgs::msg::PosToAgentCommResponse pos_to_agent_response =
+        communication::PosAgentResponseWrapper pos_to_agent_response =
             current_position_->receive_communication_request(agent_request);
 
         // Convert PosToAgentCommResponse into AgentResponse
@@ -266,8 +269,8 @@ void AgentActionClient::receive_response_callback(
         }
     }
 
-    rj_msgs::msg::AgentToPosCommResponse agent_to_position_response{};
-    agent_to_position_response.robot_id = robot_id;
+    communication::AgentPosResponseWrapper agent_to_position_response;
+    agent_to_position_response.from_robot_id = robot_id;
     agent_to_position_response.response = response.get()->agent_response;
 
     // Relay information to the position

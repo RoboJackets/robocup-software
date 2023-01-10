@@ -26,9 +26,11 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    void receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) override;
-    rj_msgs::msg::PosToAgentCommResponse receive_communication_request(
-        rj_msgs::msg::AgentToPosCommRequest request) override;
+    rj_msgs::msg::RobotIntent get_task() override;
+
+    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+    communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request) override;
 
 private:
     void set_test_multicast_request();

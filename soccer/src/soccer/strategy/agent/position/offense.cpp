@@ -39,33 +39,33 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
-void Offense::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
-    if (response.response.response_type == 1) {
+void Offense::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    if (response.response.response_type == communication::CommunicationType::test) {
         SPDLOG_INFO("\033[91mRobot {} has sent a test response with message: {}\033[0m",
-                    response.robot_id, response.response.test_response[0].message);
+                    response.from_robot_id, response.response.test_response[0].message);
     } else {
-        SPDLOG_INFO("\033[93mRobot {} has acknowledged the message: {}\033[0m", response.robot_id);
+        SPDLOG_INFO("\033[93mRobot {} has acknowledged the message: {}\033[0m", response.from_robot_id);
     }
 }
 
-rj_msgs::msg::PosToAgentCommResponse Offense::receive_communication_request(
-    rj_msgs::msg::AgentToPosCommRequest request) {
-    rj_msgs::msg::PosToAgentCommResponse comm_response{};
-    if (request.request.request_type == 1) {
+communication::PosAgentResponseWrapper Offense::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response;
+    if (request.request.request_type == communication::CommunicationType::test) {
         rj_msgs::msg::TestResponse test_response{};
         test_response.message = "I have obtained a test request message";
         comm_response.response.test_response = {test_response};
-        comm_response.response.response_type = 1;
-    } else if (request.request.request_type == 2) {
+        comm_response.response.response_type = communication::CommunicationType::test;
+    } else if (request.request.request_type == communication::CommunicationType::position) {
         rj_msgs::msg::PositionResponse position_response{};
         position_response.position = 2;
         comm_response.response.position_response = {position_response};
-        comm_response.response.response_type = 2;
+        comm_response.response.response_type = communication::CommunicationType::position;
     } else {
         rj_msgs::msg::Acknowledge acknowledge{};
         acknowledge.acknowledged = true;
         comm_response.response.acknowledge_response = {acknowledge};
-        comm_response.response.response_type = 4;
+        comm_response.response.response_type = communication::CommunicationType::acknowledge;
     }
     return comm_response;
 }

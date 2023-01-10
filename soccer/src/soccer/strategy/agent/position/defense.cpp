@@ -35,33 +35,33 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
-void Defense::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
-    if (response.response.response_type == 1) {
-        SPDLOG_INFO("\033[91mRobot {} has sent the message: {}\033[0m", response.robot_id,
+void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    if (response.response.response_type == communication::CommunicationType::test) {
+        SPDLOG_INFO("\033[91mRobot {} has sent the message: {}\033[0m", response.from_robot_id,
                     response.response.test_response[0].message);
     } else {
-        SPDLOG_INFO("\033[93mRobot {} has acknowledged the message: {}\033[0m", response.robot_id);
+        SPDLOG_INFO("\033[93mRobot {} has acknowledged the message: {}\033[0m", response.from_robot_id);
     }
 }
 
-rj_msgs::msg::PosToAgentCommResponse Defense::receive_communication_request(
-    rj_msgs::msg::AgentToPosCommRequest request) {
-    rj_msgs::msg::PosToAgentCommResponse comm_response{};
-    if (request.request.request_type == 1) {
+communication::PosAgentResponseWrapper Defense::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response;
+    if (request.request.request_type == communication::CommunicationType::test) {
         rj_msgs::msg::TestResponse test_response{};
         test_response.message = "I have obtained you message and I player defense";
         comm_response.response.test_response = {test_response};
-        comm_response.response.response_type = 1;
-    } else if (request.request.request_type == 2) {
+        comm_response.response.response_type = communication::CommunicationType::test;
+    } else if (request.request.request_type == communication::CommunicationType::position) {
         rj_msgs::msg::PositionResponse position_response{};
         position_response.position = 1;
         comm_response.response.position_response = {position_response};
-        comm_response.response.response_type = 2;
+        comm_response.response.response_type = communication::CommunicationType::position;
     } else {
         rj_msgs::msg::Acknowledge acknowledge{};
         acknowledge.acknowledged = true;
         comm_response.response.acknowledge_response = {acknowledge};
-        comm_response.response.response_type = 4;
+        comm_response.response.response_type = communication::CommunicationType::acknowledge;
     }
     // TODO: Remove Below upon approval
     set_test_multicast_request();
@@ -70,9 +70,9 @@ rj_msgs::msg::PosToAgentCommResponse Defense::receive_communication_request(
 }
 
 void Defense::set_test_multicast_request() {
-    rj_msgs::msg::PosToAgentCommRequest request;
+    communication::PosAgentRequestWrapper request;
     rj_msgs::msg::TestRequest test_request;
-    request.num_targets = 3;
+    request.broadcast = false;
     request.target_agents = {0, 2, 3};
     request.request.test_request = {test_request};
     request.request.request_type = 1;

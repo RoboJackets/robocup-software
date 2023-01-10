@@ -71,18 +71,24 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-rj_msgs::msg::PosToAgentCommRequest Position::send_communication_request() {
+communication::PosAgentRequestWrapper Position::send_communication_request() {
     return communication_request_;
 }
 
-void Position::receive_communication_response(rj_msgs::msg::AgentToPosCommResponse response) {
+void Position::receive_communication_response(communication::AgentPosResponseWrapper response) {
     return;
 }
 
-rj_msgs::msg::PosToAgentCommResponse Position::receive_communication_request(
-    rj_msgs::msg::AgentToPosCommRequest request) {
-    rj_msgs::msg::PosToAgentCommResponse empty_response{};
-    return empty_response;
+communication::PosAgentResponseWrapper Position::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper pos_agent_response;
+    rj_msgs::msg::AgentResponse response{};
+    rj_msgs::msg::Acknowledge acknowledge{};
+
+    response.acknowledge_response = {acknowledge};
+    pos_agent_response.response = response;
+
+    return pos_agent_response;
 }
 
 }  // namespace strategy

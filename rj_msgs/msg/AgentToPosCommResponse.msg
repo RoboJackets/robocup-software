@@ -1,2 +1,0 @@
-uint8 robot_id
-AgentResponse response
