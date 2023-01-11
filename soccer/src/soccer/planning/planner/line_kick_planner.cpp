@@ -13,7 +13,6 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
-    // TODO(Kevin): ros params here
     const float approach_speed = 0.25;
 
     const float ball_avoid_distance = 0.05;

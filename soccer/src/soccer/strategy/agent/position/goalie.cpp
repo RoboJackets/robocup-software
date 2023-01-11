@@ -50,6 +50,15 @@ std::optional<RobotIntent> Goalie::send_motion_cmd(RobotIntent intent) {
         auto line_kick_cmd = planning::LineKickMotionCommand{rj_geometry::Point{0.0, 4.5}};
         intent.motion_command = line_kick_cmd;
         intent.motion_command_name = "line kick";
+
+        // note: the way this is set up makes it impossible to
+        // shoot on time without breakbeam
+        // TODO(Kevin): make intent hold a manip msg instead?
+        intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 100.0;
+        intent.is_active = true;
+
         return intent;
     }
 

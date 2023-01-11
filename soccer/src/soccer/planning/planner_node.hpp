@@ -11,6 +11,7 @@
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
@@ -201,6 +202,7 @@ private:
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_pub_;
+    rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr manipulator_pub_;
     rclcpp::Service<rj_msgs::srv::PlanHypotheticalPath>::SharedPtr hypothetical_path_service_;
 
     rj_drawing::RosDebugDrawer debug_draw_;
