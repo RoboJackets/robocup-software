@@ -24,11 +24,11 @@ std::optional<rj_msgs::msg::RobotIntent> Defense::get_task() {
 
     // oscillate along horizontal line (temp)
     auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
-    double x = -3.0;
+    double x = -1.5;
     if (move_ct_ % 2 == 1) {
-        x = 3.0;
+        x = 1.5;
     }
-    rj_geometry::Point pt{x, 3.0};
+    rj_geometry::Point pt{x, 3.5};
     ptmc.target.position = rj_convert::convert_to_ros(pt);
 
     rj_geometry::Point ball_pos = world_state->ball.position;
