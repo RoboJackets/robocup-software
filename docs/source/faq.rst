@@ -98,6 +98,14 @@ of useful robotics software to build upon.
 Is it overkill? Probably. But hopefully it will teach you a valuable industry tool
 along the way.
 
+How do I learn more about ROS?
+--------------------------------------------------
+
+Generally, our tutorial should guide you through all ROS knowledge you'll need
+to be successful in RoboCup. If you need more advanced ROS, the `official
+documentation <https://docs.ros.org/en/foxy/index.html>`_ contains plenty of
+tutorials to help you out!
+
 How should I use ROS msgs in my code?
 --------------------------------------------------
 
