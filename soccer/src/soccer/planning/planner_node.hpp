@@ -129,7 +129,8 @@ public:
     /**
      * Entry point for the planner node's ActionServer.
      *
-     * Creates and publishes a Trajectory based on the given RobotIntent.
+     * Creates and publishes a Trajectory based on the given RobotIntent. Also
+     * publishes a ManipulatorSetpoint to control kicker/dribbler/chipper.
      */
     void execute_intent(const RobotIntent& intent);
 

@@ -7,7 +7,7 @@ Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
-    return send_motion_cmd(intent);
+    return state_to_task(intent);
 }
 
 Goalie::State Goalie::update_state() {
@@ -32,7 +32,7 @@ Goalie::State Goalie::update_state() {
     return IDLING;
 }
 
-std::optional<RobotIntent> Goalie::send_motion_cmd(RobotIntent intent) {
+std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
     if (latest_state_ == BLOCKING) {
         auto intercept_cmd = planning::InterceptMotionCommand{rj_geometry::Point{0.0, 0.1}};
         intent.motion_command = intercept_cmd;

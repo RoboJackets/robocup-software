@@ -33,8 +33,10 @@ private:
     // temp
     int send_idle_ct_ = 0;
 
+    // see Position superclass
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
+    // possible states of the Goalie
     enum State { BLOCKING, CLEARING, IDLING };
 
     /*
@@ -42,9 +44,30 @@ private:
      */
     bool shot_on_goal_detected(WorldState* world_state);
 
+    /*
+     * Provide an updated state for the Goalie state machine based
+     * on the current world state.
+     *
+     * e.g. when shot on goal detected, Goalie should intercept the
+     * ball
+     *
+     * @return current State to set Goalie's state machine to
+     */
     State update_state();
-    std::optional<RobotIntent> send_motion_cmd(RobotIntent intent);
 
+    /*
+     * Based on the Goalie's current state, send a motion_command
+     * to the planner node.
+     *
+     * @param intent RobotIntent to add the desired motion_command
+     * to
+     *
+     * @return matching return type of derived_get_task() (see
+     * above)
+     */
+    std::optional<RobotIntent> state_to_task(RobotIntent intent);
+
+    // current state of Goalie (state machine)
     State latest_state_ = IDLING;
 };
 
