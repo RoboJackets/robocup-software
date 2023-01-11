@@ -7,8 +7,6 @@ Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
-    if (latest_state_ != 2) SPDLOG_INFO("latest_state_ {}", latest_state_);
-
     return send_motion_cmd(intent);
 }
 
@@ -46,7 +44,6 @@ std::optional<RobotIntent> Goalie::send_motion_cmd(RobotIntent intent) {
         intent.motion_command_name = "goalie_idle";
         return intent;
     } else if (latest_state_ == CLEARING) {
-        SPDLOG_INFO("clearing");
         auto line_kick_cmd = planning::LineKickMotionCommand{rj_geometry::Point{0.0, 4.5}};
         intent.motion_command = line_kick_cmd;
         intent.motion_command_name = "line kick";
