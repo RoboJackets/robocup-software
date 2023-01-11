@@ -10,7 +10,7 @@ In Python, the best way is to set up print() statements and print out relevant
 variables. Python is an interpreted language, meaning there's no easy way for
 us to step through it with a debugger.
 
-In C++, you can achieve a similar print-by-debug with SPDLOG.
+In C++, you can achieve a similar debug-by-print with SPDLOG.
 
     1. Add ``#include <spdlog/spdlog.h>`` in your header file.
     2. Add some lines like ``SPDLOG_INFO("VARIABLE_NAME = {}", variable_name);``
