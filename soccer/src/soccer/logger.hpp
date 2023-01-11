@@ -62,7 +62,7 @@ struct Logs {
 };
 
 // Forward-declare context, which needs to use Logs as above
-class Context;
+struct Context;
 
 /**
  * \brief Populates the log frame in Context, and writes it to a file.

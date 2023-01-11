@@ -73,18 +73,21 @@ SimRadio::SimRadio(bool blue_team)
       blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
-    for (int i = 0; i < kNumShells; ++i) {
+    for (size_t i = 0; i < kNumShells; ++i) {
         last_sent_diff_.emplace_back(RJ::now());
     }
 
-    /* IP addr our radio should end to
+    /* IP addr our radio should bind to
      * see PR #1887 for last time this file was used w/ external interface
      * run ifconfig to see list of interfaces on this computer
 
      * NOTE: on field comp, make sure this IP is "172.16.1.1" (router IP)
      * on sim, make sure this IP is "127.0.0.1" (localhost)
      */
-
+    // TODO(Kevin): this default shouldn't be necessary, but sim2play refuses to accept the param
+    // file probably an issue with the hacky way I got param files to dynamically load
+    std::string localhost = "127.0.0.1";
+    this->get_parameter_or("interface", param_radio_interface_, localhost);
     SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
     address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
@@ -152,7 +155,7 @@ void SimRadio::handle_receive(const std::string& data) {
 
     packet.ParseFromString(data);
 
-    for (size_t pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
+    for (int pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
         rj_msgs::msg::RobotStatus status_ros;
         RobotStatus status;
         const RobotFeedback& sim_status = packet.feedback(pkt_idx);
@@ -166,7 +169,7 @@ void SimRadio::handle_receive(const std::string& data) {
 void SimRadio::stop_robots() {
     RobotControl sim_packet;
 
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         auto* sim_robot = sim_packet.add_robot_commands();
         sim_robot->set_id(shell);
         auto* local_velocity = sim_robot->mutable_move_command()->mutable_local_velocity();

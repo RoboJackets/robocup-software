@@ -85,7 +85,8 @@ add_executable(sim_radio_node)
 add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
-add_executable(soccer_mom_node) 
+add_executable(coach_node)
+add_executable(agent_action_client_node)
 
 if(BUILD_TESTING)
 add_executable(test-soccer)
@@ -169,6 +170,9 @@ set(LOG_VIEWER_DEPS_LIBRARIES robocup)
 set(REFEREE_NODE_DEPS_SYSTEM_LIBRARIES)
 set(REFEREE_NODE_DEPS_LIBRARIES robocup)
 
+set(COACH_NODE_DEPS_SYSTEM_LIBRARIES)
+set(COACH_NODE_DEPS_LIBRARIES robocup)
+
 set(RADIO_NODE_DEPS_SYSTEM_LIBRARIES)
 set(RADIO_NODE_DEPS_LIBRARIES robocup)
 
@@ -186,6 +190,9 @@ set(MANUAL_CONTROL_NODE_DEPS_LIBRARIES robocup)
 
 set(GLOBAL_PARAM_SERVER_NODE_DEPS_SYSTEM_LIBRARIES)
 set(GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES robocup)
+
+set(AGENT_ACTION_CLIENT_NODE_DEPS_SYSTEM_LIBRARIES)
+set(AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES robocup)
 
 # ======================================================================
 # Include and Linking
@@ -225,9 +232,8 @@ target_link_libraries(internal_referee_node PRIVATE ${REFEREE_NODE_DEPS_SYSTEM_L
 target_link_libraries(sim_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
         ${RADIO_NODE_DEPS_LIBRARIES})
 
-# -- soccer_mom_node --
-target_link_libraries(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES}
-${SOCCER_MOM_NODE_DEPS_LIBRARIES})
+target_link_libraries(coach_node PRIVATE ${COACH_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${COACH_NODE_DEPS_LIBRARIES})
 
 # -- network_radio_node --
 target_link_libraries(network_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
@@ -248,6 +254,10 @@ target_link_libraries(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_DEPS_SYS
 # -- global_param_server_node --
 target_link_libraries(global_param_server_node PRIVATE ${GLOBAL_PARAM_SERVER_NODE_DEPS_SYSTEM_LIBRARIES}
         ${GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES})
+
+# -- agent_action_client_node --
+target_link_libraries(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NODE_DEPS_SYSTEM_LIBRARIES}
+    ${AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES})
 
 # ======================================================================
 # Testing
@@ -289,14 +299,12 @@ install(
         planner_node
         control_node
         sim_radio_node
+        coach_node
         network_radio_node
         manual_control_node
         global_param_server_node
-        soccer_mom_node
+        agent_action_client_node
         DESTINATION lib/${CMAKE_PROJECT_NAME})
-
-install(
-        FILES config/realShopField.xml
         DESTINATION share/${CMAKE_PROJECT_NAME}/config
         RENAME soccer-real.cfg)
 

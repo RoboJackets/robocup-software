@@ -19,7 +19,7 @@ public:
 
     enum State {
         Halt,           // Robots must not move
-        Stop,           // Robots must stay 500mm away from ball
+        Stop,           // Robots must stay 500mm away from ball + max speed of robots < 1.5 m/s
         Setup,          // Robots not on starting team must stay 500mm away from ball
         Ready,          // A robot on the starting team may kick the ball
         Playing,        // Normal play
@@ -27,7 +27,6 @@ public:
                         // anything.
     };
 
-    // Types of restarts
     enum Restart { None, Kickoff, Direct, Indirect, Penalty, Placement };
 
     [[nodiscard]] State state() const { return state_; }

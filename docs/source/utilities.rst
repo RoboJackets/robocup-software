@@ -58,11 +58,19 @@ Debugging C++ Code
 Setting up a debugger for our C++ side code is actually quite simple!
 In particular, we have had success using `LLDB <https://lldb.llvm.org/>`_,
 made by the same group that develops the clang compiler.
-As of summer 2022, the ubuntu-setup script installs clang-10 using a script
+As of winter 2022, the ubuntu-setup script installs clang-10 using a script
 which also includes lldb-10
 (so you should not need to install anything new for this).
 All you need to do is start soccer or sim in one terminal tab, and in another
-tab, run ``sudo lldb-10 -n name_of_particular_proc``.
+tab, ``ros2 run --prefix 'lldb-10 run' rj_robocup executable_name``.
+
+If that doesn't work for some reason, 
+another way is to run the executable without the prefix 
+(``ros2 run rj_robocup executable_name``). 
+Then attach to this executable by running
+``sudo lldb-10 -n name_of_particular_proc``.
+This method is not as good as the previously described one, 
+but I included it for completeness.
 
 How do you find this particular name?
 Well it depends on what file/node you wish to debug.
@@ -80,12 +88,6 @@ CS2110 and CS2200 will introduce you to gdb which is another debugger for
 C/C++; if you already know that,
 the commands are basically the same (the syntax is different in many places
 though).
-
-There is also another method which involves commenting out the node you want
-to run in the launch files and running it separately in a new terminal tab
-with a debugging prefix. This method is slower and not as consistent, so I
-won't explain it here. Check out ``util/debug-cpp.sh`` if you
-are curious, or if the first method I explained stops working.
 
 Continuous Integration
 --------------------------------------------------

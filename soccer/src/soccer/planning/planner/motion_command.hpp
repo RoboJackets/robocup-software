@@ -8,6 +8,7 @@
 #include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/collect_motion_command.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
+#include <rj_msgs/msg/goalie_idle_motion_command.hpp>
 #include <rj_msgs/msg/intercept_motion_command.hpp>
 #include <rj_msgs/msg/line_kick_motion_command.hpp>
 #include <rj_msgs/msg/linear_motion_instant.hpp>
@@ -43,15 +44,34 @@ struct TargetFacePoint {
     rj_geometry::Point face_point;
 };
 
-using AngleOverride =
-    std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
+using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
 /**
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
 struct PathTargetCommand {
-    LinearMotionInstant goal;
+    LinearMotionInstant goal{};
     AngleOverride angle_override = TargetFaceTangent{};
     bool ignore_ball = false;
+
+    bool operator==(const PathTargetCommand& ptc) {
+        bool pos_eq = goal.position == ptc.goal.position;
+        bool vel_eq = goal.velocity == ptc.goal.velocity;
+        bool angle_eq = false;
+        if (std::holds_alternative<TargetFaceTangent>(angle_override) &&
+            std::holds_alternative<TargetFaceTangent>(ptc.angle_override)) {
+            angle_eq = (&angle_override == &ptc.angle_override);
+        } else if (std::holds_alternative<TargetFaceAngle>(angle_override) &&
+                   std::holds_alternative<TargetFaceAngle>(ptc.angle_override)) {
+            angle_eq = (std::get<TargetFaceAngle>(angle_override).target) ==
+                       (std::get<TargetFaceAngle>(ptc.angle_override).target);
+        } else if (std::holds_alternative<TargetFacePoint>(angle_override) &&
+                   std::holds_alternative<TargetFacePoint>(ptc.angle_override)) {
+            angle_eq = (std::get<TargetFacePoint>(angle_override).face_point) ==
+                       (std::get<TargetFacePoint>(ptc.angle_override).face_point);
+        }
+        bool ball_eq = ignore_ball == ptc.ignore_ball;
+        return (pos_eq && vel_eq && angle_eq && ball_eq);
+    }
 };
 
 /**
@@ -81,10 +101,14 @@ struct InterceptCommand {
     rj_geometry::Point target;
 };
 
+/*
+ * Make the Goalie track the ball when not saving shots.
+ */
+struct GoalieIdleCommand {};
+
 using MotionCommand =
-    std::variant<EmptyCommand, PathTargetCommand, WorldVelCommand, PivotCommand,
-                 SettleCommand, CollectCommand, LineKickCommand,
-                 InterceptCommand>;
+    std::variant<EmptyCommand, PathTargetCommand, WorldVelCommand, PivotCommand, SettleCommand,
+                 CollectCommand, LineKickCommand, InterceptCommand, GoalieIdleCommand>;
 
 }  // namespace planning
 
@@ -211,6 +235,24 @@ struct RosConverter<planning::CollectCommand, rj_msgs::msg::CollectMotionCommand
 ASSOCIATE_CPP_ROS(planning::CollectCommand, rj_msgs::msg::CollectMotionCommand);
 
 template <>
+struct RosConverter<planning::GoalieIdleCommand, rj_msgs::msg::GoalieIdleMotionCommand> {
+    // clang-format is disagreeing with itself here, so I disabled it for this block
+    // clang-format off
+    static rj_msgs::msg::GoalieIdleMotionCommand to_ros(
+        [[maybe_unused]] const planning::GoalieIdleCommand& from) {
+        return rj_msgs::build<rj_msgs::msg::GoalieIdleMotionCommand>();
+    }
+
+    static planning::GoalieIdleCommand from_ros(
+        [[maybe_unused]] const rj_msgs::msg::GoalieIdleMotionCommand& from) {
+        return planning::GoalieIdleCommand{};
+    }
+    // clang-format on
+};
+
+ASSOCIATE_CPP_ROS(planning::GoalieIdleCommand, rj_msgs::msg::GoalieIdleMotionCommand);
+
+template <>
 struct RosConverter<planning::LineKickCommand, rj_msgs::msg::LineKickMotionCommand> {
     static rj_msgs::msg::LineKickMotionCommand to_ros([
         [maybe_unused]] const planning::LineKickCommand& from) {
@@ -245,6 +287,7 @@ ASSOCIATE_CPP_ROS(planning::InterceptCommand, rj_msgs::msg::InterceptMotionComma
 template <>
 struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
     static rj_msgs::msg::MotionCommand to_ros(const planning::MotionCommand& from) {
+        // TODO(Kevin): wtf is this
         rj_msgs::msg::MotionCommand result;
         if (const auto* empty = std::get_if<planning::EmptyCommand>(&from)) {
             result.empty_command.emplace_back(convert_to_ros(*empty));
@@ -262,6 +305,8 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
             result.line_kick_command.emplace_back(convert_to_ros(*line_kick));
         } else if (const auto* intercept = std::get_if<planning::InterceptCommand>(&from)) {
             result.intercept_command.emplace_back(convert_to_ros(*intercept));
+        } else if (const auto* goalie_idle = std::get_if<planning::GoalieIdleCommand>(&from)) {
+            result.goalie_idle_command.emplace_back(convert_to_ros(*goalie_idle));
         } else {
             throw std::runtime_error("Invalid variant of MotionCommand");
         }
@@ -286,6 +331,8 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
             result = convert_from_ros(from.line_kick_command.front());
         } else if (!from.intercept_command.empty()) {
             result = convert_from_ros(from.intercept_command.front());
+        } else if (!from.goalie_idle_command.empty()) {
+            result = convert_from_ros(from.goalie_idle_command.front());
         } else {
             throw std::runtime_error("Invalid variant of MotionCommand");
         }
