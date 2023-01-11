@@ -56,7 +56,7 @@ std::optional<RobotIntent> Goalie::send_motion_cmd(RobotIntent intent) {
         // TODO(Kevin): make intent hold a manip msg instead?
         intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 100.0;
+        intent.kick_speed = 4.0;
         intent.is_active = true;
 
         return intent;
