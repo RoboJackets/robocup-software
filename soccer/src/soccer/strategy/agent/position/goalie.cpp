@@ -53,7 +53,7 @@ std::optional<RobotIntent> Goalie::send_motion_cmd(RobotIntent intent) {
 
         // note: the way this is set up makes it impossible to
         // shoot on time without breakbeam
-        // TODO(Kevin): make intent hold a manip msg instead?
+        // TODO(Kevin): make intent hold a manip msg instead? to be cleaner?
         intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = 4.0;
