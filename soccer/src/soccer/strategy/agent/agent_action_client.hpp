@@ -27,8 +27,6 @@
 #include "communication/communication.hpp"
 #include "rj_msgs/msg/acknowledge.hpp"
 #include "rj_msgs/msg/agent_request.hpp"
-#include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
-#include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
 #include "rj_msgs/srv/agent_communication.hpp"
 
 namespace strategy {
