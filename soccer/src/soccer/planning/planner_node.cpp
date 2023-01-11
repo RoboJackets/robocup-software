@@ -8,6 +8,8 @@
 #include "instant.hpp"
 #include "planning/planner/collect_planner.hpp"
 #include "planning/planner/escape_obstacles_path_planner.hpp"
+#include "planning/planner/goalie_idle_planner.hpp"
+#include "planning/planner/intercept_planner.hpp"
 #include "planning/planner/line_kick_planner.hpp"
 #include "planning/planner/path_target_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
@@ -37,7 +39,7 @@ PlannerNode::PlannerNode()
 
     // set up PlannerForRobot objects
     robots_planners_.reserve(kNumShells);
-    for (int i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         auto planner =
             std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
         robots_planners_.emplace_back(std::move(planner));
@@ -150,6 +152,8 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
           fmt::format("planning_{}", robot_id)} {
+    planners_.push_back(std::make_shared<GoalieIdlePlanner>());
+    planners_.push_back(std::make_shared<InterceptPlanner>());
     planners_.push_back(std::make_shared<PathTargetPlanner>());
     planners_.push_back(std::make_shared<SettlePlanner>());
     planners_.push_back(std::make_shared<CollectPlanner>());
@@ -235,20 +239,21 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // make a copy instead of getting the actual shared_ptr to Trajectory
     /* std::array<std::optional<Trajectory>, kNumShells> planned_trajectories; */
 
-    /* for (int i = 0; i < kNumShells; i++) { */
-    /*     // TODO(Kevin): check that priority works (seems like */
-    /*     // robot_trajectories_ is passed on init, when no planning has occured */
-    /*     // yet) */
-    /*     const auto& [trajectory, priority] = robot_trajectories_->get(i); */
-    /*     if (i != robot_id_ && priority >= intent.priority) { */
-    /*         if (!trajectory) { */
-    /*             planned_trajectories[i] = std::nullopt; */
-    /*         } else { */
-    /*             planned_trajectories[i] = std::make_optional<const
-     * Trajectory>(*trajectory.get()); */
-    /*         } */
-    /*     } */
-    /* } */
+    for (size_t i = 0; i < kNumShells; i++) {
+        // TODO(Kevin): check that priority works (seems like
+        // robot_trajectories_ is passed on init, when no planning has occured
+        // yet)
+        const auto& [trajectory, priority] = robot_trajectories_->get(i);
+        if (i != robot_id_ && priority >= intent.priority) {
+            if (!trajectory) {
+                planned_trajectories[i] = std::nullopt;
+            } else {
+                planned_trajectories[i] = std::make_optional<const
+    Trajectory>(*trajectory.get());
+            }
+        }
+    }
+    */
 
     // TODO(Kyle): Send constraints from gameplay
     RobotConstraints constraints;

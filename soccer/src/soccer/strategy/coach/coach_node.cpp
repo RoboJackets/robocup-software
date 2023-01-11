@@ -23,7 +23,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     /* ack_array[msg->ID] = true; */
     
     // initialize all of the robot status subscriptions
-    for (int i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
             fmt::format("/radio/robot_status/robot_{}", i), 10,
             [this](const rj_msgs::msg::RobotStatus::SharedPtr msg) {
