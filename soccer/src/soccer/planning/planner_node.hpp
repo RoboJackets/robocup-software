@@ -131,7 +131,7 @@ public:
      *
      * Creates and publishes a Trajectory based on the given RobotIntent.
      */
-    void execute_trajectory(const RobotIntent& intent);
+    void execute_intent(const RobotIntent& intent);
 
     /*
      * @brief estimate the amount of time it would take for a robot to execute a robot intent

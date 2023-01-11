@@ -12,8 +12,8 @@ struct RobotIntent {
     int8_t robot_id = 0;
 
     using Msg = rj_msgs::msg::RobotIntent;
-    enum class ShootMode { KICK, CHIP };
-    enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
+    enum ShootMode { KICK, CHIP };
+    enum TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
 
     planning::MotionCommand motion_command;
     // useful for introspection
