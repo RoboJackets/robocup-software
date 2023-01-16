@@ -69,8 +69,9 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
         if (in.debug_drawer != nullptr) {
             QColor draw_color = Qt::red;
-            in.debug_drawer->draw_circle(rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
-                                              draw_color);
+            in.debug_drawer->draw_circle(
+                rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
+                draw_color);
         }
     }
 }
