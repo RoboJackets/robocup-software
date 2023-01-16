@@ -78,6 +78,9 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-bool InterceptPlanner::is_done() const { return false; }
+bool InterceptPlanner::is_done() const {
+    // TODO(Kevin): should return true if ball is slow + in mouth
+    return false;
+}
 
 }  // namespace planning

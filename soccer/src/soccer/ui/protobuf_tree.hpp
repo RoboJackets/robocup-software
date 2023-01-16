@@ -13,7 +13,7 @@ class LogFrame;
 }
 
 class ProtobufTree : public QTreeWidget {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     ProtobufTree(QWidget* parent = nullptr);

@@ -44,6 +44,12 @@ struct RobotIntent {
     }
 };
 
+/*
+ * @brief overload equality operators to allow RobotIntent==RobotIntent
+ */
+bool operator==(const RobotIntent& r1, const RobotIntent& r2);
+bool operator!=(const RobotIntent& r1, const RobotIntent& r2);
+
 namespace rj_convert {
 
 template <>

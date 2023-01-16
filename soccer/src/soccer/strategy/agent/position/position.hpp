@@ -28,6 +28,7 @@
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_response.hpp>
 
+// tell compiler this class exists, but no need to import the whole header
 class AgentActionClient;
 
 namespace strategy {
@@ -57,7 +58,11 @@ public:
     virtual communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request);
 
-    virtual rj_msgs::msg::RobotIntent get_task() = 0;
+    /*
+     * @brief return a RobotIntent to be sent to PlannerNode; nullopt means no
+     * new task requested
+     */
+    virtual std::optional<rj_msgs::msg::RobotIntent> get_task() = 0;
 
     // this allows AgentActionClient to change private/protected members of this class
     friend class AgentActionClient;

@@ -62,11 +62,16 @@ again:
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
 # fix this so defaults launch sim, with special cases for real
-run-soccer:
-	ros2 launch rj_robocup soccer.launch.py
+# run-soccer:
+# 	ros2 launch rj_robocup soccer.launch.py
 
-# run sim with default flags
+# run ER-Force's framework and our stack simultaneously (via bash script)
 run-sim:
+	./launch/framework.bash
+
+# run our stack with default flags
+# TODO: actually name our software stack something
+run-our-stack:
 	ros2 launch rj_robocup soccer.launch.py run_sim:=True
 
 # run sim with external referee (SSL Game Controller)
@@ -181,8 +186,8 @@ checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
 	@stylize.v1 --git_diffbase=$(DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
 
-CLANG_FORMAT_BINARY=clang-format-10
-CLANG_TIDY_BINARY=clang-tidy-10
+CLANG_FORMAT_BINARY=clang-format-12
+CLANG_TIDY_BINARY=clang-tidy-12
 COMPILE_COMMANDS_DIR=build-debug
 
 # circleci has 2 cores, but advertises 32
@@ -211,8 +216,9 @@ checkstyle-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
-# used in GH Actions - build-and-test
+# used in GH Actions - build-and-test/clang-tidy (code linter)
+# google-runtime-references warnings ignored (advice is outdated)
 checktidy-lines:
 	@echo "Removing GCC precompiled headers from compile_commands.json so that clang-tidy will work"
 	@sed -i 's/-include [^ ]*cmake_pch\.hxx//' $(COMPILE_COMMANDS_DIR)/compile_commands.json
-	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES)
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -checks=-google-runtime-references

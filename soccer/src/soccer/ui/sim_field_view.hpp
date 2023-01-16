@@ -12,7 +12,7 @@
 #include "field_view.hpp"
 
 class SimFieldView : public FieldView {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     SimFieldView(QWidget* parent);

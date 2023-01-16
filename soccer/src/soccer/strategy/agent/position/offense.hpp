@@ -25,7 +25,7 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
-    rj_msgs::msg::RobotIntent get_task() override;
+    std::optional<rj_msgs::msg::RobotIntent> get_task() override;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(

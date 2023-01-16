@@ -145,7 +145,7 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
     // find an approximate ETA at each waypoint based on trapezoidal motion.
 
     double total_path_length = 0.0;
-    for (int i = 0; i < length - 1; i++) {
+    for (size_t i = 0; i < length - 1; i++) {
         total_path_length += (points[i] - points[i + 1]).mag();
     }
 
@@ -183,7 +183,7 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
     size_t num_curves = control_.size();
 
     // First, find the curve to use.
-    int index = static_cast<int>(s * num_curves);
+    int index = static_cast<unsigned long>(s * num_curves);
 
     // This will only happen when s = 1 - in that case, we actually want to use
     // the last segment.
@@ -202,8 +202,8 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
 
     // Equations from
     // https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves.
-    double tb = t;
-    double te = 1 - t;
+    // double tb = t;
+    // double te = 1 - t;
     using std::pow;
     // p(t) = p0 (-t^3 + 3t^2 - 3t + 1) + 3 p1 (t^3 - 2t^2 + t) + 3 p2 (-t^3 + t^2) + p3 t^3
     // p'(t) = p0 (-3t^2 + 6t - 3) + 3 p1 (3t^2 - 4t + 1) + 3 p2 (-3t^2 + 2t) + 3 p3 (3 t^2)

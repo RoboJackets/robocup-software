@@ -54,14 +54,13 @@ AgentActionClient::AgentActionClient(int r_id)
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
-    WorldState world_state = rj_convert::convert_from_ros(*msg);
-    auto lock = std::lock_guard(world_state_mutex_);
-    last_world_state_ = std::move(world_state);
-
     if (current_position_ == nullptr) {
         return;
     }
 
+    WorldState world_state = rj_convert::convert_from_ros(*msg);
+    auto lock = std::lock_guard(world_state_mutex_);
+    last_world_state_ = std::move(world_state);
     current_position_->update_world_state(world_state);
 }
 
@@ -74,9 +73,7 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
-        // TODO: change this once coach node merged
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
@@ -86,10 +83,26 @@ void AgentActionClient::get_task() {
         }
     }
 
-    auto task = current_position_->get_task();
-    if (task != last_task_) {
-        last_task_ = task;
-        send_new_goal();
+    auto optional_task = current_position_->get_task();
+    if (optional_task.has_value()) {
+        rj_msgs::msg::RobotIntent task = optional_task.value();
+
+        // note that this comparison uses the ROS built-in msg type
+        // so any custom operator== overloads written don't apply
+        // TODO(Kevin): fix this by making Positions return RobotIntent structs, not msgs
+        if (task != last_task_) {
+            /* if (robot_id_ == 0) { */
+            /*     SPDLOG_INFO("sending new task {}", task.motion_command.name); */
+            /* } */
+            last_task_ = task;
+            send_new_goal();
+        } else {
+            /* if (robot_id_ == 0) { */
+            /*     SPDLOG_INFO("NOT sending new task {}", task.motion_command.name); */
+            /* } */
+        }
+    } else {
+        /* SPDLOG_INFO("no new task"); */
     }
 }
 

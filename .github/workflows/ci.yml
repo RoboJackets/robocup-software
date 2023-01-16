@@ -151,6 +151,7 @@ jobs:
           apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
 
+      # check formatting style (C++)
       - name: Run clang-format
         run: |
           echo "::add-matcher::ci/clang-format.json"

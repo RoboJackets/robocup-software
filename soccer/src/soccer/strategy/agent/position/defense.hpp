@@ -25,14 +25,13 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    rj_msgs::msg::RobotIntent get_task() override;
-
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
 private:
     void set_test_multicast_request();
+    std::optional<rj_msgs::msg::RobotIntent> get_task() override;
     int move_ct_ = 0;
 };
 

@@ -8,7 +8,11 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
+#include <rj_msgs/msg/goalie_idle_motion_command.hpp>
+#include <rj_msgs/msg/intercept_motion_command.hpp>
+#include <rj_msgs/msg/path_target_motion_command.hpp>
 
+#include "planning/planner/intercept_planner.hpp"
 #include "position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -17,7 +21,7 @@
 namespace strategy {
 
 /*
- * The Defense position handles goalie behavior: blocking shots, passing to teammates, and clearing
+ * The Goalie position handles goalie behavior: blocking shots, passing to teammates, and clearing
  * the ball.
  */
 class Goalie : public Position {
@@ -25,30 +29,20 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
-    rj_msgs::msg::RobotIntent get_task() override;
+    std::optional<rj_msgs::msg::RobotIntent> get_task() override;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
 private:
-    // temp to move back and forth
-    int move_ct = 0;
-
-    void set_position_request();
-    void set_test_request();
+    // temp
+    int send_idle_ct_ = 0;
 
     /*
-     * @return Point for Goalie to block a shot. Calls get_idle_pt() if ball is
-     * slow or shot will miss the goal.
+     * @return true if ball is heading towards goal at some minimum speed threshold
      */
-    rj_geometry::Point get_block_pt(WorldState* world_state) const;
-
-    /*
-     * @return Point for Goalie to stand in when no shot is coming. Expects
-     * ball to be slow.
-     */
-    rj_geometry::Point get_idle_pt(WorldState* world_state) const;
+    bool shot_on_goal_detected(WorldState* world_state);
 };
 
 }  // namespace strategy

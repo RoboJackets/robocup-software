@@ -41,6 +41,7 @@ rosidl_generate_interfaces(
 
   msg/LinearMotionInstant.msg
   msg/EmptyMotionCommand.msg
+  msg/GoalieIdleMotionCommand.msg
   msg/PathTargetMotionCommand.msg
   msg/WorldVelMotionCommand.msg
   msg/PivotMotionCommand.msg
@@ -80,6 +81,7 @@ rosidl_generate_interfaces(
   # Services
   srv/AgentCommunication.srv
   srv/ListJoysticks.srv
+  srv/PlanHypotheticalPath.srv
   srv/QuickCommands.srv
   srv/QuickRestart.srv
   srv/SetFieldDimensions.srv

@@ -141,10 +141,11 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
         SPDLOG_ERROR("exception caught !!!");
     }
 
+    // if there was a collision, send the timestamp back via out_hit_time and
+    // return true (else return false and leave out_hit_time untouched)
     if (maybe_hit_time.has_value() && out_hit_time != nullptr) {
         *out_hit_time = maybe_hit_time.value();
     }
-
     return maybe_hit_time.has_value();
 }
 

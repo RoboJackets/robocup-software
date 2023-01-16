@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-class Context;
+struct Context;
 
 class DebugDrawer {
 public:
