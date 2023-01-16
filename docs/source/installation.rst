@@ -1,18 +1,18 @@
-Getting Started
-===============
+Installation
+======================================
 
 .. note:: 
    If you are completely unfamiliar with the command line or basic git
    usage, see the Tutorial page before proceeding. 
 
-Installation
-------------
-
 We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
-are on an Ubuntu 20.04 machine before continuing. Alternatively for
-Windows users, using WSL2 with Ubuntu 20.04 will work. The steps to set this
-up can be found `here <https://ubuntu
-.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_.
+are on an Ubuntu 20.04 machine before continuing. For Windows users, using WSL2
+with Ubuntu 20.04 will work. The steps to set this up can be found `here
+<https://ubuntu
+.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_. For Mac
+users, Ubuntu 20.04 can be emulated in a virtual machine. For M1 Macs
+specifically, using the arm64 version of Ubuntu 20.04 with the application UTM
+has worked in the past.
 
 First, clone the repository from GitHub:
 
@@ -76,7 +76,8 @@ more information).
 
 .. code-block:: bash
 
-    git pull git checkout ros2
+    git pull 
+    git checkout ros2
 
 Then, source the ROS setup file. This allows your shell to use ROS commands.
 
@@ -143,10 +144,15 @@ terminal, you can launch sim with:
 
 .. code-block:: bash
 
-   . ./source.bash make run-sim
+   . ./source.bash 
+   make run-sim
 
 ``source.bash`` is an alias for the two source commands you saw above, and
-``make run-sim`` is an alias for ``ros2 launch rj_robocup sim.launch.py``.
+``make run-sim`` will launch both ER-Force's Framework (the physics simulator)
+and our stack (``ros2 launch rj_robocup sim.launch.py``). 
+
+To stop this process (like any other) press CTRL-C in the command line. You may
+have to press CTRL-C twice.
 
 Since Python is not compiled, if you're exclusively working on Python files, and
 staying in one terminal, it's likely that you'll mostly only need:
@@ -162,7 +168,8 @@ machine, though, you can build again more quickly with:
 
 .. code-block:: bash
 
-   make again . ./source.bash
+   make again 
+   . ./source.bash
 
 The ``source.bash`` line is necessary to source the file in ``install/``, which
 is refreshed on each build. (**Note:** this does not build any CMake-related
@@ -173,9 +180,10 @@ details, but in short:
 
 .. code-block:: bash
 
-   make all         # builds with full debugging symbols make debug       #
-   alias for make all make all-release # builds with 0 debugging symbols make
-   perf        # builds with some debugging symbols; preferred method
+   make all         # builds with full debugging symbols 
+   make debug       # alias for make all 
+   make all-release # builds with 0 debugging symbols 
+   make perf        # builds with some debugging symbols; preferred method
 
 TODO(Kevin): add description of running on field comp (move that md file over
 too)

@@ -3,10 +3,9 @@
 #include "planner.hpp"
 
 namespace planning {
-class PivotPathPlanner : public PlannerForCommandType<PivotCommand> {
+class PivotPathPlanner : public PlannerForCommandType<PivotMotionCommand> {
 public:
-    PivotPathPlanner()
-        : PlannerForCommandType<PivotCommand>("PivotPathPlanner") {}
+    PivotPathPlanner() : PlannerForCommandType<PivotMotionCommand>("PivotPathPlanner") {}
     ~PivotPathPlanner() override = default;
 
     PivotPathPlanner(PivotPathPlanner&&) noexcept = default;

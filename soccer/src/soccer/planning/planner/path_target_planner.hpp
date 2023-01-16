@@ -11,7 +11,7 @@
 
 namespace planning {
 
-class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
+class PathTargetPlanner : public PlannerForCommandType<PathTargetMotionCommand> {
 public:
     PathTargetPlanner() : PlannerForCommandType("PathTargetPlanner") {}
     ~PathTargetPlanner() override = default;
@@ -26,10 +26,16 @@ public:
 
     [[nodiscard]] bool is_done() const override;
 
-    double draw_radius = kRobotRadius;
-    QColor draw_color = Qt::black;
-
 private:
+    /*
+     * Get the right AngleFunction (for control) from the
+     * PTMC-specific PathTargetFaceOption options listed in
+     * motion_command.hpp.
+     *
+     * @param PlanRequest containing a PTMC
+     * @return AngleFunction that corresponds to input
+     * PathTargetFaceOption in given PlanRequest
+     */
     [[nodiscard]] static AngleFunction get_angle_function(
         const PlanRequest& request);
 

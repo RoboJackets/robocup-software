@@ -14,6 +14,7 @@ set(ROBOCUP_LIB_SRC
     battery_profile.cpp
     global_params.cpp
     logger.cpp
+    robot_intent.cpp
     control/manipulator_control.cpp
     control/motion_control.cpp
     control/motion_control_node.cpp
@@ -31,6 +32,7 @@ set(ROBOCUP_LIB_SRC
     planning/primitives/rrt_util.cpp
     planning/primitives/trapezoidal_motion.cpp
     planning/primitives/velocity_profiling.cpp
+    planning/planner/motion_command.cpp
     planning/planner/collect_planner.cpp
     planning/planner/escape_obstacles_path_planner.cpp
     planning/planner/intercept_planner.cpp
@@ -39,14 +41,17 @@ set(ROBOCUP_LIB_SRC
     planning/planner/pivot_path_planner.cpp
     planning/planner/plan_request.cpp
     planning/planner/settle_planner.cpp
+    planning/planner/goalie_idle_planner.cpp
     planning/planner_node.cpp
     planning/trajectory.cpp
     planning/trajectory_utils.cpp
+    planning/trajectory_collection.cpp
     planning/planning_params.cpp
     processor.cpp
     radio/network_radio.cpp
     radio/packet_convert.cpp
     radio/sim_radio.cpp
+    strategy/coach/coach_node.cpp
     radio/radio.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
@@ -68,6 +73,11 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/referee_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
+    strategy/agent/agent_action_client.cpp
+    strategy/agent/position/position.cpp
+    strategy/agent/position/goalie.cpp
+    strategy/agent/position/offense.cpp
+    strategy/agent/position/defense.cpp
         )
 
 set(SOCCER_TEST_SRC
@@ -106,11 +116,15 @@ set(CONTROL_NODE_SRC control/control_node_main.cpp)
 
 set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
+set(COACH_NODE_SRC strategy/coach/coach_node_main.cpp)
+
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
 set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
+
+set(AGENT_ACTION_CLIENT_NODE_SRC strategy/agent/agent_action_client_main.cpp)
 
 # ======================================================================
 # Add sources
@@ -143,6 +157,9 @@ target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
 # ---- sim_radio_node ----
 target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
+# ---- coach_node ----
+target_sources(coach_node PRIVATE ${COACH_NODE_SRC})
+
 # ---- sim_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
 
@@ -151,6 +168,9 @@ target_sources(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_SRC})
 
 # ---- global_param_server_node ----
 target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_SRC})
+
+# ---- agent_action_client_node ----
+target_sources(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})

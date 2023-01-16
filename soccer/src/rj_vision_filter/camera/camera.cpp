@@ -159,7 +159,7 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
     // two individual kalman filters intead of a single one
     // with an update.
     // A slight delay in will most likely be seen in these cases
-    for (int i = 0; i < ball_list.size(); i++) {
+    for (size_t i = 0; i < ball_list.size(); i++) {
         const CameraBall& camera_ball = ball_list.at(i);
         bool was_used = used_camera_ball.at(i);
 
@@ -191,7 +191,7 @@ void Camera::update_robots(RJ::Time calc_time,
                            const std::vector<std::list<CameraRobot>>& blue_robot_list,
                            const std::vector<WorldRobot>& previous_yellow_world_robots,
                            const std::vector<WorldRobot>& previous_blue_world_robots) {
-    for (int i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         const std::list<CameraRobot>& single_yellow_robot_list = yellow_robot_list.at(i);
         const std::list<CameraRobot>& single_blue_robot_list = blue_robot_list.at(i);
 
@@ -302,7 +302,8 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     for (const CameraRobot& camera_robot : single_robot_list) {
         bool was_used = used_camera_robot.at(camera_robot_idx);
 
-        if (!was_used && single_kalman_robot_list.size() < PARAM_max_num_kalman_robots) {
+        if (!was_used &&
+            single_kalman_robot_list.size() < (unsigned long)PARAM_max_num_kalman_robots) {
             single_kalman_robot_list.emplace_back(camera_id_, calc_time, camera_robot,
                                                   previous_world_robot);
         }

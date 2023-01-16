@@ -179,7 +179,7 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
     log_frame->set_command_time(RJ::timestamp());
 
     // Our robots
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         const auto& state = context->world_state.our_robots.at(shell);
         const auto& status = context->robot_status.at(shell);
         const auto& setpoint = context->motion_setpoints.at(shell);
@@ -193,7 +193,7 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
     }
 
     // Radio RX/TX for each robot
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         const auto& status = context->robot_status.at(shell);
         if (RJ::now() - status.timestamp > RJ::Seconds(0.5)) {
             continue;
@@ -209,7 +209,7 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
     }
 
     // Opponent robots
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         const auto& state = context->world_state.their_robots.at(shell);
         if (!state.visible) {
             continue;

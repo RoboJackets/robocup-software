@@ -187,7 +187,7 @@ Trajectory::Cursor Trajectory::cursor(RJ::Time start_time) const {
     return Cursor{*this, start_time};
 }
 
-Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_.begin()}; }
+Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_begin()}; }
 
 void Trajectory::draw(DebugDrawer* drawer,
                       std::optional<rj_geometry::Point> alt_text_position) const {
@@ -342,6 +342,12 @@ void Trajectory::Cursor::next_knot() {
     } else {
         time_ = iterator_->stamp;
     }
+}
+
+bool operator==(const Trajectory& a, const Trajectory& b) {
+    // Don't check debug text, as that doesn't get converted over ROS
+    return a.instants() == b.instants() && a.time_created() == b.time_created() &&
+           a.angles_valid() == b.angles_valid();
 }
 
 }  // namespace planning
