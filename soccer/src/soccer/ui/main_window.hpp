@@ -33,7 +33,7 @@ enum Side { Yellow, Blue };
  * main gui thread class
  */
 class MainWindow : public QMainWindow {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     MainWindow(Processor* processor, bool has_external_ref, QWidget* parent = nullptr);

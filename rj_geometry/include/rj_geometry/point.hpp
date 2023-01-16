@@ -7,6 +7,7 @@
 #include <Eigen/Dense>
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_geometry/util.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
@@ -173,11 +174,9 @@ public:
 
     /**
      * compares two points to see if both x and y are the same
-     * adds the == operator
+     * with the == operator and approx. double equality
      */
-    [[nodiscard]] bool operator==(Point other) const {
-        return x() == other.x() && y() == other.y();
-    }
+    [[nodiscard]] bool operator==(const Point& other) const { return this->nearly_equals(other); }
 
     /**
      * this is the negation of operator operator !=
@@ -384,7 +383,7 @@ public:
      * @tolerance maximum allowed difference in x/y coord to be considered equal
      * @return true if x/y of this Point are both less than tolerance away from other
      */
-    [[nodiscard]] bool nearly_equals(Point other, double tolerance = 1e-4) const {
+    [[nodiscard]] bool nearly_equals(const Point& other, double tolerance = 1e-4) const {
         return nearly_equal(static_cast<float>(x()), static_cast<float>(other.x()), tolerance) &&
                nearly_equal(static_cast<float>(y()), static_cast<float>(other.y()), tolerance);
     }
