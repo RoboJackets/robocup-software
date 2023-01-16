@@ -19,13 +19,6 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
-#include "rj_msgs/msg/agent_request.hpp"
-#include "rj_msgs/msg/agent_response.hpp"
-#include "rj_msgs/msg/agent_to_pos_comm_request.hpp"
-#include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
-#include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
-#include "rj_msgs/msg/pos_to_agent_comm_response.hpp"
-#include "rj_msgs/srv/AgentCommunication.srv"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
@@ -36,8 +29,6 @@
 #include "rj_msgs/srv/agent_communication.hpp"
 #include "rj_msgs/msg/agent_request.hpp"
 #include "rj_msgs/msg/agent_request.hpp"
-#include "rj_msgs/msg/agent_to_pos_comm_response.hpp"
-#include "rj_msgs/msg/pos_to_agent_comm_request.hpp"
 #include "rj_msgs/msg/acknowledge.hpp"
 
 namespace strategy {
