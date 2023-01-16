@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
@@ -15,8 +16,6 @@ from launch.actions import (
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
-
-import sys
 
 # this is the only way to pass in the config file to be used in generate_launch_description()
 # https://answers.ros.org/question/376816/how-to-pass-command-line-arguments-to-a-launch-file/
@@ -81,6 +80,15 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression(["not ", run_sim])),
         package="rj_robocup",
         executable="network_radio_node",
+        output="screen",
+        parameters=[config],
+        on_exit=Shutdown(),
+    )
+
+    soccer_mom = Node(
+        condition=IfCondition(PythonExpression([run_sim])),
+        package="rj_robocup",
+        executable="soccer_mom_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
@@ -176,6 +184,7 @@ def generate_launch_description():
             planner,
             vision_receiver,
             vision_filter,
+            soccer_mom,
             # nodes below this line are XOR based on the header launch arg
             DeclareLaunchArgument("use_sim_radio", default_value="True"),
             sim_radio,

@@ -48,6 +48,7 @@ set(ROBOCUP_LIB_SRC
     radio/packet_convert.cpp
     radio/sim_radio.cpp
     radio/radio.cpp
+    soccer_mom/soccer_mom_node.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
     referee/internal_referee.cpp
@@ -106,6 +107,8 @@ set(CONTROL_NODE_SRC control/control_node_main.cpp)
 
 set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
+set(SOCCER_MOM_NODE_SRC soccer_mom/soccer_mom_node_main.cpp)
+
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
 set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
@@ -139,6 +142,9 @@ target_sources(planner_node PRIVATE ${PLANNER_NODE_SRC})
 
 # ---- control_node ----
 target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
+
+# --- soccer_mom node ----
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})

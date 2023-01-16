@@ -5,9 +5,9 @@ import stp
 import stp.rc
 import stp.role
 import stp.role.cost
-from rj_msgs.msg import RobotIntent
 
-from rj_gameplay.tactic import goalie_tactic, nmark_tactic, wall_tactic
+from rj_gameplay.tactic import goalie_tactic, nmark_tactic, wall_tactic, runner_tactic
+from rj_msgs.msg import RobotIntent
 
 
 class State(Enum):
@@ -34,6 +34,8 @@ class Defense(stp.play.Play):
 
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
+            self.prioritized_tactics.append(runner_tactic.RunnerTactic(world_state, 1))
+
             num_wallers = min(4, len(world_state.our_visible_robots) - 1)
             if num_wallers > 1:
                 self.prioritized_tactics.append(

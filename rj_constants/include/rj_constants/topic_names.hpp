@@ -38,6 +38,10 @@ constexpr auto kTeamColorPub = "referee/team_color";
 constexpr auto kQuickCommandsSrv = "referee/quick_commands";
 }  // namespace referee::topics
 
+namespace tutorial::topics {
+constexpr auto kTeamFruitPub = "soccer_mom/team_fruit";
+}
+
 namespace vision_receiver::topics {
 constexpr auto kRawProtobufPub = "vision_receiver/raw_protobuf";
 constexpr auto kDetectionFramePub = "vision_receiver/detection_frame";
