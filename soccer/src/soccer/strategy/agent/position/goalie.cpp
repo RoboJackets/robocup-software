@@ -3,7 +3,10 @@
 namespace strategy {
 
 // TODO(Kevin): lock Goalie id to id given by the ref
-Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
+Goalie::Goalie(int r_id) : Position(r_id) { 
+    position_name_ = "Goalie";
+    set_position_request();
+}
 
 std::optional<rj_msgs::msg::RobotIntent> Goalie::get_task() {
     // init an intent with our robot id
