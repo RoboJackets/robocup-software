@@ -9,7 +9,7 @@
 namespace planning {
 
 Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
-    InterceptCommand command = std::get<InterceptCommand>(plan_request.motion_command);
+    InterceptMotionCommand command = std::get<InterceptMotionCommand>(plan_request.motion_command);
 
     // Start state for the specified robot
     RobotInstant start_instant = plan_request.start;
@@ -78,6 +78,9 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-bool InterceptPlanner::is_done() const { return false; }
+bool InterceptPlanner::is_done() const {
+    // TODO(Kevin): should return true if ball is slow + in mouth
+    return false;
+}
 
 }  // namespace planning

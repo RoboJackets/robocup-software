@@ -1,5 +1,8 @@
 Tutorial
-========
+=============
+
+**Section 3 on rj_gameplay and Python is outdated as of 12/28/2022.**
+(The other sections still apply.)
 
 This page is meant to teach new RoboCup Software members the basics of what
 they'll need to contribute. It will introduce the Robot Operating System (ROS),
@@ -84,7 +87,7 @@ Some tips about learning how to use commands:
 1. Installation
 ---------------
 
-See "Getting Started". That page will assume you have the Command-Line Basics
+See "Installation". That page will assume you have the Command-Line Basics
 from above, as well as a working knowledge of Git (which you can get either
 `online <https://rogerdudler.github.io/git-guide/>`_ or from the "Contributing"
 page).

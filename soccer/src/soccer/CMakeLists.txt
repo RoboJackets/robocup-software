@@ -14,6 +14,7 @@ set(ROBOCUP_LIB_SRC
     battery_profile.cpp
     global_params.cpp
     logger.cpp
+    robot_intent.cpp
     control/manipulator_control.cpp
     control/motion_control.cpp
     control/motion_control_node.cpp
@@ -31,6 +32,7 @@ set(ROBOCUP_LIB_SRC
     planning/primitives/rrt_util.cpp
     planning/primitives/trapezoidal_motion.cpp
     planning/primitives/velocity_profiling.cpp
+    planning/planner/motion_command.cpp
     planning/planner/collect_planner.cpp
     planning/planner/escape_obstacles_path_planner.cpp
     planning/planner/intercept_planner.cpp
@@ -39,6 +41,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner/pivot_path_planner.cpp
     planning/planner/plan_request.cpp
     planning/planner/settle_planner.cpp
+    planning/planner/goalie_idle_planner.cpp
     planning/planner_node.cpp
     planning/trajectory.cpp
     planning/trajectory_utils.cpp

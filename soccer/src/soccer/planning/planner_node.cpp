@@ -8,6 +8,8 @@
 #include "instant.hpp"
 #include "planning/planner/collect_planner.hpp"
 #include "planning/planner/escape_obstacles_path_planner.hpp"
+#include "planning/planner/goalie_idle_planner.hpp"
+#include "planning/planner/intercept_planner.hpp"
 #include "planning/planner/line_kick_planner.hpp"
 #include "planning/planner/path_target_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
@@ -150,6 +152,8 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
           fmt::format("planning_{}", robot_id)} {
+    planners_.push_back(std::make_shared<GoalieIdlePlanner>());
+    planners_.push_back(std::make_shared<InterceptPlanner>());
     planners_.push_back(std::make_shared<PathTargetPlanner>());
     planners_.push_back(std::make_shared<SettlePlanner>());
     planners_.push_back(std::make_shared<CollectPlanner>());
@@ -310,11 +314,15 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
         trajectory = Trajectory{{request.start}};
         trajectory.set_debug_text("Error: No Valid Planners");
     } else {
+        // draw robot's desired path
         std::vector<rj_geometry::Point> path;
         std::transform(trajectory.instants().begin(), trajectory.instants().end(),
                        std::back_inserter(path),
                        [](const auto& instant) { return instant.position(); });
         debug_draw_.draw_path(path);
+
+        // draw robot's desired endpoint
+        debug_draw_.draw_circle(rj_geometry::Circle(path.back(), kRobotRadius), Qt::black);
     }
     debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(255, 0, 0, 30));
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));

@@ -161,6 +161,15 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         Pose pose{points[n], 0};
         Twist twist{derivs1[n].normalized(speed[n]), 0};
 
+        // TODO (someone): Make sure destination points sent to planner are within the field radius
+        // A bug exists where a point incredibly far from the field is targetted
+        // as the next location for the robot.
+        // In this case it will take the robot an incredibly long time to get there
+        // and the trajectory after will have the same destination time for some reason.
+        if (interval_time > 1e15) {
+            continue;
+        }
+
         // Add point n in
         trajectory.append_instant(RobotInstant{pose, twist, current_time});
     }

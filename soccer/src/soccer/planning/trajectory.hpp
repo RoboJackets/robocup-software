@@ -447,6 +447,8 @@ private:
     bool has_angle_profile_{false};
 };
 
+bool operator==(const Trajectory& a, const Trajectory& b);
+
 }  // namespace planning
 
 namespace rj_convert {
