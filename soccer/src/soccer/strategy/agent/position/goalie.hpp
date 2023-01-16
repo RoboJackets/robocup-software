@@ -77,6 +77,9 @@ private:
 
     // current state of Goalie (state machine)
     State latest_state_ = IDLING;
+    void set_position_request();
+
+    void set_test_request();
 };
 
 }  // namespace strategy
