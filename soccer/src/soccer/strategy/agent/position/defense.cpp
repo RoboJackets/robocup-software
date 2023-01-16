@@ -4,7 +4,16 @@ namespace strategy {
 
 Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
 
-std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
+std::optional<rj_msgs::msg::RobotIntent> Defense::get_task() {
+    // init an intent with our robot id
+    rj_msgs::msg::RobotIntent intent;
+    intent.robot_id = robot_id_;
+
+    // if world_state invalid, return empty_intent
+    if (!assert_world_state_valid()) {
+        return get_empty_intent();
+    }
+
     if (check_is_done()) {
         // toggle move pts
         move_ct_++;
@@ -14,24 +23,20 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     WorldState* world_state = this->world_state();
 
     // oscillate along horizontal line (temp)
+    auto ptmc = rj_msgs::msg::PathTargetMotionCommand{};
     double x = -3.0;
     if (move_ct_ % 2 == 1) {
         x = 3.0;
     }
-    rj_geometry::Point target_pt{x, 3.0};
+    rj_geometry::Point pt{x, 3.0};
+    ptmc.target.position = rj_convert::convert_to_ros(pt);
 
-    // stop at end of path
-    rj_geometry::Point target_vel{0.0, 0.0};
+    rj_geometry::Point ball_pos = world_state->ball.position;
+    auto face_pt = ball_pos;
+    ptmc.override_face_point = {rj_convert::convert_to_ros(face_pt)};
+    ptmc.ignore_ball = false;
+    intent.motion_command.path_target_command = {ptmc};
 
-    // face ball
-    planning::PathTargetFaceOption face_option = planning::FaceBall{};
-
-    // avoid ball
-    bool ignore_ball = false;
-
-    planning::LinearMotionInstant goal{target_pt, target_vel};
-    intent.motion_command = planning::PathTargetMotionCommand{goal, face_option, ignore_ball};
-    intent.motion_command_name = "path_target";
     return intent;
 }
 
