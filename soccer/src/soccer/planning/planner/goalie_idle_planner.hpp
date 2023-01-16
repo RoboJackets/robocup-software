@@ -17,9 +17,9 @@ namespace planning {
  * @brief This planner gives the goalie a way to track the ball when it's not
  * otherwise occupied.
  */
-class GoalieIdlePlanner : public PlannerForCommandType<GoalieIdleCommand> {
+class GoalieIdlePlanner : public PlannerForCommandType<GoalieIdleMotionCommand> {
 public:
-    GoalieIdlePlanner() : PlannerForCommandType<GoalieIdleCommand>("goalie_idle") {}
+    GoalieIdlePlanner() : PlannerForCommandType<GoalieIdleMotionCommand>("goalie_idle") {}
 
     /*
      * From Planner superclass (see planner.hpp).

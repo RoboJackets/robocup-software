@@ -68,24 +68,15 @@ void AgentActionClient::get_task() {
 
     auto optional_task = current_position_->get_task();
     if (optional_task.has_value()) {
-        rj_msgs::msg::RobotIntent task = optional_task.value();
+        RobotIntent task = optional_task.value();
 
-        // note that this comparison uses the ROS built-in msg type
-        // so any custom operator== overloads written don't apply
-        // TODO(Kevin): fix this by making Positions return RobotIntent structs, not msgs
+        // note that because these are our RobotIntent structs, this comparison
+        // uses our custom struct overloads
         if (task != last_task_) {
-            /* if (robot_id_ == 0) { */
-            /*     SPDLOG_INFO("sending new task {}", task.motion_command.name); */
-            /* } */
+            SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
             last_task_ = task;
             send_new_goal();
-        } else {
-            /* if (robot_id_ == 0) { */
-            /*     SPDLOG_INFO("NOT sending new task {}", task.motion_command.name); */
-            /* } */
         }
-    } else {
-        /* SPDLOG_INFO("no new task"); */
     }
 }
 
@@ -123,7 +114,8 @@ void AgentActionClient::send_new_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = last_task_;
+    // must convert to ROS msg form in order to be sent across ROS nodes
+    goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback =
@@ -138,21 +130,21 @@ void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
     auto goal_handle = future.get();
     if (!goal_handle) {
-        current_position_->goal_canceled_ = true;
+        current_position_->set_goal_canceled();
     }
 }
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    current_position_->time_left_ = time_left;
+    current_position_->set_time_left(time_left);
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
-            current_position_->is_done_ = true;
+            current_position_->set_is_done();
             break;
         case rclcpp_action::ResultCode::ABORTED:
             return;

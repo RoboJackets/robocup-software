@@ -9,7 +9,7 @@
 namespace planning {
 
 Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
-    InterceptCommand command = std::get<InterceptCommand>(plan_request.motion_command);
+    InterceptMotionCommand command = std::get<InterceptMotionCommand>(plan_request.motion_command);
 
     // Start state for the specified robot
     RobotInstant start_instant = plan_request.start;

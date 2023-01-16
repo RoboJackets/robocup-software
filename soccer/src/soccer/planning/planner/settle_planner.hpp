@@ -12,7 +12,7 @@ namespace planning {
 /**
  * @brief Planner which tries to move around the ball to intercept it
  */
-class SettlePlanner : public PlannerForCommandType<SettleCommand> {
+class SettlePlanner : public PlannerForCommandType<SettleMotionCommand> {
 public:
     enum class SettlePlannerStates {
         // Moves to the ball path in front of it

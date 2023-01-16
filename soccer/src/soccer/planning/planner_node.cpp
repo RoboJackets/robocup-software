@@ -310,11 +310,15 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
         trajectory = Trajectory{{request.start}};
         trajectory.set_debug_text("Error: No Valid Planners");
     } else {
+        // draw robot's desired path
         std::vector<rj_geometry::Point> path;
         std::transform(trajectory.instants().begin(), trajectory.instants().end(),
                        std::back_inserter(path),
                        [](const auto& instant) { return instant.position(); });
         debug_draw_.draw_path(path);
+
+        // draw robot's desired endpoint
+        debug_draw_.draw_circle(rj_geometry::Circle(path.back(), kRobotRadius), Qt::black);
     }
     debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(255, 0, 0, 30));
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));

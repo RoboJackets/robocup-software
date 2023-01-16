@@ -28,11 +28,11 @@ adblocker to support their free documentation hosting.
 
    self
    tutorial.rst
-   getting_started.rst
+   installation.rst
    our_stack.rst
-   faq.rst
+   troubleshooting.rst
    contributing.rst
-   utilities.rst
+   faq.rst
    fieldcomp_operation.rst
    meta_docs.rst
 

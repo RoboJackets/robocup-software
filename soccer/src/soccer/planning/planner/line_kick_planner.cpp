@@ -18,7 +18,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
 
     const float ball_avoid_distance = 0.05;
 
-    const auto& command = std::get<LineKickCommand>(plan_request.motion_command);
+    const auto& command = std::get<LineKickMotionCommand>(plan_request.motion_command);
 
     if (plan_request.virtual_obstacles.hit(plan_request.start.position())) {
         prev_path_ = Trajectory{};

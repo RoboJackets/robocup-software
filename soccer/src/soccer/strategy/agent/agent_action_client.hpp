@@ -14,9 +14,11 @@
 #include <rj_msgs/msg/position.hpp>
 #include <rj_utils/logging.hpp>
 
+#include "planning/planner/motion_command.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "robot_intent.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
@@ -72,7 +74,9 @@ private:
     void get_task();
     rclcpp::TimerBase::SharedPtr get_task_timer_;
     void update_position(const rj_msgs::msg::Position::SharedPtr& msg);
-    rj_msgs::msg::RobotIntent last_task_;
+    // note that this is our RobotIntent struct (robot_intent.hpp), not a
+    // pre-generated ROS msg type
+    RobotIntent last_task_;
 
     // const because should never be changed, but initializer list will allow
     // us to set this once initially

@@ -32,6 +32,7 @@ set(ROBOCUP_LIB_SRC
     planning/primitives/rrt_util.cpp
     planning/primitives/trapezoidal_motion.cpp
     planning/primitives/velocity_profiling.cpp
+    planning/planner/motion_command.cpp
     planning/planner/collect_planner.cpp
     planning/planner/escape_obstacles_path_planner.cpp
     planning/planner/intercept_planner.cpp
