@@ -2,16 +2,11 @@
 
 namespace strategy {
 
-<<<<<<< HEAD
-// TODO(Kevin): lock Goalie id to id given by the ref
-Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
-=======
 // TODO: lock Goalie id to id given by the ref
 Goalie::Goalie(int r_id) : Position(r_id) {
     position_name_ = "Goalie";
     set_position_request();
 }
->>>>>>> 510d044d79... basic communication complete, next is testing
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
