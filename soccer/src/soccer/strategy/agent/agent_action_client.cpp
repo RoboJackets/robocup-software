@@ -41,7 +41,7 @@ AgentActionClient::AgentActionClient(int r_id)
             create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
 
-    // TODO: make ROS param for this
+    // TODO(Kevin): make ROS param for this
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
@@ -53,14 +53,13 @@ AgentActionClient::AgentActionClient(int r_id)
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
-    WorldState world_state = rj_convert::convert_from_ros(*msg);
-    auto lock = std::lock_guard(world_state_mutex_);
-    last_world_state_ = std::move(world_state);
-
     if (current_position_ == nullptr) {
         return;
     }
 
+    WorldState world_state = rj_convert::convert_from_ros(*msg);
+    auto lock = std::lock_guard(world_state_mutex_);
+    last_world_state_ = std::move(world_state);
     current_position_->update_world_state(world_state);
 }
 
@@ -85,15 +84,24 @@ void AgentActionClient::get_task() {
 
     auto optional_task = current_position_->get_task();
     if (optional_task.has_value()) {
-        RobotIntent task = optional_task.value();
+        rj_msgs::msg::RobotIntent task = optional_task.value();
 
-        // note that because these are our RobotIntent structs, this comparison
-        // uses our custom struct overloads
+        // note that this comparison uses the ROS built-in msg type
+        // so any custom operator== overloads written don't apply
+        // TODO(Kevin): fix this by making Positions return RobotIntent structs, not msgs
         if (task != last_task_) {
-            SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
+            /* if (robot_id_ == 0) { */
+            /*     SPDLOG_INFO("sending new task {}", task.motion_command.name); */
+            /* } */
             last_task_ = task;
             send_new_goal();
+        } else {
+            /* if (robot_id_ == 0) { */
+            /*     SPDLOG_INFO("NOT sending new task {}", task.motion_command.name); */
+            /* } */
         }
+    } else {
+        /* SPDLOG_INFO("no new task"); */
     }
 }
 
@@ -106,8 +114,7 @@ void AgentActionClient::send_new_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    // must convert to ROS msg form in order to be sent across ROS nodes
-    goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
+    goal_msg.robot_intent = last_task_;
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback =
@@ -122,21 +129,21 @@ void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
     auto goal_handle = future.get();
     if (!goal_handle) {
-        current_position_->set_goal_canceled();
+        current_position_->goal_canceled_ = true;
     }
 }
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    current_position_->set_time_left(time_left);
+    current_position_->time_left_ = time_left;
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
-            current_position_->set_is_done();
+            current_position_->is_done_ = true;
             break;
         case rclcpp_action::ResultCode::ABORTED:
             return;
