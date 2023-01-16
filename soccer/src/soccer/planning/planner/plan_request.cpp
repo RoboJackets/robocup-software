@@ -63,7 +63,15 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
         // Where should we store the ball trajectory?
         *out_ball_trajectory = in.world_state->ball.make_trajectory();
-        out_dynamic->emplace_back(kBallRadius + in.min_dist_from_ball, out_ball_trajectory);
+        double radius = kBallRadius + in.min_dist_from_ball;
+
+        out_dynamic->emplace_back(radius, out_ball_trajectory);
+
+        if (in.debug_drawer != nullptr) {
+            QColor draw_color = Qt::red;
+            in.debug_drawer->draw_circle(rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
+                                              draw_color);
+        }
     }
 }
 
