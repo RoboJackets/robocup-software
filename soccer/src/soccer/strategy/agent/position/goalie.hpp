@@ -43,6 +43,10 @@ private:
      * @return true if ball is heading towards goal at some minimum speed threshold
      */
     bool shot_on_goal_detected(WorldState* world_state);
+
+    void set_position_request();
+
+    void set_test_request();
 };
 
 }  // namespace strategy
