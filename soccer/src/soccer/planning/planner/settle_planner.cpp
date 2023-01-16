@@ -23,7 +23,7 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
-    auto command = std::get<SettleCommand>(plan_request.motion_command);
+    auto command = std::get<SettleMotionCommand>(plan_request.motion_command);
 
     // The direction we will try and bounce the ball when we dampen it to
     // speed up actions after capture
