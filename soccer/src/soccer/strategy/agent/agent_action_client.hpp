@@ -139,6 +139,10 @@ private:
 
     // Robot Communication
     rclcpp::TimerBase::SharedPtr get_communication_timer_;
+    /**
+     * @brief Get the communication object (request / response) from the current position.
+     * 
+     */
     void get_communication();
     rj_msgs::msg::AgentRequest last_communication_;
 

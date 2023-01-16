@@ -54,7 +54,7 @@ communication::PosAgentResponseWrapper Defense::receive_communication_request(
     communication::PosAgentResponseWrapper comm_response;
     if (request.request.request_type == communication::CommunicationType::test) {
         rj_msgs::msg::TestResponse test_response{};
-        test_response.message = "I have obtained you message and I player defense";
+        test_response.message = "I have obtained you message and I play defense";
         comm_response.response.test_response = {test_response};
         comm_response.response.response_type = communication::CommunicationType::test;
     } else if (request.request.request_type == communication::CommunicationType::position) {

@@ -53,8 +53,27 @@ public:
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
 
     // Agent-to-Agent communication
+    /**
+     * @brief Send the intended communication request through the agent action client.
+     * 
+     * @return communication::PosAgentRequestWrapper the request to be sent
+     */
     communication::PosAgentRequestWrapper send_communication_request();
+
+    /**
+     * @brief Receive the response from a sent request.
+     * 
+     * @param response the response received from the previously sent communication
+     */
     virtual void receive_communication_response(communication::AgentPosResponseWrapper response);
+
+    /**
+     * @brief Receives a communication request from another robot before handling the request
+     * and sending a response in return.
+     * 
+     * @param request the request received from the other robot
+     * @return communication::PosAgentResponseWrapper this robot's response to the other robot.
+     */
     virtual communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request);
 
