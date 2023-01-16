@@ -2,8 +2,8 @@
 
 namespace strategy {
 
-// TODO: lock Goalie id to id given by the ref
-Goalie::Goalie(int r_id) : Position(r_id) {
+// TODO(Kevin): lock Goalie id to id given by the ref
+Goalie::Goalie(int r_id) : Position(r_id) { 
     position_name_ = "Goalie";
     set_position_request();
 }
