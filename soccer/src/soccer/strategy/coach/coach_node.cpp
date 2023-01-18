@@ -138,6 +138,7 @@ void CoachNode::check_for_play_state_change() {
 void CoachNode::assign_positions() {
     rj_msgs::msg::Position positions_message;
     std::array<uint32_t, kNumShells> positions;
+    positions[0] = Positions::Goalie;
     if (!possessing_) {
         positions[1] = Positions::Offense;
         for (int i = 2; i < kNumShells; i++) {

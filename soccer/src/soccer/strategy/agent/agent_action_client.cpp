@@ -101,8 +101,8 @@ void AgentActionClient::update_position(const rj_msgs::msg::Position::SharedPtr&
             break;
     };
 
-    if (current_position_ == nullptr ||
-        next_position_->get_name() == current_position_->get_name()) {
+        if (current_position_ == nullptr ||
+        next_position_->get_name() != current_position_->get_name()) {
         current_position_ = std::move(next_position_);
     }
 
