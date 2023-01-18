@@ -60,6 +60,11 @@ private:
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void check_for_play_state_change();
+
+    /*
+     * Assigns positions to robots with IDs 1 through 16, depending on current possession.
+     * Publishes new positions to the topic /strategy/positions (message type Position)
+     */
     void assign_positions();
 };
 

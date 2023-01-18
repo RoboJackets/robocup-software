@@ -73,6 +73,10 @@ private:
      */
     void get_task();
     rclcpp::TimerBase::SharedPtr get_task_timer_;
+
+    /*
+     * Updates the current position based on the robot ID and the given Position message.
+     */
     void update_position(const rj_msgs::msg::Position::SharedPtr& msg);
     // note that this is our RobotIntent struct (robot_intent.hpp), not a
     // pre-generated ROS msg type
