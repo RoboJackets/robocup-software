@@ -1,5 +1,7 @@
 #pragma once
 
+#include <spdlog/spdlog.h>
+
 #include <rj_common/utils.hpp>
 #include <rj_constants/constants.hpp>
 
@@ -64,6 +66,7 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
 inline AngleFunction face_point(const rj_geometry::Point point) {
     return [=](const LinearMotionInstant& instant, double previous_angle,
                Eigen::Vector2d* jacobian) -> double {
+	
         if ((instant.position - point).mag() < kRobotRadius) {
             return previous_angle;
         }

@@ -9,13 +9,12 @@ namespace planning {
  * Whether this means moving and stopping in the path of the ball
  * or completely driving through and "slapping" the ball.
  *
- * Mostly used for the goalie / defenders to block shots
+ * Mostly used for the goalie to block shots (w/ a target point of 0,0).
  */
 
-class InterceptPlanner : public PlannerForCommandType<InterceptCommand> {
+class InterceptPlanner : public PlannerForCommandType<InterceptMotionCommand> {
 public:
-    InterceptPlanner()
-        : PlannerForCommandType<InterceptCommand>("InterceptPlanner"){};
+    InterceptPlanner() : PlannerForCommandType<InterceptMotionCommand>("InterceptPlanner"){};
 
     Trajectory plan(const PlanRequest& request) override;
 

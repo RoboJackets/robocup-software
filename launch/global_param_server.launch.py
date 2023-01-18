@@ -1,12 +1,15 @@
 import os
+
+import launch_ros.actions
 from ament_index_python.packages import get_package_share_directory
+
 import launch
 from launch import LaunchDescription
 
-import launch_ros.actions
-
 
 def generate_launch_description():
+    # TODO: make this align with soccer.launch.py (we never launch
+    # global_param_server on its own)
     config = os.path.join(
         get_package_share_directory("rj_robocup"), "config", "sim.yaml"
     )

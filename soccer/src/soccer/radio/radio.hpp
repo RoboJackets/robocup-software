@@ -24,7 +24,7 @@ DECLARE_FLOAT64(kRadioParamModule, timeout);
 /**
  * @brief Sends and receives information to/from our robots.
  *
- * @details This is the abstract superclass for USBRadio and SimRadio, which do
+ * @details This is the abstract superclass for NetworkRadio and SimRadio, which do
  * the actual work - this just declares the interface and handles sending stop commands when no new
  * commands come in for a while.
  */

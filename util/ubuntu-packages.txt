@@ -35,8 +35,8 @@ clang
 g++
 
 # C/C++ (and more) code-formatting tool
-clang-format-10
-clang-tidy-10
+clang-format-12
+clang-tidy-12
 
 # contains a ton of great C++ libraries
 libboost-all-dev
@@ -81,3 +81,6 @@ libusb-1.0-0-dev
 liblz4-dev
 freeglut3-dev
 libfmt-dev
+
+# "everything else" (aka ros)
+ros-foxy-rqt*

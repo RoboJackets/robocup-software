@@ -19,15 +19,20 @@ find_package(builtin_interfaces REQUIRED)
 # This creates the target rj_msgs__rosidl_typesupport_cpp
 rosidl_generate_interfaces(
   rj_msgs
+  # Actions
+  action/RobotMove.action
+
   # Messages
   msg/BallState.msg
   msg/BallPlacement.msg
+  msg/CoachState.msg
   msg/DetectionBall.msg
   msg/DetectionFrame.msg
   msg/DetectionRobot.msg
   msg/FieldDimensions.msg
   msg/FieldOrientation.msg
   msg/GameSettings.msg
+  msg/GlobalOverride.msg
   msg/Goalie.msg
   msg/ManipulatorSetpoint.msg
   msg/MatchState.msg
@@ -35,6 +40,7 @@ rosidl_generate_interfaces(
 
   msg/LinearMotionInstant.msg
   msg/EmptyMotionCommand.msg
+  msg/GoalieIdleMotionCommand.msg
   msg/PathTargetMotionCommand.msg
   msg/WorldVelMotionCommand.msg
   msg/PivotMotionCommand.msg
@@ -57,6 +63,7 @@ rosidl_generate_interfaces(
   msg/WorldState.msg
   # Services
   srv/ListJoysticks.srv
+  srv/PlanHypotheticalPath.srv
   srv/QuickCommands.srv
   srv/QuickRestart.srv
   srv/SetFieldDimensions.srv

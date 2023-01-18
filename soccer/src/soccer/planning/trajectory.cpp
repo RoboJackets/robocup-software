@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include <spdlog/spdlog.h>
+
 #include <rj_geometry/pose.hpp>
 
 #include "instant.hpp"
@@ -23,7 +25,12 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
     if (!a_end.position().near_point(b_begin.position(), 1e-6) ||
         !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6) ||
         a_end.stamp != b_begin.stamp) {
-        a_end = b.first();
+        SPDLOG_ERROR("points near? {}, vels near? {}, timestamps match? {}",
+                     !a_end.position().near_point(b_begin.position(), 1e-6),
+                     !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6),
+                     a_end.stamp != b_begin.stamp);
+        throw std::invalid_argument(
+            "Cannot splice trajectories a and b, where a.last() != b.first()");
     }
 
     instants_ = std::move(a.instants_);
@@ -180,7 +187,7 @@ Trajectory::Cursor Trajectory::cursor(RJ::Time start_time) const {
     return Cursor{*this, start_time};
 }
 
-Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_.begin()}; }
+Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_begin()}; }
 
 void Trajectory::draw(DebugDrawer* drawer,
                       std::optional<rj_geometry::Point> alt_text_position) const {
@@ -335,6 +342,12 @@ void Trajectory::Cursor::next_knot() {
     } else {
         time_ = iterator_->stamp;
     }
+}
+
+bool operator==(const Trajectory& a, const Trajectory& b) {
+    // Don't check debug text, as that doesn't get converted over ROS
+    return a.instants() == b.instants() && a.time_created() == b.time_created() &&
+           a.angles_valid() == b.angles_valid();
 }
 
 }  // namespace planning

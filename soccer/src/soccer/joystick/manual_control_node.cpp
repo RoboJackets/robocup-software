@@ -48,7 +48,7 @@ ManualControlNode::ManualControlNode()
                        request->connect ? std::make_optional(request->robot_id) : std::nullopt);
         });
 
-    for (int i = 0; i < kNumShells; i++) {
+    for (unsigned int i = 0; i < kNumShells; i++) {
         motion_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::MotionSetpoint>(
             control::topics::motion_setpoint_pub(i), 10));
         manipulator_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
@@ -73,7 +73,7 @@ void ManualControlNode::set_manual(const std::string& uuid, std::optional<int> r
         controllers_.begin(), controllers_.end(),
         [uuid](const auto& controller_pair) { return controller_pair.first->get_uuid() == uuid; });
     if (it == controllers_.end()) {
-        SPDLOG_WARN("Requested invalid controller {}", uuid);
+        SPDLOG_WARN("Requested invalid controller \"{}\"!", uuid);
         return;
     }
 
@@ -83,6 +83,9 @@ void ManualControlNode::set_manual(const std::string& uuid, std::optional<int> r
     }
 
     robot = robot_id;
+
+    SPDLOG_INFO("Successfully connected controller \"{}\" to robot {}.", controller->get_uuid(),
+                robot_id.value());
 }
 
 void ManualControlNode::remove_controller(ManualController* controller) {

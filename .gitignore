@@ -1,5 +1,5 @@
 *.kdev4
-
+/.vscode
 # scons build system
 .sconsign.dblite
 .scons_variables

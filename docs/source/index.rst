@@ -27,11 +27,13 @@ adblocker to support their free documentation hosting.
    :caption: Contents
 
    self
-   getting_started.rst
+   tutorial.rst
+   installation.rst
    our_stack.rst
-   utilities.rst
-   faq.rst
+   troubleshooting.rst
    contributing.rst
+   faq.rst
+   fieldcomp_operation.rst
    meta_docs.rst
 
 .. note::

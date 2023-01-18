@@ -51,6 +51,7 @@ private:
 
     double kick_power_ = 0.5;
     double dribble_power_ = 0.0;
+    double MAX_DRIBBLE_POWER = 255.0;
 };
 
 class GamepadController : public SDLController {

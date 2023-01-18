@@ -18,11 +18,6 @@ using namespace boost::asio;
 
 namespace radio {
 
-// IP addr our radio should send to
-// see PR #1887 for last time this file was used w/ external interface
-// run ifconfig to see list of interfaces on this computer
-DEFINE_STRING(kRadioParamModule, interface, "127.0.0.1", "The interface for sim radio operation");
-
 static SimulatorCommand convert_placement_to_proto(
     const rj_msgs::srv::SimPlacement::Request& placement) {
     SimulatorCommand packet;
@@ -57,6 +52,7 @@ static SimulatorCommand convert_placement_to_proto(
         robot_proto->mutable_id()->set_id(robot.robot_id);
         robot_proto->mutable_id()->set_team(robot.is_blue_team ? Team::BLUE : Team::YELLOW);
 
+        // TODO(Kevin): make this only happen in sim (set a param)
         // this line sets robots with an ID above 6 to "not present", meaning
         // they will be removed on their next sim command
         // see "rj_protos/proto/ssl_simulation_control.proto"
@@ -77,13 +73,26 @@ SimRadio::SimRadio(bool blue_team)
       blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
                                                                       : kSimYellowStatusPort)) {
-    for (int i = 0; i < kNumShells; ++i) {
+    for (size_t i = 0; i < kNumShells; ++i) {
         last_sent_diff_.emplace_back(RJ::now());
     }
-    auto address = boost::asio::ip::make_address(PARAM_interface).to_v4();
+
+    /* IP addr our radio should bind to
+     * see PR #1887 for last time this file was used w/ external interface
+     * run ifconfig to see list of interfaces on this computer
+
+     * NOTE: on field comp, make sure this IP is "172.16.1.1" (router IP)
+     * on sim, make sure this IP is "127.0.0.1" (localhost)
+     */
+    // TODO(Kevin): this default shouldn't be necessary, but sim2play refuses to accept the param
+    // file probably an issue with the hacky way I got param files to dynamically load
+    std::string localhost = "127.0.0.1";
+    this->get_parameter_or("interface", param_radio_interface_, localhost);
+    SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
+    address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
-        ip::udp::endpoint(address, blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
-    sim_control_endpoint_ = ip::udp::endpoint(address, kSimCommandPort);
+        ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
+    sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
 
     buffer_.resize(1024);
     start_receive();
@@ -146,7 +155,7 @@ void SimRadio::handle_receive(const std::string& data) {
 
     packet.ParseFromString(data);
 
-    for (size_t pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
+    for (int pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
         rj_msgs::msg::RobotStatus status_ros;
         RobotStatus status;
         const RobotFeedback& sim_status = packet.feedback(pkt_idx);
@@ -160,7 +169,7 @@ void SimRadio::handle_receive(const std::string& data) {
 void SimRadio::stop_robots() {
     RobotControl sim_packet;
 
-    for (int shell = 0; shell < kNumShells; shell++) {
+    for (size_t shell = 0; shell < kNumShells; shell++) {
         auto* sim_robot = sim_packet.add_robot_commands();
         sim_robot->set_id(shell);
         auto* local_velocity = sim_robot->mutable_move_command()->mutable_local_velocity();
@@ -195,18 +204,15 @@ void SimRadio::switch_team(bool blue_team) {
 
     int status_port = blue_team ? kSimBlueStatusPort : kSimYellowStatusPort;
 
-    // Let them throw exceptions (TODO(Kevin): fix me, in scrim-2022 we used the below line)
+    // Let them throw exceptions
+    // TODO(Kevin): fix me, in scrim-2022 we used the below line; what is this
+    // IP supposed to be?
     socket_.bind(ip::udp::endpoint(ip::udp::v4(), status_port));
-
-    // this addr should match external ref's interface, as we get the team color here
-    // and from external ref
-    // see PR #1887 for last time this file was used w/ external interface
-    // run ifconfig to see list of interfaces on this computer
     // socket_.bind(ip::udp::endpoint(ip::make_address("172.25.0.11").to_v4(), status_port));
 
-    auto address = boost::asio::ip::make_address(PARAM_interface).to_v4();
+    // remake the robot_control_endpoint_ based on new team color
     robot_control_endpoint_ =
-        ip::udp::endpoint(address, blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
+        ip::udp::endpoint(address_, blue_team ? kSimBlueCommandPort : kSimYellowCommandPort);
 }
 
 void SimRadio::send_sim_command(const SimulatorCommand& cmd) {

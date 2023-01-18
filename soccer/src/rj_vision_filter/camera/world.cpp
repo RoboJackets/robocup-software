@@ -62,7 +62,7 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
     }
 
     if (update_all) {
-        for (int i = 0; i < cameras_.size(); i++) {
+        for (size_t i = 0; i < cameras_.size(); i++) {
             if (!camera_updated.at(i) && cameras_.at(i).get_is_valid()) {
                 cameras_.at(i).update_without_frame(calc_time);
             }
@@ -124,7 +124,7 @@ void World::update_world_objects(RJ::Time calc_time) {
             }
 
             // Take the best kalman filter from the camera
-            for (int i = 0; i < camera_robots_yellow.size(); i++) {
+            for (size_t i = 0; i < camera_robots_yellow.size(); i++) {
                 if (!camera_robots_yellow.at(i).empty()) {
                     camera_robots_yellow.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
                         return a.get_health() > b.get_health();
@@ -135,7 +135,7 @@ void World::update_world_objects(RJ::Time calc_time) {
             }
 
             // Take the best kalman filter from the camera
-            for (int i = 0; i < camera_robots_blue.size(); i++) {
+            for (size_t i = 0; i < camera_robots_blue.size(); i++) {
                 if (!camera_robots_blue.at(i).empty()) {
                     camera_robots_blue.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
                         return a.get_health() > b.get_health();
@@ -152,14 +152,14 @@ void World::update_world_objects(RJ::Time calc_time) {
         ball_ = WorldBall(calc_time, kalman_balls);
     }
 
-    for (int i = 0; i < robots_yellow_.size(); i++) {
+    for (size_t i = 0; i < robots_yellow_.size(); i++) {
         if (!kalman_robots_yellow.at(i).empty()) {
             robots_yellow_.at(i) =
                 WorldRobot(calc_time, WorldRobot::Team::YELLOW, i, kalman_robots_yellow.at(i));
         }
     }
 
-    for (int i = 0; i < robots_blue_.size(); i++) {
+    for (size_t i = 0; i < robots_blue_.size(); i++) {
         if (!kalman_robots_blue.at(i).empty()) {
             robots_blue_.at(i) =
                 WorldRobot(calc_time, WorldRobot::Team::BLUE, i, kalman_robots_blue.at(i));

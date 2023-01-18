@@ -132,7 +132,7 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
 
         for (int i = 0; i < chartSize; ++i) {
             float v = 0;
-            int hist_idx = start + i;
+            size_t hist_idx = start + i;
             if (hist_idx < _history->size() && _history->at(hist_idx) &&
                 function->value(*_history->at(hist_idx).get(), &v)) {
                 if (autoRange) {
