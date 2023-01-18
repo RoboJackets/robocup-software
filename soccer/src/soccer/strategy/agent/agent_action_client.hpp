@@ -10,8 +10,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/world_state.hpp>
 #include <rj_msgs/msg/position.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "planning/planner/motion_command.hpp"

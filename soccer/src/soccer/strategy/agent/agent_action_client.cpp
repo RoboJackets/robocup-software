@@ -56,6 +56,7 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
+    SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -81,15 +82,17 @@ void AgentActionClient::get_task() {
 }
 
 void AgentActionClient::update_position(const rj_msgs::msg::Position::SharedPtr& msg) {
-    // TODO remove this debug 
+    // TODO remove this debug
     /* for (int i = 0; i < 6; i++) { */
     /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
     /* } */
-    //SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions.at(robot_id_));
-    if (robot_id_ == 0) {return;}
+    // SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions[robot_id_]);
+    if (robot_id_ == 0) {
+        return;
+    }
 
     std::unique_ptr<Position> next_position_;
-    switch (msg->client_positions.at(robot_id_)) {
+    switch (msg->client_positions[robot_id_]) {
         case 1:
             next_position_ = std::make_unique<Defense>(robot_id_);
             break;
@@ -98,7 +101,8 @@ void AgentActionClient::update_position(const rj_msgs::msg::Position::SharedPtr&
             break;
     };
 
-    if (next_position_->get_name() == current_position_->get_name()) {
+    if (current_position_ == nullptr ||
+        next_position_->get_name() == current_position_->get_name()) {
         current_position_ = std::move(next_position_);
     }
 

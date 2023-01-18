@@ -11,8 +11,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         "/referee/play_state", 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    positions_pub_ = 
-        this->create_publisher<rj_msgs::msg::Position>("/strategy/positions", 10);
+    positions_pub_ = this->create_publisher<rj_msgs::msg::Position>("/strategy/positions", 10);
 
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
@@ -21,7 +20,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     // TODO: sub to acknowledgement topic from AC
     // save state of acknowledgements, only spam until some long time has passed, or ack received
     /* ack_array[msg->ID] = true; */
-    
+
     // initialize all of the robot status subscriptions
     for (size_t i = 0; i < kNumShells; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
@@ -136,22 +135,21 @@ void CoachNode::check_for_play_state_change() {
     }
 }
 
-
 void CoachNode::assign_positions() {
     rj_msgs::msg::Position positions_message;
-    SPDLOG_INFO("We are IN assign positions");
-    positions_message.client_positions[0] = Positions::Goalie;
-    if(!possessing_) {
-        positions_message.client_positions[1] = Positions::Offense;
+    std::array<uint32_t, kNumShells> positions;
+    if (!possessing_) {
+        positions[1] = Positions::Offense;
         for (int i = 2; i < kNumShells; i++) {
-            positions_message.client_positions[i] = Positions::Defense;
+            positions[i] = Positions::Defense;
         }
     } else {
-        positions_message.client_positions[1] = Positions::Defense;
+        positions[1] = Positions::Defense;
         for (int i = 2; i < kNumShells; i++) {
-            positions_message.client_positions[i] = Positions::Offense;
+            positions[i] = Positions::Offense;
         }
     }
+    positions_message.client_positions = positions;
     positions_pub_->publish(positions_message);
 }
 
