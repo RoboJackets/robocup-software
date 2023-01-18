@@ -66,6 +66,7 @@ rosidl_generate_interfaces(
   # Communication
   msg/AgentRequest.msg
   msg/AgentResponse.msg
+  msg/AgentResponseVariant.msg
 
   # Agent Request Messages
   request/PassRequest.msg
