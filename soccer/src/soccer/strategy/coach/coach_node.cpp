@@ -6,6 +6,14 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
     coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
+    def_area_obstacles_pub_ =
+        this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/def_area_obstacles", 10);
+
+    global_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/global_obstacles", 10);
+
+    play_state_change_timer_ =
+        this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
+
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
@@ -20,6 +28,11 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
     // save state of acknowledgements, only spam until some long time has passed, or ack received
     /* ack_array[msg->ID] = true; */
+
+    field_dimensions_sub_ = this->create_subscription<rj_msgs::msg::FieldDimensions>(
+        "config/field_dimensions", 10, [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
+            field_dimensions_callback(msg);
+        });
 
     // initialize all of the robot status subscriptions
     for (size_t i = 0; i < kNumShells; i++) {
@@ -144,6 +157,45 @@ void CoachNode::assign_positions() {
     }
     positions_message.client_positions = positions;
     positions_pub_->publish(positions_message);
+}
+
+void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    // Only publish once
+    if (!field_updated_) {
+        // publish defense areas as rectangular area obstacles
+        /* From the old gameplay node: "The defense area, per the rules, is the box
+         in front of each goal where only that team's goalie can be in and touch the ball." */
+
+        SPDLOG_INFO("Updating field with message");
+        SPDLOG_INFO("Message penalty dist {}", msg->penalty_long_dist);
+
+        rj_geometry_msgs::msg::ShapeSet def_area_obstacles;
+
+        rj_geometry_msgs::msg::Rect our_defense_area;
+
+        rj_geometry_msgs::msg::Point top_left;
+        top_left.x = msg->penalty_long_dist / 2 + msg->line_width;
+        top_left.y = 0.0;
+
+        rj_geometry_msgs::msg::Point bot_right;
+        bot_right.x = msg->penalty_long_dist / 2 - msg->line_width;
+        bot_right.y = msg->penalty_long_dist;
+
+        std::array<rj_geometry_msgs::msg::Point, 2> our_def_area_pts = {top_left, bot_right};
+        our_defense_area.pt = our_def_area_pts;
+
+        std::vector<rj_geometry_msgs::msg::Rect> rectangles;
+        rectangles.emplace_back(our_defense_area);
+
+        def_area_obstacles.rectangles = rectangles;
+
+        SPDLOG_INFO("made it to publishing obstacles");
+
+        def_area_obstacles_pub_->publish(def_area_obstacles);
+
+        // Only publish once
+        field_updated_ = true;
+    }
 }
 
 }  // namespace strategy

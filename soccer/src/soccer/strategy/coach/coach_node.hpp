@@ -46,19 +46,28 @@ public:
 
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachState>::SharedPtr coach_state_pub_;
+
+    rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_pub_;
+    rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_pub_;
+
+    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+
     rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr positions_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
+
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
     rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
+    bool field_updated_ = false;
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
 
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
+    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void check_for_play_state_change();
     /*
      * Handles actions the Coach does every tick. Currently calls assign_positions and
@@ -70,6 +79,11 @@ private:
      * Publishes new positions to the topic /strategy/positions (message type PositionAssignment)
      */
     void assign_positions();
+
+    /*
+     * Publishes the static obstacles. Should be a one-time helper.
+     */
+    void publish_static_obstacles();
 };
 
 }  // namespace strategy
