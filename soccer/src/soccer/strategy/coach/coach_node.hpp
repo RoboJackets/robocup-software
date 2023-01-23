@@ -64,6 +64,8 @@ private:
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
 
+    rj_geometry_msgs::msg::FieldDimensions current_field_dimesions_;
+
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);

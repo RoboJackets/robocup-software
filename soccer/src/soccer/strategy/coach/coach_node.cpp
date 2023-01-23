@@ -167,37 +167,61 @@ void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::S
     /* From the old gameplay node: "The defense area, per the rules, is the box
      in front of each goal where only that team's goalie can be in and touch the ball." */
 
-    SPDLOG_INFO("Updating field with message");
-    SPDLOG_INFO("Message penalty dist {}", msg->penalty_long_dist);
-
-    rj_geometry_msgs::msg::ShapeSet def_area_obstacles;
-
+    // Create our defense area using field dimensions
     rj_geometry_msgs::msg::Rect our_defense_area;
 
     rj_geometry_msgs::msg::Point o_top_left;
-    o_top_left.x = msg->penalty_long_dist / 2 + msg->line_width;
+    o_top_left.x =
+        current_field_dimesions_.penalty_long_dist / 2 + current_field_dimesions_.line_width;
     o_top_left.y = 0.0;
 
-    rj_geometry_msgs::msg::Point bot_right;
-    bot_right.x = msg->penalty_long_dist / 2 - msg->line_width;
-    bot_right.y = msg->penalty_long_dist;
+    rj_geometry_msgs::msg::Point o_bot_right;
+    o_bot_right.x =
+        current_field_dimesions_.penalty_long_dist / 2 - current_field_dimesions_.line_width;
+    o_bot_right.y = current_field_dimesions_.penalty_short_dist;
 
-    std::array<rj_geometry_msgs::msg::Point, 2> our_def_area_pts = {o_top_left, bot_right};
+    std::array<rj_geometry_msgs::msg::Point, 2> our_def_area_pts = {o_top_left, o_bot_right};
     our_defense_area.pt = our_def_area_pts;
 
+    // Create opponent defense area using field dimensions
     rj_geometry_msgs::msg::Rect their_defense_area;
 
+    // Sometimes there is a greater distance we need to keep:
+    // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
+    // TODO: update this conditional. gameplay_node used different set of checks than rules imply
+    bool is_extra_dist_necessary = (current_play_state_.state == PlayState::State::Stop ||
+                                    current_play_state_.restart == PlayState::Restart::Direct ||
+                                    current_play_state_.restart == PlayState::Restart::Indirect ||
+                                    current_play_state_.restart == PlayState::Restart::Kickoff);
 
+    // TODO: ask kevin if it should be 0.3 (gameplay node) or 0.2 (current rules)... maybe slack on
+    // purpose?
+    float extra_dist = is_extra_dist_necessary ? 0.3 : 0;
+    float left_x = current_field_dimesions_.penalty_long_dist / 2 +
+                   current_field_dimesions_.line_width + extra_dist;
+
+    rj_geometry_msgs::msg::Point t_bot_left;
+    t_bot_left.x = left_x;
+    t_bot_left.y = current_field_dimesions_.length;
+
+    rj_geometry_msgs::msg::Point t_top_right;
+    t_top_right.x = -left_x;
+    t_top_right.y =
+        current_field_dimesions_.length - (current_field_dimesions_.penalty_short_dist +
+                                           current_field_dimesions_.line_width + extra_dist);
+
+    std::array<rj_geometry_msgs::msg::Point, 2> their_def_area_pts = {t_bot_left, t_top_right};
+    their_defense_area.pt = their_def_area_pts;
+
+    // Combine both defense areas into ShapeSet
+    rj_geometry_msgs::msg::ShapeSet def_area_obstacles;
     std::vector<rj_geometry_msgs::msg::Rect> rectangles;
     rectangles.emplace_back(our_defense_area);
+    rectangles.emplace_back(their_defense_area);
 
     def_area_obstacles.rectangles = rectangles;
 
-    SPDLOG_INFO("made it to publishing obstacles");
-
     def_area_obstacles_pub_->publish(def_area_obstacles);
-
-    
 }
 }
 
