@@ -11,7 +11,9 @@
 
 #include "planning/instant.hpp"
 #include "position.hpp"
+#include "rj_common/field_dimensions.hpp"
 #include "rj_common/time.hpp"
+#include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 
@@ -29,6 +31,13 @@ public:
 private:
     int move_ct_ = 0;
 
+    /**
+     * @brief Currently creates a waller behavior which aims to intercept the path
+     * between the ball and the center of the goal
+     *
+     * @param [RobotIntent intent] [RobotIntent of the Defensive Robot]
+     * @return [RobotIntent with next target point for the robot]
+     */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
 
