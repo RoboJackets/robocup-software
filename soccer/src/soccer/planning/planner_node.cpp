@@ -229,6 +229,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto goalie_id = shared_state_->goalie_id();
     const auto play_state = shared_state_->play_state();
     const bool is_goalie = goalie_id == robot_id_;
+    const auto min_dist_from_ball = shared_state_->min_dist_from_ball();
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
@@ -275,7 +276,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        world_state,
                        intent.priority,
                        &debug_draw_,
-                       had_break_beam_};
+                       had_break_beam_,
+                       min_dist_from_ball};
 }
 
 Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request) {
