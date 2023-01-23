@@ -81,7 +81,7 @@ private:
     void assign_positions();
 
     /*
-     * Publishes the static obstacles. Should be a one-time helper.
+     * Publishes the static obstacles.
      */
     void publish_static_obstacles();
 };

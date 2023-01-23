@@ -9,7 +9,8 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     def_area_obstacles_pub_ =
         this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/def_area_obstacles", 10);
 
-    global_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/global_obstacles", 10);
+    global_obstacles_pub_ =
+        this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/global_obstacles", 10);
 
     play_state_change_timer_ =
         this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
@@ -136,6 +137,8 @@ void CoachNode::check_for_play_state_change() {
 
         coach_state_pub_->publish(coach_message);
 
+        publish_static_obstacles();
+
         play_state_has_changed_ = false;
     }
 }
@@ -160,42 +163,42 @@ void CoachNode::assign_positions() {
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
-    // Only publish once
-    if (!field_updated_) {
-        // publish defense areas as rectangular area obstacles
-        /* From the old gameplay node: "The defense area, per the rules, is the box
-         in front of each goal where only that team's goalie can be in and touch the ball." */
+    // publish defense areas as rectangular area obstacles
+    /* From the old gameplay node: "The defense area, per the rules, is the box
+     in front of each goal where only that team's goalie can be in and touch the ball." */
 
-        SPDLOG_INFO("Updating field with message");
-        SPDLOG_INFO("Message penalty dist {}", msg->penalty_long_dist);
+    SPDLOG_INFO("Updating field with message");
+    SPDLOG_INFO("Message penalty dist {}", msg->penalty_long_dist);
 
-        rj_geometry_msgs::msg::ShapeSet def_area_obstacles;
+    rj_geometry_msgs::msg::ShapeSet def_area_obstacles;
 
-        rj_geometry_msgs::msg::Rect our_defense_area;
+    rj_geometry_msgs::msg::Rect our_defense_area;
 
-        rj_geometry_msgs::msg::Point top_left;
-        top_left.x = msg->penalty_long_dist / 2 + msg->line_width;
-        top_left.y = 0.0;
+    rj_geometry_msgs::msg::Point o_top_left;
+    o_top_left.x = msg->penalty_long_dist / 2 + msg->line_width;
+    o_top_left.y = 0.0;
 
-        rj_geometry_msgs::msg::Point bot_right;
-        bot_right.x = msg->penalty_long_dist / 2 - msg->line_width;
-        bot_right.y = msg->penalty_long_dist;
+    rj_geometry_msgs::msg::Point bot_right;
+    bot_right.x = msg->penalty_long_dist / 2 - msg->line_width;
+    bot_right.y = msg->penalty_long_dist;
 
-        std::array<rj_geometry_msgs::msg::Point, 2> our_def_area_pts = {top_left, bot_right};
-        our_defense_area.pt = our_def_area_pts;
+    std::array<rj_geometry_msgs::msg::Point, 2> our_def_area_pts = {o_top_left, bot_right};
+    our_defense_area.pt = our_def_area_pts;
 
-        std::vector<rj_geometry_msgs::msg::Rect> rectangles;
-        rectangles.emplace_back(our_defense_area);
+    rj_geometry_msgs::msg::Rect their_defense_area;
 
-        def_area_obstacles.rectangles = rectangles;
 
-        SPDLOG_INFO("made it to publishing obstacles");
+    std::vector<rj_geometry_msgs::msg::Rect> rectangles;
+    rectangles.emplace_back(our_defense_area);
 
-        def_area_obstacles_pub_->publish(def_area_obstacles);
+    def_area_obstacles.rectangles = rectangles;
 
-        // Only publish once
-        field_updated_ = true;
-    }
+    SPDLOG_INFO("made it to publishing obstacles");
+
+    def_area_obstacles_pub_->publish(def_area_obstacles);
+
+    
+}
 }
 
 }  // namespace strategy
