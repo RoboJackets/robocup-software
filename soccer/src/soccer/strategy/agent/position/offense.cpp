@@ -14,29 +14,48 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // get world_state
     WorldState* world_state = this->world_state();  // thread-safe getter
 
-    // oscillate along vertical line (temp)
-    double y = 6.0;
-    if (!kicking_) {
-        y = 1.0;
+    rj_geometry::Point ball_pos = world_state->ball.position;
+    rj_geometry::Point ball_vel = world_state->ball.velocity;
+    rj_geometry::Point robot_pos = world_state->our_robots[robot_id_].pose.position();
+    auto msg = rj_msgs::msg::RobotStatus::SharedPtr;
+
+    float SETTLE_BALL_SPEED_THRESHOLD = 0.75;
+
+    if ("Receive") {
+        //Fix Imports
+
+        //Do seek behavior
+
+        bool ball_slow = ball_vel.norm() < .05;
+        double dist_to_ball = (robot_pos - ball_pos).norm();
+        bool ball_close = dist_to_ball - (kRobotRadius + kBallRadius) < 0.03;
+
+        if (!(msg->has_ball_sense || ball_vel.norm() < SETTLE_BALL_SPEED_THRESHOLD)) {
+
+            //Settle Ball
+            auto settle_cmd = planning::SettleMotionCommand{};
+            intent.motion_command = settle_cmd;
+            intent.motion_command_name = "settle";
+            intent.is_active = true;
+            intent.dribbler_speed = 1.0;
+            return intent;
+
+        } else if (!(ball_slow && ball_close) {
+
+            //Capture Ball
+            auto collect_cmd = planning::CollectMotionCommand{};
+            intent.motion_command = collect_cmd;
+            intent.motion_command_name = "collect";
+            intent.dribbler_speed = 1.0;
+            intent.is_active = true;
+            return intent;
+
+        } else {
+
+            return std:nullopt;
+
+        }
     }
-    rj_geometry::Point target_pt{(6.0 * (robot_id_ * 0.1) - 2.0), y};
-
-    // stop at end of path
-    rj_geometry::Point target_vel{0.0, 0.0};
-
-    // face ball on way up, face path on way down
-    planning::PathTargetFaceOption face_option = planning::FaceBall{};
-    if (kicking_) {
-        face_option = planning::FaceTarget{};
-    }
-
-    // avoid ball
-    bool ignore_ball = false;
-
-    planning::LinearMotionInstant target{target_pt, target_vel};
-    intent.motion_command =
-        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
-    return intent;
 }
 
 void Offense::receive_communication_response(communication::AgentPosResponseWrapper response) {
