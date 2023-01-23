@@ -1,3 +1,5 @@
+# Note: these docs have been deprecated as of the ROS2 rewrite in 2020
+# See our Google Drive, PRs near `#1618`
 
 Welcome to the GT RoboJackets RoboCup Documentation Page!
 

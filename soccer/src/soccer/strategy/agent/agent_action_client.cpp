@@ -68,9 +68,7 @@ void AgentActionClient::get_task() {
         // note that because these are our RobotIntent structs, this comparison
         // uses our custom struct overloads
         if (task != last_task_) {
-            if (robot_id_ == 0) {
-                SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
-            }
+            SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
             last_task_ = task;
             send_new_goal();
         }
@@ -117,9 +115,6 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
             current_position_->set_is_done();
-            if (robot_id_ == 0) {
-                SPDLOG_INFO("Robot {} done", robot_id_, result.result->is_done);
-            }
             break;
         case rclcpp_action::ResultCode::ABORTED:
             return;
