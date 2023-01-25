@@ -11,7 +11,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         "/referee/play_state", 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    positions_pub_ = this->create_publisher<rj_msgs::msg::Position>("/strategy/positions", 10);
+    positions_pub_ = this->create_publisher<rj_msgs::msg::PositionAssignment>("/strategy/positions", 10);
 
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
@@ -136,7 +136,7 @@ void CoachNode::check_for_play_state_change() {
 }
 
 void CoachNode::assign_positions() {
-    rj_msgs::msg::Position positions_message;
+    rj_msgs::msg::PositionAssignment positions_message;
     std::array<uint32_t, kNumShells> positions;
     positions[0] = Positions::Goalie;
     if (!possessing_) {

@@ -27,9 +27,9 @@ AgentActionClient::AgentActionClient(int r_id)
         "strategy/coach_state", 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
-    positions_sub_ = create_subscription<rj_msgs::msg::Position>(
+    positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
         "strategy/positions", 1,
-        [this](rj_msgs::msg::Position::SharedPtr msg) { update_position(msg); });
+        [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { update_position(msg); });
 
     // TODO(Kevin): make ROS param for this
     int hz = 10;
@@ -80,7 +80,7 @@ void AgentActionClient::get_task() {
     }
 }
 
-void AgentActionClient::update_position(const rj_msgs::msg::Position::SharedPtr& msg) {
+void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
     // TODO remove this debug
     /* for (int i = 0; i < 6; i++) { */
     /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */

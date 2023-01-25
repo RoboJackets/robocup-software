@@ -46,7 +46,7 @@ public:
 
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachState>::SharedPtr coach_state_pub_;
-    rclcpp::Publisher<rj_msgs::msg::Position>::SharedPtr positions_pub_;
+    rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr positions_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
