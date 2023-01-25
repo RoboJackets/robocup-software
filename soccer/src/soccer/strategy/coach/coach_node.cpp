@@ -54,20 +54,11 @@ void CoachNode::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr m
                     rj_convert::convert_from_ros(robot_state.pose.position),
                     rj_convert::convert_from_ros(msg->ball.position), kRobotDiameter)) {
                 possessing_ = true;
-                play_state_has_changed_ = true;
                 return;
             }
         }
     } else {
-        for (rj_msgs::msg::RobotState robot_state : msg->their_robots) {
-            if (rj_geometry::Point::nearly_equals(
-                    rj_convert::convert_from_ros(robot_state.pose.position),
-                    rj_convert::convert_from_ros(msg->ball.position), kRobotDiameter)) {
-                possessing_ = false;
-                play_state_has_changed_ = true;
-                return;
-            }
-        }
+        possessing_ = false;
     }
 }
 

@@ -10,7 +10,7 @@
 
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/positionassignment.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 

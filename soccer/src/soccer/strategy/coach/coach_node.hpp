@@ -8,7 +8,7 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/play_state.hpp>
-#include <rj_msgs/msg/position.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
@@ -50,7 +50,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
-    rclcpp::TimerBase::SharedPtr play_state_change_timer_;
+    rclcpp::TimerBase::SharedPtr coach_change_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
     bool possessing_ = false;
@@ -60,10 +60,13 @@ private:
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void check_for_play_state_change();
-
+    /*
+     * Calls assign_positions and check_for_play_state_change in coach_change_timer
+     */
+    void coach_ticker();
     /*
      * Assigns positions to robots with IDs 1 through 16, depending on current possession.
-     * Publishes new positions to the topic /strategy/positions (message type Position)
+     * Publishes new positions to the topic /strategy/positions (message type PositionAssignment)
      */
     void assign_positions();
 };
