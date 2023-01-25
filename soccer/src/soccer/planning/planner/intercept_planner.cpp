@@ -13,12 +13,14 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
 
     // Start state for the specified robot
     RobotInstant start_instant = plan_request.start;
+    latest_robot_pos_ = start_instant.pose.position();
 
     // All the max velocity / acceleration constraints for translation /
     // rotation
     const MotionConstraints& motion_constraints = plan_request.constraints.mot;
 
     BallState ball = plan_request.world_state->ball;
+    latest_ball_state_ = ball;
 
     // Time for ball to hit target point
     // Target point is projected into ball velocity line
@@ -79,8 +81,11 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
 }
 
 bool InterceptPlanner::is_done() const {
-    // TODO(Kevin): should return true if ball is slow + in mouth
-    return false;
+    bool ball_is_slow = latest_ball_state_.velocity.mag() < 0.5;  // m/s
+    bool ball_is_close = latest_ball_state_.position.dist_to(latest_robot_pos_) <
+                         kRobotRadius + kBallRadius + 0.01;  // m
+
+    return ball_is_slow && ball_is_close;
 }
 
 }  // namespace planning

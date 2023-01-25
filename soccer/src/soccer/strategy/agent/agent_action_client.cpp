@@ -15,7 +15,6 @@ AgentActionClient::AgentActionClient(int r_id)
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)) {
-    SPDLOG_INFO("my robot_id_ {}", robot_id_);
 
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
@@ -124,7 +123,6 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         default:
             return;
     }
-    /* SPDLOG_INFO("Result received: {}", result.result->is_done); */
 }
 
 }  // namespace strategy
