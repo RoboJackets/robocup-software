@@ -11,6 +11,7 @@ std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
 }
 
 Goalie::State Goalie::update_state() {
+    // if a shot is coming, override all and go block it
     WorldState* world_state = this->world_state();
 
     // if no ball found, stop and return to box immediately
