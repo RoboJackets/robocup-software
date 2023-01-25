@@ -3,6 +3,8 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_constants/constants.hpp>
+#include <rj_convert/ros_convert.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
@@ -64,12 +66,13 @@ private:
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
 
-    rj_geometry_msgs::msg::FieldDimensions current_field_dimesions_;
+    rj_msgs::msg::FieldDimensions current_field_dimensions_;
+    bool have_field_dimensions_ = false;
 
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
-    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
+    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr msg);
     void check_for_play_state_change();
     /*
      * Handles actions the Coach does every tick. Currently calls assign_positions and
