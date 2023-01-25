@@ -4,8 +4,8 @@ namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
-    play_state_change_timer_ =
-        this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
+    coach_change_timer_ =
+        this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
@@ -80,10 +80,12 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
     }
 }
 
-void CoachNode::check_for_play_state_change() {
+void CoachNode::coach_ticker() {
     assign_positions();
+    check_for_play_state_change();
+}
 
-    // TODO: assign positions on play state changes correctly
+void CoachNode::check_for_play_state_change() {
 
     if (play_state_has_changed_) {
         rj_msgs::msg::CoachState coach_message;
