@@ -10,7 +10,9 @@
 #include <rj_common/time.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/action/robot_move.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
@@ -65,6 +67,12 @@ public:
                 auto lock = std::lock_guard(mutex_);
                 last_world_state_ = rj_convert::convert_from_ros(*world_state);
             });
+        coach_state_sub_ = node->create_subscription<rj_msgs::msg::CoachState>(
+            "/strategy/coach_state", rclcpp::QoS(1),
+            [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
+                auto lock = std::lock_guard(mutex_);
+                last_min_dist_from_ball_ = coach_state->global_override.min_dist_from_ball;
+            });
     }
 
     [[nodiscard]] PlayState play_state() const {
@@ -91,6 +99,10 @@ public:
         auto lock = std::lock_guard(mutex_);
         return &last_world_state_;
     }
+    [[nodiscard]] float min_dist_from_ball() const {
+        auto lock = std::lock_guard(mutex_);
+        return last_min_dist_from_ball_;
+    }
 
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
@@ -99,6 +111,7 @@ private:
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_sub_;
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
 
     mutable std::mutex mutex_;
     PlayState last_play_state_ = PlayState::halt();
@@ -107,6 +120,7 @@ private:
     rj_geometry::ShapeSet last_global_obstacles_;
     rj_geometry::ShapeSet last_def_area_obstacles_;
     WorldState last_world_state_;
+    float last_min_dist_from_ball_;
 };
 
 /**
@@ -128,9 +142,10 @@ public:
     /**
      * Entry point for the planner node's ActionServer.
      *
-     * Creates and publishes a Trajectory based on the given RobotIntent.
+     * Creates and publishes a Trajectory based on the given RobotIntent. Also
+     * publishes a ManipulatorSetpoint to control kicker/dribbler/chipper.
      */
-    void execute_trajectory(const RobotIntent& intent);
+    void execute_intent(const RobotIntent& intent);
 
     /*
      * @brief estimate the amount of time it would take for a robot to execute a robot intent
@@ -201,6 +216,7 @@ private:
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_pub_;
+    rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr manipulator_pub_;
     rclcpp::Service<rj_msgs::srv::PlanHypotheticalPath>::SharedPtr hypothetical_path_service_;
 
     rj_drawing::RosDebugDrawer debug_draw_;
