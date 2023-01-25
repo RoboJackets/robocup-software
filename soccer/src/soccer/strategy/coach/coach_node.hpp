@@ -62,7 +62,6 @@ private:
     rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
-    bool field_updated_ = false;
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
 
