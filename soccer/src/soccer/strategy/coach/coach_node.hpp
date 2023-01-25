@@ -72,7 +72,7 @@ private:
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
-    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr msg);
+    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void check_for_play_state_change();
     /*
      * Handles actions the Coach does every tick. Currently calls assign_positions and

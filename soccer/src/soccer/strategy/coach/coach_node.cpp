@@ -144,10 +144,10 @@ void CoachNode::check_for_play_state_change() {
 }
 
 void CoachNode::assign_positions() {
-    rj_msgs::msg::PositionAssignment positions_message;
+    const rj_msgs::msg::PositionAssignment positions_message;
     std::array<uint32_t, kNumShells> positions{};
     positions[0] = Positions::Goalie;
-    if (!possessing_) {
+&    if (!possessing_) {
         positions[1] = Positions::Offense;
         for (int i = 2; i < kNumShells; i++) {
             positions[i] = Positions::Defense;
@@ -169,13 +169,14 @@ void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::S
          in front of each goal where only that team's goalie can be in and touch the ball." */
 
         // Create our defense area using field dimensions
-        rj_geometry::Point o_top_left{
-            current_field_dimensions_.penalty_long_dist / 2 + current_field_dimensions_.line_width,
-            0.0};
+        float def_long_dist = current_field_dimensions_.penalty_long_dist / 2.0;
+        float def_short_dist = current_field_dimensions_.penalty_short_dist;
+        float line_width = current_field_dimensions_.line_width;
+        float field_length = current_field_dimensions_.length;
 
-        rj_geometry::Point o_bot_right{
-            -current_field_dimensions_.penalty_long_dist / 2 - current_field_dimensions_.line_width,
-            current_field_dimensions_.penalty_short_dist};
+        rj_geometry::Point o_top_left{def_long_dist + line_width, 0.0};
+
+        rj_geometry::Point o_bot_right{-def_long_dist - line_width, def_short_dist};
 
         auto our_defense_area{std::make_shared<rj_geometry::Rect>(o_top_left, o_bot_right)};
 
@@ -194,15 +195,12 @@ void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::S
         // Also add a slack around the box
         double slack_around_box = 0.1;
         double extra_dist = is_extra_dist_necessary ? 0.2 + slack_around_box : 0;
-        double left_x = current_field_dimensions_.penalty_long_dist / 2 +
-                        current_field_dimensions_.line_width + extra_dist;
+        double left_x = def_long_dist + line_width + extra_dist;
 
-        rj_geometry::Point t_bot_left{left_x, current_field_dimensions_.length};
+        rj_geometry::Point t_bot_left{left_x, field_length};
 
-        rj_geometry::Point t_top_right{
-            -left_x,
-            current_field_dimensions_.length - (current_field_dimensions_.penalty_short_dist +
-                                                current_field_dimensions_.line_width + extra_dist)};
+        rj_geometry::Point t_top_right{-left_x,
+                                       field_length - (def_short_dist + line_width + extra_dist)};
 
         auto their_defense_area{std::make_shared<rj_geometry::Rect>(t_bot_left, t_top_right)};
 
@@ -217,7 +215,6 @@ void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::S
         double physical_goal_board_width = 0.1;
         float goal_width = current_field_dimensions_.goal_width;
         float goal_depth = current_field_dimensions_.goal_depth;
-        float field_length = current_field_dimensions_.length;
 
         // Each goal is three rectangles
         rj_geometry::Point og1_1{goal_width / 2, -goal_depth};
