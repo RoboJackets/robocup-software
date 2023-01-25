@@ -39,6 +39,8 @@ private:
     // possible states of the Goalie
     enum State { BLOCKING, CLEARING, IDLING, BALL_NOT_FOUND };
 
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
     /*
      * @return true if ball is heading towards goal at some minimum speed threshold
      */

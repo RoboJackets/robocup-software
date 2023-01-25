@@ -71,6 +71,7 @@ void AgentActionClient::get_task() {
             if (robot_id_ == 0) {
                 SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
             }
+            SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
             last_task_ = task;
             send_new_goal();
         }
