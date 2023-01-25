@@ -4,14 +4,14 @@ namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
-    coach_change_timer_ =
-        this->create_wall_timer(100ms, [this]() { coach_ticker(); });
+    coach_change_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    positions_pub_ = this->create_publisher<rj_msgs::msg::PositionAssignment>("/strategy/positions", 10);
+    positions_pub_ =
+        this->create_publisher<rj_msgs::msg::PositionAssignment>("/strategy/positions", 10);
 
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
@@ -86,7 +86,6 @@ void CoachNode::coach_ticker() {
 }
 
 void CoachNode::check_for_play_state_change() {
-
     if (play_state_has_changed_) {
         rj_msgs::msg::CoachState coach_message;
 
