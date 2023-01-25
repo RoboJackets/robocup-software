@@ -6,21 +6,61 @@ namespace strategy {
 Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
+    latest_state_ = update_state();
+    return state_to_task(intent);
+}
+
+Goalie::State Goalie::update_state() {
+    // if a shot is coming, override all and go block it
     WorldState* world_state = this->world_state();
     if (shot_on_goal_detected(world_state)) {
-        // TODO(Kevin): fix intercept planner's is_done, then add in logic to
-        // clear/pass ball once done intercepting
+        return BLOCKING;
+    }
+
+    // if the ball is in the goalie box, clear it
+    bool ball_is_slow = world_state->ball.velocity.mag() < 0.5;  // m/s
+
+    rj_geometry::Point ball_pt = world_state->ball.position;
+    // TODO(Kevin): account for field direction when field coords
+    // added in
+    bool ball_in_box = ball_pt.y() < 1.0 && fabs(ball_pt.x()) < 1.0;  // m
+    if (ball_is_slow && ball_in_box) {
+        return CLEARING;
+    }
+
+    // otherwise, default to idling
+    return IDLING;
+}
+
+std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
+    if (latest_state_ == BLOCKING) {
         auto intercept_cmd = planning::InterceptMotionCommand{rj_geometry::Point{0.0, 0.1}};
         intent.motion_command = intercept_cmd;
         intent.motion_command_name = "intercept";
         return intent;
-    } else {
+    } else if (latest_state_ == IDLING) {
         auto goalie_idle_cmd = planning::GoalieIdleMotionCommand{};
         intent.motion_command = goalie_idle_cmd;
         intent.motion_command_name = "goalie_idle";
         return intent;
+    } else if (latest_state_ == CLEARING) {
+        auto line_kick_cmd = planning::LineKickMotionCommand{rj_geometry::Point{0.0, 4.5}};
+        intent.motion_command = line_kick_cmd;
+        intent.motion_command_name = "line kick";
+
+        // note: the way this is set up makes it impossible to
+        // shoot on time without breakbeam
+        // TODO(Kevin): make intent hold a manip msg instead? to be cleaner?
+        intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 4.0;
+        intent.is_active = true;
+
+        return intent;
     }
 
+    // should be impossible to reach, but this is equivalent to
+    // sending an EmptyMotionCommand
     return std::nullopt;
 }
 
