@@ -110,7 +110,6 @@ struct PlanRequest {
 };
 
 /**
- * TODO: fix this doc
  * Create static circle obstacle for one of the robots.
  *
  * @param robot current RobotState to make an obstacle for
