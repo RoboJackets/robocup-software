@@ -2,5 +2,5 @@
 # 1 -> TestResponse
 # 2 -> PositionResponse
 # 3 -> PassResponse
-AgentRequest assocated_request
+AgentRequest associated_request
 AgentResponseVariant response

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdlib>
 #include <spdlog/spdlog.h>
 
 #include <rj_common/time.hpp>

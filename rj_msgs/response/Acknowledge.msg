@@ -1,1 +1,1 @@
-bool acknowledged
+uint32 response_uid

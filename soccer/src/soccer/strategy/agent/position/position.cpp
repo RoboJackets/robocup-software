@@ -61,12 +61,9 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
 communication::PosAgentResponseWrapper Position::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper pos_agent_response;
-    rj_msgs::msg::AgentResponse response{};
-    rj_msgs::msg::Acknowledge acknowledge{};
-
-    response.acknowledge_response = {acknowledge};
+    communication::Acknowledge response;
+    communication::generate_uid(response);
     pos_agent_response.response = response;
-
     return pos_agent_response;
 }
 

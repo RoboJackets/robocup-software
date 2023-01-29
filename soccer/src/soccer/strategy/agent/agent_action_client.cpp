@@ -165,8 +165,7 @@ void AgentActionClient::get_communication() {
         }
     }
 
-    auto communication_request = current_position_->send_communication_request();
-    rj_msgs::msg::AgentRequest request = communication_request.request;
+    communication::PosAgentRequestWrapper communication_request = current_position_->send_communication_request();
 
     bool robots_visible = false;
     for (u_int8_t i = 0; i < kNumShells; i++) {
@@ -176,38 +175,49 @@ void AgentActionClient::get_communication() {
         }
     }
 
-    if (request != last_communication_ && robots_visible) {
-        last_communication_ = request;
-        if (communication_request.broadcast) {
-            send_broadcast(request);
+    if (!(communication_request.request == last_communication_) && robots_visible) {
+        last_communication_ = communication_request.request;
+        if (communication_request.urgent) {
+            if (communication_request.broadcast) {
+                send_anycast(communication_request.request, true, communication_request.target_agents);
+            } else {
+                send_anycast(communication_request.request, false, communication_request.target_agents);
+            }
+        } else if (communication_request.broadcast) {
+            send_broadcast(communication_request.request);
         } else {
-            try {
-                auto targets = communication_request.target_agents.value();
-                if (targets.size() > 1) {
-                    send_multicast(targets, request);
-                } else {
-                    send_unicast(targets[0], request);
-                }
-            } catch (const std::bad_optional_access& e) {
-                SPDLOG_WARN("BAD REQUEST: {}", e.what());
+            if (communication_request.target_agents.size() == 1) {
+                send_unicast(communication_request.request, communication_request.target_agents[0]);
+            } else if (communication_request.target_agents.size() > 1) {
+                send_multicast(communication_request.request, communication_request.target_agents);
+            } else {
+                // TODO: ADD COLORS TO MAKE THIS SHOW UP AS RED WARNING TEXT
+                SPDLOG_WARN("AgentActionClient::get_communication() - BAD REQUEST, UNSUPPORTED NUMBER OF RECIPIENTS");
             }
         }
     }
 }
 
-void AgentActionClient::send_unicast(int robot_id, rj_msgs::msg::AgentRequest agent_request) {
+void AgentActionClient::send_unicast(communication::AgentRequest agent_request, u_int8_t robot_id) {
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = agent_request;
+    request->agent_request = rj_convert::convert_to_ros(agent_request);
 
     robot_communication_cli_[robot_id]->async_send_request(
         request, [this, robot_id](
                      const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
                          response) { receive_response_callback(response, robot_id); });
+
+    communication::AgentPosResponseWrapper buffered_response;
+    buffered_response.associated_request = agent_request;
+    buffered_response.from_robot_ids = {robot_id};
+    buffered_response.broadcast = false;
+    buffered_response.urgent = false;
+    buffered_responses_.push_back(buffered_response);
 }
 
-void AgentActionClient::send_broadcast(rj_msgs::msg::AgentRequest agent_request) {
+void AgentActionClient::send_broadcast(communication::AgentRequest agent_request) {
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = agent_request;
+    request->agent_request = rj_convert::convert_to_ros(agent_request);
 
     for (size_t i = 0; i < kNumShells; i++) {
         if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
@@ -218,12 +228,17 @@ void AgentActionClient::send_broadcast(rj_msgs::msg::AgentRequest agent_request)
                         response) { receive_response_callback(response, i); });
         }
     }
+
+    communication::AgentPosResponseWrapper buffered_response;
+    buffered_response.associated_request = agent_request;
+    buffered_response.broadcast = true;
+    buffered_response.urgent = false;
+    buffered_responses_.push_back(buffered_response);
 }
 
-void AgentActionClient::send_multicast(std::vector<u_int8_t> robot_ids,
-                                       rj_msgs::msg::AgentRequest agent_request) {
+void AgentActionClient::send_multicast(communication::AgentRequest agent_request, std::vector<u_int8_t> robot_ids) {
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = agent_request;
+    request->agent_request = rj_convert::convert_to_ros(agent_request);
 
     for (int i : robot_ids) {
         robot_communication_cli_[i]->async_send_request(
@@ -232,6 +247,54 @@ void AgentActionClient::send_multicast(std::vector<u_int8_t> robot_ids,
              i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
                     response) { receive_response_callback(response, i); });
     }
+
+    communication::AgentPosResponseWrapper buffered_response;
+    buffered_response.associated_request = agent_request;
+    buffered_response.from_robot_ids = robot_ids;
+    buffered_response.broadcast = false;
+    buffered_response.urgent = false;
+    buffered_responses_.push_back(buffered_response);
+}
+
+void AgentActionClient::send_anycast(communication::AgentRequest agent_request, bool broadcast, std::vector<u_int8_t> robot_ids) {
+    auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
+    request->agent_request = rj_convert::convert_to_ros(agent_request);
+    if (broadcast) {
+        for (size_t i = 0; i < kNumShells; i++) {
+            if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
+                robot_communication_cli_[i]->async_send_request(
+                    request,
+                    [this,
+                    i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                            response) { receive_response_callback(response, i); });
+            }
+        }
+
+        communication::AgentPosResponseWrapper buffered_response;
+        buffered_response.associated_request = agent_request;
+        buffered_response.broadcast = true;
+        buffered_response.urgent = true;
+        buffered_responses_.push_back(buffered_response);
+    } else {
+        if (!robot_ids.empty()) {
+            for (int i : robot_ids) {
+                robot_communication_cli_[i]->async_send_request(
+                    request,
+                    [this,
+                    i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                            response) { receive_response_callback(response, i); });
+            }
+
+            communication::AgentPosResponseWrapper buffered_response;
+            buffered_response.associated_request = agent_request;
+            buffered_response.from_robot_ids = robot_ids;
+            buffered_response.broadcast = false;
+            buffered_response.urgent = true;
+            buffered_responses_.push_back(buffered_response);
+        } else {
+            SPDLOG_INFO("\033[91mSEND ANYCAST FAILED DUE TO BAD PROVIDED ROBOT DESTINATIONS\033[0m");
+        }
+    }
 }
 
 void AgentActionClient::receive_communication_callback(
@@ -239,25 +302,26 @@ void AgentActionClient::receive_communication_callback(
     std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
-        rj_msgs::msg::AgentResponse agent_response{};
-        rj_msgs::msg::Acknowledge acknowledgement{};
-        acknowledgement.acknowledged = true;
-        agent_response.acknowledge_response = {acknowledgement};
-        response->agent_response = agent_response;
+        communication::AgentResponse agent_response;
+        communication::AgentRequest agent_request = rj_convert::convert_from_ros(request->agent_request);
+        communication::Acknowledge acknowledge;
+        communication::generate_uid(acknowledge);
+        agent_response.associated_request = agent_request;
+        agent_response.response = acknowledge;
+        response->agent_response = rj_convert::convert_to_ros(agent_response);
     } else {
         // Convert agent request into AgentToPosCommRequest
         communication::AgentPosRequestWrapper agent_request;
-        agent_request.request = request->agent_request;
+        communication::AgentRequest received_request = rj_convert::convert_from_ros(request->agent_request);
+        agent_request.request = received_request;
 
         // Give the current position the request and receive the response to send back
         communication::PosAgentResponseWrapper pos_to_agent_response =
             current_position_->receive_communication_request(agent_request);
 
         // Convert PosToAgentCommResponse into AgentResponse
-        rj_msgs::msg::AgentResponse agent_response = pos_to_agent_response.response;
-
-        // Send the agent's response back to the client who asked
-        response->agent_response = agent_response;
+        communication::AgentResponse agent_response { received_request, pos_to_agent_response.response };
+        response->agent_response = rj_convert::convert_to_ros(agent_response);
     }
 }
 
@@ -276,18 +340,70 @@ void AgentActionClient::receive_response_callback(
         }
     }
 
-    communication::AgentPosResponseWrapper agent_to_position_response;
-    agent_to_position_response.from_robot_id = robot_id;
-    agent_to_position_response.response = response.get()->agent_response;
+    communication::AgentResponse agent_response = rj_convert::convert_from_ros(response.get()->agent_response);
+    for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
+        auto buffered_response = buffered_responses_[i];
+        if (buffered_response.associated_request == agent_response.associated_request) {
+            // add the robot id in the corresponding (increasing) location in the received_robot_ids
+            if (buffered_response.received_robot_ids.size() == 0) {
+                buffered_response.received_robot_ids.push_back(robot_id);
+                buffered_response.responses.push_back(agent_response.response);
+            } else {
+                for (u_int32_t i = 0; i < buffered_response.from_robot_ids.size(); i++) {
+                    if (buffered_response.received_robot_ids[i] > robot_id) {
+                        buffered_response.received_robot_ids.insert(buffered_response.received_robot_ids.begin() + i, robot_id);
+                        buffered_response.responses.insert(buffered_response.responses.begin() + i, agent_response.response);
+                    }
+                }
+            }
 
-    // Relay information to the position
-    current_position_->receive_communication_response(agent_to_position_response);
+            // if the message has received all of the results then we'll send the message to the position
+            if (buffered_response.received_robot_ids.size() == buffered_response.from_robot_ids.size()) {
+                // send the message to the position
+                current_position_->receive_communication_response(buffered_response);
+                buffered_responses_.erase(buffered_responses_.begin() + i);
+            } else if (buffered_response.urgent && !buffered_response.sent) {
+                // the message is important so it will be sent
+                current_position_->receive_communication_response(buffered_response);
+                buffered_responses_.erase(buffered_responses_.begin() + i);
+            }
+        }
+    }
 }
 
 [[nodiscard]] WorldState* AgentActionClient::world_state() {
     // thread-safe getter for world_state (see update_world_state())
     auto lock = std::lock_guard(world_state_mutex_);
     return &last_world_state_;
+}
+
+void AgentActionClient::check_communication_timeout() {
+    for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
+        if (buffered_responses_[i].created + timeout_duration_ < RJ::now()) {
+            if (current_position_ == nullptr) {
+                if (robot_id_ == 0) {
+                    current_position_ = std::make_unique<Goalie>(robot_id_);
+                } else if (robot_id_ == 1) {
+                    current_position_ = std::make_unique<Defense>(robot_id_);
+                } else {
+                    current_position_ = std::make_unique<Offense>(robot_id_);
+                }
+            }
+
+            current_position_->receive_communication_response(buffered_responses_[i]);
+            buffered_responses_.erase(buffered_responses_.begin() + i);
+        } else if (buffered_responses_[i].urgent && buffered_responses_[i].received_robot_ids.size() > 0) {
+            if (current_position_ == nullptr) {
+                if (robot_id_ == 0) {
+                    current_position_ = std::make_unique<Goalie>(robot_id_);
+                } else if (robot_id_ == 1) {
+                    current_position_ = std::make_unique<Defense>(robot_id_);
+                } else {
+                    current_position_ = std::make_unique<Offense>(robot_id_);
+                }
+            }
+        }
+    }
 }
 
 }  // namespace strategy

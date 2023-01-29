@@ -41,47 +41,47 @@ std::optional<rj_msgs::msg::RobotIntent> Defense::get_task() {
 }
 
 void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {
-    if (response.response.response_type == communication::CommunicationType::test) {
-        SPDLOG_INFO("\033[91mRobot {} has sent the message: {}\033[0m", response.from_robot_id,
-                    response.response.test_response[0].message);
-    } else {
-        SPDLOG_INFO("\033[93mRobot {} has acknowledged the message: {}\033[0m", response.from_robot_id);
+    for (u_int32_t i = 0; i < response.responses.size(); i++) {
+        if (const communication::Acknowledge* acknowledge = std::get_if<communication::Acknowledge>(&response.responses[i])) {
+            SPDLOG_INFO("\033[92m Robot {} has acknowledged the message\033[0m", response.received_robot_ids[i]);
+        } else if (const communication::PassResponse* pass_response = std::get_if<communication::PassResponse>(&response.responses[i])) {
+            SPDLOG_INFO("\033[93m Robot {} has responded to the pass request\033[0m", response.received_robot_ids[i]);
+        } else if (const communication::PositionResponse* position_response = std::get_if<communication::PositionResponse>(&response.responses[i])) {
+            SPDLOG_INFO("\033[93m Robot {} is playing {}\033[0m", response.received_robot_ids[i], position_response->position);
+        } else if (const communication::TestResponse* test_response = std::get_if<communication::TestResponse>(&response.responses[i])) {
+            SPDLOG_INFO("\03392m Robot {} sent the test response {}\033[0m", response.received_robot_ids[i], test_response->message);
+        } else {
+            // TODO: HANDLE THIS ERROR AND LOG IT
+            SPDLOG_WARN("ROBOT {} HAS SENT AN UNKNOWN RESPONSE", response.received_robot_ids[i]);
+        }
     }
 }
 
 communication::PosAgentResponseWrapper Defense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response;
-    if (request.request.request_type == communication::CommunicationType::test) {
-        rj_msgs::msg::TestResponse test_response{};
-        test_response.message = "I have obtained you message and I play defense";
-        comm_response.response.test_response = {test_response};
-        comm_response.response.response_type = communication::CommunicationType::test;
-    } else if (request.request.request_type == communication::CommunicationType::position) {
-        rj_msgs::msg::PositionResponse position_response{};
-        position_response.position = 1;
-        comm_response.response.position_response = {position_response};
-        comm_response.response.response_type = communication::CommunicationType::position;
+    if (const communication::PassRequest* pass_request = std::get_if<communication::PassRequest>(&request.request)) {
+        // TODO: Handle pass response
+        communication::Acknowledge acknowledge;
+        communication::generate_uid(acknowledge);
+        comm_response.response = acknowledge;
+    } else if (const communication::PositionRequest* position_request = std::get_if<communication::PositionRequest>(&request.request)) {
+        communication::PositionResponse position_response;
+        position_response.position = position_name_;
+        communication::generate_uid(position_response);
+        comm_response.response = position_response;
+    } else if (const communication::TestRequest* test_request = std::get_if<communication::TestRequest>(&request.request)) {
+        communication::TestResponse test_response;
+        test_response.message = std::format("robot {} says hello", robot_id_);
+        communication::generate_uid(test_response);
+        comm_response.response = test_response;
     } else {
-        rj_msgs::msg::Acknowledge acknowledge{};
-        acknowledge.acknowledged = true;
-        comm_response.response.acknowledge_response = {acknowledge};
-        comm_response.response.response_type = communication::CommunicationType::acknowledge;
+        communication::Acknowledge acknowledge;
+        communication::generate_uid(acknowledge);
+        comm_response.response = acknowledge;
     }
-    // TODO: Remove Below upon approval
-    set_test_multicast_request();
 
     return comm_response;
-}
-
-void Defense::set_test_multicast_request() {
-    communication::PosAgentRequestWrapper request;
-    rj_msgs::msg::TestRequest test_request;
-    request.broadcast = false;
-    request.target_agents = {0, 2, 3};
-    request.request.test_request = {test_request};
-    request.request.request_type = 1;
-    communication_request_ = request;
 }
 
 }  // namespace strategy

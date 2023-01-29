@@ -13,6 +13,7 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
+#include <rj_convert/ros_convert.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -90,21 +91,33 @@ private:
      * @brief sends a robot communication to a specific robot
      *
      * @param robot_id the robot to communicate with
+     * @param request the request to send to the other robot
      */
-    void send_unicast(int robot_id, rj_msgs::msg::AgentRequest request);
+    void send_unicast(communication::AgentRequest request, const u_int8_t robot_id);
 
     /**
      * @brief sends a robot communication to all robots
-     *
+     * 
+     * @param request the request to send the other robots
      */
-    void send_broadcast(rj_msgs::msg::AgentRequest request);
+    void send_broadcast(communication::AgentRequest request);
 
     /**
      * @brief sends a robot communication to a specific group of robots
      *
      * @param robot_ids the robot ids to send communication to
+     * @param request the request to send the other robots
      */
-    void send_multicast(std::vector<u_int8_t> robot_ids, rj_msgs::msg::AgentRequest agent_request);
+    void send_multicast(communication::AgentRequest request, std::vector<u_int8_t> robot_ids);
+
+    /**
+     * @brief sends a robot communication to a specified group of robots only accepting the first response
+     * 
+     * @param robot_ids the robots to send the request to (not needed if broadcast is true)
+     * @param request the request to send to the other robots
+     * @param broadcast whether the communication should be sent to all other robots (defaults to false)
+     */
+    void send_anycast(communication::AgentRequest request, bool broadcast = false, std::vector<u_int8_t> robot_ids = {});
 
     /**
      * @brief the callback that handles receiving and dealing with received agent communication
@@ -137,14 +150,20 @@ private:
     void get_task();
     rj_msgs::msg::RobotIntent last_task_;
 
-    // Robot Communication
+    // Robot Communication //
     rclcpp::TimerBase::SharedPtr get_communication_timer_;
     /**
      * @brief Get the communication object (request / response) from the current position.
      * 
      */
     void get_communication();
-    rj_msgs::msg::AgentRequest last_communication_;
+    communication::AgentRequest last_communication_;
+    std::vector<communication::AgentPosResponseWrapper> buffered_responses_{};
+
+    // timeout check
+    void check_communication_timeout();
+    const RJ::Seconds timeout_duration_ = RJ::Seconds(200);
+    // End Robot Communication //
 
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
