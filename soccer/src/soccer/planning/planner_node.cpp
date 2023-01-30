@@ -116,7 +116,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         }
 
         // pub Trajectory based on the RobotIntent
-        my_robot_planner->execute_trajectory(rj_convert::convert_from_ros(goal->robot_intent));
+        my_robot_planner->execute_intent(rj_convert::convert_from_ros(goal->robot_intent));
 
         /*
         // TODO (PR #1970): fix TrajectoryCollection
@@ -163,8 +163,13 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     // The empty planner should always be last.
     planners_.push_back(std::make_shared<EscapeObstaclesPathPlanner>());
 
+    // publish paths to control
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
         planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
+
+    // publish kicker/dribbler cmds directly to radio
+    manipulator_pub_ = node->create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
+        control::topics::manipulator_setpoint_pub(robot_id), rclcpp::QoS(10));
 
     // for ball sense and possession
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
@@ -182,11 +187,20 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         });
 }
 
-void PlannerForRobot::execute_trajectory(const RobotIntent& intent) {
+void PlannerForRobot::execute_intent(const RobotIntent& intent) {
     if (robot_alive()) {
+        // plan a path and send it to control
         auto plan_request = make_request(intent);
         auto trajectory = plan_for_robot(plan_request);
         trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+
+        // send the kick/dribble commands to the radio
+        manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
+                                      .shoot_mode(intent.shoot_mode)
+                                      .trigger_mode(intent.trigger_mode)
+                                      .kick_speed(intent.kick_speed)
+                                      .dribbler_speed(intent.dribbler_speed));
+
         /*
         // TODO (PR #1970): fix TrajectoryCollection
         // store all latest trajectories in a mutex-locked shared map
