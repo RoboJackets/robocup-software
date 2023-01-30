@@ -5,6 +5,7 @@ namespace strategy {
 // TODO(Kevin): lock Goalie id to id given by the ref
 Goalie::Goalie(int r_id) : Position(r_id) { 
     position_name_ = "Goalie";
+    test_unicast_request();
 }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
@@ -109,6 +110,17 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
 }
 
 void Goalie::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    // TESTING PLEASE DO NOT USE THIS
+    if (response.responses.size() == 0) {
+        if (const communication::PassRequest* pass_request = std::get_if<communication::PassRequest>(&response.associated_request)) {
+            if (*pass_request == timeout_test_request_) {
+                SPDLOG_INFO("\033[94mTIMEOUT - The response should have timed out.  A response has been received from {} robots\033[0m", response.received_robot_ids.size());
+                SPDLOG_INFO("\033[92mCommunication System Testing Complete\033[0m");
+                return;
+            }
+        }
+    }
+    
     for (u_int32_t i = 0; i < response.responses.size(); i++) {
         if (const communication::Acknowledge* acknowledge = std::get_if<communication::Acknowledge>(&response.responses[i])) {
             SPDLOG_INFO("\033[92m Robot {} has acknowledged the message\033[0m", response.received_robot_ids[i]);
@@ -117,7 +129,23 @@ void Goalie::receive_communication_response(communication::AgentPosResponseWrapp
         } else if (const communication::PositionResponse* position_response = std::get_if<communication::PositionResponse>(&response.responses[i])) {
             SPDLOG_INFO("\033[93m Robot {} is playing {}\033[0m", response.received_robot_ids[i], position_response->position);
         } else if (const communication::TestResponse* test_response = std::get_if<communication::TestResponse>(&response.responses[i])) {
-            SPDLOG_INFO("\03392m Robot {} sent the test response {}\033[0m", response.received_robot_ids[i], test_response->message);
+            // BEGIN TESTING CODE //
+            const communication::TestRequest* test_request = std::get_if<communication::TestRequest>(&response.associated_request);
+            if (*test_request == unicast_test_request_) {
+                test_multicast_request();
+                SPDLOG_INFO("\033[94mUNICAST TEST - Robot {} sent message '{}'\033[0m", response.received_robot_ids[i], test_response->message);
+            } else if (*test_request == multicast_test_request_) {
+                test_broadcast_request();
+                SPDLOG_INFO("\033[96mMULTICAST TEST - Robot {} sent message '{}'\033[0m", response.received_robot_ids[i], test_response->message);
+            } else if (*test_request == broadcast_test_request_) {
+                test_anycast_request();
+                SPDLOG_INFO("\033[92mBROADCAST TEST - Robot {} sent message '{}'\033[0m", response.received_robot_ids[i], test_response->message);
+            } else if (*test_request == anycast_test_request_) {
+                SPDLOG_INFO("\033[93mANYCAST TEST - Robot {} sent message '{}'\033[0m", response.received_robot_ids[i], test_response->message);
+                test_timeout_request();
+            }
+            // END TESTING CODE // 
+            SPDLOG_INFO("Robot {} sent the test response '{}'", response.received_robot_ids[i], test_response->message);
         } else {
             // TODO: HANDLE THIS ERROR AND LOG IT
             SPDLOG_WARN("ROBOT {} HAS SENT AN UNKNOWN RESPONSE", response.received_robot_ids[i]);
@@ -130,7 +158,7 @@ communication::PosAgentResponseWrapper Goalie::receive_communication_request(
     communication::PosAgentResponseWrapper comm_response;
     if (const communication::TestRequest* test_request = std::get_if<communication::TestRequest>(&request.request)) {
         communication::TestResponse test_response;
-        test_response.message = std::format("The goalie (robot: {}) says hello", robot_id_);
+        test_response.message = fmt::format("The goalie (robot: {}) says hello", robot_id_);
         communication::generate_uid(test_response);
         comm_response.response = test_response;
     } else if (const communication::PositionRequest* position_request = std::get_if<communication::PositionRequest>(&request.request)) {
@@ -149,6 +177,100 @@ communication::PosAgentResponseWrapper Goalie::receive_communication_request(
         comm_response.response = acknowledge;
     }
     return comm_response;
+}
+
+void Goalie::test_unicast_request() {
+    // Create the request
+    communication::TestRequest unicast_test_request;
+    communication::generate_uid(unicast_test_request);
+
+    // Wrap the request in PosAgentRequestWrapper
+    communication::PosAgentRequestWrapper request;
+    request.request = unicast_test_request;
+    request.target_agents = {3};
+    request.broadcast = false;
+    request.urgent = false;
+
+    // Set outgoing communication request to be this request
+    communication_request_ = request;
+
+    // Store the request (FOR TESTING ONLY)
+    unicast_test_request_ = unicast_test_request;
+}
+
+void Goalie::test_multicast_request() {
+    // Create the request
+    communication::TestRequest multicast_test_request;
+    communication::generate_uid(multicast_test_request);
+
+    // Wrap the request in PosAgentRequestWrapper
+    communication::PosAgentRequestWrapper request;
+    request.request = multicast_test_request;
+    request.target_agents = {2, 3, 4, 5};
+    request.broadcast = false;
+    request.urgent = false;
+
+    // Set outgoing communication request to be this request
+    communication_request_ = request;
+
+    // Store the request (FOR TESTING ONLY)
+    multicast_test_request_ = multicast_test_request;
+}
+
+void Goalie::test_broadcast_request() {
+    // Create the request
+    communication::TestRequest broadcast_test_request;
+    communication::generate_uid(broadcast_test_request);
+
+    // Wrap the request in PosAgentRequestWrapper
+    communication::PosAgentRequestWrapper request;
+    request.request = broadcast_test_request;
+    request.target_agents = {};
+    request.broadcast = true;
+    request.urgent = false;
+
+    // Set outgoing communication request to be this request
+    communication_request_ = request;
+
+    // Store the request (FOR TESTING ONLY)
+    broadcast_test_request_ = broadcast_test_request;
+}
+
+void Goalie::test_anycast_request() {
+    // Create the request
+    communication::TestRequest anycast_test_request;
+    communication::generate_uid(anycast_test_request);
+
+    // Wrap the request in PosAgentRequestWrapper
+    communication::PosAgentRequestWrapper request;
+    request.request = anycast_test_request;
+    request.target_agents = {};
+    request.broadcast = true;
+    request.urgent = true;
+
+    // Set outgoing communication request to be this request
+    communication_request_ = request;
+
+    // Store the request (FOR TESTING ONLY)
+    anycast_test_request_ = anycast_test_request;
+}
+
+void Goalie::test_timeout_request() {
+    // Create the request
+    communication::PassRequest timeout_test_request;
+    communication::generate_uid(timeout_test_request);
+
+    // Wrap the request in PosAgentRequestWrapper
+    communication::PosAgentRequestWrapper request;
+    request.request = timeout_test_request;
+    request.target_agents = {1};
+    request.broadcast = false;
+    request.urgent = false;
+
+    // Set outgoing communication request to be this request
+    communication_request_ = request;
+    // Store the request (FOR TESTING ONLY)
+    timeout_test_request_ = timeout_test_request;
 }
 
 }  // namespace strategy

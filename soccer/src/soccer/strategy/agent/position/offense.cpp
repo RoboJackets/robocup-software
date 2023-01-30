@@ -100,7 +100,7 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         comm_response.response = position_response;
     } else if (const communication::TestRequest* test_request = std::get_if<communication::TestRequest>(&request.request)) {
         communication::TestResponse test_response;
-        test_response.message = std::format("An offensive player (robot: {}) says hi", robot_id_);
+        test_response.message = fmt::format("An offensive player (robot: {}) says hi", robot_id_);
         communication::generate_uid(test_response);
         comm_response.response = test_response;
     } else {

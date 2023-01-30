@@ -90,8 +90,8 @@ private:
     /**
      * @brief sends a robot communication to a specific robot
      *
-     * @param robot_id the robot to communicate with
      * @param request the request to send to the other robot
+     * @param robot_id the robot to communicate with
      */
     void send_unicast(communication::AgentRequest request, const u_int8_t robot_id);
 
@@ -105,17 +105,17 @@ private:
     /**
      * @brief sends a robot communication to a specific group of robots
      *
-     * @param robot_ids the robot ids to send communication to
      * @param request the request to send the other robots
+     * @param robot_ids the robot ids to send communication to
      */
     void send_multicast(communication::AgentRequest request, std::vector<u_int8_t> robot_ids);
 
     /**
      * @brief sends a robot communication to a specified group of robots only accepting the first response
      * 
-     * @param robot_ids the robots to send the request to (not needed if broadcast is true)
      * @param request the request to send to the other robots
      * @param broadcast whether the communication should be sent to all other robots (defaults to false)
+     * @param robot_ids the robots to send the request to (not needed if broadcast is true)
      */
     void send_anycast(communication::AgentRequest request, bool broadcast = false, std::vector<u_int8_t> robot_ids = {});
 
@@ -133,6 +133,7 @@ private:
      * @brief the callback that handles the response from any send transmissions to other agents.
      *
      * @param response the contents of the response from the other agent.
+     * @param robot_id the robot id of the robot this response is from
      */
     void receive_response_callback(
         const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
@@ -158,11 +159,17 @@ private:
      */
     void get_communication();
     communication::AgentRequest last_communication_;
-    std::vector<communication::AgentPosResponseWrapper> buffered_responses_{};
+    std::vector<communication::AgentPosResponseWrapper> buffered_responses_;
 
     // timeout check
+    /**
+     * @brief Checks that less than timeout_duration_ has passed for each of the buffered responses.
+     * If a response has been buffered for longer than the duration then the response (in its current state)
+     * is sent to the position.
+     * 
+     */
     void check_communication_timeout();
-    const RJ::Seconds timeout_duration_ = RJ::Seconds(200);
+    const RJ::Seconds timeout_duration_ = RJ::Seconds(1);
     // End Robot Communication //
 
     // const because should never be changed, but initializer list will allow

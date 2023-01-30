@@ -115,7 +115,6 @@ namespace communication {
         std::vector<u_int8_t> received_robot_ids;
         bool broadcast;
         bool urgent;
-        bool sent;
         RJ::Time created;
         std::vector<AgentResponseVariant> responses;
     };
