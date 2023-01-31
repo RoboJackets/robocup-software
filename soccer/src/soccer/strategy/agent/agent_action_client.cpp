@@ -87,7 +87,7 @@ void AgentActionClient::get_task() {
 
     auto optional_task = current_position_->get_task();
     if (optional_task.has_value()) {
-        rj_msgs::msg::RobotIntent task = optional_task.value();
+        RobotIntent task = optional_task.value();
 
         // note that this comparison uses the ROS built-in msg type
         // so any custom operator== overloads written don't apply
@@ -117,7 +117,7 @@ void AgentActionClient::send_new_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = last_task_;
+    goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback =

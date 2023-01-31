@@ -13,6 +13,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+#include "robot_intent.hpp"
 #include "world_state.hpp"
 
 // Communication
@@ -82,7 +83,7 @@ public:
      * @brief return a RobotIntent to be sent to PlannerNode; nullopt means no
      * new task requested
      */
-    virtual std::optional<rj_msgs::msg::RobotIntent> get_task() = 0;
+    std::optional<RobotIntent> get_task();
 
     // this allows AgentActionClient to change private/protected members of this class
     friend class AgentActionClient;
@@ -147,6 +148,8 @@ protected:
     communication::PosAgentRequestWrapper communication_request_;
 
 private:
+
+    virtual std::optional<RobotIntent> derived_get_task(RobotIntent intent) = 0;
 };
 
 }  // namespace strategy

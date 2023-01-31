@@ -149,7 +149,7 @@ private:
 
     rclcpp::TimerBase::SharedPtr get_task_timer_;
     void get_task();
-    rj_msgs::msg::RobotIntent last_task_;
+    RobotIntent last_task_;
 
     // Robot Communication //
     rclcpp::TimerBase::SharedPtr get_communication_timer_;
