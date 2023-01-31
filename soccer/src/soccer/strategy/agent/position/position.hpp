@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdlib>
+
 #include <spdlog/spdlog.h>
 
 #include <rj_common/time.hpp>
@@ -57,14 +58,14 @@ public:
     // Agent-to-Agent communication
     /**
      * @brief Send the intended communication request through the agent action client.
-     * 
+     *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
     communication::PosAgentRequestWrapper send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
-     * 
+     *
      * @param response the response received from the previously sent communication
      */
     virtual void receive_communication_response(communication::AgentPosResponseWrapper response);
@@ -72,7 +73,7 @@ public:
     /**
      * @brief Receives a communication request from another robot before handling the request
      * and sending a response in return.
-     * 
+     *
      * @param request the request received from the other robot
      * @return communication::PosAgentResponseWrapper this robot's response to the other robot.
      */
@@ -148,7 +149,6 @@ protected:
     communication::PosAgentRequestWrapper communication_request_;
 
 private:
-
     virtual std::optional<RobotIntent> derived_get_task(RobotIntent intent) = 0;
 };
 

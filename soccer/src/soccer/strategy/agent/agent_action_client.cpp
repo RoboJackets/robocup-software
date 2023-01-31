@@ -48,9 +48,8 @@ AgentActionClient::AgentActionClient(int r_id)
 
     int agent_communication_hz = 60;
     get_communication_timer_ =
-        create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz),
-                          [this]() { 
-            get_communication(); 
+        create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
+            get_communication();
             check_communication_timeout();
         });
 }
@@ -168,9 +167,11 @@ void AgentActionClient::get_communication() {
         }
     }
 
-    communication::PosAgentRequestWrapper communication_request = current_position_->send_communication_request();
+    communication::PosAgentRequestWrapper communication_request =
+        current_position_->send_communication_request();
 
-    // if (const communication::TestRequest* test_request = std::get_if<communication::TestRequest>(&communication_request.request)) {
+    // if (const communication::TestRequest* test_request =
+    // std::get_if<communication::TestRequest>(&communication_request.request)) {
     //     SPDLOG_INFO("\033[92m{}\033[0m", test_request->request_uid);
     // }
 
@@ -186,9 +187,11 @@ void AgentActionClient::get_communication() {
         last_communication_ = communication_request.request;
         if (communication_request.urgent) {
             if (communication_request.broadcast) {
-                send_anycast(communication_request.request, true, communication_request.target_agents);
+                send_anycast(communication_request.request, true,
+                             communication_request.target_agents);
             } else {
-                send_anycast(communication_request.request, false, communication_request.target_agents);
+                send_anycast(communication_request.request, false,
+                             communication_request.target_agents);
             }
         } else if (communication_request.broadcast) {
             send_broadcast(communication_request.request);
@@ -199,7 +202,9 @@ void AgentActionClient::get_communication() {
                 send_multicast(communication_request.request, communication_request.target_agents);
             } else {
                 // TODO: ADD COLORS TO MAKE THIS SHOW UP AS RED WARNING TEXT
-                SPDLOG_WARN("AgentActionClient::get_communication() - BAD REQUEST, UNSUPPORTED NUMBER OF RECIPIENTS");
+                SPDLOG_WARN(
+                    "AgentActionClient::get_communication() - BAD REQUEST, UNSUPPORTED NUMBER OF "
+                    "RECIPIENTS");
             }
         }
     }
@@ -245,7 +250,8 @@ void AgentActionClient::send_broadcast(communication::AgentRequest agent_request
     buffered_responses_.push_back(buffered_response);
 }
 
-void AgentActionClient::send_multicast(communication::AgentRequest agent_request, std::vector<u_int8_t> robot_ids) {
+void AgentActionClient::send_multicast(communication::AgentRequest agent_request,
+                                       std::vector<u_int8_t> robot_ids) {
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
     request->agent_request = rj_convert::convert_to_ros(agent_request);
 
@@ -266,17 +272,17 @@ void AgentActionClient::send_multicast(communication::AgentRequest agent_request
     buffered_responses_.push_back(buffered_response);
 }
 
-void AgentActionClient::send_anycast(communication::AgentRequest agent_request, bool broadcast, std::vector<u_int8_t> robot_ids) {
+void AgentActionClient::send_anycast(communication::AgentRequest agent_request, bool broadcast,
+                                     std::vector<u_int8_t> robot_ids) {
     auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
     request->agent_request = rj_convert::convert_to_ros(agent_request);
     if (broadcast) {
         for (size_t i = 0; i < kNumShells; i++) {
             if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
                 robot_communication_cli_[i]->async_send_request(
-                    request,
-                    [this,
-                    i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                            response) { receive_response_callback(response, i); });
+                    request, [this, i](const std::shared_future<
+                                       rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                           response) { receive_response_callback(response, i); });
             }
         }
 
@@ -290,10 +296,9 @@ void AgentActionClient::send_anycast(communication::AgentRequest agent_request, 
         if (!robot_ids.empty()) {
             for (int i : robot_ids) {
                 robot_communication_cli_[i]->async_send_request(
-                    request,
-                    [this,
-                    i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                            response) { receive_response_callback(response, i); });
+                    request, [this, i](const std::shared_future<
+                                       rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                           response) { receive_response_callback(response, i); });
             }
 
             communication::AgentPosResponseWrapper buffered_response;
@@ -304,7 +309,8 @@ void AgentActionClient::send_anycast(communication::AgentRequest agent_request, 
             buffered_response.created = RJ::now();
             buffered_responses_.push_back(buffered_response);
         } else {
-            SPDLOG_INFO("\033[91mSEND ANYCAST FAILED DUE TO BAD PROVIDED ROBOT DESTINATIONS\033[0m");
+            SPDLOG_INFO(
+                "\033[91mSEND ANYCAST FAILED DUE TO BAD PROVIDED ROBOT DESTINATIONS\033[0m");
         }
     }
 }
@@ -315,7 +321,8 @@ void AgentActionClient::receive_communication_callback(
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
-        communication::AgentRequest agent_request = rj_convert::convert_from_ros(request->agent_request);
+        communication::AgentRequest agent_request =
+            rj_convert::convert_from_ros(request->agent_request);
         communication::Acknowledge acknowledge;
         communication::generate_uid(acknowledge);
         agent_response.associated_request = agent_request;
@@ -324,7 +331,8 @@ void AgentActionClient::receive_communication_callback(
     } else {
         // Convert agent request into AgentToPosCommRequest
         communication::AgentPosRequestWrapper agent_request;
-        communication::AgentRequest received_request = rj_convert::convert_from_ros(request->agent_request);
+        communication::AgentRequest received_request =
+            rj_convert::convert_from_ros(request->agent_request);
         agent_request.request = received_request;
 
         // Give the current position the request and receive the response to send back
@@ -332,7 +340,8 @@ void AgentActionClient::receive_communication_callback(
             current_position_->receive_communication_request(agent_request);
 
         // Convert PosToAgentCommResponse into AgentResponse
-        communication::AgentResponse agent_response { received_request, pos_to_agent_response.response };
+        communication::AgentResponse agent_response{received_request,
+                                                    pos_to_agent_response.response};
         response->agent_response = rj_convert::convert_to_ros(agent_response);
     }
 }
@@ -352,7 +361,8 @@ void AgentActionClient::receive_response_callback(
         }
     }
 
-    communication::AgentResponse agent_response = rj_convert::convert_from_ros(response.get()->agent_response);
+    communication::AgentResponse agent_response =
+        rj_convert::convert_from_ros(response.get()->agent_response);
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (buffered_responses_[i].associated_request == agent_response.associated_request) {
             // add the robot id in the corresponding (increasing) location in the received_robot_ids
@@ -366,8 +376,10 @@ void AgentActionClient::receive_response_callback(
                         buffered_responses_[i].responses.push_back(agent_response.response);
                         break;
                     } else if (buffered_responses_[i].received_robot_ids[j] > robot_id) {
-                        buffered_responses_[i].received_robot_ids.insert(buffered_responses_[i].received_robot_ids.begin() + j, robot_id);
-                        buffered_responses_[i].responses.insert(buffered_responses_[i].responses.begin() + j, agent_response.response);
+                        buffered_responses_[i].received_robot_ids.insert(
+                            buffered_responses_[i].received_robot_ids.begin() + j, robot_id);
+                        buffered_responses_[i].responses.insert(
+                            buffered_responses_[i].responses.begin() + j, agent_response.response);
                         break;
                     }
                 }
@@ -377,11 +389,13 @@ void AgentActionClient::receive_response_callback(
                 current_position_->receive_communication_response(buffered_responses_[i]);
                 buffered_responses_.erase(buffered_responses_.begin() + i);
                 return;
-            } else if (buffered_responses_[i].broadcast && buffered_responses_[i].received_robot_ids.size() >= 5) {
+            } else if (buffered_responses_[i].broadcast &&
+                       buffered_responses_[i].received_robot_ids.size() >= 5) {
                 current_position_->receive_communication_response(buffered_responses_[i]);
                 buffered_responses_.erase(buffered_responses_.begin() + i);
                 return;
-            } else if (buffered_responses_[i].received_robot_ids.size() == buffered_responses_[i].from_robot_ids.size()) {
+            } else if (buffered_responses_[i].received_robot_ids.size() ==
+                       buffered_responses_[i].from_robot_ids.size()) {
                 current_position_->receive_communication_response(buffered_responses_[i]);
                 buffered_responses_.erase(buffered_responses_.begin() + i);
                 return;

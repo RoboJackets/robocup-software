@@ -1,136 +1,137 @@
 #pragma once
 
+#include <mutex>
 #include <string>
 #include <variant>
 #include <vector>
-#include <mutex>
-
-#include <rj_convert/ros_convert.hpp>
 
 #include <rj_common/time.hpp>
+#include <rj_convert/ros_convert.hpp>
 
+#include "rj_msgs/msg/acknowledge.hpp"
 #include "rj_msgs/msg/agent_request.hpp"
 #include "rj_msgs/msg/agent_response.hpp"
 #include "rj_msgs/msg/agent_response_variant.hpp"
 #include "rj_msgs/msg/pass_request.hpp"
-#include "rj_msgs/msg/position_request.hpp"
-#include "rj_msgs/msg/test_request.hpp"
-#include "rj_msgs/msg/acknowledge.hpp"
 #include "rj_msgs/msg/pass_response.hpp"
+#include "rj_msgs/msg/position_request.hpp"
 #include "rj_msgs/msg/position_response.hpp"
+#include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
 
 namespace strategy {
 
 namespace communication {
-    // BEGIN REQUEST TYPES //
+// BEGIN REQUEST TYPES //
 
-    struct PassRequest {
-        u_int32_t request_uid;
-    };
-    bool operator==(const PassRequest& a, const PassRequest& b);
+struct PassRequest {
+    u_int32_t request_uid;
+};
+bool operator==(const PassRequest& a, const PassRequest& b);
 
-    struct PositionRequest {
-        u_int32_t request_uid;
-    };
-    bool operator==( const PositionRequest& a,  const PositionRequest& b);
+struct PositionRequest {
+    u_int32_t request_uid;
+};
+bool operator==(const PositionRequest& a, const PositionRequest& b);
 
-    struct TestRequest {
-        u_int32_t request_uid;
-    };
-    bool operator==( const TestRequest& a,  const TestRequest& b);
+struct TestRequest {
+    u_int32_t request_uid;
+};
+bool operator==(const TestRequest& a, const TestRequest& b);
 
-    using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest>;
+using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest>;
 
-    // END REQUEST TYPES //
+// END REQUEST TYPES //
 
-    // BEGIN RESPONSE TYPES //
+// BEGIN RESPONSE TYPES //
 
-    struct Acknowledge {
-        u_int32_t response_uid;
-    };
-    bool operator==( const Acknowledge& a,  const Acknowledge& b);
+struct Acknowledge {
+    u_int32_t response_uid;
+};
+bool operator==(const Acknowledge& a, const Acknowledge& b);
 
-    struct PassResponse {
-        u_int32_t response_uid;
-    };
-    bool operator==( const PassResponse& a,  const PassResponse& b);
+struct PassResponse {
+    u_int32_t response_uid;
+};
+bool operator==(const PassResponse& a, const PassResponse& b);
 
-    struct PositionResponse {
-        u_int32_t response_uid;
-        std::string position;
-    };
-    bool operator==( const PositionResponse& a,  const PositionResponse& b);
+struct PositionResponse {
+    u_int32_t response_uid;
+    std::string position;
+};
+bool operator==(const PositionResponse& a, const PositionResponse& b);
 
-    struct TestResponse {
-        u_int32_t response_uid;
-        std::string message;
-    };
-    bool operator==( const TestResponse& a,  const TestResponse& b);
+struct TestResponse {
+    u_int32_t response_uid;
+    std::string message;
+};
+bool operator==(const TestResponse& a, const TestResponse& b);
 
-    using AgentResponseVariant = std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse>;
+using AgentResponseVariant =
+    std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse>;
 
-    struct AgentResponse {
-        AgentRequest associated_request;
-        AgentResponseVariant response;
-    };
-    bool operator==( const AgentResponse& a,  const AgentResponse& b);
+struct AgentResponse {
+    AgentRequest associated_request;
+    AgentResponseVariant response;
+};
+bool operator==(const AgentResponse& a, const AgentResponse& b);
 
-    // END RESPONSE TYPES //
+// END RESPONSE TYPES //
 
-    /**
-     * @brief Wraps a communication request by giving the intended destination of the communication.
-     * 
-     */
-    struct PosAgentRequestWrapper {
-        AgentRequest request; // The request to be send
-        std::vector<u_int8_t> target_agents; // The target receivers of the message (unnecessary in broadcast)
-        bool broadcast; // Denotes whether or not the message should be sent to all robots.
-        bool urgent; // If urgent, first response is sent through (others are dropped)
-    };
+/**
+ * @brief Wraps a communication request by giving the intended destination of the communication.
+ *
+ */
+struct PosAgentRequestWrapper {
+    AgentRequest request;  // The request to be send
+    std::vector<u_int8_t>
+        target_agents;  // The target receivers of the message (unnecessary in broadcast)
+    bool broadcast;     // Denotes whether or not the message should be sent to all robots.
+    bool urgent;        // If urgent, first response is sent through (others are dropped)
+};
 
-    /**
-     * @brief Wraps a communication response to ensure symmetry for agent-to-agent communication.
-     * 
-     */
-    struct PosAgentResponseWrapper {
-        AgentResponseVariant response;
-    };
+/**
+ * @brief Wraps a communication response to ensure symmetry for agent-to-agent communication.
+ *
+ */
+struct PosAgentResponseWrapper {
+    AgentResponseVariant response;
+};
 
-    /**
-     * @brief Wraps a communication request to ensure symmetry for agent-to-agent communication.
-     * 
-     */
-    struct AgentPosRequestWrapper {
-        AgentRequest request;
-    };
+/**
+ * @brief Wraps a communication request to ensure symmetry for agent-to-agent communication.
+ *
+ */
+struct AgentPosRequestWrapper {
+    AgentRequest request;
+};
 
-    /**
-     * @brief Wraps a communication response by giving the robot the communication is from.
-     * 
-     */
-    struct AgentPosResponseWrapper {
-        AgentRequest associated_request;
-        std::vector<u_int8_t> from_robot_ids;
-        std::vector<u_int8_t> received_robot_ids;
-        bool broadcast;
-        bool urgent;
-        RJ::Time created;
-        std::vector<AgentResponseVariant> responses;
-    };
+/**
+ * @brief Wraps a communication response by giving the robot the communication is from.
+ *
+ */
+struct AgentPosResponseWrapper {
+    AgentRequest associated_request;
+    std::vector<u_int8_t> from_robot_ids;
+    std::vector<u_int8_t> received_robot_ids;
+    bool broadcast;
+    bool urgent;
+    RJ::Time created;
+    std::vector<AgentResponseVariant> responses;
+};
 
-    void generate_uid(PassRequest& request);
-    void generate_uid(PositionRequest& request);
-    void generate_uid(TestRequest& request);
-    
-    void generate_uid(Acknowledge& response);
-    void generate_uid(PassResponse& response);
-    void generate_uid(PositionResponse& response);
-    void generate_uid(TestResponse& response);
+void generate_uid(PassRequest& request);
+void generate_uid(PositionRequest& request);
+void generate_uid(TestRequest& request);
 
-} // namespace communication
+void generate_uid(Acknowledge& response);
+void generate_uid(PassResponse& response);
+void generate_uid(PositionResponse& response);
+void generate_uid(TestResponse& response);
 
-} // namespace strategy
+}  // namespace communication
+
+}  // namespace strategy
 
 namespace rj_convert {
 
@@ -138,16 +139,14 @@ namespace rj_convert {
 
 template <>
 struct RosConverter<strategy::communication::PassRequest, rj_msgs::msg::PassRequest> {
-    static rj_msgs::msg::PassRequest to_ros(
-        const strategy::communication::PassRequest& from) {
+    static rj_msgs::msg::PassRequest to_ros(const strategy::communication::PassRequest& from) {
         rj_msgs::msg::PassRequest result;
         result.request_uid = from.request_uid;
         return result;
     }
 
-    static strategy::communication::PassRequest from_ros(
-        const rj_msgs::msg::PassRequest& from) {
-        return strategy::communication::PassRequest{ from.request_uid };
+    static strategy::communication::PassRequest from_ros(const rj_msgs::msg::PassRequest& from) {
+        return strategy::communication::PassRequest{from.request_uid};
     }
 };
 
@@ -164,7 +163,7 @@ struct RosConverter<strategy::communication::PositionRequest, rj_msgs::msg::Posi
 
     static strategy::communication::PositionRequest from_ros(
         const rj_msgs::msg::PositionRequest& from) {
-        return strategy::communication::PositionRequest{ from.request_uid };
+        return strategy::communication::PositionRequest{from.request_uid};
     }
 };
 
@@ -172,16 +171,14 @@ ASSOCIATE_CPP_ROS(strategy::communication::PositionRequest, rj_msgs::msg::Positi
 
 template <>
 struct RosConverter<strategy::communication::TestRequest, rj_msgs::msg::TestRequest> {
-    static rj_msgs::msg::TestRequest to_ros(
-        const strategy::communication::TestRequest& from) {
+    static rj_msgs::msg::TestRequest to_ros(const strategy::communication::TestRequest& from) {
         rj_msgs::msg::TestRequest result;
         result.request_uid = from.request_uid;
         return result;
     }
 
-    static strategy::communication::TestRequest from_ros(
-        const rj_msgs::msg::TestRequest& from) {
-        return strategy::communication::TestRequest{ from.request_uid };
+    static strategy::communication::TestRequest from_ros(const rj_msgs::msg::TestRequest& from) {
+        return strategy::communication::TestRequest{from.request_uid};
     }
 };
 
@@ -189,14 +186,15 @@ ASSOCIATE_CPP_ROS(strategy::communication::TestRequest, rj_msgs::msg::TestReques
 
 template <>
 struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
-    static rj_msgs::msg::AgentRequest to_ros(
-        const strategy::communication::AgentRequest& from) {
+    static rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {
         rj_msgs::msg::AgentRequest result;
         if (const auto* test_request = std::get_if<strategy::communication::TestRequest>(&from)) {
             result.test_request.emplace_back(convert_to_ros(*test_request));
-        } else if (const auto* position_request = std::get_if<strategy::communication::PositionRequest>(&from)) {
+        } else if (const auto* position_request =
+                       std::get_if<strategy::communication::PositionRequest>(&from)) {
             result.position_request.emplace_back(convert_to_ros(*position_request));
-        } else if (const auto* pass_request = std::get_if<strategy::communication::PassRequest>(&from)) {
+        } else if (const auto* pass_request =
+                       std::get_if<strategy::communication::PassRequest>(&from)) {
             result.pass_request.emplace_back(convert_to_ros(*pass_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
@@ -204,8 +202,7 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         return result;
     }
 
-    static strategy::communication::AgentRequest from_ros(
-        const rj_msgs::msg::AgentRequest& from) {
+    static strategy::communication::AgentRequest from_ros(const rj_msgs::msg::AgentRequest& from) {
         strategy::communication::AgentRequest result;
         if (!from.test_request.empty()) {
             result = convert_from_ros(from.test_request.front());
@@ -228,16 +225,14 @@ ASSOCIATE_CPP_ROS(strategy::communication::AgentRequest, rj_msgs::msg::AgentRequ
 
 template <>
 struct RosConverter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge> {
-    static rj_msgs::msg::Acknowledge to_ros(
-        const strategy::communication::Acknowledge& from) {
+    static rj_msgs::msg::Acknowledge to_ros(const strategy::communication::Acknowledge& from) {
         rj_msgs::msg::Acknowledge result;
         result.response_uid = from.response_uid;
         return result;
     }
 
-    static strategy::communication::Acknowledge from_ros(
-        const rj_msgs::msg::Acknowledge& from) {
-        return strategy::communication::Acknowledge{ from.response_uid };
+    static strategy::communication::Acknowledge from_ros(const rj_msgs::msg::Acknowledge& from) {
+        return strategy::communication::Acknowledge{from.response_uid};
     }
 };
 
@@ -245,15 +240,13 @@ ASSOCIATE_CPP_ROS(strategy::communication::Acknowledge, rj_msgs::msg::Acknowledg
 
 template <>
 struct RosConverter<strategy::communication::PassResponse, rj_msgs::msg::PassResponse> {
-    static rj_msgs::msg::PassResponse to_ros(
-        const strategy::communication::PassResponse& from) {
+    static rj_msgs::msg::PassResponse to_ros(const strategy::communication::PassResponse& from) {
         rj_msgs::msg::PassResponse result;
         result.response_uid = from.response_uid;
         return result;
     }
 
-    static strategy::communication::PassResponse from_ros(
-        const rj_msgs::msg::PassResponse& from) {
+    static strategy::communication::PassResponse from_ros(const rj_msgs::msg::PassResponse& from) {
         strategy::communication::PassResponse result;
         result.response_uid = from.response_uid;
         return result;
@@ -285,16 +278,14 @@ ASSOCIATE_CPP_ROS(strategy::communication::PositionResponse, rj_msgs::msg::Posit
 
 template <>
 struct RosConverter<strategy::communication::TestResponse, rj_msgs::msg::TestResponse> {
-    static rj_msgs::msg::TestResponse to_ros(
-        const strategy::communication::TestResponse& from) {
+    static rj_msgs::msg::TestResponse to_ros(const strategy::communication::TestResponse& from) {
         rj_msgs::msg::TestResponse result;
         result.message = from.message;
         result.response_uid = from.response_uid;
         return result;
     }
 
-    static strategy::communication::TestResponse from_ros(
-        const rj_msgs::msg::TestResponse& from) {
+    static strategy::communication::TestResponse from_ros(const rj_msgs::msg::TestResponse& from) {
         strategy::communication::TestResponse result;
         result.message = from.message;
         result.response_uid = from.response_uid;
@@ -306,17 +297,21 @@ ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_msgs::msg::TestRespo
 
 template <>
 struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {
-    static rj_msgs::msg::AgentResponse to_ros(
-        const strategy::communication::AgentResponse& from) {
+    static rj_msgs::msg::AgentResponse to_ros(const strategy::communication::AgentResponse& from) {
         rj_msgs::msg::AgentResponse result;
         result.associated_request = convert_to_ros(from.associated_request);
-        if (const auto* acknowledge_response = std::get_if<strategy::communication::Acknowledge>(&(from.response))) {
-            result.response.acknowledge_response.emplace_back(convert_to_ros(*acknowledge_response));
-        } else if (const auto* test_response = std::get_if<strategy::communication::TestResponse>(&(from.response))) {
+        if (const auto* acknowledge_response =
+                std::get_if<strategy::communication::Acknowledge>(&(from.response))) {
+            result.response.acknowledge_response.emplace_back(
+                convert_to_ros(*acknowledge_response));
+        } else if (const auto* test_response =
+                       std::get_if<strategy::communication::TestResponse>(&(from.response))) {
             result.response.test_response.emplace_back(convert_to_ros(*test_response));
-        } else if (const auto* position_response = std::get_if<strategy::communication::PositionResponse>(&(from.response))) {
+        } else if (const auto* position_response =
+                       std::get_if<strategy::communication::PositionResponse>(&(from.response))) {
             result.response.position_response.emplace_back(convert_to_ros(*position_response));
-        } else if (const auto* pass_response = std::get_if<strategy::communication::PassResponse>(&(from.response))) {
+        } else if (const auto* pass_response =
+                       std::get_if<strategy::communication::PassResponse>(&(from.response))) {
             result.response.pass_response.emplace_back(convert_to_ros(*pass_response));
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");
@@ -347,4 +342,4 @@ ASSOCIATE_CPP_ROS(strategy::communication::AgentResponse, rj_msgs::msg::AgentRes
 
 // END RESPONSE TYPES //
 
-} // namespace rj_convert
+}  // namespace rj_convert

@@ -10,10 +10,10 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/time.hpp>
+#include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
-#include <rj_convert/ros_convert.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -97,7 +97,7 @@ private:
 
     /**
      * @brief sends a robot communication to all robots
-     * 
+     *
      * @param request the request to send the other robots
      */
     void send_broadcast(communication::AgentRequest request);
@@ -111,13 +111,16 @@ private:
     void send_multicast(communication::AgentRequest request, std::vector<u_int8_t> robot_ids);
 
     /**
-     * @brief sends a robot communication to a specified group of robots only accepting the first response
-     * 
+     * @brief sends a robot communication to a specified group of robots only accepting the first
+     * response
+     *
      * @param request the request to send to the other robots
-     * @param broadcast whether the communication should be sent to all other robots (defaults to false)
+     * @param broadcast whether the communication should be sent to all other robots (defaults to
+     * false)
      * @param robot_ids the robots to send the request to (not needed if broadcast is true)
      */
-    void send_anycast(communication::AgentRequest request, bool broadcast = false, std::vector<u_int8_t> robot_ids = {});
+    void send_anycast(communication::AgentRequest request, bool broadcast = false,
+                      std::vector<u_int8_t> robot_ids = {});
 
     /**
      * @brief the callback that handles receiving and dealing with received agent communication
@@ -155,7 +158,7 @@ private:
     rclcpp::TimerBase::SharedPtr get_communication_timer_;
     /**
      * @brief Get the communication object (request / response) from the current position.
-     * 
+     *
      */
     void get_communication();
     communication::AgentRequest last_communication_;
@@ -164,9 +167,9 @@ private:
     // timeout check
     /**
      * @brief Checks that less than timeout_duration_ has passed for each of the buffered responses.
-     * If a response has been buffered for longer than the duration then the response (in its current state)
-     * is sent to the position.
-     * 
+     * If a response has been buffered for longer than the duration then the response (in its
+     * current state) is sent to the position.
+     *
      */
     void check_communication_timeout();
     const RJ::Seconds timeout_duration_ = RJ::Seconds(1);

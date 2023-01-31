@@ -91,6 +91,6 @@ void generate_uid(TestResponse& response) {
     response_uid_mutex.unlock();
 }
 
-} // namespace communication
+}  // namespace communication
 
-} // namespace strategy
+}  // namespace strategy
