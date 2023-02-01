@@ -849,29 +849,16 @@ void MainWindow::on_actionStopBall_triggered() {
 }
 
 void MainWindow::on_actionResetField_triggered() {
-    grSim_Packet simPacket;
-
-    grSim_Replacement* replacement = simPacket.mutable_replacement();
-    for (size_t i = 0; i < kRobotsPerTeam; ++i) {
-        auto* rob = replacement->add_robots();
-
-        const int NUM_COLS = 2;
-        const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
-
-        double x_pos = -2.5 + i / ROBOTS_PER_COL;
-        double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
-
-        _ui.fieldView->set_robot_pose(rj_geometry::Pose(x_pos, y_pos, 0), i, true);
-    }
+    const int NUM_COLS = 2;
+    const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
 
     for (size_t i = 0; i < kRobotsPerTeam; ++i) {
-        const int NUM_COLS = 2;
-        const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
-
         double x_pos = +2.5 - i / ROBOTS_PER_COL;
         double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+        auto pose = rj_geometry::Pose(x_pos, y_pos, 0);
 
-        _ui.fieldView->set_robot_pose(rj_geometry::Pose(x_pos, y_pos, 0), i, false);
+        _ui.fieldView->set_robot_pose(pose, i, false);
+        _ui.fieldView->set_robot_pose(pose, i, true);
     }
 
     _ui.fieldView->set_ball_position(rj_geometry::Point(0.0, 0.0));
