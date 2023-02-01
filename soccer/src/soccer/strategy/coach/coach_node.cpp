@@ -147,14 +147,14 @@ void CoachNode::assign_positions() {
     const rj_msgs::msg::PositionAssignment positions_message;
     std::array<uint32_t, kNumShells> positions{};
     positions[0] = Positions::Goalie;
-&    if (!possessing_) {
+    if (!possessing_) {
         positions[1] = Positions::Offense;
         for (int i = 2; i < kNumShells; i++) {
             positions[i] = Positions::Defense;
         }
     } else {
         positions[1] = Positions::Defense;
-        for (int i = 2; i < kNumShellns; i++) {
+        for (int i = 2; i < kNumShells; i++) {
             positions[i] = Positions::Offense;
         }
     }
