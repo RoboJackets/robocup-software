@@ -50,7 +50,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
-    rclcpp::TimerBase::SharedPtr coach_change_timer_;
+    rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
     bool possessing_ = false;
