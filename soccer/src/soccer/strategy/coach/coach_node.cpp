@@ -4,16 +4,22 @@ namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
-    play_state_change_timer_ =
-        this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
+    coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
+    positions_pub_ =
+        this->create_publisher<rj_msgs::msg::PositionAssignment>("/strategy/positions", 10);
+
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
+
+    // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
+    // save state of acknowledgements, only spam until some long time has passed, or ack received
+    /* ack_array[msg->ID] = true; */
 
     // initialize all of the robot status subscriptions
     for (size_t i = 0; i < kNumShells; i++) {
@@ -27,7 +33,6 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
     current_play_state_.our_restart = true;
-
     rj_geometry_msgs::msg::Point temp_point;
     temp_point.x = -1;
     temp_point.y = -1;
@@ -49,20 +54,11 @@ void CoachNode::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr m
                     rj_convert::convert_from_ros(robot_state.pose.position),
                     rj_convert::convert_from_ros(msg->ball.position), kRobotDiameter)) {
                 possessing_ = true;
-                play_state_has_changed_ = true;
                 return;
             }
         }
     } else {
-        for (rj_msgs::msg::RobotState robot_state : msg->their_robots) {
-            if (rj_geometry::Point::nearly_equals(
-                    rj_convert::convert_from_ros(robot_state.pose.position),
-                    rj_convert::convert_from_ros(msg->ball.position), kRobotDiameter)) {
-                possessing_ = false;
-                play_state_has_changed_ = true;
-                return;
-            }
-        }
+        possessing_ = false;
     }
 }
 
@@ -73,6 +69,11 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
             play_state_has_changed_ = true;
         }
     }
+}
+
+void CoachNode::coach_ticker() {
+    assign_positions();
+    check_for_play_state_change();
 }
 
 void CoachNode::check_for_play_state_change() {
@@ -124,6 +125,25 @@ void CoachNode::check_for_play_state_change() {
 
         play_state_has_changed_ = false;
     }
+}
+
+void CoachNode::assign_positions() {
+    rj_msgs::msg::PositionAssignment positions_message;
+    std::array<uint32_t, kNumShells> positions{};
+    positions[0] = Positions::Goalie;
+    if (!possessing_) {
+        positions[1] = Positions::Offense;
+        for (int i = 2; i < kNumShells; i++) {
+            positions[i] = Positions::Defense;
+        }
+    } else {
+        positions[1] = Positions::Defense;
+        for (int i = 2; i < kNumShells; i++) {
+            positions[i] = Positions::Offense;
+        }
+    }
+    positions_message.client_positions = positions;
+    positions_pub_->publish(positions_message);
 }
 
 }  // namespace strategy
