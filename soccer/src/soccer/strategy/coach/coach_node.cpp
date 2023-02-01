@@ -184,7 +184,7 @@ void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::S
 
         // Sometimes there is a greater distance we need to keep:
         // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
-        // TODO: update this conditional. gameplay_node used different set of checks than rules
+        // TODO(sid-parikh): update this conditional. gameplay_node used different set of checks than rules
         // imply
         bool is_extra_dist_necessary =
             (current_play_state_.state == PlayState::State::Stop ||
