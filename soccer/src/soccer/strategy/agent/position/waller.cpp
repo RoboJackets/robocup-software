@@ -2,13 +2,9 @@
 
 namespace strategy {
 
-Waller::Waller() { 
-    std::string defense_type_{"Waller"};
-}
-
+Waller::Waller() { std::string defense_type_{"Waller"}; }
 
 std::optional<RobotIntent> Waller::get_task(RobotIntent intent, rj_geometry::Point ball_location) {
-
     // Get Goal Location (Always (0,0)) as of creation
     rj_geometry::Point goal_center_point{0, 0};
 

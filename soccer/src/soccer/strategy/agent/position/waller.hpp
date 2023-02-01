@@ -17,7 +17,6 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 
-
 namespace strategy {
 
 /*
@@ -40,8 +39,6 @@ public:
     std::optional<RobotIntent> get_task(RobotIntent intent, rj_geometry::Point ball_location);
 
 private:
-
-
 };
 
 }  // namespace strategy
