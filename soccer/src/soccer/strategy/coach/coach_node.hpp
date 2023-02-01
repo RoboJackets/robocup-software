@@ -61,7 +61,8 @@ private:
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void check_for_play_state_change();
     /*
-     * Handles actions the Coach does every tick. Currently calls assign_positions and check_for_play_state_change.
+     * Handles actions the Coach does every tick. Currently calls assign_positions and
+     * check_for_play_state_change.
      */
     void coach_ticker();
     /*
