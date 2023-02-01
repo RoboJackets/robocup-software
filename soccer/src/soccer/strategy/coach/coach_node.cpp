@@ -164,95 +164,104 @@ void CoachNode::assign_positions() {
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
     if (have_field_dimensions_) {
-        // Publish defense areas as rectangular area obstacles
-        /* From the old gameplay node: "The defense area, per the rules, is the box
-         in front of each goal where only that team's goalie can be in and touch the ball." */
+        rj_geometry::ShapeSet defense_area_obstacles = create_defense_area_obstacles();
+        rj_geometry::ShapeSet goal_wall_obstacles = create_goal_wall_obstacles();
 
-        // Create our defense area using field dimensions
-        float def_long_dist = current_field_dimensions_.penalty_long_dist / 2.0f;
-        float def_short_dist = current_field_dimensions_.penalty_short_dist;
-        float line_width = current_field_dimensions_.line_width;
-        float field_length = current_field_dimensions_.length;
-
-        rj_geometry::Point o_top_left{def_long_dist + line_width, 0.0};
-
-        rj_geometry::Point o_bot_right{-def_long_dist - line_width, def_short_dist};
-
-        auto our_defense_area{std::make_shared<rj_geometry::Rect>(o_top_left, o_bot_right)};
-
-        // Create opponent defense area using field dimensions
-
-        // Sometimes there is a greater distance we need to keep:
-        // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
-        // TODO(sid-parikh): update this conditional. gameplay_node used different set of checks than rules
-        // imply
-        bool is_extra_dist_necessary =
-            (current_play_state_.state == PlayState::State::Stop ||
-             current_play_state_.restart == PlayState::Restart::Direct ||
-             current_play_state_.restart == PlayState::Restart::Indirect ||
-             current_play_state_.restart == PlayState::Restart::Kickoff);
-
-        // Also add a slack around the box
-        double slack_around_box = 0.1;
-        double extra_dist = is_extra_dist_necessary ? 0.2 + slack_around_box : 0;
-        double left_x = def_long_dist + line_width + extra_dist;
-
-        rj_geometry::Point t_bot_left{left_x, field_length};
-
-        rj_geometry::Point t_top_right{-left_x,
-                                       field_length - (def_short_dist + line_width + extra_dist)};
-
-        auto their_defense_area{std::make_shared<rj_geometry::Rect>(t_bot_left, t_top_right)};
-
-        // Combine both defense areas into ShapeSet
-        rj_geometry::ShapeSet def_area_obstacles{};
-        def_area_obstacles.add(our_defense_area);
-        def_area_obstacles.add(their_defense_area);
-
-        def_area_obstacles_pub_->publish(rj_convert::convert_to_ros(def_area_obstacles));
-
-        // Publish physical walls of the goals as a static obstacle
-        double physical_goal_board_width = 0.1;
-        float goal_width = current_field_dimensions_.goal_width;
-        float goal_depth = current_field_dimensions_.goal_depth;
-
-        // Each goal is three rectangles
-        rj_geometry::Point og1_1{goal_width / 2, -goal_depth};
-        rj_geometry::Point og1_2{-goal_width / 2, -goal_depth - physical_goal_board_width};
-        auto our_goal_1{std::make_shared<rj_geometry::Rect>(og1_1, og1_2)};
-
-        rj_geometry::Point og2_1{goal_width / 2, -goal_depth};
-        rj_geometry::Point og2_2{goal_width / 2 + physical_goal_board_width, 0.0};
-        auto our_goal_2{std::make_shared<rj_geometry::Rect>(og2_1, og2_2)};
-
-        rj_geometry::Point og3_1{-goal_width / 2, -goal_depth};
-        rj_geometry::Point og3_2{-goal_width / 2 - physical_goal_board_width, 0.0};
-        auto our_goal_3{std::make_shared<rj_geometry::Rect>(og3_1, og3_2)};
-
-        rj_geometry::Point tg1_1{goal_width / 2, field_length + goal_depth};
-        rj_geometry::Point tg1_2{-goal_width / 2,
-                                 field_length + goal_depth + physical_goal_board_width};
-        auto their_goal_1{std::make_shared<rj_geometry::Rect>(tg1_1, tg1_2)};
-
-        rj_geometry::Point tg2_1{goal_width / 2, field_length + goal_depth};
-        rj_geometry::Point tg2_2{goal_width / 2 + physical_goal_board_width, field_length};
-        auto their_goal_2{std::make_shared<rj_geometry::Rect>(tg2_1, tg2_2)};
-
-        rj_geometry::Point tg3_1{-goal_width / 2, field_length + goal_depth};
-        rj_geometry::Point tg3_2{-goal_width / 2 - physical_goal_board_width, field_length};
-        auto their_goal_3{std::make_shared<rj_geometry::Rect>(tg3_1, tg3_2)};
-
-        // Put all the walls into a ShapeSet and publish it
-        rj_geometry::ShapeSet goal_wall_obstacles{};
-        goal_wall_obstacles.add(our_goal_1);
-        goal_wall_obstacles.add(our_goal_2);
-        goal_wall_obstacles.add(our_goal_3);
-        goal_wall_obstacles.add(their_goal_1);
-        goal_wall_obstacles.add(their_goal_2);
-        goal_wall_obstacles.add(their_goal_3);
-
+        def_area_obstacles_pub_->publish(rj_convert::convert_to_ros(defense_area_obstacles));
         global_obstacles_pub_->publish(rj_convert::convert_to_ros(goal_wall_obstacles));
     }
+}
+
+rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
+    // Create defense areas as rectangular area obstacles
+    /* The defense area, per the rules, is the box in front of
+    each goal where only that team's goalie can be in and touch the ball. */
+
+    // Create our defense area using field dimensions
+    float def_long_dist = current_field_dimensions_.penalty_long_dist / 2.0f;
+    float def_short_dist = current_field_dimensions_.penalty_short_dist;
+    float line_width = current_field_dimensions_.line_width;
+    float field_length = current_field_dimensions_.length;
+
+    rj_geometry::Point o_top_left{def_long_dist + line_width, 0.0};
+
+    rj_geometry::Point o_bot_right{-def_long_dist - line_width, def_short_dist};
+
+    auto our_defense_area{std::make_shared<rj_geometry::Rect>(o_top_left, o_bot_right)};
+
+    // Create opponent defense area using field dimensions
+
+    // Sometimes there is a greater distance we need to keep:
+    // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
+    // TODO(sid-parikh): update this conditional. gameplay_node used different set of checks
+    // than rules imply
+    bool is_extra_dist_necessary = (current_play_state_.state == PlayState::State::Stop ||
+                                    current_play_state_.restart == PlayState::Restart::Direct ||
+                                    current_play_state_.restart == PlayState::Restart::Indirect);
+
+    // Also add a slack around the box
+    double slack_around_box = 0.1;
+    double extra_dist = is_extra_dist_necessary ? 0.2 + slack_around_box : 0;
+    double left_x = def_long_dist + line_width + extra_dist;
+
+    rj_geometry::Point t_bot_left{left_x, field_length};
+
+    rj_geometry::Point t_top_right{-left_x,
+                                   field_length - (def_short_dist + line_width + extra_dist)};
+
+    auto their_defense_area{std::make_shared<rj_geometry::Rect>(t_bot_left, t_top_right)};
+
+    // Combine both defense areas into ShapeSet
+    rj_geometry::ShapeSet def_area_obstacles{};
+    def_area_obstacles.add(our_defense_area);
+    def_area_obstacles.add(their_defense_area);
+
+    return def_area_obstacles;
+}
+
+rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {
+    // Create physical walls of the goals as static obstacles
+    double physical_goal_board_width = 0.1;
+    float goal_width = current_field_dimensions_.goal_width;
+    float goal_depth = current_field_dimensions_.goal_depth;
+    float field_length = current_field_dimensions_.length;
+
+    // Each goal is three rectangles
+    rj_geometry::Point og1_1{goal_width / 2, -goal_depth};
+    rj_geometry::Point og1_2{-goal_width / 2, -goal_depth - physical_goal_board_width};
+    auto our_goal_1{std::make_shared<rj_geometry::Rect>(og1_1, og1_2)};
+
+    rj_geometry::Point og2_1{goal_width / 2, -goal_depth};
+    rj_geometry::Point og2_2{goal_width / 2 + physical_goal_board_width, 0.0};
+    auto our_goal_2{std::make_shared<rj_geometry::Rect>(og2_1, og2_2)};
+
+    rj_geometry::Point og3_1{-goal_width / 2, -goal_depth};
+    rj_geometry::Point og3_2{-goal_width / 2 - physical_goal_board_width, 0.0};
+    auto our_goal_3{std::make_shared<rj_geometry::Rect>(og3_1, og3_2)};
+
+    rj_geometry::Point tg1_1{goal_width / 2, field_length + goal_depth};
+    rj_geometry::Point tg1_2{-goal_width / 2,
+                             field_length + goal_depth + physical_goal_board_width};
+    auto their_goal_1{std::make_shared<rj_geometry::Rect>(tg1_1, tg1_2)};
+
+    rj_geometry::Point tg2_1{goal_width / 2, field_length + goal_depth};
+    rj_geometry::Point tg2_2{goal_width / 2 + physical_goal_board_width, field_length};
+    auto their_goal_2{std::make_shared<rj_geometry::Rect>(tg2_1, tg2_2)};
+
+    rj_geometry::Point tg3_1{-goal_width / 2, field_length + goal_depth};
+    rj_geometry::Point tg3_2{-goal_width / 2 - physical_goal_board_width, field_length};
+    auto their_goal_3{std::make_shared<rj_geometry::Rect>(tg3_1, tg3_2)};
+
+    // Put all the walls into a ShapeSet and publish it
+    rj_geometry::ShapeSet goal_wall_obstacles{};
+    goal_wall_obstacles.add(our_goal_1);
+    goal_wall_obstacles.add(our_goal_2);
+    goal_wall_obstacles.add(our_goal_3);
+    goal_wall_obstacles.add(their_goal_1);
+    goal_wall_obstacles.add(their_goal_2);
+    goal_wall_obstacles.add(their_goal_3);
+
+    return goal_wall_obstacles;
 }
 
 }  // namespace strategy

@@ -49,9 +49,19 @@ public:
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachState>::SharedPtr coach_state_pub_;
 
+    /*
+     * Used to publish the defense areas as shapes for the planner node to recognize as obstacles
+     * for non-goalies.
+     */
     rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_pub_;
+    /*
+     * Used to add the walls of the goals to the list of global obstacles.
+     */
     rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_pub_;
 
+    /*
+     * Information needed to calculate the static obstacles (defense areas and goal walls).
+     */
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 
     rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr positions_pub_;
@@ -88,6 +98,16 @@ private:
      * Publishes the static obstacles.
      */
     void publish_static_obstacles();
+
+    /*
+     * Calculates the defense area obstacles. (Goalie boxes)
+     */
+    rj_geometry::ShapeSet create_defense_area_obstacles();
+
+    /*
+     * Calculates the goal wall obstacles.
+     */
+    rj_geometry::ShapeSet create_goal_wall_obstacles();
 };
 
 }  // namespace strategy
