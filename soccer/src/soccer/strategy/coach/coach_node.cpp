@@ -4,7 +4,7 @@ namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
-    coach_change_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
+    coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
