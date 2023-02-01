@@ -174,8 +174,6 @@ void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::S
 
 rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
     // Create defense areas as rectangular area obstacles
-    /* The defense area, per the rules, is the box in front of
-    each goal where only that team's goalie can be in and touch the ball. */
 
     // Create our defense area using field dimensions
     float def_long_dist = current_field_dimensions_.penalty_long_dist / 2.0f;

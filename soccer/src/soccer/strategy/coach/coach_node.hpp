@@ -100,12 +100,14 @@ private:
     void publish_static_obstacles();
 
     /*
-     * Calculates the defense area obstacles. (Goalie boxes)
+     * Calculates the defense area as a set of obstacles. The defense area, per the rules, is the
+     * box in front of each goal where only that team's goalie can be in and touch the ball.
      */
     rj_geometry::ShapeSet create_defense_area_obstacles();
 
     /*
-     * Calculates the goal wall obstacles.
+     * Calculates the physical (3D) walls of the each goal as a set of obstacles, so robots don't
+     * crash into them.
      */
     rj_geometry::ShapeSet create_goal_wall_obstacles();
 };
