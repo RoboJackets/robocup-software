@@ -159,7 +159,8 @@ void CoachNode::assign_positions() {
         }
     }
     positions_message.client_positions = positions;
-    have_field_dimensions_ = true;    positions_pub_->publish(positions_message);
+    have_field_dimensions_ = true;
+    positions_pub_->publish(positions_message);
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
