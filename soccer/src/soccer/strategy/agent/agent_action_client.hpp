@@ -56,8 +56,8 @@ private:
     rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
 
     // clients for receiving instructions from the other agents
-    rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr
-        robot_communication_cli_[kNumShells];
+    std::array<rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr, kNumShells>
+        robot_communication_cli_;
 
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
@@ -93,7 +93,7 @@ private:
      * @param request the request to send to the other robot
      * @param robot_id the robot to communicate with
      */
-    void send_unicast(communication::AgentRequest request, const u_int8_t robot_id);
+    void send_unicast(communication::AgentRequest request, u_int8_t robot_id);
 
     /**
      * @brief sends a robot communication to all robots
