@@ -12,9 +12,6 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     global_obstacles_pub_ =
         this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/global_obstacles", 10);
 
-    play_state_change_timer_ =
-        this->create_wall_timer(100ms, [this]() { check_for_play_state_change(); });
-
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         "/referee/play_state", 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
@@ -144,7 +141,7 @@ void CoachNode::check_for_play_state_change() {
 }
 
 void CoachNode::assign_positions() {
-    const rj_msgs::msg::PositionAssignment positions_message;
+    rj_msgs::msg::PositionAssignment positions_message;
     std::array<uint32_t, kNumShells> positions{};
     positions[0] = Positions::Goalie;
     if (!possessing_) {
@@ -159,11 +156,15 @@ void CoachNode::assign_positions() {
         }
     }
     positions_message.client_positions = positions;
-    have_field_dimensions_ = true;
     positions_pub_->publish(positions_message);
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    current_field_dimensions_ = *msg;
+    have_field_dimensions_ = true;
+}
+
+void CoachNode::publish_static_obstacles() {
     if (have_field_dimensions_) {
         rj_geometry::ShapeSet defense_area_obstacles = create_defense_area_obstacles();
         rj_geometry::ShapeSet goal_wall_obstacles = create_goal_wall_obstacles();
