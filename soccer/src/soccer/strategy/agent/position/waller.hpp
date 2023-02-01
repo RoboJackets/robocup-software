@@ -16,30 +16,32 @@
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
-#include "waller.hpp"
+
 
 namespace strategy {
 
 /*
- * The Defense position handles general defensive tasks, like intercepting
- * passes, walling in front of our goal, and fighting for possession.
+ * The Waller role provides the implementation for a defensive robot that implements
+ * this class to have a waller-like behavior where it aims to serve as a wall between
+ * the ball and the goal.
  */
-class Defense : public Position {
+class Waller {
 public:
-    Defense(int r_id);
-    ~Defense() override = default;
-
-private:
-    int move_ct_ = 0;
+    Waller();
+    ~Waller() = default;
 
     /**
-     * @brief Currently creates a waller behavior which aims to intercept the path
+     * @brief Currently returns a waller behavior which aims to intercept the path
      * between the ball and the center of the goal
      *
      * @param [RobotIntent intent] [RobotIntent of the Defensive Robot]
      * @return [RobotIntent with next target point for the robot]
      */
-    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+    std::optional<RobotIntent> get_task(RobotIntent intent, rj_geometry::Point ball_location);
+
+private:
+
+
 };
 
 }  // namespace strategy
