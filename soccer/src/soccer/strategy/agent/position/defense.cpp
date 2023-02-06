@@ -18,7 +18,7 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     if (move_ct_ % 2 == 1) {
         x = 3.0;
     }
-    rj_geometry::Point target_pt{x, 3.0};
+    rj_geometry::Point target_pt{x, robot_id_ * 1.0};
 
     // stop at end of path
     rj_geometry::Point target_vel{0.0, 0.0};

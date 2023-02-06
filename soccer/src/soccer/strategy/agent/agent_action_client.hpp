@@ -12,6 +12,7 @@
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
@@ -51,6 +52,8 @@ private:
     // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
+    // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // server for receiving instructions from other agents
     rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
@@ -152,6 +155,13 @@ private:
 
     rclcpp::TimerBase::SharedPtr get_task_timer_;
     void get_task();
+
+    /*
+     * Updates the current position based on the robot ID and the given Position message.
+     */
+    void update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
+    // note that this is our RobotIntent struct (robot_intent.hpp), not a
+    // pre-generated ROS msg type
     RobotIntent last_task_;
 
     // Robot Communication //

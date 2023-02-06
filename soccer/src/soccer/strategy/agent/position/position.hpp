@@ -54,6 +54,7 @@ public:
     // communication with AC
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
+    const std::string get_name();
 
     // Agent-to-Agent communication
     /**

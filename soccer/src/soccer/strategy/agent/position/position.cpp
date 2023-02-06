@@ -88,5 +88,6 @@ rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
     intent.motion_command.empty_command = {empty};
     return intent;
 }
+const std::string Position::get_name() { return position_name_; }
 
 }  // namespace strategy

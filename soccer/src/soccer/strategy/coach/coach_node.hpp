@@ -8,11 +8,17 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/play_state.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_utils/logging.hpp>
 
 #include "game_state.hpp"
+#include "strategy/agent/position/defense.hpp"
+#include "strategy/agent/position/goalie.hpp"
+#include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/position.hpp"
 
 namespace strategy {
 enum MatchSituation {
@@ -23,6 +29,8 @@ enum MatchSituation {
     penalty_kick,    // penalty kick restarts
     in_play,         // normal play
 };
+
+enum Positions { Goalie, Defense, Offense };
 
 /**
  * @brief This node takes the referee information and standardizes it for consumption of the
@@ -38,10 +46,11 @@ public:
 
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachState>::SharedPtr coach_state_pub_;
+    rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr positions_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
-    rclcpp::TimerBase::SharedPtr play_state_change_timer_;
+    rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
     bool possessing_ = false;
@@ -51,6 +60,16 @@ private:
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void check_for_play_state_change();
+    /*
+     * Handles actions the Coach does every tick. Currently calls assign_positions and
+     * check_for_play_state_change.
+     */
+    void coach_ticker();
+    /*
+     * Assigns positions to robots with IDs 1 through 16, depending on current possession.
+     * Publishes new positions to the topic /strategy/positions (message type PositionAssignment)
+     */
+    void assign_positions();
 };
 
 }  // namespace strategy
