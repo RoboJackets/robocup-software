@@ -283,19 +283,15 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         // If coach node has speed set to 0,
         // choose not to move by replacing the MotionCommand with an empty one.
         motion_command = EmptyMotionCommand{};
-    }
-    else if (max_robot_speed < 0.0f) {
+    } else if (max_robot_speed < 0.0f) {
         // If coach node has speed set to negative, assume infinity.
         // Negative numbers cause crashes, but 10 is an effectively infinite limit.
         motion_command = intent.motion_command;
         constraints.mot.max_speed = 10.0f;
-    }
-    else {
+    } else {
         motion_command = intent.motion_command;
         constraints.mot.max_speed = max_robot_speed;
     }
-
-    SPDLOG_INFO("Max robot speed: {}", max_robot_speed);
 
     return PlanRequest{start,
                        motion_command,
