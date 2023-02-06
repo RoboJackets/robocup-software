@@ -107,7 +107,7 @@ private:
      */
     void receive_response_callback(
         const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
-        int robot_id);
+        u_int8_t robot_id);
 
     // server for receiving instructions from other agents
     rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;

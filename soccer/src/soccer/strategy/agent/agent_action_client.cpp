@@ -66,7 +66,6 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     WorldState world_state = rj_convert::convert_from_ros(*msg);
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
-    current_position_->update_world_state(world_state);
 }
 
 void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg) {
@@ -212,7 +211,7 @@ void AgentActionClient::get_communication() {
         // send communication requests
         if (communication_request.broadcast) {
             for (size_t i = 0; i < kNumShells; i++) {
-                if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
+                if (i != (size_t) robot_id_ && this->world_state()->get_robot(true, i).visible) {
                     robot_communication_cli_[i]->async_send_request(
                         request,
                         [this, i](const std::shared_future<
@@ -223,7 +222,7 @@ void AgentActionClient::get_communication() {
             // set broadcast to true in buffer
             buffered_response.broadcast = true;
         } else {
-            for (int i : communication_request.target_agents) {
+            for (u_int8_t i : communication_request.target_agents) {
                 robot_communication_cli_[i]->async_send_request(
                     request, [this, i](const std::shared_future<
                                        rj_msgs::srv::AgentCommunication::Response::SharedPtr>
@@ -250,7 +249,7 @@ void AgentActionClient::receive_communication_callback(
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
             rj_convert::convert_from_ros(request->agent_request);
-        communication::Acknowledge acknowledge;
+        communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         agent_response.associated_request = agent_request;
         agent_response.response = acknowledge;
@@ -275,7 +274,7 @@ void AgentActionClient::receive_communication_callback(
 
 void AgentActionClient::receive_response_callback(
     const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
-    int robot_id) {
+    u_int8_t robot_id) {
     // TODO: change this default to defense? or NOP?
     if (current_position_ == nullptr) {
         // TODO: change this once coach node merged
