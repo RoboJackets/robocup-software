@@ -243,8 +243,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto goalie_id = shared_state_->goalie_id();
     const auto play_state = shared_state_->play_state();
     const bool is_goalie = goalie_id == robot_id_;
-    const auto min_dist_from_ball = shared_state_->min_dist_from_ball();
-    const auto max_robot_speed = shared_state_->max_robot_speed();
+    const auto min_dist_from_ball = shared_state_->coach_state().global_override.min_dist_from_ball;
+    const auto max_robot_speed = shared_state_->coach_state().global_override.min_dist_from_ball;
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
