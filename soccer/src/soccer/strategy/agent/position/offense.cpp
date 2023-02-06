@@ -67,6 +67,7 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
         // TODO: Handle pass requests
+        sleep(100);
         communication::Acknowledge acknowledge;
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;

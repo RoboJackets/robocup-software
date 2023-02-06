@@ -55,22 +55,6 @@ private:
     rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
-    // server for receiving instructions from other agents
-    rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
-
-    // clients for receiving instructions from the other agents
-    std::array<rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr, kNumShells>
-        robot_communication_cli_;
-
-    WorldState last_world_state_;
-    mutable std::mutex world_state_mutex_;
-    /*
-     * @return thread-safe ptr to most recent world_state
-     */
-    [[nodiscard]] WorldState* world_state();
-
-    // TODO(Kevin): communication module pub/sub here (e.g. passing)
-
     // callbacks for subs
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
     void coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg);
@@ -85,11 +69,26 @@ private:
 
     void result_callback(const GoalHandleRobotMove::WrappedResult& result);
 
-    /*
+    /**
      * @brief send a goal to the planning ActionServer, based on the Position's get_task().
      */
     void send_new_goal();
 
+    /**
+     * @brief calls and executes current_positions_'s current desired task
+     */
+    void get_task();
+    rclcpp::TimerBase::SharedPtr get_task_timer_;
+
+    /*
+     * Updates the current position based on the robot ID and the given Position message.
+     */
+    void update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
+    // note that this is our RobotIntent struct (robot_intent.hpp), not a
+    // pre-generated ROS msg type
+    RobotIntent last_task_;
+
+    // Robot Communication //
     /**
      * @brief the callback that handles receiving and dealing with received agent communication
      *
@@ -110,26 +109,13 @@ private:
         const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
         int robot_id);
 
-    // TODO(#1957): add back this if needed, or delete
-    // cancel latest goal every time a new goal comes in, to avoid overloading memory with many
-    // threads
-    /* void cancel_last_goal(); */
-    // after goal is asynchronously canceled, reset last_goal_handle_
-    /* void cancel_goal_callback(rclcpp_action::Client<RobotMove>::CancelResponse::SharedPtr); */
-    /* GoalHandleRobotMove::SharedPtr last_goal_handle_; */
+    // server for receiving instructions from other agents
+    rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
 
-    rclcpp::TimerBase::SharedPtr get_task_timer_;
-    void get_task();
+    // clients for receiving instructions from the other agents
+    std::array<rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr, kNumShells>
+        robot_communication_cli_;
 
-    /*
-     * Updates the current position based on the robot ID and the given Position message.
-     */
-    void update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
-    // note that this is our RobotIntent struct (robot_intent.hpp), not a
-    // pre-generated ROS msg type
-    RobotIntent last_task_;
-
-    // Robot Communication //
     rclcpp::TimerBase::SharedPtr get_communication_timer_;
     /**
      * @brief Get the communication object (request / response) from the current position.
@@ -153,6 +139,16 @@ private:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
+
+    /*
+     * @return thread-safe ptr to most recent world_state
+     */
+    [[nodiscard]] WorldState* world_state();
+
+    // private to avoid allowing WorldState to be accessed directly by derived
+    // classes (must use thread-safe getter)
+    WorldState last_world_state_;
+    mutable std::mutex world_state_mutex_;
 
 };  // class AgentActionClient
 

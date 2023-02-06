@@ -27,7 +27,6 @@ AgentActionClient::AgentActionClient(int r_id)
         "strategy/coach_state", 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
-    // TODO(NATE): Update QoS for service to fit correct number
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
         [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
@@ -40,6 +39,7 @@ AgentActionClient::AgentActionClient(int r_id)
         robot_communication_cli_[i] =
             create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
+
     positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
         "strategy/positions", 1,
         [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { update_position(msg); });
@@ -49,6 +49,7 @@ AgentActionClient::AgentActionClient(int r_id)
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 
+    // TODO(Kevin): make ROS param for this
     int agent_communication_hz = 60;
     get_communication_timer_ =
         create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
@@ -77,7 +78,6 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    // SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -92,22 +92,12 @@ void AgentActionClient::get_task() {
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
 
-        // note that this comparison uses the ROS built-in msg type
-        // so any custom operator== overloads written don't apply
-        // TODO(Kevin): fix this by making Positions return RobotIntent structs, not msgs
+        // note that because these are our RobotIntent structs, this comparison
+        // uses our custom struct overloads
         if (task != last_task_) {
-            /* if (robot_id_ == 0) { */
-            /*     SPDLOG_INFO("sending new task {}", task.motion_command.name); */
-            /* } */
             last_task_ = task;
             send_new_goal();
-        } else {
-            /* if (robot_id_ == 0) { */
-            /*     SPDLOG_INFO("NOT sending new task {}", task.motion_command.name); */
-            /* } */
         }
-    } else {
-        /* SPDLOG_INFO("no new task"); */
     }
 }
 
@@ -163,21 +153,21 @@ void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
     auto goal_handle = future.get();
     if (!goal_handle) {
-        current_position_->goal_canceled_ = true;
+        current_position_->set_goal_canceled();
     }
 }
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    current_position_->time_left_ = time_left;
+    current_position_->set_time_left(time_left);
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
-            current_position_->is_done_ = true;
+            current_position_->set_is_done();
             break;
         case rclcpp_action::ResultCode::ABORTED:
             return;
@@ -341,12 +331,6 @@ void AgentActionClient::receive_response_callback(
     }
 }
 
-[[nodiscard]] WorldState* AgentActionClient::world_state() {
-    // thread-safe getter for world_state (see update_world_state())
-    auto lock = std::lock_guard(world_state_mutex_);
-    return &last_world_state_;
-}
-
 void AgentActionClient::check_communication_timeout() {
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {
@@ -364,6 +348,12 @@ void AgentActionClient::check_communication_timeout() {
             buffered_responses_.erase(buffered_responses_.begin() + i);
         }
     }
+}
+
+[[nodiscard]] WorldState* AgentActionClient::world_state() {
+    // thread-safe getter for world_state (see update_world_state())
+    auto lock = std::lock_guard(world_state_mutex_);
+    return &last_world_state_;
 }
 
 }  // namespace strategy
