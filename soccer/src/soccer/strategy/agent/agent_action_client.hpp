@@ -91,41 +91,6 @@ private:
     void send_new_goal();
 
     /**
-     * @brief sends a robot communication to a specific robot
-     *
-     * @param request the request to send to the other robot
-     * @param robot_id the robot to communicate with
-     */
-    void send_unicast(communication::AgentRequest request, u_int8_t robot_id);
-
-    /**
-     * @brief sends a robot communication to all robots
-     *
-     * @param request the request to send the other robots
-     */
-    void send_broadcast(communication::AgentRequest request);
-
-    /**
-     * @brief sends a robot communication to a specific group of robots
-     *
-     * @param request the request to send the other robots
-     * @param robot_ids the robot ids to send communication to
-     */
-    void send_multicast(communication::AgentRequest request, std::vector<u_int8_t> robot_ids);
-
-    /**
-     * @brief sends a robot communication to a specified group of robots only accepting the first
-     * response
-     *
-     * @param request the request to send to the other robots
-     * @param broadcast whether the communication should be sent to all other robots (defaults to
-     * false)
-     * @param robot_ids the robots to send the request to (not needed if broadcast is true)
-     */
-    void send_anycast(communication::AgentRequest request, bool broadcast = false,
-                      std::vector<u_int8_t> robot_ids = {});
-
-    /**
      * @brief the callback that handles receiving and dealing with received agent communication
      *
      * @param request the robot communication request from the other robot

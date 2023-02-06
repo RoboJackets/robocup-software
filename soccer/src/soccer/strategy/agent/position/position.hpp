@@ -80,6 +80,7 @@ public:
      */
     virtual communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request);
+    // END Agent-to-Agent Communication
 
     /*
      * @brief return a RobotIntent to be sent to PlannerNode; nullopt means no

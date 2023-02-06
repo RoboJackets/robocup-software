@@ -120,6 +120,7 @@ struct AgentPosResponseWrapper {
     std::vector<AgentResponseVariant> responses;
 };
 
+// TODO: Make this templated and less ugly
 void generate_uid(PassRequest& request);
 void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);

@@ -77,7 +77,7 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    SPDLOG_INFO("Getting task for robot {}", robot_id_);
+    // SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -202,11 +202,6 @@ void AgentActionClient::get_communication() {
     communication::PosAgentRequestWrapper communication_request =
         current_position_->send_communication_request();
 
-    // if (const communication::TestRequest* test_request =
-    // std::get_if<communication::TestRequest>(&communication_request.request)) {
-    //     SPDLOG_INFO("\033[92m{}\033[0m", test_request->request_uid);
-    // }
-
     bool robots_visible = false;
     for (u_int8_t i = 0; i < kNumShells; i++) {
         if (this->world_state()->get_robot(true, i).visible) {
@@ -216,134 +211,44 @@ void AgentActionClient::get_communication() {
     }
 
     if (!(communication_request.request == last_communication_) && robots_visible) {
+        // update the last communication
         last_communication_ = communication_request.request;
-        if (communication_request.urgent) {
-            if (communication_request.broadcast) {
-                send_anycast(communication_request.request, true,
-                             communication_request.target_agents);
-            } else {
-                send_anycast(communication_request.request, false,
-                             communication_request.target_agents);
+        // create a buffer to hold the responses and the outgoing request
+        communication::AgentPosResponseWrapper buffered_response;
+
+        auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
+        request->agent_request = rj_convert::convert_to_ros(communication_request.request);
+
+        // send communication requests
+        if (communication_request.broadcast) {
+            for (size_t i = 0; i < kNumShells; i++) {
+                if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
+                    robot_communication_cli_[i]->async_send_request(
+                        request,
+                        [this, i](const std::shared_future<
+                                  rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                      response) { receive_response_callback(response, i); });
+                }
             }
-        } else if (communication_request.broadcast) {
-            send_broadcast(communication_request.request);
+            // set broadcast to true in buffer
+            buffered_response.broadcast = true;
         } else {
-            if (communication_request.target_agents.size() == 1) {
-                send_unicast(communication_request.request, communication_request.target_agents[0]);
-            } else if (communication_request.target_agents.size() > 1) {
-                send_multicast(communication_request.request, communication_request.target_agents);
-            } else {
-                // TODO: ADD COLORS TO MAKE THIS SHOW UP AS RED WARNING TEXT
-                SPDLOG_WARN(
-                    "AgentActionClient::get_communication() - BAD REQUEST, UNSUPPORTED NUMBER OF "
-                    "RECIPIENTS");
-            }
-        }
-    }
-}
-
-void AgentActionClient::send_unicast(communication::AgentRequest agent_request, u_int8_t robot_id) {
-    auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = rj_convert::convert_to_ros(agent_request);
-
-    robot_communication_cli_[robot_id]->async_send_request(
-        request, [this, robot_id](
-                     const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                         response) { receive_response_callback(response, robot_id); });
-
-    communication::AgentPosResponseWrapper buffered_response;
-    buffered_response.associated_request = agent_request;
-    buffered_response.from_robot_ids = {robot_id};
-    buffered_response.broadcast = false;
-    buffered_response.urgent = false;
-    buffered_response.created = RJ::now();
-    buffered_responses_.push_back(buffered_response);
-}
-
-void AgentActionClient::send_broadcast(communication::AgentRequest agent_request) {
-    auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = rj_convert::convert_to_ros(agent_request);
-
-    for (size_t i = 0; i < kNumShells; i++) {
-        if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
-            robot_communication_cli_[i]->async_send_request(
-                request,
-                [this,
-                 i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                        response) { receive_response_callback(response, i); });
-        }
-    }
-
-    communication::AgentPosResponseWrapper buffered_response;
-    buffered_response.associated_request = agent_request;
-    buffered_response.broadcast = true;
-    buffered_response.urgent = false;
-    buffered_response.created = RJ::now();
-    buffered_responses_.push_back(buffered_response);
-}
-
-void AgentActionClient::send_multicast(communication::AgentRequest agent_request,
-                                       std::vector<u_int8_t> robot_ids) {
-    auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = rj_convert::convert_to_ros(agent_request);
-
-    for (int i : robot_ids) {
-        robot_communication_cli_[i]->async_send_request(
-            request,
-            [this,
-             i](const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                    response) { receive_response_callback(response, i); });
-    }
-
-    communication::AgentPosResponseWrapper buffered_response;
-    buffered_response.associated_request = agent_request;
-    copy(robot_ids.begin(), robot_ids.end(), back_inserter(buffered_response.from_robot_ids));
-    buffered_response.broadcast = false;
-    buffered_response.urgent = false;
-    buffered_response.created = RJ::now();
-    buffered_responses_.push_back(buffered_response);
-}
-
-void AgentActionClient::send_anycast(communication::AgentRequest agent_request, bool broadcast,
-                                     std::vector<u_int8_t> robot_ids) {
-    auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = rj_convert::convert_to_ros(agent_request);
-    if (broadcast) {
-        for (size_t i = 0; i < kNumShells; i++) {
-            if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
+            for (int i : communication_request.target_agents) {
                 robot_communication_cli_[i]->async_send_request(
                     request, [this, i](const std::shared_future<
                                        rj_msgs::srv::AgentCommunication::Response::SharedPtr>
                                            response) { receive_response_callback(response, i); });
             }
+            // copy the robot ids of the robots sent to into the buffer
+            copy(communication_request.target_agents.begin(),
+                 communication_request.target_agents.end(),
+                 back_inserter(buffered_response.from_robot_ids));
         }
 
-        communication::AgentPosResponseWrapper buffered_response;
-        buffered_response.associated_request = agent_request;
-        buffered_response.broadcast = true;
-        buffered_response.urgent = true;
+        buffered_response.associated_request = communication_request.request;
+        buffered_response.urgent = communication_request.urgent;
         buffered_response.created = RJ::now();
         buffered_responses_.push_back(buffered_response);
-    } else {
-        if (!robot_ids.empty()) {
-            for (int i : robot_ids) {
-                robot_communication_cli_[i]->async_send_request(
-                    request, [this, i](const std::shared_future<
-                                       rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                           response) { receive_response_callback(response, i); });
-            }
-
-            communication::AgentPosResponseWrapper buffered_response;
-            buffered_response.associated_request = agent_request;
-            buffered_response.from_robot_ids = robot_ids;
-            buffered_response.broadcast = false;
-            buffered_response.urgent = true;
-            buffered_response.created = RJ::now();
-            buffered_responses_.push_back(buffered_response);
-        } else {
-            SPDLOG_INFO(
-                "\033[91mSEND ANYCAST FAILED DUE TO BAD PROVIDED ROBOT DESTINATIONS\033[0m");
-        }
     }
 }
 
