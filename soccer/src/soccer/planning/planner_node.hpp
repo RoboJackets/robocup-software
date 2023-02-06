@@ -103,7 +103,6 @@ public:
         auto lock = std::lock_guard(mutex_);
         return last_coach_state_;
     }
-    
 
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;

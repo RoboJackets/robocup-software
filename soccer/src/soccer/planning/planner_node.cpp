@@ -244,7 +244,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto play_state = shared_state_->play_state();
     const bool is_goalie = goalie_id == robot_id_;
     const auto min_dist_from_ball = shared_state_->coach_state().global_override.min_dist_from_ball;
-    const auto max_robot_speed = shared_state_->coach_state().global_override.min_dist_from_ball;
+    const auto max_robot_speed = shared_state_->coach_state().global_override.max_speed;
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
@@ -275,16 +275,27 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
     */
 
-    RobotConstraints constraints {};
+    RobotConstraints constraints;
     MotionCommand motion_command;
-    // If max robot speed is 0, replace the motion command with an empty one. 
-    // Simply passing 0 in as the max speed crashes the planner; an EmptyMotionCommand results in the expected no movement.
+    // Attempting to create trajectories with max speeds <= 0 crashes the planner (during RRT
+    // generation)
     if (max_robot_speed == 0.0f) {
-        motion_command = EmptyMotionCommand {};
-    } else {
+        // If coach node has speed set to 0,
+        // choose not to move by replacing the MotionCommand with an empty one.
+        motion_command = EmptyMotionCommand{};
+    }
+    else if (max_robot_speed < 0.0f) {
+        // If coach node has speed set to negative, assume infinity.
+        // Negative numbers cause crashes, but 10 is an effectively infinite limit.
+        motion_command = intent.motion_command;
+        constraints.mot.max_speed = 10.0f;
+    }
+    else {
         motion_command = intent.motion_command;
         constraints.mot.max_speed = max_robot_speed;
     }
+
+    SPDLOG_INFO("Max robot speed: {}", max_robot_speed);
 
     return PlanRequest{start,
                        motion_command,
