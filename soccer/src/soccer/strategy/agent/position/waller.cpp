@@ -2,7 +2,10 @@
 
 namespace strategy {
 
-Waller::Waller() { std::string defense_type_{"Waller"}; }
+Waller::Waller(int wallerNum) {
+    std::string defense_type_{"Waller"};
+    int wallerPos = wallerNum;
+}
 
 std::optional<RobotIntent> Waller::get_task(RobotIntent intent, rj_geometry::Point ball_location) {
     // Get Goal Location (Always (0,0)) as of creation
@@ -14,14 +17,15 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, rj_geometry::Poi
     float box_w{FieldDimensions::kDefaultDimensions.penalty_long_dist()};
     float box_h{FieldDimensions::kDefaultDimensions.penalty_short_dist()};
     float line_w{FieldDimensions::kDefaultDimensions.line_width()};
-    const double MIN_WALL_RAD{(kRobotRadius * 4.0) + line_w + hypot(box_w / 2, box_h)};
+    const double min_wall_rad{(kRobotRadius * 4.0f) + line_w +
+                              static_cast<float>(hypot(box_w / 2, box_h))};
 
     // Find ball_direction unit vector
     rj_geometry::Point ball_dir_vector{(ball_location - goal_center_point + 0.000001)};
     ball_dir_vector /= ball_dir_vector.mag();
 
     // Find target Point
-    rj_geometry::Point mid_point{(goal_center_point) + (ball_dir_vector * MIN_WALL_RAD)};
+    rj_geometry::Point mid_point{(goal_center_point) + (ball_dir_vector * min_wall_rad)};
 
     // Stop at end of path
     rj_geometry::Point target_vel{0.0, 0.0};

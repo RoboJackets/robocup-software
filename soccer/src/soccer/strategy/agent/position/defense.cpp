@@ -13,8 +13,8 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     rj_geometry::Point ball_location{world_state->ball.position};
 
     // Create Waller
-    Waller* waller = new Waller();
-    return waller->get_task(intent, ball_location);
+    Waller waller{0};
+    return waller.get_task(intent, ball_location);
 }
 
 }  // namespace strategy
