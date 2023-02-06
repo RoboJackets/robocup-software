@@ -244,6 +244,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto play_state = shared_state_->play_state();
     const bool is_goalie = goalie_id == robot_id_;
     const auto min_dist_from_ball = shared_state_->min_dist_from_ball();
+    const auto max_robot_speed = shared_state_->max_robot_speed();
+    
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
@@ -274,11 +276,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
     */
 
-    // TODO(Kyle): Send constraints from gameplay
     RobotConstraints constraints;
-    if (play_state.is_stop()) {
-        constraints.mot.max_speed = 0.8;
-    }
+    constraints.mot.max_speed = max_robot_speed;
 
     return PlanRequest{start,
                        intent.motion_command,
