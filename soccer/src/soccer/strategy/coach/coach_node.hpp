@@ -3,6 +3,8 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_constants/constants.hpp>
+#include <rj_convert/ros_convert.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
@@ -46,6 +48,22 @@ public:
 
 private:
     rclcpp::Publisher<rj_msgs::msg::CoachState>::SharedPtr coach_state_pub_;
+
+    /*
+     * Used to publish the defense areas as shapes for the planner node to recognize as obstacles
+     * for non-goalies.
+     */
+    rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_pub_;
+    /*
+     * Used to add the walls of the goals to the list of global obstacles.
+     */
+    rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_pub_;
+
+    /*
+     * Information needed to calculate the static obstacles (defense areas and goal walls).
+     */
+    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+
     rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr positions_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
@@ -56,9 +74,13 @@ private:
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
 
+    rj_msgs::msg::FieldDimensions current_field_dimensions_;
+    bool have_field_dimensions_ = false;
+
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
+    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void check_for_play_state_change();
     /*
      * Handles actions the Coach does every tick. Currently calls assign_positions and
@@ -70,6 +92,23 @@ private:
      * Publishes new positions to the topic /strategy/positions (message type PositionAssignment)
      */
     void assign_positions();
+
+    /*
+     * Publishes the static obstacles.
+     */
+    void publish_static_obstacles();
+
+    /*
+     * Calculates the defense area as a set of obstacles. The defense area, per the rules, is the
+     * box in front of each goal where only that team's goalie can be in and touch the ball.
+     */
+    rj_geometry::ShapeSet create_defense_area_obstacles();
+
+    /*
+     * Calculates the physical (3D) walls of the each goal as a set of obstacles, so robots don't
+     * crash into them.
+     */
+    rj_geometry::ShapeSet create_goal_wall_obstacles();
 };
 
 }  // namespace strategy
