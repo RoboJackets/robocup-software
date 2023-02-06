@@ -275,13 +275,19 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
     */
 
-    RobotConstraints constraints;
-    if (max_robot_speed > 0.0f) {
+    RobotConstraints constraints {};
+    MotionCommand motion_command;
+    // If max robot speed is 0, replace the motion command with an empty one. 
+    // Simply passing 0 in as the max speed crashes the planner; an EmptyMotionCommand results in the expected no movement.
+    if (max_robot_speed == 0.0f) {
+        motion_command = EmptyMotionCommand {};
+    } else {
+        motion_command = intent.motion_command;
         constraints.mot.max_speed = max_robot_speed;
     }
 
     return PlanRequest{start,
-                       intent.motion_command,
+                       motion_command,
                        constraints,
                        std::move(real_obstacles),
                        std::move(virtual_obstacles),
