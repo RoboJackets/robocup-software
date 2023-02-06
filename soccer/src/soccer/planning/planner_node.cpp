@@ -245,7 +245,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const bool is_goalie = goalie_id == robot_id_;
     const auto min_dist_from_ball = shared_state_->min_dist_from_ball();
     const auto max_robot_speed = shared_state_->max_robot_speed();
-    
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
@@ -277,7 +276,9 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     */
 
     RobotConstraints constraints;
-    constraints.mot.max_speed = max_robot_speed;
+    if (max_robot_speed > 0.0f) {
+        constraints.mot.max_speed = max_robot_speed;
+    }
 
     return PlanRequest{start,
                        intent.motion_command,
