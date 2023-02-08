@@ -8,6 +8,7 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 
 #include "planning/planner/motion_command.hpp"
 #include "rj_common/time.hpp"
@@ -71,6 +72,10 @@ public:
      */
     void set_goal_canceled();
 
+    void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
+
+    bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack);
+
 protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
@@ -120,6 +125,8 @@ protected:
     bool assert_world_state_valid();
 
 private:
+    mutable std::mutex request_uid_mutex;
+    u_int32_t request_uid = 0;
     // private to avoid allowing WorldState to be accessed directly by derived
     // classes (must use thread-safe getter)
     WorldState last_world_state_;
