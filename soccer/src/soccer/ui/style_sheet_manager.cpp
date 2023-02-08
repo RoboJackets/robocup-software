@@ -8,10 +8,10 @@
 // To add a new style sheet, declare the static variable
 std::map<QString, QString> filePaths = {
     // Add new entries here:
-    {"DARK", "../soccer/ui/qt/themes/QTDark.stylesheet"},
-    {"DARCULIZED", "../soccer/ui/qt/themes/darculized.stylesheet"},
-    {"1337H4X0R", "../soccer/ui/qt/themes/1337h4x0r.stylesheet"},
-    {"NYAN", "../soccer/ui/qt/themes/nyan.stylesheet"}};
+    {"DARK", "../../../soccer/src/soccer/ui/qt/themes/QTDark.stylesheet"},
+    {"DARCULIZED", "../../../soccer/src/soccer/ui/qt/themes/darculized.stylesheet"},
+    {"1337H4X0R", "../../../soccer/src/soccer/ui/qt/themes/1337h4x0r.stylesheet"},
+    {"NYAN", "../../../soccer/src/soccer/ui/qt/themes/nyan.stylesheet"}};
 
 void StyleSheetManager::changeStyleSheet(QMainWindow* window, const QString& name) {
     if (filePaths.count(name) != 0u) {

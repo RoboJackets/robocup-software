@@ -61,6 +61,7 @@ rosidl_generate_interfaces(
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+  msg/PositionAssignment.msg
   # Services
   srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv
