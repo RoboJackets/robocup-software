@@ -10,7 +10,6 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
-#include <rj_msgs/msg/position_assignment.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -115,10 +114,6 @@ public:
     virtual communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request);
     // END Agent-to-Agent Communication
-    
-    void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
-
-    bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack);
 
 protected:
     // should be overriden in subclass constructors
@@ -177,8 +172,6 @@ protected:
     communication::PosAgentRequestWrapper communication_request_;
 
 private:
-    mutable std::mutex request_uid_mutex;
-    u_int32_t request_uid = 0;
     // private to avoid allowing WorldState to be accessed directly by derived
     // classes (must use thread-safe getter)
     WorldState last_world_state_;
