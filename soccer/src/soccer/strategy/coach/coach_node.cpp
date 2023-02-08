@@ -4,8 +4,7 @@ namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
-
-    coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() {    coach_ticker(); });
+    coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     def_area_obstacles_pub_ =
         this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/def_area_obstacles", 10);
@@ -23,10 +22,6 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
-
-    position_ack_sub_ = this->create_subscription<rj_msgs::msg::PositionAck>(
-        "/strategy/position_ack", 10,
-        [this](const rj_msgs::msg::PositionAck::SharedPtr msg) { position_ack_callback(msg); });
 
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
     // save state of acknowledgements, only spam until some long time has passed, or ack received
@@ -147,45 +142,24 @@ void CoachNode::check_for_play_state_change() {
 }
 
 void CoachNode::assign_positions() {
-    rj_msgs::msg::PositionAssignment goalie_position_msg;
-    goalie_position_msg.client_position = Positions::Goalie;
-    generate_uid(goalie_position_msg);
-    positions_pub_->publish(goalie_position_msg);
+    rj_msgs::msg::PositionAssignment positions_message;
+    std::array<uint32_t, kNumShells> positions{};
+    positions[0] = Positions::Goalie;
     if (!possessing_) {
-        rj_msgs::msg::PositionAssignment offense_position_msg;
-        offense_position_msg.client_position = Positions::Offense;
-        generate_uid(offense_position_msg);
-        positions_pub_->publish(offense_position_msg);
+        positions[1] = Positions::Offense;
         for (int i = 2; i < kNumShells; i++) {
-            rj_msgs::msg::PositionAssignment defense_position_msg;
-            defense_position_msg.client_position = Positions::Defense;
-            generate_uid(defense_position_msg);
-            positions_pub_->publish(defense_position_msg);
+            positions[i] = Positions::Defense;
         }
     } else {
-        rj_msgs::msg::PositionAssignment defense_position_msg;
-        defense_position_msg.client_position = Positions::Defense;
-        generate_uid(defense_position_msg);
-        positions_pub_->publish(defense_position_msg);
+        positions[1] = Positions::Defense;
         for (int i = 2; i < kNumShells; i++) {
-            rj_msgs::msg::PositionAssignment offense_position_msg;
-            offense_position_msg.client_position = Positions::Offense;
-            generate_uid(offense_position_msg);
-            positions_pub_->publish(offense_position_msg);
+            positions[i] = Positions::Offense;
         }
     }
-
+    positions_message.client_positions = positions;
+    positions_pub_->publish(positions_message);
 }
 
-void CoachNode::position_ack_callback(const rj_msgs::msg::PositionAck::SharedPtr& msg) {
-    if((goalie_position_msg.request_uid == msg->response_uid || defense_position_msg.request_uid == msg->response_uid || offense_position_msg.request_uid == msg->response_uid) && msg->acknowledgement == 1) {
-        ack_array[msg->robot_id] = 1;
-    } else {
-        ack_array[msg->robot_id] = 0;
-    }
-}
-
-//TODO: Create a function that checks if the first 6 bots have been acknowledged. It should return a boolean. Check that boolean in the coach ticker. 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
     current_field_dimensions_ = *msg;
     have_field_dimensions_ = true;
