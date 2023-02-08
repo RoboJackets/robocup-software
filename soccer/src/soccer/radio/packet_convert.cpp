@@ -290,7 +290,7 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     }
     control_message.shootMode = manipulator.shoot_mode;
     control_message.triggerMode = manipulator.trigger_mode;
-    control_message.song = 0;
+    control_message.role = 0;
 }
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,

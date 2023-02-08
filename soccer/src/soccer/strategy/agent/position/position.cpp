@@ -93,6 +93,18 @@ rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
     intent.motion_command.empty_command = {empty};
     return intent;
 }
+
+void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
+    request_uid_mutex.lock();
+    msg.request_uid = request_uid;
+    request_uid++;
+    request_uid_mutex.unlock();
+}
+
+bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack) {
+    return assignment.request_uid = ack.response_uid;
+}
+
 const std::string Position::get_name() { return position_name_; }
 
 }  // namespace strategy
