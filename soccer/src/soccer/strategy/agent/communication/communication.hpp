@@ -19,9 +19,8 @@
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
 
-namespace strategy {
+namespace strategy::communication {
 
-namespace communication {
 // BEGIN REQUEST TYPES //
 
 struct PassRequest {
@@ -120,7 +119,7 @@ struct AgentPosResponseWrapper {
     std::vector<AgentResponseVariant> responses;
 };
 
-// TODO: Make this templated and less ugly
+// TODO (https://app.clickup.com/t/8677c0tqe): Make this templated and less ugly
 void generate_uid(PassRequest& request);
 void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);
@@ -130,9 +129,7 @@ void generate_uid(PassResponse& response);
 void generate_uid(PositionResponse& response);
 void generate_uid(TestResponse& response);
 
-}  // namespace communication
-
-}  // namespace strategy
+}  // namespace strategy::communication
 
 namespace rj_convert {
 

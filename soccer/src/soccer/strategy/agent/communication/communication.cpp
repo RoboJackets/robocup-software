@@ -1,8 +1,6 @@
 #include "communication.hpp"
 
-namespace strategy {
-
-namespace communication {
+namespace strategy::communication {
 
 std::mutex request_uid_mutex;
 u_int32_t request_uid = 0;
@@ -91,6 +89,4 @@ void generate_uid(TestResponse& response) {
     response_uid_mutex.unlock();
 }
 
-}  // namespace communication
-
-}  // namespace strategy
+}  // namespace strategy::communication

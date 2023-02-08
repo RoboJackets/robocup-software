@@ -63,28 +63,28 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
-    communication::PosAgentResponseWrapper comm_response;
+    communication::PosAgentResponseWrapper comm_response{};
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
-        // TODO: Handle pass requests
+        // TODO (https://app.clickup.com/t/8677c0q36): Handle pass requests
         sleep(100);
         communication::Acknowledge acknowledge;
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     } else if (const communication::PositionRequest* position_request =
                    std::get_if<communication::PositionRequest>(&request.request)) {
-        communication::PositionResponse position_response;
+        communication::PositionResponse position_response{};
         position_response.position = position_name_;
         communication::generate_uid(position_response);
         comm_response.response = position_response;
     } else if (const communication::TestRequest* test_request =
                    std::get_if<communication::TestRequest>(&request.request)) {
-        communication::TestResponse test_response;
+        communication::TestResponse test_response{};
         test_response.message = fmt::format("An offensive player (robot: {}) says hi", robot_id_);
         communication::generate_uid(test_response);
         comm_response.response = test_response;
     } else {
-        communication::Acknowledge acknowledge;
+        communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     }

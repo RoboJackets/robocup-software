@@ -75,14 +75,13 @@ communication::PosAgentRequestWrapper Position::send_communication_request() {
     return communication_request_;
 }
 
-void Position::receive_communication_response(communication::AgentPosResponseWrapper response) {
-    return;
-}
+void Position::receive_communication_response(
+    [[maybe_unused]] communication::AgentPosResponseWrapper response) {}
 
 communication::PosAgentResponseWrapper Position::receive_communication_request(
-    communication::AgentPosRequestWrapper request) {
-    communication::PosAgentResponseWrapper pos_agent_response;
-    communication::Acknowledge response;
+    [[maybe_unused]] communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper pos_agent_response{};
+    communication::Acknowledge response{};
     communication::generate_uid(response);
     pos_agent_response.response = response;
     return pos_agent_response;

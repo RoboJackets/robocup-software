@@ -51,11 +51,11 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
                         position_response->position);
         } else if (const communication::TestResponse* test_response =
                        std::get_if<communication::TestResponse>(&response.responses[i])) {
-            SPDLOG_INFO("\03392m Robot {} sent the test response {}\033[0m",
+            SPDLOG_INFO("\033[92m Robot {} sent the test response {}\033[0m",
                         response.received_robot_ids[i], test_response->message);
         } else {
-            // TODO: HANDLE THIS ERROR AND LOG IT
-            SPDLOG_WARN("ROBOT {} HAS SENT AN UNKNOWN RESPONSE", response.received_robot_ids[i]);
+            SPDLOG_WARN("\033[92mROBOT {} HAS SENT AN UNKNOWN RESPONSE\033[0m",
+                        response.received_robot_ids[i]);
         }
     }
 }
@@ -65,25 +65,25 @@ communication::PosAgentResponseWrapper Defense::receive_communication_request(
     communication::PosAgentResponseWrapper comm_response;
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
-        // TODO: Handle pass response
+        // TODO (https://app.clickup.com/t/8677c0q36): Handle pass response
         sleep(5);
-        communication::Acknowledge acknowledge;
+        communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     } else if (const communication::PositionRequest* position_request =
                    std::get_if<communication::PositionRequest>(&request.request)) {
-        communication::PositionResponse position_response;
+        communication::PositionResponse position_response{};
         position_response.position = position_name_;
         communication::generate_uid(position_response);
         comm_response.response = position_response;
     } else if (const communication::TestRequest* test_request =
                    std::get_if<communication::TestRequest>(&request.request)) {
-        communication::TestResponse test_response;
+        communication::TestResponse test_response{};
         test_response.message = fmt::format("robot {} says hello", robot_id_);
         communication::generate_uid(test_response);
         comm_response.response = test_response;
     } else {
-        communication::Acknowledge acknowledge;
+        communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     }
