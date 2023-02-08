@@ -210,13 +210,14 @@ void AgentActionClient::get_communication() {
 
         // send communication requests
         if (communication_request.broadcast) {
-            for (size_t i = 0; i < kNumShells; i++) {
-                if (i != (size_t) robot_id_ && this->world_state()->get_robot(true, i).visible) {
+            for (int i = 0; i < ((int)kNumShells); i++) {
+                if (i != robot_id_ && this->world_state()->get_robot(true, i).visible) {
                     robot_communication_cli_[i]->async_send_request(
-                        request,
-                        [this, i](const std::shared_future<
-                                  rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                      response) { receive_response_callback(response, i); });
+                        request, [this, i](const std::shared_future<
+                                           rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                               response) {
+                            receive_response_callback(response, ((u_int8_t)i));
+                        });
                 }
             }
             // set broadcast to true in buffer
@@ -243,8 +244,8 @@ void AgentActionClient::get_communication() {
 
 void AgentActionClient::receive_communication_callback(
     const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
-    std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
-    // TODO: change this default to defense? or NOP?
+    const std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
+    // TODO (https://app.clickup.com/t/867796fh2): change this default to defense? or NOP?
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
@@ -275,9 +276,9 @@ void AgentActionClient::receive_communication_callback(
 void AgentActionClient::receive_response_callback(
     const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
     u_int8_t robot_id) {
-    // TODO: change this default to defense? or NOP?
+    // TODO (https://app.clickup.com/t/867796fh2): change this default to defense? or NOP?
     if (current_position_ == nullptr) {
-        // TODO: change this once coach node merged
+        // TODO (https://app.clickup.com/t/867796fh2): change this once coach node merged
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
@@ -287,21 +288,25 @@ void AgentActionClient::receive_response_callback(
         }
     }
 
+    // Convert response from other agent to c++
     communication::AgentResponse agent_response =
         rj_convert::convert_from_ros(response.get()->agent_response);
+
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (buffered_responses_[i].associated_request == agent_response.associated_request) {
             // add the robot id in the corresponding (increasing) location in the received_robot_ids
-            if (buffered_responses_[i].received_robot_ids.size() == 0) {
+            if (buffered_responses_[i].received_robot_ids.empty()) {
                 buffered_responses_[i].received_robot_ids.push_back(robot_id);
                 buffered_responses_[i].responses.push_back(agent_response.response);
             } else {
                 for (u_int32_t j = 0; j < buffered_responses_[i].received_robot_ids.size(); j++) {
                     if (j == buffered_responses_[i].received_robot_ids.size() - 1) {
+                        // The response should be added at the end of the buffer
                         buffered_responses_[i].received_robot_ids.push_back(robot_id);
                         buffered_responses_[i].responses.push_back(agent_response.response);
                         break;
                     } else if (buffered_responses_[i].received_robot_ids[j] > robot_id) {
+                        // The response should be added at i in the buffer
                         buffered_responses_[i].received_robot_ids.insert(
                             buffered_responses_[i].received_robot_ids.begin() + j, robot_id);
                         buffered_responses_[i].responses.insert(
@@ -311,17 +316,13 @@ void AgentActionClient::receive_response_callback(
                 }
             }
 
-            if (buffered_responses_[i].urgent) {
-                current_position_->receive_communication_response(buffered_responses_[i]);
-                buffered_responses_.erase(buffered_responses_.begin() + i);
-                return;
-            } else if (buffered_responses_[i].broadcast &&
-                       buffered_responses_[i].received_robot_ids.size() >= 5) {
-                current_position_->receive_communication_response(buffered_responses_[i]);
-                buffered_responses_.erase(buffered_responses_.begin() + i);
-                return;
-            } else if (buffered_responses_[i].received_robot_ids.size() ==
-                       buffered_responses_[i].from_robot_ids.size()) {
+            // if the message is urgent -> relay the response
+            // if we've received a response from all of the robots we want -> relay the response
+            if (buffered_responses_[i].urgent ||
+                (buffered_responses_[i].broadcast &&
+                 buffered_responses_[i].received_robot_ids.size() >= 5) ||
+                (buffered_responses_[i].received_robot_ids.size() ==
+                 buffered_responses_[i].from_robot_ids.size())) {
                 current_position_->receive_communication_response(buffered_responses_[i]);
                 buffered_responses_.erase(buffered_responses_.begin() + i);
                 return;

@@ -97,7 +97,7 @@ private:
      */
     void receive_communication_callback(
         const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
-        std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response);
+        const std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response);
 
     /**
      * @brief the callback that handles the response from any send transmissions to other agents.
