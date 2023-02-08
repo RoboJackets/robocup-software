@@ -2011,16 +2011,29 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="testingTab">
+          <widget class="QWidget" name="testingTab"> <!--
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
+          </property> -->
           <attribute name="title">
            <string>Testing Tab</string>
-          </attribute>
+          </attribute> 
+
+          <widget class="QComboBox" name="robotPosition_0">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+          </widget>
+          
+          <!--
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
             <widget class="QSplitter" name="splitter_3">
@@ -2199,9 +2212,9 @@ p, li { white-space: pre-wrap; }
              </widget>
             </widget>
            </item>
-          </layout>
-         </widget>
-        </widget>
+          </layout> -->
+         </widget> 
+        </widget> 
        </widget>
       </item>
      </layout>

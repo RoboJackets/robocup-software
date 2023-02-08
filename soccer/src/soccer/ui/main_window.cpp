@@ -68,13 +68,13 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     // Initialize live/non-live control styles
 
-    _currentPlay = new QLabel(this);
-    _currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _currentPlay->setToolTip("Current Play");
-    _currentPlay->setAlignment(Qt::AlignCenter);
-    _currentPlay->setObjectName("current_play_name");
-    calcMinimumWidth(_currentPlay, "XXXXXXXXXXXXXXXX");
-    statusBar()->addPermanentWidget(_currentPlay);
+    // _currentPlay = new QLabel(this);
+    // _currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    // _currentPlay->setToolTip("Current Play");
+    // _currentPlay->setAlignment(Qt::AlignCenter);
+    // _currentPlay->setObjectName("current_play_name");
+    // calcMinimumWidth(_currentPlay, "XXXXXXXXXXXXXXXX");
+    // statusBar()->addPermanentWidget(_currentPlay);
 
     _logFile = new QLabel(this);
     _logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
@@ -192,19 +192,19 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         config_server::topics::kGameSettingsSrv);
 
     // test play logic initialization
-    test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
+    // test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
 
-    std::fstream plays;
-    plays.open("config/plays.txt",
-               ios::in);    // open a file to perform read operation using file object
-    if (plays.is_open()) {  // checking whether the file is open
-        std::string to_add;
-        while (getline(plays, to_add)) {  // read data from file object and put it into string.
-            boost::trim(to_add);
-            new QListWidgetItem(tr(to_add.c_str()), _ui.selectedTestsTable);
-        }
-        plays.close();  // close the file object.
-    }
+    // std::fstream plays;
+    // plays.open("config/plays.txt",
+    //            ios::in);    // open a file to perform read operation using file object
+    // if (plays.is_open()) {  // checking whether the file is open
+    //     std::string to_add;
+    //     while (getline(plays, to_add)) {  // read data from file object and put it into string.
+    //         boost::trim(to_add);
+    //         new QListWidgetItem(tr(to_add.c_str()), _ui.selectedTestsTable);
+    //     }
+    //     plays.close();  // close the file object.
+    // }
 
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
@@ -1171,27 +1171,27 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 }
 
 void MainWindow::on_addToTable_clicked() {
-    auto to_add = (_ui.testInput->toPlainText().toStdString());
-    boost::trim(to_add);
+    // auto to_add = (_ui.testInput->toPlainText().toStdString());
+    // boost::trim(to_add);
 
-    // do not add same test multiple times
-    for (int i = 0; i < _ui.selectedTestsTable->count(); ++i) {
-        auto test = _ui.selectedTestsTable->item(i);
-        auto test_name = test->text().toStdString();
-        if (to_add == test_name) {
-            return;
-        }
-    }
+    // // do not add same test multiple times
+    // for (int i = 0; i < _ui.selectedTestsTable->count(); ++i) {
+    //     auto test = _ui.selectedTestsTable->item(i);
+    //     auto test_name = test->text().toStdString();
+    //     if (to_add == test_name) {
+    //         return;
+    //     }
+    // }
 
     new QListWidgetItem(tr(to_add.c_str()), _ui.selectedTestsTable);
 }
 
 void MainWindow::on_testRun_clicked() {
-    if (_ui.selectedTestsTable->currentItem() == nullptr) {
-        return;
-    }
-    std::string test_name = _ui.selectedTestsTable->currentItem()->text().toStdString();
-    auto message = std_msgs::msg::String();
-    message.data = test_name;
-    test_play_pub_->publish(message);
+    // if (_ui.selectedTestsTable->currentItem() == nullptr) {
+    //     return;
+    // }
+    // std::string test_name = _ui.selectedTestsTable->currentItem()->text().toStdString();
+    // auto message = std_msgs::msg::String();
+    // message.data = test_name;
+    // test_play_pub_->publish(message);
 }

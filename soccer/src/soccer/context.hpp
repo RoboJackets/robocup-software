@@ -35,6 +35,8 @@ struct Context {
     std::array<planning::Trajectory, kNumShells> trajectories;
     // Radio -> Gameplay
     std::array<RobotStatus, kNumShells> robot_status;
+    // Coach -> Positions
+    std::array<uint32_t, 16> robot_positions; 
     // MainWindow -> Manual control
     std::array<bool, kNumShells> is_joystick_controlled{};
     /** \brief Whether at least one joystick is connected */

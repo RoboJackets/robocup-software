@@ -22,6 +22,7 @@
 #include <ros2_temp/debug_draw_interface.hpp>
 #include <ros2_temp/raw_vision_packet_sub.hpp>
 #include <ros2_temp/referee_sub.hpp>
+#include <ros2_temp/coach_sub.hpp>
 #include <ros2_temp/soccer_config_client.hpp>
 
 #include "context.hpp"
@@ -155,6 +156,7 @@ private:
     std::unique_ptr<ros2_temp::SoccerConfigClient> config_client_;
     std::unique_ptr<ros2_temp::RawVisionPacketSub> raw_vision_packet_sub_;
     std::unique_ptr<ros2_temp::RefereeSub> referee_sub_;
+    std::unique_ptr<ros2_temp::CoachSub> coach_sub_;
     std::unique_ptr<ros2_temp::DebugDrawInterface> debug_draw_sub_;
     std::unique_ptr<ros2_temp::AutonomyInterface> autonomy_interface_;
 
