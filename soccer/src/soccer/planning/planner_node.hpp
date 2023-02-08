@@ -71,7 +71,7 @@ public:
             "/strategy/coach_state", rclcpp::QoS(1),
             [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
                 auto lock = std::lock_guard(mutex_);
-                last_coach_state_ = *coach_state;
+                last_min_dist_from_ball_ = coach_state->global_override.min_dist_from_ball;
             });
     }
 
@@ -99,9 +99,9 @@ public:
         auto lock = std::lock_guard(mutex_);
         return &last_world_state_;
     }
-    [[nodiscard]] const rj_msgs::msg::CoachState coach_state() const {
+    [[nodiscard]] float min_dist_from_ball() const {
         auto lock = std::lock_guard(mutex_);
-        return last_coach_state_;
+        return last_min_dist_from_ball_;
     }
 
 private:
@@ -120,7 +120,7 @@ private:
     rj_geometry::ShapeSet last_global_obstacles_;
     rj_geometry::ShapeSet last_def_area_obstacles_;
     WorldState last_world_state_;
-    rj_msgs::msg::CoachState last_coach_state_;
+    float last_min_dist_from_ball_;
 };
 
 /**
