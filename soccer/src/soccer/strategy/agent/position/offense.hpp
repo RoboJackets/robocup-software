@@ -34,7 +34,7 @@ private:
     bool kicking_{true};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-    // TODO: strategy design pattern for BallHandler/Receiver
+    // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 };
 
 }  // namespace strategy

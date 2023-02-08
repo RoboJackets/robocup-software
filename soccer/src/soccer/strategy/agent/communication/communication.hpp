@@ -245,7 +245,7 @@ struct RosConverter<strategy::communication::PassResponse, rj_msgs::msg::PassRes
     }
 
     static strategy::communication::PassResponse from_ros(const rj_msgs::msg::PassResponse& from) {
-        strategy::communication::PassResponse result;
+        strategy::communication::PassResponse result{};
         result.response_uid = from.response_uid;
         return result;
     }

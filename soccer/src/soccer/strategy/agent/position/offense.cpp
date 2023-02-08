@@ -68,7 +68,7 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
             std::get_if<communication::PassRequest>(&request.request)) {
         // TODO (https://app.clickup.com/t/8677c0q36): Handle pass requests
         sleep(100);
-        communication::Acknowledge acknowledge;
+        communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     } else if (const communication::PositionRequest* position_request =

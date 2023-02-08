@@ -73,23 +73,6 @@ private:
 
     // current state of Goalie (state machine)
     State latest_state_ = IDLING;
-
-    // TEST CODE //
-    void test_unicast_request();
-    communication::TestRequest unicast_test_request_{100};
-
-    void test_multicast_request();
-    communication::TestRequest multicast_test_request_{100};
-
-    void test_broadcast_request();
-    communication::TestRequest broadcast_test_request_{100};
-
-    void test_anycast_request();
-    communication::TestRequest anycast_test_request_{100};
-
-    void test_timeout_request();
-    communication::PassRequest timeout_test_request_{100};
-    // END TEST CODE //
 };
 
 }  // namespace strategy
