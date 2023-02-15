@@ -130,8 +130,7 @@ void CoachNode::check_for_play_state_change() {
                 global_override.min_dist_from_ball = 0.5;
                 break;
             case PlayState::State::Playing:
-                // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number instead.
-                global_override.max_speed = 10.0;
+                global_override.max_speed = -1;
                 global_override.min_dist_from_ball = 0;
         }
 
