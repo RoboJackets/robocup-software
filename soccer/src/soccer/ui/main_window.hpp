@@ -162,8 +162,7 @@ private Q_SLOTS:
     void on_fastIndirectYellow_clicked();
 
     // Testing
-    void on_addToTable_clicked();
-    void on_testRun_clicked();
+ 
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
@@ -180,6 +179,8 @@ private:
     void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
     void updateDebugLayers(const Packet::LogFrame& frame);
+
+    void updatePosition(int robot, int position);
 
     Ui_MainWindow _ui{};
     const QStandardItemModel* goalieModel{};

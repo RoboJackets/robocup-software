@@ -410,6 +410,8 @@ void MainWindow::updateViews() {
                             context_->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
+    updatePosition(0, context_->robot_positions[1]);
+
     // Set the history vector by taking the last kHistorySize elements of the
     // "long" history, or fewer if _longHistory is shorter.
     _history.assign(
@@ -1050,6 +1052,10 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
 }
 
+void MainWindow::updatePosition(int robot, int position) {
+    _ui.robotPosition_0->setCurrentIndex(position);
+}
+
 ////////////////
 // Tab Widget Section
 
@@ -1170,28 +1176,3 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
     }
 }
 
-void MainWindow::on_addToTable_clicked() {
-    // auto to_add = (_ui.testInput->toPlainText().toStdString());
-    // boost::trim(to_add);
-
-    // // do not add same test multiple times
-    // for (int i = 0; i < _ui.selectedTestsTable->count(); ++i) {
-    //     auto test = _ui.selectedTestsTable->item(i);
-    //     auto test_name = test->text().toStdString();
-    //     if (to_add == test_name) {
-    //         return;
-    //     }
-    // }
-
-    new QListWidgetItem(tr(to_add.c_str()), _ui.selectedTestsTable);
-}
-
-void MainWindow::on_testRun_clicked() {
-    // if (_ui.selectedTestsTable->currentItem() == nullptr) {
-    //     return;
-    // }
-    // std::string test_name = _ui.selectedTestsTable->currentItem()->text().toStdString();
-    // auto message = std_msgs::msg::String();
-    // message.data = test_name;
-    // test_play_pub_->publish(message);
-}

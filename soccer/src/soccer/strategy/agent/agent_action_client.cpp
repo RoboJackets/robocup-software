@@ -80,7 +80,7 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    SPDLOG_INFO("Getting task for robot {}", robot_id_);
+    // SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
