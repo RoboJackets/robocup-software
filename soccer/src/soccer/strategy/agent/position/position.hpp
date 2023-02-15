@@ -1,22 +1,40 @@
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_action/rclcpp_action.hpp>
+#include <cstdlib>
+
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/action/robot_move.hpp>
+#include <rj_common/time.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/position_ack.hpp>
 
-#include "planning/planner/motion_command.hpp"
-#include "rj_common/time.hpp"
-#include "rj_geometry/geometry_conversions.hpp"
-#include "rj_geometry/point.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
+
+// Communication
+#include "../communication/communication.hpp"
+
+// Requests
+#include <rj_msgs/msg/pass_request.hpp>
+#include <rj_msgs/msg/position_request.hpp>
+#include <rj_msgs/msg/test_request.hpp>
+
+// Responses
+#include <rj_msgs/msg/acknowledge.hpp>
+#include <rj_msgs/msg/pass_response.hpp>
+#include <rj_msgs/msg/position_request.hpp>
+#include <rj_msgs/msg/test_response.hpp>
+
+// tell compiler this class exists, but no need to import the whole header
+class AgentActionClient;
 
 namespace strategy {
 /*
@@ -35,7 +53,7 @@ public:
     Position(int r_id);
     virtual ~Position() = default;
 
-    /*
+    /**
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
      * means no new task requested.
      *
@@ -52,12 +70,12 @@ public:
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
     const std::string get_name();
 
-    /*
+    /**
      * @brief setter for time_left_
      */
     void set_time_left(double time_left);
 
-    /*
+    /**
      * @brief setter for is_done_
      *
      * Outside classes can only set to true, Position/derived classes can clear
@@ -65,7 +83,7 @@ public:
      */
     void set_is_done();
 
-    /*
+    /**
      * @brief setter for goal_canceled_
      *
      * Outside classes can only set to true, Position/derived classes can clear
@@ -73,6 +91,7 @@ public:
      */
     void set_goal_canceled();
 
+<<<<<<< HEAD
     void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
 
     bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack);
@@ -81,11 +100,39 @@ protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
+=======
+    // Agent-to-Agent communication
+    /**
+     * @brief Send the intended communication request through the agent action client.
+     *
+     * @return communication::PosAgentRequestWrapper the request to be sent
+     */
+    communication::PosAgentRequestWrapper send_communication_request();
 
+    /**
+     * @brief Receive the response from a sent request.
+     *
+     * @param response the response received from the previously sent communication
+     */
+    virtual void receive_communication_response(communication::AgentPosResponseWrapper response);
+
+    /**
+     * @brief Receives a communication request from another robot before handling the request
+     * and sending a response in return.
+     *
+     * @param request the request received from the other robot
+     * @return communication::PosAgentResponseWrapper this robot's response to the other robot.
+     */
+    virtual communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request);
+    // END Agent-to-Agent Communication
+>>>>>>> 756fb2c4083511c580fb2e9bd9ec827a013b0a57
+
+protected:
     // should be overriden in subclass constructors
     std::string position_name_{"Position"};
 
-    // common protected fields, derived classes can treat these as private fields
+    // field for tell_time_left() above
     double time_left_{};
     bool is_done_{};
     bool goal_canceled_{};
@@ -96,18 +143,6 @@ protected:
     int match_situation_{};  // TODO: this is an enum, get from coach_node
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
-
-    /*
-     * @brief getter for is_done that clears the flag before returning
-     * @return value of is_done before being cleared
-     */
-    bool check_is_done();
-
-    /*
-     * @brief getter for goal_canceled that clears the flag before returning
-     * @return value of goal_canceled before being cleared
-     */
-    bool check_goal_canceled();
 
     /*
      * @return thread-safe ptr to most recent world_state
@@ -125,6 +160,30 @@ protected:
      */
     bool assert_world_state_valid();
 
+    /*
+     * @brief return an empty robot intent for our robot_id_.
+     */
+    rj_msgs::msg::RobotIntent get_empty_intent() const;
+
+    /*
+     * @brief getter for is_done that clears the flag before returning
+     * @return value of is_done before being cleared
+     */
+    bool check_is_done();
+
+    /*
+     * @brief getter for goal_canceled that clears the flag before returning
+     * @return value of goal_canceled before being cleared
+     */
+    bool check_goal_canceled();
+
+    // const because should never be changed, but initializer list will allow
+    // us to set this once initially
+    const int robot_id_;
+
+    // Request
+    communication::PosAgentRequestWrapper communication_request_;
+
 private:
     mutable std::mutex request_uid_mutex;
     u_int32_t request_uid = 0;
@@ -133,7 +192,7 @@ private:
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
 
-    /*
+    /**
      * @brief allow derived classes to change behavior of get_task(). See
      * get_task() above.
      * @param intent a blank RobotIntent with this robot's ID filled in already

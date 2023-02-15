@@ -71,6 +71,7 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
+<<<<<<< HEAD
 void Position::generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
     request_uid_mutex.lock();
     msg.request_uid = request_uid;
@@ -80,6 +81,29 @@ void Position::generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& m
 
 bool Position::operator==(const rj_msgs::msg::PositionAssignment::SharedPtr assignment, const rj_msgs::msg::PositionAck::SharedPtr& ack) {
     return assignment.request_uid == ack.response_uid;
+=======
+communication::PosAgentRequestWrapper Position::send_communication_request() {
+    return communication_request_;
+}
+
+void Position::receive_communication_response([
+    [maybe_unused]] communication::AgentPosResponseWrapper response) {}
+
+communication::PosAgentResponseWrapper Position::receive_communication_request([
+    [maybe_unused]] communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper pos_agent_response{};
+    communication::Acknowledge response{};
+    communication::generate_uid(response);
+    pos_agent_response.response = response;
+    return pos_agent_response;
+}
+
+rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
+    rj_msgs::msg::RobotIntent intent{};
+    auto empty = rj_msgs::msg::EmptyMotionCommand{};
+    intent.motion_command.empty_command = {empty};
+    return intent;
+>>>>>>> 756fb2c4083511c580fb2e9bd9ec827a013b0a57
 }
 
 const std::string Position::get_name() { return position_name_; }

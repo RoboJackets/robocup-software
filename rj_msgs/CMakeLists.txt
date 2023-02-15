@@ -23,6 +23,7 @@ rosidl_generate_interfaces(
   action/RobotMove.action
 
   # Messages
+  msg/AgentState.msg
   msg/BallState.msg
   msg/BallPlacement.msg
   msg/CoachState.msg
@@ -62,9 +63,30 @@ rosidl_generate_interfaces(
   msg/Trajectory.msg
   msg/WorldState.msg
   msg/PositionAssignment.msg
+<<<<<<< HEAD
   msg/PositionAck.msg
   
+=======
+
+  # Communication
+  msg/AgentRequest.msg
+  msg/AgentResponse.msg
+  msg/AgentResponseVariant.msg
+
+  # Agent Request Messages
+  request/PassRequest.msg
+  request/PositionRequest.msg
+  request/TestRequest.msg
+
+  # Agent Response Messages
+  response/Acknowledge.msg
+  response/PassResponse.msg
+  response/PositionResponse.msg
+  response/TestResponse.msg
+
+>>>>>>> 756fb2c4083511c580fb2e9bd9ec827a013b0a57
   # Services
+  srv/AgentCommunication.srv
   srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv
   srv/QuickCommands.srv
