@@ -13,6 +13,13 @@ std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
 Goalie::State Goalie::update_state() {
     // if a shot is coming, override all and go block it
     WorldState* world_state = this->world_state();
+
+    // if no ball found, stop and return to box immediately
+    if (!world_state->ball.visible) {
+        return BALL_NOT_FOUND;
+    }
+
+    // if a shot is coming, override all and go block it
     if (shot_on_goal_detected(world_state)) {
         return BLOCKING;
     }
@@ -56,6 +63,20 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.kick_speed = 4.0;
         intent.is_active = true;
 
+        return intent;
+    } else if (latest_state_ == BALL_NOT_FOUND) {
+        // TODO: make point dependent on team
+        rj_geometry::Point target_pt{0, 0.5};
+        rj_geometry::Point target_vel{0.0, 0.0};
+
+        planning::PathTargetFaceOption face_option = planning::FaceTarget{};
+
+        // ball not found
+        bool ignore_ball = true;
+
+        planning::LinearMotionInstant goal{target_pt, target_vel};
+        intent.motion_command = planning::PathTargetMotionCommand{goal, face_option, ignore_ball};
+        intent.motion_command_name = "path_target";
         return intent;
     }
 

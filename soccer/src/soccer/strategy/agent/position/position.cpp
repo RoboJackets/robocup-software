@@ -71,4 +71,6 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
+const std::string Position::get_name() { return position_name_; }
+
 }  // namespace strategy
