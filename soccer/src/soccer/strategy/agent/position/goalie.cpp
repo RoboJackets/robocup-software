@@ -150,22 +150,35 @@ communication::Acknowledge Goalie::acknowledge_pass(
     return acknowledge_response;
 }
 
-void Goalie::pass_ball(int robot_id) {
-    // Call to super
-    Position::pass_ball(robot_id);
-    // Update current state
-    latest_state_ = PASSING;
-}
-
-communication::Acknowledge Goalie::acknowledge_ball_in_transit(
-    communication::BallInTransitRequest ball_in_transit_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_ball_in_transit(ball_in_transit_request);
-    // Update current state
-    latest_state_ = RECEIVING;
-    // Return acknowledge response
-    return acknowledge_response;
+communication::PosAgentResponseWrapper Goalie::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response{};
+    if (const communication::TestRequest* test_request =
+            std::get_if<communication::TestRequest>(&request.request)) {
+        communication::TestResponse test_response{};
+        test_response.message = fmt::format("The goalie (robot: {}) says hello", robot_id_);
+        communication::generate_uid(test_response);
+        comm_response.response = test_response;
+    } else if (const communication::PositionRequest* position_request =
+                   std::get_if<communication::PositionRequest>(&request.request)) {
+        communication::PositionResponse position_response{};
+        position_response.position = position_name_;
+        communication::generate_uid(position_response);
+        comm_response.response = position_response;
+    } else if (const communication::PassRequest* pass_request =
+                   std::get_if<communication::PassRequest>(&request.request)) {
+        communication::PassResponse pass_response = receive_pass_request(pass_request);
+        comm_response.response = pass_response;
+    } else if (const communication::IncomingPassRequest& incoming_pass_request = std::get_if<communication::IncomingPassRequest>(&request.request)) {
+        communication::Acknowledge incoming_pass_acknowledge = confirm_pass(incoming_pass_request);
+        // TODO: Set FSM state to receiving pass
+        comm_response.response = incoming_pass_acknowledge;
+    } else {
+        communication::Acknowledge acknowledge{};
+        communication::generate_uid(acknowledge);
+        comm_response.response = acknowledge;
+    }
+    return comm_response;
 }
 
 }  // namespace strategy
