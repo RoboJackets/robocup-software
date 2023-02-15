@@ -64,11 +64,11 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     }
 
     WorldState world_state = rj_convert::convert_from_ros(*msg);
+    current_position_->update_world_state(world_state);
     // avoid mutex issues w/ world state (probably not an issue in AC, but
     // already here so why not)
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
-    current_position_->update_world_state(last_world_state_);
 }
 
 void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg) {
