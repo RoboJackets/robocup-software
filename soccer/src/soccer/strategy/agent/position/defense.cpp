@@ -65,11 +65,12 @@ communication::PosAgentResponseWrapper Defense::receive_communication_request(
     communication::PosAgentResponseWrapper comm_response;
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
-        // TODO (https://app.clickup.com/t/8677c0q36): Handle pass response
-        sleep(5);
-        communication::Acknowledge acknowledge{};
-        communication::generate_uid(acknowledge);
-        comm_response.response = acknowledge;
+        communication::PassResponse pass_response = receive_pass_request(pass_request);
+        comm_response.response = pass_response;
+    } else if (const communication::IncomingPassRequest* incoming_pass_request = std::get_if<communication::IncomingPassRequest>(&request.request)) {
+        communication::Acknowledge incoming_pass_acknowledge = confirm_pass(incoming_pass_request);
+        // TODO: Set FSM state to receiving pass
+        comm_response.response = incoming_pass_acknowledge;
     } else if (const communication::PositionRequest* position_request =
                    std::get_if<communication::PositionRequest>(&request.request)) {
         communication::PositionResponse position_response{};

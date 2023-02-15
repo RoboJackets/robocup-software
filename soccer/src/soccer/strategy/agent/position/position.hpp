@@ -3,6 +3,7 @@
 #include <cstdlib>
 
 #include <spdlog/spdlog.h>
+#include <vector>
 
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
@@ -170,6 +171,16 @@ protected:
 
     // Request
     communication::PosAgentRequestWrapper communication_request_;
+
+    // Passing //
+    void send_direct_pass_request(std::vector<u_int8_t> candidate_robots);
+    // TODO (https://app.clickup.com/t/8677dvtj1): develop leading passing
+    // void send_leading_pass()
+    
+    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
+    void send_pass_confirmation(u_int8_t target_robot);
+    communication::Acknowledge confirm_pass(communication::IncomingPassRequest incoming_pass_request);
+    void pass_ball(int robot_id);
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
