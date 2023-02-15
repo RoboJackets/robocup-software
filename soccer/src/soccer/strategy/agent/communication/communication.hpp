@@ -18,6 +18,7 @@
 #include "rj_msgs/msg/position_response.hpp"
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
+#include "rj_msgs/msg/incoming_pass_request.hpp"
 
 namespace strategy::communication {
 
@@ -25,6 +26,8 @@ namespace strategy::communication {
 
 struct PassRequest {
     u_int32_t request_uid;
+    bool direct;
+    u_int8_t from_robot_id;
 };
 bool operator==(const PassRequest& a, const PassRequest& b);
 
@@ -38,7 +41,12 @@ struct TestRequest {
 };
 bool operator==(const TestRequest& a, const TestRequest& b);
 
-using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest>;
+struct IncomingPassRequest {
+    u_int32_t request_uid;
+};
+bool operator==(const IncomingPassRequest& a, cons IncomingPassRequest& b);
+
+using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest>;
 
 // END REQUEST TYPES //
 
@@ -51,6 +59,7 @@ bool operator==(const Acknowledge& a, const Acknowledge& b);
 
 struct PassResponse {
     u_int32_t response_uid;
+    bool direct_open;
 };
 bool operator==(const PassResponse& a, const PassResponse& b);
 
@@ -123,6 +132,7 @@ struct AgentPosResponseWrapper {
 void generate_uid(PassRequest& request);
 void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);
+void generate_uid(IncomingPassRequest& request);
 
 void generate_uid(Acknowledge& response);
 void generate_uid(PassResponse& response);
@@ -140,11 +150,17 @@ struct RosConverter<strategy::communication::PassRequest, rj_msgs::msg::PassRequ
     static rj_msgs::msg::PassRequest to_ros(const strategy::communication::PassRequest& from) {
         rj_msgs::msg::PassRequest result;
         result.request_uid = from.request_uid;
+        result.direct = from.direct;
+        result.from_robot_id = from.from_robot_id;
         return result;
     }
 
     static strategy::communication::PassRequest from_ros(const rj_msgs::msg::PassRequest& from) {
-        return strategy::communication::PassRequest{from.request_uid};
+        strategy::communication::PassRequest result{};
+        result.request_uid = from.request_uid;
+        result.direct = from.direct;
+        result.from_robot_id = from.from_robot_id;
+        return result;
     }
 };
 
@@ -181,6 +197,21 @@ struct RosConverter<strategy::communication::TestRequest, rj_msgs::msg::TestRequ
 };
 
 ASSOCIATE_CPP_ROS(strategy::communication::TestRequest, rj_msgs::msg::TestRequest);
+
+template <>
+struct RosConverter<strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest> {
+    static rj_msgs:msg::IncomingPassRequest to_ros(const strategy::communication::IncommingPassRequest& from) {
+        rj_msgs::msg::IncomingPassRequest result;
+        result.request_uid = from.request_uid;
+        return result;
+    }
+
+    static strategy::communication::IncomingPassRequest from_ros(const rj_msgs::msg::IncomingPassRequest& from) {
+        return strategy::communication::IncomingPassRequest{from.request_uid};
+    }
+}
+
+ASSOCIATE_CPP_ROS(strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest);
 
 template <>
 struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
@@ -241,12 +272,14 @@ struct RosConverter<strategy::communication::PassResponse, rj_msgs::msg::PassRes
     static rj_msgs::msg::PassResponse to_ros(const strategy::communication::PassResponse& from) {
         rj_msgs::msg::PassResponse result;
         result.response_uid = from.response_uid;
+        result.direct_open = from.direct_open;
         return result;
     }
 
     static strategy::communication::PassResponse from_ros(const rj_msgs::msg::PassResponse& from) {
         strategy::communication::PassResponse result{};
         result.response_uid = from.response_uid;
+        result.direct_open = from.direct_open;
         return result;
     }
 };

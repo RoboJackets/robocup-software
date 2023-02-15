@@ -1,1 +1,3 @@
 uint32 request_uid
+bool direct
+uint8 from_robot_id
