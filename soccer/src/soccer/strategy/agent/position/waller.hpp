@@ -26,7 +26,7 @@ namespace strategy {
  */
 class Waller {
 public:
-    Waller(int wallerNum);
+    Waller(int waller_num);
     ~Waller() = default;
 
     /**
@@ -36,12 +36,12 @@ public:
      * @param [RobotIntent intent] [RobotIntent of the Defensive Robot]
      * @return [RobotIntent with next target point for the robot]
      */
-    static std::optional<RobotIntent> get_task(RobotIntent intent,
+    std::optional<RobotIntent> get_task(RobotIntent intent,
                                                rj_geometry::Point ball_location);
 
 private:
-    std::string defense_type_;
-    int wallerPos;
+    std::string defense_type;
+    int waller_pos;
 };
 
 }  // namespace strategy

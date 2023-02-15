@@ -2,9 +2,9 @@
 
 namespace strategy {
 
-Waller::Waller(int wallerNum) {
-    std::string defense_type_{"Waller"};
-    int wallerPos = wallerNum;
+Waller::Waller(int waller_num) {
+    std::string defense_type{"Waller"};
+    int waller_pos = waller_num;
 }
 
 std::optional<RobotIntent> Waller::get_task(RobotIntent intent, rj_geometry::Point ball_location) {
@@ -18,7 +18,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, rj_geometry::Poi
     float box_h{FieldDimensions::kDefaultDimensions.penalty_short_dist()};
     float line_w{FieldDimensions::kDefaultDimensions.line_width()};
     const double min_wall_rad{(kRobotRadius * 4.0f) + line_w +
-                              static_cast<float>(hypot(box_w / 2, box_h))};
+                              hypot(static_cast<float>(box_w) / static_cast<float>((2, box_h))};
 
     // Find ball_direction unit vector
     rj_geometry::Point ball_dir_vector{(ball_location - goal_center_point + 0.000001)};
