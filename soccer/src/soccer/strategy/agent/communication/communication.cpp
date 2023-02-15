@@ -24,10 +24,6 @@ bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b) {
     return a.request_uid == b.request_uid;
 }
 
-bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b) {
-    return a.request_uid == b.request_uid;
-}
-
 bool operator==(const Acknowledge& a, const Acknowledge& b) {
     return a.response_uid == b.response_uid;
 }
@@ -76,6 +72,7 @@ void generate_uid(IncomingPassRequest& request) {
     request_uid_mutex.unlock();
 }
 
+<<<<<<< HEAD
 void generate_uid(BallInTransitRequest& request) {
     request_uid_mutex.lock();
     request.request_uid = request_uid;
@@ -83,6 +80,8 @@ void generate_uid(BallInTransitRequest& request) {
     request_uid_mutex.unlock();
 }
 
+=======
+>>>>>>> 22e6aef362... update communicaiton.*pp to add incoming pass request + reflect changes in pass request/response
 void generate_uid(Acknowledge& response) {
     response_uid_mutex.lock();
     response.response_uid = response_uid;

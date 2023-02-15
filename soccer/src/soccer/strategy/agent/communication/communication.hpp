@@ -19,6 +19,7 @@
 #include "rj_msgs/msg/position_response.hpp"
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
+#include "rj_msgs/msg/incoming_pass_request.hpp"
 
 namespace strategy::communication {
 
@@ -43,18 +44,10 @@ bool operator==(const TestRequest& a, const TestRequest& b);
 
 struct IncomingPassRequest {
     u_int32_t request_uid;
-    u_int8_t from_robot_id;
 };
-bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b);
+bool operator==(const IncomingPassRequest& a, cons IncomingPassRequest& b);
 
-struct BallInTransitRequest {
-    u_int32_t request_uid;
-    u_int8_t from_robot_id;
-};
-bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
-
-using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest,
-                                  BallInTransitRequest>;
+using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest>;
 
 // END REQUEST TYPES //
 
@@ -141,7 +134,10 @@ void generate_uid(PassRequest& request);
 void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);
 void generate_uid(IncomingPassRequest& request);
+<<<<<<< HEAD
 void generate_uid(BallInTransitRequest& request);
+=======
+>>>>>>> 22e6aef362... update communicaiton.*pp to add incoming pass request + reflect changes in pass request/response
 
 void generate_uid(Acknowledge& response);
 void generate_uid(PassResponse& response);
@@ -208,6 +204,7 @@ struct RosConverter<strategy::communication::TestRequest, rj_msgs::msg::TestRequ
 ASSOCIATE_CPP_ROS(strategy::communication::TestRequest, rj_msgs::msg::TestRequest);
 
 template <>
+<<<<<<< HEAD
 struct RosConverter<strategy::communication::IncomingPassRequest,
                     rj_msgs::msg::IncomingPassRequest> {
     static rj_msgs::msg::IncomingPassRequest to_ros(
@@ -223,10 +220,24 @@ struct RosConverter<strategy::communication::IncomingPassRequest,
         return strategy::communication::IncomingPassRequest{from.request_uid, from.from_robot_id};
     }
 };
+=======
+struct RosConverter<strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest> {
+    static rj_msgs:msg::IncomingPassRequest to_ros(const strategy::communication::IncommingPassRequest& from) {
+        rj_msgs::msg::IncomingPassRequest result;
+        result.request_uid = from.request_uid;
+        return result;
+    }
+
+    static strategy::communication::IncomingPassRequest from_ros(const rj_msgs::msg::IncomingPassRequest& from) {
+        return strategy::communication::IncomingPassRequest{from.request_uid};
+    }
+}
+>>>>>>> 22e6aef362... update communicaiton.*pp to add incoming pass request + reflect changes in pass request/response
 
 ASSOCIATE_CPP_ROS(strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest);
 
 template <>
+<<<<<<< HEAD
 struct RosConverter<strategy::communication::BallInTransitRequest,
                     rj_msgs::msg::BallInTransitRequest> {
     static rj_msgs::msg::BallInTransitRequest to_ros(
@@ -247,6 +258,8 @@ ASSOCIATE_CPP_ROS(strategy::communication::BallInTransitRequest,
                   rj_msgs::msg::BallInTransitRequest);
 
 template <>
+=======
+>>>>>>> 22e6aef362... update communicaiton.*pp to add incoming pass request + reflect changes in pass request/response
 struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
     static rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {
         rj_msgs::msg::AgentRequest result;
