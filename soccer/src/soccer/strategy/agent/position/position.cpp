@@ -71,15 +71,15 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
+void Position::generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
     request_uid_mutex.lock();
     msg.request_uid = request_uid;
     request_uid++;
     request_uid_mutex.unlock();
 }
 
-bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack) {
-    return assignment.request_uid = ack.response_uid;
+bool Position::operator==(const rj_msgs::msg::PositionAssignment::SharedPtr assignment, const rj_msgs::msg::PositionAck::SharedPtr& ack) {
+    return assignment.request_uid == ack.response_uid;
 }
 
 const std::string Position::get_name() { return position_name_; }

@@ -73,6 +73,7 @@ private:
     rj_msgs::msg::PlayState current_play_state_;
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
+    bool all_pos_acks = false;
 
     std::vector<int> client_acknowledgements_(16, 0);
 

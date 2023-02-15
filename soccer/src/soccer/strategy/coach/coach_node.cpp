@@ -88,7 +88,9 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
 }
 
 void CoachNode::coach_ticker() {
-    assign_positions();
+    if (!all_pos_acks) {
+        assign_positions();
+    }
     check_for_play_state_change();
 }
 
@@ -147,6 +149,8 @@ void CoachNode::check_for_play_state_change() {
 }
 
 void CoachNode::assign_positions() {
+    all_pos_acks = false;
+    
     rj_msgs::msg::PositionAssignment goalie_position_msg;
     goalie_position_msg.client_position = Positions::Goalie;
     generate_uid(goalie_position_msg);
@@ -175,14 +179,20 @@ void CoachNode::assign_positions() {
         }
     }
 
+    for (int i = 0; i < client_acknowledgements_.length; i++) {
+        client_acknowledgements_[i] = 0;
+    }
+
 }
 
 void CoachNode::position_ack_callback(const rj_msgs::msg::PositionAck::SharedPtr& msg) {
     if((goalie_position_msg.request_uid == msg->response_uid || defense_position_msg.request_uid == msg->response_uid || offense_position_msg.request_uid == msg->response_uid) && msg->acknowledgement == 1) {
-        ack_array[msg->robot_id] = 1;
+        client_acknowledgements_[msg->robot_id] = 1;
     } else {
-        ack_array[msg->robot_id] = 0;
+        client_acknowledgements_[msg->robot_id] = 0;
     }
+
+    all_pos_acks = true;
 }
 
 //TODO: Create a function that checks if the first 6 bots have been acknowledged. It should return a boolean. Check that boolean in the coach ticker. 

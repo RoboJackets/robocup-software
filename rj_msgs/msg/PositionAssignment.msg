@@ -1,3 +1,3 @@
-# This message contains data about client positions at the robot_id index.
+# This message contains data about client positions.
 uint32 request_uid
 uint32 client_position

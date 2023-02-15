@@ -9,6 +9,7 @@
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/position_assignment.hpp>
+#include <rj_msgs/msg/position_ack.hpp>
 
 #include "planning/planner/motion_command.hpp"
 #include "rj_common/time.hpp"
