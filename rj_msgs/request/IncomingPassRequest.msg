@@ -1,2 +1,1 @@
 uint32 request_uid
-uint8 from_robot_id
