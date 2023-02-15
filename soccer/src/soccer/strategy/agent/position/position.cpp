@@ -78,8 +78,6 @@ void Position::generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& m
     request_uid_mutex.unlock();
 }
 
-bool Position::operator==(const rj_msgs::msg::PositionAssignment::SharedPtr assignment, const rj_msgs::msg::PositionAck::SharedPtr& ack) {
-    return assignment->request_uid == ack->response_uid;
 communication::PosAgentRequestWrapper Position::send_communication_request() {
     return communication_request_;
 }
@@ -104,5 +102,9 @@ rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
 }
 
 const std::string Position::get_name() { return position_name_; }
+
+bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, const rj_msgs::msg::PositionAck::SharedPtr& ack) {
+    return assignment->request_uid == ack->response_uid;
+}
 
 }  // namespace strategy

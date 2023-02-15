@@ -93,8 +93,6 @@ public:
 
     void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
 
-    bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack);
-
 protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
@@ -192,5 +190,7 @@ private:
      */
     virtual std::optional<RobotIntent> derived_get_task(RobotIntent intent) = 0;
 };
+
+bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack);
 
 }  // namespace strategy

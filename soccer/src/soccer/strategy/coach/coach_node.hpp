@@ -76,7 +76,7 @@ private:
     bool play_state_has_changed_ = true;
     bool all_pos_acks = false;
 
-    std::vector<int> client_acknowledgements_(16, 0);
+    std::vector<int> client_acknowledgements_;
 
     rj_msgs::msg::FieldDimensions current_field_dimensions_;
     bool have_field_dimensions_ = false;
@@ -84,7 +84,7 @@ private:
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
-    void CoachNode::position_ack_callback(const rj_msgs::msg::PositionAck::SharedPtr& msg);
+    void position_ack_callback(const rj_msgs::msg::PositionAck::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void check_for_play_state_change();
     /*
