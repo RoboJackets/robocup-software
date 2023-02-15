@@ -18,7 +18,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, rj_geometry::Poi
     float box_h{FieldDimensions::kDefaultDimensions.penalty_short_dist()};
     float line_w{FieldDimensions::kDefaultDimensions.line_width()};
     double min_wall_rad{(kRobotRadius * 4.0f) + line_w +
-                        hypot(static_cast<float>(box_w) / 2, static_cast<float>((box_h)))};
+                        hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)))};
 
     // Find ball_direction unit vector
     rj_geometry::Point ball_dir_vector{(ball_location - goal_center_point + 0.000001)};
