@@ -144,9 +144,6 @@ private:
      * @return thread-safe ptr to most recent world_state
      */
     [[nodiscard]] WorldState* world_state();
-
-    // private to avoid allowing WorldState to be accessed directly by derived
-    // classes (must use thread-safe getter)
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
 
