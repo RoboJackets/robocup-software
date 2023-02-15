@@ -35,13 +35,6 @@ Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
                               plan_request.constraints, angle_function, RJ::Seconds(3.0)},
         std::move(previous_));
 
-    // Debug drawing
-    if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_circle(
-            rj_geometry::Circle(command.goal.position, static_cast<float>(draw_radius)),
-            draw_color);
-    }
-
     // Cache current Trajectory, return
     previous_ = trajectory;
     return trajectory;

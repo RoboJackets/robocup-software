@@ -125,14 +125,17 @@ bool operator==([[maybe_unused]] const GoalieIdleMotionCommand& a,
                 [[maybe_unused]] const GoalieIdleMotionCommand& b);
 
 /*
- * Make the Goalie track the ball when not saving shots.
+ * Penalty kick behavior.
  */
-struct GoalieIdleCommand {};
+struct PenaltyKickMotionCommand {};
+bool operator==([[maybe_unused]] const PenaltyKickMotionCommand& a,
+                [[maybe_unused]] const PenaltyKickMotionCommand& b);
 
 using MotionCommand =
     std::variant<EmptyMotionCommand, PathTargetMotionCommand, WorldVelMotionCommand,
                  PivotMotionCommand, SettleMotionCommand, CollectMotionCommand,
-                 LineKickMotionCommand, InterceptMotionCommand, GoalieIdleMotionCommand>;
+                 LineKickMotionCommand, InterceptMotionCommand,
+                 GoalieIdleMotionCommand, PenaltyKickMotionCommand>;
 
 }  // namespace planning
 

@@ -14,12 +14,14 @@
 
 namespace planning {
 /**
- * @brief This planner gives the goalie a way to track the ball when it's not
- * otherwise occupied.
+ * @brief This planner creates penalty kick behavior:
+ * (1) dribble the ball until close to the goal (legal in
+ * PK)
+ * (2) shoot ball at open side of goal
  */
-class GoalieIdlePlanner : public PlannerForCommandType<GoalieIdleMotionCommand> {
+class PenaltyKickPlanner : public PlannerForCommandType<PenaltyKickMotionCommand> {
 public:
-    GoalieIdlePlanner() : PlannerForCommandType<GoalieIdleMotionCommand>("goalie_idle") {}
+    PenaltyKickPlanner() : PlannerForCommandType<PenaltyKickMotionCommand>("penalty_kick") {}
 
     /*
      * From Planner superclass (see planner.hpp).
@@ -27,12 +29,6 @@ public:
     Trajectory plan(const PlanRequest& plan_request) override;
     void reset() override;
     [[nodiscard]] bool is_done() const override;
-
-    /*
-     * @return Point for Goalie to stand in when no shot is coming. Expects
-     * ball to be slow.
-     */
-    static rj_geometry::Point get_idle_pt(const WorldState* world_state);
 
 private:
     Trajectory previous_{};
