@@ -5,7 +5,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     coach_state_pub_ =
         this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
 
-    coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() {    coach_ticker(); });
+    coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     def_area_obstacles_pub_ =
         this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/def_area_obstacles", 10);
@@ -149,7 +149,7 @@ void CoachNode::check_for_play_state_change() {
 
 void CoachNode::assign_positions() {
     all_pos_acks = false;
-    
+
     rj_msgs::msg::PositionAssignment goalie_position_msg;
     goalie_position_msg.client_position = Positions::Goalie;
     generate_uid(goalie_position_msg);
@@ -181,11 +181,13 @@ void CoachNode::assign_positions() {
     for (int i = 0; i < client_acknowledgements_.length; i++) {
         client_acknowledgements_[i] = 0;
     }
-
 }
 
 void CoachNode::position_ack_callback(const rj_msgs::msg::PositionAck::SharedPtr& msg) {
-    if((goalie_position_msg.request_uid == msg->response_uid || defense_position_msg.request_uid == msg->response_uid || offense_position_msg.request_uid == msg->response_uid) && msg->acknowledgement == 1) {
+    if ((goalie_position_msg.request_uid == msg->response_uid ||
+         defense_position_msg.request_uid == msg->response_uid ||
+         offense_position_msg.request_uid == msg->response_uid) &&
+        msg->acknowledgement == 1) {
         client_acknowledgements_[msg->robot_id] = 1;
     } else {
         client_acknowledgements_[msg->robot_id] = 0;
@@ -194,7 +196,8 @@ void CoachNode::position_ack_callback(const rj_msgs::msg::PositionAck::SharedPtr
     all_pos_acks = true;
 }
 
-//TODO: Create a function that checks if the first 6 bots have been acknowledged. It should return a boolean. Check that boolean in the coach ticker. 
+// TODO: Create a function that checks if the first 6 bots have been acknowledged. It should return
+// a boolean. Check that boolean in the coach ticker.
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
     current_field_dimensions_ = *msg;
     have_field_dimensions_ = true;

@@ -10,8 +10,8 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
-#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/position_ack.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -94,7 +94,8 @@ public:
 <<<<<<< HEAD
     void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
 
-    bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack);
+    bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment,
+                    rj_msgs::msg::PositionAck::SharedPtr& ack);
 
 protected:
     // const because should never be changed, but initializer list will allow

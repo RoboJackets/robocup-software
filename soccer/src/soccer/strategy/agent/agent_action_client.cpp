@@ -105,7 +105,6 @@ void AgentActionClient::get_task() {
 }
 
 void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-
     if (robot_id_ == 0) {
         return;
     }
@@ -119,19 +118,18 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
             next_position_ = std::make_unique<Offense>(robot_id_);
             break;
     };
-    // TODO: once the acknowledgments work, delete this 
+    // TODO: once the acknowledgments work, delete this
     if (current_position_ == nullptr ||
         next_position_->get_name() != current_position_->get_name()) {
         current_position_ = std::move(next_position_);
     }
 
-    //Send acknowledgement back to Coach to stop publishing same assignment
+    // Send acknowledgement back to Coach to stop publishing same assignment
     rj_msgs::msg::PositionAck client_acknowledgement;
     client_acknowledgement.response_uid = msg->request_uid;
     client_acknowledgement.robot_id = robot_id_;
     client_acknowledgement.acknowledgement = 1;
     position_ack_pub_->publish(client_acknowledgement);
-
 }
 
 void AgentActionClient::send_new_goal() {

@@ -79,7 +79,8 @@ void Position::generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& m
     request_uid_mutex.unlock();
 }
 
-bool Position::operator==(const rj_msgs::msg::PositionAssignment::SharedPtr assignment, const rj_msgs::msg::PositionAck::SharedPtr& ack) {
+bool Position::operator==(const rj_msgs::msg::PositionAssignment::SharedPtr assignment,
+                          const rj_msgs::msg::PositionAck::SharedPtr& ack) {
     return assignment.request_uid == ack.response_uid;
 =======
 communication::PosAgentRequestWrapper Position::send_communication_request() {
