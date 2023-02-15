@@ -68,6 +68,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
+    rclcpp::Subscription<rj_msgs::msg::PositionAck>::SharedPtr position_ack_callback;
     rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
@@ -83,6 +84,7 @@ private:
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
+    void CoachNode::position_ack_callback(const rj_msgs::msg::PositionAck::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void check_for_play_state_change();
     /*

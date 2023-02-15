@@ -10,8 +10,8 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
-#include <rj_msgs/msg/position_ack.hpp>
 #include <rj_msgs/msg/position_assignment.hpp>
+#include <rj_msgs/msg/position_ack.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -91,17 +91,14 @@ public:
      */
     void set_goal_canceled();
 
-<<<<<<< HEAD
     void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
 
-    bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment,
-                    rj_msgs::msg::PositionAck::SharedPtr& ack);
+    bool operator==(const rj_msgs::msg::PositionAssignment::SharedPtr& assignment, rj_msgs::msg::PositionAck::SharedPtr& ack);
 
 protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
-=======
     // Agent-to-Agent communication
     /**
      * @brief Send the intended communication request through the agent action client.
@@ -127,7 +124,6 @@ protected:
     virtual communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request);
     // END Agent-to-Agent Communication
->>>>>>> 756fb2c4083511c580fb2e9bd9ec827a013b0a57
 
 protected:
     // should be overriden in subclass constructors
@@ -177,10 +173,6 @@ protected:
      * @return value of goal_canceled before being cleared
      */
     bool check_goal_canceled();
-
-    // const because should never be changed, but initializer list will allow
-    // us to set this once initially
-    const int robot_id_;
 
     // Request
     communication::PosAgentRequestWrapper communication_request_;

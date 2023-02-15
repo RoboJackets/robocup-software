@@ -157,28 +157,28 @@ void CoachNode::assign_positions() {
     if (!possessing_) {
         rj_msgs::msg::PositionAssignment offense_position_msg;
         offense_position_msg.client_position = Positions::Offense;
-        generate_uid(offense_position_msg);
+        Position::generate_uid(offense_position_msg);
         positions_pub_->publish(offense_position_msg);
         for (int i = 2; i < kNumShells; i++) {
             rj_msgs::msg::PositionAssignment defense_position_msg;
             defense_position_msg.client_position = Positions::Defense;
-            generate_uid(defense_position_msg);
+            Position::generate_uid(defense_position_msg);
             positions_pub_->publish(defense_position_msg);
         }
     } else {
         rj_msgs::msg::PositionAssignment defense_position_msg;
         defense_position_msg.client_position = Positions::Defense;
-        generate_uid(defense_position_msg);
+        Position::generate_uid(defense_position_msg);
         positions_pub_->publish(defense_position_msg);
         for (int i = 2; i < kNumShells; i++) {
             rj_msgs::msg::PositionAssignment offense_position_msg;
             offense_position_msg.client_position = Positions::Offense;
-            generate_uid(offense_position_msg);
+            Position::generate_uid(offense_position_msg);
             positions_pub_->publish(offense_position_msg);
         }
     }
 
-    for (int i = 0; i < client_acknowledgements_.length; i++) {
+    for (int i = 0; i < client_acknowledgements_.size(); i++) {
         client_acknowledgements_[i] = 0;
     }
 }
