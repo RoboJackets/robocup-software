@@ -63,10 +63,8 @@ rosidl_generate_interfaces(
   msg/Trajectory.msg
   msg/WorldState.msg
   msg/PositionAssignment.msg
-<<<<<<< HEAD
   msg/PositionAck.msg
   
-=======
 
   # Communication
   msg/AgentRequest.msg
@@ -84,7 +82,6 @@ rosidl_generate_interfaces(
   response/PositionResponse.msg
   response/TestResponse.msg
 
->>>>>>> 756fb2c4083511c580fb2e9bd9ec827a013b0a57
   # Services
   srv/AgentCommunication.srv
   srv/ListJoysticks.srv
@@ -95,6 +92,7 @@ rosidl_generate_interfaces(
   srv/SetGameSettings.srv
   srv/SimPlacement.srv
   srv/SetManual.srv
+  
   DEPENDENCIES
   std_msgs
   builtin_interfaces
