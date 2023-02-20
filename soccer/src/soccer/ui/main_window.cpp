@@ -1151,19 +1151,19 @@ void MainWindow::on_fastKickoffYellow_clicked() {
 }
 
 void MainWindow::on_fastDirectBlue_clicked() {
-    send_quick_command(PlayState::ready_direct(context_->blue_team));
+    send_quick_command(PlayState::ready_free_kick(context_->blue_team));
 }
 
 void MainWindow::on_fastDirectYellow_clicked() {
-    send_quick_command(PlayState::ready_direct(!context_->blue_team));
+    send_quick_command(PlayState::ready_free_kick(!context_->blue_team));
 }
 
 void MainWindow::on_fastIndirectBlue_clicked() {
-    send_quick_command(PlayState::ready_indirect(context_->blue_team));
+    send_quick_command(PlayState::ready_free_kick(context_->blue_team));
 }
 
 void MainWindow::on_fastIndirectYellow_clicked() {
-    send_quick_command(PlayState::ready_indirect(!context_->blue_team));
+    send_quick_command(PlayState::ready_free_kick(!context_->blue_team));
 }
 
 bool MainWindow::live() { return !_playbackRate; }

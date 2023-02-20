@@ -86,8 +86,7 @@ void CoachNode::check_for_play_state_change() {
             case PlayState::Restart::Kickoff:
                 coach_message.match_situation = MatchSituation::kickoff;
                 break;
-            case PlayState::Restart::Direct:
-            case PlayState::Restart::Indirect:
+            case PlayState::Restart::Free:
                 coach_message.match_situation = MatchSituation::free_kick;
                 break;
             case PlayState::Restart::Penalty:
