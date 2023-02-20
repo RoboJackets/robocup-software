@@ -9,6 +9,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/empty_motion_command.hpp>
 
+#include "blocker.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/time.hpp"
