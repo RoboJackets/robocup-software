@@ -26,11 +26,15 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
+    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+    communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request) override;
+
 private:
     bool kicking_{true};
-    // TODO: strategy design pattern for BallHandler/Receiver
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+    // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 };
 
 }  // namespace strategy
