@@ -119,9 +119,9 @@ message SSL_Referee {
         // The number of red cards issued to the team since the beginning of the game.
         required uint32 red_cards = 3;
         // The amount of time (in microseconds) left on each yellow card issued to the team.
-		// If no yellow cards are issued, this array has no elements.
-		// Otherwise, times are ordered from smallest to largest.
-		repeated uint32 yellow_card_times = 4 [packed=true];
+        // If no yellow cards are issued, this array has no elements.
+        // Otherwise, times are ordered from smallest to largest.
+        repeated uint32 yellow_card_times = 4 [packed=true];
 		// The total number of yellow cards ever issued to the team.
 		required uint32 yellow_cards = 5;
 		// The number of timeouts this team can still call.
