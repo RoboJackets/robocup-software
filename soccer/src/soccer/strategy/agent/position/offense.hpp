@@ -14,6 +14,7 @@
 #include "rj_common/time.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
+#include "world_state.hpp"
 
 namespace strategy {
 
@@ -31,6 +32,9 @@ private:
     // TODO: strategy design pattern for BallHandler/Receiver
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+    rj_geometry::Point get_open_point();
+    rj_geometry::Point calculate_open_point(double, double, rj_geometry::Point);
+    int max_los(rj_geometry::Point, rj_geometry::Point, WorldState*);
 };
 
 }  // namespace strategy
