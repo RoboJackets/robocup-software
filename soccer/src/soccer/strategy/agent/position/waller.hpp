@@ -16,6 +16,7 @@
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
+#include "roleInterface.hpp"
 
 namespace strategy {
 
@@ -24,7 +25,7 @@ namespace strategy {
  * this class to have a waller-like behavior where it aims to serve as a wall between
  * the ball and the goal.
  */
-class Waller {
+class Waller : public RoleInterface {
 public:
     Waller(int waller_num);
     ~Waller() = default;
