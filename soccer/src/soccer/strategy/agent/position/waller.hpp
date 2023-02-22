@@ -37,7 +37,7 @@ public:
      * @param [RobotIntent intent] [RobotIntent of the Defensive Robot]
      * @return [RobotIntent with next target point for the robot]
      */
-    std::optional<RobotIntent> get_task(RobotIntent intent, rj_geometry::Point ball_location);
+    std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* const world_state);
 
 private:
     std::string defense_type;

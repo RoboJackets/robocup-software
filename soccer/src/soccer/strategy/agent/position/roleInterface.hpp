@@ -28,7 +28,7 @@ public:
      * @return [RobotIntent with next target point for the robot]
      */
     virtual std::optional<RobotIntent> get_task(RobotIntent intent,
-                                                rj_geometry::Point ball_location) = 0;
+                                                const WorldState* const world_state) = 0;
 
 private:
 };
