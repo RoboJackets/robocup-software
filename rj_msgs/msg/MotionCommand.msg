@@ -8,3 +8,4 @@ CollectMotionCommand[<=1] collect_command
 LineKickMotionCommand[<=1] line_kick_command
 InterceptMotionCommand[<=1] intercept_command
 GoalieIdleMotionCommand[<=1] goalie_idle_command
+PenaltyKickMotionCommand[<=1] penalty_kick_command

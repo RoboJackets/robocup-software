@@ -19,6 +19,7 @@
 #include <rj_msgs/msg/pivot_motion_command.hpp>
 #include <rj_msgs/msg/settle_motion_command.hpp>
 #include <rj_msgs/msg/world_vel_motion_command.hpp>
+#include <rj_msgs/msg/penalty_kick_motion_command.hpp>
 #include <world_state.hpp>
 
 #include "planning/instant.hpp"
@@ -288,6 +289,24 @@ struct RosConverter<planning::GoalieIdleMotionCommand, rj_msgs::msg::GoalieIdleM
 ASSOCIATE_CPP_ROS(planning::GoalieIdleMotionCommand, rj_msgs::msg::GoalieIdleMotionCommand);
 
 template <>
+struct RosConverter<planning::PenaltyKickMotionCommand, rj_msgs::msg::PenaltyKickMotionCommand> {
+    // clang-format is disagreeing with itself here, so I disabled it for this block
+    // clang-format off
+    static rj_msgs::msg::PenaltyKickMotionCommand to_ros(
+        [[maybe_unused]] const planning::PenaltyKickMotionCommand& from) {
+        return rj_msgs::build<rj_msgs::msg::PenaltyKickMotionCommand>();
+    }
+
+    static planning::PenaltyKickMotionCommand from_ros(
+        [[maybe_unused]] const rj_msgs::msg::PenaltyKickMotionCommand& from) {
+        return planning::PenaltyKickMotionCommand{};
+    }
+    // clang-format on
+};
+
+ASSOCIATE_CPP_ROS(planning::PenaltyKickMotionCommand, rj_msgs::msg::PenaltyKickMotionCommand);
+
+template <>
 struct RosConverter<planning::LineKickMotionCommand, rj_msgs::msg::LineKickMotionCommand> {
     static rj_msgs::msg::LineKickMotionCommand to_ros(
         [[maybe_unused]] const planning::LineKickMotionCommand& from) {
@@ -344,6 +363,9 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         } else if (const auto* goalie_idle =
                        std::get_if<planning::GoalieIdleMotionCommand>(&from)) {
             result.goalie_idle_command.emplace_back(convert_to_ros(*goalie_idle));
+        } else if (const auto* penalty_kick =
+                       std::get_if<planning::PenaltyKickMotionCommand>(&from)) {
+            result.penalty_kick_command.emplace_back(convert_to_ros(*penalty_kick));
         } else {
             throw std::runtime_error("Invalid variant of MotionCommand");
         }
@@ -370,6 +392,8 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
             result = convert_from_ros(from.intercept_command.front());
         } else if (!from.goalie_idle_command.empty()) {
             result = convert_from_ros(from.goalie_idle_command.front());
+        } else if (!from.penalty_kick_command.empty()) {
+            result = convert_from_ros(from.penalty_kick_command.front());
         } else {
             throw std::runtime_error("Invalid variant of MotionCommand");
         }

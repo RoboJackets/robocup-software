@@ -8,7 +8,6 @@
 #include "planning/primitives/replanner.hpp"
 #include "planning/trajectory.hpp"
 #include "rj_geometry/point.hpp"
-/* #include <rj_msgs/msg/path_target_motion_command.hpp> */
 #include "planning/planner/motion_command.hpp"
 #include "planning/primitives/angle_planning.hpp"
 
