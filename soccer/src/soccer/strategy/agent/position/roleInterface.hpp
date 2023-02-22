@@ -16,21 +16,21 @@
 namespace strategy {
 
 /**
- * This abstract class serves as an interface for all roles (ie. Waller, Marker, Seeker, etc.) to follow when being created.
-*/
+ * This abstract class serves as an interface for all roles (ie. Waller, Marker, Seeker, etc.) to
+ * follow when being created.
+ */
 class RoleInterface {
-public:    
-
+public:
     /**
      * @brief Returns a behavior based on the role
      *
      * @param [RobotIntent intent] [RobotIntent of the Robot]
      * @return [RobotIntent with next target point for the robot]
      */
-    virtual std::optional<RobotIntent> get_task(RobotIntent intent, rj_geometry::Point ball_location) = 0;
+    virtual std::optional<RobotIntent> get_task(RobotIntent intent,
+                                                rj_geometry::Point ball_location) = 0;
 
 private:
-
 };
 
-}
+}  // namespace strategy
