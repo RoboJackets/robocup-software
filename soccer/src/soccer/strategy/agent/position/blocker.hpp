@@ -6,7 +6,10 @@
 
  namespace strategy {
     class Blocker {
+        private:
+            const double factor{};
         public:
-            static std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* const world_state, const double factor);
+            Blocker(double factor=0.75);
+            std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* const world_state);
     };
  }
