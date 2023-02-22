@@ -71,13 +71,6 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-void Position::generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-    request_uid_mutex.lock();
-    msg->request_uid = request_uid;
-    request_uid++;
-    request_uid_mutex.unlock();
-}
-
 communication::PosAgentRequestWrapper Position::send_communication_request() {
     return communication_request_;
 }

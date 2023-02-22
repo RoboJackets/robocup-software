@@ -54,7 +54,6 @@ private:
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
-    rclcpp::Publisher<rj_msgs::msg::PositionAck>::SharedPtr position_ack_pub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs

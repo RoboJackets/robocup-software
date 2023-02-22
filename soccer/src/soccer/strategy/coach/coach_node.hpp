@@ -22,6 +22,9 @@
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/position.hpp"
 
+#include "strategy/agent/communication/communication.hpp"
+#include "rj_msgs/msg/agent_request.hpp"
+
 namespace strategy {
 enum MatchSituation {
     ball_placement,  // ball placement on a restart restart.ball_placement
@@ -68,13 +71,11 @@ private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
-    rclcpp::Subscription<rj_msgs::msg::PositionAck>::SharedPtr position_ack_callback;
     rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
 
     rj_msgs::msg::PlayState current_play_state_;
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
-    bool all_pos_acks = false;
 
     std::vector<int> client_acknowledgements_;
 

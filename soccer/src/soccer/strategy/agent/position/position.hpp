@@ -91,9 +91,6 @@ public:
      */
     void set_goal_canceled();
 
-    void generate_uid(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
-
-protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
@@ -176,8 +173,6 @@ protected:
     communication::PosAgentRequestWrapper communication_request_;
 
 private:
-    mutable std::mutex request_uid_mutex;
-    u_int32_t request_uid = 0;
     // private to avoid allowing WorldState to be accessed directly by derived
     // classes (must use thread-safe getter)
     WorldState last_world_state_;

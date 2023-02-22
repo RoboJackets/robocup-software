@@ -44,6 +44,7 @@ AgentActionClient::AgentActionClient(int r_id)
         "strategy/positions", 1,
         [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { update_position(msg); });
 
+
     // TODO(Kevin): make ROS param for this
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
@@ -80,7 +81,7 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    SPDLOG_INFO("Getting task for robot {}", robot_id_);
+    //SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -113,10 +114,9 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
     if (robot_id_ == 0) {
         return;
     }
-    
 
     std::unique_ptr<Position> next_position_;
-    switch (msg->client_positions[robot_id_]) {
+    switch (msg->client_position) {
         case 1:
             next_position_ = std::make_unique<Defense>(robot_id_);
             break;
@@ -130,7 +130,6 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
         current_position_ = std::move(next_position_);
     }
 
-    // TODO: send acknowledgement back to coach node (w/ robot ID)
 }
 
 void AgentActionClient::send_new_goal() {
