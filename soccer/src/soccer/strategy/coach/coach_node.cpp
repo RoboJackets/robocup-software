@@ -148,37 +148,38 @@ void CoachNode::assign_positions() {
     goalie_position_msg.client_position = Positions::Goalie;
     communication::generate_uid(pos_request);
     goalie_position_msg.request_uid = pos_request.request_uid;
+    goalie_position_msg.robot_id = 0;
     positions_pub_->publish(goalie_position_msg);
     if (!possessing_) {
         rj_msgs::msg::PositionAssignment offense_position_msg;
         offense_position_msg.client_position = Positions::Offense;
         communication::generate_uid(pos_request);
         offense_position_msg.request_uid = pos_request.request_uid;
+        offense_position_msg.robot_id = 1;
         positions_pub_->publish(offense_position_msg);
         for (int i = 2; i < kNumShells; i++) {
             rj_msgs::msg::PositionAssignment defense_position_msg;
             defense_position_msg.client_position = Positions::Defense;
             communication::generate_uid(pos_request);
             defense_position_msg.request_uid = pos_request.request_uid;
+            defense_position_msg.robot_id = i;
             positions_pub_->publish(defense_position_msg);
         }
     } else {
         rj_msgs::msg::PositionAssignment defense_position_msg;
         defense_position_msg.client_position = Positions::Defense;
         communication::generate_uid(pos_request);
-            defense_position_msg.request_uid = pos_request.request_uid;
+        defense_position_msg.request_uid = pos_request.request_uid;
+        defense_position_msg.robot_id = 1;
         positions_pub_->publish(defense_position_msg);
         for (int i = 2; i < kNumShells; i++) {
             rj_msgs::msg::PositionAssignment offense_position_msg;
             offense_position_msg.client_position = Positions::Offense;
             communication::generate_uid(pos_request);
             offense_position_msg.request_uid = pos_request.request_uid;
+            offense_position_msg.robot_id = i;
             positions_pub_->publish(offense_position_msg);
         }
-    }
-
-    for (int i = 0; i < client_acknowledgements_.size(); i++) {
-        client_acknowledgements_[i] = 0;
     }
 }
 

@@ -110,8 +110,8 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
     /* for (int i = 0; i < 6; i++) { */
     /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
     /* } */
-    // SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions[robot_id_]);
-    if (robot_id_ == 0) {
+    SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_position);
+    if (robot_id_ == 0 || msg->robot_id != robot_id_) {
         return;
     }
 
