@@ -42,7 +42,8 @@ private:
     rj_geometry::Point average_ball_vel_;
     bool average_ball_vel_initialized_ = false;
 
-    // TODO(Kevin): ros params here
+    // TODO(Kevin): make this a common param ("ball is slow" used
+    // in a lot of places)
     double IS_DONE_BALL_VEL = 0.5;  // m/s
 };
 
