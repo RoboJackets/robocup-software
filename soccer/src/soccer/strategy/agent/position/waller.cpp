@@ -3,8 +3,8 @@
 namespace strategy {
 
 Waller::Waller(int waller_num) {
-    std::string defense_type{"Waller"};
-    waller_pos = waller_num;
+    std::string defense_type_{"Waller"};
+    waller_pos_ = waller_num;
 }
 
 std::optional<RobotIntent> Waller::get_task(RobotIntent intent,
