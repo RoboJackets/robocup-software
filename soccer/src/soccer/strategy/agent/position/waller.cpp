@@ -3,15 +3,12 @@
 namespace strategy {
 
 Waller::Waller(int waller_num) {
-    std::string defense_type_{"Waller"};
-    waller_pos_ = waller_num;
+    std::string defense_type{"Waller"};
+    waller_pos = waller_num;
 }
 
-std::optional<RobotIntent> Waller::get_task(RobotIntent intent,
-                                            const WorldState* const world_state) {
-    // Get Ball Location
-    rj_geometry::Point ball_location{world_state->ball.position};
-
+std::optional<RobotIntent> Waller::get_task(RobotIntent intent, rj_geometry::Point ball_location) {
+    // Get Goal Location (Always (0,0)) as of creation
     rj_geometry::Point goal_center_point{0, 0};
 
     // Creates Minimum wall radius is slightly greater than  box bounds
