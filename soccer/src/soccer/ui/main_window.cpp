@@ -198,8 +198,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _ui.robotPosition_8,  _ui.robotPosition_9,  _ui.robotPosition_10, _ui.robotPosition_11,
         _ui.robotPosition_12, _ui.robotPosition_13, _ui.robotPosition_14, _ui.robotPosition_15};
 
-    positionOverridden = {false, false, false, false, false, false, false, false,
-                          false, false, false, false, false, false, false, false};
+    positionOverrides = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
     positionResetButtons = {
         _ui.positionReset_0,  _ui.positionReset_1,  _ui.positionReset_2,  _ui.positionReset_3,
@@ -1196,12 +1195,19 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 ////////
 // Position dropdowns
 void MainWindow::updatePosition(int robot, int position) {
-    // Update the position of the robot in the UI
-    if (position > 0 && robot != _ui.goalieID->currentIndex() - 1 && !positionOverridden[robot] &&
-        positionDropdowns[robot]->currentIndex() != position - 1) {
-        SPDLOG_INFO("Updating position for robot {}", robot);
+    // Update the position of the robot in the UI (if not goalie)
 
-        positionDropdowns[robot]->setCurrentIndex(position - 1);
+    if (robot != _ui.goalieID->currentIndex() - 1) {
+        // SPDLOG_INFO("Updating position for robot {}", robot);
+        if (positionOverrides[robot] >= 0) {
+            position = positionOverrides[robot];
+        } else {
+            position = position - 1;
+        }
+        if (position >= 0 && positionDropdowns[robot]->currentIndex() != position) {
+            SPDLOG_INFO("Updating position dropdown for robot {}", robot);
+            positionDropdowns[robot]->setCurrentIndex(position);
+        }
     }
 }
 
@@ -1224,17 +1230,15 @@ void MainWindow::onPositionDropdownChanged(int robot, int position) {
     if (robot != _ui.goalieID->currentIndex() - 1 &&
         context_->robot_positions[robot] - 1 != position) {
         SPDLOG_INFO("Position dropdown changed for robot {}", robot);
-
-        positionOverridden[robot] = true;
+        positionOverrides[robot] = position;
         positionResetButtons[robot]->setEnabled(true);
     }
 }
 
 void MainWindow::onResetButtonClicked(int robot) {
     SPDLOG_INFO("Reset button clicked for robot {}", robot);
-    positionOverridden[robot] = false;
+    positionOverrides[robot] = -1;
     positionResetButtons[robot]->setEnabled(false);
-    positionDropdowns[robot]->setCurrentIndex(context_->robot_positions[robot] - 1);
 }
 
 void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
@@ -1242,63 +1246,63 @@ void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
 }
 
 void MainWindow::on_robotPosition_1_currentIndexChanged(int value) {
-    onPositionDropdownChanged(0, value);
-}
-
-void MainWindow::on_robotPosition_2_currentIndexChanged(int value) {
     onPositionDropdownChanged(1, value);
 }
 
-void MainWindow::on_robotPosition_3_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_2_currentIndexChanged(int value) {
     onPositionDropdownChanged(2, value);
 }
 
-void MainWindow::on_robotPosition_4_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_3_currentIndexChanged(int value) {
     onPositionDropdownChanged(3, value);
 }
 
-void MainWindow::on_robotPosition_5_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_4_currentIndexChanged(int value) {
     onPositionDropdownChanged(4, value);
 }
 
-void MainWindow::on_robotPosition_6_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_5_currentIndexChanged(int value) {
     onPositionDropdownChanged(5, value);
 }
 
-void MainWindow::on_robotPosition_7_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_6_currentIndexChanged(int value) {
     onPositionDropdownChanged(6, value);
 }
 
-void MainWindow::on_robotPosition_8_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_7_currentIndexChanged(int value) {
     onPositionDropdownChanged(7, value);
 }
 
-void MainWindow::on_robotPosition_9_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_8_currentIndexChanged(int value) {
     onPositionDropdownChanged(8, value);
 }
 
-void MainWindow::on_robotPosition_10_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_9_currentIndexChanged(int value) {
     onPositionDropdownChanged(9, value);
 }
 
-void MainWindow::on_robotPosition_11_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_10_currentIndexChanged(int value) {
     onPositionDropdownChanged(10, value);
 }
 
-void MainWindow::on_robotPosition_12_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_11_currentIndexChanged(int value) {
     onPositionDropdownChanged(11, value);
 }
 
-void MainWindow::on_robotPosition_13_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_12_currentIndexChanged(int value) {
     onPositionDropdownChanged(12, value);
 }
 
-void MainWindow::on_robotPosition_14_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_13_currentIndexChanged(int value) {
     onPositionDropdownChanged(13, value);
 }
 
-void MainWindow::on_robotPosition_15_currentIndexChanged(int value) {
+void MainWindow::on_robotPosition_14_currentIndexChanged(int value) {
     onPositionDropdownChanged(14, value);
+}
+
+void MainWindow::on_robotPosition_15_currentIndexChanged(int value) {
+    onPositionDropdownChanged(15, value);
 }
 
 void MainWindow::on_positionReset_0_clicked() { onResetButtonClicked(0); }

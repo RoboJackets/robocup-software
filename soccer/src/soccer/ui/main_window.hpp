@@ -5,6 +5,7 @@
 
 #include <QComboBox>
 #include <QMainWindow>
+#include <QPushButton>
 #include <QTime>
 #include <QTimer>
 #include <QtGui/QStandardItemModel>
@@ -239,7 +240,7 @@ private:
     // Position Dropdowns
     std::array<QComboBox*, kNumShells> positionDropdowns;
     std::array<QPushButton*, kNumShells> positionResetButtons;
-    std::array<bool, kNumShells> positionOverridden;
+    std::array<int, kNumShells> positionOverrides;
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};
