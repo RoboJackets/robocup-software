@@ -20,6 +20,7 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
     play_state_sub_ = node_->create_subscription<PlayState::Msg>(
         referee::topics::kPlayStatePub, keep_latest, [this](PlayState::Msg::UniquePtr msg) {
             rj_convert::convert_from_ros(*msg, &context_->play_state);
+            // SPDLOG_INFO("Play State Sub");
         });
 
     match_state_sub_ = node_->create_subscription<MatchStateMsg>(

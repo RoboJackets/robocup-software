@@ -2,6 +2,7 @@
 
 #include <rclcpp/executor.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_msgs/msg/position_assignment.hpp>
 

@@ -13,6 +13,7 @@
 #include <QString>
 #include <boost/algorithm/string.hpp>
 #include <google/protobuf/descriptor.h>
+#include <spdlog/spdlog.h>
 
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/topic_names.hpp>
@@ -191,6 +192,21 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
 
+    positionDropdowns = {
+        _ui.robotPosition_0,  _ui.robotPosition_1,  _ui.robotPosition_2,  _ui.robotPosition_3,
+        _ui.robotPosition_4,  _ui.robotPosition_5,  _ui.robotPosition_6,  _ui.robotPosition_7,
+        _ui.robotPosition_8,  _ui.robotPosition_9,  _ui.robotPosition_10, _ui.robotPosition_11,
+        _ui.robotPosition_12, _ui.robotPosition_13, _ui.robotPosition_14, _ui.robotPosition_15};
+
+    positionOverridden = {false, false, false, false, false, false, false, false,
+                          false, false, false, false, false, false, false, false};
+
+    positionResetButtons = {
+        _ui.positionReset_0,  _ui.positionReset_1,  _ui.positionReset_2,  _ui.positionReset_3,
+        _ui.positionReset_4,  _ui.positionReset_5,  _ui.positionReset_6,  _ui.positionReset_7,
+        _ui.positionReset_8,  _ui.positionReset_9,  _ui.positionReset_10, _ui.positionReset_11,
+        _ui.positionReset_12, _ui.positionReset_13, _ui.positionReset_14, _ui.positionReset_15};
+
     // test play logic initialization
     // test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
 
@@ -300,6 +316,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() != _game_settings.request_goalie_id + 1) {
             _ui.goalieID->setCurrentIndex(_game_settings.request_goalie_id + 1);
+            disableGoaliePositionDropdown(_game_settings.request_goalie_id);
         }
 
         bool blueTeam = context_->blue_team;
@@ -410,7 +427,10 @@ void MainWindow::updateViews() {
                             context_->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
-    updatePosition(0, context_->robot_positions[1]);
+    for (size_t i = 0; i < kNumShells; i++) {
+        updatePosition(i, context_->robot_positions[i]);
+        // SPDLOG_INFO("ROBOT POSITION {}: {}", i, context_->robot_positions[i]);
+    }
 
     // Set the history vector by taking the last kHistorySize elements of the
     // "long" history, or fewer if _longHistory is shorter.
@@ -1050,10 +1070,7 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
-}
-
-void MainWindow::updatePosition(int robot, int position) {
-    _ui.robotPosition_0->setCurrentIndex(position);
+    disableGoaliePositionDropdown(value - 1);
 }
 
 ////////////////
@@ -1176,3 +1193,142 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
     }
 }
 
+////////
+// Position dropdowns
+void MainWindow::updatePosition(int robot, int position) {
+    // Update the position of the robot in the UI
+    if (position > 0 && robot != _ui.goalieID->currentIndex() - 1 && !positionOverridden[robot] &&
+        positionDropdowns[robot]->currentIndex() != position - 1) {
+        SPDLOG_INFO("Updating position for robot {}", robot);
+
+        positionDropdowns[robot]->setCurrentIndex(position - 1);
+    }
+}
+
+void MainWindow::disableGoaliePositionDropdown(int robot) {
+    // Disable specified and enable rest
+    SPDLOG_INFO("Disabling goalie position dropdown for robot {}", robot);
+    for (unsigned int i = 0; i < positionDropdowns.size(); i++) {
+        if (i == robot) {
+            positionDropdowns[i]->insertItem(2, QString::fromStdString("Goalie"), Qt::DisplayRole);
+            positionDropdowns[i]->setCurrentIndex(2);
+            positionDropdowns[i]->setEnabled(false);
+        } else {
+            positionDropdowns[i]->setEnabled(true);
+            positionDropdowns[i]->removeItem(2);
+        }
+    }
+}
+
+void MainWindow::onPositionDropdownChanged(int robot, int position) {
+    if (robot != _ui.goalieID->currentIndex() - 1 &&
+        context_->robot_positions[robot] - 1 != position) {
+        SPDLOG_INFO("Position dropdown changed for robot {}", robot);
+
+        positionOverridden[robot] = true;
+        positionResetButtons[robot]->setEnabled(true);
+    }
+}
+
+void MainWindow::onResetButtonClicked(int robot) {
+    SPDLOG_INFO("Reset button clicked for robot {}", robot);
+    positionOverridden[robot] = false;
+    positionResetButtons[robot]->setEnabled(false);
+    positionDropdowns[robot]->setCurrentIndex(context_->robot_positions[robot] - 1);
+}
+
+void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
+    onPositionDropdownChanged(0, value);
+}
+
+void MainWindow::on_robotPosition_1_currentIndexChanged(int value) {
+    onPositionDropdownChanged(0, value);
+}
+
+void MainWindow::on_robotPosition_2_currentIndexChanged(int value) {
+    onPositionDropdownChanged(1, value);
+}
+
+void MainWindow::on_robotPosition_3_currentIndexChanged(int value) {
+    onPositionDropdownChanged(2, value);
+}
+
+void MainWindow::on_robotPosition_4_currentIndexChanged(int value) {
+    onPositionDropdownChanged(3, value);
+}
+
+void MainWindow::on_robotPosition_5_currentIndexChanged(int value) {
+    onPositionDropdownChanged(4, value);
+}
+
+void MainWindow::on_robotPosition_6_currentIndexChanged(int value) {
+    onPositionDropdownChanged(5, value);
+}
+
+void MainWindow::on_robotPosition_7_currentIndexChanged(int value) {
+    onPositionDropdownChanged(6, value);
+}
+
+void MainWindow::on_robotPosition_8_currentIndexChanged(int value) {
+    onPositionDropdownChanged(7, value);
+}
+
+void MainWindow::on_robotPosition_9_currentIndexChanged(int value) {
+    onPositionDropdownChanged(8, value);
+}
+
+void MainWindow::on_robotPosition_10_currentIndexChanged(int value) {
+    onPositionDropdownChanged(9, value);
+}
+
+void MainWindow::on_robotPosition_11_currentIndexChanged(int value) {
+    onPositionDropdownChanged(10, value);
+}
+
+void MainWindow::on_robotPosition_12_currentIndexChanged(int value) {
+    onPositionDropdownChanged(11, value);
+}
+
+void MainWindow::on_robotPosition_13_currentIndexChanged(int value) {
+    onPositionDropdownChanged(12, value);
+}
+
+void MainWindow::on_robotPosition_14_currentIndexChanged(int value) {
+    onPositionDropdownChanged(13, value);
+}
+
+void MainWindow::on_robotPosition_15_currentIndexChanged(int value) {
+    onPositionDropdownChanged(14, value);
+}
+
+void MainWindow::on_positionReset_0_clicked() { onResetButtonClicked(0); }
+
+void MainWindow::on_positionReset_1_clicked() { onResetButtonClicked(1); }
+
+void MainWindow::on_positionReset_2_clicked() { onResetButtonClicked(2); }
+
+void MainWindow::on_positionReset_3_clicked() { onResetButtonClicked(3); }
+
+void MainWindow::on_positionReset_4_clicked() { onResetButtonClicked(4); }
+
+void MainWindow::on_positionReset_5_clicked() { onResetButtonClicked(5); }
+
+void MainWindow::on_positionReset_6_clicked() { onResetButtonClicked(6); }
+
+void MainWindow::on_positionReset_7_clicked() { onResetButtonClicked(7); }
+
+void MainWindow::on_positionReset_8_clicked() { onResetButtonClicked(8); }
+
+void MainWindow::on_positionReset_9_clicked() { onResetButtonClicked(9); }
+
+void MainWindow::on_positionReset_10_clicked() { onResetButtonClicked(10); }
+
+void MainWindow::on_positionReset_11_clicked() { onResetButtonClicked(11); }
+
+void MainWindow::on_positionReset_12_clicked() { onResetButtonClicked(12); }
+
+void MainWindow::on_positionReset_13_clicked() { onResetButtonClicked(13); }
+
+void MainWindow::on_positionReset_14_clicked() { onResetButtonClicked(14); }
+
+void MainWindow::on_positionReset_15_clicked() { onResetButtonClicked(15); }

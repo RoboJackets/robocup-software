@@ -98,6 +98,7 @@ void AgentActionClient::get_task() {
         // note that because these are our RobotIntent structs, this comparison
         // uses our custom struct overloads
         if (task != last_task_) {
+            // SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
             last_task_ = task;
             send_new_goal();
         }

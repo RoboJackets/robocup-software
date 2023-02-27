@@ -88,9 +88,10 @@ void Processor::run() {
         ////////////////
         // Inputs
         // TODO(#1558): Backport spin_all and use it for our main executor.
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             ros_executor_->spin_some();
         }
+        // ros_executor_->spin_all();
 
         // Updates context_->field_dimensions
         config_client_->run();
