@@ -198,7 +198,14 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _ui.robotPosition_8,  _ui.robotPosition_9,  _ui.robotPosition_10, _ui.robotPosition_11,
         _ui.robotPosition_12, _ui.robotPosition_13, _ui.robotPosition_14, _ui.robotPosition_15};
 
-    positionOverrides = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    positionOverrides = {
+        OverridePosition::None, OverridePosition::None, OverridePosition::None,
+        OverridePosition::None, OverridePosition::None, OverridePosition::None,
+        OverridePosition::None, OverridePosition::None, OverridePosition::None,
+        OverridePosition::None, OverridePosition::None, OverridePosition::None,
+        OverridePosition::None, OverridePosition::None, OverridePosition::None,
+        OverridePosition::None,
+    };
 
     positionResetButtons = {
         _ui.positionReset_0,  _ui.positionReset_1,  _ui.positionReset_2,  _ui.positionReset_3,
@@ -315,7 +322,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() != _game_settings.request_goalie_id + 1) {
             _ui.goalieID->setCurrentIndex(_game_settings.request_goalie_id + 1);
-            disableGoaliePositionDropdown(_game_settings.request_goalie_id);
+            positionOverrides[_game_settings.request_goalie_id] = OverridePosition::Goalie;
         }
 
         bool blueTeam = context_->blue_team;
@@ -427,8 +434,7 @@ void MainWindow::updateViews() {
     }
 
     for (size_t i = 0; i < kNumShells; i++) {
-        updatePosition(i, context_->robot_positions[i]);
-        // SPDLOG_INFO("ROBOT POSITION {}: {}", i, context_->robot_positions[i]);
+        updatePosition(i);
     }
 
     // Set the history vector by taking the last kHistorySize elements of the
@@ -1069,7 +1075,7 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
-    disableGoaliePositionDropdown(value - 1);
+    positionOverrides[value - 1] = OverridePosition::Goalie;
 }
 
 ////////////////
@@ -1194,24 +1200,41 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 
 ////////
 // Position dropdowns
-void MainWindow::updatePosition(int robot, int position) {
-    // Update the position of the robot in the UI (if not goalie)
+void MainWindow::updatePosition(int robot) {
+    // Update the position of the robot in the UI
+    auto position = positionOverrides[robot];
+    if (position == OverridePosition::None) {
+        position = static_cast<OverridePosition>(context_->robot_positions[robot]);
+    }
 
-    if (robot != _ui.goalieID->currentIndex() - 1) {
-        // SPDLOG_INFO("Updating position for robot {}", robot);
-        if (positionOverrides[robot] >= 0) {
-            position = positionOverrides[robot];
-        } else {
-            position = position - 1;
-        }
-        if (position >= 0 && positionDropdowns[robot]->currentIndex() != position) {
-            SPDLOG_INFO("Updating position dropdown for robot {}", robot);
-            positionDropdowns[robot]->setCurrentIndex(position);
-        }
+    switch (position) {
+        case OverridePosition::Goalie:
+            if (_ui.goalieID->currentIndex() + 1 != robot) {
+                positionOverrides[robot] = OverridePosition::None;
+            }
+            // if (positionDropdowns[robot]->currentIndex() != 2) {
+            //     SPDLOG_INFO("robot {} is now goalie", robot);
+            //     setGoalieDropdown(robot);
+            // }
+            break;
+        case OverridePosition::Defense:
+            if (positionDropdowns[robot]->currentIndex() != 0) {
+                SPDLOG_INFO("robot {} is now defense", robot);
+                positionDropdowns[robot]->setCurrentIndex(0);
+            }
+            break;
+        case OverridePosition::Offense:
+            if (positionDropdowns[robot]->currentIndex() != 1) {
+                SPDLOG_INFO("robot {} is now offense", robot);
+                positionDropdowns[robot]->setCurrentIndex(1);
+            }
+            break;
+        default:
+            break;
     }
 }
 
-void MainWindow::disableGoaliePositionDropdown(int robot) {
+void MainWindow::setGoalieDropdown(int robot) {
     // Disable specified and enable rest
     SPDLOG_INFO("Disabling goalie position dropdown for robot {}", robot);
     for (unsigned int i = 0; i < positionDropdowns.size(); i++) {
@@ -1227,17 +1250,29 @@ void MainWindow::disableGoaliePositionDropdown(int robot) {
 }
 
 void MainWindow::onPositionDropdownChanged(int robot, int position) {
-    if (robot != _ui.goalieID->currentIndex() - 1 &&
-        context_->robot_positions[robot] - 1 != position) {
-        SPDLOG_INFO("Position dropdown changed for robot {}", robot);
-        positionOverrides[robot] = position;
-        positionResetButtons[robot]->setEnabled(true);
+    // The dropdown just changed. If it's not the same as context, it creates an override.
+    // position + 1 because the first item is defense and the second is offense
+    OverridePosition newPosition = static_cast<OverridePosition>(position + 1); 
+    OverridePosition givenPosition = static_cast<OverridePosition>(context_->robot_positions[robot]);
+    if (newPosition != givenPosition) {
+        switch (newPosition) {
+            case OverridePosition::Defense:
+                positionOverrides[robot] = OverridePosition::Defense;
+                positionResetButtons[robot]->setEnabled(true);
+                break;
+            case OverridePosition::Offense:
+                positionOverrides[robot] = OverridePosition::Offense;
+                positionResetButtons[robot]->setEnabled(true);
+                break;
+            default:
+                break;
+        }
     }
 }
 
 void MainWindow::onResetButtonClicked(int robot) {
     SPDLOG_INFO("Reset button clicked for robot {}", robot);
-    positionOverrides[robot] = -1;
+    positionOverrides[robot] = OverridePosition::None;
     positionResetButtons[robot]->setEnabled(false);
 }
 

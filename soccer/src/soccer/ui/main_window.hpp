@@ -198,8 +198,6 @@ private Q_SLOTS:
     void on_fastIndirectBlue_clicked();
     void on_fastIndirectYellow_clicked();
 
-    // Testing
-
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
     int historyLocationChanged(int value);
@@ -215,11 +213,6 @@ private:
     void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
     void updateDebugLayers(const Packet::LogFrame& frame);
-
-    void updatePosition(int robot, int position);
-    void disableGoaliePositionDropdown(int robot);
-    void onPositionDropdownChanged(int robot, int value);
-    void onResetButtonClicked(int robot);
 
     Ui_MainWindow _ui{};
     const QStandardItemModel* goalieModel{};
@@ -237,10 +230,24 @@ private:
     // To export a larger amount of data.
     std::vector<std::shared_ptr<Packet::LogFrame>> _longHistory{};
 
-    // Position Dropdowns
+    // Manual Position Controls
+
+    // These values are explicitly declared because they are the ints that are published to
+    // strategy/positions i.e. the same values as strategy::Positions
+    enum OverridePosition { Goalie = 0, Defense = 1, Offense = 2, None = 3 };
+
+    // UI elements
     std::array<QComboBox*, kNumShells> positionDropdowns;
     std::array<QPushButton*, kNumShells> positionResetButtons;
-    std::array<int, kNumShells> positionOverrides;
+
+    // Overrides
+    std::array<OverridePosition, kNumShells> positionOverrides;
+
+    // Position callbacks
+    void updatePosition(int robot);
+    void setGoalieDropdown(int robot);
+    void onPositionDropdownChanged(int robot, int value);
+    void onResetButtonClicked(int robot);
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};
