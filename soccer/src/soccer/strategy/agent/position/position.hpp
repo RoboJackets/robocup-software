@@ -116,6 +116,12 @@ public:
         communication::AgentPosRequestWrapper request);
     // END Agent-to-Agent Communication
 
+    void send_direct_pass_request(std::vector<u_int8_t> target_robots);
+    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
+    void send_pass_confirmation(u_int8_t target_robot);
+    virtual communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) = 0;
+    virtual void pass_ball(int robot_id) = 0;
+
 protected:
     // should be overriden in subclass constructors
     std::string position_name_{"Position"};
@@ -168,19 +174,12 @@ protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
+    int target_robot_id;
+    double our_min_pass_distance = 0.001;
+    double min_pass_distance = 0.01;
 
     // Request
     communication::PosAgentRequestWrapper communication_request_;
-
-    // Passing //
-    void send_direct_pass_request(std::vector<u_int8_t> candidate_robots);
-    // TODO (https://app.clickup.com/t/8677dvtj1): develop leading passing
-    // void send_leading_pass()
-    
-    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
-    void send_pass_confirmation(u_int8_t target_robot);
-    communication::Acknowledge confirm_pass(communication::IncomingPassRequest incoming_pass_request);
-    void pass_ball(int robot_id);
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived

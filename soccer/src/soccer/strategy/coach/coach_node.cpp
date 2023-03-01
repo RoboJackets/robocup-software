@@ -142,22 +142,22 @@ void CoachNode::check_for_play_state_change() {
 }
 
 void CoachNode::assign_positions() {
-    rj_msgs::msg::PositionAssignment positions_message;
-    std::array<uint32_t, kNumShells> positions{};
-    positions[0] = Positions::Goalie;
-    if (!possessing_) {
-        positions[1] = Positions::Offense;
-        for (int i = 2; i < kNumShells; i++) {
-            positions[i] = Positions::Defense;
-        }
-    } else {
-        positions[1] = Positions::Defense;
-        for (int i = 2; i < kNumShells; i++) {
-            positions[i] = Positions::Offense;
-        }
-    }
-    positions_message.client_positions = positions;
-    positions_pub_->publish(positions_message);
+    // rj_msgs::msg::PositionAssignment positions_message;
+    // std::array<uint32_t, kNumShells> positions{};
+    // positions[0] = Positions::Goalie;
+    // if (!possessing_) {
+    //     positions[1] = Positions::Offense;
+    //     for (int i = 2; i < kNumShells; i++) {
+    //         positions[i] = Positions::Defense;
+    //     }
+    // } else {
+    //     positions[1] = Positions::Defense;
+    //     for (int i = 2; i < kNumShells; i++) {
+    //         positions[i] = Positions::Offense;
+    //     }
+    // }
+    // positions_message.client_positions = positions;
+    // positions_pub_->publish(positions_message);
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {

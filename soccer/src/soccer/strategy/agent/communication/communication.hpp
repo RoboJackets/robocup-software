@@ -44,7 +44,7 @@ bool operator==(const TestRequest& a, const TestRequest& b);
 struct IncomingPassRequest {
     u_int32_t request_uid;
 };
-bool operator==(const IncomingPassRequest& a, cons IncomingPassRequest& b);
+bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b);
 
 using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest>;
 
@@ -200,7 +200,7 @@ ASSOCIATE_CPP_ROS(strategy::communication::TestRequest, rj_msgs::msg::TestReques
 
 template <>
 struct RosConverter<strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest> {
-    static rj_msgs:msg::IncomingPassRequest to_ros(const strategy::communication::IncommingPassRequest& from) {
+    static rj_msgs::msg::IncomingPassRequest to_ros(const strategy::communication::IncomingPassRequest& from) {
         rj_msgs::msg::IncomingPassRequest result;
         result.request_uid = from.request_uid;
         return result;
@@ -209,7 +209,7 @@ struct RosConverter<strategy::communication::IncomingPassRequest, rj_msgs::msg::
     static strategy::communication::IncomingPassRequest from_ros(const rj_msgs::msg::IncomingPassRequest& from) {
         return strategy::communication::IncomingPassRequest{from.request_uid};
     }
-}
+};
 
 ASSOCIATE_CPP_ROS(strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest);
 

@@ -33,6 +33,9 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
+    communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) override;
+    void pass_ball(int robot_id) override;
+
 private:
     // temp
     int send_idle_ct_ = 0;
@@ -41,7 +44,14 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     // possible states of the Goalie
-    enum State { BLOCKING, CLEARING, IDLING, BALL_NOT_FOUND };
+    enum State {
+        IDLING, // doing nothing
+        BLOCKING, // blocking the ball from reaching the goal
+        CLEARING, // clearing the ball out of the goal box
+        BALL_NOT_FOUND, // the ball is not in play
+        RECEIVING, // physically intercepting the ball from a pass
+        PASSING, // physically kicking the ball at another robot
+    };
 
     /*
      * @return true if ball is heading towards goal at some minimum speed threshold

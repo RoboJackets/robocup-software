@@ -30,10 +30,30 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
+    communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) override;
+    void pass_ball(int robot_id) override;
+
 private:
     int move_ct_ = 0;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    enum State {
+        IDLING, // simply staying in place
+        SEARCHING, // moving around on the field to do something
+        RECEIVING, // physically intercepting the ball from a pass
+        PASSING, // physically kicking the ball towards another robot
+    };
+
+    State update_state();
+
+    std::optional<RobotIntent> state_to_task(RobotIntent intent);
+
+    // current state of the defense agent (state machine)
+    State current_state_ = IDLING;
+
+    double BALL_RECEIVE_DISTANCE = 0.1;
+    double BALL_LOST_DISTANCE = 0.5;
 };
 
 }  // namespace strategy

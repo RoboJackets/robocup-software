@@ -96,51 +96,48 @@ rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
 
 const std::string Position::get_name() { return position_name_; }
 
-void send_direct_pass_request(std::vector<u_int8_t> candidate_robots) {
-    communication::PosAgentRequestWrapper communication_request{};
+void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication::PassRequest pass_request{};
     communication::generate_uid(pass_request);
     pass_request.direct = true;
+    pass_request.from_robot_id = robot_id_;
+
+    communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = pass_request;
-    communication_request.target_agents = candidate_robots;
-    communication_request.broadcast = false;
+    communication_request.target_agents = target_robots;
+    // For testing
     communication_request.urgent = true;
+
     communication_request_ = communication_request;
 }
 
-communication::PassResponse receive_pass_request(communication::PassRequest pass_request) {
+communication::PassResponse Position::receive_pass_request(communication::PassRequest pass_request) {
     communication::PassResponse pass_response{};
     communication::generate_uid(pass_response);
+
     if (pass_request.direct) {
-        // TODO: Create line between from robot and this robot
-        // If there are no robots in the line then we return true
+        // Handle direct pass request
+        // TODO: Make this rely on actually being open
         pass_response.direct_open = true;
     } else {
-        // TODO(): Figure out a way to say just how open a robot is
+        // TODO: Handle indirect pass request
         pass_response.direct_open = false;
     }
+
     return pass_response;
 }
 
-void position::send_pass_confirmation(u_int8_t target_robot) {
-    communication::PosAgentRequestWrapper communication_request{};
+void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication::IncomingPassRequest incoming_pass_request{};
     communication::generate_uid(incoming_pass_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = incoming_pass_request;
     communication_request.target_agents = {target_robot};
     communication_request.broadcast = false;
     communication_request.urgent = true;
+
     communication_request_ = communication_request;
-}
-
-communication::Acknowledge position::confirm_pass(communication::IncomingPassRequest incoming_pass_request) {
-    communication::Acknowledge acknowledge{};
-    communication::generate_uid(acknowledge);
-    return acknowledge;
-}
-
-void position::pass_ball(u_int8_t robot_id) {
-    // TODO: pass the ball to that robot
 }
 
 }  // namespace strategy
