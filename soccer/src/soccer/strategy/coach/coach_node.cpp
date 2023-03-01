@@ -24,7 +24,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     goalie_sub_ = this->create_subscription<rj_msgs::msg::Goalie>(
-        "/referee/goalie", 10,
+        "/referee/our_goalie", 10,
         [this](const rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
 
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC

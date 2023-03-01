@@ -110,12 +110,11 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
     /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
     /* } */
     // SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions[robot_id_]);
-    if (robot_id_ == 0) {
-        return;
-    }
-
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
+        case 0:
+            next_position_ = std::make_unique<Goalie>(robot_id_);
+            break;
         case 1:
             next_position_ = std::make_unique<Defense>(robot_id_);
             break;
