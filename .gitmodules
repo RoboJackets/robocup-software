@@ -10,3 +10,6 @@
 [submodule "external/sdlcontrollerdb"]
 	path = external/sdlcontrollerdb
 	url = https://github.com/gabomdq/SDL_GameControllerDB
+[submodule "external/robocup-fshare"]
+	path = external/robocup-fshare
+	url = https://github.com/robojackets/robocup-fshare

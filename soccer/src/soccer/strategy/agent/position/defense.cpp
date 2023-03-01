@@ -10,11 +10,11 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     WorldState* world_state = this->world_state();
 
     // Get Ball Location
-    rj_geometry::Point ball_location{world_state->ball.position};
+    // rj_geometry::Point ball_location{world_state->ball.position};
 
     // Create Waller
     Waller waller{0};
-    return waller.get_task(intent, ball_location);
+    return waller.get_task(intent, world_state);
 }
 
 void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {
