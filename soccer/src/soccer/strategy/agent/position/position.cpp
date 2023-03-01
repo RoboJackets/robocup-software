@@ -75,7 +75,6 @@ std::optional<communication::PosAgentRequestWrapper> Position::send_communicatio
     if (communication_request_ != std::nullopt) {
         auto saved_comm_req = communication_request_;
         communication_request_ = std::nullopt;
-        SPDLOG_INFO("\033[92mSENT ACTUAL COMM TO AGENT\033[0m");
         return saved_comm_req;
     }
     return std::nullopt;
@@ -154,6 +153,8 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
 const std::string Position::get_name() { return position_name_; }
 
 void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
+    SPDLOG_INFO("\033[92m send_direct_pass_request!! \033[0m");
+
     communication::PassRequest pass_request{};
     communication::generate_uid(pass_request);
     pass_request.direct = true;
@@ -169,6 +170,7 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
 }
 
 communication::PassResponse Position::receive_pass_request(communication::PassRequest pass_request) {
+    SPDLOG_INFO("\033[92m receive_pass_request!! \033[0m");
     communication::PassResponse pass_response{};
     communication::generate_uid(pass_response);
 
