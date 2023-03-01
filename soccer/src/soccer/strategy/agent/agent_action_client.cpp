@@ -201,7 +201,7 @@ void AgentActionClient::get_communication() {
     // }
 
     auto optional_communication_request = current_position_->send_communication_request();
-    SPDLOG_INFO("comm request");
+    // SPDLOG_INFO("comm request");
     // TODO: get if syntax?
     if (!optional_communication_request.has_value()) {
         return;
@@ -218,8 +218,10 @@ void AgentActionClient::get_communication() {
         }
     }
 
-    if (!(communication_request.request == last_communication_) && robots_visible) {
-        SPDLOG_INFO("avoiding duplicate");
+    SPDLOG_INFO("\033[92mROBOTS VISIBLE\033[0m");
+
+    if (robots_visible) {
+        SPDLOG_INFO("\033[92mSENDING REQUEST\033[0m");
         // update the last communication
         last_communication_ = communication_request.request;
         // create a buffer to hold the responses and the outgoing request

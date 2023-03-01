@@ -75,6 +75,7 @@ std::optional<communication::PosAgentRequestWrapper> Position::send_communicatio
     if (communication_request_ != std::nullopt) {
         auto saved_comm_req = communication_request_;
         communication_request_ = std::nullopt;
+        SPDLOG_INFO("\033[92mSENT ACTUAL COMM TO AGENT\033[0m");
         return saved_comm_req;
     }
     return std::nullopt;
@@ -114,7 +115,9 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication_request.target_agents = target_robots;
     // For testing
     communication_request.urgent = true;
+    communication_request.broadcast = false;
 
+    SPDLOG_INFO("\033[92mREQUEST SET\033[0m");
     communication_request_ = communication_request;
 }
 
