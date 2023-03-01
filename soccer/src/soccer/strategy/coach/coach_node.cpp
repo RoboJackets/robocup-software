@@ -23,6 +23,10 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         "/vision_filter/world_state", 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
+    goalie_sub_ = this->create_subscription<rj_msgs::msg::Goalie>(
+        "/referee/goalie", 10,
+        [this](const rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
+
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
     // save state of acknowledgements, only spam until some long time has passed, or ack received
     /* ack_array[msg->ID] = true; */
@@ -163,6 +167,10 @@ void CoachNode::assign_positions() {
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
     current_field_dimensions_ = *msg;
     have_field_dimensions_ = true;
+}
+
+void CoachNode::goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg) {
+    goalie_id_ = msg->goalie_id;
 }
 
 void CoachNode::publish_static_obstacles() {
