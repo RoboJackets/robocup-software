@@ -62,7 +62,7 @@ AgentActionClient::AgentActionClient(int r_id)
     } else if (r_id == 1) {
         current_position_ = std::make_unique<Defense>(r_id);
     } else {
-        current_position_ = std::make_unique<Defense>(r_id);
+        current_position_ = std::make_unique<Offense>(r_id);
     }
 }
 
@@ -200,8 +200,15 @@ void AgentActionClient::get_communication() {
     //     }
     // }
 
-    communication::PosAgentRequestWrapper communication_request =
-        current_position_->send_communication_request();
+    auto optional_communication_request = current_position_->send_communication_request();
+    SPDLOG_INFO("comm request");
+    // TODO: get if syntax?
+    if (!optional_communication_request.has_value()) {
+        return;
+    }
+    SPDLOG_INFO("non null comm request");
+
+    auto communication_request = optional_communication_request.value();
 
     bool robots_visible = false;
     for (u_int8_t i = 0; i < kNumShells; i++) {
@@ -212,6 +219,7 @@ void AgentActionClient::get_communication() {
     }
 
     if (!(communication_request.request == last_communication_) && robots_visible) {
+        SPDLOG_INFO("avoiding duplicate");
         // update the last communication
         last_communication_ = communication_request.request;
         // create a buffer to hold the responses and the outgoing request

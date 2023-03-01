@@ -71,8 +71,13 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-communication::PosAgentRequestWrapper Position::send_communication_request() {
-    return communication_request_;
+std::optional<communication::PosAgentRequestWrapper> Position::send_communication_request() {
+    if (communication_request_ != std::nullopt) {
+        auto saved_comm_req = communication_request_;
+        communication_request_ = std::nullopt;
+        return saved_comm_req;
+    }
+    return std::nullopt;
 }
 
 void Position::receive_communication_response([
@@ -97,6 +102,8 @@ rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
 const std::string Position::get_name() { return position_name_; }
 
 void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
+    SPDLOG_INFO("\033[92m send_direct_pass_request!! \033[0m");
+
     communication::PassRequest pass_request{};
     communication::generate_uid(pass_request);
     pass_request.direct = true;
@@ -112,6 +119,7 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
 }
 
 communication::PassResponse Position::receive_pass_request(communication::PassRequest pass_request) {
+    SPDLOG_INFO("\033[92m receive_pass_request!! \033[0m");
     communication::PassResponse pass_response{};
     communication::generate_uid(pass_response);
 

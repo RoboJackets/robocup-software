@@ -28,7 +28,6 @@ Offense::State Offense::update_state() {
     
     // if no ball found, stop and return to box immediately
     if (!world_state->ball.visible) {
-        SPDLOG_INFO("\033[92m BALL INVIS!! \033[0m");
         return current_state_;
     }
 
@@ -69,9 +68,9 @@ Offense::State Offense::update_state() {
                 SPDLOG_INFO("\033[92m switching off stealing {} \033[0m", BALL_RECEIVE_DISTANCE);
 
                 // send direct pass request to robot 3
-                send_direct_pass_request({1});
+                send_direct_pass_request({4});
                 
-                // go to IDLING (pass receieved will go to PASSING)
+                // go to IDLING (pass received will go to PASSING)
                 next_state = SEARCHING;
             }
             break;
@@ -159,10 +158,12 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response{};
+    SPDLOG_INFO("\033[92m offense recv comm req !! \033[0m");
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
         communication::PassResponse pass_response = receive_pass_request(*pass_request);
         comm_response.response = pass_response;
+        // TODO: "IncomingPassRequest" => "IncomingBallRequest" (or smth)
     } else if (const communication::IncomingPassRequest* incoming_pass_request = std::get_if<communication::IncomingPassRequest>(&request.request)) {
         communication::Acknowledge incoming_pass_acknowledge = acknowledge_pass(*incoming_pass_request);
         comm_response.response = incoming_pass_acknowledge;

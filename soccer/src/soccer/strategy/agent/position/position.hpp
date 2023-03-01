@@ -96,7 +96,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    communication::PosAgentRequestWrapper send_communication_request();
+    std::optional<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -179,7 +179,7 @@ protected:
     double min_pass_distance = 0.01;
 
     // Request
-    communication::PosAgentRequestWrapper communication_request_;
+    std::optional<communication::PosAgentRequestWrapper> communication_request_;
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
