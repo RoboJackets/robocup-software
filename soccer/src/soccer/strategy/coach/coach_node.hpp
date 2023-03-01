@@ -35,6 +35,12 @@ enum MatchSituation {
 
 enum Positions { Goalie, Defense, Offense };
 
+// These values are explicitly declared because they are the ints that are published to
+// strategy/positions i.e. the same values as strategy::Positions
+namespace OverridePosition {
+enum OverridePosition { Goalie = 0, Defense = 1, Offense = 2, None = 3 };
+}
+
 /**
  * @brief This node takes the referee information and standardizes it for consumption of the
  * individual robot agents.

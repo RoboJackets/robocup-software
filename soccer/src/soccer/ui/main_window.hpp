@@ -14,6 +14,7 @@
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
+#include <strategy/coach/coach_node.hpp>
 
 #include "field_view.hpp"
 #include "processor.hpp"
@@ -31,6 +32,7 @@ QString NonLiveStyle("border:2px solid red");
 };  // namespace
 
 enum Side { Yellow, Blue };
+
 /**
  * main gui thread class
  */
@@ -232,22 +234,32 @@ private:
 
     // Manual Position Controls
 
-    // These values are explicitly declared because they are the ints that are published to
-    // strategy/positions i.e. the same values as strategy::Positions
-    enum OverridePosition { Goalie = 0, Defense = 1, Offense = 2, None = 3 };
-
     // UI elements
     std::array<QComboBox*, kNumShells> positionDropdowns;
     std::array<QPushButton*, kNumShells> positionResetButtons;
 
     // Overrides
-    std::array<OverridePosition, kNumShells> positionOverrides;
+    std::array<strategy::OverridePosition::OverridePosition, kNumShells> positionOverrides;
 
-    // Position callbacks
+    /*
+     * Updates the dropdown for a robot to reflect its current position.
+     */
     void updatePosition(int robot);
+    /*
+     * Sets which dropdown represents the goalie — disabling it and ensuring the previous goalie
+     * dropdown is re-enabled.
+     */
     void setGoalieDropdown(int robot);
+    /*
+     * Callback when a dropdown is changed (whether by user or program)
+     */
     void onPositionDropdownChanged(int robot, int value);
+    /*
+     * Callback when a reset button is clicked
+     */
     void onResetButtonClicked(int robot);
+
+    rclcpp::Publisher<strategy::Positions>::SharedPtr overridePublisher;
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};

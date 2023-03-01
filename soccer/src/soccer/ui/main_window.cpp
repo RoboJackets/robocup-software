@@ -199,12 +199,12 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _ui.robotPosition_12, _ui.robotPosition_13, _ui.robotPosition_14, _ui.robotPosition_15};
 
     positionOverrides = {
-        OverridePosition::None, OverridePosition::None, OverridePosition::None,
-        OverridePosition::None, OverridePosition::None, OverridePosition::None,
-        OverridePosition::None, OverridePosition::None, OverridePosition::None,
-        OverridePosition::None, OverridePosition::None, OverridePosition::None,
-        OverridePosition::None, OverridePosition::None, OverridePosition::None,
-        OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None,
     };
 
     positionResetButtons = {
@@ -212,6 +212,8 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _ui.positionReset_4,  _ui.positionReset_5,  _ui.positionReset_6,  _ui.positionReset_7,
         _ui.positionReset_8,  _ui.positionReset_9,  _ui.positionReset_10, _ui.positionReset_11,
         _ui.positionReset_12, _ui.positionReset_13, _ui.positionReset_14, _ui.positionReset_15};
+
+    
 
     // test play logic initialization
     // test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
@@ -1200,24 +1202,24 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 // Position dropdowns
 void MainWindow::updatePosition(int robot) {
     auto position = positionOverrides[robot];
-    if (position == OverridePosition::None) {
-        position = static_cast<OverridePosition>(context_->robot_positions[robot]);
+    if (position == strategy::OverridePosition::None) {
+        position = static_cast<strategy::OverridePosition::OverridePosition>(context_->robot_positions[robot]);
     }
 
     switch (position) {
-        case OverridePosition::Defense:
+        case strategy::OverridePosition::Defense:
             if (positionDropdowns[robot]->currentIndex() != 0) {
                 SPDLOG_INFO("robot {} is now defense", robot);
                 positionDropdowns[robot]->setCurrentIndex(0);
             }
             break;
-        case OverridePosition::Offense:
+        case strategy::OverridePosition::Offense:
             if (positionDropdowns[robot]->currentIndex() != 1) {
                 SPDLOG_INFO("robot {} is now offense", robot);
                 positionDropdowns[robot]->setCurrentIndex(1);
             }
             break;
-        case OverridePosition::Goalie:
+        case strategy::OverridePosition::Goalie:
             if (positionDropdowns[robot]->currentIndex() != 2) {
                 SPDLOG_INFO("robot {} is now goalie", robot);
                 setGoalieDropdown(robot);
@@ -1246,17 +1248,17 @@ void MainWindow::setGoalieDropdown(int robot) {
 void MainWindow::onPositionDropdownChanged(int robot, int position) {
     // The dropdown just changed. If it's not the same as context, it creates an override.
     // position + 1 because the first item is defense and the second is offense
-    OverridePosition newPosition = static_cast<OverridePosition>(position + 1);
-    OverridePosition givenPosition =
-        static_cast<OverridePosition>(context_->robot_positions[robot]);
+    strategy::OverridePosition::OverridePosition newPosition = static_cast<strategy::OverridePosition::OverridePosition>(position + 1);
+    strategy::OverridePosition::OverridePosition givenPosition =
+        static_cast<strategy::OverridePosition::OverridePosition>(context_->robot_positions[robot]);
     if (newPosition != givenPosition) {
         switch (newPosition) {
-            case OverridePosition::Defense:
-                positionOverrides[robot] = OverridePosition::Defense;
+            case strategy::OverridePosition::Defense:
+                positionOverrides[robot] = strategy::OverridePosition::Defense;
                 positionResetButtons[robot]->setEnabled(true);
                 break;
-            case OverridePosition::Offense:
-                positionOverrides[robot] = OverridePosition::Offense;
+            case strategy::OverridePosition::Offense:
+                positionOverrides[robot] = strategy::OverridePosition::Offense;
                 positionResetButtons[robot]->setEnabled(true);
                 break;
             default:
@@ -1267,7 +1269,7 @@ void MainWindow::onPositionDropdownChanged(int robot, int position) {
 
 void MainWindow::onResetButtonClicked(int robot) {
     SPDLOG_INFO("Reset button clicked for robot {}", robot);
-    positionOverrides[robot] = OverridePosition::None;
+    positionOverrides[robot] = strategy::OverridePosition::None;
     positionResetButtons[robot]->setEnabled(false);
 }
 
