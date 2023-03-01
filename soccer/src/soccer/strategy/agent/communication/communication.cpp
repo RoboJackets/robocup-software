@@ -24,6 +24,10 @@ bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b) {
     return a.request_uid == b.request_uid;
 }
 
+bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b) {
+    return a.request_uid == b.request_uid;
+}
+
 bool operator==(const Acknowledge& a, const Acknowledge& b) {
     return a.response_uid == b.response_uid;
 }

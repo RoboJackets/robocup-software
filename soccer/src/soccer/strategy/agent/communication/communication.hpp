@@ -47,7 +47,12 @@ struct IncomingPassRequest {
 };
 bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b);
 
-using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest>;
+struct BallInTransitRequest {
+    u_int32_t request_uid;
+};
+bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
+
+using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest, BallInTransitRequest>;
 
 // END REQUEST TYPES //
 
@@ -215,6 +220,21 @@ struct RosConverter<strategy::communication::IncomingPassRequest, rj_msgs::msg::
 ASSOCIATE_CPP_ROS(strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest);
 
 template <>
+struct RosConverter<strategy::communication::BallInTransitRequest, rj_msgs::msg::BallInTransitRequest> {
+    static rj_msgs::msg::BallInTransitRequest to_ros(const strategy::communication::BallInTransitRequest& from) {
+        rj_msgs::msg::BallInTransitRequest result;
+        result.request_uid = from.request_uid;
+        return result;
+    }
+
+    static strategy::communication::BallInTransitRequest from_ros(const rj_msgs::msg::BallInTransitRequest& from) {
+        return strategy::communication::BallInTransitRequest{from.request_uid};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::BallInTransitRequest, rj_msgs::msg::BallInTransitRequest);
+
+template <>
 struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
     static rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {
         rj_msgs::msg::AgentRequest result;
@@ -228,6 +248,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result.pass_request.emplace_back(convert_to_ros(*pass_request));
         } else if (const auto* incoming_ass_request = std::get_if<strategy::communication::IncomingPassRequest>(&from)) {
             result.incoming_pass_request.emplace_back(convert_to_ros(*incoming_ass_request));
+        } else if (const auto* ball_in_transit_request = std::get_if<strategy::communication::BallInTransitRequest>(&from)) {
+            result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
@@ -244,6 +266,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result = convert_from_ros(from.pass_request.front());
         } else if (!from.incoming_pass_request.empty()) {
             result = convert_from_ros(from.incoming_pass_request.front());
+        } else if (!from.ball_in_transit_request.empty()) {
+            result = convert_from_ros(from.ball_in_transit_request.front());
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
