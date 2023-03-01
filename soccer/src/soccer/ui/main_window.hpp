@@ -11,12 +11,12 @@
 #include <QtGui/QStandardItemModel>
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_convert/ros_convert.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
 #include <strategy/coach/coach_node.hpp>
-#include <rj_msgs/msg/position_assignment.hpp>
-#include <rj_convert/ros_convert.hpp>
 
 #include "field_view.hpp"
 #include "processor.hpp"
