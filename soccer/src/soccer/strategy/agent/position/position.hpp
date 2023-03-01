@@ -25,6 +25,8 @@
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
+#include <rj_msgs/msg/incoming_pass_request.hpp>
+#include <rj_msgs/msg/ball_in_transit_request.hpp>
 
 // Responses
 #include <rj_msgs/msg/acknowledge.hpp>
@@ -96,7 +98,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    std::optional<communication::PosAgentRequestWrapper> send_communication_request();
+    communication::PosAgentRequestWrapper send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -121,6 +123,7 @@ public:
     void send_pass_confirmation(u_int8_t target_robot);
     virtual communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) = 0;
     virtual void pass_ball(int robot_id) = 0;
+    virtual communication::Acknowledge acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) = 0;
 
 protected:
     // should be overriden in subclass constructors
@@ -179,7 +182,7 @@ protected:
     double min_pass_distance = 0.01;
 
     // Request
-    std::optional<communication::PosAgentRequestWrapper> communication_request_;
+    communication::PosAgentRequestWrapper communication_request_;
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
