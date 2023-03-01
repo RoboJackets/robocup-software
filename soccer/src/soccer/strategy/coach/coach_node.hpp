@@ -83,7 +83,7 @@ private:
     rj_msgs::msg::FieldDimensions current_field_dimensions_;
     bool have_field_dimensions_ = false;
 
-    int goalie_id_ = 0;  // sensible default?
+    int goalie_id_{0};
 
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
