@@ -199,12 +199,14 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _ui.robotPosition_12, _ui.robotPosition_13, _ui.robotPosition_14, _ui.robotPosition_15};
 
     positionOverrides = {
-        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
+        strategy::OverridePosition::None, strategy::OverridePosition::None,
     };
 
     positionResetButtons = {
@@ -213,7 +215,8 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _ui.positionReset_8,  _ui.positionReset_9,  _ui.positionReset_10, _ui.positionReset_11,
         _ui.positionReset_12, _ui.positionReset_13, _ui.positionReset_14, _ui.positionReset_15};
 
-    
+    override_pub_ = _node->create_publisher<rj_msgs::msg::PositionAssignment>(
+        "/strategy/position_overrides", 10);
 
     // test play logic initialization
     // test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
@@ -434,9 +437,19 @@ void MainWindow::updateViews() {
                             context_->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
+    // Update positions and republish overrides
     for (size_t i = 0; i < kNumShells; i++) {
         updatePosition(i);
     }
+
+    rj_msgs::msg::PositionAssignment msg;
+    std::array<uint32_t, kNumShells> message_overrides{
+        positionOverrides[0],  positionOverrides[1],  positionOverrides[2],  positionOverrides[3],
+        positionOverrides[4],  positionOverrides[5],  positionOverrides[6],  positionOverrides[7],
+        positionOverrides[8],  positionOverrides[9],  positionOverrides[10], positionOverrides[11],
+        positionOverrides[12], positionOverrides[13], positionOverrides[14], positionOverrides[15]};
+    msg.client_positions = message_overrides;
+    override_pub_->publish(msg);
 
     // Set the history vector by taking the last kHistorySize elements of the
     // "long" history, or fewer if _longHistory is shorter.
@@ -1202,8 +1215,11 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 // Position dropdowns
 void MainWindow::updatePosition(int robot) {
     auto position = positionOverrides[robot];
-    if (position == strategy::OverridePosition::None) {
-        position = static_cast<strategy::OverridePosition::OverridePosition>(context_->robot_positions[robot]);
+    auto givenPosition =
+        static_cast<strategy::OverridePosition::OverridePosition>(context_->robot_positions[robot]);
+    if (givenPosition == strategy::OverridePosition::Goalie ||
+        position == strategy::OverridePosition::None) {
+        position = givenPosition;
     }
 
     switch (position) {
@@ -1248,7 +1264,8 @@ void MainWindow::setGoalieDropdown(int robot) {
 void MainWindow::onPositionDropdownChanged(int robot, int position) {
     // The dropdown just changed. If it's not the same as context, it creates an override.
     // position + 1 because the first item is defense and the second is offense
-    strategy::OverridePosition::OverridePosition newPosition = static_cast<strategy::OverridePosition::OverridePosition>(position + 1);
+    strategy::OverridePosition::OverridePosition newPosition =
+        static_cast<strategy::OverridePosition::OverridePosition>(position + 1);
     strategy::OverridePosition::OverridePosition givenPosition =
         static_cast<strategy::OverridePosition::OverridePosition>(context_->robot_positions[robot]);
     if (newPosition != givenPosition) {

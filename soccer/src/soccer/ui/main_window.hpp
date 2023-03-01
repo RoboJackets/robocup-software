@@ -15,6 +15,8 @@
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
 #include <strategy/coach/coach_node.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
+#include <rj_convert/ros_convert.hpp>
 
 #include "field_view.hpp"
 #include "processor.hpp"
@@ -259,7 +261,7 @@ private:
      */
     void onResetButtonClicked(int robot);
 
-    rclcpp::Publisher<strategy::Positions>::SharedPtr overridePublisher;
+    rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr override_pub_;
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};
