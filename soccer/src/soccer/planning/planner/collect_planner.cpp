@@ -405,7 +405,6 @@ void CollectPlanner::reset() {
 }
 
 bool CollectPlanner::is_done() const {
-    return true;
     // FSM: CourseApproach -> FineApproach -> Control
     // (see process_state_transition())
     if (current_state_ != Control) {

@@ -103,9 +103,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     } else if (current_state_ == RECEIVING) {
         SPDLOG_INFO("\033[94mRobot {} is receiving the ball\033[0m", robot_id_);
         // intercept the bal
-        rj_geometry::Point ball_position = world_state()->ball.position;
-        auto intercept_cmd = planning::InterceptMotionCommand{ball_position};
-        intent.motion_command = intercept_cmd;
+        auto settle_pt = world_state()->get_robot(true, robot_id_).pose.position();
+        auto settle_cmd = planning::SettleMotionCommand{settle_pt};
+        intent.motion_command = settle_cmd;
         intent.motion_command_name = fmt::format("robot {} offensive receive ball", robot_id_);
         return intent;
     } else if (current_state_ == STEALING) {
