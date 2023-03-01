@@ -62,7 +62,7 @@ AgentActionClient::AgentActionClient(int r_id)
     } else if (r_id == 1) {
         current_position_ = std::make_unique<Defense>(r_id);
     } else {
-        current_position_ = std::make_unique<Offense>(r_id);
+        current_position_ = std::make_unique<Defense>(r_id);
     }
 }
 
