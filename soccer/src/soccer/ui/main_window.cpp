@@ -322,7 +322,6 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() != _game_settings.request_goalie_id + 1) {
             _ui.goalieID->setCurrentIndex(_game_settings.request_goalie_id + 1);
-            positionOverrides[_game_settings.request_goalie_id] = OverridePosition::Goalie;
         }
 
         bool blueTeam = context_->blue_team;
@@ -1075,7 +1074,6 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
-    positionOverrides[value - 1] = OverridePosition::Goalie;
 }
 
 ////////////////
@@ -1201,22 +1199,12 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 ////////
 // Position dropdowns
 void MainWindow::updatePosition(int robot) {
-    // Update the position of the robot in the UI
     auto position = positionOverrides[robot];
     if (position == OverridePosition::None) {
         position = static_cast<OverridePosition>(context_->robot_positions[robot]);
     }
 
     switch (position) {
-        case OverridePosition::Goalie:
-            if (_ui.goalieID->currentIndex() + 1 != robot) {
-                positionOverrides[robot] = OverridePosition::None;
-            }
-            // if (positionDropdowns[robot]->currentIndex() != 2) {
-            //     SPDLOG_INFO("robot {} is now goalie", robot);
-            //     setGoalieDropdown(robot);
-            // }
-            break;
         case OverridePosition::Defense:
             if (positionDropdowns[robot]->currentIndex() != 0) {
                 SPDLOG_INFO("robot {} is now defense", robot);
@@ -1227,6 +1215,12 @@ void MainWindow::updatePosition(int robot) {
             if (positionDropdowns[robot]->currentIndex() != 1) {
                 SPDLOG_INFO("robot {} is now offense", robot);
                 positionDropdowns[robot]->setCurrentIndex(1);
+            }
+            break;
+        case OverridePosition::Goalie:
+            if (positionDropdowns[robot]->currentIndex() != 2) {
+                SPDLOG_INFO("robot {} is now goalie", robot);
+                setGoalieDropdown(robot);
             }
             break;
         default:
@@ -1252,8 +1246,9 @@ void MainWindow::setGoalieDropdown(int robot) {
 void MainWindow::onPositionDropdownChanged(int robot, int position) {
     // The dropdown just changed. If it's not the same as context, it creates an override.
     // position + 1 because the first item is defense and the second is offense
-    OverridePosition newPosition = static_cast<OverridePosition>(position + 1); 
-    OverridePosition givenPosition = static_cast<OverridePosition>(context_->robot_positions[robot]);
+    OverridePosition newPosition = static_cast<OverridePosition>(position + 1);
+    OverridePosition givenPosition =
+        static_cast<OverridePosition>(context_->robot_positions[robot]);
     if (newPosition != givenPosition) {
         switch (newPosition) {
             case OverridePosition::Defense:
