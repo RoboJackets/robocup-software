@@ -363,7 +363,7 @@ void AgentActionClient::check_communication_timeout() {
 }
 
 [[nodiscard]] WorldState* AgentActionClient::world_state() {
-    // thread-safe getter for world_state (see update_world_state())
+    // thread-safe getter for world_state
     auto lock = std::lock_guard(world_state_mutex_);
     return &last_world_state_;
 }
