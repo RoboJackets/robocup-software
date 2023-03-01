@@ -15,6 +15,9 @@ Offense::Offense(int r_id) : Position(r_id) {
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
+    if (robot_id_ == 2) {
+        SPDLOG_INFO("\033[92m current_state_ {} \033[0m", current_state_);
+    }
     return state_to_task(intent);
 }
 
@@ -22,6 +25,12 @@ Offense::State Offense::update_state() {
     State next_state = current_state_;
     // handle transitions between current state
     WorldState* world_state = this->world_state();
+    
+    // if no ball found, stop and return to box immediately
+    if (!world_state->ball.visible) {
+        SPDLOG_INFO("\033[92m BALL INVIS!! \033[0m");
+        return current_state_;
+    }
 
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = world_state->ball.position;
@@ -54,10 +63,16 @@ Offense::State Offense::update_state() {
             }
             break;
         case STEALING:
-            SPDLOG_INFO("\033[92m Robot {} is stealing\033[0m", robot_id_);
             // transition to idling if we are close enough to the ball
-            if (distance_to_ball < BALL_RECEIVE_DISTANCE) {
-                next_state = IDLING;
+            if (check_is_done()) {
+                /* SPDLOG_INFO("\033[92m ball pos {}{} \033[0m", ball_position.x(), ball_position.y()); */
+                SPDLOG_INFO("\033[92m switching off stealing {} \033[0m", BALL_RECEIVE_DISTANCE);
+
+                // send direct pass request to robot 3
+                send_direct_pass_request({1});
+                
+                // go to IDLING (pass receieved will go to PASSING)
+                next_state = SEARCHING;
             }
             break;
     }
@@ -68,7 +83,7 @@ Offense::State Offense::update_state() {
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
         // DO NOTHING
-        SPDLOG_INFO("\033[93m Robot {} is idling\033[0m", robot_id_);
+        /* SPDLOG_INFO("\033[93m Robot {} is idling\033[0m", robot_id_); */
     } else if (current_state_ == SEARCHING) {
         // TODO: DEFINE SEARCHING BEHAVIOR
     } else if (current_state_ == PASSING) {
@@ -95,7 +110,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command_name = fmt::format("robot {} offensive receive ball", robot_id_);
         return intent;
     } else if (current_state_ == STEALING) {
-        SPDLOG_INFO("\033[93mRobot {} is stealing the ball\033[0m", robot_id_);
+        /* SPDLOG_INFO("\033[93mRobot {} is stealing the ball\033[0m", robot_id_); */
         // intercept the ball
         auto collect_cmd = planning::CollectMotionCommand{};
         // rj_geometry::Point ball_position = world_state()->ball.position;
