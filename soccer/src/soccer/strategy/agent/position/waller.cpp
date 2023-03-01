@@ -3,12 +3,12 @@
 namespace strategy {
 
 Waller::Waller(int waller_num) {
-    std::string defense_type_{"Waller"};
+    defense_type_ = "Waller";
     waller_pos_ = waller_num;
 }
 
 std::optional<RobotIntent> Waller::get_task(RobotIntent intent,
-                                            const WorldState* const world_state) {
+                                            const WorldState* world_state) {
     // Get Goal Location (Always (0,0)) as of creation
     rj_geometry::Point ball_location{world_state->ball.position};
 
