@@ -30,7 +30,7 @@ Defense::State Defense::update_state() {
             }
             break;
         case PASSING:
-            // transition to idling if we no longer have the ball (i.e. it was passed or it was
+            // transition to idling if we no longer have the ball (i.e. it was passed or it was 
             // stolen)
             if (distance_to_ball > BALL_LOST_DISTANCE) {
                 next_state = IDLING;
@@ -47,33 +47,18 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     } else if (current_state_ == SEARCHING) {
         // TODO: Define defensive searching behavior
     } else if (current_state_ == RECEIVING) {
-        // check how far we are from the ball
-        rj_geometry::Point robot_position =
-            world_state()->get_robot(true, robot_id_).pose.position();
-        rj_geometry::Point ball_position = world_state()->ball.position;
-        double distance_to_ball = robot_position.dist_to(ball_position);
-        if (distance_to_ball > max_receive_distance && !chasing_ball) {
-            auto motion_instance =
-                planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
-            auto face_ball = planning::FaceBall{};
-            auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
-            intent.motion_command = face_ball_cmd;
-        } else {
-            // intercept the bal
-            chasing_ball = true;
-            SPDLOG_INFO("\033[92mrobot {} settling the ball\033[0m", robot_id_);
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-        }
+        // intercept the bal
+        rj_geometry::Point current_position = world_state()->get_robot(true, robot_id_).pose.position();
+        auto intercept_cmd = planning::InterceptMotionCommand{current_position};
+        intent.motion_command = intercept_cmd;
+        intent.motion_command_name = fmt::format("robot {} defensive receive ball", robot_id_);
         return intent;
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
-        SPDLOG_INFO("\033[92mrobot {} passing ball\033[0m", robot_id_);
-        rj_geometry::Point target_robot_pos =
-            world_state()->get_robot(true, target_robot_id).pose.position();
-        planning::LinearMotionInstant target{target_robot_pos};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+        rj_geometry::Point target_robot_pos = world_state()->get_robot(true, target_robot_id).pose.position();
+        auto line_kick_cmd = planning::LineKickMotionCommand{target_robot_pos};
         intent.motion_command = line_kick_cmd;
+        intent.motion_command_name = fmt::format("robot {} offensive pass to robot {}", robot_id_, target_robot_id);
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
@@ -86,35 +71,56 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     return std::nullopt;
 }
 
+void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    for (u_int32_t i = 0; i < response.responses.size(); i++) {
+        if (const communication::Acknowledge* acknowledge =
+                std::get_if<communication::Acknowledge>(&response.responses[i])) {
+            // if the acknowledgement is from an incoming pass request -> pass the ball
+            if (const communication::IncomingPassRequest* incoming_pass_request = std::get_if<communication::IncomingPassRequest>(&response.associated_request)) {
+                pass_ball(response.received_robot_ids[i]);
+            }
+
+        } else if (const communication::PassResponse* pass_response =
+                       std::get_if<communication::PassResponse>(&response.responses[i])) {
+            // get the associated pass request for this response
+            if (const communication::PassRequest* sent_pass_request = std::get_if<communication::PassRequest>(&response.associated_request)) {
+                if (sent_pass_request->direct) {
+                    // if direct -> pass to first robot
+                    send_pass_confirmation(response.received_robot_ids[i]);
+                } else {
+                    // TODO: handle deciding on indirect passing
+                }
+            }
+        }
+
+        // TEST CODE: UNCOMMENT TO TEST
+        // if (const communication::TestResponse* test_response =
+        //                std::get_if<communication::TestResponse>(&response.responses[i])) {
+        //     SPDLOG_INFO("\033[92m Robot {} sent the test response {}\033[0m",
+        //                 response.received_robot_ids[i], test_response->message);
+        // }
+    }
+
+    return std::nullopt;
+}
+
 communication::PosAgentResponseWrapper Defense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response;
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
-        communication::PassResponse pass_response = receive_pass_request(pass_request);
+        communication::PassResponse pass_response = receive_pass_request(*pass_request);
         comm_response.response = pass_response;
     } else if (const communication::IncomingPassRequest* incoming_pass_request = std::get_if<communication::IncomingPassRequest>(&request.request)) {
-        communication::Acknowledge incoming_pass_acknowledge = confirm_pass(incoming_pass_request);
-        // TODO: Set FSM state to receiving pass
+        communication::Acknowledge incoming_pass_acknowledge = acknowledge_pass(*incoming_pass_request);
         comm_response.response = incoming_pass_acknowledge;
-    } else if (const communication::PositionRequest* position_request =
-                   std::get_if<communication::PositionRequest>(&request.request)) {
-        communication::PositionResponse position_response{};
-        position_response.position = position_name_;
-        communication::generate_uid(position_response);
-        comm_response.response = position_response;
-    } else if (const communication::TestRequest* test_request =
-                   std::get_if<communication::TestRequest>(&request.request)) {
-        communication::TestResponse test_response{};
-        test_response.message = fmt::format("robot {} says hello", robot_id_);
-        communication::generate_uid(test_response);
-        comm_response.response = test_response;
     } else {
         communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     }
 
+<<<<<<< HEAD
 communication::Acknowledge Defense::acknowledge_ball_in_transit(
     communication::BallInTransitRequest ball_in_transit_request) {
     // Call to super
@@ -124,6 +130,32 @@ communication::Acknowledge Defense::acknowledge_ball_in_transit(
     current_state_ = RECEIVING;
     // Return acknowledge response
     return acknowledge_response;
+=======
+    // TEST CODE: UNCOMMENT TO TEST
+    // if (const communication::TestRequest* test_request =
+    //                std::get_if<communication::TestRequest>(&request.request)) {
+    //     communication::TestResponse test_response{};
+    //     test_response.message = fmt::format("robot {} says hello", robot_id_);
+    //     communication::generate_uid(test_response);
+    //     comm_response.response = test_response;
+    // }
+
+    return comm_response;
+>>>>>>> 3c47867921... rewrite basic passing infrastructure
+}
+
+communication::Acknowledge Defense::acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) {
+    communication::Acknowledge acknowledge_response{};
+    communication::generate_uid(acknowledge_response);
+
+    current_state_ = RECEIVING;
+
+    return acknowledge_response;
+}
+
+void Defense::pass_ball(int robot_id) {
+    target_robot_id = robot_id;
+    current_state_ = PASSING;
 }
 
 }  // namespace strategy

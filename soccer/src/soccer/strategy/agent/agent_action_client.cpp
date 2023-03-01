@@ -89,15 +89,15 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 
 void AgentActionClient::get_task() {
     // SPDLOG_INFO("Getting task for robot {}", robot_id_);
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
+    // if (current_position_ == nullptr) {
+    //     if (robot_id_ == 0) {
+    //         current_position_ = std::make_unique<Goalie>(robot_id_);
+    //     } else if (robot_id_ == 1) {
+    //         current_position_ = std::make_unique<Defense>(robot_id_);
+    //     } else {
+    //         current_position_ = std::make_unique<Offense>(robot_id_);
+    //     }
+    // }
 
     auto optional_task = current_position_->get_task();
     if (optional_task.has_value()) {
@@ -193,14 +193,6 @@ void AgentActionClient::get_communication() {
     //         current_position_ = std::make_unique<Offense>(robot_id_);
     //     }
     // }
-
-    auto optional_communication_request = current_position_->send_communication_request();
-    // SPDLOG_INFO("comm request");
-    // TODO: get if syntax?
-    if (!optional_communication_request.has_value()) {
-        return;
-    }
-    SPDLOG_INFO("non null comm request");
 
     auto communication_request = optional_communication_request.value();
 

@@ -31,6 +31,9 @@ public:
     communication::Acknowledge acknowledge_ball_in_transit(
         communication::BallInTransitRequest ball_in_transit_request) override;
 
+    communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) override;
+    void pass_ball(int robot_id) override;
+
 private:
     bool kicking_{true};
 
@@ -38,13 +41,12 @@ private:
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 
     enum State {
-        IDLING,     // simply staying in place
-        SEARCHING,  // moving around on the field to get open
-        PASSING,    // physically kicking the ball towards another robot
-        SHOOTING,   // physically kicking the ball towards the net
-        RECEIVING,  // physically intercepting the ball from a pass (gets possession)
-        STEALING,   // attempting to intercept the ball from the other team
-        FACING,
+        IDLING, // simply staying in place
+        SEARCHING, // moving around on the field to get open
+        PASSING, // physically kicking the ball towards another robot
+        SHOOTING, // physically kicking the ball towards the net
+        RECEIVING, // physically intercepting the ball from a pass (gets possession)
+        STEALING, // attempting to intercept the ball from the other team
     };
 
     State update_state();
