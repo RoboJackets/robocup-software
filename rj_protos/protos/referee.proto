@@ -124,7 +124,7 @@ message SSL_Referee {
         repeated uint32 yellow_card_times = 4 [packed = true];
         // The total number of yellow cards ever issued to the team.
         required uint32 yellow_cards = 5;
-		// The number of timeouts this team can still call.
+        // The number of timeouts this team can still call.
 		// If in a timeout right now, that timeout is excluded.
 		required uint32 timeouts = 6;
 		// The number of microseconds of timeout this team can use.

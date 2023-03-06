@@ -316,9 +316,9 @@
          <item>
           <layout class="QVBoxLayout" name="Directs">
            <item>
-            <widget class="QPushButton" name="fastDirectBlue">
+            <widget class="QPushButton" name="fastBlue">
              <property name="toolTip">
-              <string>Direct Blue</string>
+              <string>Free Blue</string>
              </property>
              <property name="text">
               <string/>
@@ -339,9 +339,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="fastDirectYellow">
+            <widget class="QPushButton" name="fastYellow">
              <property name="toolTip">
-              <string>Direct Yellow</string>
+              <string>Free Yellow</string>
              </property>
              <property name="text">
               <string/>
@@ -349,56 +349,6 @@
              <property name="icon">
               <iconset resource="main_icons.qrc">
                <normaloff>:/icons/direct_yellow.svg</normaloff>:/icons/direct_yellow.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="Indirects">
-           <item>
-            <widget class="QPushButton" name="fastIndirectBlue">
-             <property name="toolTip">
-              <string>Indirect Blue</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/indirect_blue.svg</normaloff>:/icons/indirect_blue.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="fastIndirectYellow">
-             <property name="toolTip">
-              <string>Indirect Yellow</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/indirect_yellow.svg</normaloff>:/icons/indirect_yellow.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
