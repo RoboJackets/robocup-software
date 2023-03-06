@@ -9,6 +9,7 @@
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
+#include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/robot_state.hpp>
@@ -64,6 +65,11 @@ private:
      */
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 
+    /*
+     * Let the referee determine which robot is the goalie.
+     */
+    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
+
     rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr positions_pub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
@@ -77,10 +83,13 @@ private:
     rj_msgs::msg::FieldDimensions current_field_dimensions_;
     bool have_field_dimensions_ = false;
 
+    int goalie_id_{0};
+
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr msg);
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
+    void goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg);
     void check_for_play_state_change();
     /*
      * Handles actions the Coach does every tick. Currently calls assign_positions and
