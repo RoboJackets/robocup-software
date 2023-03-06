@@ -39,7 +39,7 @@ enum Positions { Goalie, Defense, Offense };
 // strategy/positions i.e. the same values as strategy::Positions
 namespace OverridePosition {
 enum OverridePosition { Goalie = 0, Defense = 1, Offense = 2, None = 3 };
-}
+} // namespace OverridePosition
 
 /**
  * @brief This node takes the referee information and standardizes it for consumption of the
