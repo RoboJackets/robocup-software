@@ -44,6 +44,7 @@ private:
         SEARCHING, // moving around on the field to do something
         RECEIVING, // physically intercepting the ball from a pass
         PASSING, // physically kicking the ball towards another robot
+        FACING, // turning to face the passing robot
     };
 
     State update_state();

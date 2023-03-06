@@ -52,6 +52,7 @@ private:
         BALL_NOT_FOUND, // the ball is not in play
         RECEIVING, // physically intercepting the ball from a pass
         PASSING, // physically kicking the ball at another robot
+        FACING, // turning to face the passing robot
     };
 
     /*

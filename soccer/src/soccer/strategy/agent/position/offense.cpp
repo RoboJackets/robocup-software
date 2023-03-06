@@ -189,34 +189,27 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
 }
 
 communication::Acknowledge Offense::acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) {
-    communication::Acknowledge acknowledge_response{};
-    communication::generate_uid(acknowledge_response);
-
+    // Call to super
+    communication::Acknowledge acknowledge_response = Position::acknowledge_pass(incoming_pass_request);
+    // Update current state
+    current_state_ = FACING;
+    // Return acknowledge response
     return acknowledge_response;
 }
 
 void Offense::pass_ball(int robot_id) {
-    target_robot_id = robot_id;
+    // Call to super
+    Position::pass_ball(robot_id);
+    // Update current state
     current_state_ = PASSING;
-
-    communication::BallInTransitRequest ball_in_transit_request{};
-    communication::generate_uid(ball_in_transit_request);
-    
-    communication::PosAgentRequestWrapper communication_request{};
-    communication_request.request = ball_in_transit_request;
-    communication_request.target_agents = {robot_id};
-    communication_request.urgent = true;
-    communication_request.broadcast = false;
-
-    communication_request_ = communication_request;
 }
 
 communication::Acknowledge Offense::acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) {
-    communication::Acknowledge acknowledge_response{};
-    communication::generate_uid(acknowledge_response);
-
+    // Call to super
+    communication::Acknowledge acknowledge_response = Position::acknowledge_ball_in_transit(ball_in_transit_request);
+    // Update current state
     current_state_ = RECEIVING;
-
+    // Return acknowledge response
     return acknowledge_response;
 }
 

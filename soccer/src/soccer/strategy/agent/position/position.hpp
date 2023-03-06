@@ -121,9 +121,9 @@ public:
     void send_direct_pass_request(std::vector<u_int8_t> target_robots);
     communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
     void send_pass_confirmation(u_int8_t target_robot);
-    virtual communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) = 0;
-    virtual void pass_ball(int robot_id) = 0;
-    virtual communication::Acknowledge acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) = 0;
+    communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request);
+    void pass_ball(int robot_id);
+    communication::Acknowledge acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request);
 
 protected:
     // should be overriden in subclass constructors

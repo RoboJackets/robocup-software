@@ -43,11 +43,13 @@ bool operator==(const TestRequest& a, const TestRequest& b);
 
 struct IncomingPassRequest {
     u_int32_t request_uid;
+    u_int8_t from_robot_id;
 };
 bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b);
 
 struct BallInTransitRequest {
     u_int32_t request_uid;
+    u_int8_t from_robot_id;
 };
 bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
 
@@ -208,11 +210,12 @@ struct RosConverter<strategy::communication::IncomingPassRequest, rj_msgs::msg::
     static rj_msgs::msg::IncomingPassRequest to_ros(const strategy::communication::IncomingPassRequest& from) {
         rj_msgs::msg::IncomingPassRequest result;
         result.request_uid = from.request_uid;
+        result.from_robot_id = from.from_robot_id;
         return result;
     }
 
     static strategy::communication::IncomingPassRequest from_ros(const rj_msgs::msg::IncomingPassRequest& from) {
-        return strategy::communication::IncomingPassRequest{from.request_uid};
+        return strategy::communication::IncomingPassRequest{from.request_uid, from.from_robot_id};
     }
 };
 
@@ -223,11 +226,12 @@ struct RosConverter<strategy::communication::BallInTransitRequest, rj_msgs::msg:
     static rj_msgs::msg::BallInTransitRequest to_ros(const strategy::communication::BallInTransitRequest& from) {
         rj_msgs::msg::BallInTransitRequest result;
         result.request_uid = from.request_uid;
+        result.from_robot_id = from.from_robot_id;
         return result;
     }
 
     static strategy::communication::BallInTransitRequest from_ros(const rj_msgs::msg::BallInTransitRequest& from) {
-        return strategy::communication::BallInTransitRequest{from.request_uid};
+        return strategy::communication::BallInTransitRequest{from.request_uid, from.from_robot_id};
     }
 };
 
