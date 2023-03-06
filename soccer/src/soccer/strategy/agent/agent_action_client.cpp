@@ -55,9 +55,9 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
+        // TODO: change to whichever ID is being tested
+        if (robot_id_ == 3) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);

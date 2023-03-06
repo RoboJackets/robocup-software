@@ -6,8 +6,26 @@ namespace strategy {
 Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
-    latest_state_ = update_state();
-    return state_to_task(intent);
+    // TEMP
+
+    // line kick (PTMC can't handle 0 vel, and Empty can't handle the chip
+    // command)
+    auto line_kick_cmd = planning::LineKickMotionCommand{rj_geometry::Point{0.0, 1.5}};
+    intent.motion_command = line_kick_cmd;
+    intent.motion_command_name = "line kick";
+
+    // send chip on breakbeam command
+    intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+    intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+    intent.kick_speed = 4.0;
+    intent.is_active = true;
+
+    return intent;
+
+    // END TEMP
+
+    /* latest_state_ = update_state(); */
+    /* return state_to_task(intent); */
 }
 
 Goalie::State Goalie::update_state() {
