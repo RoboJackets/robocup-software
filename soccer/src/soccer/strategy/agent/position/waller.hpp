@@ -31,7 +31,7 @@ public:
     ~Waller() = default;
 
     /**
-     * @brief Currently returns a waller behavior which aims to intercept the path
+     * @brief  Returns a waller behavior which aims to intercept the path
      * between the ball and the center of the goal
      *
      * @param [RobotIntent intent] [RobotIntent of the Defensive Robot]

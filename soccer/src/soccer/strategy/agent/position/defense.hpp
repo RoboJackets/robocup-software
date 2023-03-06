@@ -37,8 +37,10 @@ private:
     int move_ct_ = 0;
 
     /**
-     * @brief Currently creates a waller behavior which aims to intercept the path
-     * between the ball and the center of the goal
+     * @brief The derived_get_task method returns the task for the defensive robot
+     *  to do based on the game situation. The method will continuously look to assign
+     *  the robot to a defensive role, allowing us to quickly swap roles through
+     *  gametime. Roles aim to include things such as waller, blocker, etc.
      *
      * @param [RobotIntent intent] [RobotIntent of the Defensive Robot]
      * @return [RobotIntent with next target point for the robot]
