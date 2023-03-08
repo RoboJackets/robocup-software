@@ -143,55 +143,30 @@ struct FieldDimensions {
      * Parameterized constructor - creates the values and structs to be passed into the
      * FieldDimensions topic.
      */
-    FieldDimensions(float fl, float fw, float fb, float flw, float gw, float gd, float gh,
-                    float psd, float pld, float cr, float cd, float gf, float ffl, float ffw)
-        : length_(fl),
-          width_(fw),
-          border_(fb),
-          line_width_(flw),
-          goal_width_(gw),
-          goal_depth_(gd),
-          goal_height_(gh),
-          penalty_short_dist_(psd),
-          penalty_long_dist_(pld),
-          center_radius_(cr),
-          center_diameter_(cd),
-          goal_flat_(gf),
-          floor_length_(ffl),
-          floor_width_(ffw),
-          penalty_x_right_coord_(pld / 2),
-          penalty_x_left_coord_(-pld / 2),
-          field_x_right_coord_(fw / 2),
-          field_x_left_coord_(-fw / 2) {
-        rj_geometry::Point top_left;
-        rj_geometry::Point bottom_right;
-
-        our_penalty_area_coordinates_ =
-            rj_geometry::Rect(rj_geometry::Point(penalty_x_left_coord_, penalty_short_dist_),
-                              rj_geometry::Point(penalty_x_right_coord_, 0.0));
-        their_penalty_area_coordinates_ = rj_geometry::Rect(
-            rj_geometry::Point(penalty_x_left_coord_, length_),
-            rj_geometry::Point(penalty_x_right_coord_, (length_ - penalty_short_dist_)));
-        field_coords_ = rj_geometry::Rect(rj_geometry::Point(field_x_left_coord_, length_),
-                                          rj_geometry::Point(field_x_right_coord_, 0.0));
-
-        our_goal_loc_ = rj_geometry::Point(0.0, 0.0);
-        center_field_loc_ = rj_geometry::Point(0.0, length_ / 2);
-        their_goal_loc_ = rj_geometry::Point(0.0, length_);
-
-        our_left_goal_post_coordinate_ = rj_geometry::Point(-goal_width_ / 2, 0.0);
-        our_right_goal_post_coordinate_ = rj_geometry::Point(goal_width_ / 2, 0.0);
-        their_left_goal_post_coordinate_ = rj_geometry::Point(-goal_width_ / 2, length_);
-        their_right_goal_post_coordinate_ = rj_geometry::Point(goal_width_ / 2, length_);
-
-        our_left_corner_ = rj_geometry::Point(field_x_left_coord_, 0.0);
-        our_right_corner_ = rj_geometry::Point(field_x_right_coord_, 0.0);
-        their_left_corner_ = rj_geometry::Point(field_x_left_coord_, length_);
-        their_right_corner_ = rj_geometry::Point(field_x_right_coord_, length_);
-
-        floor_border_width_ = width_ + 2 * border_;
-        floor_border_length_ = length_ + 2 * border_;
-
+    FieldDimensions(float length, float width, float border, float line_width, float goal_width,
+                    float goal_depth, float goal_height, float penalty_short_dist,
+                    float penalty_long_dist, float center_radius, float center_diameter,
+                    float goal_flat, float floor_length, float floor_width)
+        : length_(length),
+          width_(width),
+          border_(border),
+          line_width_(line_width),
+          goal_width_(goal_width),
+          goal_depth_(goal_depth),
+          goal_height_(goal_height),
+          penalty_short_dist_(penalty_short_dist),
+          penalty_long_dist_(penalty_long_dist),
+          center_radius_(center_radius),
+          center_diameter_(center_diameter),
+          goal_flat_(goal_flat),
+          floor_length_(floor_length),
+          floor_width_(floor_width),
+          penalty_x_right_coord_(penalty_long_dist / 2),
+          penalty_x_left_coord_(-penalty_long_dist / 2),
+          field_x_right_coord_(width / 2),
+          field_x_left_coord_(-width / 2),
+          floor_border_width_(width + 2 * border),
+          floor_border_length_(length + 2 * border) {
         update_geometry();
     }
 
@@ -233,6 +208,29 @@ struct FieldDimensions {
      * Updates the basic geometric values and structs in this struct.
      */
     void update_geometry() {
+        our_penalty_area_coordinates_ =
+            rj_geometry::Rect(rj_geometry::Point(penalty_x_left_coord_, penalty_short_dist_),
+                              rj_geometry::Point(penalty_x_right_coord_, 0.0));
+        their_penalty_area_coordinates_ = rj_geometry::Rect(
+            rj_geometry::Point(penalty_x_left_coord_, length_),
+            rj_geometry::Point(penalty_x_right_coord_, (length_ - penalty_short_dist_)));
+        field_coords_ = rj_geometry::Rect(rj_geometry::Point(field_x_left_coord_, length_),
+                                          rj_geometry::Point(field_x_right_coord_, 0.0));
+
+        our_goal_loc_ = rj_geometry::Point(0.0, 0.0);
+        center_field_loc_ = rj_geometry::Point(0.0, length_ / 2);
+        their_goal_loc_ = rj_geometry::Point(0.0, length_);
+
+        our_left_goal_post_coordinate_ = rj_geometry::Point(-goal_width_ / 2, 0.0);
+        our_right_goal_post_coordinate_ = rj_geometry::Point(goal_width_ / 2, 0.0);
+        their_left_goal_post_coordinate_ = rj_geometry::Point(-goal_width_ / 2, length_);
+        their_right_goal_post_coordinate_ = rj_geometry::Point(goal_width_ / 2, length_);
+
+        our_left_corner_ = rj_geometry::Point(field_x_left_coord_, 0.0);
+        our_right_corner_ = rj_geometry::Point(field_x_right_coord_, 0.0);
+        their_left_corner_ = rj_geometry::Point(field_x_left_coord_, length_);
+        their_right_corner_ = rj_geometry::Point(field_x_right_coord_, length_);
+
         center_point_ = rj_geometry::Point(0.0, length_ / 2.0);
 
         our_goal_zone_shape_ =
@@ -350,45 +348,12 @@ struct RosConverter<FieldDimensions, FieldDimensions::Msg> {
         convert_to_ros(from.floor_length(), &field_message.floor_length);
         convert_to_ros(from.floor_width(), &field_message.floor_width);
 
-        convert_to_ros(from.penalty_x_right_coord(), &field_message.penalty_x_right_coord);
-        convert_to_ros(from.penalty_x_left_coord(), &field_message.penalty_x_left_coord);
-
-        convert_to_ros(from.field_x_right_coord(), &field_message.field_x_right_coord);
-        convert_to_ros(from.field_x_left_coord(), &field_message.field_x_left_coord);
-
-        convert_to_ros(from.floor_border_width(), &field_message.floor_border_width);
-        convert_to_ros(from.floor_border_length(), &field_message.floor_border_length);
-
-        convert_to_ros(from.our_goal_loc(), &field_message.our_goal_loc);
-        convert_to_ros(from.center_field_loc(), &field_message.center_field_loc);
-        convert_to_ros(from.their_goal_loc(), &field_message.their_goal_loc);
-
-        convert_to_ros(from.our_penalty_area_coordinates(),
-                       &field_message.our_penalty_area_coordinates);
-        convert_to_ros(from.their_penalty_area_coordinates(),
-                       &field_message.their_penalty_area_coordinates);
-
-        convert_to_ros(from.our_left_goal_post_coordinate(),
-                       &field_message.our_left_goal_post_coordinate);
-        convert_to_ros(from.our_right_goal_post_coordinate(),
-                       &field_message.our_right_goal_post_coordinate);
-        convert_to_ros(from.their_left_goal_post_coordinate(),
-                       &field_message.their_left_goal_post_coordinate);
-        convert_to_ros(from.their_right_goal_post_coordinate(),
-                       &field_message.their_right_goal_post_coordinate);
-
-        convert_to_ros(from.our_left_corner(), &field_message.our_left_corner);
-        convert_to_ros(from.our_right_corner(), &field_message.our_right_corner);
-        convert_to_ros(from.their_left_corner(), &field_message.their_left_corner);
-        convert_to_ros(from.their_right_corner(), &field_message.their_right_corner);
-
-        convert_to_ros(from.field_coordinates(), &field_message.field_coordinates);
-
         return field_message;
     }
 
     /**
-     * Converts and returns the FieldDimensions struct from msg form to the original struct form.
+     * Converts and returns the FieldDimensions struct from msg form to the original struct
+     * form.
      */
     static FieldDimensions from_ros(const FieldDimensions::Msg& from) {
         return FieldDimensions(
