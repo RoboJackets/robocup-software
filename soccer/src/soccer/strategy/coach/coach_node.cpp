@@ -1,17 +1,17 @@
 #include "coach_node.hpp"
+
 #include "rj_constants/topic_names.hpp"
 
 namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
-    coach_state_pub_ =
-        this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStatePub, 10);
+    coach_state_pub_ = this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStatePub, 10);
     coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
-    def_area_obstacles_pub_ =
-        this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(::planning::topics::kDefAreaObstaclesPub, 10);
+    def_area_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
+        ::planning::topics::kDefAreaObstaclesPub, 10);
 
-    global_obstacles_pub_ =
-        this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(::planning::topics::kGlobalObstaclesPub, 10);
+    global_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
+        ::planning::topics::kGlobalObstaclesPub, 10);
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
         ::referee::topics::kPlayStatePub, 10,
@@ -33,7 +33,8 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     /* ack_array[msg->ID] = true; */
 
     field_dimensions_sub_ = this->create_subscription<rj_msgs::msg::FieldDimensions>(
-        ::config_server::topics::kFieldDimensionsPub, 10, [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
+        ::config_server::topics::kFieldDimensionsPub, 10,
+        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
             field_dimensions_callback(msg);
         });
 

@@ -1,4 +1,5 @@
 #include "agent_action_client.hpp"
+
 #include "rj_constants/topic_names.hpp"
 
 namespace strategy {
