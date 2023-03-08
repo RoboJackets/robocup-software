@@ -128,12 +128,6 @@ struct FieldDimensions {
     };
 
     std::vector<rj_geometry::Line> field_borders() const { return field_borders_; }
-<<<<<<< HEAD
-=======
-    
-    
-    
->>>>>>> Added all the information for the field dimensions struct (FINAL).
 
     static const FieldDimensions kSingleFieldDimensions;
 
