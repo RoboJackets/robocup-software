@@ -11,6 +11,8 @@
 
 #include "radio.hpp"
 
+#include "strategy/coach/coach_node.hpp"
+
 #include "rc-fshare/rtp.hpp"
 
 namespace radio {
@@ -26,7 +28,7 @@ public:
 
 protected:
     void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-              const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
+              const rj_msgs::msg::ManipulatorSetpoint& manipulator, Positions position) override;
     void receive() override;
     void switch_team(bool blue) override;
 

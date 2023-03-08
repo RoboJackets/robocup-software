@@ -17,6 +17,12 @@ Radio::Radio()
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
             switch_team(color->is_blue);
         });
+    positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
+        "strategy/positions", 1,
+        [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { 
+            positions_ = msg->client_positions; 
+            });
+    
     for (size_t i = 0; i < kNumShells; i++) {
         robot_status_pubs_.at(i) = create_publisher<rj_msgs::msg::RobotStatus>(
             topics::robot_status_pub(i), rclcpp::QoS(1));
@@ -29,7 +35,7 @@ Radio::Radio()
             control::topics::motion_setpoint_pub(i), rclcpp::QoS(1),
             [this, i](rj_msgs::msg::MotionSetpoint::SharedPtr motion) {  // NOLINT
                 last_updates_.at(i) = RJ::now();
-                send(i, *motion, manipulators_cached_.at(i));
+                send(i, *motion, manipulators_cached_.at(i), positions_.at(i));
             });
     }
 
@@ -65,4 +71,5 @@ void Radio::tick() {
         }
     }
 }
+
 }  // namespace radio

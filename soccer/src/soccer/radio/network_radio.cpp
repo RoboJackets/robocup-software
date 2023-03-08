@@ -40,7 +40,7 @@ void NetworkRadio::start_receive() {
 }
 
 void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                        const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
+                        const rj_msgs::msg::ManipulatorSetpoint& manipulator, Positions position) {
     // Build the control packet for this robot.
     std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
@@ -52,7 +52,7 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     auto* body = reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
 
-    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body);
+    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, position);
 
     // Fetch the connection
     auto maybe_connection = connections_.at(robot_id);

@@ -15,6 +15,8 @@
 
 #include "robot_status.hpp"
 
+#include "strategy/coach/coach_node.hpp"
+
 #include "rc-fshare/rtp.hpp"
 
 /**

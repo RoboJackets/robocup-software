@@ -13,6 +13,8 @@
 #include <rj_param_utils/param.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
+#include "strategy/coach/coach_node.hpp"
+
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
 
@@ -43,6 +45,8 @@ protected:
 private:
     void tick();
 
+    std::array<Positions, kNumShells> positions_;
+
     std::array<rclcpp::Publisher<rj_msgs::msg::RobotStatus>::SharedPtr, kNumShells>
         robot_status_pubs_;
     std::array<rclcpp::Subscription<rj_msgs::msg::MotionSetpoint>::SharedPtr, kNumShells>
@@ -50,6 +54,7 @@ private:
     std::array<rclcpp::Subscription<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr, kNumShells>
         manipulator_subs_;
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
+    rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     rclcpp::TimerBase::SharedPtr tick_timer_;
 
     std::array<rj_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;

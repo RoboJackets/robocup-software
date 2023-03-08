@@ -68,6 +68,10 @@ static inline std::string trajectory_pub(int robot_id) {
 
 }  // namespace planning::topics
 
+namespace strategy::topics {
+constexpr auto positionsPub = "/strategy/positions";
+}  // namespace strategy::topics
+
 namespace control {
 
 namespace topics {
