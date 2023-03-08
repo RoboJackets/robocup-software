@@ -1,4 +1,5 @@
 #include "agent_action_client.hpp"
+#include "rj_constants/topic_names.hpp"
 
 namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
@@ -20,11 +21,11 @@ AgentActionClient::AgentActionClient(int r_id)
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
-        "vision_filter/world_state", 1,
+        ::vision_filter::topics::kWorldStatePub, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     coach_state_sub_ = create_subscription<rj_msgs::msg::CoachState>(
-        "strategy/coach_state", 1,
+        topics::kCoachStatePub, 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
@@ -41,7 +42,7 @@ AgentActionClient::AgentActionClient(int r_id)
     }
 
     positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
-        "strategy/positions", 1,
+        topics::kPositionsPub, 1,
         [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { update_position(msg); });
 
     // TODO(Kevin): make ROS param for this
