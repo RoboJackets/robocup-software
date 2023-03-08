@@ -148,32 +148,32 @@ void CoachNode::check_for_play_state_change() {
 void CoachNode::assign_positions() {
     rj_msgs::msg::PositionAssignment positions_message;
     std::array<uint32_t, kNumShells> positions{};
-    positions[goalie_id_] = Positions::Goalie;
+    positions[goalie_id_] = Position::Goalie;
     if (!possessing_) {
         // All robots set to defense
         for (int i = 0; i < kNumShells; i++) {
             if (i != goalie_id_) {
-                positions[i] = Positions::Defense;
+                positions[i] = Position::Defense;
             }
         }
         // Lowest non-goalie robot set to offense
         if (goalie_id_ == 0) {
-            positions[1] = Positions::Offense;
+            positions[1] = Position::Offense;
         } else {
-            positions[0] = Positions::Offense;
+            positions[0] = Position::Offense;
         }
     } else {
         // All robots set to offense
         for (int i = 0; i < kNumShells; i++) {
             if (i != goalie_id_) {
-                positions[i] = Positions::Offense;
+                positions[i] = Position::Offense;
             }
         }
         // Lowest non-goalie robot set to defense
         if (goalie_id_ == 0) {
-            positions[1] = Positions::Defense;
+            positions[1] = Position::Defense;
         } else {
-            positions[0] = Positions::Defense;
+            positions[0] = Position::Defense;
         }
     }
     positions_message.client_positions = positions;

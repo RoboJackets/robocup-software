@@ -33,7 +33,7 @@ enum MatchSituation {
     in_play,         // normal play
 };
 
-enum Positions { Goalie, Defense, Offense };
+enum Position { Goalie, Defense, Offense };
 
 /**
  * @brief This node takes the referee information and standardizes it for consumption of the
