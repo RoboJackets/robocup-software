@@ -96,12 +96,8 @@ struct FieldDimensions {
 
     rj_geometry::Point center_point() const { return center_point_; }
 
-    [[nodiscard]] rj_geometry::Rect our_goal_zone_shape() const {
-        return our_goal_zone_shape_;
-    }
-    [[nodiscard]] rj_geometry::Rect their_goal_zone_shape() const {
-        return their_goal_zone_shape_;
-    }
+    [[nodiscard]] rj_geometry::Rect our_goal_zone_shape() const { return our_goal_zone_shape_; }
+    [[nodiscard]] rj_geometry::Rect their_goal_zone_shape() const { return their_goal_zone_shape_; }
 
     /*
      * Provides a rect that is a padded version of their goalbox
@@ -147,8 +143,7 @@ struct FieldDimensions {
 
     static FieldDimensions current_dimensions;
 
-    FieldDimensions()
-        : FieldDimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
+    FieldDimensions() : FieldDimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 
     /**
      * Parameterized constructor - creates the values and structs to be passed into the
@@ -174,8 +169,6 @@ struct FieldDimensions {
           penalty_x_left_coord_(-pld / 2),
           field_x_right_coord_(fw / 2),
           field_x_left_coord_(-fw / 2) {
-        update_geometry();
-
         rj_geometry::Point top_left;
         rj_geometry::Point bottom_right;
 
@@ -204,40 +197,40 @@ struct FieldDimensions {
 
         floor_border_width_ = width_ + 2 * border_;
         floor_border_length_ = length_ + 2 * border_;
+
+        update_geometry();
     }
 
     /**
      * Returns a FieldDimensions struct but with the field size changed by a scalar factor.
      */
     FieldDimensions operator*(float scalar) const {
-        return FieldDimensions(
-            length_ * scalar, width_ * scalar, border_ * scalar,
-            line_width_ * scalar, goal_width_ * scalar, goal_depth_ * scalar,
-            goal_height_ * scalar, penalty_short_dist_ * scalar,
-            penalty_long_dist_ * scalar, center_radius_ * scalar,
-            center_diameter_ * scalar, goal_flat_ * scalar, floor_length_ * scalar,
-            floor_width_ * scalar);
+        return FieldDimensions(length_ * scalar, width_ * scalar, border_ * scalar,
+                               line_width_ * scalar, goal_width_ * scalar, goal_depth_ * scalar,
+                               goal_height_ * scalar, penalty_short_dist_ * scalar,
+                               penalty_long_dist_ * scalar, center_radius_ * scalar,
+                               center_diameter_ * scalar, goal_flat_ * scalar,
+                               floor_length_ * scalar, floor_width_ * scalar);
     }
 
     /**
      * Returns a boolean value regarding whether 2 FieldDimensions structs are equal.
      */
     bool operator==(const FieldDimensions& a) const {
-        return !(
-            std::abs(length() - a.length()) > FLT_EPSILON ||
-            std::abs(width() - a.width()) > FLT_EPSILON ||
-            std::abs(border() - a.border()) > FLT_EPSILON ||
-            std::abs(line_width() - a.line_width()) > FLT_EPSILON ||
-            std::abs(goal_width() - a.goal_width()) > FLT_EPSILON ||
-            std::abs(goal_depth() - a.goal_depth()) > FLT_EPSILON ||
-            std::abs(goal_height() - a.goal_height()) > FLT_EPSILON ||
-            std::abs(penalty_short_dist() - a.penalty_short_dist()) > FLT_EPSILON ||
-            std::abs(penalty_long_dist() - a.penalty_long_dist()) > FLT_EPSILON ||
-            std::abs(center_radius() - a.center_radius()) > FLT_EPSILON ||
-            std::abs(center_diameter() - a.center_diameter()) > FLT_EPSILON ||
-            std::abs(goal_flat() - a.goal_flat()) > FLT_EPSILON ||
-            std::abs(floor_length() - a.floor_length()) > FLT_EPSILON ||
-            std::abs(floor_width() - a.floor_width()) > FLT_EPSILON);
+        return !(std::abs(length() - a.length()) > FLT_EPSILON ||
+                 std::abs(width() - a.width()) > FLT_EPSILON ||
+                 std::abs(border() - a.border()) > FLT_EPSILON ||
+                 std::abs(line_width() - a.line_width()) > FLT_EPSILON ||
+                 std::abs(goal_width() - a.goal_width()) > FLT_EPSILON ||
+                 std::abs(goal_depth() - a.goal_depth()) > FLT_EPSILON ||
+                 std::abs(goal_height() - a.goal_height()) > FLT_EPSILON ||
+                 std::abs(penalty_short_dist() - a.penalty_short_dist()) > FLT_EPSILON ||
+                 std::abs(penalty_long_dist() - a.penalty_long_dist()) > FLT_EPSILON ||
+                 std::abs(center_radius() - a.center_radius()) > FLT_EPSILON ||
+                 std::abs(center_diameter() - a.center_diameter()) > FLT_EPSILON ||
+                 std::abs(goal_flat() - a.goal_flat()) > FLT_EPSILON ||
+                 std::abs(floor_length() - a.floor_length()) > FLT_EPSILON ||
+                 std::abs(floor_width() - a.floor_width()) > FLT_EPSILON);
     }
 
     bool operator!=(const FieldDimensions& a) const { return !(*this == a); }
@@ -248,100 +241,35 @@ struct FieldDimensions {
     void update_geometry() {
         center_point_ = rj_geometry::Point(0.0, length_ / 2.0);
 
-        our_goal_zone_shape_ = rj_geometry::Rect(
-            rj_geometry::Point(penalty_long_dist_ / 2, penalty_short_dist_),
-            rj_geometry::Point(-penalty_long_dist_ / 2, 0));
+        our_goal_zone_shape_ =
+            rj_geometry::Rect(rj_geometry::Point(penalty_long_dist_ / 2, penalty_short_dist_),
+                              rj_geometry::Point(-penalty_long_dist_ / 2, 0));
 
-        their_goal_zone_shape_ =
-            rj_geometry::Rect(rj_geometry::Point(-penalty_long_dist_ / 2, length_),
-                             rj_geometry::Point(penalty_long_dist_ / 2,
-                                               length_ - penalty_short_dist_));
+        their_goal_zone_shape_ = rj_geometry::Rect(
+            rj_geometry::Point(-penalty_long_dist_ / 2, length_),
+            rj_geometry::Point(penalty_long_dist_ / 2, length_ - penalty_short_dist_));
 
-        their_goal_segment_ =
-            rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, length_),
-                                rj_geometry::Point(-goal_width_ / 2.0, length_));
-        our_goal_segment_ =
-            rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, 0),
-                                rj_geometry::Point(-goal_width_ / 2.0, 0));
+        their_goal_segment_ = rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, length_),
+                                                   rj_geometry::Point(-goal_width_ / 2.0, length_));
+        our_goal_segment_ = rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, 0),
+                                                 rj_geometry::Point(-goal_width_ / 2.0, 0));
 
-        their_half_ =
-            rj_geometry::Rect(rj_geometry::Point(-width_ / 2, length_),
-                             rj_geometry::Point(width_ / 2, length_ / 2));
+        their_half_ = rj_geometry::Rect(rj_geometry::Point(-width_ / 2, length_),
+                                        rj_geometry::Point(width_ / 2, length_ / 2));
         our_half_ = rj_geometry::Rect(rj_geometry::Point(-width_ / 2, 0),
-                                    rj_geometry::Point(width_ / 2, length_ / 2));
+                                      rj_geometry::Point(width_ / 2, length_ / 2));
 
         field_rect_ = rj_geometry::Rect(rj_geometry::Point(-width_ / 2.0, 0),
-                                      rj_geometry::Point(width_ / 2.0, length_));
+                                        rj_geometry::Point(width_ / 2.0, length_));
 
-        field_borders_ = {
-            rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, 0),
-                             rj_geometry::Point(-width_ / 2.0, length_)),
-            rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, length_),
-                             rj_geometry::Point(width_ / 2.0, length_)),
-            rj_geometry::Line(rj_geometry::Point(width_ / 2.0, length_),
-                             rj_geometry::Point(width_ / 2.0, 0)),
-            rj_geometry::Line(rj_geometry::Point(width_ / 2.0, 0),
-                             rj_geometry::Point(-width_ / 2.0, 0))};
-    }
-
-    /**
-     * Pushes the FieldDimensions message into the ostream for communication across the ROS2
-     * network.
-     */
-    friend std::ostream& operator<<(std::ostream& stream,
-                                    const FieldDimensions& fd) {
-        stream << "length: " << fd.length() << "\n";
-        stream << "width: " << fd.width() << "\n";
-        stream << "border: " << fd.border() << "\n";
-
-        stream << "line_width: " << fd.line_width() << "\n";
-
-        stream << "goal_width: " << fd.goal_width() << "\n";
-        stream << "goal_depth: " << fd.goal_depth() << "\n";
-        stream << "goal_height: " << fd.goal_height() << "\n";
-
-        stream << "penalty_short_dist: " << fd.penalty_short_dist() << "\n";
-        stream << "penalty_long_dist: " << fd.penalty_long_dist() << "\n";
-
-        stream << "center_radius: " << fd.center_radius() << "\n";
-        stream << "center_diameter: " << fd.center_diameter() << "\n";
-
-        stream << "goal_flat: " << fd.goal_flat() << "\n";
-
-        stream << "floor_length: " << fd.floor_length() << "\n";
-        stream << "floor_width: " << fd.floor_width();
-
-        stream << "penalty_x_right_coord: " << fd.penalty_x_right_coord() << "\n";
-        stream << "penalty_x_left_coord: " << fd.penalty_x_left_coord() << "\n";
-
-        stream << "field_x_right_coord: " << fd.field_x_right_coord() << "\n";
-        stream << "field_x_left_coord: " << fd.field_x_left_coord() << "\n";
-
-        stream << "floor_border_width: " << fd.floor_border_width() << "\n";
-        stream << "floor_border_length: " << fd.floor_border_length() << "\n";
-
-        stream << "our_goal_loc: " << fd.our_goal_loc() << "\n";
-        stream << "center_field_loc: " << fd.center_field_loc() << "\n";
-        stream << "their_goal_loc: " << fd.their_goal_loc() << "\n";
-
-        stream << "our_penalty_area_coordinates: " << fd.our_penalty_area_coordinates() << "\n";
-        stream << "their_penalty_area_coordinates: " << fd.their_penalty_area_coordinates() << "\n";
-
-        stream << "our_left_goal_post_coordinate: " << fd.our_left_goal_post_coordinate() << "\n";
-        stream << "our_right_goal_post_coordinate: " << fd.our_right_goal_post_coordinate() << "\n";
-        stream << "their_left_goal_post_coordinate: " << fd.their_left_goal_post_coordinate()
-               << "\n";
-        stream << "their_right_goal_post_coordinate: " << fd.their_right_goal_post_coordinate()
-               << "\n";
-
-        stream << "our_left_corner: " << fd.our_left_corner() << "\n";
-        stream << "our_right_corner: " << fd.our_right_corner() << "\n";
-        stream << "their_left_corner: " << fd.their_left_corner() << "\n";
-        stream << "their_right_corner: " << fd.their_right_corner() << "\n";
-
-        stream << "field_coordinates: " << fd.field_coordinates() << "\n";
-
-        return stream;
+        field_borders_ = {rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, 0),
+                                            rj_geometry::Point(-width_ / 2.0, length_)),
+                          rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, length_),
+                                            rj_geometry::Point(width_ / 2.0, length_)),
+                          rj_geometry::Line(rj_geometry::Point(width_ / 2.0, length_),
+                                            rj_geometry::Point(width_ / 2.0, 0)),
+                          rj_geometry::Line(rj_geometry::Point(width_ / 2.0, 0),
+                                            rj_geometry::Point(-width_ / 2.0, 0))};
     }
 
 private:
@@ -470,11 +398,9 @@ struct RosConverter<FieldDimensions, FieldDimensions::Msg> {
      */
     static FieldDimensions from_ros(const FieldDimensions::Msg& from) {
         return FieldDimensions(
-            from.length, from.width, from.border, from.line_width,
-            from.goal_width, from.goal_depth, from.goal_height,
-            from.penalty_short_dist, from.penalty_long_dist, from.center_radius,
-            from.center_diameter, from.goal_flat, from.floor_length,
-            from.floor_width);
+            from.length, from.width, from.border, from.line_width, from.goal_width, from.goal_depth,
+            from.goal_height, from.penalty_short_dist, from.penalty_long_dist, from.center_radius,
+            from.center_diameter, from.goal_flat, from.floor_length, from.floor_width);
     }
 };
 
