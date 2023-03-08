@@ -1,4 +1,5 @@
 #include "agent_action_client.hpp"
+#include "strategy/coach/coach_node.hpp"
 
 namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
@@ -112,13 +113,13 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
     // SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions[robot_id_]);
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
-        case 0:
+        case Position::Goalie:
             next_position_ = std::make_unique<Goalie>(robot_id_);
             break;
-        case 1:
+        case Position::Defense:
             next_position_ = std::make_unique<Defense>(robot_id_);
             break;
-        case 2:
+        case Position::Offense:
             next_position_ = std::make_unique<Offense>(robot_id_);
             break;
     };
