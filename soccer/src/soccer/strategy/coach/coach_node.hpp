@@ -97,10 +97,10 @@ private:
      */
     void coach_ticker();
     /*
-     * Assigns Position to robots with IDs 1 through 16, depending on current possession.
+     * Assigns Positions to robots with IDs 1 through 16, depending on current possession.
      * Publishes new Position to the topic /strategy/Position (message type PositionAssignment)
      */
-    void assign_Position();
+    void assign_positions();
 
     /*
      * Publishes the static obstacles.
