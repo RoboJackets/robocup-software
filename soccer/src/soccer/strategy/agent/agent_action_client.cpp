@@ -108,7 +108,6 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
     /* for (int i = 0; i < 6; i++) { */
     /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
     /* } */
-    // SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions[robot_id_]);
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
         case 0:

@@ -1202,19 +1202,16 @@ void MainWindow::updatePosition(int robot) {
     switch (position) {
         case strategy::OverridePosition::Defense:
             if (positionDropdowns[robot]->currentIndex() != 0) {
-                // SPDLOG_INFO("robot {} is now defense", robot);
                 positionDropdowns[robot]->setCurrentIndex(0);
             }
             break;
         case strategy::OverridePosition::Offense:
             if (positionDropdowns[robot]->currentIndex() != 1) {
-                // SPDLOG_INFO("robot {} is now offense", robot);
                 positionDropdowns[robot]->setCurrentIndex(1);
             }
             break;
         case strategy::OverridePosition::Goalie:
             if (positionDropdowns[robot]->currentIndex() != 2) {
-                // SPDLOG_INFO("robot {} is now goalie", robot);
                 setGoalieDropdown(robot);
             }
             break;
@@ -1225,7 +1222,6 @@ void MainWindow::updatePosition(int robot) {
 
 void MainWindow::setGoalieDropdown(int robot) {
     // Disable specified and enable rest
-    // SPDLOG_INFO("Disabling goalie position dropdown for robot {}", robot);
     for (unsigned int i = 0; i < positionDropdowns.size(); i++) {
         if (i == robot) {
             positionDropdowns[i]->insertItem(2, QString::fromStdString("Goalie"), Qt::DisplayRole);
@@ -1262,7 +1258,6 @@ void MainWindow::onPositionDropdownChanged(int robot, int position) {
 }
 
 void MainWindow::onResetButtonClicked(int robot) {
-    // SPDLOG_INFO("Reset button clicked for robot {}", robot);
     positionOverrides[robot] = strategy::OverridePosition::None;
     positionResetButtons[robot]->setEnabled(false);
 }
