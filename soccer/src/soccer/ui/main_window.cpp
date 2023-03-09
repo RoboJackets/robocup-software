@@ -69,14 +69,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     // Initialize live/non-live control styles
 
-    // _currentPlay = new QLabel(this);
-    // _currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    // _currentPlay->setToolTip("Current Play");
-    // _currentPlay->setAlignment(Qt::AlignCenter);
-    // _currentPlay->setObjectName("current_play_name");
-    // calcMinimumWidth(_currentPlay, "XXXXXXXXXXXXXXXX");
-    // statusBar()->addPermanentWidget(_currentPlay);
-
     _logFile = new QLabel(this);
     _logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _logFile->setToolTip("Log File");
@@ -217,21 +209,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     override_pub_ = _node->create_publisher<rj_msgs::msg::PositionAssignment>(
         "/strategy/position_overrides", 10);
-
-    // test play logic initialization
-    // test_play_pub_ = _node->create_publisher<std_msgs::msg::String>("test_play", 1);
-
-    // std::fstream plays;
-    // plays.open("config/plays.txt",
-    //            ios::in);    // open a file to perform read operation using file object
-    // if (plays.is_open()) {  // checking whether the file is open
-    //     std::string to_add;
-    //     while (getline(plays, to_add)) {  // read data from file object and put it into string.
-    //         boost::trim(to_add);
-    //         new QListWidgetItem(tr(to_add.c_str()), _ui.selectedTestsTable);
-    //     }
-    //     plays.close();  // close the file object.
-    // }
 
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });

@@ -2,7 +2,6 @@
 
 #include <rclcpp/executor.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <spdlog/spdlog.h>
 
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/match_state.hpp>

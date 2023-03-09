@@ -80,7 +80,6 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    // SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -98,7 +97,6 @@ void AgentActionClient::get_task() {
         // note that because these are our RobotIntent structs, this comparison
         // uses our custom struct overloads
         if (task != last_task_) {
-            // SPDLOG_INFO("robot {} has new task '{}'", robot_id_, task.motion_command_name);
             last_task_ = task;
             send_new_goal();
         }

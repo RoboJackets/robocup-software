@@ -91,6 +91,7 @@ void Processor::run() {
         for (int i = 0; i < 20; i++) {
             ros_executor_->spin_some();
         }
+        // spin_all doesn't exist yet
         // ros_executor_->spin_all();
 
         // Updates context_->field_dimensions
