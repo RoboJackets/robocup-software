@@ -80,6 +80,7 @@ jobs:
         run: |
           apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
+
       - name: Run style on all changed files
         run: |
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/style/clang-format-diff.py -binary clang-format-10 -i -p1
@@ -91,6 +92,7 @@ jobs:
           commit_message: Automatic style
           create_branch: false
           commit_options: '--no-verify --signoff'
+
       # check formatting style (C++)
       - name: Run clang-format
         run: |
