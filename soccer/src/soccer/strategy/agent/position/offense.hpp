@@ -47,7 +47,7 @@ private:
         SHOOTING, // physically kicking the ball towards the net
         RECEIVING, // physically intercepting the ball from a pass (gets possession)
         STEALING, // attempting to intercept the ball from the other team
-        FACING, // turning to face the robot that is passing to this robot
+        FACING,
     };
 
     State update_state();

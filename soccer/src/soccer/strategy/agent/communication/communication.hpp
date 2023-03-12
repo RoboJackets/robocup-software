@@ -140,6 +140,7 @@ void generate_uid(PassRequest& request);
 void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);
 void generate_uid(IncomingPassRequest& request);
+void generate_uid(BallInTransitRequest& request);
 
 void generate_uid(Acknowledge& response);
 void generate_uid(PassResponse& response);

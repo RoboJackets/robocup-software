@@ -204,7 +204,7 @@ communication::Acknowledge Goalie::acknowledge_pass(communication::IncomingPassR
     // Call to super
     communication::Acknowledge acknowledge_response = Position::acknowledge_pass(incoming_pass_request);
     // Update current state
-    current_state_ = FACING;
+    latest_state_ = FACING;
     // Return acknowledge response
     return acknowledge_response;
 }
@@ -213,14 +213,14 @@ void Goalie::pass_ball(int robot_id) {
     // Call to super
     Position::pass_ball(robot_id);
     // Update current state
-    current_state_ = PASSING;
+    latest_state_ = PASSING;
 }
 
 communication::Acknowledge Goalie::acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) {
     // Call to super
     communication::Acknowledge acknowledge_response = Position::acknowledge_ball_in_transit(ball_in_transit_request);
     // Update current state
-    current_state_ = RECEIVING;
+    latest_state_ = RECEIVING;
     // Return acknowledge response
     return acknowledge_response;
 }

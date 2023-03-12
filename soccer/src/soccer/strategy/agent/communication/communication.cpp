@@ -76,6 +76,13 @@ void generate_uid(IncomingPassRequest& request) {
     request_uid_mutex.unlock();
 }
 
+void generate_uid(BallInTransitRequest& request) {
+    request_uid_mutex.lock();
+    request.request_uid = request_uid;
+    request_uid++;
+    request_uid_mutex.unlock();
+}
+
 void generate_uid(Acknowledge& response) {
     response_uid_mutex.lock();
     response.response_uid = response_uid;

@@ -170,7 +170,7 @@ void Position::pass_ball(int robot_id) {
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = ball_in_transit_request;
-    communication_request.target_agents = {robot_id};
+    communication_request.target_agents = {(u_int8_t) robot_id};
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
@@ -181,7 +181,7 @@ communication::Acknowledge Position::acknowledge_ball_in_transit(communication::
     communication::Acknowledge acknowledge_response{};
     communication::generate_uid(acknowledge_response);
 
-    face_robot_id = incoming_pass_request.from_robot_id;
+    face_robot_id = ball_in_transit_request.from_robot_id;
 
     return acknowledge_response;
 }
