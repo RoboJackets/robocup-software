@@ -13,10 +13,9 @@
 #include <rj_param_utils/param.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
-#include "strategy/coach/coach_node.hpp"
-
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
+#include "strategy/coach/coach_node.hpp"
 
 namespace radio {
 
@@ -38,7 +37,8 @@ protected:
     void publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status);
 
     virtual void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                      const rj_msgs::msg::ManipulatorSetpoint& manipulator, strategy::Positions role) = 0;
+                      const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                      strategy::Positions role) = 0;
     virtual void receive() = 0;
     virtual void switch_team(bool blue) = 0;
 

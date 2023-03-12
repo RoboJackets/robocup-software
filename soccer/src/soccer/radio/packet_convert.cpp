@@ -271,7 +271,8 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * intent.dribbler_speed));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp, strategy::Positions role) {
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp,
+                strategy::Positions role) {
     rtp->uid = shell;
     rtp->messageType = rtp::RobotTxMessage::ControlMessageType;
 

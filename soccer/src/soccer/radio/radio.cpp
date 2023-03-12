@@ -18,14 +18,13 @@ Radio::Radio()
             switch_team(color->is_blue);
         });
     positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
-        "strategy/positions", 1,
-        [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) {
+        "strategy/positions", 1, [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) {
             auto msg_array = msg->client_positions;
             for (int i = 0; i < kNumShells; i++) {
-                positions_.at(i) = static_cast<strategy::Positions> (msg_array.at(i));
+                positions_.at(i) = static_cast<strategy::Positions>(msg_array.at(i));
             }
-            });
-    
+        });
+
     for (size_t i = 0; i < kNumShells; i++) {
         robot_status_pubs_.at(i) = create_publisher<rj_msgs::msg::RobotStatus>(
             topics::robot_status_pub(i), rclcpp::QoS(1));
