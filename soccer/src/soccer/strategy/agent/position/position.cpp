@@ -202,4 +202,38 @@ void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication_request_ = communication_request;
 }
 
+communication::Acknowledge Position::acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) {
+    communication::Acknowledge acknowledge_response{};
+    communication::generate_uid(acknowledge_response);
+
+    face_robot_id = incoming_pass_request.from_robot_id;
+
+    return acknowledge_response;
+}
+
+void Position::pass_ball(int robot_id) {
+    target_robot_id = robot_id;
+
+    communication::BallInTransitRequest ball_in_transit_request{};
+    ball_in_transit_request.from_robot_id = robot_id_;
+    communication::generate_uid(ball_in_transit_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = ball_in_transit_request;
+    communication_request.target_agents = {(u_int8_t) robot_id};
+    communication_request.urgent = true;
+    communication_request.broadcast = false;
+
+    communication_request_ = communication_request;
+}
+
+communication::Acknowledge Position::acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) {
+    communication::Acknowledge acknowledge_response{};
+    communication::generate_uid(acknowledge_response);
+
+    face_robot_id = ball_in_transit_request.from_robot_id;
+
+    return acknowledge_response;
+}
+
 }  // namespace strategy

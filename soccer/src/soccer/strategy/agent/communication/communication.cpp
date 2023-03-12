@@ -76,7 +76,6 @@ void generate_uid(IncomingPassRequest& request) {
     request_uid_mutex.unlock();
 }
 
-<<<<<<< HEAD
 void generate_uid(BallInTransitRequest& request) {
     request_uid_mutex.lock();
     request.request_uid = request_uid;
@@ -84,8 +83,6 @@ void generate_uid(BallInTransitRequest& request) {
     request_uid_mutex.unlock();
 }
 
-=======
->>>>>>> 22e6aef362... update communicaiton.*pp to add incoming pass request + reflect changes in pass request/response
 void generate_uid(Acknowledge& response) {
     response_uid_mutex.lock();
     response.response_uid = response_uid;

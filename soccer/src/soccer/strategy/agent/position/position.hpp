@@ -100,7 +100,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    communication::PosAgentRequestWrapper send_communication_request();
+    std::optional<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -123,9 +123,9 @@ public:
     void send_direct_pass_request(std::vector<u_int8_t> target_robots);
     communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
     void send_pass_confirmation(u_int8_t target_robot);
-    virtual communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) = 0;
-    virtual void pass_ball(int robot_id) = 0;
-    virtual communication::Acknowledge acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) = 0;
+    virtual communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request);
+    virtual void pass_ball(int robot_id);
+    virtual communication::Acknowledge acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request);
 
 protected:
     // should be overriden in subclass constructors
@@ -175,8 +175,12 @@ protected:
     // us to set this once initially
     const int robot_id_;
     int target_robot_id;
+    int face_robot_id;
     double our_min_pass_distance = 0.001;
     double min_pass_distance = 0.01;
+    const double max_receive_distance = 1.0;
+    bool chasing_ball = false;
+
 
     // the robot our robot is going to be passing to
     int target_robot_id;
@@ -193,7 +197,7 @@ protected:
     bool chasing_ball = false;
 
     // Request
-    communication::PosAgentRequestWrapper communication_request_;
+    std::optional<communication::PosAgentRequestWrapper> communication_request_;
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
