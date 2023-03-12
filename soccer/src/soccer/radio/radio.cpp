@@ -19,8 +19,11 @@ Radio::Radio()
         });
     positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
         "strategy/positions", 1,
-        [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { 
-            positions_ = msg->client_positions; 
+        [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) {
+            auto msg_array = msg->client_positions;
+            for (int i = 0; i < kNumShells; i++) {
+                positions_.at(i) = static_cast<strategy::Positions> (msg_array.at(i));
+            }
             });
     
     for (size_t i = 0; i < kNumShells; i++) {
@@ -67,7 +70,7 @@ void Radio::tick() {
                                          .kick_speed(0)
                                          .dribbler_speed(0);
             last_updates_.at(i) = RJ::now();
-            send(i, motion, manipulator);
+            send(i, motion, manipulator, positions_.at(i));
         }
     }
 }

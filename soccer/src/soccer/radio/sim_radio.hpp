@@ -22,7 +22,7 @@ public:
 
 protected:
     void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-              const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
+              const rj_msgs::msg::ManipulatorSetpoint& manipulator, strategy::Positions role) override;
     void receive() override;
     void switch_team(bool blue) override;
 
