@@ -104,28 +104,6 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
     return std::nullopt;
 }
 
-communication::PosAgentResponseWrapper Offense::receive_communication_request(
-    communication::AgentPosRequestWrapper request) {
-    communication::PosAgentResponseWrapper comm_response{};
-    SPDLOG_INFO("\033[92m offense recv comm req !! \033[0m");
-    if (const communication::PassRequest* pass_request =
-            std::get_if<communication::PassRequest>(&request.request)) {
-        communication::PassResponse pass_response = receive_pass_request(*pass_request);
-        comm_response.response = pass_response;
-        // TODO: "IncomingPassRequest" => "IncomingBallRequest" (or smth)
-    } else if (const communication::IncomingPassRequest* incoming_pass_request = std::get_if<communication::IncomingPassRequest>(&request.request)) {
-        communication::Acknowledge incoming_pass_acknowledge = acknowledge_pass(*incoming_pass_request);
-        comm_response.response = incoming_pass_acknowledge;
-    } else if (const communication::BallInTransitRequest* ball_in_transit_request = std::get_if<communication::BallInTransitRequest>(&request.request)) {
-        communication::Acknowledge ball_in_transit_acknowledge = acknowledge_ball_in_transit(*ball_in_transit_request);
-        comm_response.response = ball_in_transit_acknowledge;
-    } else {
-        communication::Acknowledge acknowledge{};
-        communication::generate_uid(acknowledge);
-        comm_response.response = acknowledge;
-    }
-
-<<<<<<< HEAD
 communication::Acknowledge Defense::acknowledge_ball_in_transit(
     communication::BallInTransitRequest ball_in_transit_request) {
     // Call to super
@@ -135,43 +113,22 @@ communication::Acknowledge Defense::acknowledge_ball_in_transit(
     current_state_ = RECEIVING;
     // Return acknowledge response
     return acknowledge_response;
-=======
-    // TEST CODE: UNCOMMENT TO TEST
-    // if (const communication::TestRequest* test_request =
-    //                std::get_if<communication::TestRequest>(&request.request)) {
-    //     communication::TestResponse test_response{};
-    //     test_response.message = fmt::format("An offensive player (robot: {}) says hi", robot_id_);
-    //     communication::generate_uid(test_response);
-    //     comm_response.response = test_response;
-    // }
-
-    return comm_response;
->>>>>>> 3c47867921... rewrite basic passing infrastructure
 }
 
-void Offense::pass_ball(int robot_id) {
-    target_robot_id = robot_id;
-    current_state_ = PASSING;
-
-    communication::BallInTransitRequest ball_in_transit_request{};
-    communication::generate_uid(ball_in_transit_request);
-    
-    communication::PosAgentRequestWrapper communication_request{};
-    communication_request.request = ball_in_transit_request;
-    communication_request.target_agents = {robot_id};
-    communication_request.urgent = true;
-    communication_request.broadcast = false;
-
-    communication_request_ = communication_request;
-}
-
-communication::Acknowledge Offense::acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) {
-    communication::Acknowledge acknowledge_response{};
-    communication::generate_uid(acknowledge_response);
-
-    current_state_ = RECEIVING;
-
+communication::Acknowledge Defense::acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) {
+    // Call to super
+    communication::Acknowledge acknowledge_response = Position::acknowledge_pass(incoming_pass_request);
+    // Update current state
+    current_state_ = FACING;
+    // Return acknowledge response
     return acknowledge_response;
+}
+
+void Defense::pass_ball(int robot_id) {
+    // Call to super
+    Position::pass_ball(robot_id);
+    // Update current state
+    current_state_ = PASSING;
 }
 
 }  // namespace strategy
