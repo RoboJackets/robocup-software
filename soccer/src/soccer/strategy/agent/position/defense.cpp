@@ -6,8 +6,8 @@ Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     WorldState* world_state = this->world_state();
-    Blocker blocker{};
-    return blocker.get_task(intent, world_state);
+    Marker marker{};
+    return marker.get_point_task(intent, rj_geometry::Point{0.0, 0.0}, world_state->ball.position);
 }
 
 void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {

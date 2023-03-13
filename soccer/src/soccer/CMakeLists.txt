@@ -79,7 +79,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/defense.cpp
-    strategy/agent/position/blocker.cpp
+    strategy/agent/position/marker.cpp
     strategy/agent/position/waller.cpp
         )
 
