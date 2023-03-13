@@ -81,10 +81,8 @@ jobs:
           apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
 
-      - name: Make ${{ github.base_ref }} and ${{ github.head_ref }} branches exist
+      - name: Make ${{ github.head_ref }} branch exist
         run: |
-            git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
-            git checkout -
             git checkout -b ${{ github.head_ref }}
             git checkout -
 
