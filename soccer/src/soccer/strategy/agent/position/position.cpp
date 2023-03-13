@@ -71,4 +71,29 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
+communication::PosAgentRequestWrapper Position::send_communication_request() {
+    return communication_request_;
+}
+
+void Position::receive_communication_response(
+    [[maybe_unused]] communication::AgentPosResponseWrapper response) {}
+
+communication::PosAgentResponseWrapper Position::receive_communication_request(
+    [[maybe_unused]] communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper pos_agent_response{};
+    communication::Acknowledge response{};
+    communication::generate_uid(response);
+    pos_agent_response.response = response;
+    return pos_agent_response;
+}
+
+rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
+    rj_msgs::msg::RobotIntent intent{};
+    auto empty = rj_msgs::msg::EmptyMotionCommand{};
+    intent.motion_command.empty_command = {empty};
+    return intent;
+}
+
+const std::string Position::get_name() { return position_name_; }
+
 }  // namespace strategy
