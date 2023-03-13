@@ -17,7 +17,7 @@ DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
       config_client_{this},
-      team_color_queue_{this, referee::topics::kTeamColorPub},
+      team_color_queue_{this, referee::topics::kTeamColorTopic},
       param_provider_{this, kVisionFilterParamModule} {
     // Create a timer that calls predict on all of the Kalman filters.
     const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
@@ -38,10 +38,10 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         world_.update_single_camera(RJ::now(), frame);
     };
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
-        vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize), callback);
+        vision_receiver::topics::kDetectionFrameTopic, rclcpp::QoS(kQueueSize), callback);
 
     // Create publishers.
-    world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStatePub, 10);
+    world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStateTopic, 10);
 }
 
 VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) const {

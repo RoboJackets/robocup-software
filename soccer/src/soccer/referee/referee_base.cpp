@@ -14,19 +14,19 @@ RefereeBase::RefereeBase(const std::string& name)
       config_client_{this} {
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
-    team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorPub, keep_latest);
-    goalie_id_pub_ = create_publisher<GoalieMsg>(referee::topics::kGoaliePub, keep_latest);
-    our_team_info_pub_ = create_publisher<TeamInfoMsg>(referee::topics::kOurInfoPub, keep_latest);
+    team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorTopic, keep_latest);
+    goalie_id_pub_ = create_publisher<GoalieMsg>(referee::topics::kGoalieTopic, keep_latest);
+    our_team_info_pub_ = create_publisher<TeamInfoMsg>(referee::topics::kOurInfoTopic, keep_latest);
     their_team_info_pub_ =
-        create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoPub, keep_latest);
-    play_state_pub_ = create_publisher<PlayState::Msg>(referee::topics::kPlayStatePub, keep_latest);
+        create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoTopic, keep_latest);
+    play_state_pub_ = create_publisher<PlayState::Msg>(referee::topics::kPlayStateTopic, keep_latest);
     match_state_pub_ =
-        create_publisher<MatchState::Msg>(referee::topics::kMatchStatePub, keep_latest);
+        create_publisher<MatchState::Msg>(referee::topics::kMatchStateTopic, keep_latest);
 
     pub_timer_ = create_wall_timer(100ms, [this]() { send(); });
 
     world_state_sub_ = create_subscription<WorldState::Msg>(
-        vision_filter::topics::kWorldStatePub, 1, [this](WorldState::Msg::SharedPtr msg) {
+        vision_filter::topics::kWorldStateTopic, 1, [this](WorldState::Msg::SharedPtr msg) {
             auto ball_state = rj_convert::convert_from_ros(msg->ball);
             if (spin_kick_detector(ball_state.position)) {
                 send();

@@ -46,7 +46,7 @@ ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socke
     SPDLOG_INFO("ExternalReferee team_name: {}", param_team_name_);
     set_team_name(param_team_name_);
 
-    raw_ref_pub_ = create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, 10);
+    raw_ref_pub_ = create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawTopic, 10);
 
     network_timer_ = create_wall_timer(std::chrono::milliseconds(10), [this]() { this->update(); });
 

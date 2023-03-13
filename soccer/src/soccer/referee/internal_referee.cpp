@@ -18,7 +18,7 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
 
     // NOLINTNEXTLINE(performance-unnecessary-value-param)
     game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(
-        config_server::topics::kGameSettingsPub, rclcpp::QoS(1).transient_local(),
+        config_server::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) {
             set_team_color(msg->request_blue_team);
             override_goalie(msg->request_goalie_id);

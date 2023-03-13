@@ -4,28 +4,28 @@
 
 namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
-    coach_state_pub_ = this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStatePub, 10);
+    coach_state_pub_ = this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStateTopic, 10);
     coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     def_area_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
-        ::planning::topics::kDefAreaObstaclesPub, 10);
+        ::planning::topics::kDefAreaObstaclesTopic, 10);
 
     global_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
-        ::planning::topics::kGlobalObstaclesPub, 10);
+        ::planning::topics::kGlobalObstaclesTopic, 10);
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
-        ::referee::topics::kPlayStatePub, 10,
+        ::referee::topics::kPlayStateTopic, 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
     positions_pub_ =
-        this->create_publisher<rj_msgs::msg::PositionAssignment>(topics::kPositionsPub, 10);
+        this->create_publisher<rj_msgs::msg::PositionAssignment>(topics::kPositionsTopic, 10);
 
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
-        ::vision_filter::topics::kWorldStatePub, 10,
+        ::vision_filter::topics::kWorldStateTopic, 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     goalie_sub_ = this->create_subscription<rj_msgs::msg::Goalie>(
-        ::referee::topics::kGoaliePub, 10,
+        ::referee::topics::kGoalieTopic, 10,
         [this](const rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
 
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
@@ -33,7 +33,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     /* ack_array[msg->ID] = true; */
 
     field_dimensions_sub_ = this->create_subscription<rj_msgs::msg::FieldDimensions>(
-        ::config_server::topics::kFieldDimensionsPub, 10,
+        ::config_server::topics::kFieldDimensionsTopic, 10,
         [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
             field_dimensions_callback(msg);
         });
@@ -41,7 +41,7 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     // initialize all of the robot status subscriptions
     for (size_t i = 0; i < kNumShells; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
-            ::radio::topics::robot_status_pub(i), 10,
+            ::radio::topics::robot_status_topic(i), 10,
             [this](const rj_msgs::msg::RobotStatus::SharedPtr msg) {
                 ball_sense_callback(msg, true);
             });

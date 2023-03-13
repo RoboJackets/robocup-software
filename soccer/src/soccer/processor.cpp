@@ -43,7 +43,7 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
         std::make_unique<ros2_temp::AutonomyInterface>(&context_, ros_executor_.get());
 
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
-        "world_state_queue", vision_filter::topics::kWorldStatePub);
+        "world_state_queue", vision_filter::topics::kWorldStateTopic);
 
     if (!read_log_file.empty()) {
         logger_->read(read_log_file);
