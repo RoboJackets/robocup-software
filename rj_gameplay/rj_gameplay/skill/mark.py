@@ -57,7 +57,6 @@ class Mark(skill.ISkill):
         target_vel: np.ndarray = np.array([0.0, 0.0]),
         ignore_ball: bool = False,
     ):
-
         self.__name__ = "Mark"
         self.robot = robot
         self.target_robot = target_robot

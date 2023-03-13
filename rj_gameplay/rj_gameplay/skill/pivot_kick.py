@@ -38,7 +38,6 @@ class PivotKick(skill.Skill):
         threshold: float = 0.02,
         priority: int = 1,
     ) -> None:
-
         self.__name__ = "pivot kick"
         self.robot = robot
         # TODO: make skill take either np array or tuple (and auto-cast to whichever is best)

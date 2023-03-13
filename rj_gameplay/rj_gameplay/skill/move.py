@@ -23,7 +23,6 @@ class Move(stp.skill.Skill):
         ignore_ball: bool = False,
         priority: int = 0,
     ):
-
         self.robot = robot
         self.target_point = target_point
         self.target_vel = target_vel

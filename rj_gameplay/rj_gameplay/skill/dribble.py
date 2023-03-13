@@ -32,7 +32,6 @@ class Dribble(skill.ISkill):
         face_point: Optional[np.ndarray] = None,
         priority: int = 0,
     ):
-
         self.robot = robot
         self.target_point = target_point
         self.target_vel = target_vel
@@ -44,7 +43,6 @@ class Dribble(skill.ISkill):
     def tick(
         self, robot: rc.Robot, world_state: rc.WorldState, intent: RobotIntent
     ):  # returns dict of robot and actions
-
         self.robot = robot
 
         path_command = PathTargetMotionCommand()

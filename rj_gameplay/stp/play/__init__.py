@@ -66,7 +66,6 @@ class Play(ABC):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         """Performs one "tick" of the specified play.
 
         This should:
@@ -150,7 +149,8 @@ class Play(ABC):
 
     def get_robot_intents(self, world_state: stp.rc.WorldState) -> List[RobotIntent]:
         """Has to be called after assigned_roles has been called.
-        Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent"""
+        Tick each tactic to get a list of RobotIntents for GameplayNode. Each RobotIntent in this list is at index robot_id, or in Python terms: return_list[robot_id] = robot_intent
+        """
         # TODO: this constant is from gameplay_node, move to a common gameplay params file
         NUM_ROBOTS = 16
         robot_intents = [None for _ in range(NUM_ROBOTS)]
