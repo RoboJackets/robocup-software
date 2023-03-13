@@ -22,79 +22,81 @@ using namespace std;
 struct FieldDimensions {
     using Msg = rj_msgs::msg::FieldDimensions;
 
-    float length() const { return length_; }
-    float width() const { return width_; }
+    [[nodiscard]] float length() const { return length_; }
+    [[nodiscard]] float width() const { return width_; }
 
     /** the distance from the edge of the field to the border line */
-    float border() const { return border_; }
+    [[nodiscard]] float border() const { return border_; }
 
     /** The width of the border lines */
-    float line_width() const { return line_width_; }
+    [[nodiscard]] float line_width() const { return line_width_; }
 
-    float goal_width() const { return goal_width_; }
-    float goal_depth() const { return goal_depth_; }
-    float goal_height() const { return goal_height_; }
+    [[nodiscard]] float goal_width() const { return goal_width_; }
+    [[nodiscard]] float goal_depth() const { return goal_depth_; }
+    [[nodiscard]] float goal_height() const { return goal_height_; }
 
     /** Dimensions of the rectangular penalty zone */
-    float penalty_short_dist() const { return penalty_short_dist_; }
-    float penalty_long_dist() const { return penalty_long_dist_; }
+    [[nodiscard]] float penalty_short_dist() const { return penalty_short_dist_; }
+    [[nodiscard]] float penalty_long_dist() const { return penalty_long_dist_; }
 
     /** diameter of the center circle */
-    float center_radius() const { return center_radius_; }
-    float center_diameter() const { return center_diameter_; }
+    [[nodiscard]] float center_radius() const { return center_radius_; }
+    [[nodiscard]] float center_diameter() const { return center_diameter_; }
 
     /** flat area for defence markings */
-    float goal_flat() const { return goal_flat_; }
+    [[nodiscard]] float goal_flat() const { return goal_flat_; }
 
-    float floor_length() const { return floor_length_; }
-    float floor_width() const { return floor_width_; }
+    [[nodiscard]] float floor_length() const { return floor_length_; }
+    [[nodiscard]] float floor_width() const { return floor_width_; }
 
     /** penalty right and left coords */
 
-    float penalty_x_right_coord() const { return penalty_x_right_coord_; }
-    float penalty_x_left_coord() const { return penalty_x_left_coord_; }
+    [[nodiscard]] float penalty_x_right_coord() const { return penalty_x_right_coord_; }
+    [[nodiscard]] float penalty_x_left_coord() const { return penalty_x_left_coord_; }
 
     /** field right and left coords */
 
-    float field_x_right_coord() const { return field_x_right_coord_; }
-    float field_x_left_coord() const { return field_x_left_coord_; }
+    [[nodiscard]] float field_x_right_coord() const { return field_x_right_coord_; }
+    [[nodiscard]] float field_x_left_coord() const { return field_x_left_coord_; }
 
     /** width and length of floor */
 
-    float floor_border_width() const { return floor_border_width_; }
-    float floor_border_length() const { return floor_border_length_; }
+    [[nodiscard]] float floor_border_width() const { return floor_border_width_; }
+    [[nodiscard]] float floor_border_length() const { return floor_border_length_; }
 
-    rj_geometry::Point our_goal_loc() const { return our_goal_loc_; }
-    rj_geometry::Point center_field_loc() const { return center_field_loc_; }
-    rj_geometry::Point their_goal_loc() const { return their_goal_loc_; }
+    [[nodiscard]] rj_geometry::Point our_goal_loc() const { return our_goal_loc_; }
+    [[nodiscard]] rj_geometry::Point center_field_loc() const { return center_field_loc_; }
+    [[nodiscard]] rj_geometry::Point their_goal_loc() const { return their_goal_loc_; }
 
-    rj_geometry::Rect our_penalty_area_coordinates() const { return our_penalty_area_coordinates_; }
-    rj_geometry::Rect their_penalty_area_coordinates() const {
+    [[nodiscard]] rj_geometry::Rect our_penalty_area_coordinates() const {
+        return our_penalty_area_coordinates_;
+    }
+    [[nodiscard]] rj_geometry::Rect their_penalty_area_coordinates() const {
         return their_penalty_area_coordinates_;
     }
 
-    rj_geometry::Point our_left_goal_post_coordinate() const {
+    [[nodiscard]] rj_geometry::Point our_left_goal_post_coordinate() const {
         return our_left_goal_post_coordinate_;
     }
-    rj_geometry::Point our_right_goal_post_coordinate() const {
+    [[nodiscard]] rj_geometry::Point our_right_goal_post_coordinate() const {
         return our_right_goal_post_coordinate_;
     }
 
-    rj_geometry::Point their_left_goal_post_coordinate() const {
+    [[nodiscard]] rj_geometry::Point their_left_goal_post_coordinate() const {
         return their_left_goal_post_coordinate_;
     }
-    rj_geometry::Point their_right_goal_post_coordinate() const {
+    [[nodiscard]] rj_geometry::Point their_right_goal_post_coordinate() const {
         return their_right_goal_post_coordinate_;
     }
 
-    rj_geometry::Point our_left_corner() const { return our_left_corner_; }
-    rj_geometry::Point our_right_corner() const { return our_right_corner_; }
-    rj_geometry::Point their_left_corner() const { return their_left_corner_; }
-    rj_geometry::Point their_right_corner() const { return their_right_corner_; }
+    [[nodiscard]] rj_geometry::Point our_left_corner() const { return our_left_corner_; }
+    [[nodiscard]] rj_geometry::Point our_right_corner() const { return our_right_corner_; }
+    [[nodiscard]] rj_geometry::Point their_left_corner() const { return their_left_corner_; }
+    [[nodiscard]] rj_geometry::Point their_right_corner() const { return their_right_corner_; }
 
-    rj_geometry::Rect field_coordinates() const { return field_coords_; }
+    [[nodiscard]] rj_geometry::Rect field_coordinates() const { return field_coords_; }
 
-    rj_geometry::Point center_point() const { return center_point_; }
+    [[nodiscard]] rj_geometry::Point center_point() const { return center_point_; }
 
     [[nodiscard]] rj_geometry::Rect our_goal_zone_shape() const { return our_goal_zone_shape_; }
     [[nodiscard]] rj_geometry::Rect their_goal_zone_shape() const { return their_goal_zone_shape_; }
@@ -104,24 +106,24 @@ struct FieldDimensions {
      * used mostly for movement at the play level
      * exposed to python via constants.Field
      */
-    rj_geometry::Rect their_goal_zone_shape_padded(float padding) {
+    [[nodiscard]] rj_geometry::Rect their_goal_zone_shape_padded(float padding) {
         rj_geometry::Rect tmp = rj_geometry::Rect(their_goal_zone_shape_);
         tmp.pad(padding);
         return tmp;
     };
 
-    rj_geometry::Segment our_goal_segment() const { return our_goal_segment_; }
-    rj_geometry::Segment their_goal_segment() const { return their_goal_segment_; }
-    rj_geometry::Rect our_half() const { return our_half_; }
-    rj_geometry::Rect their_half() const { return their_half_; }
-    rj_geometry::Rect field_rect() const { return field_rect_; }
+    [[nodiscard]] rj_geometry::Segment our_goal_segment() const { return our_goal_segment_; }
+    [[nodiscard]] rj_geometry::Segment their_goal_segment() const { return their_goal_segment_; }
+    [[nodiscard]] rj_geometry::Rect our_half() const { return our_half_; }
+    [[nodiscard]] rj_geometry::Rect their_half() const { return their_half_; }
+    [[nodiscard]] rj_geometry::Rect field_rect() const { return field_rect_; }
 
     /*
      * Provides a rect that is a padded version of our goalbox
      * used mostly for movement at the play level
      * exposed to python via constants.Field
      */
-    rj_geometry::Rect our_goal_zone_shape_padded(float padding) {
+    [[nodiscard]] rj_geometry::Rect our_goal_zone_shape_padded(float padding) {
         rj_geometry::Rect tmp = rj_geometry::Rect(our_goal_zone_shape_);
         tmp.pad(padding);
         return tmp;
