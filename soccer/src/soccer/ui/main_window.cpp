@@ -680,7 +680,7 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(false);
         _ui.fastKickoffBlue->setEnabled(false);
         _ui.fastKickoffYellow->setEnabled(false);
-        _ui.fastDirectBlue->setEnabled(false);
+        _ui.fastBlue->setEnabled(false);
     } else {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
@@ -688,7 +688,7 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(true);
         _ui.fastKickoffBlue->setEnabled(true);
         _ui.fastKickoffYellow->setEnabled(true);
-        _ui.fastDirectBlue->setEnabled(true);
+        _ui.fastBlue->setEnabled(true);
     }
 
     updateFromRefPacket(_has_external_ref);
@@ -1137,19 +1137,11 @@ void MainWindow::on_fastKickoffYellow_clicked() {
     queued_command_ = PlayState::ready_kickoff(context_->blue_team);
 }
 
-void MainWindow::on_fastDirectBlue_clicked() {
+void MainWindow::on_fastBlue_clicked() {
     send_quick_command(PlayState::ready_free_kick(context_->blue_team));
 }
 
-void MainWindow::on_fastDirectYellow_clicked() {
-    send_quick_command(PlayState::ready_free_kick(!context_->blue_team));
-}
-
-void MainWindow::on_fastIndirectBlue_clicked() {
-    send_quick_command(PlayState::ready_free_kick(context_->blue_team));
-}
-
-void MainWindow::on_fastIndirectYellow_clicked() {
+void MainWindow::on_fastYellow_clicked() {
     send_quick_command(PlayState::ready_free_kick(!context_->blue_team));
 }
 

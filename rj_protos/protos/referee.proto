@@ -123,10 +123,10 @@ message SSL_Referee {
         // Otherwise, times are ordered from smallest to largest.
         repeated uint32 yellow_card_times = 4 [packed = true];
         // The total number of yellow cards ever issued to the team.
-		required uint32 yellow_cards = 5;
-		// The number of timeouts this team can still call.
-		// If in a timeout right now, that timeout is excluded.
-		required uint32 timeouts = 6;
+        required uint32 yellow_cards = 5;
+        // The number of timeouts this team can still call.
+        // If in a timeout right now, that timeout is excluded.
+        required uint32 timeouts = 6;
 		// The number of microseconds of timeout this team can use.
 		required uint32 timeout_time = 7;
 		// The pattern number of this team's goalie.
