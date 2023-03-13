@@ -27,9 +27,8 @@ Goalie::State Goalie::update_state() {
     bool ball_is_slow = world_state->ball.velocity.mag() < 0.5;  // m/s
 
     rj_geometry::Point ball_pt = world_state->ball.position;
-    // TODO(Kevin): account for field direction when field coords
-    // added in
-    bool ball_in_box = ball_pt.y() < 1.0 && fabs(ball_pt.x()) < 1.0;  // m
+
+    bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     if (ball_is_slow && ball_in_box) {
         return CLEARING;
     }
