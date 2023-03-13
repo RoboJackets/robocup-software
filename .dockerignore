@@ -1,1 +1,50 @@
-.gitignore
+*.kdev4
+/.vscode
+# scons build system
+.sconsign.dblite
+.scons_variables
+
+# build directories
+/build
+/install
+/gmon.out
+*.swp
+/.settings
+/api_docs
+*~
+build-*
+cmake-*
+docs/build/
+
+# sublime-text
+*.sublime-workspace
+
+# Python
+__pycache__/
+*.pyc
+.pydevproject
+.mypy_cache/
+
+# OS X Finder prefs
+.DS_Store
+
+# Qt Creator
+*.creator.user
+
+# IntelliJ
+.idea
+
+# output binaries
+run/*.bin
+run/*.nib
+clean.patch
+perf.data*
+.gdb_history
+
+# Python Coverage
+.coverage
+.coverage.*
+coverage.xml
+
+# Debugging launch files
+launch/debug-*
