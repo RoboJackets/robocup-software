@@ -68,7 +68,6 @@ static inline std::string trajectory_pub(int robot_id) {
 
 }  // namespace planning::topics
 
-
 namespace control {
 
 namespace topics {
