@@ -19,12 +19,20 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     positions_pub_ =
         this->create_publisher<rj_msgs::msg::PositionAssignment>("/strategy/positions", 10);
 
+    overrides_sub_ = this->create_subscription<rj_msgs::msg::PositionAssignment>(
+        "/strategy/position_overrides", 10,
+        [this](const rj_msgs::msg::PositionAssignment::SharedPtr msg) { overrides_callback(msg); });
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         "/vision_filter/world_state", 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
+    goalie_sub_ = this->create_subscription<rj_msgs::msg::Goalie>(
+        "/referee/our_goalie", 10,
+        [this](const rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
+
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
-    // save state of acknowledgements, only spam until some long time has passed, or ack received
+    // save state of acknowledgements, only spam until some long time has passed, or ack
+    // received
     /* ack_array[msg->ID] = true; */
 
     field_dimensions_sub_ = this->create_subscription<rj_msgs::msg::FieldDimensions>(
@@ -123,7 +131,8 @@ void CoachNode::check_for_play_state_change() {
                 global_override.min_dist_from_ball = 0.5;
                 break;
             case PlayState::State::Playing:
-                // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number instead.
+                // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number
+                // instead.
                 global_override.max_speed = 10.0;
                 global_override.min_dist_from_ball = 0;
         }
@@ -144,25 +153,60 @@ void CoachNode::check_for_play_state_change() {
 void CoachNode::assign_positions() {
     rj_msgs::msg::PositionAssignment positions_message;
     std::array<uint32_t, kNumShells> positions{};
-    positions[0] = Positions::Goalie;
+    positions[goalie_id_] = Positions::Goalie;
     if (!possessing_) {
-        positions[1] = Positions::Offense;
-        for (int i = 2; i < kNumShells; i++) {
-            positions[i] = Positions::Defense;
+        // All robots set to defense
+        for (int i = 0; i < kNumShells; i++) {
+            if (i != goalie_id_) {
+                positions[i] = Positions::Defense;
+            }
+        }
+        // Lowest non-goalie robot set to offense
+        if (goalie_id_ == 0) {
+            positions[1] = Positions::Offense;
+        } else {
+            positions[0] = Positions::Offense;
         }
     } else {
-        positions[1] = Positions::Defense;
-        for (int i = 2; i < kNumShells; i++) {
-            positions[i] = Positions::Offense;
+        // All robots set to offense
+        for (int i = 0; i < kNumShells; i++) {
+            if (i != goalie_id_) {
+                positions[i] = Positions::Offense;
+            }
+        }
+        // Lowest non-goalie robot set to defense
+        if (goalie_id_ == 0) {
+            positions[1] = Positions::Defense;
+        } else {
+            positions[0] = Positions::Defense;
         }
     }
+
+    // Check Overrides
+    if (have_overrides_) {
+        for (int i = 0; i < kNumShells; i++) {
+            if (i != goalie_id_ && current_overrides_[i] == 1 || current_overrides_[i] == 2) {
+                positions[i] = current_overrides_[i];
+            }
+        }
+    }
+
     positions_message.client_positions = positions;
     positions_pub_->publish(positions_message);
+}
+
+void CoachNode::overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
+    current_overrides_ = msg->client_positions;
+    have_overrides_ = true;
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
     current_field_dimensions_ = *msg;
     have_field_dimensions_ = true;
+}
+
+void CoachNode::goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg) {
+    goalie_id_ = msg->goalie_id;
 }
 
 void CoachNode::publish_static_obstacles() {
