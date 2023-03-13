@@ -81,9 +81,16 @@ jobs:
           apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
 
+    - name: Make ${{ github.base_ref }} and ${{ github.head_ref }} branches exist
+      run: |
+          git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
+          git checkout -
+          git checkout -b ${{ github.head_ref }}
+          git checkout -
+
       - name: Run style on all changed files
         run: |
-            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/style/clang-format-diff.py -binary clang-format-10 -i -p1
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --exclude "control/mtrain/"
       - uses: stefanzweifel/git-auto-commit-action@v4
         with: 
