@@ -106,7 +106,7 @@ private:
     void overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
     void check_for_play_state_change();
     /*
-     * Handles actions the Coach does every tick. Currently calls assign_Position and
+     * Handles actions the Coach does every tick. Currently calls assign_positions() and
      * check_for_play_state_change.
      */
     void coach_ticker();
