@@ -71,13 +71,16 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp
     ros2_temp/referee_sub.cpp
+    ros2_temp/coach_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     strategy/agent/agent_action_client.cpp
+    strategy/agent/communication/communication.cpp
     strategy/agent/position/position.cpp
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/defense.cpp
+    strategy/agent/position/waller.cpp
         )
 
 set(SOCCER_TEST_SRC

@@ -37,6 +37,7 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
     raw_vision_packet_sub_ = std::make_unique<ros2_temp::RawVisionPacketSub>(&context_);
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
+    coach_sub_ = std::make_unique<ros2_temp::CoachSub>(&context_, ros_executor_.get());
     debug_draw_sub_ =
         std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());
     autonomy_interface_ =
@@ -54,9 +55,7 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     nodes_.push_back(logger_.get());
 }
 
-Processor::~Processor() {
-    stop();
-}
+Processor::~Processor() { stop(); }
 
 void Processor::stop() {
     if (running_) {
@@ -89,9 +88,11 @@ void Processor::run() {
         ////////////////
         // Inputs
         // TODO(#1558): Backport spin_all and use it for our main executor.
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             ros_executor_->spin_some();
         }
+        // spin_all doesn't exist yet
+        // ros_executor_->spin_all();
 
         // Updates context_->field_dimensions
         config_client_->run();
@@ -155,8 +156,6 @@ void Processor::run() {
 
 void Processor::stop_robots() {}
 
-void Processor::set_field_dimensions(const FieldDimensions& dims) {
-    *current_dimensions = dims;
-}
+void Processor::set_field_dimensions(const FieldDimensions& dims) { *current_dimensions = dims; }
 
 bool Processor::is_initialized() const { return initialized_; }
