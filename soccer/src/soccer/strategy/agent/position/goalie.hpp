@@ -29,9 +29,11 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
-    communication::Acknowledge acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) override;
+    communication::Acknowledge acknowledge_pass(
+        communication::IncomingPassRequest incoming_pass_request) override;
     void pass_ball(int robot_id) override;
-    communication::Acknowledge acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) override;
+    communication::Acknowledge acknowledge_ball_in_transit(
+        communication::BallInTransitRequest ball_in_transit_request) override;
 
 private:
     // temp
@@ -42,13 +44,13 @@ private:
 
     // possible states of the Goalie
     enum State {
-        IDLING, // doing nothing
-        BLOCKING, // blocking the ball from reaching the goal
-        CLEARING, // clearing the ball out of the goal box
-        BALL_NOT_FOUND, // the ball is not in play
-        RECEIVING, // physically intercepting the ball from a pass
-        PASSING, // physically kicking the ball at another robot
-        FACING, // turning to face the passing robot
+        IDLING,          // doing nothing
+        BLOCKING,        // blocking the ball from reaching the goal
+        CLEARING,        // clearing the ball out of the goal box
+        BALL_NOT_FOUND,  // the ball is not in play
+        RECEIVING,       // physically intercepting the ball from a pass
+        PASSING,         // physically kicking the ball at another robot
+        FACING,          // turning to face the passing robot
     };
 
     /*

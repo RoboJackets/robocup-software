@@ -58,7 +58,8 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.motion_command_name = "goalie_idle";
         return intent;
     } else if (latest_state_ == BLOCKING) {
-        auto blocking_intercept_cmd = planning::InterceptMotionCommand{rj_geometry::Point{0.0, 0.1}};
+        auto blocking_intercept_cmd =
+            planning::InterceptMotionCommand{rj_geometry::Point{0.0, 0.1}};
         intent.motion_command = blocking_intercept_cmd;
         intent.motion_command_name = "intercept";
         return intent;
@@ -92,17 +93,20 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         return intent;
     } else if (latest_state_ == RECEIVING) {
         // intercept the bal
-        rj_geometry::Point current_position = world_state()->get_robot(true, robot_id_).pose.position();
+        rj_geometry::Point current_position =
+            world_state()->get_robot(true, robot_id_).pose.position();
         auto receive_intercept_cmd = planning::InterceptMotionCommand{current_position};
         intent.motion_command = receive_intercept_cmd;
         intent.motion_command_name = fmt::format("robot {} goalie receive ball", robot_id_);
         return intent;
     } else if (latest_state_ == PASSING) {
         // attempt to pass the ball to the target robot
-        rj_geometry::Point target_robot_pos = world_state()->get_robot(true, target_robot_id).pose.position();
+        rj_geometry::Point target_robot_pos =
+            world_state()->get_robot(true, target_robot_id).pose.position();
         auto pass_kick_cmd = planning::LineKickMotionCommand{target_robot_pos};
         intent.motion_command = pass_kick_cmd;
-        intent.motion_command_name = fmt::format("robot {} goalie pass to robot {}", robot_id_, target_robot_id);
+        intent.motion_command_name =
+            fmt::format("robot {} goalie pass to robot {}", robot_id_, target_robot_id);
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
@@ -136,9 +140,11 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
     return ball_is_fast && shot_on_target;
 }
 
-communication::Acknowledge Goalie::acknowledge_pass(communication::IncomingPassRequest incoming_pass_request) {
+communication::Acknowledge Goalie::acknowledge_pass(
+    communication::IncomingPassRequest incoming_pass_request) {
     // Call to super
-    communication::Acknowledge acknowledge_response = Position::acknowledge_pass(incoming_pass_request);
+    communication::Acknowledge acknowledge_response =
+        Position::acknowledge_pass(incoming_pass_request);
     // Update current state
     latest_state_ = FACING;
     // Return acknowledge response
@@ -152,9 +158,11 @@ void Goalie::pass_ball(int robot_id) {
     latest_state_ = PASSING;
 }
 
-communication::Acknowledge Goalie::acknowledge_ball_in_transit(communication::BallInTransitRequest ball_in_transit_request) {
+communication::Acknowledge Goalie::acknowledge_ball_in_transit(
+    communication::BallInTransitRequest ball_in_transit_request) {
     // Call to super
-    communication::Acknowledge acknowledge_response = Position::acknowledge_ball_in_transit(ball_in_transit_request);
+    communication::Acknowledge acknowledge_response =
+        Position::acknowledge_ball_in_transit(ball_in_transit_request);
     // Update current state
     latest_state_ = RECEIVING;
     // Return acknowledge response
