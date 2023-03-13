@@ -238,8 +238,9 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
     auto their_defense_area =
         is_extra_dist_necessary
             ? std::make_shared<rj_geometry::Rect>(
-                  current_field_dimensions_.their_defense_area_padded(slack_around_box))
-            : std::make_shared<rj_geometry::Rect>(current_field_dimensions_.their_defense_area());
+                  std::move(current_field_dimensions_.their_defense_area_padded(slack_around_box)))
+            : std::make_shared<rj_geometry::Rect>(
+                  std::move(current_field_dimensions_.their_defense_area()));
 
     // Combine both defense areas into ShapeSet
     rj_geometry::ShapeSet def_area_obstacles{};
