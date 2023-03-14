@@ -110,6 +110,6 @@ jobs:
         run: |
           echo "::add-matcher::ci/flake8.json"
           find /usr/ | grep flake8
-          flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} --flake8-options --max-line-length=88
+          flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} --flake8-options --max-line-length=88 --extend-ignore=E203
           echo "::remove-matcher owner=flake8-error::"
           echo "::remove-matcher owner=flake8-warning::"
