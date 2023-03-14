@@ -7,7 +7,7 @@ Waller::Waller(int waller_num) {
     waller_pos_ = waller_num;
 }
 
-std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState* world_state) {
+std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState* world_state, FieldDimensions field_dimensions) {
     rj_geometry::Point ball_location{world_state->ball.position};
 
     // Get Goal Location (Always (0,0)) as of creation

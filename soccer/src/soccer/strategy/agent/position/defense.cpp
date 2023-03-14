@@ -11,7 +11,7 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
 
     // Create Waller
     Waller waller{0};
-    return waller.get_task(intent, world_state);
+    return waller.get_task(intent, world_state, this->field_dimensions_);
 }
 
 void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {

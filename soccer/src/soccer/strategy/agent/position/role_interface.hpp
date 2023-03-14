@@ -42,7 +42,7 @@ public:
      * @return [RobotIntent with next target point for the robot]
      */
     virtual std::optional<RobotIntent> get_task(RobotIntent intent,
-                                                const WorldState* world_state) = 0;
+                                                const WorldState* world_state, FieldDimensions field_dimensions) = 0;
 
 private:
 };
