@@ -29,7 +29,6 @@ class GoalieTactic(stp.tactic.Tactic):
     def tick(
         self, world_state: stp.rc.WorldState
     ) -> List[Tuple[int, RobotIntent]]:  # (id, intent)
-
         # assumes all roles requested are filled, because tactic is one unit
         if len(self.assigned_roles) != len(self._role_requests):
             self.init_roles(world_state)
