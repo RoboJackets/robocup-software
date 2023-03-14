@@ -115,10 +115,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             # Throw an exception if the returned cost is not finite.
             if not isfinite(unassigned_cost):
                 raise ValueError(
-                    "Got a non-finite cost ({}) for request {} and \
-                    unassinged robot {}".format(
-                        cost, request, robot
-                    )
+                    "Got a non-finite cost ({}) for request {} and                    "
+                    " unassinged robot {}".format(cost, request, robot)
                 )
 
             # Add unassigned cost to last row of robot_costs

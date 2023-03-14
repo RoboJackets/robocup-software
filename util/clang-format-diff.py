@@ -58,16 +58,20 @@ def main():
         "-regex",
         metavar="PATTERN",
         default=None,
-        help="custom pattern selecting file paths to reformat "
-        "(case sensitive, overrides -iregex)",
+        help=(
+            "custom pattern selecting file paths to reformat "
+            "(case sensitive, overrides -iregex)"
+        ),
     )
     parser.add_argument(
         "-iregex",
         metavar="PATTERN",
         default=r".*\.(cpp|cc|c\+\+|cxx|c|cl|h|hh|hpp|m|mm|inc|js|ts|proto"
         r"|protodevel|java|cs)",
-        help="custom pattern selecting file paths to reformat "
-        "(case insensitive, overridden by -regex)",
+        help=(
+            "custom pattern selecting file paths to reformat "
+            "(case insensitive, overridden by -regex)"
+        ),
     )
     parser.add_argument(
         "-sort-includes",
@@ -83,7 +87,7 @@ def main():
     )
     parser.add_argument(
         "-style",
-        help="formatting style to apply (LLVM, Google, Chromium, " "Mozilla, WebKit)",
+        help="formatting style to apply (LLVM, Google, Chromium, Mozilla, WebKit)",
     )
     parser.add_argument(
         "-binary",

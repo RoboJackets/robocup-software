@@ -70,8 +70,10 @@ def main():
     parser.add_argument(
         "--check",
         action="store_true",
-        help="Exit with status code 0 if formatting would not change "
-        "file contents, or status code 1 if it would",
+        help=(
+            "Exit with status code 0 if formatting would not change "
+            "file contents, or status code 1 if it would"
+        ),
     )
     args = parser.parse_args()
 
