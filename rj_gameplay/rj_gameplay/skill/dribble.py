@@ -82,8 +82,12 @@ class Dribble(skill.ISkill):
             return False
 
     def __str__(self):
-        return f"Capture(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}, \
-                target_vel={self.target_vel}, face_angle={self.face_angle}, face_point={self.face_point})"
+        return (
+            f"Capture(robot={self.robot.id if self.robot is not None else '??'},"
+            f" target={self.target_point},                "
+            f" target_vel={self.target_vel}, face_angle={self.face_angle},"
+            f" face_point={self.face_point})"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()

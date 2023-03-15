@@ -94,7 +94,10 @@ class PivotKick(skill.Skill):
         return self._state == State.DONE
 
     def __str__(self):
-        return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
+        return (
+            f"Pivot(robot={self.robot.id if self.robot is not None else '??'},"
+            f" target={self.target_point})"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
