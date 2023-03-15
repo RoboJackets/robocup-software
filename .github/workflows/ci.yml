@@ -105,7 +105,8 @@ jobs:
           echo "::add-matcher::ci/clang-format.json"
           git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
           echo "::remove-matcher owner=clang-format::"
-
+      
+      # black and flake8 not used anymore because we don't use python as of 2023
       # - name: Run flake8
       #   if: always()
       #   run: |
