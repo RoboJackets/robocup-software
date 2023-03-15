@@ -74,7 +74,6 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
         for request_idx, (role_id, request) in enumerate(flat_requests.items()):
             # For each role request, iterate over robots.
             for robot_idx, robot in enumerate(free_robots):
-
                 # If the robot is not visible then do not consider its cost
                 # Cannot be infinte, will break linear_sum_assignment
                 if not robot.visible:
@@ -116,10 +115,8 @@ class NaiveRoleAssignment(assignment.IRoleAssignment):
             # Throw an exception if the returned cost is not finite.
             if not isfinite(unassigned_cost):
                 raise ValueError(
-                    "Got a non-finite cost ({}) for request {} and \
-                    unassinged robot {}".format(
-                        cost, request, robot
-                    )
+                    "Got a non-finite cost ({}) for request {} and                    "
+                    " unassinged robot {}".format(cost, request, robot)
                 )
 
             # Add unassigned cost to last row of robot_costs

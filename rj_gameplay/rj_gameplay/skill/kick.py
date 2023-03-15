@@ -19,7 +19,6 @@ class Kick(skill.Skill):
         kick_speed: float,
         threshold: float = 0.02,
     ) -> None:
-
         self.__name__ = "kick skill"
         self.robot = robot
         self.chip = chip

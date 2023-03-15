@@ -29,7 +29,6 @@ class PenaltyOffense(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         if self._state == State.INIT:
             self.prioritized_tactics.append(striker_tactic.StrikerTactic(world_state))
             num_liners = len(world_state.our_visible_robots) - 1
@@ -58,7 +57,6 @@ class PrepPenaltyOff(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         if self._state == State.INIT:
             self.prioritized_tactics.append(prep_move.PrepMove(world_state))
             num_liners = len(world_state.our_visible_robots) - 1
