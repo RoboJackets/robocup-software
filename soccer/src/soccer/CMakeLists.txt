@@ -81,6 +81,8 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/offense.cpp
     strategy/agent/position/defense.cpp
     strategy/agent/position/waller.cpp
+    strategy/agent/position/penalty_kicker.cpp
+
         )
 
 set(SOCCER_TEST_SRC
