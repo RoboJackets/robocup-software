@@ -19,7 +19,6 @@ class DumbMove(stp.role.Role):
     def tick(
         self, world_state: stp.rc.WorldState, target_point=None, face_point=None
     ) -> RobotIntent:
-
         skill_needs_update = self.move_skill is None
 
         if target_point is not None:

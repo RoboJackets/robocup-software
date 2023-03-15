@@ -32,9 +32,11 @@ from io import StringIO
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Reformat changed lines in diff. Without -i "
-        "option just output the diff that would be "
-        "introduced."
+        description=(
+            "Reformat changed lines in diff. Without -i "
+            "option just output the diff that would be "
+            "introduced."
+        )
     )
     parser.add_argument(
         "-i",
@@ -52,24 +54,30 @@ def main():
         "-regex",
         metavar="PATTERN",
         default=None,
-        help="custom pattern selecting file paths to reformat "
-        "(case sensitive, overrides -iregex)",
+        help=(
+            "custom pattern selecting file paths to reformat "
+            "(case sensitive, overrides -iregex)"
+        ),
     )
     parser.add_argument(
         "-iregex",
         metavar="PATTERN",
         default=r".*\.(py)",
-        help="custom pattern selecting file paths to reformat "
-        "(case insensitive, overridden by -regex)",
+        help=(
+            "custom pattern selecting file paths to reformat "
+            "(case insensitive, overridden by -regex)"
+        ),
     )
     parser.add_argument(
         "-style",
-        help="specify formatting style: either a style name (for "
-        'example "pep8" or "google"), or the name of a file with '
-        "style settings. The default is pep8 unless a "
-        ".style.yapf or setup.cfg file located in one of the "
-        "parent directories of the source file (or current "
-        "directory for stdin)",
+        help=(
+            "specify formatting style: either a style name (for "
+            'example "pep8" or "google"), or the name of a file with '
+            "style settings. The default is pep8 unless a "
+            ".style.yapf or setup.cfg file located in one of the "
+            "parent directories of the source file (or current "
+            "directory for stdin)"
+        ),
     )
     parser.add_argument(
         "-binary", default="yapf", help="location of binary to use for yapf"

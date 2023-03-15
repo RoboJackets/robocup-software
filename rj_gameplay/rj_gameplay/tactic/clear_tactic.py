@@ -35,7 +35,6 @@ class ClearerCost(role.CostFn):
         prev_result: Optional[role.RoleResult],
         world_state: rc.WorldState,
     ) -> float:
-
         # TODO: Implement real unassigned cost function
         return role.BIG_STUPID_NUMBER_CONST_FOR_UNASSIGNED_COST_PLS_CHANGE
 
