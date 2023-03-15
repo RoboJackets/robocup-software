@@ -17,7 +17,6 @@ class BallClassifier(fsm.StateMachine):
         kickoff = 6
 
     def __init__(self) -> None:
-
         super().__init__(start_state=BallClassifier.State.no_possession)
 
         self.team: Team = None  # represents the team currently with posession

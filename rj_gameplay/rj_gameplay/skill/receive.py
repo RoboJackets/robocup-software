@@ -36,7 +36,10 @@ class Receive(skill.Skill):
         return self.capture.is_done(world_state)
 
     def __str__(self):
-        return f"Receive(robot={self.robot.id if self.robot is not None else '??'}, ticks={self.capture.ticks_done})"
+        return (
+            f"Receive(robot={self.robot.id if self.robot is not None else '??'},"
+            f" ticks={self.capture.ticks_done})"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
