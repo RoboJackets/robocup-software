@@ -184,10 +184,8 @@ class Robot:
         """
         if not self.is_ours:
             warnings.warn(
-                (
-                    "Attempting to retrieve lethal fault information from an opposing"
-                    " robot"
-                ),
+                "Attempting to retrieve lethal fault information from an opposing"
+                " robot",
                 RuntimeWarning,
             )
 
