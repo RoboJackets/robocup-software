@@ -48,7 +48,8 @@ namespace strategy {
  */
 class Position {
 public:
-    Position(int r_id); virtual ~Position() = default;
+    Position(int r_id);
+    virtual ~Position() = default;
 
     /**
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
