@@ -11,7 +11,7 @@ namespace planning {
  * @brief Planner that tries to move onto and gain control of a slow moving
  * ball.
  */
-class CollectPlanner : public PlannerForCommandType<CollectMotionCommand> {
+class CollectPlanner : public Planner {
 public:
     enum CollectPathPlannerStates {
         // From start of subbehavior to the start of the slow part of the
@@ -24,7 +24,7 @@ public:
     };
 
     CollectPlanner()
-        : PlannerForCommandType<CollectMotionCommand>("collect"),
+        : Planner("collect"),
           average_ball_vel_(0, 0),
           approach_direction_(0, 0) {}
 

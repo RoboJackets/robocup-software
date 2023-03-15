@@ -12,9 +12,9 @@ namespace planning {
  * Mostly used for the goalie to block shots (w/ a target point of 0,0).
  */
 
-class InterceptPlanner : public PlannerForCommandType<InterceptMotionCommand> {
+class InterceptPlanner : public Planner {
 public:
-    InterceptPlanner() : PlannerForCommandType<InterceptMotionCommand>("InterceptPlanner"){};
+    InterceptPlanner() : Planner("InterceptPlanner"){};
 
     Trajectory plan(const PlanRequest& request) override;
 

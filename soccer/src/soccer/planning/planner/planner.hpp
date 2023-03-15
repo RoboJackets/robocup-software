@@ -17,17 +17,6 @@ public:
     Planner& operator=(const Planner&) = default;
 
     /**
-     * Whether or not this command can be planned by this planner.
-     *
-     * Implemented by @ref PlannerForCommandType<T>
-     *
-     * @param command The command to check.
-     * @return Whether or not this planner can plan that type of command.
-     */
-    [[nodiscard]] virtual bool is_applicable(
-        const MotionCommand& command) const = 0;
-
-    /**
      * Plan a trajectory for this request. This is guaranteed to be a request
      * that this planner is able to handle (according to @ref is_applicable)
      *
@@ -54,25 +43,6 @@ public:
 
 private:
     std::string name_;
-};
-
-template <typename CommandType>
-class PlannerForCommandType : public Planner {
-public:
-    PlannerForCommandType(const std::string& name) : Planner(name){};
-    ~PlannerForCommandType() override = default;
-
-    PlannerForCommandType(const PlannerForCommandType& other) = default;
-    PlannerForCommandType& operator=(const PlannerForCommandType& other) =
-        default;
-    PlannerForCommandType(PlannerForCommandType&& other) noexcept = default;
-    PlannerForCommandType& operator=(PlannerForCommandType&& other) noexcept =
-        default;
-
-    [[nodiscard]] bool is_applicable(
-        const MotionCommand& command) const override {
-        return std::holds_alternative<CommandType>(command);
-    }
 };
 
 }  // namespace planning
