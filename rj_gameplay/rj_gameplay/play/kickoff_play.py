@@ -40,7 +40,6 @@ class PrepareKickoff(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         if self._state == State.INIT:
             if len(self.pts) == 0:
                 self.create_pts(world_state)
@@ -86,7 +85,6 @@ class Kickoff(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         if self._state == State.INIT:
             if len(self.pts) == 0:
                 self.create_pts(world_state)
@@ -136,7 +134,6 @@ class DefendKickoff(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         if self._state == State.INIT:
             self.prioritized_tactics.append(goalie_tactic.GoalieTactic(world_state, 0))
             self.prioritized_tactics.append(wall_tactic.WallTactic(world_state, 5))

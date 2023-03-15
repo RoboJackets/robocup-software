@@ -57,7 +57,6 @@ class Mark(skill.ISkill):
         target_vel: np.ndarray = np.array([0.0, 0.0]),
         ignore_ball: bool = False,
     ):
-
         self.__name__ = "Mark"
         self.robot = robot
         self.target_robot = target_robot
@@ -114,7 +113,10 @@ class Mark(skill.ISkill):
             return False
 
     def __str__(self):
-        return f"Mark(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_robot.id if self.target_robot is not None else '??'})"
+        return (
+            f"Mark(robot={self.robot.id if self.robot is not None else '??'},"
+            f" target={self.target_robot.id if self.target_robot is not None else '??'})"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()

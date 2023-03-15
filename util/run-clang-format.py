@@ -38,7 +38,7 @@ def run_format(args, file_queue, lock):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Runs clang-format over all files " "in a compilation database."
+        description="Runs clang-format over all files in a compilation database."
     )
     parser.add_argument(
         "-clang-format-binary",

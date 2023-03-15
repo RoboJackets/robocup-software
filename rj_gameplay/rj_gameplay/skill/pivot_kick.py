@@ -38,7 +38,6 @@ class PivotKick(skill.Skill):
         threshold: float = 0.02,
         priority: int = 1,
     ) -> None:
-
         self.__name__ = "pivot kick"
         self.robot = robot
         # TODO: make skill take either np array or tuple (and auto-cast to whichever is best)
@@ -95,7 +94,10 @@ class PivotKick(skill.Skill):
         return self._state == State.DONE
 
     def __str__(self):
-        return f"Pivot(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point})"
+        return (
+            f"Pivot(robot={self.robot.id if self.robot is not None else '??'},"
+            f" target={self.target_point})"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()

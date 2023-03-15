@@ -93,7 +93,11 @@ class LineKick(skill.Skill):
         return False
 
     def __str__(self):
-        return f"LineKick(robot={self.robot.id if self.robot is not None else '??'}, target={self.target_point}, chip={self.chip}, kick_speed={self.kick_speed})"
+        return (
+            f"LineKick(robot={self.robot.id if self.robot is not None else '??'},"
+            f" target={self.target_point}, chip={self.chip},"
+            f" kick_speed={self.kick_speed})"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
