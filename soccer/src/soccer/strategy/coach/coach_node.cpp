@@ -221,8 +221,8 @@ void CoachNode::publish_static_obstacles() {
 
 rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
     // Create defense areas as rectangular area obstacles
-    auto our_defense_area{
-        std::make_shared<rj_geometry::Rect>(current_field_dimensions_.our_defense_area())};
+    auto our_defense_area{std::make_shared<rj_geometry::Rect>(
+        std::move(current_field_dimensions_.our_defense_area()))};
 
     // Sometimes there is a greater distance we need to keep:
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
