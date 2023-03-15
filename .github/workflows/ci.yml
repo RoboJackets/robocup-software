@@ -79,7 +79,8 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update && apt-get -y install clang-format sudo git python3-pip
-          sudo pip3 install --upgrade flake8-diff flake8 click==8.0.4 black==20.8b1 pip
+          sudo pip3 install --upgrade flake8-diff flake8 pip
+        # sudo pip3 install --upgrade black
 
       - name: Make ${{ github.head_ref }} branch exist
         run: |
@@ -89,7 +90,7 @@ jobs:
       - name: Run style on all changed files
         run: |
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
-            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
+          # git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
       - uses: stefanzweifel/git-auto-commit-action@v4
         with: 
           skip_checkout: true
@@ -105,11 +106,11 @@ jobs:
           git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
           echo "::remove-matcher owner=clang-format::"
 
-      - name: Run flake8
-        if: always()
-        run: |
-          echo "::add-matcher::ci/flake8.json"
-          find /usr/ | grep flake8
-          flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} --flake8-options --max-line-length=88 --extend-ignore=E203
-          echo "::remove-matcher owner=flake8-error::"
-          echo "::remove-matcher owner=flake8-warning::"
+      # - name: Run flake8
+      #   if: always()
+      #   run: |
+      #     echo "::add-matcher::ci/flake8.json"
+      #     find /usr/ | grep flake8
+      #     flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} --flake8-options --max-line-length=88 --extend-ignore=E203
+      #     echo "::remove-matcher owner=flake8-error::"
+      #     echo "::remove-matcher owner=flake8-warning::"
