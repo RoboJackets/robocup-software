@@ -19,7 +19,6 @@ class PickRobotById(stp.role.CostFn):
         robot: stp.rc.Robot,
         world_state: stp.rc.WorldState,
     ) -> float:
-
         if robot.id == self._robot_id:
             return 0.0
 

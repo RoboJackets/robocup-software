@@ -117,9 +117,11 @@ def merge_replacement_files(tmpdir, mergefile):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run clang-tidy against changed files, and "
-        "output diagnostics only for modified "
-        "lines."
+        description=(
+            "Run clang-tidy against changed files, and "
+            "output diagnostics only for modified "
+            "lines."
+        )
     )
     parser.add_argument(
         "-clang-tidy-binary",
@@ -137,21 +139,25 @@ def main():
         "-regex",
         metavar="PATTERN",
         default=None,
-        help="custom pattern selecting file paths to check "
-        "(case sensitive, overrides -iregex)",
+        help=(
+            "custom pattern selecting file paths to check "
+            "(case sensitive, overrides -iregex)"
+        ),
     )
     parser.add_argument(
         "-iregex",
         metavar="PATTERN",
         default=r".*\.(cpp|cc|c\+\+|cxx|c|cl|h|hpp|m|mm|inc)",
-        help="custom pattern selecting file paths to check "
-        "(case insensitive, overridden by -regex)",
+        help=(
+            "custom pattern selecting file paths to check "
+            "(case insensitive, overridden by -regex)"
+        ),
     )
     parser.add_argument(
         "-ignore",
         metavar="PATTERN",
         default=None,
-        help="custom pattern selecting file paths to ignore " "(case sensitive)",
+        help="custom pattern selecting file paths to ignore (case sensitive)",
     )
     parser.add_argument(
         "-j",
@@ -173,7 +179,7 @@ def main():
     )
     parser.add_argument(
         "-checks",
-        help="checks filter, when not specified, use clang-tidy " "default",
+        help="checks filter, when not specified, use clang-tidy default",
         default="",
     )
     parser.add_argument(
@@ -186,22 +192,24 @@ def main():
             "-export-fixes",
             metavar="FILE",
             dest="export_fixes",
-            help="Create a yaml file to store suggested fixes in, "
-            "which can be applied with clang-apply-replacements.",
+            help=(
+                "Create a yaml file to store suggested fixes in, "
+                "which can be applied with clang-apply-replacements."
+            ),
         )
     parser.add_argument(
         "-extra-arg",
         dest="extra_arg",
         action="append",
         default=[],
-        help="Additional argument to append to the compiler " "command line.",
+        help="Additional argument to append to the compiler command line.",
     )
     parser.add_argument(
         "-extra-arg-before",
         dest="extra_arg_before",
         action="append",
         default=[],
-        help="Additional argument to prepend to the compiler " "command line.",
+        help="Additional argument to prepend to the compiler command line.",
     )
     parser.add_argument(
         "-quiet",
