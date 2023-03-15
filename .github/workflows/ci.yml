@@ -79,7 +79,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update && apt-get -y install clang-format sudo git python3-pip
-          sudo pip3 install --upgrade flake8-diff flake8 black==20.8b1 pip
+          sudo pip3 install --upgrade flake8-diff flake8 click==8.0.4 black==20.8b1 pip
 
       - name: Make ${{ github.head_ref }} branch exist
         run: |
