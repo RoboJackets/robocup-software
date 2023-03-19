@@ -23,10 +23,7 @@ public:
         Control
     };
 
-    CollectPlanner()
-        : Planner("collect"),
-          average_ball_vel_(0, 0),
-          approach_direction_(0, 0) {}
+    CollectPlanner() : Planner("collect"), average_ball_vel_(0, 0), approach_direction_(0, 0) {}
 
     Trajectory plan(const PlanRequest& plan_request) override;
 

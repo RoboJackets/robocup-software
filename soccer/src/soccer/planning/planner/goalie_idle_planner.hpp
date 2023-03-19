@@ -19,7 +19,7 @@ namespace planning {
  */
 class GoalieIdlePlanner : public Planner {
 public:
-    GoalieIdlePlanner() : Planner("goalie_idle") {}
+    GoalieIdlePlanner() : Planner("goalie_idle") = default;
 
     /*
      * From Planner superclass (see planner.hpp).

@@ -22,9 +22,7 @@ public:
     };
 
     SettlePlanner()
-        : Planner("settle"),
-          avg_instantaneous_intercept_target_(0, 0),
-          average_ball_vel_(0, 0) {}
+        : Planner("settle"), avg_instantaneous_intercept_target_(0, 0), average_ball_vel_(0, 0) {}
 
     Trajectory plan(const PlanRequest& plan_request) override;
 

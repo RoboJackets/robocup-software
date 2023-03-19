@@ -86,84 +86,84 @@ bool operator==(const MotionCommand& a, const MotionCommand& b);
 
 /*/***/
 /* * An empty "do-nothing" motion command.*/
-/* */*/
-/*struct EmptyMotionCommand {};*/
-/*bool operator==([[maybe_unused]] const EmptyMotionCommand& a,*/
-/*                [[maybe_unused]] const EmptyMotionCommand& b);*/
+/* */ * /
+    /*struct EmptyMotionCommand {};*/
+    /*bool operator==([[maybe_unused]] const EmptyMotionCommand& a,*/
+    /*                [[maybe_unused]] const EmptyMotionCommand& b);*/
 
-/*/**/
-/* * Make robot face along its path (for PTMC).*/
-/* */*/
-/*struct FaceTarget {};*/
-/*bool operator==([[maybe_unused]] const FaceTarget& a, [[maybe_unused]] const FaceTarget& b);*/
+    /*/**/
+    /* * Make robot face along its path (for PTMC).*/
+    /* */ * /
+    /*struct FaceTarget {};*/
+    /*bool operator==([[maybe_unused]] const FaceTarget& a, [[maybe_unused]] const FaceTarget& b);*/
 
-/*/**/
-/* * Make robot face a specific heading while traveling (for PTMC).*/
-/* **/
-/* * TODO(?): heading based on what coord frame? global frame or robot-centric?*/
-/* */*/
-/*struct FaceAngle {*/
-/*    double target;*/
-/*};*/
-/*bool operator==(const FaceAngle& a, const FaceAngle& b);*/
+    /*/**/
+    /* * Make robot face a specific heading while traveling (for PTMC).*/
+    /* **/
+    /* * TODO(?): heading based on what coord frame? global frame or robot-centric?*/
+    /* */ * /
+    /*struct FaceAngle {*/
+    /*    double target;*/
+    /*};*/
+    /*bool operator==(const FaceAngle& a, const FaceAngle& b);*/
 
-/*/**/
-/* * Make robot face a specific point while traveling (for PTMC).*/
-/* */*/
-/*struct FacePoint {*/
-/*    rj_geometry::Point face_point;*/
-/*};*/
-/*bool operator==(const FacePoint& a, const FacePoint& b);*/
+    /*/**/
+    /* * Make robot face a specific point while traveling (for PTMC).*/
+    /* */ * /
+    /*struct FacePoint {*/
+    /*    rj_geometry::Point face_point;*/
+    /*};*/
+    /*bool operator==(const FacePoint& a, const FacePoint& b);*/
 
-/*/**/
-/* * Make robot face ball while traveling (for PTMC).*/
-/* */*/
-/*struct FaceBall {};*/
-/*bool operator==([[maybe_unused]] const FaceBall& a, [[maybe_unused]] const FaceBall& b);*/
+    /*/**/
+    /* * Make robot face ball while traveling (for PTMC).*/
+    /* */ * /
+    /*struct FaceBall {};*/
+    /*bool operator==([[maybe_unused]] const FaceBall& a, [[maybe_unused]] const FaceBall& b);*/
 
-/*using PathTargetFaceOption = std::variant<FaceTarget, FaceAngle, FacePoint, FaceBall>;*/
-/*/***/
-/* * Move to a particular target with a particular ending velocity, avoiding obstacles.*/
-/* */*/
-/*struct PathTargetMotionCommand {*/
-/*    LinearMotionInstant goal{};*/
-/*    PathTargetFaceOption face_option = FaceTarget{};*/
-/*    bool ignore_ball = false;*/
-/*};*/
-/*bool operator==(const PathTargetMotionCommand& a, const PathTargetMotionCommand& b);*/
+    /*using PathTargetFaceOption = std::variant<FaceTarget, FaceAngle, FacePoint, FaceBall>;*/
+    /*/***/
+    /* * Move to a particular target with a particular ending velocity, avoiding obstacles.*/
+    /* */ * /
+    /*struct PathTargetMotionCommand {*/
+    /*    LinearMotionInstant goal{};*/
+    /*    PathTargetFaceOption face_option = FaceTarget{};*/
+    /*    bool ignore_ball = false;*/
+    /*};*/
+    /*bool operator==(const PathTargetMotionCommand& a, const PathTargetMotionCommand& b);*/
 
-/*/***/
-/* * Pivot around a given point, with a given target angle.*/
-/* **/
-/* * The robot will face the pivot_point throughout the command.*/
-/* */*/
-/*struct PivotMotionCommand {*/
-/*    rj_geometry::Point pivot_point;*/
-/*    rj_geometry::Point pivot_target;*/
-/*};*/
-/*bool operator==(const PivotMotionCommand& a, const PivotMotionCommand& b);*/
+    /*/***/
+    /* * Pivot around a given point, with a given target angle.*/
+    /* **/
+    /* * The robot will face the pivot_point throughout the command.*/
+    /* */ * /
+    /*struct PivotMotionCommand {*/
+    /*    rj_geometry::Point pivot_point;*/
+    /*    rj_geometry::Point pivot_target;*/
+    /*};*/
+    /*bool operator==(const PivotMotionCommand& a, const PivotMotionCommand& b);*/
 
-/*/***/
-/* * Intercept a moving ball, disregarding whether or not we can actually capture*/
-/* * it.*/
-/* **/
-/* * Designed for goal defense.*/
-/* */*/
-/*struct InterceptMotionCommand {*/
-/*    rj_geometry::Point target;*/
-/*};*/
-/*bool operator==(const InterceptMotionCommand& a, const InterceptMotionCommand& b);*/
+    /*/***/
+    /* * Intercept a moving ball, disregarding whether or not we can actually capture*/
+    /* * it.*/
+    /* **/
+    /* * Designed for goal defense.*/
+    /* */ * /
+    /*struct InterceptMotionCommand {*/
+    /*    rj_geometry::Point target;*/
+    /*};*/
+    /*bool operator==(const InterceptMotionCommand& a, const InterceptMotionCommand& b);*/
 
-/*/**/
-/* * Make the Goalie track the ball when not saving shots.*/
-/* */*/
-/*struct GoalieIdleMotionCommand {};*/
-/*bool operator==([[maybe_unused]] const GoalieIdleMotionCommand& a,*/
-/*                [[maybe_unused]] const GoalieIdleMotionCommand& b);*/
+    /*/**/
+    /* * Make the Goalie track the ball when not saving shots.*/
+    /* */ * /
+    /*struct GoalieIdleMotionCommand {};*/
+    /*bool operator==([[maybe_unused]] const GoalieIdleMotionCommand& a,*/
+    /*                [[maybe_unused]] const GoalieIdleMotionCommand& b);*/
 
-/*/**/
-/* * Make the Goalie track the ball when not saving shots.*/
-/* */*/
+    /*/**/
+    /* * Make the Goalie track the ball when not saving shots.*/
+    /* */ * /
 /*struct GoalieIdleCommand {};*/
 
 /*using MotionCommand =*/
@@ -192,8 +192,7 @@ namespace rj_convert {
 
 template <>
 struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
-    static rj_msgs::msg::MotionCommand to_ros(
-        const planning::MotionCommand& from) {
+    static rj_msgs::msg::MotionCommand to_ros(const planning::MotionCommand& from) {
         rj_msgs::msg::MotionCommand result;
 
         // convert the LinearMotionInstant target
@@ -221,10 +220,9 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         return result;
     }
 
-    static planning::MotionCommand from_ros(
-        const rj_msgs::msg::MotionCommand& from) {
+    static planning::MotionCommand from_ros(const rj_msgs::msg::MotionCommand& from) {
         planning::MotionCommand result;
-    
+
         // convert the LinearMotionInstant msg to cpp
         result.goal = convert_from_ros(from.target);
 
@@ -232,7 +230,8 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         if (!from.override_angle.empty()) {
             result.face_option = planning::FaceAngle{from.override_angle.front()};
         } else if (!from.override_face_point.empty()) {
-            result.face_option = planning::FacePoint{convert_from_ros(from.override_face_point.front())};
+            result.face_option =
+                planning::FacePoint{convert_from_ros(from.override_face_point.front())};
         } else if (from.face_ball) {
             result.face_option = planning::FaceBall{};
         } else {
@@ -254,7 +253,8 @@ ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
 
 /* template <> */
 /* struct RosConverter<planning::WorldVelMotionCommand, rj_msgs::msg::WorldVelMotionCommand> { */
-/*     static rj_msgs::msg::WorldVelMotionCommand to_ros(const planning::WorldVelMotionCommand& from) { */
+/*     static rj_msgs::msg::WorldVelMotionCommand to_ros(const planning::WorldVelMotionCommand&
+ * from) { */
 /*         return rj_msgs::build<rj_msgs::msg::WorldVelMotionCommand>().world_vel( */
 /*             convert_to_ros(from.world_vel)); */
 /*     } */
@@ -275,7 +275,8 @@ ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
 /*             .pivot_target(convert_to_ros(from.pivot_target)); */
 /*     } */
 
-/*     static planning::PivotMotionCommand from_ros(const rj_msgs::msg::PivotMotionCommand& from) { */
+/*     static planning::PivotMotionCommand from_ros(const rj_msgs::msg::PivotMotionCommand& from) {
+ */
 /*         return planning::PivotMotionCommand{convert_from_ros(from.pivot_point), */
 /*                                             convert_from_ros(from.pivot_target)}; */
 /*     } */
@@ -285,7 +286,8 @@ ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
 
 /* template <> */
 /* struct RosConverter<planning::SettleMotionCommand, rj_msgs::msg::SettleMotionCommand> { */
-/*     static rj_msgs::msg::SettleMotionCommand to_ros(const planning::SettleMotionCommand& from) { */
+/*     static rj_msgs::msg::SettleMotionCommand to_ros(const planning::SettleMotionCommand& from) {
+ */
 /*         rj_msgs::msg::SettleMotionCommand result; */
 /*         if (from.target.has_value()) { */
 /*             result.maybe_target.push_back(convert_to_ros(from.target.value())); */
@@ -293,7 +295,8 @@ ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
 /*         return result; */
 /*     } */
 
-/*     static planning::SettleMotionCommand from_ros(const rj_msgs::msg::SettleMotionCommand& from) { */
+/*     static planning::SettleMotionCommand from_ros(const rj_msgs::msg::SettleMotionCommand& from)
+ * { */
 /*         planning::SettleMotionCommand result; */
 /*         if (!from.maybe_target.empty()) { */
 /*             result.target = convert_from_ros(from.maybe_target.front()); */
@@ -320,7 +323,8 @@ ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
 /* ASSOCIATE_CPP_ROS(planning::CollectMotionCommand, rj_msgs::msg::CollectMotionCommand); */
 
 /* template <> */
-/* struct RosConverter<planning::GoalieIdleMotionCommand, rj_msgs::msg::GoalieIdleMotionCommand> { */
+/* struct RosConverter<planning::GoalieIdleMotionCommand, rj_msgs::msg::GoalieIdleMotionCommand> {
+ */
 /*     // clang-format is disagreeing with itself here, so I disabled it for this block */
 /*     // clang-format off */
 /*     static rj_msgs::msg::GoalieIdleMotionCommand to_ros( */
@@ -379,7 +383,8 @@ ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
 /*         } else if (const auto* path_target = */
 /*                        std::get_if<planning::PathTargetMotionCommand>(&from)) { */
 /*             result.path_target_command.emplace_back(convert_to_ros(*path_target)); */
-/*         } else if (const auto* world_vel = std::get_if<planning::WorldVelMotionCommand>(&from)) { */
+/*         } else if (const auto* world_vel = std::get_if<planning::WorldVelMotionCommand>(&from)) {
+ */
 /*             result.world_vel_command.emplace_back(convert_to_ros(*world_vel)); */
 /*         } else if (const auto* pivot = std::get_if<planning::PivotMotionCommand>(&from)) { */
 /*             result.pivot_command.emplace_back(convert_to_ros(*pivot)); */
@@ -387,9 +392,11 @@ ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
 /*             result.settle_command.emplace_back(convert_to_ros(*settle)); */
 /*         } else if (const auto* collect = std::get_if<planning::CollectMotionCommand>(&from)) { */
 /*             result.collect_command.emplace_back(convert_to_ros(*collect)); */
-/*         } else if (const auto* line_kick = std::get_if<planning::LineKickMotionCommand>(&from)) { */
+/*         } else if (const auto* line_kick = std::get_if<planning::LineKickMotionCommand>(&from)) {
+ */
 /*             result.line_kick_command.emplace_back(convert_to_ros(*line_kick)); */
-/*         } else if (const auto* intercept = std::get_if<planning::InterceptMotionCommand>(&from)) { */
+/*         } else if (const auto* intercept = std::get_if<planning::InterceptMotionCommand>(&from))
+ * { */
 /*             result.intercept_command.emplace_back(convert_to_ros(*intercept)); */
 /*         } else if (const auto* goalie_idle = */
 /*                        std::get_if<planning::GoalieIdleMotionCommand>(&from)) { */

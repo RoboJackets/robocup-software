@@ -21,7 +21,7 @@ namespace planning {
  */
 class LineKickPlanner : public Planner {
 public:
-    LineKickPlanner() : Planner("LineKickPlanner"){};
+    LineKickPlanner() : Planner("LineKickPlanner") = default;
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {
