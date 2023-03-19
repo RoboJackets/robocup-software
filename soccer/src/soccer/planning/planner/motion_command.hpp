@@ -62,7 +62,7 @@ using PathTargetFaceOption = std::variant<FaceTarget, FaceAngle, FacePoint, Face
  * TODO(Kevin): fix this doc
  */
 struct MotionCommand {
-    std::string name{};
+    std::string name{"halt"};
     LinearMotionInstant target{};
     PathTargetFaceOption face_option = FaceTarget{};
     bool ignore_ball{false};
@@ -75,7 +75,7 @@ bool operator==(const MotionCommand& a, const MotionCommand& b);
 namespace rj_convert {
 
 /*
- * These methods allow conversion of ROS' .msg types to standard C++ structs.
+ * These methods allow conversion of ROS .msg types to standard C++ structs.
  * The reason we do this is because though ROS auto-generates C++ structs for
  * each msg (that's why we can use them in code), each auto-generated struct
  * cannot be modified.

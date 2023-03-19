@@ -33,9 +33,9 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // avoid ball
     bool ignore_ball = false;
 
-    planning::LinearMotionInstant goal{target_pt, target_vel};
-    intent.motion_command = planning::PathTargetMotionCommand{goal, face_option, ignore_ball};
-    intent.motion_command_name = "path_target";
+    planning::LinearMotionInstant target{target_pt, target_vel};
+    intent.motion_command =
+        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
     return intent;
 }
 
