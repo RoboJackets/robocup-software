@@ -9,7 +9,7 @@
 namespace planning {
 
 Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
-    InterceptMotionCommand command = std::get<InterceptMotionCommand>(plan_request.motion_command);
+    const MotionCommand& command = plan_request.motion_command;
 
     // Start state for the specified robot
     RobotInstant start_instant = plan_request.start;
@@ -25,7 +25,8 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     // Time for ball to hit target point
     // Target point is projected into ball velocity line
     rj_geometry::Point target_pos_on_line;
-    RJ::Seconds ball_to_point_time = ball.query_seconds_near(command.target, &target_pos_on_line);
+    RJ::Seconds ball_to_point_time =
+        ball.query_seconds_near(command.target.position, &target_pos_on_line);
 
     // vector from robot to target
     rj_geometry::Point bot_to_target = (target_pos_on_line - start_instant.position());

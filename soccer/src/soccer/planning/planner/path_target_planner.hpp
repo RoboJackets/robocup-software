@@ -13,7 +13,7 @@ namespace planning {
 
 class PathTargetPlanner : public Planner {
 public:
-    PathTargetPlanner() : Planner("PathTargetPlanner") = default;
+    PathTargetPlanner() : Planner("PathTargetPlanner") {}
     ~PathTargetPlanner() override = default;
 
     PathTargetPlanner(PathTargetPlanner&&) noexcept = default;
@@ -43,7 +43,7 @@ private:
 
     // vars to tell if is_done
     std::optional<LinearMotionInstant> cached_start_instant_;
-    std::optional<LinearMotionInstant> cached_goal_instant_;
+    std::optional<LinearMotionInstant> cached_target_instant_;
 };
 
 }  // namespace planning

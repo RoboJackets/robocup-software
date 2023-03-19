@@ -32,13 +32,6 @@ public:
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
-    // if no other planners apply, this one does (see the order of planners in
-    // planner_node.cpp)
-    [[nodiscard]] bool is_applicable(
-        const MotionCommand& /* command */) const override {
-        return true;
-    }
-
     /// Uses an RRT to find a point near to @pt that isn't blocked by obstacles.
     /// If @prev_pt is give, only uses a newly-found point if it is closer to @pt
     /// by a configurable threshold.

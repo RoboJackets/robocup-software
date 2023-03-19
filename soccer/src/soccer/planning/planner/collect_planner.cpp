@@ -18,7 +18,7 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
-    const auto& command = std::get<CollectMotionCommand>(plan_request.motion_command);
+    const MotionCommand& command = plan_request.motion_command;
 
     // Start state for specified robot
     RobotInstant start_instant = plan_request.start;

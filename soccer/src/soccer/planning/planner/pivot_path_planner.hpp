@@ -5,7 +5,7 @@
 namespace planning {
 class PivotPathPlanner : public Planner {
 public:
-    PivotPathPlanner() : Planner("PivotPathPlanner") = default;
+    PivotPathPlanner() : Planner("PivotPathPlanner") {}
     ~PivotPathPlanner() override = default;
 
     PivotPathPlanner(PivotPathPlanner&&) noexcept = default;

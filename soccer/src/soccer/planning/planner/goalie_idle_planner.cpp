@@ -22,24 +22,22 @@ Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
     }
 
     // Create a new PathTargetMotionCommand to fill in with desired idle_pt
-    auto command = PathTargetMotionCommand{};
     auto idle_pt = get_idle_pt(plan_request.world_state);
-    command.goal.position = idle_pt;
+    LinearMotionInstant target{idle_pt};
 
     // Make robot face ball
     auto angle_function = AngleFns::face_point(plan_request.world_state->ball.position);
 
     // call Replanner to generate a Trajectory
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{plan_request.start, command.goal, static_obstacles, dynamic_obstacles,
+        Replanner::PlanParams{plan_request.start, target, static_obstacles, dynamic_obstacles,
                               plan_request.constraints, angle_function, RJ::Seconds(3.0)},
         std::move(previous_));
 
     // Debug drawing
     if (plan_request.debug_drawer != nullptr) {
         plan_request.debug_drawer->draw_circle(
-            rj_geometry::Circle(command.goal.position, static_cast<float>(draw_radius)),
-            draw_color);
+            rj_geometry::Circle(target.position, static_cast<float>(draw_radius)), draw_color);
     }
 
     // Cache current Trajectory, return

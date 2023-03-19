@@ -14,7 +14,7 @@ namespace planning {
 
 class InterceptPlanner : public Planner {
 public:
-    InterceptPlanner() : Planner("InterceptPlanner") = default;
+    InterceptPlanner() : Planner("InterceptPlanner"){};
 
     Trajectory plan(const PlanRequest& request) override;
 

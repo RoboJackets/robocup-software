@@ -23,11 +23,11 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
-    auto command = std::get<SettleMotionCommand>(plan_request.motion_command);
+    const MotionCommand& command = plan_request.motion_command;
 
     // The direction we will try and bounce the ball when we dampen it to
     // speed up actions after capture
-    target_bounce_direction_ = command.target;
+    target_bounce_direction_ = command.target.position;
 
     // Start state for the specified robot
     RobotInstant start_instant = plan_request.start;

@@ -18,14 +18,15 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
 
     const float ball_avoid_distance = 0.10;
 
-    const auto& command = std::get<LineKickMotionCommand>(plan_request.motion_command);
+    const MotionCommand& command = plan_request.motion_command;
 
     if (plan_request.virtual_obstacles.hit(plan_request.start.position())) {
         prev_path_ = Trajectory{};
         return prev_path_;
     }
 
-    if (target_kick_pos_.has_value() && command.target.dist_to(target_kick_pos_.value()) > 0.1) {
+    if (target_kick_pos_.has_value() &&
+        command.target.position.dist_to(target_kick_pos_.value()) > 0.1) {
         prev_path_ = Trajectory{};
         target_kick_pos_ = std::nullopt;
     }
@@ -92,8 +93,8 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
 
     // only plan line kick if not is_done
     if (!this->is_done()) {
-        LinearMotionInstant target{ball.position,
-                                   (command.target - ball.position).normalized(approach_speed)};
+        LinearMotionInstant target{
+            ball.position, (command.target.position - ball.position).normalized(approach_speed)};
 
         auto ball_trajectory = ball.make_trajectory();
 
@@ -117,7 +118,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
                 obstacles_with_ball,
                 dynamic_obstacles,
                 plan_request.constraints,
-                AngleFns::face_angle(ball.position.angle_to(command.target))};
+                AngleFns::face_angle(ball.position.angle_to(command.target.position))};
             path = Replanner::create_plan(params, prev_path_);
             path.set_debug_text("slow ball 1");
         } else {
@@ -138,11 +139,11 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
                                          static_obstacles,
                                          dynamic_obstacles,
                                          plan_request.constraints,
-                                         AngleFns::face_point(command.target)};
+                                         AngleFns::face_point(command.target.position)};
             path = Replanner::create_plan(params, prev_path_);
             path.set_debug_text("slow ball 2");
         }
-        target_kick_pos_ = command.target;
+        target_kick_pos_ = command.target.position;
         path.stamp(RJ::now());
         prev_path_ = path;
         return path;
@@ -158,7 +159,8 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
         RJ::Time intercept_time = ball.query_time_near(*target_kick_pos_, &target.position);
         RJ::Time end_time_adjusted = prev_path_.end_time() - RJ::Seconds(1.0);
         if (previous_duration_remaining < RJ::Seconds(0.0)) {
-            target.velocity = (command.target - target.position).normalized(approach_speed);
+            target.velocity =
+                (command.target.position - target.position).normalized(approach_speed);
             target.position -= target.velocity.normalized(kRobotRadius + kBallRadius * 2);
 
             Replanner::PlanParams params{start_instant,
@@ -166,7 +168,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
                                          static_obstacles,
                                          dynamic_obstacles,
                                          plan_request.constraints,
-                                         AngleFns::face_point(command.target)};
+                                         AngleFns::face_point(command.target.position)};
             Trajectory path = Replanner::create_plan(params, prev_path_);
 
             if (!path.empty()) {
@@ -213,7 +215,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
         auto ball_state_predicted = ball.predict_at(rollout_time);
         LinearMotionInstant target{ball_state_predicted.position};
         target_kick_pos_ = target.position;
-        target.velocity = (command.target - target.position).normalized(approach_speed);
+        target.velocity = (command.target.position - target.position).normalized(approach_speed);
         target.position -= target.velocity.normalized(kRobotRadius + kBallRadius * 2);
 
         vector<Point> intermediate_points;
@@ -247,7 +249,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
 
     auto ball_predicted = ball.predict_at(cur_time);
     LinearMotionInstant target{ball_predicted.position};
-    target.velocity = (command.target - target.position).normalized(approach_speed);
+    target.velocity = (command.target.position - target.position).normalized(approach_speed);
     target.position -= target.velocity.normalized(kRobotRadius * 3);
 
     auto ball_path = ball.make_trajectory();
@@ -258,7 +260,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
                                  static_obstacles,
                                  dynamic_obstacles,
                                  plan_request.constraints,
-                                 AngleFns::face_point(command.target)};
+                                 AngleFns::face_point(command.target.position)};
     Trajectory path = Replanner::create_plan(params, prev_path_);
 
     path.set_debug_text("Approaching cautious");
