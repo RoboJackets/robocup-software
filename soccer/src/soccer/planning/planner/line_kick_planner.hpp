@@ -18,6 +18,9 @@ namespace planning {
  * ball and robot intersect at the same time.
  *
  * TODO(Kyle): Overhaul this entire planner. It's sketchy right now.
+ *
+ * Params taken from MotionCommand:
+ *   target.position - planner will kick to this point
  */
 class LineKickPlanner : public Planner {
 public:

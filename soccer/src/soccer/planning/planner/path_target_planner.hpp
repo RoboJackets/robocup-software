@@ -11,6 +11,19 @@
 
 namespace planning {
 
+/**
+ * Planner which moves the robot to a desired point at a desired velocity. Will
+ * avoid all obstacles given in plan_request. Will avoid ball unless
+ * ignore_ball = true.
+ *
+ * Params taken from MotionCommand:
+ *   target.position - robot will end up at this point
+ *   target.velocity - robot will end up with this velocity on target.position
+ *   face_option - while travelling, robot will face the target point unless
+ *                 this is specified (see motion_command.hpp)
+ *
+ *   ignore_ball - when false, robot treats ball as obstacle
+ */
 class PathTargetPlanner : public Planner {
 public:
     PathTargetPlanner() : Planner("PathTargetPlanner") {}

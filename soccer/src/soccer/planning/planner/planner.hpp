@@ -6,6 +6,16 @@
 #include "planning/trajectory.hpp"
 
 namespace planning {
+
+/**
+ * Virtual base class for all Planners. An implementation of Planner must take
+ * in a PlanRequest from PlannerNode and output a Trajectory for the robot to
+ * take. Planners can be state machines internally, they simply must always
+ * output a valid Trajectory.
+ *
+ * Planners should also detail which fields of MotionCommand.msg they use, and
+ * for what purpose in the docstring.
+ */
 class Planner {
 public:
     explicit Planner(std::string name) : name_(std::move(name)) {}

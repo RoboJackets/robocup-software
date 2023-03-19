@@ -17,6 +17,9 @@ namespace planning {
  * @brief This planner finds a path to quickly get out of an obstacle. If the
  * start point isn't in an obstacle, returns a path containing only the start
  * point.
+ *
+ * Params taken from MotionCommand:
+ *   None
  */
 class EscapeObstaclesPathPlanner : public Planner {
 public:

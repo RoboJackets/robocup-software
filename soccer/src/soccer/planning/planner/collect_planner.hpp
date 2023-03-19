@@ -8,8 +8,11 @@
 namespace planning {
 
 /**
- * @brief Planner that tries to move onto and gain control of a slow moving
- * ball.
+ * @brief Planner that tries to move onto and gain control of the ball,
+ * wherever the ball is. Ball MUST be slow-moving before Collect can be called.
+ *
+ * Params taken from MotionCommand:
+ *   None
  */
 class CollectPlanner : public Planner {
 public:

@@ -10,7 +10,13 @@ class ConfigDouble;
 namespace planning {
 
 /**
- * @brief Planner which tries to move around the ball to intercept it
+ * @brief Planner which tries to get a fast-moving ball into its mouth to slow
+ * it down. Paired with CollectPlanner, this forms the basis of receiving
+ * passes.
+ *
+ * Params taken from MotionCommand:
+ *   target.position - the direction we will try and bounce the ball while
+ *                     slowing it down to speed up actions after capture
  */
 class SettlePlanner : public Planner {
 public:

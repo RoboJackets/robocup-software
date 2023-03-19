@@ -10,6 +10,10 @@ namespace planning {
  * or completely driving through and "slapping" the ball.
  *
  * Mostly used for the goalie to block shots (w/ a target point of 0,0).
+ *
+ * Params taken from MotionCommand:
+ *   target.position - planner will attempt to intercept ball as close to
+ *                     this point as possible
  */
 
 class InterceptPlanner : public Planner {

@@ -16,6 +16,9 @@ namespace planning {
 /**
  * @brief This planner gives the goalie a way to track the ball when it's not
  * otherwise occupied.
+ *
+ * Params taken from MotionCommand:
+ *   None
  */
 class GoalieIdlePlanner : public Planner {
 public:
