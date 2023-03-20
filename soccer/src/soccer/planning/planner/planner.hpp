@@ -7,37 +7,41 @@
 
 namespace planning {
 
+// TODO(Kevin): change this filename to path_planner.hpp!!
+
 /**
- * Virtual base class for all Planners. An implementation of Planner must take
+ * Virtual base class for all PathPlanners. An implementation of PathPlanner must take
  * in a PlanRequest from PlannerNode and output a Trajectory for the robot to
- * take. Planners can be state machines internally, they simply must always
+ * take. PathPlanners can be state machines internally, they simply must always
  * output a valid Trajectory.
  *
- * Planners should also detail which fields of MotionCommand.msg they use, and
+ * PathPlanners should also detail which fields of MotionCommand.msg they use, and
  * for what purpose in the docstring.
  */
-class Planner {
+class PathPlanner {
 public:
-    explicit Planner(std::string name) : name_(std::move(name)) {}
-    virtual ~Planner() = default;
+    explicit PathPlanner(std::string name) : name_(std::move(name)) {}
+    virtual ~PathPlanner() = default;
 
-    Planner(Planner&&) noexcept = default;
-    Planner& operator=(Planner&&) noexcept = default;
-    Planner(const Planner&) = default;
-    Planner& operator=(const Planner&) = default;
+    PathPlanner(PathPlanner&&) noexcept = default;
+    PathPlanner& operator=(PathPlanner&&) noexcept = default;
+    PathPlanner(const PathPlanner&) = default;
+    PathPlanner& operator=(const PathPlanner&) = default;
 
     /**
      * Plan a trajectory for this request. This is guaranteed to be a request
-     * that this planner is able to handle (according to @ref is_applicable)
+     * that this PathPlanner is able to handle (name in MotionCommand must
+     * match this PathPlanner's name).
      *
-     * @param request The request to plan.
-     * @return A trajectory for the robot to follow.
+     * @param request The request to plan for.
+     * @return A Trajectory for the robot (or empty Trajectory if planning
+     * fails).
      */
     virtual Trajectory plan(const PlanRequest& request) = 0;
 
     /**
-     * Reset this planner. Called after the planner is _not_ used to handle a
-     * given command for the robot.
+     * Reset this planner. Called if this planner fails to generate a valid
+     * Trajectory.
      */
     virtual void reset() {}
 

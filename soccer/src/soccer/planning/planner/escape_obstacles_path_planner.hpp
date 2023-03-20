@@ -21,12 +21,12 @@ namespace planning {
  * Params taken from MotionCommand:
  *   None
  */
-class EscapeObstaclesPathPlanner : public Planner {
+class EscapeObstaclesPathPlanner : public PathPlanner {
 public:
     // TODO(Kevin): think of better way to convey halted behavior than "EscapeObstaclesPathPlanner"
     // actually this is not HALT, control node does HALT for us
     // or maybe use PathTargetPlanner with no real velocity?
-    EscapeObstaclesPathPlanner() : Planner("halt"){};
+    EscapeObstaclesPathPlanner() : PathPlanner("halt"){};
     ~EscapeObstaclesPathPlanner() override = default;
 
     EscapeObstaclesPathPlanner(EscapeObstaclesPathPlanner&&) noexcept = default;
@@ -52,7 +52,8 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
-    PathTargetPlanner planner_;
+    // TODO(Kevin): delete this if unused
+    /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
 };
 

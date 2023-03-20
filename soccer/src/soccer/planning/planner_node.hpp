@@ -29,9 +29,16 @@
 
 namespace planning {
 
-class SharedStateInfo {
+/**
+ * Aggregates info from other ROS nodes into an unchanging "global state" for
+ * each planner.
+ *
+ * ("Global state" in quotes since many of these fields can be changed by other
+ * nodes; however, to PlannerNode these are immutable.)
+ */
+class GlobalState {
 public:
-    SharedStateInfo(rclcpp::Node* node) {
+    GlobalState(rclcpp::Node* node) {
         play_state_sub_ = node->create_subscription<rj_msgs::msg::PlayState>(
             referee::topics::kPlayStatePub, rclcpp::QoS(1),
             [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
@@ -127,7 +134,7 @@ private:
 /**
  * @brief Handles one robot's planning, which for us is a translation of RobotIntent to
  * Trajectory. Bundles together all relevant ROS pub/subs and forwards
- * RobotIntents to the appropriate Planner (see planner.hpp).
+ * RobotIntents to the appropriate PathPlanner (see planner.hpp).
  *
  * In general, prefers default behavior and WARN-level logs over crashing.
  *
@@ -137,7 +144,7 @@ private:
 class PlannerForRobot {
 public:
     PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories,
-                    SharedStateInfo* shared_state);
+                    const GlobalState& global_state);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;
@@ -228,13 +235,13 @@ private:
     [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
-    std::unordered_map<std::string, std::shared_ptr<Planner>> planners_;
-    std::shared_ptr<Planner> default_planner_;
-    std::shared_ptr<Planner> current_planner_;
+    std::unordered_map<std::string, std::shared_ptr<PathPlanner>> planners_;
+    std::shared_ptr<PathPlanner> default_planner_;
+    std::shared_ptr<PathPlanner> current_planner_;
 
     int robot_id_;
     TrajectoryCollection* robot_trajectories_;
-    SharedStateInfo* shared_state_;
+    const GlobalState& global_state_;
 
     bool had_break_beam_ = false;
 
@@ -260,7 +267,7 @@ public:
 private:
     std::vector<std::shared_ptr<PlannerForRobot>> robots_planners_;
     TrajectoryCollection robot_trajectories_;
-    SharedStateInfo shared_state_;
+    GlobalState global_state_;
     ::params::LocalROS2ParamProvider param_provider_;
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action

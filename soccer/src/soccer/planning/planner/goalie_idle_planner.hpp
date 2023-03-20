@@ -20,12 +20,12 @@ namespace planning {
  * Params taken from MotionCommand:
  *   None
  */
-class GoalieIdlePlanner : public Planner {
+class GoalieIdlePathPlanner : public PathPlanner {
 public:
-    GoalieIdlePlanner() : Planner("goalie_idle") {}
+    GoalieIdlePathPlanner() : PathPlanner("goalie_idle") {}
 
     /*
-     * From Planner superclass (see planner.hpp).
+     * From PathPlanner superclass (see planner.hpp).
      */
     Trajectory plan(const PlanRequest& plan_request) override;
     void reset() override;

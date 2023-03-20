@@ -12,7 +12,7 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
+Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     // TODO(?): ros param these
     const float approach_speed = 0.25;
 
@@ -270,7 +270,7 @@ Trajectory LineKickPlanner::plan(const PlanRequest& plan_request) {
     return path;
 }
 
-bool LineKickPlanner::is_done() const {
+bool LineKickPathPlanner::is_done() const {
     // if ball is fast, assume we have kicked it correctly
     // (either way we can't go recapture it)
     return average_ball_vel_.mag() > IS_DONE_BALL_VEL;

@@ -25,7 +25,7 @@ PlannerNode::PlannerNode()
     : rclcpp::Node("planner", rclcpp::NodeOptions{}
                                   .automatically_declare_parameters_from_overrides(true)
                                   .allow_undeclared_parameters(true)),
-      shared_state_(this),
+      global_state_(this),
       param_provider_{this, kPlanningParamModule} {
     // for _1, _2 etc. below
     using namespace std::placeholders;
@@ -42,7 +42,7 @@ PlannerNode::PlannerNode()
     robots_planners_.reserve(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
         auto planner =
-            std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
+            std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, global_state_);
         robots_planners_.emplace_back(std::move(planner));
     }
 }
@@ -145,25 +145,25 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                  TrajectoryCollection* robot_trajectories,
-                                 SharedStateInfo* shared_state)
+                                 const GlobalState& global_state)
     : node_{node},
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
-      shared_state_{shared_state},
+      global_state_{global_state},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
           fmt::format("planning_{}", robot_id)} {
     // create map of {planner name -> planner}
-    planners_[GoalieIdlePlanner().name()] = std::make_shared<GoalieIdlePlanner>();
-    planners_[InterceptPlanner().name()] = std::make_shared<InterceptPlanner>();
-    planners_[PathTargetPlanner().name()] = std::make_shared<PathTargetPlanner>();
-    planners_[SettlePlanner().name()] = std::make_shared<SettlePlanner>();
-    planners_[CollectPlanner().name()] = std::make_shared<CollectPlanner>();
-    planners_[LineKickPlanner().name()] = std::make_shared<LineKickPlanner>();
+    planners_[GoalieIdlePathPlanner().name()] = std::make_shared<GoalieIdlePathPlanner>();
+    planners_[InterceptPathPlanner().name()] = std::make_shared<InterceptPathPlanner>();
+    planners_[PathTargetPathPlanner().name()] = std::make_shared<PathTargetPathPlanner>();
+    planners_[SettlePathPlanner().name()] = std::make_shared<SettlePathPlanner>();
+    planners_[CollectPathPlanner().name()] = std::make_shared<CollectPathPlanner>();
+    planners_[LineKickPathPlanner().name()] = std::make_shared<LineKickPathPlanner>();
     planners_[PivotPathPlanner().name()] = std::make_shared<PivotPathPlanner>();
     planners_[EscapeObstaclesPathPlanner().name()] = std::make_shared<EscapeObstaclesPathPlanner>();
 
-    // EscapeObstaclesPathPlanner is our default planner
+    // EscapeObstaclesPathPlanner is our default path planner
     // because when robots start inside of an obstacle, all other planners will fail
     // TODO(Kevin): make EscapeObstaclesPathPlanner default start of all planner FSM so this doesn't
     // happen
@@ -244,19 +244,22 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
-    const auto* world_state = shared_state_->world_state();
-    const auto global_obstacles = shared_state_->global_obstacles();
-    const auto def_area_obstacles = shared_state_->def_area_obstacles();
-    const auto goalie_id = shared_state_->goalie_id();
-    const auto play_state = shared_state_->play_state();
-    const bool is_goalie = goalie_id == robot_id_;
-    const auto min_dist_from_ball = shared_state_->coach_state().global_override.min_dist_from_ball;
-    const auto max_robot_speed = shared_state_->coach_state().global_override.max_speed;
+    // pass global_state_ directly
+    const auto* world_state = global_state_.world_state();
+    const auto goalie_id = global_state_.goalie_id();
+    const auto play_state = global_state_.play_state();
+    const auto min_dist_from_ball = global_state_.coach_state().global_override.min_dist_from_ball;
+    const auto max_robot_speed = global_state_.coach_state().global_override.max_speed;
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
+
+    const auto global_obstacles = global_state_.global_obstacles();
     rj_geometry::ShapeSet real_obstacles = global_obstacles;
+
+    const auto def_area_obstacles = global_state_.def_area_obstacles();
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
+    const bool is_goalie = goalie_id == robot_id_;
     if (!is_goalie) {
         virtual_obstacles.add(def_area_obstacles);
     }
@@ -292,7 +295,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         motion_command = MotionCommand{};
     } else if (max_robot_speed < 0.0f) {
         // If coach node has speed set to negative, assume infinity.
-        // Negative numbers cause crashes, but 10 is an effectively infinite limit.
+        // Negative numbers cause crashes, but 10 m/s is an effectively infinite limit.
         motion_command = intent.motion_command;
         constraints.mot.max_speed = 10.0f;
     } else {
@@ -328,8 +331,8 @@ Trajectory PlannerForRobot::unsafe_plan_for_robot(const planning::PlanRequest& r
         // empty Trajectory means current_planner_ has failed
         // if current_planner_ fails, reset it before throwing exception
         current_planner_->reset();
-        throw std::runtime_error(
-            fmt::format("Planner name <{}> failed to plan!", current_planner_->name()));
+        throw std::runtime_error(fmt::format("PathPlanner <{}> failed to create valid Trajectory!",
+                                             current_planner_->name()));
     }
 
     if (!trajectory.angles_valid()) {
@@ -352,6 +355,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     } catch (std::runtime_error exception) {
         SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
         SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
+
         current_planner_ = default_planner_;
         trajectory = current_planner_->plan(request);
         // TODO(Kevin): planning should be able to send empty Trajectory
@@ -372,7 +376,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
     // draw obstacles for this robot
     // TODO: these will stack atop each other, since each robot draws obstacles
-    debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(255, 0, 0, 30));
+    debug_draw_.draw_shapes(global_state_.global_obstacles(), QColor(255, 0, 0, 30));
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
     debug_draw_.publish();
 
@@ -380,8 +384,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 }
 
 bool PlannerForRobot::robot_alive() const {
-    return shared_state_->world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < shared_state_->world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+    return global_state_.world_state()->our_robots.at(robot_id_).visible &&
+           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
 }
 
 bool PlannerForRobot::is_done() const {

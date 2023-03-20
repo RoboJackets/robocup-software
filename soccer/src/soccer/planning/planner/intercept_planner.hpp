@@ -5,7 +5,7 @@
 namespace planning {
 
 /**
- * Planner which tries to intercept the path ball as quickly as possible
+ * PathPlanner which tries to intercept the path ball as quickly as possible
  * Whether this means moving and stopping in the path of the ball
  * or completely driving through and "slapping" the ball.
  *
@@ -16,9 +16,9 @@ namespace planning {
  *                     this point as possible
  */
 
-class InterceptPlanner : public Planner {
+class InterceptPathPlanner : public PathPlanner {
 public:
-    InterceptPlanner() : Planner("intercept"){};
+    InterceptPathPlanner() : PathPlanner("intercept"){};
 
     Trajectory plan(const PlanRequest& request) override;
 

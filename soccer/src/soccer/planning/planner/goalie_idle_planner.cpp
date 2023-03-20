@@ -2,8 +2,8 @@
 
 namespace planning {
 
-Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
-    // lots of this is duplicated from PathTargetPlanner, because there's not
+Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
+    // lots of this is duplicated from PathTargetPathPlanner, because there's not
     // an easy way to convert from one PlanRequest to another
 
     // Collect obstacles
@@ -45,7 +45,7 @@ Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-rj_geometry::Point GoalieIdlePlanner::get_idle_pt(const WorldState* world_state) {
+rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state) {
     rj_geometry::Point ball_pos = world_state->ball.position;
     // TODO(Kevin): make this depend on team +/-x
     rj_geometry::Point goal_pt{0.0, 0.0};
@@ -58,8 +58,8 @@ rj_geometry::Point GoalieIdlePlanner::get_idle_pt(const WorldState* world_state)
     return idle_pt;
 }
 
-void GoalieIdlePlanner::reset() {}
+void GoalieIdlePathPlanner::reset() {}
 
-bool GoalieIdlePlanner::is_done() const { return false; }
+bool GoalieIdlePathPlanner::is_done() const { return false; }
 
 }  // namespace planning

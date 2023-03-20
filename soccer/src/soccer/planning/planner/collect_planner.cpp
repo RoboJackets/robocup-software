@@ -13,7 +13,7 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
+Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     BallState ball = plan_request.world_state->ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
@@ -126,7 +126,7 @@ Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
     return previous_;
 }
 
-void CollectPlanner::check_solution_validity(BallState ball, RobotInstant start) {
+void CollectPathPlanner::check_solution_validity(BallState ball, RobotInstant start) {
     bool near_ball = (ball.position - start.position()).mag() <
                      collect::PARAM_dist_cutoff_to_approach + collect::PARAM_dist_cutoff_to_control;
 
@@ -140,7 +140,7 @@ void CollectPlanner::check_solution_validity(BallState ball, RobotInstant start)
     }
 }
 
-void CollectPlanner::process_state_transition(BallState ball, RobotInstant start_instant) {
+void CollectPathPlanner::process_state_transition(BallState ball, RobotInstant start_instant) {
     // Do the transitions
     double dist = (start_instant.position() - ball.position).mag() - kRobotMouthRadius;
     double speed_diff = (start_instant.linear_velocity() - average_ball_vel_).mag() -
@@ -161,9 +161,10 @@ void CollectPlanner::process_state_transition(BallState ball, RobotInstant start
     }
 }
 
-Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, RobotInstant start,
-                                           const rj_geometry::ShapeSet& static_obstacles,
-                                           const std::vector<DynamicObstacle>& dynamic_obstacles) {
+Trajectory CollectPathPlanner::coarse_approach(
+    const PlanRequest& plan_request, RobotInstant start,
+    const rj_geometry::ShapeSet& static_obstacles,
+    const std::vector<DynamicObstacle>& dynamic_obstacles) {
     BallState ball = plan_request.world_state->ball;
 
     // There are two paths that get combined together
@@ -218,7 +219,7 @@ Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, Robo
     return coarse_path;
 }
 
-Trajectory CollectPlanner::fine_approach(
+Trajectory CollectPathPlanner::fine_approach(
     const PlanRequest& plan_request, RobotInstant start_instant,
     const rj_geometry::ShapeSet& /* static_obstacles */,
     const std::vector<DynamicObstacle>& /* dynamic_obstacles */) {
@@ -274,10 +275,10 @@ Trajectory CollectPlanner::fine_approach(
     return path_hit;
 }
 
-Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant start,
-                                   const Trajectory& /* partial_path */,
-                                   const rj_geometry::ShapeSet& static_obstacles,
-                                   const std::vector<DynamicObstacle>& dynamic_obstacles) {
+Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotInstant start,
+                                       const Trajectory& /* partial_path */,
+                                       const rj_geometry::ShapeSet& static_obstacles,
+                                       const std::vector<DynamicObstacle>& dynamic_obstacles) {
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints = plan_request.constraints;
     MotionConstraints& motion_constraints = robot_constraints.mot;
@@ -340,7 +341,7 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
     cached_robot_pos_ = start.position();
     cached_ball_pos_ = ball.position;
 
-    // Try to use the RRTPlanner to generate the path first
+    // Try to use the RRTPathPlanner to generate the path first
     // It reaches the target better for some reason
     std::vector<Point> start_end_points{start.position(), target.position};
     Trajectory path = CreatePath::rrt(start.linear_motion(), target, motion_constraints,
@@ -375,9 +376,9 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
     return path;
 }
 
-Trajectory CollectPlanner::invalid(const PlanRequest& plan_request,
-                                   const rj_geometry::ShapeSet& static_obstacles,
-                                   const std::vector<DynamicObstacle>& dynamic_obstacles) {
+Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
+                                       const rj_geometry::ShapeSet& static_obstacles,
+                                       const std::vector<DynamicObstacle>& dynamic_obstacles) {
     SPDLOG_WARN("Invalid state in collect planner. Restarting");
     current_state_ = CourseApproach;
 
@@ -395,16 +396,16 @@ Trajectory CollectPlanner::invalid(const PlanRequest& plan_request,
     return path;
 }
 
-void CollectPlanner::reset() {
+void CollectPathPlanner::reset() {
     previous_ = Trajectory();
-    current_state_ = CollectPathPlannerStates::CourseApproach;
+    current_state_ = CollectPathPathPlannerStates::CourseApproach;
     average_ball_vel_initialized_ = false;
     approach_direction_created_ = false;
     control_path_created_ = false;
     path_coarse_target_initialized_ = false;
 }
 
-bool CollectPlanner::is_done() const {
+bool CollectPathPlanner::is_done() const {
     // FSM: CourseApproach -> FineApproach -> Control
     // (see process_state_transition())
     if (current_state_ != Control) {

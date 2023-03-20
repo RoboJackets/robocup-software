@@ -11,7 +11,7 @@ class ConfigDouble;
 namespace planning {
 
 /**
- * Planner which plans a path to line kick a ball.
+ * PathPlanner which plans a path to line kick a ball.
  * Uses the System State object to get the position of the ball
  * and predict its Path. It chooses the closest intersection point
  * with the ball Path it can reach in time and plans a Path so the
@@ -22,9 +22,9 @@ namespace planning {
  * Params taken from MotionCommand:
  *   target.position - planner will kick to this point
  */
-class LineKickPlanner : public Planner {
+class LineKickPathPlanner : public PathPlanner {
 public:
-    LineKickPlanner() : Planner("line_kick"){};
+    LineKickPathPlanner() : PathPlanner("line_kick"){};
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {

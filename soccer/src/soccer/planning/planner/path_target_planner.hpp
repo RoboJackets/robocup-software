@@ -24,15 +24,17 @@ namespace planning {
  *
  *   ignore_ball - when false, robot treats ball as obstacle
  */
-class PathTargetPlanner : public Planner {
+// TODO(Kevin): change this to be "basic" and clarify its use as a building
+// block in other path planners
+class PathTargetPathPlanner : public PathPlanner {
 public:
-    PathTargetPlanner() : Planner("path_target") {}
-    ~PathTargetPlanner() override = default;
+    PathTargetPathPlanner() : PathPlanner("path_target") {}
+    ~PathTargetPathPlanner() override = default;
 
-    PathTargetPlanner(PathTargetPlanner&&) noexcept = default;
-    PathTargetPlanner& operator=(PathTargetPlanner&&) noexcept = default;
-    PathTargetPlanner(const PathTargetPlanner&) = default;
-    PathTargetPlanner& operator=(const PathTargetPlanner&) = default;
+    PathTargetPathPlanner(PathTargetPathPlanner&&) noexcept = default;
+    PathTargetPathPlanner& operator=(PathTargetPathPlanner&&) noexcept = default;
+    PathTargetPathPlanner(const PathTargetPathPlanner&) = default;
+    PathTargetPathPlanner& operator=(const PathTargetPathPlanner&) = default;
 
     Trajectory plan(const PlanRequest& request) override;
     void reset() override { previous_ = Trajectory(); }

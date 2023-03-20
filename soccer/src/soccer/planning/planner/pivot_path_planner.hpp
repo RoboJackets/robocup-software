@@ -5,7 +5,7 @@
 namespace planning {
 
 /**
- * Planner which pivots about the point given by <command.pivot_point> to the target point
+ * PathPlanner which pivots about the point given by <command.pivot_point> to the target point
  * <command.target.position>.
  *
  * For instance, if <command.pivot_point> = ball.position and the ball is in
@@ -16,9 +16,9 @@ namespace planning {
  *   target.pivot_point - planner will pivot about this point
  *   target.position - planner will stop on this point when done pivoting
  */
-class PivotPathPlanner : public Planner {
+class PivotPathPlanner : public PathPlanner {
 public:
-    PivotPathPlanner() : Planner("pivot") {}
+    PivotPathPlanner() : PathPlanner("pivot") {}
     ~PivotPathPlanner() override = default;
 
     PivotPathPlanner(PivotPathPlanner&&) noexcept = default;

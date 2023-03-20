@@ -8,7 +8,7 @@
 
 namespace planning {
 
-Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
+Trajectory InterceptPathPlanner::plan(const PlanRequest& plan_request) {
     const MotionCommand& command = plan_request.motion_command;
 
     // Start state for the specified robot
@@ -81,7 +81,7 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-bool InterceptPlanner::is_done() const {
+bool InterceptPathPlanner::is_done() const {
     bool ball_is_slow = latest_ball_state_.velocity.mag() < 0.5;  // m/s
     bool ball_is_close = latest_ball_state_.position.dist_to(latest_robot_pos_) <
                          kRobotRadius + kBallRadius + 0.01;  // m

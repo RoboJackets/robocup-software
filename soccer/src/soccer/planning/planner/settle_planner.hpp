@@ -10,25 +10,27 @@ class ConfigDouble;
 namespace planning {
 
 /**
- * @brief Planner which tries to get a fast-moving ball into its mouth to slow
- * it down. Paired with CollectPlanner, this forms the basis of receiving
+ * @brief PathPlanner which tries to get a fast-moving ball into its mouth to slow
+ * it down. Paired with CollectPathPlanner, this forms the basis of receiving
  * passes.
  *
  * Params taken from MotionCommand:
  *   target.position - the direction we will try and bounce the ball while
  *                     slowing it down to speed up actions after capture
  */
-class SettlePlanner : public Planner {
+class SettlePathPlanner : public PathPlanner {
 public:
-    enum class SettlePlannerStates {
+    enum class SettlePathPlannerStates {
         // Moves to the ball path in front of it
         Intercept,
         // Starts to dampen the ball with backward motion
         Dampen
     };
 
-    SettlePlanner()
-        : Planner("settle"), avg_instantaneous_intercept_target_(0, 0), average_ball_vel_(0, 0) {}
+    SettlePathPlanner()
+        : PathPlanner("settle"),
+          avg_instantaneous_intercept_target_(0, 0),
+          average_ball_vel_(0, 0) {}
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
@@ -77,7 +79,7 @@ private:
 
     std::optional<rj_geometry::Point> target_bounce_direction_;
 
-    SettlePlannerStates current_state_ = SettlePlannerStates::Intercept;
+    SettlePathPlannerStates current_state_ = SettlePathPlannerStates::Intercept;
 
     // Intercept Target Filtering Variables
     rj_geometry::Point avg_instantaneous_intercept_target_;

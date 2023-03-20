@@ -13,7 +13,7 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
+Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
     ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
@@ -48,16 +48,16 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     return trajectory;
 }
 
-bool PathTargetPlanner::is_done() const {
+bool PathTargetPathPlanner::is_done() const {
     if (!cached_start_instant_.has_value() || !cached_target_instant_.has_value()) {
         return false;
     }
 
     // TODO(Kevin): also, should enforce the desired angle
     // right now there is a convoluted chain
-    // PathTargetPlanner->Replanner->plan_angles which plans angles depending
+    // PathTargetPathPlanner->Replanner->plan_angles which plans angles depending
     // on AngleFunction (either desired face point or desired face angle).
-    // nowhere in the chain is there a check if PathTargetPlanner actually is
+    // nowhere in the chain is there a check if PathTargetPathPlanner actually is
     // getting to the desired angle.
     //
     // may be related to issue #1506?
@@ -71,7 +71,7 @@ bool PathTargetPlanner::is_done() const {
     /* return cached_start_instant_ == cached_target_instant_; */
 }
 
-AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {
+AngleFunction PathTargetPathPlanner::get_angle_function(const PlanRequest& request) {
     const auto& face_option = request.motion_command.face_option;
 
     if (std::holds_alternative<FacePoint>(face_option)) {
