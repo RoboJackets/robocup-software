@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_map>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -124,12 +125,14 @@ private:
 };
 
 /**
- * Interface for one robot's planning, which for us is a RobotIntent to Trajectory
- * translation. Bundles together all relevant ROS pub/subs and forwards
+ * @brief Handles one robot's planning, which for us is a translation of RobotIntent to
+ * Trajectory. Bundles together all relevant ROS pub/subs and forwards
  * RobotIntents to the appropriate Planner (see planner.hpp).
  *
- * The PlannerNode makes N PlannerForRobots and handles them all (see
- * PlannerNode below).
+ * In general, prefers default behavior and WARN-level logs over crashing.
+ *
+ * (PlannerNode makes N PlannerForRobots and handles them all, see
+ * PlannerNode below.)
  */
 class PlannerForRobot {
 public:
@@ -159,6 +162,7 @@ public:
      * @param response The response object that will contain the resultant time to completion of a
      * hypothetical path.
      */
+    // TODO(Kevin): I probably broke this, fix it
     void plan_hypothetical_robot_path(
         const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
         std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response);
@@ -189,17 +193,33 @@ private:
     PlanRequest make_request(const RobotIntent& intent);
 
     /*
-     * @brief Get a Trajectory based on the PlanRequest by ticking through all
-     * available planners.
+     * @brief Get a Trajectory based on the string name given in MotionCommand.
+     * Guaranteed to output a valid Trajectory: defaults to
+     * EscapeObstaclesPathPlanner if requested planner fails, and gives WARN
+     * logs.
      *
-     * @details (Each planner implements an "is_applicable(PlanRequest.motion_command)").
+     * @details Uses unsafe_plan_for_robot() to get a plan, handling any
+     * Exceptions that come up.
      *
-     * @param request PlanRequest that needs a motion plan made
+     * @param request PlanRequest to create a Trajectory from
      *
      * @return Trajectory (timestamped series of poses & twists) that satisfies
      * the PlanRequest as well as possible
      */
-    Trajectory plan_for_robot(const planning::PlanRequest& request);
+    Trajectory safe_plan_for_robot(const planning::PlanRequest& request);
+
+    /*
+     * @brief Get a Trajectory based on the string name given in MotionCommand.
+     *
+     * @details Differs from safe_plan_for_robot() in that it will throw Exceptions if
+     * planners fail (which safe_plan_for_robot() handles).
+     *
+     * @param request PlanRequest to create a Trajectory from
+     *
+     * @return Trajectory (timestamped series of poses & twists) that satisfies
+     * the PlanRequest as well as possible
+     */
+    Trajectory unsafe_plan_for_robot(const planning::PlanRequest& request);
 
     /*
      * @brief Check that robot is visible in world_state and that world_state has been
@@ -208,7 +228,8 @@ private:
     [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
-    std::vector<std::shared_ptr<Planner>> planners_;
+    std::unordered_map<std::string, std::shared_ptr<Planner>> planners_;
+    std::shared_ptr<Planner> default_planner_;
     std::shared_ptr<Planner> current_planner_;
 
     int robot_id_;

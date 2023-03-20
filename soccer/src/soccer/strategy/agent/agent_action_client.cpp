@@ -135,7 +135,6 @@ void AgentActionClient::send_new_goal() {
 
     auto goal_msg = RobotMove::Goal();
     goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
-    SPDLOG_INFO("{}'s AC name: {}", robot_id_, last_task_.motion_command.name);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback =

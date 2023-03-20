@@ -23,7 +23,8 @@ namespace planning {
  */
 class EscapeObstaclesPathPlanner : public Planner {
 public:
-    // TODO: think of better way to convey halted behavior than "EscapeObstaclesPathPlanner"
+    // TODO(Kevin): think of better way to convey halted behavior than "EscapeObstaclesPathPlanner"
+    // actually this is not HALT, control node does HALT for us
     // or maybe use PathTargetPlanner with no real velocity?
     EscapeObstaclesPathPlanner() : Planner("halt"){};
     ~EscapeObstaclesPathPlanner() override = default;

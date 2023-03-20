@@ -153,16 +153,22 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
           fmt::format("planning_{}", robot_id)} {
-    planners_.push_back(std::make_shared<GoalieIdlePlanner>());
-    planners_.push_back(std::make_shared<InterceptPlanner>());
-    planners_.push_back(std::make_shared<PathTargetPlanner>());
-    planners_.push_back(std::make_shared<SettlePlanner>());
-    planners_.push_back(std::make_shared<CollectPlanner>());
-    planners_.push_back(std::make_shared<LineKickPlanner>());
-    planners_.push_back(std::make_shared<PivotPathPlanner>());
+    // create map of {planner name -> planner}
+    planners_[GoalieIdlePlanner().name()] = std::make_shared<GoalieIdlePlanner>();
+    planners_[InterceptPlanner().name()] = std::make_shared<InterceptPlanner>();
+    planners_[PathTargetPlanner().name()] = std::make_shared<PathTargetPlanner>();
+    planners_[SettlePlanner().name()] = std::make_shared<SettlePlanner>();
+    planners_[CollectPlanner().name()] = std::make_shared<CollectPlanner>();
+    planners_[LineKickPlanner().name()] = std::make_shared<LineKickPlanner>();
+    planners_[PivotPathPlanner().name()] = std::make_shared<PivotPathPlanner>();
+    planners_[EscapeObstaclesPathPlanner().name()] = std::make_shared<EscapeObstaclesPathPlanner>();
 
-    // The empty planner should always be last.
-    planners_.push_back(std::make_shared<EscapeObstaclesPathPlanner>());
+    // EscapeObstaclesPathPlanner is our default planner
+    // because when robots start inside of an obstacle, all other planners will fail
+    // TODO(Kevin): make EscapeObstaclesPathPlanner default start of all planner FSM so this doesn't
+    // happen
+    default_planner_ = std::make_shared<EscapeObstaclesPathPlanner>();
+    current_planner_ = default_planner_;
 
     // publish paths to control
     trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
@@ -192,7 +198,7 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
     if (robot_alive()) {
         // plan a path and send it to control
         auto plan_request = make_request(intent);
-        auto trajectory = plan_for_robot(plan_request);
+        auto trajectory = safe_plan_for_robot(plan_request);
         trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
 
         // send the kick/dribble commands to the radio
@@ -216,7 +222,7 @@ void PlannerForRobot::plan_hypothetical_robot_path(
     std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
     const auto intent = rj_convert::convert_from_ros(request->intent);
     auto plan_request = make_request(intent);
-    auto trajectory = plan_for_robot(plan_request);
+    auto trajectory = safe_plan_for_robot(plan_request);
     RJ::Seconds trajectory_duration = trajectory.duration();
     response->estimate = rj_convert::convert_to_ros(trajectory_duration);
 }
@@ -308,81 +314,66 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        min_dist_from_ball};
 }
 
-Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request) {
-    // Try each planner in sequence until we find one that is applicable.
-    // This gives the planners a sort of "priority" - this makes sense, because
-    // the empty planner is always last.
-    Trajectory trajectory;
-    for (auto& planner : planners_) {
-        // If this planner could possibly plan for this command, try to make
-        // a plan.
-        if (trajectory.empty() && boost::iequals(planner->name(), request.motion_command.name)) {
-            /* SPDLOG_INFO("{}/{}: Planner: <{}>, Request: <{}>", robot_id_, request.shell_id,
-             * planner->name(), request.motion_command.name); */
-            /* SPDLOG_INFO("?= {}", boost::iequals(planner->name(), request.motion_command.name));
-             */
-
-            current_planner_ = planner;
-            trajectory = planner->plan(request);
-
-            /* SPDLOG_INFO("generated trajectory len: {}", trajectory.num_instants()); */
-        }
-
-        // If it fails, or if the planner was not used, the trajectory will
-        // still be empty. Reset the planner.
-        if (trajectory.empty()) {
-            current_planner_ = nullptr;
-            planner->reset();
-        } else {
-            if (!trajectory.angles_valid()) {
-                throw std::runtime_error("Trajectory returned from " + planner->name() +
-                                         " has no angle profile!");
-            }
-
-            if (!trajectory.time_created().has_value()) {
-                throw std::runtime_error("Trajectory returned from " + planner->name() +
-                                         " has no timestamp!");
-            }
-        }
+Trajectory PlannerForRobot::unsafe_plan_for_robot(const planning::PlanRequest& request) {
+    if (planners_.count(request.motion_command.name) == 0) {
+        throw std::runtime_error(fmt::format("ID {}: MotionCommand name <{}> does not exist!",
+                                             robot_id_, request.motion_command.name));
     }
+
+    // get Trajectory from the planner requested in MotionCommand
+    current_planner_ = planners_[request.motion_command.name];
+    Trajectory trajectory = current_planner_->plan(request);
 
     if (trajectory.empty()) {
-        SPDLOG_INFO("MC name: <{}>", request.motion_command.name);
-        SPDLOG_INFO("id: {}", request.shell_id);
-
-        SPDLOG_ERROR("No valid planner! Did you forget to specify a default planner?");
-        // TODO(Kevin): this is inaccurate, this part means all the planners in
-        // the list tried to generate a Trajectory and failed
-        // before, this issue was masked by the default
-        // EscapeObstaclesPathPlanner, now that is explicit
-
-        // TODO(Kevin): planning should be able to send empty Trajectory
-        // without crashing
-        // (currently the ros_convert "cannot serialize trajectory with invalid
-        // angles")
-
-        SPDLOG_INFO("defaulting to escape obstacles");
-        // TODO: this should point to the one in the map, probably
-        current_planner_ = std::make_shared<EscapeObstaclesPathPlanner>();
-        trajectory = current_planner_->plan(request);
-
-        /* trajectory = Trajectory{{request.start}}; */
-        /* trajectory.set_debug_text("Error: No Valid Planners"); */
-        /* trajectory.mark_angles_valid(); */
-    } else {
-        // draw robot's desired path
-        std::vector<rj_geometry::Point> path;
-        std::transform(trajectory.instants().begin(), trajectory.instants().end(),
-                       std::back_inserter(path),
-                       [](const auto& instant) { return instant.position(); });
-        debug_draw_.draw_path(path);
-
-        // draw robot's desired endpoint
-        debug_draw_.draw_circle(rj_geometry::Circle(path.back(), kRobotRadius), Qt::black);
+        // empty Trajectory means current_planner_ has failed
+        // if current_planner_ fails, reset it before throwing exception
+        current_planner_->reset();
+        throw std::runtime_error(
+            fmt::format("Planner name <{}> failed to plan!", current_planner_->name()));
     }
+
+    if (!trajectory.angles_valid()) {
+        throw std::runtime_error(fmt::format("Trajectory returned from <{}> has no angle profile!",
+                                             current_planner_->name()));
+    }
+
+    if (!trajectory.time_created().has_value()) {
+        throw std::runtime_error(fmt::format("Trajectory returned from <{}> has no timestamp!",
+                                             current_planner_->name()));
+    }
+
+    return trajectory;
+}
+
+Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& request) {
+    Trajectory trajectory;
+    try {
+        trajectory = unsafe_plan_for_robot(request);
+    } catch (std::runtime_error exception) {
+        SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
+        SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
+        current_planner_ = default_planner_;
+        trajectory = current_planner_->plan(request);
+        // TODO(Kevin): planning should be able to send empty Trajectory
+        // without crashing, instead of resorting to default planner
+        // (currently the ros_convert throws "cannot serialize trajectory with
+        // invalid angles")
+    }
+
+    // draw robot's desired path
+    std::vector<rj_geometry::Point> path;
+    std::transform(trajectory.instants().begin(), trajectory.instants().end(),
+                   std::back_inserter(path),
+                   [](const auto& instant) { return instant.position(); });
+    debug_draw_.draw_path(path);
+
+    // draw robot's desired endpoint
+    debug_draw_.draw_circle(rj_geometry::Circle(path.back(), kRobotRadius), Qt::black);
+
+    // draw obstacles for this robot
+    // TODO: these will stack atop each other, since each robot draws obstacles
     debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(255, 0, 0, 30));
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
-
     debug_draw_.publish();
 
     return trajectory;
