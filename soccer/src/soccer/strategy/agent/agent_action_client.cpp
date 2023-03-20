@@ -104,10 +104,6 @@ void AgentActionClient::get_task() {
 }
 
 void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-    // TODO remove this debug
-    /* for (int i = 0; i < 6; i++) { */
-    /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
-    /* } */
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
         case 0:
@@ -139,9 +135,7 @@ void AgentActionClient::send_new_goal() {
 
     auto goal_msg = RobotMove::Goal();
     goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
-    if (robot_id_ == 0) {
-        SPDLOG_INFO("{}'s AC name: {}", robot_id_, last_task_.motion_command.name);
-    }
+    SPDLOG_INFO("{}'s AC name: {}", robot_id_, last_task_.motion_command.name);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback =

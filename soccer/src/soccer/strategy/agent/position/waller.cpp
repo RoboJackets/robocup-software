@@ -23,8 +23,9 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
                         hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)))};
 
     // Find ball_direction unit vector
-    rj_geometry::Point ball_dir_vector{(ball_location - goal_center_point + 0.000001)};
-    ball_dir_vector /= ball_dir_vector.mag();
+    rj_geometry::Point ball_dir_vector{(ball_location - goal_center_point)};
+    // (avoid div by 0)
+    ball_dir_vector /= (ball_dir_vector.mag() + 0.000001);
 
     // Find target Point
     rj_geometry::Point mid_point{(goal_center_point) + (ball_dir_vector * min_wall_rad)};
@@ -36,7 +37,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     planning::PathTargetFaceOption face_option{planning::FaceBall{}};
 
     // Avoid ball
-    bool ignore_ball{false};
+    bool ignore_ball{true};
 
     // Create Motion Command
     planning::LinearMotionInstant target{mid_point, target_vel};

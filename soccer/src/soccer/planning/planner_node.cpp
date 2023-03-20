@@ -317,8 +317,15 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
         // If this planner could possibly plan for this command, try to make
         // a plan.
         if (trajectory.empty() && boost::iequals(planner->name(), request.motion_command.name)) {
+            /* SPDLOG_INFO("{}/{}: Planner: <{}>, Request: <{}>", robot_id_, request.shell_id,
+             * planner->name(), request.motion_command.name); */
+            /* SPDLOG_INFO("?= {}", boost::iequals(planner->name(), request.motion_command.name));
+             */
+
             current_planner_ = planner;
             trajectory = planner->plan(request);
+
+            /* SPDLOG_INFO("generated trajectory len: {}", trajectory.num_instants()); */
         }
 
         // If it fails, or if the planner was not used, the trajectory will
@@ -340,12 +347,28 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
     }
 
     if (trajectory.empty()) {
-        SPDLOG_INFO("MC name: {}", request.motion_command.name);
+        SPDLOG_INFO("MC name: <{}>", request.motion_command.name);
         SPDLOG_INFO("id: {}", request.shell_id);
 
         SPDLOG_ERROR("No valid planner! Did you forget to specify a default planner?");
-        trajectory = Trajectory{{request.start}};
-        trajectory.set_debug_text("Error: No Valid Planners");
+        // TODO(Kevin): this is inaccurate, this part means all the planners in
+        // the list tried to generate a Trajectory and failed
+        // before, this issue was masked by the default
+        // EscapeObstaclesPathPlanner, now that is explicit
+
+        // TODO(Kevin): planning should be able to send empty Trajectory
+        // without crashing
+        // (currently the ros_convert "cannot serialize trajectory with invalid
+        // angles")
+
+        SPDLOG_INFO("defaulting to escape obstacles");
+        // TODO: this should point to the one in the map, probably
+        current_planner_ = std::make_shared<EscapeObstaclesPathPlanner>();
+        trajectory = current_planner_->plan(request);
+
+        /* trajectory = Trajectory{{request.start}}; */
+        /* trajectory.set_debug_text("Error: No Valid Planners"); */
+        /* trajectory.mark_angles_valid(); */
     } else {
         // draw robot's desired path
         std::vector<rj_geometry::Point> path;
