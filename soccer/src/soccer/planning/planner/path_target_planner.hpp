@@ -26,7 +26,7 @@ namespace planning {
  */
 class PathTargetPlanner : public Planner {
 public:
-    PathTargetPlanner() : Planner("PathTargetPlanner") {}
+    PathTargetPlanner() : Planner("path_target") {}
     ~PathTargetPlanner() override = default;
 
     PathTargetPlanner(PathTargetPlanner&&) noexcept = default;

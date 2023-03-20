@@ -93,6 +93,9 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
     static rj_msgs::msg::MotionCommand to_ros(const planning::MotionCommand& from) {
         rj_msgs::msg::MotionCommand result;
 
+        // take the name from the struct and put it in the ROS msg version
+        result.name = from.name;
+
         // TODO(Kevin): what if these are empty?
         // convert the LinearMotionInstant target
         result.target.push_back(convert_to_ros(from.target));

@@ -87,13 +87,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request([
     return pos_agent_response;
 }
 
-rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
-    rj_msgs::msg::RobotIntent intent{};
-    auto halt = rj_msgs::msg::MotionCommand{};
-    intent.motion_command = halt;
-    return intent;
-}
-
 const std::string Position::get_name() { return position_name_; }
 
 }  // namespace strategy

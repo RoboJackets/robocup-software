@@ -125,7 +125,11 @@ private:
 
 /**
  * Interface for one robot's planning, which for us is a RobotIntent to Trajectory
- * translation. Planner node makes N PlannerForRobots and handles them all.
+ * translation. Bundles together all relevant ROS pub/subs and forwards
+ * RobotIntents to the appropriate Planner (see planner.hpp).
+ *
+ * The PlannerNode makes N PlannerForRobots and handles them all (see
+ * PlannerNode below).
  */
 class PlannerForRobot {
 public:

@@ -148,11 +148,6 @@ protected:
     bool assert_world_state_valid();
 
     /*
-     * @brief return an empty robot intent for our robot_id_.
-     */
-    rj_msgs::msg::RobotIntent get_empty_intent() const;
-
-    /*
      * @brief getter for is_done that clears the flag before returning
      * @return value of is_done before being cleared
      */

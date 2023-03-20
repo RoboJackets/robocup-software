@@ -47,7 +47,11 @@ public:
     [[nodiscard]] virtual bool is_done() const = 0;
 
     /**
-     * Get a user-readable name for this planner.
+     * Get a human-readable name. RobotIntents will come with strings matching
+     * this name. 
+     *
+     * (We have to do it this way because ROS msgs only allow us to pass basic
+     * types or other ROS msgs.)
      */
     [[nodiscard]] std::string name() const { return name_; }
 

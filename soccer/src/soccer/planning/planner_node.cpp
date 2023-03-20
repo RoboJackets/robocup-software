@@ -5,6 +5,8 @@
 #include <rj_constants/topic_names.hpp>
 #include <ros_debug_drawer.hpp>
 
+#include <boost/algorithm/string.hpp>
+
 #include "instant.hpp"
 #include "planning/planner/collect_planner.hpp"
 #include "planning/planner/escape_obstacles_path_planner.hpp"
@@ -281,8 +283,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // generation)
     if (max_robot_speed == 0.0f) {
         // If coach node has speed set to 0,
-        // choose not to move by replacing the MotionCommand with an empty one.
-        motion_command = EmptyMotionCommand{};
+        // force HALT by replacing the MotionCommand with an empty one.
+        motion_command = MotionCommand{};
     } else if (max_robot_speed < 0.0f) {
         // If coach node has speed set to negative, assume infinity.
         // Negative numbers cause crashes, but 10 is an effectively infinite limit.
@@ -315,7 +317,7 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
     for (auto& planner : planners_) {
         // If this planner could possibly plan for this command, try to make
         // a plan.
-        if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
+        if (trajectory.empty() && boost::iequals(planner->name(), request.motion_command.name)) {
             current_planner_ = planner;
             trajectory = planner->plan(request);
         }
@@ -339,6 +341,9 @@ Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request)
     }
 
     if (trajectory.empty()) {
+        SPDLOG_INFO("MC name: {}", request.motion_command.name);
+        SPDLOG_INFO("id: {}", request.shell_id);
+
         SPDLOG_ERROR("No valid planner! Did you forget to specify a default planner?");
         trajectory = Trajectory{{request.start}};
         trajectory.set_debug_text("Error: No Valid Planners");

@@ -23,7 +23,9 @@ namespace planning {
  */
 class EscapeObstaclesPathPlanner : public Planner {
 public:
-    EscapeObstaclesPathPlanner() : Planner("EscapeObstaclesPathPlanner"){};
+    // TODO: think of better way to convey halted behavior than "EscapeObstaclesPathPlanner"
+    // or maybe use PathTargetPlanner with no real velocity?
+    EscapeObstaclesPathPlanner() : Planner("halt"){};
     ~EscapeObstaclesPathPlanner() override = default;
 
     EscapeObstaclesPathPlanner(EscapeObstaclesPathPlanner&&) noexcept = default;
