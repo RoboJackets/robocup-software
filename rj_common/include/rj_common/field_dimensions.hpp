@@ -12,6 +12,7 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/polygon.hpp>
 #include <rj_geometry/rect.hpp>
+#include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 
 using namespace std;
@@ -81,6 +82,8 @@ struct FieldDimensions {
     [[nodiscard]] rj_geometry::Point our_right_goal_post_coordinate() const {
         return our_right_goal_post_coordinate_;
     }
+    [[nodiscard]] rj_geometry::Rect our_defense_area() const { return our_defense_area_; }
+    [[nodiscard]] rj_geometry::Rect their_defense_area() const { return their_defense_area_; }
 
     [[nodiscard]] rj_geometry::Point their_left_goal_post_coordinate() const {
         return their_left_goal_post_coordinate_;
@@ -98,19 +101,24 @@ struct FieldDimensions {
 
     [[nodiscard]] rj_geometry::Point center_point() const { return center_point_; }
 
-    [[nodiscard]] rj_geometry::Rect our_goal_zone_shape() const { return our_goal_zone_shape_; }
-    [[nodiscard]] rj_geometry::Rect their_goal_zone_shape() const { return their_goal_zone_shape_; }
-
     /*
-     * Provides a rect that is a padded version of their goalbox
-     * used mostly for movement at the play level
-     * exposed to python via constants.Field
+     * Provides a rect that is a padded version of their goalbox.
+     * Used as a static obstalce by coach in certain match situations.
      */
-    [[nodiscard]] rj_geometry::Rect their_goal_zone_shape_padded(float padding) {
-        rj_geometry::Rect tmp = rj_geometry::Rect(their_goal_zone_shape_);
+    [[nodiscard]] rj_geometry::Rect their_defense_area_padded(float padding) {
+        rj_geometry::Rect tmp = rj_geometry::Rect(their_defense_area_);
         tmp.pad(padding);
         return tmp;
     };
+
+    /*
+     * Provides a rect that is a padded version of our goalbox.
+     */
+    [[nodiscard]] rj_geometry::Rect our_defense_area_padded(float padding) {
+        rj_geometry::Rect tmp = rj_geometry::Rect(our_defense_area_);
+        tmp.pad(padding);
+        return tmp;
+    }
 
     [[nodiscard]] rj_geometry::Segment our_goal_segment() const { return our_goal_segment_; }
     [[nodiscard]] rj_geometry::Segment their_goal_segment() const { return their_goal_segment_; }
@@ -118,18 +126,12 @@ struct FieldDimensions {
     [[nodiscard]] rj_geometry::Rect their_half() const { return their_half_; }
     [[nodiscard]] rj_geometry::Rect field_rect() const { return field_rect_; }
 
-    /*
-     * Provides a rect that is a padded version of our goalbox
-     * used mostly for movement at the play level
-     * exposed to python via constants.Field
-     */
-    [[nodiscard]] rj_geometry::Rect our_goal_zone_shape_padded(float padding) {
-        rj_geometry::Rect tmp = rj_geometry::Rect(our_goal_zone_shape_);
-        tmp.pad(padding);
-        return tmp;
-    };
+    [[nodiscard]] rj_geometry::ShapeSet our_goal_walls() { return our_goal_walls_; }
+    [[nodiscard]] [[nodiscard]] rj_geometry::ShapeSet their_goal_walls() {
+        return their_goal_walls_;
+    }
 
-    std::vector<rj_geometry::Line> field_borders() const { return field_borders_; }
+    [[nodiscard]] std::vector<rj_geometry::Line> field_borders() const { return field_borders_; }
 
     static const FieldDimensions kSingleFieldDimensions;
 
@@ -235,13 +237,14 @@ struct FieldDimensions {
 
         center_point_ = rj_geometry::Point(0.0, length_ / 2.0);
 
-        our_goal_zone_shape_ =
-            rj_geometry::Rect(rj_geometry::Point(penalty_long_dist_ / 2, penalty_short_dist_),
-                              rj_geometry::Point(-penalty_long_dist_ / 2, 0));
+        our_defense_area_ = rj_geometry::Rect(
+            rj_geometry::Point(penalty_long_dist_ / 2 + line_width_, penalty_short_dist_),
+            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, 0));
 
-        their_goal_zone_shape_ = rj_geometry::Rect(
-            rj_geometry::Point(-penalty_long_dist_ / 2, length_),
-            rj_geometry::Point(penalty_long_dist_ / 2, length_ - penalty_short_dist_));
+        their_defense_area_ =
+            rj_geometry::Rect(rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, length_),
+                              rj_geometry::Point(penalty_long_dist_ / 2 + line_width_,
+                                                 length_ - penalty_short_dist_));
 
         their_goal_segment_ = rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, length_),
                                                    rj_geometry::Point(-goal_width_ / 2.0, length_));
@@ -264,6 +267,30 @@ struct FieldDimensions {
                                             rj_geometry::Point(width_ / 2.0, 0)),
                           rj_geometry::Line(rj_geometry::Point(width_ / 2.0, 0),
                                             rj_geometry::Point(-width_ / 2.0, 0))};
+
+        float physical_goal_board_width = 0.1f;
+        our_goal_walls_ = rj_geometry::ShapeSet{};
+        our_goal_walls_.add(std::make_shared<rj_geometry::Rect>(
+            rj_geometry::Point{goal_width_ / 2, -goal_depth_},
+            rj_geometry::Point{-goal_width_ / 2, -goal_depth_ - physical_goal_board_width}));
+        our_goal_walls_.add(std::make_shared<rj_geometry::Rect>(
+            rj_geometry::Point{goal_width_ / 2, -goal_depth_},
+            rj_geometry::Point{goal_width_ / 2 + physical_goal_board_width, 0.0}));
+        our_goal_walls_.add(std::make_shared<rj_geometry::Rect>(
+            rj_geometry::Point{-goal_width_ / 2, -goal_depth_},
+            rj_geometry::Point{-goal_width_ / 2 - physical_goal_board_width, 0.0}));
+
+        their_goal_walls_ = rj_geometry::ShapeSet{};
+        their_goal_walls_.add(std::make_shared<rj_geometry::Rect>(
+            rj_geometry::Point{goal_width_ / 2, length_ + goal_depth_},
+            rj_geometry::Point{-goal_width_ / 2,
+                               length_ + goal_depth_ + physical_goal_board_width}));
+        their_goal_walls_.add(std::make_shared<rj_geometry::Rect>(
+            rj_geometry::Point{goal_width_ / 2, length_ + goal_depth_},
+            rj_geometry::Point{goal_width_ / 2 + physical_goal_board_width, length_}));
+        their_goal_walls_.add(std::make_shared<rj_geometry::Rect>(
+            rj_geometry::Point{-goal_width_ / 2, length_ + goal_depth_},
+            rj_geometry::Point{-goal_width_ / 2 - physical_goal_board_width, length_}));
     }
 
 private:
@@ -307,13 +334,15 @@ private:
     rj_geometry::Rect field_coords_;
 
     rj_geometry::Point center_point_;
-    rj_geometry::Rect our_goal_zone_shape_;
-    rj_geometry::Rect their_goal_zone_shape_;
+    rj_geometry::Rect our_defense_area_;
+    rj_geometry::Rect their_defense_area_;
     rj_geometry::Segment our_goal_segment_;
     rj_geometry::Segment their_goal_segment_;
     rj_geometry::Rect our_half_;
     rj_geometry::Rect their_half_;
     rj_geometry::Rect field_rect_;
+    rj_geometry::ShapeSet our_goal_walls_;
+    rj_geometry::ShapeSet their_goal_walls_;
 
     std::vector<rj_geometry::Line> field_borders_;
 };
