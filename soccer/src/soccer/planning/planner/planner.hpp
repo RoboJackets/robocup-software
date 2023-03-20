@@ -48,7 +48,7 @@ public:
 
     /**
      * Get a human-readable name. RobotIntents will come with strings matching
-     * this name. 
+     * this name.
      *
      * (We have to do it this way because ROS msgs only allow us to pass basic
      * types or other ROS msgs.)

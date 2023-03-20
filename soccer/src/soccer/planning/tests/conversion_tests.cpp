@@ -16,7 +16,8 @@ namespace testing {
 // TODO(Kevin): add conversion test for new MotionCommand
 
 /* // NOLINTNEXTLINE */
-/* TEST(RosConversions, EmptyMotionCommand) { test_lossless_convert_cpp_value(EmptyMotionCommand{}); } */
+/* TEST(RosConversions, EmptyMotionCommand) { test_lossless_convert_cpp_value(EmptyMotionCommand{});
+ * } */
 
 /* // NOLINTNEXTLINE */
 /* TEST(RosConversions, PathTargetMotionCommand) { */

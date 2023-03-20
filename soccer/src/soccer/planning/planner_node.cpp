@@ -1,11 +1,10 @@
 #include "planner_node.hpp"
 
+#include <boost/algorithm/string.hpp>
 #include <spdlog/spdlog.h>
 
 #include <rj_constants/topic_names.hpp>
 #include <ros_debug_drawer.hpp>
-
-#include <boost/algorithm/string.hpp>
 
 #include "instant.hpp"
 #include "planning/planner/collect_planner.hpp"

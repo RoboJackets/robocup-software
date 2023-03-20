@@ -8,17 +8,7 @@
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_msgs/msg/collect_motion_command.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
-#include <rj_msgs/msg/goalie_idle_motion_command.hpp>
-#include <rj_msgs/msg/intercept_motion_command.hpp>
-#include <rj_msgs/msg/line_kick_motion_command.hpp>
-#include <rj_msgs/msg/linear_motion_instant.hpp>
 #include <rj_msgs/msg/motion_command.hpp>
-#include <rj_msgs/msg/path_target_motion_command.hpp>
-#include <rj_msgs/msg/pivot_motion_command.hpp>
-#include <rj_msgs/msg/settle_motion_command.hpp>
-#include <rj_msgs/msg/world_vel_motion_command.hpp>
 #include <world_state.hpp>
 
 #include "planning/instant.hpp"

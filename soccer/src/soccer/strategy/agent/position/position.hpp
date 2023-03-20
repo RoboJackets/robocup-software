@@ -8,7 +8,6 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 
 #include "rclcpp/rclcpp.hpp"
