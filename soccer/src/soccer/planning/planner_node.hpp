@@ -154,7 +154,7 @@ public:
      * @param response The response object that will contain the resultant time to completion of a
      * hypothetical path.
      */
-    // TODO(Kevin): I probably broke this, fix it
+    // TODO(Kevin): I broke this, sorry
     void plan_hypothetical_robot_path(
         const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
         std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response);
