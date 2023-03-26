@@ -7,10 +7,6 @@
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
-#include <rj_msgs/msg/goalie_idle_motion_command.hpp>
-#include <rj_msgs/msg/intercept_motion_command.hpp>
-#include <rj_msgs/msg/path_target_motion_command.hpp>
 
 #include "planning/planner/intercept_planner.hpp"
 #include "position.hpp"

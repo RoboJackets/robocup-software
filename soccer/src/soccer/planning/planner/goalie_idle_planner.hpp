@@ -16,13 +16,16 @@ namespace planning {
 /**
  * @brief This planner gives the goalie a way to track the ball when it's not
  * otherwise occupied.
+ *
+ * Params taken from MotionCommand:
+ *   None
  */
-class GoalieIdlePlanner : public PlannerForCommandType<GoalieIdleMotionCommand> {
+class GoalieIdlePathPlanner : public PathPlanner {
 public:
-    GoalieIdlePlanner() : PlannerForCommandType<GoalieIdleMotionCommand>("goalie_idle") {}
+    GoalieIdlePathPlanner() : PathPlanner("goalie_idle") {}
 
     /*
-     * From Planner superclass (see planner.hpp).
+     * From PathPlanner superclass (see planner.hpp).
      */
     Trajectory plan(const PlanRequest& plan_request) override;
     void reset() override;

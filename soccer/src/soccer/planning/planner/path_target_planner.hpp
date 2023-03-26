@@ -11,15 +11,30 @@
 
 namespace planning {
 
-class PathTargetPlanner : public PlannerForCommandType<PathTargetMotionCommand> {
+/**
+ * Planner which moves the robot to a desired point at a desired velocity. Will
+ * avoid all obstacles given in plan_request. Will avoid ball unless
+ * ignore_ball = true.
+ *
+ * Params taken from MotionCommand:
+ *   target.position - robot will end up at this point
+ *   target.velocity - robot will end up with this velocity on target.position
+ *   face_option - while travelling, robot will face the target point unless
+ *                 this is specified (see motion_command.hpp)
+ *
+ *   ignore_ball - when false, robot treats ball as obstacle
+ */
+// TODO(Kevin): change this to be "basic" and clarify its use as a building
+// block in other path planners
+class PathTargetPathPlanner : public PathPlanner {
 public:
-    PathTargetPlanner() : PlannerForCommandType("PathTargetPlanner") {}
-    ~PathTargetPlanner() override = default;
+    PathTargetPathPlanner() : PathPlanner("path_target") {}
+    ~PathTargetPathPlanner() override = default;
 
-    PathTargetPlanner(PathTargetPlanner&&) noexcept = default;
-    PathTargetPlanner& operator=(PathTargetPlanner&&) noexcept = default;
-    PathTargetPlanner(const PathTargetPlanner&) = default;
-    PathTargetPlanner& operator=(const PathTargetPlanner&) = default;
+    PathTargetPathPlanner(PathTargetPathPlanner&&) noexcept = default;
+    PathTargetPathPlanner& operator=(PathTargetPathPlanner&&) noexcept = default;
+    PathTargetPathPlanner(const PathTargetPathPlanner&) = default;
+    PathTargetPathPlanner& operator=(const PathTargetPathPlanner&) = default;
 
     Trajectory plan(const PlanRequest& request) override;
     void reset() override { previous_ = Trajectory(); }
@@ -43,7 +58,7 @@ private:
 
     // vars to tell if is_done
     std::optional<LinearMotionInstant> cached_start_instant_;
-    std::optional<LinearMotionInstant> cached_goal_instant_;
+    std::optional<LinearMotionInstant> cached_target_instant_;
 };
 
 }  // namespace planning
