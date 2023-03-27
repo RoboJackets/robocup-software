@@ -1,4 +1,4 @@
-#include "line_kick_planner.hpp"
+#include "line_kick_path_planner.hpp"
 
 #include <rj_geometry/util.hpp>
 

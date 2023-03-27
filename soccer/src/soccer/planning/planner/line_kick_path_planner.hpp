@@ -3,7 +3,7 @@
 #include <optional>
 
 #include "planning/trajectory.hpp"
-#include "planning/planner/planner.hpp"
+#include "planning/planner/path_planner.hpp"
 
 class Configuration;
 class ConfigDouble;

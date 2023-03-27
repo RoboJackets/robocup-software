@@ -20,7 +20,7 @@
 
 #include "node.hpp"
 #include "planner/plan_request.hpp"
-#include "planner/planner.hpp"
+#include "planner/path_planner.hpp"
 #include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
@@ -119,7 +119,7 @@ private:
 /**
  * @brief Handles one robot's planning, which for us is a translation of RobotIntent to
  * Trajectory. Bundles together all relevant ROS pub/subs and forwards
- * RobotIntents to the appropriate PathPlanner (see planner.hpp).
+ * RobotIntents to the appropriate PathPlanner (see path_planner.hpp).
  *
  * In general, prefers default behavior and WARN-level logs over crashing.
  *

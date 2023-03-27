@@ -3,7 +3,7 @@
 
 #include <rj_geometry/shape_set.hpp>
 
-#include "planner.hpp"
+#include "path_planner.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/replanner.hpp"
 #include "planning/primitives/velocity_profiling.hpp"

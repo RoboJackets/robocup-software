@@ -1,4 +1,4 @@
-#include "planning/planner/goalie_idle_planner.hpp"
+#include "planning/planner/goalie_idle_path_planner.hpp"
 
 namespace planning {
 
