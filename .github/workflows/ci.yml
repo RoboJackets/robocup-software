@@ -89,7 +89,11 @@ jobs:
 
       - name: Run style on all changed files
         run: |
+            # check formatting style (C++)
+            echo "::add-matcher::ci/clang-format.json"
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
+            echo "::remove-matcher owner=clang-format::"
+
             # for Python files
             # git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
 
@@ -107,20 +111,3 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git commit --allow-empty --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "empty commit for workflow"
           git push origin HEAD:${{ github.head_ref }}
-
-      # check formatting style (C++)
-      - name: Run clang-format
-        run: |
-          echo "::add-matcher::ci/clang-format.json"
-          git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
-          echo "::remove-matcher owner=clang-format::"
-      
-      # black and flake8 not used anymore because we don't use python as of 2023
-      # - name: Run flake8
-      #   if: always()
-      #   run: |
-      #     echo "::add-matcher::ci/flake8.json"
-      #     find /usr/ | grep flake8
-      #     flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} --flake8-options --max-line-length=88 --extend-ignore=E203
-      #     echo "::remove-matcher owner=flake8-error::"
-      #     echo "::remove-matcher owner=flake8-warning::"
