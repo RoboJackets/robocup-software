@@ -90,7 +90,9 @@ jobs:
       - name: Run style on all changed files
         run: |
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
-          # git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
+            # for Python files
+            # git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
+
       - uses: stefanzweifel/git-auto-commit-action@v4
         with: 
           skip_checkout: true
@@ -98,6 +100,13 @@ jobs:
           commit_message: Automatic style
           create_branch: false
           commit_options: '--no-verify --signoff'
+
+      - name: Make empty commit (so Workflow still runs)
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git commit --allow-empty --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "empty commit for workflow"
+          git push
 
       # check formatting style (C++)
       - name: Run clang-format
