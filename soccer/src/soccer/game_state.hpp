@@ -27,7 +27,7 @@ public:
                         // anything.
     };
 
-    enum Restart { None, Kickoff, Direct, Indirect, Penalty, Placement };
+    enum Restart { None, Kickoff, Free, Penalty, Placement };
 
     [[nodiscard]] State state() const { return state_; }
     [[nodiscard]] bool is_restart() const { return restart_ != Restart::None; }
@@ -41,8 +41,7 @@ public:
     [[nodiscard]] bool is_playing() const { return state() == State::Playing; }
     [[nodiscard]] bool is_penalty_playing() const { return state() == State::PenaltyPlaying; }
     [[nodiscard]] bool is_kickoff() const { return restart() == Restart::Kickoff; }
-    [[nodiscard]] bool is_direct() const { return restart() == Restart::Direct; }
-    [[nodiscard]] bool is_indirect() const { return restart() == Restart::Indirect; }
+    [[nodiscard]] bool is_free_kick() const { return restart() == Restart::Free; }
     [[nodiscard]] bool is_penalty() const { return restart() == Restart::Penalty; }
     [[nodiscard]] bool is_placement() const { return restart() == Restart::Placement; }
 
@@ -135,11 +134,8 @@ public:
     static PlayState ready_penalty(bool ours) {
         return PlayState(State::Ready, Restart::Penalty, ours, {});
     }
-    static PlayState ready_direct(bool ours) {
-        return PlayState(State::Ready, Restart::Direct, ours, {});
-    }
-    static PlayState ready_indirect(bool ours) {
-        return PlayState(State::Ready, Restart::Indirect, ours, {});
+    static PlayState ready_free_kick(bool ours) {
+        return PlayState(State::Ready, Restart::Free, ours, {});
     }
     static PlayState ball_placement(bool ours, rj_geometry::Point point) {
         return PlayState(State::Stop, Restart::Placement, ours, point);
@@ -163,10 +159,8 @@ public:
         switch (restart_) {
             case Kickoff:
                 return fmt::format("{} KICKOFF : {}", ours_string, setup_string);
-            case Direct:
-                return fmt::format("{} DIRECT", ours_string);
-            case Indirect:
-                return fmt::format("{} INDIRECT", ours_string);
+            case Free:
+                return fmt::format("{} FREE", ours_string);
             case Penalty:
                 return fmt::format("{} PENALTY : {}", ours_string, setup_string);
             case Placement:
