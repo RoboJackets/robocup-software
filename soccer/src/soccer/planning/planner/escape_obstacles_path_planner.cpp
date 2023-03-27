@@ -27,7 +27,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
             {RobotInstant{start_instant.pose, start_instant.velocity * 0.0, start_instant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
-        result.set_debug_text("[SLOW " + std::to_string(plan_request.motion_command.index()) + "]");
+        result.set_debug_text("[SLOW " + std::to_string(plan_request.shell_id) + "]");
         return result;
     }
 
@@ -40,7 +40,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     auto result = CreatePath::simple(start_instant.linear_motion(), goal, motion_constraints,
                                      start_instant.stamp);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
-    result.set_debug_text("[ESCAPE " + std::to_string(plan_request.motion_command.index()) + "]");
+    result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
 
     previous_target_ = unblocked;
 

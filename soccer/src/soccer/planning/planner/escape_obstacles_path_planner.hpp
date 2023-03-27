@@ -5,9 +5,9 @@
 #include <optional>
 #include <rrt/Tree.hpp>
 
-#include "path_target_planner.hpp"
+#include "path_target_path_planner.hpp"
 #include "planning/planner/plan_request.hpp"
-#include "planning/planner/planner.hpp"
+#include "planning/planner/path_planner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -17,10 +17,16 @@ namespace planning {
  * @brief This planner finds a path to quickly get out of an obstacle. If the
  * start point isn't in an obstacle, returns a path containing only the start
  * point.
+ *
+ * Params taken from MotionCommand:
+ *   None
  */
-class EscapeObstaclesPathPlanner : public Planner {
+class EscapeObstaclesPathPlanner : public PathPlanner {
 public:
-    EscapeObstaclesPathPlanner() : Planner("EscapeObstaclesPathPlanner"){};
+    // TODO(Kevin): think of better way to convey halted behavior than "EscapeObstaclesPathPlanner"
+    // actually this is not HALT, control node does HALT for us
+    // or maybe use PathTargetPlanner with no real velocity?
+    EscapeObstaclesPathPlanner() : PathPlanner("halt"){};
     ~EscapeObstaclesPathPlanner() override = default;
 
     EscapeObstaclesPathPlanner(EscapeObstaclesPathPlanner&&) noexcept = default;
@@ -31,13 +37,6 @@ public:
         default;
 
     Trajectory plan(const PlanRequest& plan_request) override;
-
-    // if no other planners apply, this one does (see the order of planners in
-    // planner_node.cpp)
-    [[nodiscard]] bool is_applicable(
-        const MotionCommand& /* command */) const override {
-        return true;
-    }
 
     /// Uses an RRT to find a point near to @pt that isn't blocked by obstacles.
     /// If @prev_pt is give, only uses a newly-found point if it is closer to @pt
@@ -53,7 +52,7 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
-    PathTargetPlanner planner_;
+    /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
 };
 

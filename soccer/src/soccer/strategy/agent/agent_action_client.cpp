@@ -104,10 +104,6 @@ void AgentActionClient::get_task() {
 }
 
 void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-    // TODO remove this debug
-    /* for (int i = 0; i < 6; i++) { */
-    /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
-    /* } */
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
         case 0:

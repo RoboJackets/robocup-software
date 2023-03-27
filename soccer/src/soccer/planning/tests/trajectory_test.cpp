@@ -6,7 +6,7 @@
 #include "math.h"
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
-#include "planning/planner/path_target_planner.hpp"
+#include "planning/planner/path_target_path_planner.hpp"
 #include "planning/primitives/path_smoothing.hpp"
 #include "planning/primitives/rrt_util.hpp"
 #include "planning/primitives/velocity_profiling.hpp"

@@ -1,4 +1,4 @@
-#include "intercept_planner.hpp"
+#include "intercept_path_planner.hpp"
 
 #include <rj_constants/constants.hpp>
 
@@ -8,8 +8,8 @@
 
 namespace planning {
 
-Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
-    InterceptMotionCommand command = std::get<InterceptMotionCommand>(plan_request.motion_command);
+Trajectory InterceptPathPlanner::plan(const PlanRequest& plan_request) {
+    const MotionCommand& command = plan_request.motion_command;
 
     // Start state for the specified robot
     RobotInstant start_instant = plan_request.start;
@@ -25,7 +25,8 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     // Time for ball to hit target point
     // Target point is projected into ball velocity line
     rj_geometry::Point target_pos_on_line;
-    RJ::Seconds ball_to_point_time = ball.query_seconds_near(command.target, &target_pos_on_line);
+    RJ::Seconds ball_to_point_time =
+        ball.query_seconds_near(command.target.position, &target_pos_on_line);
 
     // vector from robot to target
     rj_geometry::Point bot_to_target = (target_pos_on_line - start_instant.position());
@@ -80,7 +81,7 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-bool InterceptPlanner::is_done() const {
+bool InterceptPathPlanner::is_done() const {
     bool ball_is_slow = latest_ball_state_.velocity.mag() < 0.5;  // m/s
     bool ball_is_close = latest_ball_state_.position.dist_to(latest_robot_pos_) <
                          kRobotRadius + kBallRadius + 0.01;  // m

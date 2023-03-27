@@ -7,7 +7,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
 
 #include "planning/instant.hpp"
 #include "position.hpp"
