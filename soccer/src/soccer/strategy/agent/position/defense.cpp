@@ -146,4 +146,30 @@ void Defense::send_leave_wall_request() {
     communication_request_ = communication_request;
 }
 
+bool Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
+    for (int i = 0; i < walling_robots.size(); i++) {
+        if (waling_robots[i] == join_response.robot_id) {
+            return true;
+        } else if (walling_robots[i] > join_response.robot_id) {
+            walling_robots.insert(walling_robots.begin() + i, join_response.robot_id);
+            return false;
+        }
+    }
+    
+    return false;
+}
+
+bool Defense::handle_leave_wall_response(communication::LeaveWallResponse leave_response) {
+    for (int i = walling_robots.size() - 1; i > 0; i--) {
+        if (walling_robots[i] == leave_response.robot_id) {
+            walling_robots.erase(walling_robots.begin() + i);
+            return true;
+        } else if (walling_robots[i] > leave_response.robot_id) {
+            return false;
+        }
+    }
+
+    return false;
+}
+
 }  // namespace strategy

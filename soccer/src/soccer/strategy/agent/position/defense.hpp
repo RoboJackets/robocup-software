@@ -33,6 +33,7 @@ public:
     void pass_ball(int robot_id) override;
     communication::Acknowledge acknowledge_ball_in_transit(
         communication::BallInTransitRequest ball_in_transit_request) override;
+    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
 
 private:
     int move_ct_ = 0;
@@ -65,6 +66,12 @@ private:
 
     void send_join_wall_request();
     void send_leave_wall_request();
+
+    bool handle_join_wall_response(communication::JoinWallResponse join_request);
+    bool handle_leave_wall_response(communication::LeaveWallResponse leave_request);
+
+    std::vector<u_int8_t> walling_robots = {};
+    int waller_id = -1;
 
     // current state of the defense agent (state machine)
     State current_state_ = IDLING;
