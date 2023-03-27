@@ -18,16 +18,16 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
+Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     BallState ball = plan_request.world_state->ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
-    auto command = std::get<SettleMotionCommand>(plan_request.motion_command);
+    const MotionCommand& command = plan_request.motion_command;
 
     // The direction we will try and bounce the ball when we dampen it to
     // speed up actions after capture
-    target_bounce_direction_ = command.target;
+    target_bounce_direction_ = command.target.position;
 
     // Start state for the specified robot
     RobotInstant start_instant = plan_request.start;
@@ -79,11 +79,11 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
 
     // Run state code
     switch (current_state_) {
-        case SettlePlannerStates::Intercept:
+        case SettlePathPlannerStates::Intercept:
             result = intercept(plan_request, start_instant, static_obstacles, dynamic_obstacles,
                                delta_pos, face_pos);
             break;
-        case SettlePlannerStates::Dampen:
+        case SettlePathPlannerStates::Dampen:
             result = dampen(plan_request, start_instant, delta_pos, face_pos);
             break;
         default:
@@ -95,8 +95,8 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
     return result;
 }
 
-void SettlePlanner::check_solution_validity(BallState ball, RobotInstant start_instant,
-                                            rj_geometry::Point delta_pos) {
+void SettlePathPlanner::check_solution_validity(BallState ball, RobotInstant start_instant,
+                                                rj_geometry::Point delta_pos) {
     const double max_ball_angle_change_for_path_reset =
         settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
 
@@ -122,16 +122,16 @@ void SettlePlanner::check_solution_validity(BallState ball, RobotInstant start_i
 
     if (((!robot_on_ball_line && ball_moving && ball_moving_to_us) ||
          (robot_far && ball_moving && !ball_moving_to_us)) &&
-        current_state_ == SettlePlannerStates::Dampen) {
+        current_state_ == SettlePathPlannerStates::Dampen) {
         first_intercept_target_found_ = false;
         first_ball_vel_found_ = false;
 
-        current_state_ = SettlePlannerStates::Intercept;
+        current_state_ = SettlePathPlannerStates::Intercept;
     }
 }
 
-void SettlePlanner::process_state_transition(BallState ball, RobotInstant* start_instant,
-                                             double angle, rj_geometry::Point delta_pos) {
+void SettlePathPlanner::process_state_transition(BallState ball, RobotInstant* start_instant,
+                                                 double angle, rj_geometry::Point delta_pos) {
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
@@ -157,19 +157,19 @@ void SettlePlanner::process_state_transition(BallState ball, RobotInstant* start
             average_ball_vel_.angle_between(start_instant->position() - ball.position) < 3.14 / 2;
 
         if (in_front_of_ball && inline_with_ball &&
-            current_state_ == SettlePlannerStates::Intercept) {
+            current_state_ == SettlePathPlannerStates::Intercept) {
             // Start the next section of the path from the end of our current
             // path
             *start_instant = path_so_far.last();
-            current_state_ = SettlePlannerStates::Dampen;
+            current_state_ = SettlePathPlannerStates::Dampen;
         }
     }
 }
 
-Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
-                                    const rj_geometry::ShapeSet& static_obstacles,
-                                    const std::vector<DynamicObstacle>& dynamic_obstacles,
-                                    rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
+Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
+                                        const rj_geometry::ShapeSet& static_obstacles,
+                                        const std::vector<DynamicObstacle>& dynamic_obstacles,
+                                        rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     BallState ball = plan_request.world_state->ball;
 
     // Try find best point to intercept using brute force method
@@ -373,8 +373,8 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
     return new_target_path;
 }
 
-Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                 rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
+Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
+                                     rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball
@@ -469,11 +469,11 @@ Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant s
     return dampen_end;
 }
 
-Trajectory SettlePlanner::invalid(const PlanRequest& plan_request,
-                                  const rj_geometry::ShapeSet& static_obstacles,
-                                  const std::vector<DynamicObstacle>& dynamic_obstacles) {
+Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
+                                      const rj_geometry::ShapeSet& static_obstacles,
+                                      const std::vector<DynamicObstacle>& dynamic_obstacles) {
     SPDLOG_WARN("Invalid state in settle planner. Restarting");
-    current_state_ = SettlePlannerStates::Intercept;
+    current_state_ = SettlePathPlannerStates::Intercept;
 
     // Stop movement until next frame since it's the safest option
     // programmatically
@@ -488,9 +488,10 @@ Trajectory SettlePlanner::invalid(const PlanRequest& plan_request,
     return path;
 }
 
-void SettlePlanner::calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant,
-                                           double* angle_out, rj_geometry::Point* delta_robot_pos,
-                                           rj_geometry::Point* face_pos) {
+void SettlePathPlanner::calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant,
+                                               double* angle_out,
+                                               rj_geometry::Point* delta_robot_pos,
+                                               rj_geometry::Point* face_pos) {
     // If we have a valid bounce target
     if (target_bounce_direction_) {
         // Get angle between target and normal hit
@@ -527,8 +528,8 @@ void SettlePlanner::calc_delta_pos_for_dir(BallState ball, RobotInstant start_in
     }
 }
 
-void SettlePlanner::reset() {
-    current_state_ = SettlePlannerStates::Intercept;
+void SettlePathPlanner::reset() {
+    current_state_ = SettlePathPlannerStates::Intercept;
     first_intercept_target_found_ = false;
     first_ball_vel_found_ = false;
     path_created_for_dampen_ = false;
@@ -536,10 +537,10 @@ void SettlePlanner::reset() {
     previous_ = Trajectory{};
 }
 
-bool SettlePlanner::is_done() const {
+bool SettlePathPlanner::is_done() const {
     // FSM: Intercept -> Dampen
     // (see process_state_transition())
-    if (current_state_ != SettlePlannerStates::Dampen) {
+    if (current_state_ != SettlePathPlannerStates::Dampen) {
         return false;
     }
 

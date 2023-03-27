@@ -5,16 +5,20 @@
 namespace planning {
 
 /**
- * Planner which tries to intercept the path ball as quickly as possible
+ * PathPlanner which tries to intercept the path ball as quickly as possible
  * Whether this means moving and stopping in the path of the ball
  * or completely driving through and "slapping" the ball.
  *
  * Mostly used for the goalie to block shots (w/ a target point of 0,0).
+ *
+ * Params taken from MotionCommand:
+ *   target.position - planner will attempt to intercept ball as close to
+ *                     this point as possible
  */
 
-class InterceptPlanner : public PlannerForCommandType<InterceptMotionCommand> {
+class InterceptPathPlanner : public PathPlanner {
 public:
-    InterceptPlanner() : PlannerForCommandType<InterceptMotionCommand>("InterceptPlanner"){};
+    InterceptPathPlanner() : PathPlanner("intercept"){};
 
     Trajectory plan(const PlanRequest& request) override;
 

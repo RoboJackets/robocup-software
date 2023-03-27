@@ -27,7 +27,7 @@ TEST(Planning, path_target_random) {
     std::mt19937 gen(1337);
 
     WorldState world_state;
-    PathTargetPlanner planner;
+    PathTargetPathPlanner planner;
 
     int failure_count = 0;
     for (int i = 0; i < 1000; i++) {
@@ -48,7 +48,7 @@ TEST(Planning, path_target_random) {
 
         LinearMotionInstant goal = random_instant(&gen).linear_motion();
         PlanRequest request{start,
-                            PathTargetMotionCommand{goal},
+                            MotionCommand{"path_target", goal},
                             RobotConstraints{},
                             obstacles,
                             {},
@@ -88,7 +88,7 @@ TEST(Planning, collect_basic) {
     world_state.ball.velocity = Point{0, 0};
     world_state.ball.timestamp = RJ::now();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        CollectMotionCommand{},
+                        MotionCommand{"collect"},
                         RobotConstraints{},
                         ShapeSet{},
                         {},
@@ -97,7 +97,7 @@ TEST(Planning, collect_basic) {
                         &world_state,
                         2,
                         nullptr};
-    CollectPlanner planner;
+    CollectPathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -110,7 +110,7 @@ TEST(Planning, collect_obstructed) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        CollectMotionCommand{},
+                        MotionCommand{"collect"},
                         RobotConstraints{},
                         obstacles,
                         {},
@@ -119,7 +119,7 @@ TEST(Planning, collect_obstructed) {
                         &world_state,
                         2,
                         nullptr};
-    CollectPlanner planner;
+    CollectPathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -135,7 +135,7 @@ TEST(Planning, collect_pointless_obs) {
     obstacles.add(std::make_shared<Circle>(Point{-2, 3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{0, 5}, .2));
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        CollectMotionCommand{},
+                        MotionCommand{"collect"},
                         RobotConstraints{},
                         obstacles,
                         {},
@@ -144,7 +144,7 @@ TEST(Planning, collect_pointless_obs) {
                         &world_state,
                         2,
                         nullptr};
-    CollectPlanner planner;
+    CollectPathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -157,7 +157,7 @@ TEST(Planning, collect_moving_ball_quick) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        CollectMotionCommand{},
+                        MotionCommand{"collect"},
                         RobotConstraints{},
                         obstacles,
                         {},
@@ -166,7 +166,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         &world_state,
                         2,
                         nullptr};
-    CollectPlanner planner;
+    CollectPathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -179,7 +179,7 @@ TEST(Planning, collect_moving_ball_slow) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-0.5, .5}, .2));
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        CollectMotionCommand{},
+                        MotionCommand{"collect"},
                         RobotConstraints{},
                         obstacles,
                         {},
@@ -188,7 +188,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         &world_state,
                         2,
                         nullptr};
-    CollectPlanner planner;
+    CollectPathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -201,7 +201,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        CollectMotionCommand{},
+                        MotionCommand{"collect"},
                         RobotConstraints{},
                         obstacles,
                         {},
@@ -210,7 +210,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         &world_state,
                         2,
                         nullptr};
-    CollectPlanner planner;
+    CollectPathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -235,7 +235,7 @@ TEST(Planning, collect_random) {
                 .2));
         }
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                            CollectMotionCommand{},
+                            MotionCommand{"collect"},
                             RobotConstraints{},
                             obstacles,
                             {},
@@ -244,7 +244,7 @@ TEST(Planning, collect_random) {
                             &world_state,
                             2,
                             nullptr};
-        CollectPlanner planner;
+        CollectPathPlanner planner;
         Trajectory path = planner.plan(std::move(request));
 
         if (path.empty()) {
@@ -266,7 +266,7 @@ TEST(Planning, settle_basic) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        SettleMotionCommand{},
+                        MotionCommand{"settle"},
                         RobotConstraints{},
                         obstacles,
                         {},
@@ -275,7 +275,7 @@ TEST(Planning, settle_basic) {
                         &world_state,
                         2,
                         nullptr};
-    SettlePlanner planner;
+    SettlePathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -290,7 +290,7 @@ TEST(Planning, settle_pointless_obs) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-1, 1.0}, .2));
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                        SettleMotionCommand{},
+                        MotionCommand{"settle"},
                         RobotConstraints{},
                         obstacles,
                         {},
@@ -299,7 +299,7 @@ TEST(Planning, settle_pointless_obs) {
                         &world_state,
                         2,
                         nullptr};
-    SettlePlanner planner;
+    SettlePathPlanner planner;
     Trajectory path = planner.plan(std::move(request));
     ASSERT_TRUE(!path.empty());
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
@@ -325,7 +325,7 @@ TEST(Planning, settle_random) {
                 .2));
         }
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
-                            SettleMotionCommand{},
+                            MotionCommand{"settle"},
                             RobotConstraints{},
                             obstacles,
                             {},
@@ -334,7 +334,7 @@ TEST(Planning, settle_random) {
                             &world_state,
                             2,
                             nullptr};
-        SettlePlanner planner;
+        SettlePathPlanner planner;
         Trajectory path = planner.plan(std::move(request));
 
         if (path.empty()) {

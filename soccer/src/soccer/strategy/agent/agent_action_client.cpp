@@ -56,6 +56,14 @@ AgentActionClient::AgentActionClient(int r_id)
             get_communication();
             check_communication_timeout();
         });
+
+    if (r_id == 0) {
+        current_position_ = std::make_unique<Goalie>(r_id);
+    } else if (r_id == 1) {
+        current_position_ = std::make_unique<Defense>(r_id);
+    } else {
+        current_position_ = std::make_unique<Offense>(r_id);
+    }
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -80,15 +88,16 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
+    // SPDLOG_INFO("Getting task for robot {}", robot_id_);
+    // if (current_position_ == nullptr) {
+    //     if (robot_id_ == 0) {
+    //         current_position_ = std::make_unique<Goalie>(robot_id_);
+    //     } else if (robot_id_ == 1) {
+    //         current_position_ = std::make_unique<Defense>(robot_id_);
+    //     } else {
+    //         current_position_ = std::make_unique<Offense>(robot_id_);
+    //     }
+    // }
 
     auto optional_task = current_position_->get_task();
     if (optional_task.has_value()) {
@@ -104,10 +113,6 @@ void AgentActionClient::get_task() {
 }
 
 void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-    // TODO remove this debug
-    /* for (int i = 0; i < 6; i++) { */
-    /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
-    /* } */
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
         case 0:
@@ -179,18 +184,25 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
 }
 
 void AgentActionClient::get_communication() {
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
+    // if (current_position_ == nullptr) {
+    //     if (robot_id_ == 0) {
+    //         current_position_ = std::make_unique<Goalie>(robot_id_);
+    //     } else if (robot_id_ == 1) {
+    //         current_position_ = std::make_unique<Defense>(robot_id_);
+    //     } else {
+    //         current_position_ = std::make_unique<Offense>(robot_id_);
+    //     }
+    // }
 
-    communication::PosAgentRequestWrapper communication_request =
-        current_position_->send_communication_request();
+    auto optional_communication_request = current_position_->send_communication_request();
+    // SPDLOG_INFO("comm request");
+    // TODO: get if syntax?
+    if (!optional_communication_request.has_value()) {
+        return;
+    }
+    SPDLOG_INFO("non null comm request");
+
+    auto communication_request = optional_communication_request.value();
 
     bool robots_visible = false;
     for (u_int8_t i = 0; i < kNumShells; i++) {
@@ -200,7 +212,10 @@ void AgentActionClient::get_communication() {
         }
     }
 
-    if (!(communication_request.request == last_communication_) && robots_visible) {
+    SPDLOG_INFO("\033[92mROBOTS VISIBLE\033[0m");
+
+    if (robots_visible) {
+        SPDLOG_INFO("\033[92mSENDING REQUEST\033[0m");
         // update the last communication
         last_communication_ = communication_request.request;
         // create a buffer to hold the responses and the outgoing request
@@ -278,16 +293,16 @@ void AgentActionClient::receive_response_callback(
     const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
     u_int8_t robot_id) {
     // TODO (https://app.clickup.com/t/867796fh2): change this default to defense? or NOP?
-    if (current_position_ == nullptr) {
-        // TODO (https://app.clickup.com/t/867796fh2): change this once coach node merged
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
+    // if (current_position_ == nullptr) {
+    //     // TODO (https://app.clickup.com/t/867796fh2): change this once coach node merged
+    //     if (robot_id_ == 0) {
+    //         current_position_ = std::make_unique<Goalie>(robot_id_);
+    //     } else if (robot_id_ == 1) {
+    //         current_position_ = std::make_unique<Defense>(robot_id_);
+    //     } else {
+    //         current_position_ = std::make_unique<Offense>(robot_id_);
+    //     }
+    // }
 
     // Convert response from other agent to c++
     communication::AgentResponse agent_response =
@@ -335,15 +350,15 @@ void AgentActionClient::receive_response_callback(
 void AgentActionClient::check_communication_timeout() {
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {
-            if (current_position_ == nullptr) {
-                if (robot_id_ == 0) {
-                    current_position_ = std::make_unique<Goalie>(robot_id_);
-                } else if (robot_id_ == 1) {
-                    current_position_ = std::make_unique<Defense>(robot_id_);
-                } else {
-                    current_position_ = std::make_unique<Offense>(robot_id_);
-                }
-            }
+            // if (current_position_ == nullptr) {
+            //     if (robot_id_ == 0) {
+            //         current_position_ = std::make_unique<Goalie>(robot_id_);
+            //     } else if (robot_id_ == 1) {
+            //         current_position_ = std::make_unique<Defense>(robot_id_);
+            //     } else {
+            //         current_position_ = std::make_unique<Offense>(robot_id_);
+            //     }
+            // }
 
             current_position_->receive_communication_response(buffered_responses_[i]);
             buffered_responses_.erase(buffered_responses_.begin() + i);

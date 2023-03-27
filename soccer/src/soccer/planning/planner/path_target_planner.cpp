@@ -13,12 +13,12 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
+Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
     ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
-    auto command = std::get<PathTargetMotionCommand>(request.motion_command);
+    const MotionCommand& command = request.motion_command;
     fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
                    &ball_trajectory);
 
@@ -29,18 +29,18 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
         return Trajectory();
     }
 
-    LinearMotionInstant goal_instant = command.goal;
-    Point goal_point = goal_instant.position;
+    LinearMotionInstant target_instant = command.target;
+    Point goal_point = target_instant.position;
 
     // Cache the start and goal instants for is_done()
-    cached_goal_instant_ = goal_instant;
+    cached_target_instant_ = target_instant;
     cached_start_instant_ = request.start.linear_motion();
 
     AngleFunction angle_function = get_angle_function(request);
 
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{request.start, goal_instant, static_obstacles, dynamic_obstacles,
+        Replanner::PlanParams{request.start, target_instant, static_obstacles, dynamic_obstacles,
                               request.constraints, angle_function, RJ::Seconds(3.0)},
         std::move(previous_));
 
@@ -48,31 +48,31 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     return trajectory;
 }
 
-bool PathTargetPlanner::is_done() const {
-    if (!cached_start_instant_.has_value() || !cached_goal_instant_.has_value()) {
+bool PathTargetPathPlanner::is_done() const {
+    if (!cached_start_instant_.has_value() || !cached_target_instant_.has_value()) {
         return false;
     }
 
     // TODO(Kevin): also, should enforce the desired angle
     // right now there is a convoluted chain
-    // PathTargetPlanner->Replanner->plan_angles which plans angles depending
+    // PathTargetPathPlanner->Replanner->plan_angles which plans angles depending
     // on AngleFunction (either desired face point or desired face angle).
-    // nowhere in the chain is there a check if PathTargetPlanner actually is
+    // nowhere in the chain is there a check if PathTargetPathPlanner actually is
     // getting to the desired angle.
     //
     // may be related to issue #1506?
     double position_tolerance = 1e-1;
     double velocity_tolerance = 1e-1;
     return LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
-                                              cached_goal_instant_.value(), position_tolerance,
+                                              cached_target_instant_.value(), position_tolerance,
                                               velocity_tolerance);
     // TODO(Kevin): in theory this should work as LinearMotionInstant has
     // tolerance built into its == overload, but in practice it doesn't
-    /* return cached_start_instant_ == cached_goal_instant_; */
+    /* return cached_start_instant_ == cached_target_instant_; */
 }
 
-AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) {
-    auto face_option = std::get<PathTargetMotionCommand>(request.motion_command).face_option;
+AngleFunction PathTargetPathPlanner::get_angle_function(const PlanRequest& request) {
+    const auto& face_option = request.motion_command.face_option;
 
     if (std::holds_alternative<FacePoint>(face_option)) {
         return AngleFns::face_point(std::get<FacePoint>(face_option).face_point);
@@ -88,7 +88,7 @@ AngleFunction PathTargetPlanner::get_angle_function(const PlanRequest& request) 
     }
 
     // default to facing tangent to path
-    // (rj_convert from ROS to PTMC also follows this default)
+    // (rj_convert in motion_command.hpp also follows this default)
     return AngleFns::tangent;
 }
 
