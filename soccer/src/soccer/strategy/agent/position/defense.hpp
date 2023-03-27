@@ -67,8 +67,8 @@ private:
     void send_join_wall_request();
     void send_leave_wall_request();
 
-    bool handle_join_wall_response(communication::JoinWallResponse join_request);
-    bool handle_leave_wall_response(communication::LeaveWallResponse leave_request);
+    void handle_join_wall_response(communication::JoinWallResponse join_request);
+    void handle_leave_wall_response(communication::LeaveWallResponse leave_request);
 
     std::vector<u_int8_t> walling_robots = {};
     int waller_id = -1;

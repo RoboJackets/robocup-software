@@ -21,6 +21,19 @@ Defense::State Defense::update_state() {
     switch (current_state_) {
         case IDLING:
             break;
+        case JOINING_WALL:
+            send_join_wall_request();
+            next_state = WALLING;
+            walling_robots = {(u_int8_t) robot_id_};
+            break;
+        case WALLING:
+            break;
+        case LEAVING_WALL:
+            send_leave_wall_request();
+            next_state = IDLING;
+            walling_robots = {(u_int8_t) robot_id_};
+            waller_id = -1;
+            break;
         case SEARCHING:
             break;
         case RECEIVING:
@@ -81,6 +94,11 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.kick_speed = 4.0;
         intent.is_active = true;
         return intent;
+    } else if (current_state_ == WALLING) {
+        if (walling_robots.size() > 1) {
+            Waller waller{waller_id};
+            return waller.get_task(intent, world_state());
+        }
     }
 
     return std::nullopt;
@@ -115,6 +133,26 @@ communication::Acknowledge Defense::acknowledge_ball_in_transit(
     return acknowledge_response;
 }
 
+void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    // Call to super
+    Position::receive_communication_response(response);
+
+    // Handle join and leave wall responses
+    if (const communication::JoinWallRequest* join_request = std::get_if<communication::JoinWallRequest>(&response.associated_request)) {
+        for (u_int32_t i = 0; i < response.responses.size(); i++) {
+            if (const communication::JoinWallResponse* join_response = std::get_if<communication::JoinWallResponse>(&response.responses[i])) {
+                handle_join_wall_response(*join_response);
+            }
+        }
+    } else if (const communication::LeaveWallRequest* leave_request = std::get_if<communication::LeaveWallRequest>(&response.associated_request)) {
+        for (u_int32_t i = 0; i < response.responses.size(); i++) {
+            if (const communication::LeaveWallResponse* leave_response = std::get_if<communication::LeaveWallResponse>(&response.responses[i])) {
+                handle_leave_wall_response(*leave_response);
+            }
+        }
+    }
+}
+
 void Defense::send_join_wall_request() {
     communication::JoinWallRequest join_request{};
     join_request.robot_id = robot_id_;
@@ -138,38 +176,35 @@ void Defense::send_leave_wall_request() {
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = leave_request;
-    // TODO: send this to only walling agents
-    communication_request.target_agents = {};
+    communication_request.target_agents = walling_robots;
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
     communication_request_ = communication_request;
 }
 
-bool Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
+void Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
     for (int i = 0; i < walling_robots.size(); i++) {
-        if (waling_robots[i] == join_response.robot_id) {
-            return true;
+        if (walling_robots[i] == join_response.robot_id) {
+            return;
         } else if (walling_robots[i] > join_response.robot_id) {
             walling_robots.insert(walling_robots.begin() + i, join_response.robot_id);
-            return false;
+            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) - walling_robots.begin();
+            return;
         }
     }
-    
-    return false;
 }
 
-bool Defense::handle_leave_wall_response(communication::LeaveWallResponse leave_response) {
+void Defense::handle_leave_wall_response(communication::LeaveWallResponse leave_response) {
     for (int i = walling_robots.size() - 1; i > 0; i--) {
         if (walling_robots[i] == leave_response.robot_id) {
             walling_robots.erase(walling_robots.begin() + i);
-            return true;
+            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) - walling_robots.begin();
+            return;
         } else if (walling_robots[i] > leave_response.robot_id) {
-            return false;
+            return;
         }
     }
-
-    return false;
 }
 
 }  // namespace strategy
