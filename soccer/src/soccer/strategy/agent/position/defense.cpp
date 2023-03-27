@@ -137,20 +137,29 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
     // Call to super
     Position::receive_communication_response(response);
 
-    // Handle join and leave wall responses
+    // Handle join wall response
     if (const communication::JoinWallRequest* join_request = std::get_if<communication::JoinWallRequest>(&response.associated_request)) {
         for (u_int32_t i = 0; i < response.responses.size(); i++) {
             if (const communication::JoinWallResponse* join_response = std::get_if<communication::JoinWallResponse>(&response.responses[i])) {
                 handle_join_wall_response(*join_response);
             }
         }
-    } else if (const communication::LeaveWallRequest* leave_request = std::get_if<communication::LeaveWallRequest>(&response.associated_request)) {
-        for (u_int32_t i = 0; i < response.responses.size(); i++) {
-            if (const communication::LeaveWallResponse* leave_response = std::get_if<communication::LeaveWallResponse>(&response.responses[i])) {
-                handle_leave_wall_response(*leave_response);
-            }
-        }
     }
+}
+
+communication::PosAgentResponseWrapper Defense::receive_communication_request(communication::AgentPosRequestWrapper request) {
+    // Call to super
+    communication::PosAgentResponseWrapper response = Position::receive_communication_request(request);
+
+    // Handle join and leave wall request
+    if (const communication::JoinWallRequest* join_request = std::get_if<communication::JoinWallRequest>(&request.request)) {
+        response.response = handle_join_wall_request(*join_request);
+    } else if (const communication::LeaveWallRequest* leave_request = std::get_if<communication::LeaveWallRequest>(&request.request)) {
+        response.response = handle_leave_wall_request(*leave_request);
+    }
+
+    // Return the response
+    return response;
 }
 
 void Defense::send_join_wall_request() {
@@ -183,6 +192,41 @@ void Defense::send_leave_wall_request() {
     communication_request_ = communication_request;
 }
 
+communication::JoinWallResponse Defense::handle_join_wall_request(communication::JoinWallRequest join_request) {
+    for (int i = 0; i < walling_robots.size(); i++) {
+        if (walling_robots[i] == join_request.robot_id) {
+            break;
+        } else if (walling_robots[i] > join_request.robot_id) {
+            walling_robots.insert(walling_robots.begin() + i, join_request.robot_id);
+            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) - walling_robots.begin();
+            break;
+        }
+    }
+
+    communication::JoinWallResponse join_response{};
+    join_response.robot_id = robot_id_;
+    communication::generate_uid(join_response);
+
+    return join_response;
+}
+
+communication::Acknowledge Defense::handle_leave_wall_request(communication::LeaveWallRequest leave_request) {
+    for (int i = walling_robots.size() - 1; i > 0; i--) {
+        if (walling_robots[i] == leave_request.robot_id) {
+            walling_robots.erase(walling_robots.begin() + i);
+            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) - walling_robots.begin();
+            break;
+        } else if (walling_robots[i] > leave_request.robot_id) {
+            break;
+        }
+    }
+
+    communication::Acknowledge acknowledge_response{};
+    communication::generate_uid(acknowledge_response);
+
+    return acknowledge_response;
+}
+
 void Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
     for (int i = 0; i < walling_robots.size(); i++) {
         if (walling_robots[i] == join_response.robot_id) {
@@ -190,18 +234,6 @@ void Defense::handle_join_wall_response(communication::JoinWallResponse join_res
         } else if (walling_robots[i] > join_response.robot_id) {
             walling_robots.insert(walling_robots.begin() + i, join_response.robot_id);
             waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) - walling_robots.begin();
-            return;
-        }
-    }
-}
-
-void Defense::handle_leave_wall_response(communication::LeaveWallResponse leave_response) {
-    for (int i = walling_robots.size() - 1; i > 0; i--) {
-        if (walling_robots[i] == leave_response.robot_id) {
-            walling_robots.erase(walling_robots.begin() + i);
-            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) - walling_robots.begin();
-            return;
-        } else if (walling_robots[i] > leave_response.robot_id) {
             return;
         }
     }

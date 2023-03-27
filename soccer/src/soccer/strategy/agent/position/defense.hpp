@@ -34,6 +34,8 @@ public:
     communication::Acknowledge acknowledge_ball_in_transit(
         communication::BallInTransitRequest ball_in_transit_request) override;
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+    communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request) override;
 
 private:
     int move_ct_ = 0;
@@ -67,8 +69,10 @@ private:
     void send_join_wall_request();
     void send_leave_wall_request();
 
+    communication::JoinWallResponse handle_join_wall_request(communication::JoinWallRequest join_request);
+    communication::Acknowledge handle_leave_wall_request(communication::LeaveWallRequest leave_request);
+
     void handle_join_wall_response(communication::JoinWallResponse join_request);
-    void handle_leave_wall_response(communication::LeaveWallResponse leave_request);
 
     std::vector<u_int8_t> walling_robots = {};
     int waller_id = -1;
