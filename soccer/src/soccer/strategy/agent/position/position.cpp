@@ -151,43 +151,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
     return comm_response;
 }
 
-communication::PosAgentResponseWrapper Position::receive_communication_request(
-    communication::AgentPosRequestWrapper request) {
-    communication::PosAgentResponseWrapper comm_response{};
-    SPDLOG_INFO("\033[92m offense recv comm req !! \033[0m");
-    if (const communication::PassRequest* pass_request =
-            std::get_if<communication::PassRequest>(&request.request)) {
-        communication::PassResponse pass_response = receive_pass_request(*pass_request);
-        comm_response.response = pass_response;
-        // TODO: "IncomingPassRequest" => "IncomingBallRequest" (or smth)
-    } else if (const communication::IncomingPassRequest* incoming_pass_request =
-                   std::get_if<communication::IncomingPassRequest>(&request.request)) {
-        communication::Acknowledge incoming_pass_acknowledge =
-            acknowledge_pass(*incoming_pass_request);
-        comm_response.response = incoming_pass_acknowledge;
-    } else if (const communication::BallInTransitRequest* ball_in_transit_request =
-                   std::get_if<communication::BallInTransitRequest>(&request.request)) {
-        communication::Acknowledge ball_in_transit_acknowledge =
-            acknowledge_ball_in_transit(*ball_in_transit_request);
-        comm_response.response = ball_in_transit_acknowledge;
-    } else {
-        communication::Acknowledge acknowledge{};
-        communication::generate_uid(acknowledge);
-        comm_response.response = acknowledge;
-    }
-
-    // TEST CODE: UNCOMMENT TO TEST
-    // if (const communication::TestRequest* test_request =
-    //                std::get_if<communication::TestRequest>(&request.request)) {
-    //     communication::TestResponse test_response{};
-    //     test_response.message = fmt::format("An offensive player (robot: {}) says hi",
-    //     robot_id_); communication::generate_uid(test_response); comm_response.response =
-    //     test_response;
-    // }
-
-    return comm_response;
-}
-
 const std::string Position::get_name() { return position_name_; }
 
 void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
@@ -229,6 +192,7 @@ communication::PassResponse Position::receive_pass_request(
 
 void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication::IncomingPassRequest incoming_pass_request{};
+    incoming_pass_request.from_robot_id = robot_id_;
     communication::generate_uid(incoming_pass_request);
 
     communication::PosAgentRequestWrapper communication_request{};
