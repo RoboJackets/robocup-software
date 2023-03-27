@@ -75,8 +75,9 @@ public:
             });
     }
 
-    [[nodiscard]] PlayState play_state() const {
-        auto lock = std::lock_guard(mutex_);
+     [[nodiscard]] PlayState play_state() const {
+        auto lOCK = std::lock_guard(mutex_);
+
         return last_play_state_;
     }
     [[nodiscard]] GameSettings game_settings() const {
