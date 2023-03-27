@@ -100,21 +100,19 @@ jobs:
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --preview
 
             if ! git diff-index --quiet HEAD; then
-              echo "Style fixes applied"
-              git commit -am "Apply automatic style formatting"
               echo "::set-output name=changed::true"
             else
-              # no changes
-              echo "No style fixes needed"
+              echo "::set-output name=changed::false"
             fi
 
       - name: Create PR with style fixes
         if: steps.style-check.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v3
         with:
+          commit-message: "automated style fixes"
           title: Fix Code Style On ${{ github.head_ref }}
-          labels: style fixes, automated PR
           body: This pull request contains automatic style formatting for ${{ github.head_ref }}.
+          labels: style fixes, automated PR
           branch: fix-code-style/${{ github.head_ref }}
           base: ${{ github.base_ref }}
 
