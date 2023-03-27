@@ -52,14 +52,19 @@ Goalie::State Goalie::update_state() {
 }
 
 std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
-    if (latest_state_ == IDLING) {
-        auto goalie_idle_cmd = planning::GoalieIdleMotionCommand{};
+    if (latest_state_ == BLOCKING) {
+        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 0.1}};
+        auto intercept_cmd = planning::MotionCommand{"intercept", target};
+        intent.motion_command = intercept_cmd;
+        return intent;
+    } else if (latest_state_ == IDLING) {
+        auto goalie_idle_cmd = planning::MotionCommand{"goalie_idle"};
         intent.motion_command = goalie_idle_cmd;
         return intent;
     } else if (latest_state_ == CLEARING) {
-        auto clear_kick_cmd = planning::LineKickMotionCommand{rj_geometry::Point{0.0, 4.5}};
-        intent.motion_command = clear_kick_cmd;
-        intent.motion_command_name = "line kick";
+        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 4.5}};
+        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+        intent.motion_command = line_kick_cmd;
 
         // note: the way this is set up makes it impossible to
         // shoot on time without breakbeam
@@ -108,6 +113,8 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         return intent;
     }
 
+    // should be impossible to reach, but this is equivalent to
+    // sending an empty MotionCommand
     return std::nullopt;
 }
 
