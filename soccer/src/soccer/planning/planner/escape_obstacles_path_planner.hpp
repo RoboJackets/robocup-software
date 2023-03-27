@@ -52,7 +52,6 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
-    // TODO(Kevin): delete this if unused
     /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
 };
