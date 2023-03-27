@@ -110,8 +110,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: "automated style fixes"
-          title: Fix Code Style On ${{ github.head_ref }}
-          body: This pull request contains automatic style formatting for ${{ github.head_ref }}.
+          title: Fix Code Style For PR \#${{ github.event.number }}
+          body: This pull request contains automatic style formatting for PR \#${{ github.event.number }}.
           labels: style fixes, automated PR
           branch: fix-code-style/${{ github.head_ref }}
           base: ${{ github.head_ref }}
