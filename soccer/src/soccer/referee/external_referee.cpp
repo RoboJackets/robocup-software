@@ -170,10 +170,10 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
         case SSL_Referee::PREPARE_PENALTY_BLUE:
             set_play_state(PlayState::setup_penalty(BLUE));
             break;
-        case SSL_Referee::FREE_YELLOW:
+        case SSL_Referee::DIRECT_FREE_YELLOW:
             set_play_state(PlayState::ready_free_kick(YELLOW));
             break;
-        case SSL_Referee::FREE_BLUE:
+        case SSL_Referee::DIRECT_FREE_BLUE:
             set_play_state(PlayState::ready_free_kick(BLUE));
             break;
         case SSL_Referee::TIMEOUT_YELLOW:

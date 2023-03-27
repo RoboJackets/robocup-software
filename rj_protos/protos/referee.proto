@@ -81,9 +81,9 @@ message SSL_Referee {
 		// The blue team may move into penalty position.
 		PREPARE_PENALTY_BLUE = 7;
         // The yellow team may take a free kick.
-        FREE_YELLOW = 8;
+        DIRECT_FREE_YELLOW = 8;
         // The blue team may take a free kick.
-        FREE_BLUE = 9;
+        DIRECT_FREE_BLUE = 9;
         // The yellow team is currently in a timeout.
         TIMEOUT_YELLOW = 10;
         // The blue team is currently in a timeout.
@@ -128,8 +128,8 @@ message SSL_Referee {
         // If in a timeout right now, that timeout is excluded.
         required uint32 timeouts = 6;
         // The number of microseconds of timeout this team can use.
-		required uint32 timeout_time = 7;
-		// The pattern number of this team's goalie.
+        required uint32 timeout_time = 7;
+        // The pattern number of this team's goalie.
 		required uint32 goalie = 8;
     }
 
