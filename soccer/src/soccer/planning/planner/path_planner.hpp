@@ -7,8 +7,6 @@
 
 namespace planning {
 
-// TODO(Kevin): change this filename to path_planner.hpp!!
-
 /**
  * Virtual base class for all PathPlanners. An implementation of PathPlanner must take
  * in a PlanRequest from PlannerNode and output a Trajectory for the robot to
