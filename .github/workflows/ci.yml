@@ -106,7 +106,7 @@ jobs:
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git commit --allow-empty --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "empty commit for workflow"
-          git push
+          git push origin HEAD:${{ github.head_ref }}
 
       # check formatting style (C++)
       - name: Run clang-format
