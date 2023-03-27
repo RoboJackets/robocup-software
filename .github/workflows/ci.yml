@@ -55,7 +55,7 @@ jobs:
           echo "::remove-matcher owner=clang-tidy::"
         if: always()
 
-  style:
+  fix-style:
     runs-on: ubuntu-latest
     container:
       image: ros:foxy
@@ -80,7 +80,7 @@ jobs:
         run: |
           apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
-        # sudo pip3 install --upgrade black
+          sudo pip3 install --upgrade black
 
       - name: Make ${{ github.head_ref }} branch exist
         run: |
@@ -89,29 +89,18 @@ jobs:
 
       - name: Run style on all changed files
         run: |
+            # check formatting style (C++)
+            echo "::add-matcher::ci/clang-format.json"
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
-          # git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with: 
-          skip_checkout: true
-          skip_fetch: true
-          commit_message: Automatic style
-          create_branch: false
-          commit_options: '--no-verify --signoff'
+            echo "::remove-matcher owner=clang-format::"
 
-      # check formatting style (C++)
-      - name: Run clang-format
+            # for Python files
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
+
+      - name: Create empty commit if changes were made
+        if: ${{ steps.style-check.outputs.exit-code != 0 }}
         run: |
-          echo "::add-matcher::ci/clang-format.json"
-          git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
-          echo "::remove-matcher owner=clang-format::"
-      
-      # black and flake8 not used anymore because we don't use python as of 2023
-      # - name: Run flake8
-      #   if: always()
-      #   run: |
-      #     echo "::add-matcher::ci/flake8.json"
-      #     find /usr/ | grep flake8
-      #     flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }} --flake8-options --max-line-length=88 --extend-ignore=E203
-      #     echo "::remove-matcher owner=flake8-error::"
-      #     echo "::remove-matcher owner=flake8-warning::"
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git commit --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "Automatic style"
+          git push
