@@ -66,12 +66,16 @@ rosidl_generate_interfaces(
   request/TestRequest.msg
   request/IncomingPassRequest.msg
   request/BallInTransitRequest.msg
+  request/JoinWallRequest.msg
+  request/LeaveWallRequest.msg
 
   # Agent Response Messages
   response/Acknowledge.msg
   response/PassResponse.msg
   response/PositionResponse.msg
   response/TestResponse.msg
+  response/JoinWallResponse.msg
+  response/LeaveWallResponse.msg
 
   # Services
   srv/AgentCommunication.srv
