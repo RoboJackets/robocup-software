@@ -97,16 +97,15 @@ jobs:
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
 
             # for Python files
-            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --preview
 
-            git diff --quiet
-            if [ $? -eq 0 ]; then
-              # no changes
-              echo "no style fixes needed"
-            else
-              echo "style fixes applied"
+            if ! git diff-index --quiet HEAD; then
+              echo "Style fixes applied"
               git commit -am "Apply automatic style formatting"
               echo "::set-output name=changed::true"
+            else
+              # no changes
+              echo "No style fixes needed"
             fi
 
       - name: Create PR with style fixes
