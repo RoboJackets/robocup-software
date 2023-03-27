@@ -97,10 +97,15 @@ jobs:
             # for Python files
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with: 
-          skip_checkout: true
-          skip_fetch: true
-          commit_message: Automatic style
-          create_branch: false
-          commit_options: '--no-verify --signoff'
+      - name: Create empty commit if changes were made
+        if: ${{ steps.style-check.outputs.exit-code != 0 }}
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git commit --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "Automatic style"
+          git push
+          
+      - name: Push changes
+        if: ${{ steps.style-check.outputs.exit-code == 0 }}
+        run: |
+          git push --set-upstream origin ${{ github.head_ref }}
