@@ -30,7 +30,7 @@ this).
 
 First, go to ``launch/soccer.launch.py`` and comment out the Node that is
 throwing errors. Then, in another terminal tab, run ``ros2 run --prefix
-'lldb-10 run' rj_robocup executable_name``. Type ``r`` in the LLDB command-line
+'lldb-10 run' rj_robocup <executable_name>``. Type ``r`` in the LLDB command-line
 utility that pops up to run, or any other valid LLDB option (Google it).
 
 (If that doesn't work for some reason, another way is to run the executable
@@ -43,12 +43,13 @@ completeness. -Kasra)
 
 It depends on what file/node you wish to debug.
 
-As of the time of writing, we do not use any ros2 node composition, so each
-node is its own process. Looking in the soccer launch file a node's
-"executable_name" corresponds to the process name to place after ``-n``. 
+As of the time of writing (spring 2023), we do not use any ros2 node
+composition, so each node is its own process. Looking in ``soccer.launch.py``,
+a node's <executable_name> corresponds to the process name to place after
+``-n``. 
 
-Another method to find the process names of nodes is to run ``top`` in a new
-terminal tab and look in there.
+Another method to find the process names of nodes is to run ``top`` (or
+``htop``) in a new terminal tab and look in there.
 
 **How do you use lldb?**
 
