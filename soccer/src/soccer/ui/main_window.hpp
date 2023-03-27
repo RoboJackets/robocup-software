@@ -197,10 +197,8 @@ private Q_SLOTS:
     void on_fastForceStart_clicked();
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
-    void on_fastDirectBlue_clicked();
-    void on_fastDirectYellow_clicked();
-    void on_fastIndirectBlue_clicked();
-    void on_fastIndirectYellow_clicked();
+    void on_fastBlue_clicked();
+    void on_fastYellow_clicked();
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
