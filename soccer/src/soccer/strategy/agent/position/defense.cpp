@@ -115,4 +115,35 @@ communication::Acknowledge Defense::acknowledge_ball_in_transit(
     return acknowledge_response;
 }
 
+void Defense::send_join_wall_request() {
+    communication::JoinWallRequest join_request{};
+    join_request.robot_id = robot_id_;
+    communication::generate_uid(join_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = join_request;
+    communication_request.target_agents = {};
+    communication_request.urgent = false;
+    communication_request.broadcast = true;
+
+    communication_request_ = communication_request;
+
+    current_state_ = WALLING;
+}
+
+void Defense::send_leave_wall_request() {
+    communication::LeaveWallRequest leave_request{};
+    leave_request.robot_id = robot_id_;
+    communication::generate_uid(leave_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = leave_request;
+    // TODO: send this to only walling agents
+    communication_request.target_agents = {};
+    communication_request.urgent = true;
+    communication_request.broadcast = false;
+
+    communication_request_ = communication_request;
+}
+
 }  // namespace strategy
