@@ -143,7 +143,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         auto current_location_instant =
             planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
         auto face_ball = planning::FaceBall{};
-        auto face_ball_cmd = planning::MotionCommand{"path_target", current_location_instant, face_ball};
+        auto face_ball_cmd =
+            planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
         return intent;
     }
@@ -167,7 +168,7 @@ void Offense::pass_ball(int robot_id) {
 
     communication::BallInTransitRequest ball_in_transit_request{};
     communication::generate_uid(ball_in_transit_request);
-    
+
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = ball_in_transit_request;
     communication_request.target_agents = {robot_id};
