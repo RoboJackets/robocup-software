@@ -85,9 +85,9 @@ jobs:
       - name: Check code style
         run: |
           # check formatting style (C++)
-          clang-format -style=file -fallback-style=Google -output-replacements-xml $(git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.cpp' '*.h' | grep -E '^\+\+\+' | cut -c '5-') | grep -q "<replacement"
+          clang-format -style=file -fallback-style=Google -output-replacements-xml $(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.cpp' '*.h' | grep -E '^\+\+\+' | cut -c '5-') | grep -q "<replacement"
           if [ $? -eq 0 ]; then
-            git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.cpp' '*.h' | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.cpp' '*.h' | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
             git add -A
             git commit -m "Apply Clang-Format to C++ code"
             echo "::set-output name=changed::true"
@@ -96,11 +96,11 @@ jobs:
           fi
 
           # check formatting style (Python)
-          black --check $(git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
+          black --check $(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
           if [ $? -eq 0 ]; then
             echo "No Python code style errors detected"
           else
-            black $(git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
+            black $(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
             git add -A
             git commit -m "Apply Black to Python code"
             echo "::set-output name=changed::true"

@@ -30,7 +30,7 @@ namespace planning {
 
 class SharedStateInfo {
 public:
-       SharedStateInfo(rclcpp::Node* node) {
+    SharedStateInfo(rclcpp::Node* node) {
         play_state_sub_ = node->create_subscription<rj_msgs::msg::PlayState>(
             referee::topics::kPlayStatePub, rclcpp::QoS(1),
             [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
