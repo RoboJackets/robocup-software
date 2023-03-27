@@ -105,8 +105,18 @@ jobs:
           create_branch: false
           commit_options: '--no-verify --signoff'
 
+      - name: Check for style changes
+        id: style_changes
+        run: |
+          diff=$(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }})
+          if [ -n "$diff" ]; then
+            echo "::set-output name=changes::true"
+          else
+            echo "::set-output name=changes::false"
+          fi
+
       - name: Make empty commit (if changes were made)
-        if: `git diff --cached --quiet || echo "changes"`
+        if: steps.style_changes.outputs.changes == 'true'
         run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
