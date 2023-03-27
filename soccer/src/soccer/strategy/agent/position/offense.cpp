@@ -92,10 +92,6 @@ Offense::State Offense::update_state() {
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
         // Face the ball
-        auto empty_command = planning::EmptyMotionCommand{};
-        intent.motion_command = empty_command;
-        intent.motion_command_name = fmt::format("robot {} idle command", robot_id_);
-        return intent;
     } else if (current_state_ == SEARCHING) {
         // TODO: DEFINE SEARCHING BEHAVIOR
     } else if (current_state_ == PASSING) {
@@ -104,10 +100,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         SPDLOG_INFO("\033[92mrobot {} passing ball\033[0m", robot_id_);
         rj_geometry::Point target_robot_pos =
             world_state()->get_robot(true, target_robot_id).pose.position();
-        auto line_kick_cmd = planning::LineKickMotionCommand{target_robot_pos};
+        planning::LinearMotionInstant target{target_robot_pos};
+        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
-        intent.motion_command_name =
-            fmt::format("robot {} offensive pass to robot {}", robot_id_, target_robot_id);
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
@@ -127,23 +122,20 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto motion_instance =
                 planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
             auto face_ball = planning::FaceBall{};
-            auto face_ball_cmd = planning::PathTargetMotionCommand{motion_instance, face_ball};
+            auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
             intent.motion_command = face_ball_cmd;
-            intent.motion_command_name = fmt::format("robot {} waiting for pass", robot_id_);
         } else {
             // intercept the bal
             chasing_ball = true;
             SPDLOG_INFO("\033[92mrobot {} settling the ball\033[0m", robot_id_);
-            auto collect_cmd = planning::CollectMotionCommand{};
+            auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
-            intent.motion_command_name = fmt::format("robot {} offensive receive ball", robot_id_);
         }
         return intent;
     } else if (current_state_ == STEALING) {
         // intercept the ball
-        auto collect_cmd = planning::CollectMotionCommand{};
+        auto collect_cmd = planning::MotionCommand{"collect"};
         intent.motion_command = collect_cmd;
-        intent.motion_command_name = fmt::format("robot {} offensive stealing ball", robot_id_);
         return intent;
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
@@ -151,9 +143,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         auto current_location_instant =
             planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
         auto face_ball = planning::FaceBall{};
-        auto face_ball_cmd = planning::PathTargetMotionCommand{current_location_instant, face_ball};
+        auto face_ball_cmd = planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
-        intent.motion_command_name = fmt::format("robot {} face ball", robot_id_);
         return intent;
     }
 
