@@ -105,9 +105,10 @@ jobs:
           create_branch: false
           commit_options: '--no-verify --signoff'
 
-      - name: Make empty commit (so Workflow still runs)
+      - name: Make empty commit (if changes were made)
+        if: `git diff --cached --quiet || echo "changes"`
         run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git commit --allow-empty --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "empty commit for workflow"
+          git commit --allow-empty --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "empty commit so workflow re-runs"
           git push origin HEAD:${{ github.head_ref }}
