@@ -75,10 +75,8 @@ public:
             });
     }
 
-    // TODO: do these need mutex locks?
     [[nodiscard]] PlayState play_state() const {
-        auto lOCK = std::lock_guard(mutex_);
-
+        auto lock = std::lock_guard(mutex_);
         return last_play_state_;
     }
     [[nodiscard]] GameSettings game_settings() const {
