@@ -151,22 +151,54 @@ void CoachNode::check_for_play_state_change() {
 }
 
 void CoachNode::assign_positions() {
+    // TODO: UNCOMMENT THIS
     // rj_msgs::msg::PositionAssignment positions_message;
     // std::array<uint32_t, kNumShells> positions{};
-    // positions[0] = Positions::Goalie;
+    // positions[goalie_id_] = Positions::Goalie;
     // if (!possessing_) {
-    //     positions[1] = Positions::Offense;
-    //     for (int i = 2; i < kNumShells; i++) {
-    //         positions[i] = Positions::Defense;
+    //     // All robots set to defense
+    //     for (int i = 0; i < kNumShells; i++) {
+    //         if (i != goalie_id_) {
+    //             positions[i] = Positions::Defense;
+    //         }
+    //     }
+    //     // Lowest non-goalie robot set to offense
+    //     if (goalie_id_ == 0) {
+    //         positions[1] = Positions::Offense;
+    //     } else {
+    //         positions[0] = Positions::Offense;
     //     }
     // } else {
-    //     positions[1] = Positions::Defense;
-    //     for (int i = 2; i < kNumShells; i++) {
-    //         positions[i] = Positions::Offense;
+    //     // All robots set to offense
+    //     for (int i = 0; i < kNumShells; i++) {
+    //         if (i != goalie_id_) {
+    //             positions[i] = Positions::Offense;
+    //         }
+    //     }
+    //     // Lowest non-goalie robot set to defense
+    //     if (goalie_id_ == 0) {
+    //         positions[1] = Positions::Defense;
+    //     } else {
+    //         positions[0] = Positions::Defense;
     //     }
     // }
+
+    // // Check Overrides
+    // if (have_overrides_) {
+    //     for (int i = 0; i < kNumShells; i++) {
+    //         if (i != goalie_id_ && current_overrides_[i] == 1 || current_overrides_[i] == 2) {
+    //             positions[i] = current_overrides_[i];
+    //         }
+    //     }
+    // }
+
     // positions_message.client_positions = positions;
     // positions_pub_->publish(positions_message);
+}
+
+void CoachNode::overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
+    current_overrides_ = msg->client_positions;
+    have_overrides_ = true;
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
