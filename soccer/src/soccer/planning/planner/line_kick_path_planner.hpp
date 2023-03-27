@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "planning/trajectory.hpp"
 #include "planning/planner/path_planner.hpp"
+#include "planning/trajectory.hpp"
 
 class Configuration;
 class ConfigDouble;

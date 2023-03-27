@@ -51,8 +51,7 @@ private:
      * @return AngleFunction that corresponds to input
      * PathTargetFaceOption in given PlanRequest
      */
-    [[nodiscard]] static AngleFunction get_angle_function(
-        const PlanRequest& request);
+    [[nodiscard]] static AngleFunction get_angle_function(const PlanRequest& request);
 
     Trajectory previous_;
 

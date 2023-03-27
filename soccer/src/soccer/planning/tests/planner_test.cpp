@@ -2,17 +2,17 @@
 
 #include <gtest/gtest.h>
 
-#include "rj_geometry/pose.hpp"
 #include "planning/instant.hpp"
-#include "planning/trajectory.hpp"
 #include "planning/planner/collect_path_planner.hpp"
 #include "planning/planner/motion_command.hpp"
+#include "planning/planner/path_planner.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
 #include "planning/planner/plan_request.hpp"
-#include "planning/planner/path_planner.hpp"
 #include "planning/planner/settle_path_planner.hpp"
 #include "planning/primitives/rrt_util.hpp"
 #include "planning/tests/testing_utils.hpp"
+#include "planning/trajectory.hpp"
+#include "rj_geometry/pose.hpp"
 
 /*
  * If these tests are failing, run again with the flag --gtest_break_on_failure

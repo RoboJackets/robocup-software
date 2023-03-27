@@ -1,15 +1,16 @@
+#include "planning/trajectory.hpp"
+
 #include <gtest/gtest.h>
 
 #include <rrt/planning/Path.hpp>
 
-#include "testing_utils.hpp"
 #include "math.h"
 #include "planning/instant.hpp"
-#include "planning/trajectory.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
 #include "planning/primitives/path_smoothing.hpp"
 #include "planning/primitives/rrt_util.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
+#include "testing_utils.hpp"
 
 using namespace planning;
 using namespace rj_geometry;

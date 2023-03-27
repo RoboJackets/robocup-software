@@ -19,8 +19,8 @@
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
-#include "planner/plan_request.hpp"
 #include "planner/path_planner.hpp"
+#include "planner/plan_request.hpp"
 #include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
