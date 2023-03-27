@@ -56,6 +56,9 @@ jobs:
         if: always()
 
   fix-style:
+    # Check if the PR is not raised by this workflow and is not from a fork
+    if: startsWith(github.head_ref, 'fix-code-style') == false && github.event.pull_request.head.repo.full_name == github.repository
+
     runs-on: ubuntu-latest
     container:
       image: ros:foxy
@@ -82,36 +85,42 @@ jobs:
           sudo pip3 install --upgrade flake8-diff flake8 pip
           sudo pip3 install --upgrade black
 
-      - name: Check code style
+      - name: Make ${{ github.head_ref }} branch exist
         run: |
-          # check formatting style (C++)
-          clang-format -style=file -fallback-style=Google -output-replacements-xml $(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.cpp' '*.h' | grep -E '^\+\+\+' | cut -c '5-') | grep -q "<replacement"
-          if [ $? -eq 0 ]; then
-            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.cpp' '*.h' | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
-            git add -A
-            git commit -m "Apply Clang-Format to C++ code"
-            echo "::set-output name=changed::true"
-          else
-            echo "No C++ code style errors detected"
-          fi
+            git checkout -b ${{ github.head_ref }}
+            git checkout -
 
-          # check formatting style (Python)
-          black --check $(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
-          if [ $? -eq 0 ]; then
-            echo "No Python code style errors detected"
-          else
-            black $(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
-            git add -A
-            git commit -m "Apply Black to Python code"
-            echo "::set-output name=changed::true"
-          fi
+      - name: Run style on all changed files
+        id: style-check
+        run: |
+            # check formatting style (C++)
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
 
-      - name: Create pull request
-        if: steps.check-style.outputs.changed == 'true'
+            # for Python files
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
+
+            git diff --quiet
+            if [ $? -eq 0 ]; then
+              # no changes
+              echo "no style fixes needed"
+            else
+              echo "style fixes applied"
+              git commit -am "Apply automatic style formatting"
+              echo "::set-output name=changed::true"
+            fi
+
+      - name: Create PR with style fixes
+        if: steps.style-check.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: Apply Code Style
-          title: Apply Code Style
-          body: "This pull request contains code style fixes automatically applied by Clang-Format and Black."
-          branch: apply-code-style/${{ github.head_ref }}
+          title: Fix Code Style On ${{ github.head_ref }}
+          labels: style fixes, automated PR
+          body: This pull request contains automatic style formatting for ${{ github.head_ref }}.
+          branch: fix-code-style/${{ github.head_ref }}
           base: ${{ github.base_ref }}
+
+      - name: Fail if style changes were made
+        if: steps.style-check.outputs.changed == 'true'
+        run: exit 1
+
+
