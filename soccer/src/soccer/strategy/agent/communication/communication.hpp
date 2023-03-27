@@ -43,11 +43,13 @@ bool operator==(const TestRequest& a, const TestRequest& b);
 
 struct IncomingPassRequest {
     u_int32_t request_uid;
+    u_int8_t from_robot_id;
 };
 bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b);
 
 struct BallInTransitRequest {
     u_int32_t request_uid;
+    u_int8_t from_robot_id;
 };
 bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
 
@@ -212,6 +214,7 @@ struct RosConverter<strategy::communication::IncomingPassRequest,
         const strategy::communication::IncomingPassRequest& from) {
         rj_msgs::msg::IncomingPassRequest result;
         result.request_uid = from.request_uid;
+        result.from_robot_id = from.from_robot_id;
         return result;
     }
 
@@ -230,6 +233,7 @@ struct RosConverter<strategy::communication::BallInTransitRequest,
         const strategy::communication::BallInTransitRequest& from) {
         rj_msgs::msg::BallInTransitRequest result;
         result.request_uid = from.request_uid;
+        result.from_robot_id = from.from_robot_id;
         return result;
     }
 
