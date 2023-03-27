@@ -82,25 +82,36 @@ jobs:
           sudo pip3 install --upgrade flake8-diff flake8 pip
           sudo pip3 install --upgrade black
 
-      - name: Make ${{ github.head_ref }} branch exist
+      - name: Check code style
         run: |
-            git checkout -b ${{ github.head_ref }}
-            git checkout -
+          # check formatting style (C++)
+          clang-format -style=file -fallback-style=Google -output-replacements-xml $(git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.cpp' '*.h' | grep -E '^\+\+\+' | cut -c '5-') | grep -q "<replacement"
+          if [ $? -eq 0 ]; then
+            git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.cpp' '*.h' | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
+            git add -A
+            git commit -m "Apply Clang-Format to C++ code"
+            echo "::set-output name=changed::true"
+          else
+            echo "No C++ code style errors detected"
+          fi
 
-      - name: Run style on all changed files
-        run: |
-            # check formatting style (C++)
-            echo "::add-matcher::ci/clang-format.json"
-            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
-            echo "::remove-matcher owner=clang-format::"
+          # check formatting style (Python)
+          black --check $(git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
+          if [ $? -eq 0 ]; then
+            echo "No Python code style errors detected"
+          else
+            black $(git diff -U0 --no-color ${GITHUB_BASE_REF} ${GITHUB_HEAD_REF} -- '*.py' | grep -E '^\+\+\+' | cut -c '5-')
+            git add -A
+            git commit -m "Apply Black to Python code"
+            echo "::set-output name=changed::true"
+          fi
 
-            # for Python files
-            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with: 
-          skip_checkout: true
-          skip_fetch: true
-          commit_message: Automatic style
-          create_branch: false
-          commit_options: '--no-verify --signoff'
+      - name: Create pull request
+        if: steps.check-style.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Apply Code Style
+          title: Apply Code Style
+          body: "This pull request contains code style fixes automatically applied by Clang-Format and Black."
+          branch: apply-code-style/${{ github.head_ref }}
+          base: ${{ github.base_ref }}
