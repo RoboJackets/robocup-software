@@ -114,7 +114,8 @@ jobs:
           body: This pull request contains automatic style formatting for ${{ github.head_ref }}.
           labels: style fixes, automated PR
           branch: fix-code-style/${{ github.head_ref }}
-          base: ${{ github.base_ref }}
+          base: ${{ github.head_ref }}
+          reviewers: ${{ github.event.pull_request.user.login }}
 
       - name: Fail if style changes were made
         if: steps.style-check.outputs.changed == 'true'
