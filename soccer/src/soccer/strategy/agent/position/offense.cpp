@@ -163,19 +163,10 @@ communication::Acknowledge Offense::acknowledge_pass(
 }
 
 void Offense::pass_ball(int robot_id) {
-    target_robot_id = robot_id;
+    // Call to super
+    Position::pass_ball(robot_id);
+    // Update current state
     current_state_ = PASSING;
-
-    communication::BallInTransitRequest ball_in_transit_request{};
-    communication::generate_uid(ball_in_transit_request);
-
-    communication::PosAgentRequestWrapper communication_request{};
-    communication_request.request = ball_in_transit_request;
-    communication_request.target_agents = {robot_id};
-    communication_request.urgent = true;
-    communication_request.broadcast = false;
-
-    communication_request_ = communication_request;
 }
 
 communication::Acknowledge Offense::acknowledge_ball_in_transit(
