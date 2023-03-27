@@ -19,6 +19,10 @@
 #include "rj_msgs/msg/position_response.hpp"
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
+#include "rj_msgs/msg/join_wall_request.hpp"
+#include "rj_msgs/msg/join_wall_response.hpp"
+#include "rj_msgs/msg/leave_wall_request.hpp"
+#include "rj_msgs/msg/leave_wall_response.hpp"
 
 namespace strategy::communication {
 
@@ -53,8 +57,20 @@ struct BallInTransitRequest {
 };
 bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
 
+struct JoinWallRequest {
+    u_int32_t request_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const JoinWallRequest& a, const JoinWallRequest& b);
+
+struct LeaveWallRequest {
+    u_int32_t request_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const LeaveWallRequest& a, const LeaveWallRequest& b);
+
 using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest,
-                                  BallInTransitRequest>;
+                                  BallInTransitRequest, JoinWallRequest, LeaveWallRequest>;
 
 // END REQUEST TYPES //
 
@@ -83,8 +99,20 @@ struct TestResponse {
 };
 bool operator==(const TestResponse& a, const TestResponse& b);
 
+struct JoinWallResponse {
+    u_int32_t response_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const JoinWallResponse& a, const JoinWallResponse& b);
+
+struct LeaveWallResponse {
+    u_int32_t response_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const LeaveWallResponse& a, const LeaveWallResponse& b);
+
 using AgentResponseVariant =
-    std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse>;
+    std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse, JoinWallResponse, LeaveWallResponse>;
 
 struct AgentResponse {
     AgentRequest associated_request;
@@ -142,11 +170,15 @@ void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);
 void generate_uid(IncomingPassRequest& request);
 void generate_uid(BallInTransitRequest& request);
+void generate_uid(JoinWallRequest& request);
+void generate_uid(LeaveWallRequest& request);
 
 void generate_uid(Acknowledge& response);
 void generate_uid(PassResponse& response);
 void generate_uid(PositionResponse& response);
 void generate_uid(TestResponse& response);
+void generate_uid(JoinWallResponse& response);
+void generate_uid(LeaveWallResponse& response);
 
 }  // namespace strategy::communication
 
@@ -225,6 +257,44 @@ struct RosConverter<strategy::communication::IncomingPassRequest,
 };
 
 ASSOCIATE_CPP_ROS(strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest);
+
+template <>
+struct RosConverter<strategy::communication::JoinWallRequest,
+                    rj_msgs::msg::JoinWallRequest> {
+    static rj_msgs::msg::JoinWallRequest to_ros(
+        const strategy::communication::JoinWallRequest& from) {
+        rj_msgs::msg::JoinWallRequest result;
+        result.request_uid = from.request_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::JoinWallRequest from_ros(
+        const rj_msgs::msg::JoinWallRequest& from) {
+        return strategy::communication::JoinWallRequest{from.request_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest);
+
+template <>
+struct RosConverter<strategy::communication::LeaveWallRequest,
+                    rj_msgs::msg::LeaveWallRequest> {
+    static rj_msgs::msg::LeaveWallRequest to_ros(
+        const strategy::communication::LeaveWallRequest& from) {
+        rj_msgs::msg::LeaveWallRequest result;
+        result.request_uid = from.request_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::LeaveWallRequest from_ros(
+        const rj_msgs::msg::LeaveWallRequest& from) {
+        return strategy::communication::LeaveWallRequest{from.request_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::LeaveWallRequest, rj_msgs::msg::LeaveWallRequest);
 
 template <>
 struct RosConverter<strategy::communication::BallInTransitRequest,
@@ -368,6 +438,44 @@ struct RosConverter<strategy::communication::TestResponse, rj_msgs::msg::TestRes
 };
 
 ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_msgs::msg::TestResponse);
+
+template <>
+struct RosConverter<strategy::communication::JoinWallResponse,
+                    rj_msgs::msg::JoinWallResponse> {
+    static rj_msgs::msg::JoinWallResponse to_ros(
+        const strategy::communication::JoinWallResponse& from) {
+        rj_msgs::msg::JoinWallResponse result;
+        result.response_uid = from.response_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::JoinWallResponse from_ros(
+        const rj_msgs::msg::JoinWallResponse& from) {
+        return strategy::communication::JoinWallResponse{from.response_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::JoinWallResponse, rj_msgs::msg::JoinWallResponse);
+
+template <>
+struct RosConverter<strategy::communication::LeaveWallResponse,
+                    rj_msgs::msg::LeaveWallResponse> {
+    static rj_msgs::msg::LeaveWallResponse to_ros(
+        const strategy::communication::LeaveWallResponse& from) {
+        rj_msgs::msg::LeaveWallResponse result;
+        result.response_uid = from.response_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::LeaveWallResponse from_ros(
+        const rj_msgs::msg::LeaveWallResponse& from) {
+        return strategy::communication::LeaveWallResponse{from.response_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::LeaveWallResponse, rj_msgs::msg::LeaveWallResponse);
 
 template <>
 struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {
