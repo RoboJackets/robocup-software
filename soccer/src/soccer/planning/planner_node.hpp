@@ -75,7 +75,8 @@ public:
             });
     }
 
-     [[nodiscard]] PlayState play_state() const {
+    // TODO: do these need mutex locks?
+    [[nodiscard]] PlayState play_state() const {
         auto lOCK = std::lock_guard(mutex_);
 
         return last_play_state_;
