@@ -129,7 +129,11 @@ message SSL_Referee {
         required uint32 timeouts = 6;
         // The number of microseconds of timeout this team can use.
         required uint32 timeout_time = 7;
+<<<<<<< HEAD
         // The pattern number of this team's goalie.
+=======
+		// The pattern number of this team's goalie.
+>>>>>>> e44cd4baa3e806de27e9fb45cdaaaabd3a94ac25
 		required uint32 goalie = 8;
     }
 
