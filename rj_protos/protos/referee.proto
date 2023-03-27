@@ -132,9 +132,9 @@ message SSL_Referee {
 <<<<<<< HEAD
         // The pattern number of this team's goalie.
 =======
-		// The pattern number of this team's goalie.
+        // The pattern number of this team's goalie.
 >>>>>>> e44cd4baa3e806de27e9fb45cdaaaabd3a94ac25
-		required uint32 goalie = 8;
+        required uint32 goalie = 8;
     }
 
     // Information about the two teams.
