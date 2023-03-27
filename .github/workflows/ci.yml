@@ -55,7 +55,7 @@ jobs:
           echo "::remove-matcher owner=clang-tidy::"
         if: always()
 
-  style:
+  fix-style:
     runs-on: ubuntu-latest
     container:
       image: ros:foxy
@@ -95,7 +95,7 @@ jobs:
             echo "::remove-matcher owner=clang-format::"
 
             # for Python files
-            # git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --experimental-string-processing
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with: 
@@ -104,21 +104,3 @@ jobs:
           commit_message: Automatic style
           create_branch: false
           commit_options: '--no-verify --signoff'
-
-      - name: Check for style changes
-        id: style_changes
-        run: |
-          diff=$(git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }})
-          if [ -n "$diff" ]; then
-            echo "::set-output name=changes::true"
-          else
-            echo "::set-output name=changes::false"
-          fi
-
-      - name: Make empty commit (if changes were made)
-        if: steps.style_changes.outputs.changes == 'true'
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git commit --allow-empty --author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>" -m "empty commit so workflow re-runs"
-          git push origin HEAD:${{ github.head_ref }}
