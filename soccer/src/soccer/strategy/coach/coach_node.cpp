@@ -4,7 +4,8 @@
 
 namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
-    coach_state_pub_ = this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStateTopic, 10);
+    coach_state_pub_ =
+        this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStateTopic, 10);
     coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
     def_area_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(

@@ -19,7 +19,8 @@ RefereeBase::RefereeBase(const std::string& name)
     our_team_info_pub_ = create_publisher<TeamInfoMsg>(referee::topics::kOurInfoTopic, keep_latest);
     their_team_info_pub_ =
         create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoTopic, keep_latest);
-    play_state_pub_ = create_publisher<PlayState::Msg>(referee::topics::kPlayStateTopic, keep_latest);
+    play_state_pub_ =
+        create_publisher<PlayState::Msg>(referee::topics::kPlayStateTopic, keep_latest);
     match_state_pub_ =
         create_publisher<MatchState::Msg>(referee::topics::kMatchStateTopic, keep_latest);
 
