@@ -15,6 +15,7 @@
 
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
+#include "strategy/coach/coach_node.hpp"
 
 namespace radio {
 
@@ -36,12 +37,15 @@ protected:
     void publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status);
 
     virtual void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                      const rj_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
+                      const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                      strategy::Positions role) = 0;
     virtual void receive() = 0;
     virtual void switch_team(bool blue) = 0;
 
 private:
     void tick();
+
+    std::array<strategy::Positions, kNumShells> positions_;
 
     std::array<rclcpp::Publisher<rj_msgs::msg::RobotStatus>::SharedPtr, kNumShells>
         robot_status_pubs_;
@@ -50,6 +54,7 @@ private:
     std::array<rclcpp::Subscription<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr, kNumShells>
         manipulator_subs_;
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
+    rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     rclcpp::TimerBase::SharedPtr tick_timer_;
 
     std::array<rj_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;

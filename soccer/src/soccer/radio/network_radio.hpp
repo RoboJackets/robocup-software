@@ -2,14 +2,15 @@
 
 #include <mutex>
 
-#include <boost/config.hpp>
-
-#include <robot_intent.hpp>
 #include <boost/asio.hpp>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#include <boost/config.hpp>
+
+#include <robot_intent.hpp>
 
 #include "radio.hpp"
+#include "strategy/coach/coach_node.hpp"
 
 #include "rc-fshare/rtp.hpp"
 
@@ -26,7 +27,8 @@ public:
 
 protected:
     void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-              const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
+              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+              strategy::Positions role) override;
     void receive() override;
     void switch_team(bool blue) override;
 

@@ -106,13 +106,13 @@ private:
     void overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
     void check_for_play_state_change();
     /*
-     * Handles actions the Coach does every tick. Currently calls assign_positions and
+     * Handles actions the Coach does every tick. Currently calls assign_positions() and
      * check_for_play_state_change.
      */
     void coach_ticker();
     /*
-     * Assigns positions to robots with IDs 1 through 16, depending on current possession.
-     * Publishes new positions to the topic /strategy/positions (message type PositionAssignment)
+     * Assigns Positions to robots with IDs 1 through 16, depending on current possession.
+     * Publishes new Position to the topic /strategy/Position (message type PositionAssignment)
      */
     void assign_positions();
 
