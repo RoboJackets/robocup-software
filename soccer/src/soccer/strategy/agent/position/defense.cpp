@@ -96,7 +96,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == WALLING) {
         if (walling_robots.size() > 1) {
-            Waller waller{waller_id};
+            Waller waller{waller_id, (int) walling_robots.size()};
             return waller.get_task(intent, world_state());
         }
     }
@@ -163,6 +163,8 @@ communication::PosAgentResponseWrapper Defense::receive_communication_request(co
 }
 
 void Defense::send_join_wall_request() {
+    SPDLOG_INFO("\033[92mSending Join Wall Request\033[0m");
+
     communication::JoinWallRequest join_request{};
     join_request.robot_id = robot_id_;
     communication::generate_uid(join_request);
@@ -179,6 +181,8 @@ void Defense::send_join_wall_request() {
 }
 
 void Defense::send_leave_wall_request() {
+    SPDLOG_INFO("\033[92mSending Leave Wall Request\033[0m");
+
     communication::LeaveWallRequest leave_request{};
     leave_request.robot_id = robot_id_;
     communication::generate_uid(leave_request);
@@ -193,6 +197,8 @@ void Defense::send_leave_wall_request() {
 }
 
 communication::JoinWallResponse Defense::handle_join_wall_request(communication::JoinWallRequest join_request) {
+    SPDLOG_INFO("\033[92mJoin Wall Request Received\033[0m");
+
     for (int i = 0; i < walling_robots.size(); i++) {
         if (walling_robots[i] == join_request.robot_id) {
             break;
@@ -211,6 +217,8 @@ communication::JoinWallResponse Defense::handle_join_wall_request(communication:
 }
 
 communication::Acknowledge Defense::handle_leave_wall_request(communication::LeaveWallRequest leave_request) {
+    SPDLOG_INFO("\033[92mLeave Wall Request Received\033[0m");
+
     for (int i = walling_robots.size() - 1; i > 0; i--) {
         if (walling_robots[i] == leave_request.robot_id) {
             walling_robots.erase(walling_robots.begin() + i);
@@ -228,6 +236,8 @@ communication::Acknowledge Defense::handle_leave_wall_request(communication::Lea
 }
 
 void Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
+    SPDLOG_INFO("\033[92mJoin Wall Response Received\033[0m");
+
     for (int i = 0; i < walling_robots.size(); i++) {
         if (walling_robots[i] == join_response.robot_id) {
             return;

@@ -78,7 +78,7 @@ private:
     int waller_id = -1;
 
     // current state of the defense agent (state machine)
-    State current_state_ = IDLING;
+    State current_state_ = JOINING_WALL;
 
     double BALL_RECEIVE_DISTANCE = 0.1;
     double BALL_LOST_DISTANCE = 0.5;
