@@ -26,7 +26,7 @@ namespace strategy {
  */
 class Waller : public RoleInterface {
 public:
-    Waller(int waller_num);
+    Waller(int waller_num, int total_wallers);
     ~Waller() = default;
 
     /**
@@ -41,6 +41,7 @@ public:
 private:
     std::string defense_type_;
     int waller_pos_;
+    int total_wallers_;
 };
 
 }  // namespace strategy
