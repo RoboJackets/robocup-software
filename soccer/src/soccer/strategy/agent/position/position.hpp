@@ -61,8 +61,7 @@ public:
      * Uses the Template Method + non-virtual interface:
      * https://www.sandordargo.com/blog/2022/08/24/tmp-and-nvi
      */
-    std::optional<RobotIntent> 
-    get_task();
+    std::optional<RobotIntent> get_task();
 
     // communication with AC
     void update_world_state(WorldState world_state);
