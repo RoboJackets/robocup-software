@@ -29,9 +29,7 @@ AgentActionClient::AgentActionClient(int r_id)
 
     field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
         "config/field_dimensions", 1,
-        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) {
-            field_dimensions_callback(msg);
-        });
+        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
