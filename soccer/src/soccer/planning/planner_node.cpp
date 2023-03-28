@@ -39,11 +39,11 @@ PlannerNode::PlannerNode()
         std::bind(&PlannerNode::handle_accepted, this, _1));
 
     // set up PlannerForRobot objects
-    robots_planners_.reserve(kNumShells);
+    robot_planners_.reserve(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
         auto planner =
-            std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, global_state_);
-        robots_planners_.emplace_back(std::move(planner));
+            std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_, global_state_);
+        robot_planners_.emplace_back(std::move(planner));
     }
 }
 
@@ -95,7 +95,8 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
     // get correct PlannerForRobot object for this robot_id
     int robot_id = goal->robot_intent.robot_id;
-    std::shared_ptr<PlannerForRobot> my_robot_planner = robots_planners_[robot_id];
+    // reference to unique_ptr to avoid transferring ownership
+    PlannerForRobot& my_robot_planner = *robot_planners_[robot_id];
 
     auto& robot_task = server_task_states_.at(robot_id);
 
@@ -117,13 +118,13 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         }
 
         // pub Trajectory based on the RobotIntent
-        my_robot_planner->execute_intent(rj_convert::convert_from_ros(goal->robot_intent));
+        my_robot_planner.execute_intent(rj_convert::convert_from_ros(goal->robot_intent));
 
         /*
         // TODO (PR #1970): fix TrajectoryCollection
         // send feedback
         std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-        if (auto time_left = my_robot_planner->get_time_left()) {
+        if (auto time_left = my_robot_planner.get_time_left()) {
             feedback->time_left = rj_convert::convert_to_ros(time_left.value());
             goal_handle->publish_feedback(feedback);
         }
@@ -131,7 +132,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
-        if (my_robot_planner->is_done()) {
+        if (my_robot_planner.is_done()) {
             if (rclcpp::ok()) {
                 result->is_done = true;
                 goal_handle->succeed(result);

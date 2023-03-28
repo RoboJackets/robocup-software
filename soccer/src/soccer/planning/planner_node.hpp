@@ -263,7 +263,7 @@ public:
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:
-    std::vector<std::shared_ptr<PlannerForRobot>> robots_planners_;
+    std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
     TrajectoryCollection robot_trajectories_;
     GlobalState global_state_;
     ::params::LocalROS2ParamProvider param_provider_;
