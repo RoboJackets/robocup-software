@@ -10,7 +10,7 @@ MotionControlNode::MotionControlNode()
     controllers_.reserve(kNumShells);
 
     auto drawing_publisher = create_publisher<rj_drawing_msgs::msg::DebugDraw>(
-        viz::topics::kDebugDrawPub, rclcpp::QoS(10));
+        viz::topics::kDebugDrawTopic, rclcpp::QoS(10));
     for (int i = 0; i < kNumShells; i++) {
         controllers_.emplace_back(i, this);
         manipulators_.emplace_back(i, this);
