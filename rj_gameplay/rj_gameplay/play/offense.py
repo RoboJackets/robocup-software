@@ -68,7 +68,6 @@ class Offense(stp.play.Play):
             return self.get_robot_intents(world_state)
 
         elif self._state == State.WAIT_TO_PASS:
-
             # TODO: seekers should be getting open all the time, how fix?
             # should be some time-based method
             # seek_tactic = self.prioritized_tactics[1]

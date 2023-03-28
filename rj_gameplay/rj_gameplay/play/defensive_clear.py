@@ -27,7 +27,6 @@ class DefensiveClear(play.IPlay):
         prev_results: role.assignment.FlatRoleResults,
         props,
     ) -> Tuple[Dict[tactic.SkillEntry, List[role.RoleResult]], List[tactic.SkillEntry]]:
-
         # Get role requests from all tactics and put them into a dictionary
         role_requests: play.RoleRequests = {}
         role_requests[self.two_mark] = self.two_mark.get_requests(world_state, None)

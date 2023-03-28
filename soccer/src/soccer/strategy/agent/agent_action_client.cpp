@@ -82,7 +82,6 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
 }
 
 void AgentActionClient::get_task() {
-    SPDLOG_INFO("Getting task for robot {}", robot_id_);
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -111,7 +110,6 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
     /* for (int i = 0; i < 6; i++) { */
     /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
     /* } */
-    // SPDLOG_INFO("{}'s position : {}", robot_id_, msg->client_positions[robot_id_]);
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
         case 0:

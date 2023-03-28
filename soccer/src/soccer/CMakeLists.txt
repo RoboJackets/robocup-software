@@ -71,6 +71,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp
     ros2_temp/referee_sub.cpp
+    ros2_temp/coach_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     strategy/agent/agent_action_client.cpp

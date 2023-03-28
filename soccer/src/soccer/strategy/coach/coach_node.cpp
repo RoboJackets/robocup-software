@@ -20,6 +20,9 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     positions_pub_ =
         this->create_publisher<rj_msgs::msg::PositionAssignment>(topics::kPositionsTopic, 10);
 
+    overrides_sub_ = this->create_subscription<rj_msgs::msg::PositionAssignment>(
+        "/strategy/position_overrides", 10,
+        [this](const rj_msgs::msg::PositionAssignment::SharedPtr msg) { overrides_callback(msg); });
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
@@ -29,7 +32,8 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         [this](const rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
 
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
-    // save state of acknowledgements, only spam until some long time has passed, or ack received
+    // save state of acknowledgements, only spam until some long time has passed, or ack
+    // received
     /* ack_array[msg->ID] = true; */
 
     field_dimensions_sub_ = this->create_subscription<rj_msgs::msg::FieldDimensions>(
@@ -129,7 +133,8 @@ void CoachNode::check_for_play_state_change() {
                 global_override.min_dist_from_ball = 0.5;
                 break;
             case PlayState::State::Playing:
-                // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number instead.
+                // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number
+                // instead.
                 global_override.max_speed = 10.0;
                 global_override.min_dist_from_ball = 0;
         }
@@ -178,8 +183,23 @@ void CoachNode::assign_positions() {
             positions[0] = Positions::Defense;
         }
     }
+
+    // Check Overrides
+    if (have_overrides_) {
+        for (int i = 0; i < kNumShells; i++) {
+            if (i != goalie_id_ && current_overrides_[i] == 1 || current_overrides_[i] == 2) {
+                positions[i] = current_overrides_[i];
+            }
+        }
+    }
+
     positions_message.client_positions = positions;
     positions_pub_->publish(positions_message);
+}
+
+void CoachNode::overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
+    current_overrides_ = msg->client_positions;
+    have_overrides_ = true;
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {

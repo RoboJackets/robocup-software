@@ -35,6 +35,12 @@ enum MatchSituation {
 
 enum Positions { Goalie, Defense, Offense };
 
+// These values are explicitly declared because they are the ints that are published to
+// strategy/positions i.e. the same values as strategy::Positions
+namespace OverridePosition {
+enum OverridePosition { Goalie = 0, Defense = 1, Offense = 2, None = 3 };
+}  // namespace OverridePosition
+
 /**
  * @brief This node takes the referee information and standardizes it for consumption of the
  * individual robot agents.
@@ -71,6 +77,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
 
     rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr positions_pub_;
+    rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr overrides_sub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
@@ -83,6 +90,12 @@ private:
     rj_msgs::msg::FieldDimensions current_field_dimensions_;
     bool have_field_dimensions_ = false;
 
+    /*
+     * Overrides from the UI.
+     */
+    std::array<uint32_t, kNumShells> current_overrides_;
+    bool have_overrides_ = false;
+
     int goalie_id_{0};
 
     void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr msg);
@@ -90,15 +103,16 @@ private:
     void ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr msg, bool our_team);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg);
+    void overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
     void check_for_play_state_change();
     /*
-     * Handles actions the Coach does every tick. Currently calls assign_positions and
+     * Handles actions the Coach does every tick. Currently calls assign_positions() and
      * check_for_play_state_change.
      */
     void coach_ticker();
     /*
-     * Assigns positions to robots with IDs 1 through 16, depending on current possession.
-     * Publishes new positions to the topic /strategy/positions (message type PositionAssignment)
+     * Assigns Positions to robots with IDs 1 through 16, depending on current possession.
+     * Publishes new Position to the topic /strategy/Position (message type PositionAssignment)
      */
     void assign_positions();
 
