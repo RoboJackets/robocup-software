@@ -21,6 +21,7 @@
 #include "node.hpp"
 #include "planner/path_planner.hpp"
 #include "planner/plan_request.hpp"
+#include "planning/planner/escape_obstacles_path_planner.hpp"
 #include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
@@ -220,9 +221,21 @@ private:
     [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
-    std::unordered_map<std::string, std::shared_ptr<PathPlanner>> planners_;
-    std::shared_ptr<PathPlanner> default_planner_;
-    std::shared_ptr<PathPlanner> current_planner_;
+
+    // unique_ptrs here because we don't want to transfer ownership of
+    // thePathPlanner objects anywhere else
+    // (must be some type of ptr for polymorphism)
+    std::unordered_map<std::string, std::unique_ptr<PathPlanner>> path_planners_;
+    // EscapeObstaclesPathPlanner is our default path planner
+    // because when robots start inside of an obstacle, all other planners will fail
+    // TODO(Kevin): make EscapeObstaclesPathPlanner default start of all planner FSM so this doesn't
+    // happen
+    std::unique_ptr<PathPlanner> default_path_planner_{
+        std::make_unique<EscapeObstaclesPathPlanner>()};
+
+    // raw ptr here because current_path_planner_ should not take ownership
+    // from any of the unique_ptrs to PathPlanners
+    PathPlanner* current_path_planner_{default_path_planner_.get()};
 
     int robot_id_;
     TrajectoryCollection* robot_trajectories_;
