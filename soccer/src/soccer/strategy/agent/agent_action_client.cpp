@@ -59,9 +59,9 @@ AgentActionClient::AgentActionClient(int r_id)
 
     if (r_id == 0) {
         current_position_ = std::make_unique<Goalie>(r_id);
-    } else if (r_id == 1) {
+    } else if (r_id == 1 || r_id == 3 || r_id == 5) {
         current_position_ = std::make_unique<Defense>(r_id);
-    } else {
+    } else if (r_id == 2 || r_id == 4) {
         current_position_ = std::make_unique<Offense>(r_id);
     }
 }
@@ -194,6 +194,18 @@ void AgentActionClient::get_communication() {
     //     }
     // }
 
+    bool robots_visible = false;
+    for (u_int8_t i = 0; i < kNumShells; i++) {
+        if (this->world_state()->get_robot(true, i).visible) {
+            robots_visible = true;
+            break;
+        }
+    }
+
+    if (!robots_visible) {
+        return;
+    }
+
     auto optional_communication_request = current_position_->send_communication_request();
     // SPDLOG_INFO("comm request");
     // TODO: get if syntax?
@@ -204,15 +216,7 @@ void AgentActionClient::get_communication() {
 
     auto communication_request = optional_communication_request.value();
 
-    bool robots_visible = false;
-    for (u_int8_t i = 0; i < kNumShells; i++) {
-        if (this->world_state()->get_robot(true, i).visible) {
-            robots_visible = true;
-            break;
-        }
-    }
-
-    SPDLOG_INFO("\033[92mROBOTS VISIBLE\033[0m");
+    // SPDLOG_INFO("\033[92mROBOTS VISIBLE\033[0m");
 
     if (robots_visible) {
         SPDLOG_INFO("\033[92mSENDING REQUEST\033[0m");

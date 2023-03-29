@@ -32,7 +32,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     rj_geometry::Point mid_point{(goal_center_point) + (ball_dir_vector * min_wall_rad)};
 
     // Calculate the wall spacing
-    auto wall_spacing = kRobotDiameter + kBallRadius;
+    auto wall_spacing = kRobotRadius + kBallRadius;
 
     // Calculate the target point
     rj_geometry::Point target_point{};
@@ -42,6 +42,8 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     } else {
         target_point = mid_point + ball_dir_vector * ((total_wallers_ - waller_pos_) * wall_spacing);
     }
+
+    target_point = target_point.rotate(mid_point, M_PI / 2);
 
     // Stop at end of path
     rj_geometry::Point target_vel{0.0, 0.0};

@@ -423,8 +423,6 @@ bool CollectPathPlanner::is_done() const {
     double dist_to_ball = (cached_robot_pos_.value() - cached_ball_pos_.value()).mag();
     bool ball_in_mouth = dist_to_ball - (kRobotRadius + kBallRadius) < ball_in_mouth_cutoff;
 
-    SPDLOG_INFO("\033[92m ball_in_mouth {}, ball_is_slow {} \033[0m", ball_in_mouth, ball_is_slow);
-
     return ball_is_slow && ball_in_mouth;
 }
 

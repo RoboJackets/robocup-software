@@ -3,11 +3,9 @@
 namespace strategy {
 
 Offense::Offense(int r_id) : Position(r_id) {
-    SPDLOG_INFO("\033[92m Robot Id: {}\033[0m", r_id);
     position_name_ = "Offense";
     if (r_id == 2) {
         current_state_ = STEALING;
-        SPDLOG_INFO("\033[92mInitializing Stealing Robot\033[0m");
     } else {
         current_state_ = FACING;
     }
@@ -41,13 +39,10 @@ Offense::State Offense::update_state() {
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
             if (check_is_done()) {
-                SPDLOG_INFO("\033[92mRobot {} is finished passing\033[0m", robot_id_);
                 next_state = IDLING;
             }
 
             if (distance_to_ball > BALL_LOST_DISTANCE) {
-                SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
-                            robot_id_);
                 next_state = IDLING;
             }
             break;
@@ -61,8 +56,6 @@ Offense::State Offense::update_state() {
         case RECEIVING:
             // transition to idling if we are close enough to the ball
             if (distance_to_ball < BALL_RECEIVE_DISTANCE) {
-                SPDLOG_INFO("\033[92mRobot {} is {} from the ball\033[0m", robot_id_,
-                            distance_to_ball);
                 next_state = IDLING;
             }
             break;
@@ -71,7 +64,6 @@ Offense::State Offense::update_state() {
             if (check_is_done()) {
                 /* SPDLOG_INFO("\033[92m ball pos {}{} \033[0m", ball_position.x(),
                  * ball_position.y()); */
-                SPDLOG_INFO("\033[92m switching off stealing {} \033[0m", BALL_RECEIVE_DISTANCE);
 
                 // send direct pass request to robot 3
                 send_direct_pass_request({4});
@@ -97,7 +89,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     } else if (current_state_ == PASSING) {
         // TODO: FIX LINE KICK
         // attempt to pass the ball to the target robot
-        SPDLOG_INFO("\033[92mrobot {} passing ball\033[0m", robot_id_);
         rj_geometry::Point target_robot_pos =
             world_state()->get_robot(true, target_robot_id).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
@@ -127,7 +118,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         } else {
             // intercept the bal
             chasing_ball = true;
-            SPDLOG_INFO("\033[92mrobot {} settling the ball\033[0m", robot_id_);
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
         }
