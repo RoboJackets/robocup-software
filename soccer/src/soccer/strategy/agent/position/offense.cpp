@@ -2,93 +2,184 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position(r_id) { position_name_ = "Offense"; }
+Offense::Offense(int r_id) : Position(r_id) {
+    SPDLOG_INFO("\033[92m Robot Id: {}\033[0m", r_id);
+    position_name_ = "Offense";
+    if (r_id == 2) {
+        current_state_ = STEALING;
+        SPDLOG_INFO("\033[92mInitializing Stealing Robot\033[0m");
+    } else {
+        current_state_ = FACING;
+    }
+}
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
-    // FSM: kick -> move away -> repeat
-    if (check_is_done()) {
-        // switch from kicking -> not kicking or vice versa
-        kicking_ = !kicking_;
-    }
-
-    // get world_state
-    WorldState* world_state = this->world_state();  // thread-safe getter
-
-    // oscillate along vertical line (temp)
-    double y = 6.0;
-    if (!kicking_) {
-        y = 1.0;
-    }
-    rj_geometry::Point target_pt{(6.0 * (robot_id_ * 0.1) - 2.0), y};
-
-    // stop at end of path
-    rj_geometry::Point target_vel{0.0, 0.0};
-
-    // face ball on way up, face path on way down
-    planning::PathTargetFaceOption face_option = planning::FaceBall{};
-    if (kicking_) {
-        face_option = planning::FaceTarget{};
-    }
-
-    // avoid ball
-    bool ignore_ball = false;
-
-    planning::LinearMotionInstant target{target_pt, target_vel};
-    intent.motion_command =
-        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
-    return intent;
+    current_state_ = update_state();
+    return state_to_task(intent);
 }
 
-void Offense::receive_communication_response(communication::AgentPosResponseWrapper response) {
-    for (u_int32_t i = 0; i < response.responses.size(); i++) {
-        if (const communication::Acknowledge* acknowledge =
-                std::get_if<communication::Acknowledge>(&response.responses[i])) {
-            SPDLOG_INFO("\033[93mRobot {} has acknowledged the message: {}\033[0m",
-                        response.received_robot_ids[i]);
-        } else if (const communication::PassResponse* pass_response =
-                       std::get_if<communication::PassResponse>(&response.responses[i])) {
-            SPDLOG_INFO("\033[92mRobot {} has sent the pass response\033[0m",
-                        response.received_robot_ids[i]);
-        } else if (const communication::TestResponse* test_response =
-                       std::get_if<communication::TestResponse>(&response.responses[i])) {
-            SPDLOG_INFO("\033[91mRobot {} has sent a test response with message: {}\033[0m",
-                        response.received_robot_ids[i], test_response->message);
-        } else if (const communication::PositionResponse* position_response =
-                       std::get_if<communication::PositionResponse>(&response.responses[i])) {
-            SPDLOG_INFO("\033[90mRobot {} has sent a position response\033[0m",
-                        response.received_robot_ids[i]);
+Offense::State Offense::update_state() {
+    State next_state = current_state_;
+    // handle transitions between current state
+    WorldState* world_state = this->world_state();
+
+    // if no ball found, stop and return to box immediately
+    if (!world_state->ball.visible) {
+        return current_state_;
+    }
+
+    rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point ball_position = world_state->ball.position;
+    double distance_to_ball = robot_position.dist_to(ball_position);
+
+    switch (current_state_) {
+        case IDLING:
+            break;
+        case SEARCHING:
+            break;
+        case PASSING:
+            // transition to idling if we no longer have the ball (i.e. it was passed or it was
+            // stolen)
+            if (check_is_done()) {
+                SPDLOG_INFO("\033[92mRobot {} is finished passing\033[0m", robot_id_);
+                next_state = IDLING;
+            }
+
+            if (distance_to_ball > BALL_LOST_DISTANCE) {
+                SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
+                            robot_id_);
+                next_state = IDLING;
+            }
+            break;
+        case SHOOTING:
+            // transition to idling if we no longer have the ball (i.e. it was passed or it was
+            // stolen)
+            if (distance_to_ball > BALL_LOST_DISTANCE) {
+                next_state = IDLING;
+            }
+            break;
+        case RECEIVING:
+            // transition to idling if we are close enough to the ball
+            if (distance_to_ball < BALL_RECEIVE_DISTANCE) {
+                SPDLOG_INFO("\033[92mRobot {} is {} from the ball\033[0m", robot_id_,
+                            distance_to_ball);
+                next_state = IDLING;
+            }
+            break;
+        case STEALING:
+            // transition to idling if we are close enough to the ball
+            if (check_is_done()) {
+                /* SPDLOG_INFO("\033[92m ball pos {}{} \033[0m", ball_position.x(),
+                 * ball_position.y()); */
+                SPDLOG_INFO("\033[92m switching off stealing {} \033[0m", BALL_RECEIVE_DISTANCE);
+
+                // send direct pass request to robot 3
+                send_direct_pass_request({4});
+
+                // go to IDLING (pass received will go to PASSING)
+                next_state = SEARCHING;
+            }
+            break;
+        case FACING:
+            if (check_is_done()) {
+                next_state = IDLING;
+            }
+    }
+
+    return next_state;
+}
+
+std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
+    if (current_state_ == IDLING) {
+        // Face the ball
+    } else if (current_state_ == SEARCHING) {
+        // TODO: DEFINE SEARCHING BEHAVIOR
+    } else if (current_state_ == PASSING) {
+        // TODO: FIX LINE KICK
+        // attempt to pass the ball to the target robot
+        SPDLOG_INFO("\033[92mrobot {} passing ball\033[0m", robot_id_);
+        rj_geometry::Point target_robot_pos =
+            world_state()->get_robot(true, target_robot_id).pose.position();
+        planning::LinearMotionInstant target{target_robot_pos};
+        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+        intent.motion_command = line_kick_cmd;
+        intent.shoot_mode = RobotIntent::ShootMode::KICK;
+        // NOTE: Check we can actually use break beams
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        // TODO: Adjust the kick speed based on distance
+        intent.kick_speed = 4.0;
+        intent.is_active = true;
+        return intent;
+    } else if (current_state_ == SHOOTING) {
+        // TODO: Shoot the ball at the goal
+    } else if (current_state_ == RECEIVING) {
+        // check how far we are from the ball
+        rj_geometry::Point robot_position =
+            world_state()->get_robot(true, robot_id_).pose.position();
+        rj_geometry::Point ball_position = world_state()->ball.position;
+        double distance_to_ball = robot_position.dist_to(ball_position);
+        if (distance_to_ball > max_receive_distance && !chasing_ball) {
+            auto motion_instance =
+                planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
+            auto face_ball = planning::FaceBall{};
+            auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
+            intent.motion_command = face_ball_cmd;
+        } else {
+            // intercept the bal
+            chasing_ball = true;
+            SPDLOG_INFO("\033[92mrobot {} settling the ball\033[0m", robot_id_);
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
         }
+        return intent;
+    } else if (current_state_ == STEALING) {
+        // intercept the ball
+        auto collect_cmd = planning::MotionCommand{"collect"};
+        intent.motion_command = collect_cmd;
+        return intent;
+    } else if (current_state_ == FACING) {
+        rj_geometry::Point robot_position =
+            world_state()->get_robot(true, robot_id_).pose.position();
+        auto current_location_instant =
+            planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
+        auto face_ball = planning::FaceBall{};
+        auto face_ball_cmd =
+            planning::MotionCommand{"path_target", current_location_instant, face_ball};
+        intent.motion_command = face_ball_cmd;
+        return intent;
     }
+
+    // should be impossible to reach, but this is an EmptyMotionCommand
+    return std::nullopt;
 }
 
-communication::PosAgentResponseWrapper Offense::receive_communication_request(
-    communication::AgentPosRequestWrapper request) {
-    communication::PosAgentResponseWrapper comm_response{};
-    if (const communication::PassRequest* pass_request =
-            std::get_if<communication::PassRequest>(&request.request)) {
-        // TODO (https://app.clickup.com/t/8677c0q36): Handle pass requests
-        sleep(100);
-        communication::Acknowledge acknowledge{};
-        communication::generate_uid(acknowledge);
-        comm_response.response = acknowledge;
-    } else if (const communication::PositionRequest* position_request =
-                   std::get_if<communication::PositionRequest>(&request.request)) {
-        communication::PositionResponse position_response{};
-        position_response.position = position_name_;
-        communication::generate_uid(position_response);
-        comm_response.response = position_response;
-    } else if (const communication::TestRequest* test_request =
-                   std::get_if<communication::TestRequest>(&request.request)) {
-        communication::TestResponse test_response{};
-        test_response.message = fmt::format("An offensive player (robot: {}) says hi", robot_id_);
-        communication::generate_uid(test_response);
-        comm_response.response = test_response;
-    } else {
-        communication::Acknowledge acknowledge{};
-        communication::generate_uid(acknowledge);
-        comm_response.response = acknowledge;
-    }
-    return comm_response;
+communication::Acknowledge Offense::acknowledge_pass(
+    communication::IncomingPassRequest incoming_pass_request) {
+    // Call to super
+    communication::Acknowledge acknowledge_response =
+        Position::acknowledge_pass(incoming_pass_request);
+    // Return acknowledge response
+    return acknowledge_response;
+}
+
+void Offense::pass_ball(int robot_id) {
+    // Call to super
+    Position::pass_ball(robot_id);
+    // Update current state
+    current_state_ = PASSING;
+}
+
+communication::Acknowledge Offense::acknowledge_ball_in_transit(
+    communication::BallInTransitRequest ball_in_transit_request) {
+    // Call to super
+    communication::Acknowledge acknowledge_response =
+        Position::acknowledge_ball_in_transit(ball_in_transit_request);
+    // Update current state
+    current_state_ = RECEIVING;
+    // Reset chasing_ball
+    chasing_ball = false;
+    // Return acknowledge response
+    return acknowledge_response;
 }
 
 }  // namespace strategy
