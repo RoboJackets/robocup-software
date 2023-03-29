@@ -66,18 +66,46 @@ private:
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
+    /**
+     * @brief Sends a JoinWallRequest in broadcast to the other robots
+     */
     void send_join_wall_request();
+
+    /**
+     * @brief Sends a LeaveWallRequest to each of the robots in walling_robots_.
+     */
     void send_leave_wall_request();
 
+    /**
+     * @brief Adds the new waller to this robot's list of wallers and updates this robot's position
+     * in the wall.
+     *
+     * @param join_request the request received from another robot about joining the wall
+     * @return communication::JoinWallResponse A confirmation for the other robot to join the wall
+     * with this robot's ID
+     */
     communication::JoinWallResponse handle_join_wall_request(
         communication::JoinWallRequest join_request);
+
+    /**
+     * @brief Removes a given robot from this robot's list of wallers.
+     *
+     * @param leave_request the request from the robot who is leaving the wall
+     * @return communication::Acknowledge acknowledgement of the other robot's communication
+     */
     communication::Acknowledge handle_leave_wall_request(
         communication::LeaveWallRequest leave_request);
 
-    void handle_join_wall_response(communication::JoinWallResponse join_request);
+    /**
+     * @brief Handles the response from the currently walling robots to find this robot's place in
+     * the wall.
+     *
+     * @param join_response the response from another robot that this robot can join the wall
+     */
+    void handle_join_wall_response(communication::JoinWallResponse join_response);
 
-    std::vector<u_int8_t> walling_robots = {};
-    int waller_id = -1;
+    std::vector<u_int8_t> walling_robots_ = {};
+    int waller_id_ = -1;
 
     // current state of the defense agent (state machine)
     State current_state_ = JOINING_WALL;

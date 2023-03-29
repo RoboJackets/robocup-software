@@ -24,15 +24,15 @@ Defense::State Defense::update_state() {
         case JOINING_WALL:
             send_join_wall_request();
             next_state = WALLING;
-            walling_robots = {(u_int8_t)robot_id_};
+            walling_robots_ = {(u_int8_t)robot_id_};
             break;
         case WALLING:
             break;
         case LEAVING_WALL:
             send_leave_wall_request();
             next_state = IDLING;
-            walling_robots = {(u_int8_t)robot_id_};
-            waller_id = -1;
+            walling_robots_ = {(u_int8_t)robot_id_};
+            waller_id_ = -1;
             break;
         case SEARCHING:
             break;
@@ -93,10 +93,10 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == WALLING) {
-        if (walling_robots.size() > 0) {
+        if (walling_robots_.size() > 0) {
             // SPDLOG_INFO("\033[92mRobot {} is walling as waller {} out of {}\033[0m", robot_id_,
-            // waller_id, walling_robots.size());
-            Waller waller{waller_id, (int)walling_robots.size()};
+            // waller_id_, walling_robots_.size());
+            Waller waller{waller_id_, (int)walling_robots_.size()};
             return waller.get_task(intent, world_state());
         }
     }
@@ -191,7 +191,7 @@ void Defense::send_leave_wall_request() {
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = leave_request;
-    communication_request.target_agents = walling_robots;
+    communication_request.target_agents = walling_robots_;
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
@@ -200,23 +200,23 @@ void Defense::send_leave_wall_request() {
 
 communication::JoinWallResponse Defense::handle_join_wall_request(
     communication::JoinWallRequest join_request) {
-    for (int i = 0; i < walling_robots.size(); i++) {
-        if (walling_robots[i] == join_request.robot_id) {
+    for (int i = 0; i < walling_robots_.size(); i++) {
+        if (walling_robots_[i] == join_request.robot_id) {
             break;
-        } else if (walling_robots[i] > join_request.robot_id) {
-            walling_robots.insert(walling_robots.begin() + i, join_request.robot_id);
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots for robot
+        } else if (walling_robots_[i] > join_request.robot_id) {
+            walling_robots_.insert(walling_robots_.begin() + i, join_request.robot_id);
+            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_request.robot_id, i, robot_id_);
-            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) -
-                        walling_robots.begin();
-            // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id,
+            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
+                         walling_robots_.begin();
+            // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id_,
             // robot_id_);
             break;
-        } else if (i == walling_robots.size() - 1) {
-            walling_robots.push_back(join_request.robot_id);
-            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) -
-                        walling_robots.begin();
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots for robot
+        } else if (i == walling_robots_.size() - 1) {
+            walling_robots_.push_back(join_request.robot_id);
+            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
+                         walling_robots_.begin();
+            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_request.robot_id, i+1, robot_id_);
         }
     }
@@ -230,13 +230,13 @@ communication::JoinWallResponse Defense::handle_join_wall_request(
 
 communication::Acknowledge Defense::handle_leave_wall_request(
     communication::LeaveWallRequest leave_request) {
-    for (int i = walling_robots.size() - 1; i > 0; i--) {
-        if (walling_robots[i] == leave_request.robot_id) {
-            walling_robots.erase(walling_robots.begin() + i);
-            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) -
-                        walling_robots.begin();
+    for (int i = walling_robots_.size() - 1; i > 0; i--) {
+        if (walling_robots_[i] == leave_request.robot_id) {
+            walling_robots_.erase(walling_robots_.begin() + i);
+            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
+                         walling_robots_.begin();
             break;
-        } else if (walling_robots[i] > leave_request.robot_id) {
+        } else if (walling_robots_[i] > leave_request.robot_id) {
             break;
         }
     }
@@ -248,23 +248,23 @@ communication::Acknowledge Defense::handle_leave_wall_request(
 }
 
 void Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
-    for (int i = 0; i < walling_robots.size(); i++) {
-        if (walling_robots[i] == join_response.robot_id) {
+    for (int i = 0; i < walling_robots_.size(); i++) {
+        if (walling_robots_[i] == join_response.robot_id) {
             return;
-        } else if (walling_robots[i] > join_response.robot_id) {
-            walling_robots.insert(walling_robots.begin() + i, join_response.robot_id);
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots for robot
+        } else if (walling_robots_[i] > join_response.robot_id) {
+            walling_robots_.insert(walling_robots_.begin() + i, join_response.robot_id);
+            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_response.robot_id, i, robot_id_);
-            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) -
-                        walling_robots.begin();
-            // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id,
+            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
+                         walling_robots_.begin();
+            // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id_,
             // robot_id_);
             return;
-        } else if (i == walling_robots.size() - 1) {
-            walling_robots.push_back(join_response.robot_id);
-            waller_id = find(walling_robots.begin(), walling_robots.end(), robot_id_) -
-                        walling_robots.begin();
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots for robot
+        } else if (i == walling_robots_.size() - 1) {
+            walling_robots_.push_back(join_response.robot_id);
+            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
+                         walling_robots_.begin();
+            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_response.robot_id, i+1, robot_id_);
         }
     }
