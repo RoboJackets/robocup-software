@@ -20,6 +20,14 @@ bool operator==(const TestRequest& a, const TestRequest& b) {
     return a.request_uid == b.request_uid;
 }
 
+bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b) {
+    return a.request_uid == b.request_uid;
+}
+
+bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b) {
+    return a.request_uid == b.request_uid;
+}
+
 bool operator==(const Acknowledge& a, const Acknowledge& b) {
     return a.response_uid == b.response_uid;
 }
@@ -55,6 +63,20 @@ void generate_uid(PositionRequest& request) {
 }
 
 void generate_uid(TestRequest& request) {
+    request_uid_mutex.lock();
+    request.request_uid = request_uid;
+    request_uid++;
+    request_uid_mutex.unlock();
+}
+
+void generate_uid(IncomingPassRequest& request) {
+    request_uid_mutex.lock();
+    request.request_uid = request_uid;
+    request_uid++;
+    request_uid_mutex.unlock();
+}
+
+void generate_uid(BallInTransitRequest& request) {
     request_uid_mutex.lock();
     request.request_uid = request_uid;
     request_uid++;
