@@ -61,14 +61,12 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         } else {
             // intercept the bal
             chasing_ball = true;
-            SPDLOG_INFO("\033[92mrobot {} settling the ball\033[0m", robot_id_);
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
         }
         return intent;
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
-        SPDLOG_INFO("\033[92mrobot {} passing ball\033[0m", robot_id_);
         rj_geometry::Point target_robot_pos =
             world_state()->get_robot(true, target_robot_id).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
