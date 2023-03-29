@@ -9,9 +9,9 @@ std::optional<RobotIntent> Position::get_task() {
     RobotIntent intent = RobotIntent{};
     intent.robot_id = robot_id_;
 
-    // if world_state invalid, return empty_intent
+    // if world_state invalid, return empty MotionCommand (equivalent to HALT)
     if (!assert_world_state_valid()) {
-        intent.motion_command = planning::EmptyMotionCommand{};
+        intent.motion_command = planning::MotionCommand{};
         return intent;
     }
 
@@ -85,13 +85,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request([
     communication::generate_uid(response);
     pos_agent_response.response = response;
     return pos_agent_response;
-}
-
-rj_msgs::msg::RobotIntent Position::get_empty_intent() const {
-    rj_msgs::msg::RobotIntent intent{};
-    auto empty = rj_msgs::msg::EmptyMotionCommand{};
-    intent.motion_command.empty_command = {empty};
-    return intent;
 }
 
 const std::string Position::get_name() { return position_name_; }

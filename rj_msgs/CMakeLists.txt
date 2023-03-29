@@ -40,15 +40,6 @@ rosidl_generate_interfaces(
   msg/MotionSetpoint.msg
 
   msg/LinearMotionInstant.msg
-  msg/EmptyMotionCommand.msg
-  msg/GoalieIdleMotionCommand.msg
-  msg/PathTargetMotionCommand.msg
-  msg/WorldVelMotionCommand.msg
-  msg/PivotMotionCommand.msg
-  msg/SettleMotionCommand.msg
-  msg/CollectMotionCommand.msg
-  msg/LineKickMotionCommand.msg
-  msg/InterceptMotionCommand.msg
   msg/MotionCommand.msg
 
   msg/RawProtobuf.msg

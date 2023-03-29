@@ -41,19 +41,18 @@ Goalie::State Goalie::update_state() {
 
 std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
     if (latest_state_ == BLOCKING) {
-        auto intercept_cmd = planning::InterceptMotionCommand{rj_geometry::Point{0.0, 0.1}};
+        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 0.1}};
+        auto intercept_cmd = planning::MotionCommand{"intercept", target};
         intent.motion_command = intercept_cmd;
-        intent.motion_command_name = "intercept";
         return intent;
     } else if (latest_state_ == IDLING) {
-        auto goalie_idle_cmd = planning::GoalieIdleMotionCommand{};
+        auto goalie_idle_cmd = planning::MotionCommand{"goalie_idle"};
         intent.motion_command = goalie_idle_cmd;
-        intent.motion_command_name = "goalie_idle";
         return intent;
     } else if (latest_state_ == CLEARING) {
-        auto line_kick_cmd = planning::LineKickMotionCommand{rj_geometry::Point{0.0, 4.5}};
+        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 4.5}};
+        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
-        intent.motion_command_name = "line kick";
 
         // note: the way this is set up makes it impossible to
         // shoot on time without breakbeam
@@ -74,14 +73,14 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         // ball not found
         bool ignore_ball = true;
 
-        planning::LinearMotionInstant goal{target_pt, target_vel};
-        intent.motion_command = planning::PathTargetMotionCommand{goal, face_option, ignore_ball};
-        intent.motion_command_name = "path_target";
+        planning::LinearMotionInstant target{target_pt, target_vel};
+        intent.motion_command =
+            planning::MotionCommand{"path_target", target, face_option, ignore_ball};
         return intent;
     }
 
     // should be impossible to reach, but this is equivalent to
-    // sending an EmptyMotionCommand
+    // sending an empty MotionCommand
     return std::nullopt;
 }
 
