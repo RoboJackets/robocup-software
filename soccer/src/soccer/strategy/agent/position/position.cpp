@@ -75,7 +75,7 @@ std::optional<communication::PosAgentRequestWrapper> Position::send_communicatio
     if (communication_request_ != std::nullopt) {
         auto saved_comm_req = communication_request_;
         communication_request_ = std::nullopt;
-        SPDLOG_INFO("\033[92mSENT ACTUAL COMM TO AGENT\033[0m");
+        // SPDLOG_INFO("\033[92mSENT ACTUAL COMM TO AGENT\033[0m");
         return saved_comm_req;
     }
     return std::nullopt;
@@ -117,7 +117,6 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
 communication::PosAgentResponseWrapper Position::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response{};
-    SPDLOG_INFO("\033[92m offense recv comm req !! \033[0m");
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
         communication::PassResponse pass_response = receive_pass_request(*pass_request);

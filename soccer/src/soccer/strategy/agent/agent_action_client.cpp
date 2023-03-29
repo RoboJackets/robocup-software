@@ -212,14 +212,13 @@ void AgentActionClient::get_communication() {
     if (!optional_communication_request.has_value()) {
         return;
     }
-    SPDLOG_INFO("non null comm request");
 
     auto communication_request = optional_communication_request.value();
 
     // SPDLOG_INFO("\033[92mROBOTS VISIBLE\033[0m");
 
     if (robots_visible) {
-        SPDLOG_INFO("\033[92mSENDING REQUEST\033[0m");
+        // SPDLOG_INFO("\033[92mSENDING REQUEST\033[0m");
         // update the last communication
         last_communication_ = communication_request.request;
         // create a buffer to hold the responses and the outgoing request

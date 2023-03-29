@@ -13,16 +13,16 @@
 #include "rj_msgs/msg/agent_response.hpp"
 #include "rj_msgs/msg/agent_response_variant.hpp"
 #include "rj_msgs/msg/incoming_pass_request.hpp"
+#include "rj_msgs/msg/join_wall_request.hpp"
+#include "rj_msgs/msg/join_wall_response.hpp"
+#include "rj_msgs/msg/leave_wall_request.hpp"
+#include "rj_msgs/msg/leave_wall_response.hpp"
 #include "rj_msgs/msg/pass_request.hpp"
 #include "rj_msgs/msg/pass_response.hpp"
 #include "rj_msgs/msg/position_request.hpp"
 #include "rj_msgs/msg/position_response.hpp"
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
-#include "rj_msgs/msg/join_wall_request.hpp"
-#include "rj_msgs/msg/join_wall_response.hpp"
-#include "rj_msgs/msg/leave_wall_request.hpp"
-#include "rj_msgs/msg/leave_wall_response.hpp"
 
 namespace strategy::communication {
 
@@ -111,8 +111,8 @@ struct LeaveWallResponse {
 };
 bool operator==(const LeaveWallResponse& a, const LeaveWallResponse& b);
 
-using AgentResponseVariant =
-    std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse, JoinWallResponse, LeaveWallResponse>;
+using AgentResponseVariant = std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse,
+                                          JoinWallResponse, LeaveWallResponse>;
 
 struct AgentResponse {
     AgentRequest associated_request;
@@ -259,8 +259,7 @@ struct RosConverter<strategy::communication::IncomingPassRequest,
 ASSOCIATE_CPP_ROS(strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest);
 
 template <>
-struct RosConverter<strategy::communication::JoinWallRequest,
-                    rj_msgs::msg::JoinWallRequest> {
+struct RosConverter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest> {
     static rj_msgs::msg::JoinWallRequest to_ros(
         const strategy::communication::JoinWallRequest& from) {
         rj_msgs::msg::JoinWallRequest result;
@@ -278,8 +277,7 @@ struct RosConverter<strategy::communication::JoinWallRequest,
 ASSOCIATE_CPP_ROS(strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest);
 
 template <>
-struct RosConverter<strategy::communication::LeaveWallRequest,
-                    rj_msgs::msg::LeaveWallRequest> {
+struct RosConverter<strategy::communication::LeaveWallRequest, rj_msgs::msg::LeaveWallRequest> {
     static rj_msgs::msg::LeaveWallRequest to_ros(
         const strategy::communication::LeaveWallRequest& from) {
         rj_msgs::msg::LeaveWallRequest result;
@@ -334,9 +332,11 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* ball_in_transit_request =
                        std::get_if<strategy::communication::BallInTransitRequest>(&from)) {
             result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
-        } else if (const auto* join_wall_request = std::get_if<strategy::communication::JoinWallRequest>(&from)) {
+        } else if (const auto* join_wall_request =
+                       std::get_if<strategy::communication::JoinWallRequest>(&from)) {
             result.join_wall_request.emplace_back(convert_to_ros(*join_wall_request));
-        } else if (const auto* leave_wall_request = std::get_if<strategy::communication::LeaveWallRequest>(&from)) {
+        } else if (const auto* leave_wall_request =
+                       std::get_if<strategy::communication::LeaveWallRequest>(&from)) {
             result.leave_wall_request.emplace_back(convert_to_ros(*leave_wall_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
@@ -448,8 +448,7 @@ struct RosConverter<strategy::communication::TestResponse, rj_msgs::msg::TestRes
 ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_msgs::msg::TestResponse);
 
 template <>
-struct RosConverter<strategy::communication::JoinWallResponse,
-                    rj_msgs::msg::JoinWallResponse> {
+struct RosConverter<strategy::communication::JoinWallResponse, rj_msgs::msg::JoinWallResponse> {
     static rj_msgs::msg::JoinWallResponse to_ros(
         const strategy::communication::JoinWallResponse& from) {
         rj_msgs::msg::JoinWallResponse result;
@@ -467,8 +466,7 @@ struct RosConverter<strategy::communication::JoinWallResponse,
 ASSOCIATE_CPP_ROS(strategy::communication::JoinWallResponse, rj_msgs::msg::JoinWallResponse);
 
 template <>
-struct RosConverter<strategy::communication::LeaveWallResponse,
-                    rj_msgs::msg::LeaveWallResponse> {
+struct RosConverter<strategy::communication::LeaveWallResponse, rj_msgs::msg::LeaveWallResponse> {
     static rj_msgs::msg::LeaveWallResponse to_ros(
         const strategy::communication::LeaveWallResponse& from) {
         rj_msgs::msg::LeaveWallResponse result;
@@ -503,9 +501,11 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
         } else if (const auto* pass_response =
                        std::get_if<strategy::communication::PassResponse>(&(from.response))) {
             result.response.pass_response.emplace_back(convert_to_ros(*pass_response));
-        } else if (const auto* join_wall_response = std::get_if<strategy::communication::JoinWallResponse>(&(from.response))) {
+        } else if (const auto* join_wall_response =
+                       std::get_if<strategy::communication::JoinWallResponse>(&(from.response))) {
             result.response.join_wall_response.emplace_back(convert_to_ros(*join_wall_response));
-        } else if (const auto* leave_wall_response = std::get_if<strategy::communication::LeaveWallResponse>(&(from.response))) {
+        } else if (const auto* leave_wall_response =
+                       std::get_if<strategy::communication::LeaveWallResponse>(&(from.response))) {
             result.response.leave_wall_response.emplace_back(convert_to_ros(*leave_wall_response));
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");

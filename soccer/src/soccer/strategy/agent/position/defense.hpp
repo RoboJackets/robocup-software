@@ -52,14 +52,14 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        IDLING,       // simply staying in place
-        JOINING_WALL, // send message to find its place in the wall
-        WALLING,      // participating in the wall
-        LEAVING_WALL, // send message to leave the wall
-        SEARCHING,    // moving around on the field to do something
-        RECEIVING,    // physically intercepting the ball from a pass
-        PASSING,      // physically kicking the ball towards another robot
-        FACING,       // turning to face the passing robot
+        IDLING,        // simply staying in place
+        JOINING_WALL,  // send message to find its place in the wall
+        WALLING,       // participating in the wall
+        LEAVING_WALL,  // send message to leave the wall
+        SEARCHING,     // moving around on the field to do something
+        RECEIVING,     // physically intercepting the ball from a pass
+        PASSING,       // physically kicking the ball towards another robot
+        FACING,        // turning to face the passing robot
     };
 
     State update_state();
@@ -69,8 +69,10 @@ private:
     void send_join_wall_request();
     void send_leave_wall_request();
 
-    communication::JoinWallResponse handle_join_wall_request(communication::JoinWallRequest join_request);
-    communication::Acknowledge handle_leave_wall_request(communication::LeaveWallRequest leave_request);
+    communication::JoinWallResponse handle_join_wall_request(
+        communication::JoinWallRequest join_request);
+    communication::Acknowledge handle_leave_wall_request(
+        communication::LeaveWallRequest leave_request);
 
     void handle_join_wall_response(communication::JoinWallResponse join_request);
 
