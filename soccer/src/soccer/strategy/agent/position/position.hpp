@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdlib>
+#include <vector>
 
 #include <spdlog/spdlog.h>
 
@@ -20,6 +21,8 @@
 #include "../communication/communication.hpp"
 
 // Requests
+#include <rj_msgs/msg/ball_in_transit_request.hpp>
+#include <rj_msgs/msg/incoming_pass_request.hpp>
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
@@ -94,7 +97,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    communication::PosAgentRequestWrapper send_communication_request();
+    std::optional<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -113,6 +116,56 @@ public:
     virtual communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request);
     // END Agent-to-Agent Communication
+
+    /**
+     * @brief sends a direct pass request to the target robots
+     *
+     * @param target_robots a vector of robots to send a request to
+     */
+    void send_direct_pass_request(std::vector<u_int8_t> target_robots);
+
+    /**
+     * @brief receives and handles a pass_request
+     *
+     * @param pass_request the pass request to handle
+     * @return communication::PassResponse a response to the robot as to whether or not it
+     * is open for a pass
+     */
+    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
+
+    /**
+     * @brief tell another robot that this robot will pass to it
+     *
+     * @param target_robot the robot that will be passed to
+     */
+    void send_pass_confirmation(u_int8_t target_robot);
+
+    /**
+     * @brief acknowledges the pass confirmation from another robot
+     *
+     * @param incoming_pass_request the request that a ball will be coming to this robot
+     * @return communication::Acknowledge acknowledgement that the other robot may pass to this
+     * robot
+     */
+    virtual communication::Acknowledge acknowledge_pass(
+        communication::IncomingPassRequest incoming_pass_request);
+
+    /**
+     * @brief physically update the state of the robot to be passing the ball
+     *
+     * @param robot_id the robot id of the robot to pass the ball to
+     */
+    virtual void pass_ball(int robot_id);
+
+    /**
+     * @brief the ball is on the way, so the robot should change its state accordingly
+     *
+     * @param ball_in_transit_request request from the passing robot that they have passed the ball
+     * @return communication::Acknowledge response to the passing robot that this robot will be
+     * receiving
+     */
+    virtual communication::Acknowledge acknowledge_ball_in_transit(
+        communication::BallInTransitRequest ball_in_transit_request);
 
 protected:
     // should be overriden in subclass constructors
@@ -162,8 +215,22 @@ protected:
     // us to set this once initially
     const int robot_id_;
 
+    // the robot our robot is going to be passing to
+    int target_robot_id;
+
+    // the robot our robot will be facing (useful for passing)
+    int face_robot_id;
+
+    // the maximum distance from the robot to the ball for the robot to begin
+    // chasing the ball
+    const double max_receive_distance = 1.0;
+
+    // Whether or not this robot should be chasing the ball on receive
+    // set to true when the ball gets close to this robot
+    bool chasing_ball = false;
+
     // Request
-    communication::PosAgentRequestWrapper communication_request_;
+    std::optional<communication::PosAgentRequestWrapper> communication_request_;
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
