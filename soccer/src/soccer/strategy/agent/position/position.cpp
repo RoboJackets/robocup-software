@@ -56,6 +56,10 @@ void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
     /* SPDLOG_INFO("match_situation {}, our_possession {}", match_situation_, our_possession_); */
 }
 
+void Position::update_field_dimensions(FieldDimensions field_dims) {
+    field_dimensions_ = std::move(field_dims);
+}
+
 [[nodiscard]] WorldState* Position::world_state() {
     // thread-safe getter for world_state (see update_world_state())
     auto lock = std::lock_guard(world_state_mutex_);

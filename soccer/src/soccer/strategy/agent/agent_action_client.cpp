@@ -27,6 +27,12 @@ AgentActionClient::AgentActionClient(int r_id)
         "strategy/coach_state", 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
+    field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
+        "config/field_dimensions", 1,
+        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) {
+            field_dimensions_callback(msg);
+        });
+
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
         [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
@@ -77,6 +83,15 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
     }
 
     current_position_->update_coach_state(*msg);
+}
+
+void AgentActionClient::field_dimensions_callback(
+    const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    if (current_position_ == nullptr) {
+        return;
+    }
+
+    current_position_->update_field_dimensions(rj_convert::convert_from_ros(*msg));
 }
 
 void AgentActionClient::get_task() {

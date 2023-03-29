@@ -9,6 +9,7 @@
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
+#include <rj_common/field_dimensions.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -65,6 +66,7 @@ public:
     // communication with AC
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
+    void update_field_dimensions(FieldDimensions field_dimensions);
     const std::string get_name();
 
     /**
@@ -129,6 +131,8 @@ protected:
     int match_situation_{};  // TODO: this is an enum, get from coach_node
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
+
+    FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
     /*
      * @return thread-safe ptr to most recent world_state
