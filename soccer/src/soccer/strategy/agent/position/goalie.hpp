@@ -8,7 +8,6 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 
-#include "planning/planner/intercept_planner.hpp"
 #include "position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
