@@ -44,8 +44,8 @@ Offense::State Offense::update_state() {
             }
 
             if (distance_to_ball > BALL_LOST_DISTANCE) {
-            //     SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
-            //                 robot_id_);
+                //     SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
+                //                 robot_id_);
                 next_state = IDLING;
             }
             break;
