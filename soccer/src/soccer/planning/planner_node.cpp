@@ -194,7 +194,7 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         // plan a path and send it to control
         auto plan_request = make_request(intent);
 
-        auto trajectory = plan_for_robot(plan_request);
+        auto trajectory = safe_plan_for_robot(plan_request);
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
         // send the kick/dribble commands to the radio
