@@ -47,7 +47,6 @@ Goalie::State Goalie::update_state() {
         }
     }
 
-    // otherwise, default to idling
     return latest_state_;
 }
 
@@ -90,6 +89,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", target, face_option, ignore_ball};
         return intent;
     } else if (latest_state_ == RECEIVING) {
+        // TODO(https://app.clickup.com/t/8677rrgjn): Convert RECEIVING state into role_interface
         // intercept the bal
         rj_geometry::Point current_position =
             world_state()->get_robot(true, robot_id_).pose.position();
@@ -98,6 +98,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.motion_command = receive_intercept_cmd;
         return intent;
     } else if (latest_state_ == PASSING) {
+        // TODO(https://app.clickup.com/t/8677rrgjn): Convert PASSING state into role_interface
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
             world_state()->get_robot(true, target_robot_id).pose.position();
@@ -105,7 +106,6 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         auto pass_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = pass_kick_cmd;
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         // TODO: Adjust the kick speed based on distance
         intent.kick_speed = 4.0;
@@ -140,10 +140,10 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
 }
 
 communication::Acknowledge Goalie::acknowledge_pass(
-    communication::IncomingPassRequest incoming_pass_request) {
-    // Call to super
+    communication::IncomingBallRequest incoming_ball_request) {
+    // Acknowledge the incoming pass
     communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_pass_request);
+        Position::acknowledge_pass(incoming_ball_request);
     // Update current state
     latest_state_ = FACING;
     // Return acknowledge response

@@ -45,9 +45,10 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
         // DO NOTHING
     } else if (current_state_ == SEARCHING) {
-        // TODO: Define defensive searching behavior
+        // TODO(https://app.clickup.com/t/8677qektb): Define defensive searching behavior
     } else if (current_state_ == RECEIVING) {
         // check how far we are from the ball
+        // TODO(https://app.clickup.com/t/8677rrgjn): Convert RECEIVING state into role_interface
         rj_geometry::Point robot_position =
             world_state()->get_robot(true, robot_id_).pose.position();
         rj_geometry::Point ball_position = world_state()->ball.position;
@@ -66,6 +67,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         }
         return intent;
     } else if (current_state_ == PASSING) {
+        // TODO(https://app.clickup.com/t/8677rrgjn): Convert PASSING state into role_interface
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
             world_state()->get_robot(true, target_robot_id).pose.position();
@@ -85,10 +87,10 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
 }
 
 communication::Acknowledge Defense::acknowledge_pass(
-    communication::IncomingPassRequest incoming_pass_request) {
-    // Call to super
+    communication::IncomingBallRequest incoming_ball_request) {
+    // Acknowledge the incoming pass
     communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_pass_request);
+        Position::acknowledge_pass(incoming_ball_request);
     // Update current state
     current_state_ = FACING;
     // Return acknowledge response

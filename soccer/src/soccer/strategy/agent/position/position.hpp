@@ -22,7 +22,7 @@
 
 // Requests
 #include <rj_msgs/msg/ball_in_transit_request.hpp>
-#include <rj_msgs/msg/incoming_pass_request.hpp>
+#include <rj_msgs/msg/incoming_ball_request.hpp>
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
@@ -143,15 +143,15 @@ public:
     /**
      * @brief acknowledges the pass confirmation from another robot
      *
-     * @param incoming_pass_request the request that a ball will be coming to this robot
+     * @param incoming_ball_request the request that a ball will be coming to this robot
      * @return communication::Acknowledge acknowledgement that the other robot may pass to this
      * robot
      */
     virtual communication::Acknowledge acknowledge_pass(
-        communication::IncomingPassRequest incoming_pass_request);
+        communication::IncomingBallRequest incoming_ball_request);
 
     /**
-     * @brief physically update the state of the robot to be passing the ball
+     * @brief update the robot state to be passing the ball
      *
      * @param robot_id the robot id of the robot to pass the ball to
      */
@@ -223,7 +223,7 @@ protected:
 
     // the maximum distance from the robot to the ball for the robot to begin
     // chasing the ball
-    const double max_receive_distance = 1.0;
+    const double max_receive_distance = 1.0; // m
 
     // Whether or not this robot should be chasing the ball on receive
     // set to true when the ball gets close to this robot

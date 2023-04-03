@@ -85,8 +85,8 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
         if (const communication::Acknowledge* acknowledge =
                 std::get_if<communication::Acknowledge>(&response.responses[i])) {
             // if the acknowledgement is from an incoming pass request -> pass the ball
-            if (const communication::IncomingPassRequest* incoming_pass_request =
-                    std::get_if<communication::IncomingPassRequest>(&response.associated_request)) {
+            if (const communication::IncomingBallRequest* incoming_ball_request =
+                    std::get_if<communication::IncomingBallRequest>(&response.associated_request)) {
                 pass_ball(response.received_robot_ids[i]);
             }
 
@@ -103,13 +103,6 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
                 }
             }
         }
-
-        // TEST CODE: UNCOMMENT TO TEST
-        // if (const communication::TestResponse* test_response =
-        //                std::get_if<communication::TestResponse>(&response.responses[i])) {
-        //     SPDLOG_INFO("\033[91mRobot {} has sent a test response with message: {}\033[0m",
-        //                 response.received_robot_ids[i], test_response->message);
-        // }
     }
 }
 
@@ -120,11 +113,11 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
             std::get_if<communication::PassRequest>(&request.request)) {
         communication::PassResponse pass_response = receive_pass_request(*pass_request);
         comm_response.response = pass_response;
-        // TODO: "IncomingPassRequest" => "IncomingBallRequest" (or smth)
-    } else if (const communication::IncomingPassRequest* incoming_pass_request =
-                   std::get_if<communication::IncomingPassRequest>(&request.request)) {
+        // TODO: "IncomingBallRequest" => "IncomingBallRequest" (or smth)
+    } else if (const communication::IncomingBallRequest* incoming_ball_request =
+                   std::get_if<communication::IncomingBallRequest>(&request.request)) {
         communication::Acknowledge incoming_pass_acknowledge =
-            acknowledge_pass(*incoming_pass_request);
+            acknowledge_pass(*incoming_ball_request);
         comm_response.response = incoming_pass_acknowledge;
     } else if (const communication::BallInTransitRequest* ball_in_transit_request =
                    std::get_if<communication::BallInTransitRequest>(&request.request)) {
@@ -136,16 +129,7 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     }
-
-    // TEST CODE: UNCOMMENT TO TEST
-    // if (const communication::TestRequest* test_request =
-    //                std::get_if<communication::TestRequest>(&request.request)) {
-    //     communication::TestResponse test_response{};
-    //     test_response.message = fmt::format("An offensive player (robot: {}) says hi",
-    //     robot_id_); communication::generate_uid(test_response); comm_response.response =
-    //     test_response;
-    // }
-
+    
     return comm_response;
 }
 
@@ -160,7 +144,6 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = pass_request;
     communication_request.target_agents = target_robots;
-    // For testing
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
@@ -185,12 +168,12 @@ communication::PassResponse Position::receive_pass_request(
 }
 
 void Position::send_pass_confirmation(u_int8_t target_robot) {
-    communication::IncomingPassRequest incoming_pass_request{};
-    incoming_pass_request.from_robot_id = robot_id_;
-    communication::generate_uid(incoming_pass_request);
+    communication::IncomingBallRequest incoming_ball_request{};
+    incoming_ball_request.from_robot_id = robot_id_;
+    communication::generate_uid(incoming_ball_request);
 
     communication::PosAgentRequestWrapper communication_request{};
-    communication_request.request = incoming_pass_request;
+    communication_request.request = incoming_ball_request;
     communication_request.target_agents = {target_robot};
     communication_request.broadcast = false;
     communication_request.urgent = true;
@@ -199,11 +182,11 @@ void Position::send_pass_confirmation(u_int8_t target_robot) {
 }
 
 communication::Acknowledge Position::acknowledge_pass(
-    communication::IncomingPassRequest incoming_pass_request) {
+    communication::IncomingBallRequest incoming_ball_request) {
     communication::Acknowledge acknowledge_response{};
     communication::generate_uid(acknowledge_response);
 
-    face_robot_id = incoming_pass_request.from_robot_id;
+    face_robot_id = incoming_ball_request.from_robot_id;
 
     return acknowledge_response;
 }

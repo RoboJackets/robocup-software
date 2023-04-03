@@ -29,7 +29,7 @@ public:
     ~Defense() override = default;
 
     communication::Acknowledge acknowledge_pass(
-        communication::IncomingPassRequest incoming_pass_request) override;
+        communication::IncomingBallRequest incoming_ball_request) override;
     void pass_ball(int robot_id) override;
     communication::Acknowledge acknowledge_ball_in_transit(
         communication::BallInTransitRequest ball_in_transit_request) override;
@@ -63,8 +63,8 @@ private:
     // current state of the defense agent (state machine)
     State current_state_ = IDLING;
 
-    double BALL_RECEIVE_DISTANCE = 0.1;
-    double BALL_LOST_DISTANCE = 0.5;
+    static constexpr double BALL_RECEIVE_DISTANCE = 0.1;
+    static constexpr double BALL_LOST_DISTANCE = 0.5;
 };
 
 }  // namespace strategy

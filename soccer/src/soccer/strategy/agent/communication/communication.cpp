@@ -20,7 +20,7 @@ bool operator==(const TestRequest& a, const TestRequest& b) {
     return a.request_uid == b.request_uid;
 }
 
-bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b) {
+bool operator==(const IncomingBallRequest& a, const IncomingBallRequest& b) {
     return a.request_uid == b.request_uid;
 }
 
@@ -69,7 +69,7 @@ void generate_uid(TestRequest& request) {
     request_uid_mutex.unlock();
 }
 
-void generate_uid(IncomingPassRequest& request) {
+void generate_uid(IncomingBallRequest& request) {
     request_uid_mutex.lock();
     request.request_uid = request_uid;
     request_uid++;

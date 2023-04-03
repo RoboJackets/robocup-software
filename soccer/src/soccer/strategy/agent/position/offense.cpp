@@ -146,10 +146,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 }
 
 communication::Acknowledge Offense::acknowledge_pass(
-    communication::IncomingPassRequest incoming_pass_request) {
+    communication::IncomingBallRequest incoming_ball_request) {
     // Call to super
     communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_pass_request);
+        Position::acknowledge_pass(incoming_ball_request);
     // Return acknowledge response
     return acknowledge_response;
 }
