@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_map>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -18,8 +19,9 @@
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
+#include "planner/path_planner.hpp"
 #include "planner/plan_request.hpp"
-#include "planner/planner.hpp"
+#include "planning/planner/escape_obstacles_path_planner.hpp"
 #include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
@@ -28,79 +30,72 @@
 
 namespace planning {
 
-class SharedStateInfo {
+/**
+ * Aggregates info from other ROS nodes into an unchanging "global state" for
+ * each planner. Read-only (from PlannerNode's perspective).
+ *
+ * ("Global state" in quotes since many of these fields can be changed by other
+ * nodes; however, to PlannerNode these are immutable.)
+ */
+class GlobalState {
 public:
-    SharedStateInfo(rclcpp::Node* node) {
+    GlobalState(rclcpp::Node* node) {
         play_state_sub_ = node->create_subscription<rj_msgs::msg::PlayState>(
             referee::topics::kPlayStateTopic, rclcpp::QoS(1),
             [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
-                auto lock = std::lock_guard(mutex_);
                 last_play_state_ = rj_convert::convert_from_ros(*state);
             });
         game_settings_sub_ = node->create_subscription<rj_msgs::msg::GameSettings>(
             config_server::topics::kGameSettingsTopic, rclcpp::QoS(1),
             [this](rj_msgs::msg::GameSettings::SharedPtr settings) {  // NOLINT
-                auto lock = std::lock_guard(mutex_);
                 last_game_settings_ = rj_convert::convert_from_ros(*settings);
             });
         goalie_sub_ = node->create_subscription<rj_msgs::msg::Goalie>(
             referee::topics::kGoalieTopic, rclcpp::QoS(1),
             [this](rj_msgs::msg::Goalie::SharedPtr goalie) {  // NOLINT
-                auto lock = std::lock_guard(mutex_);
                 last_goalie_id_ = goalie->goalie_id;
             });
         global_obstacles_sub_ = node->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
             planning::topics::kGlobalObstaclesTopic, rclcpp::QoS(1),
             [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr global_obstacles) {  // NOLINT
-                auto lock = std::lock_guard(mutex_);
                 last_global_obstacles_ = rj_convert::convert_from_ros(*global_obstacles);
             });
         def_area_obstacles_sub_ = node->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
             planning::topics::kDefAreaObstaclesTopic, rclcpp::QoS(1),
             [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr def_area_obstacles) {  // NOLINT
-                auto lock = std::lock_guard(mutex_);
                 last_def_area_obstacles_ = rj_convert::convert_from_ros(*def_area_obstacles);
             });
         world_state_sub_ = node->create_subscription<rj_msgs::msg::WorldState>(
             vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
             [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
-                auto lock = std::lock_guard(mutex_);
                 last_world_state_ = rj_convert::convert_from_ros(*world_state);
             });
         coach_state_sub_ = node->create_subscription<rj_msgs::msg::CoachState>(
             "/strategy/coach_state", rclcpp::QoS(1),
             [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
-                auto lock = std::lock_guard(mutex_);
                 last_coach_state_ = *coach_state;
             });
     }
 
     [[nodiscard]] PlayState play_state() const {
-        auto lock = std::lock_guard(mutex_);
         return last_play_state_;
     }
     [[nodiscard]] GameSettings game_settings() const {
-        auto lock = std::lock_guard(mutex_);
         return last_game_settings_;
     }
     [[nodiscard]] int goalie_id() const {
-        auto lock = std::lock_guard(mutex_);
         return last_goalie_id_;
     }
     [[nodiscard]] rj_geometry::ShapeSet global_obstacles() const {
-        auto lock = std::lock_guard(mutex_);
         return last_global_obstacles_;
     }
     [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const {
-        auto lock = std::lock_guard(mutex_);
         return last_def_area_obstacles_;
     }
     [[nodiscard]] const WorldState* world_state() const {
-        auto lock = std::lock_guard(mutex_);
         return &last_world_state_;
     }
     [[nodiscard]] const rj_msgs::msg::CoachState coach_state() const {
-        auto lock = std::lock_guard(mutex_);
         return last_coach_state_;
     }
 
@@ -113,7 +108,6 @@ private:
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
 
-    mutable std::mutex mutex_;
     PlayState last_play_state_ = PlayState::halt();
     GameSettings last_game_settings_;
     int last_goalie_id_;
@@ -124,13 +118,19 @@ private:
 };
 
 /**
- * Interface for one robot's planning, which for us is a RobotIntent to Trajectory
- * translation. Planner node makes N PlannerForRobots and handles them all.
+ * @brief Handles one robot's planning, which for us is a translation of RobotIntent to
+ * Trajectory. Bundles together all relevant ROS pub/subs and forwards
+ * RobotIntents to the appropriate PathPlanner (see path_planner.hpp).
+ *
+ * In general, prefers default behavior and WARN-level logs over crashing.
+ *
+ * (PlannerNode makes N PlannerForRobots and handles them all, see
+ * PlannerNode below.)
  */
 class PlannerForRobot {
 public:
     PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories,
-                    SharedStateInfo* shared_state);
+                    const GlobalState& global_state);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;
@@ -155,6 +155,7 @@ public:
      * @param response The response object that will contain the resultant time to completion of a
      * hypothetical path.
      */
+    // TODO(Kevin): I broke this, sorry
     void plan_hypothetical_robot_path(
         const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
         std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response);
@@ -185,17 +186,33 @@ private:
     PlanRequest make_request(const RobotIntent& intent);
 
     /*
-     * @brief Get a Trajectory based on the PlanRequest by ticking through all
-     * available planners.
+     * @brief Get a Trajectory based on the string name given in MotionCommand.
+     * Guaranteed to output a valid Trajectory: defaults to
+     * EscapeObstaclesPathPlanner if requested planner fails, and gives WARN
+     * logs.
      *
-     * @details (Each planner implements an "is_applicable(PlanRequest.motion_command)").
+     * @details Uses unsafe_plan_for_robot() to get a plan, handling any
+     * Exceptions that come up.
      *
-     * @param request PlanRequest that needs a motion plan made
+     * @param request PlanRequest to create a Trajectory from
      *
      * @return Trajectory (timestamped series of poses & twists) that satisfies
      * the PlanRequest as well as possible
      */
-    Trajectory plan_for_robot(const planning::PlanRequest& request);
+    Trajectory safe_plan_for_robot(const planning::PlanRequest& request);
+
+    /*
+     * @brief Get a Trajectory based on the string name given in MotionCommand.
+     *
+     * @details Differs from safe_plan_for_robot() in that it will throw Exceptions if
+     * planners fail (which safe_plan_for_robot() handles).
+     *
+     * @param request PlanRequest to create a Trajectory from
+     *
+     * @return Trajectory (timestamped series of poses & twists) that satisfies
+     * the PlanRequest as well as possible
+     */
+    Trajectory unsafe_plan_for_robot(const planning::PlanRequest& request);
 
     /*
      * @brief Check that robot is visible in world_state and that world_state has been
@@ -204,12 +221,25 @@ private:
     [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
-    std::vector<std::shared_ptr<Planner>> planners_;
-    std::shared_ptr<Planner> current_planner_;
+
+    // unique_ptrs here because we don't want to transfer ownership of
+    // thePathPlanner objects anywhere else
+    // (must be some type of ptr for polymorphism)
+    std::unordered_map<std::string, std::unique_ptr<PathPlanner>> path_planners_;
+    // EscapeObstaclesPathPlanner is our default path planner
+    // because when robots start inside of an obstacle, all other planners will fail
+    // TODO(Kevin): make EscapeObstaclesPathPlanner default start of all planner FSM so this doesn't
+    // happen
+    std::unique_ptr<PathPlanner> default_path_planner_{
+        std::make_unique<EscapeObstaclesPathPlanner>()};
+
+    // raw ptr here because current_path_planner_ should not take ownership
+    // from any of the unique_ptrs to PathPlanners
+    PathPlanner* current_path_planner_{default_path_planner_.get()};
 
     int robot_id_;
     TrajectoryCollection* robot_trajectories_;
-    SharedStateInfo* shared_state_;
+    const GlobalState& global_state_;
 
     bool had_break_beam_ = false;
 
@@ -233,9 +263,9 @@ public:
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:
-    std::vector<std::shared_ptr<PlannerForRobot>> robots_planners_;
+    std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
     TrajectoryCollection robot_trajectories_;
-    SharedStateInfo shared_state_;
+    GlobalState global_state_;
     ::params::LocalROS2ParamProvider param_provider_;
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action

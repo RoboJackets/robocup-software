@@ -109,8 +109,7 @@ void CoachNode::check_for_play_state_change() {
             case PlayState::Restart::Kickoff:
                 coach_message.match_situation = MatchSituation::kickoff;
                 break;
-            case PlayState::Restart::Direct:
-            case PlayState::Restart::Indirect:
+            case PlayState::Restart::Free:
                 coach_message.match_situation = MatchSituation::free_kick;
                 break;
             case PlayState::Restart::Penalty:
@@ -244,8 +243,7 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
     // TODO(sid-parikh): update this conditional. gameplay_node used different set of checks
     // than rules imply
     bool is_extra_dist_necessary = (current_play_state_.state == PlayState::State::Stop ||
-                                    current_play_state_.restart == PlayState::Restart::Direct ||
-                                    current_play_state_.restart == PlayState::Restart::Indirect);
+                                    current_play_state_.restart == PlayState::Restart::Free);
 
     // Also add a slack around the box
     double slack_around_box = 0.1;
