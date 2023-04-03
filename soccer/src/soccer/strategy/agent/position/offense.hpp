@@ -25,11 +25,9 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
-    communication::Acknowledge acknowledge_pass(
-        communication::IncomingBallRequest incoming_ball_request) override;
-    void pass_ball(int robot_id) override;
-    communication::Acknowledge acknowledge_ball_in_transit(
-        communication::BallInTransitRequest ball_in_transit_request) override;
+    void derived_acknowledge_pass() override;
+    void derived_pass_ball() override;
+    void derived_acknowledge_ball_in_transit() override;
 
 private:
     bool kicking_{true};

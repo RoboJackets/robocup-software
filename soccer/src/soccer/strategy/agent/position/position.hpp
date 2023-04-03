@@ -151,11 +151,23 @@ public:
         communication::IncomingBallRequest incoming_ball_request);
 
     /**
+     * @brief method called in acknowledge_pass that updates the position to its next state
+     * 
+     */
+    virtual void derived_acknowledge_pass() = 0;
+
+    /**
      * @brief update the robot state to be passing the ball
      *
      * @param robot_id the robot id of the robot to pass the ball to
      */
     virtual void pass_ball(int robot_id);
+
+    /**
+     * @brief method called in pass ball that updates the position to its corresponding passing state.
+     * 
+     */
+    virtual void derived_pass_ball() = 0;
 
     /**
      * @brief the ball is on the way, so the robot should change its state accordingly
@@ -166,6 +178,13 @@ public:
      */
     virtual communication::Acknowledge acknowledge_ball_in_transit(
         communication::BallInTransitRequest ball_in_transit_request);
+
+    /**
+     * @brief method called in acknowledge_ball_in_transit to update the position to its corresponding
+     * next state
+     * 
+     */
+    virtual void derived_acknowledge_ball_in_transit() = 0;
 
 protected:
     // should be overriden in subclass constructors

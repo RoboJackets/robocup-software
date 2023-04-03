@@ -188,6 +188,8 @@ communication::Acknowledge Position::acknowledge_pass(
 
     face_robot_id = incoming_ball_request.from_robot_id;
 
+    derived_acknowledge_pass();
+
     return acknowledge_response;
 }
 
@@ -205,6 +207,8 @@ void Position::pass_ball(int robot_id) {
     communication_request.broadcast = false;
 
     communication_request_ = communication_request;
+
+    derived_pass_ball();
 }
 
 communication::Acknowledge Position::acknowledge_ball_in_transit(
@@ -213,6 +217,8 @@ communication::Acknowledge Position::acknowledge_ball_in_transit(
     communication::generate_uid(acknowledge_response);
 
     face_robot_id = ball_in_transit_request.from_robot_id;
+
+    derived_acknowledge_ball_in_transit();
 
     return acknowledge_response;
 }

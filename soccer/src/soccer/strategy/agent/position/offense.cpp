@@ -145,33 +145,17 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     return std::nullopt;
 }
 
-communication::Acknowledge Offense::acknowledge_pass(
-    communication::IncomingBallRequest incoming_ball_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_ball_request);
-    // Return acknowledge response
-    return acknowledge_response;
+void Offense::derived_acknowledge_pass() {
+    current_state_ = FACING;
 }
 
-void Offense::pass_ball(int robot_id) {
-    // Call to super
-    Position::pass_ball(robot_id);
-    // Update current state
+void Offense::derived_pass_ball() {
     current_state_ = PASSING;
 }
 
-communication::Acknowledge Offense::acknowledge_ball_in_transit(
-    communication::BallInTransitRequest ball_in_transit_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_ball_in_transit(ball_in_transit_request);
-    // Update current state
+void Offense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
-    // Reset chasing_ball
     chasing_ball = false;
-    // Return acknowledge response
-    return acknowledge_response;
 }
 
 }  // namespace strategy

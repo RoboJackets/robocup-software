@@ -139,33 +139,16 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
     return ball_is_fast && shot_on_target;
 }
 
-communication::Acknowledge Goalie::acknowledge_pass(
-    communication::IncomingBallRequest incoming_ball_request) {
-    // Acknowledge the incoming pass
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_ball_request);
-    // Update current state
+void Goalie::derived_acknowledge_pass() {
     latest_state_ = FACING;
-    // Return acknowledge response
-    return acknowledge_response;
 }
 
-void Goalie::pass_ball(int robot_id) {
-    // Call to super
-    Position::pass_ball(robot_id);
-    // Update current state
+void Goalie::derived_pass_ball() {
     latest_state_ = PASSING;
 }
 
-communication::Acknowledge Goalie::acknowledge_ball_in_transit(
-    communication::BallInTransitRequest ball_in_transit_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_ball_in_transit(ball_in_transit_request);
-    // Update current state
+void Goalie::derived_acknowledge_ball_in_transit() {
     latest_state_ = RECEIVING;
-    // Return acknowledge response
-    return acknowledge_response;
 }
 
 }  // namespace strategy
