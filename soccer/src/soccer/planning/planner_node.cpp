@@ -197,7 +197,6 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         auto trajectory = plan_for_robot(plan_request);
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
-
         // send the kick/dribble commands to the radio
         manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
                                       .shoot_mode(intent.shoot_mode)
