@@ -1,6 +1,5 @@
 #include "waller.hpp"
 
-
 namespace strategy {
 
 Waller::Waller(int waller_num) {
