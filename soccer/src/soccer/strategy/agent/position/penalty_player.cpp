@@ -1,11 +1,11 @@
-#include "penalty_kicker.hpp"
+#include "penalty_player.hpp"
 
 namespace strategy {
 
-PenaltyKicker::PenaltyKicker(int r_id) : Position(r_id) { position_name_ = "PenaltyKicker"; }
+PenaltyPlayer::PenaltyPlayer(int r_id) : Position(r_id) { position_name_ = "PenaltyPlayer"; }
 
-std::optional<RobotIntent> PenaltyKicker::derived_get_task(RobotIntent intent) {
-    // Penalty Kicker lines up with the ball
+std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
+    // Penalty Player lines up with the ball
     // Only robot allowed within 1 m of the ball
     // Cannot touch the ball
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_penalty_kick
