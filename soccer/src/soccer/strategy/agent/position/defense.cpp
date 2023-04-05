@@ -35,7 +35,7 @@ Defense::State Defense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
-            
+
             if (distance_to_ball > ball_lost_distance_) {
                 next_state = IDLING;
             }
