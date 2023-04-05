@@ -37,7 +37,7 @@ Defense::State Defense::update_state() {
             }
             break;
         case FACING:
-            if(check_is_done()) {
+            if (check_is_done()) {
                 next_state = IDLING;
             }
     }
