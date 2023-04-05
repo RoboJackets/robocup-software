@@ -36,6 +36,10 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
             break;
+        case FACING:
+            if(check_is_done()) {
+                next_state = IDLING;
+            }
     }
 
     return next_state;
@@ -81,6 +85,16 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.kick_speed = 4.0;
         intent.is_active = true;
         return intent;
+    } else if (current_state_ = FACING) {
+        rj_geometry::Point robot_position =
+            world_state()->get_robot(true, robot_id_).pose.position();
+        auto current_location_instant =
+            planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
+        auto face_ball = planning::FaceBall{};
+        auto face_ball_cmd =
+            planning::MotionCommand{"path_target", current_location_instant, face_ball};
+        intent.motion_command = face_ball_cmd;
+        return intent;
     }
 
     return std::nullopt;
@@ -96,6 +110,7 @@ void Defense::derived_pass_ball() {
 
 void Defense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
+    chasing_ball = false;
 }
 
 }  // namespace strategy

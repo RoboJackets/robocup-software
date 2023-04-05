@@ -40,12 +40,14 @@ Offense::State Offense::update_state() {
             // stolen)
             if (check_is_done()) {
                 // SPDLOG_INFO("\033[92mRobot {} is finished passing\033[0m", robot_id_);
+                SPDLOG_INFO("\033[92mRobot {} finished pass - is done\033[0m", robot_id_);
                 next_state = IDLING;
             }
 
             if (distance_to_ball > BALL_LOST_DISTANCE) {
                 //     SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
                 //                 robot_id_);
+                SPDLOG_INFO("\033[92mRobot {} finished pass\033[0m", robot_id_);
                 next_state = IDLING;
             }
             break;
@@ -68,7 +70,7 @@ Offense::State Offense::update_state() {
                 /* SPDLOG_INFO("\033[92m ball pos {}{} \033[0m", ball_position.x(),
                  * ball_position.y()); */
 
-                // send direct pass request to robot 3
+                // send direct pass request to robot 4
                 send_direct_pass_request({4});
 
                 // go to IDLING (pass received will go to PASSING)
@@ -86,7 +88,10 @@ Offense::State Offense::update_state() {
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
-        // Face the ball
+        // Do nothing
+        auto empty_motion_cmd = planning::MotionCommand{};
+        intent.motion_command = empty_motion_cmd;
+        return intent;
     } else if (current_state_ == SEARCHING) {
         // DEFINE SEARCHING BEHAVIOR
     } else if (current_state_ == PASSING) {
