@@ -49,11 +49,13 @@ void Position::update_world_state(WorldState world_state) {
 }
 
 void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
-    match_situation_ = msg.match_situation;
+    match_state_ = msg.play_state.state;
+    match_restart_ = msg.play_state.restart;
     our_possession_ = msg.our_possession;
     // TODO: how is planner supposed to get this global override info?
     global_override_ = msg.global_override;
-    /* SPDLOG_INFO("match_situation {}, our_possession {}", match_situation_, our_possession_); */
+    /* SPDLOG_INFO("match_restart {}, match_state {}, our_possession {}", match_restart_,
+     * match_state_, our_possession_); */
 }
 
 [[nodiscard]] WorldState* Position::world_state() {
