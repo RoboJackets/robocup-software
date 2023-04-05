@@ -98,26 +98,7 @@ void CoachNode::coach_ticker() {
 void CoachNode::check_for_play_state_change() {
     if (play_state_has_changed_) {
         rj_msgs::msg::CoachState coach_message;
-
-        switch (current_play_state_.restart) {
-            case PlayState::Restart::Placement:
-                coach_message.match_situation = MatchSituation::ball_placement;
-                break;
-            case PlayState::Restart::Kickoff:
-                coach_message.match_situation = MatchSituation::kickoff;
-                break;
-            case PlayState::Restart::Free:
-                coach_message.match_situation = MatchSituation::free_kick;
-                break;
-            case PlayState::Restart::Penalty:
-                coach_message.match_situation = MatchSituation::penalty_kick;
-                break;
-        }
-
-        if (current_play_state_.state == PlayState::State::Playing) {
-            coach_message.match_situation = MatchSituation::in_play;
-        }
-
+        coach_message.play_state = current_play_state_;
         rj_msgs::msg::GlobalOverride global_override;
 
         switch (current_play_state_.state) {
@@ -134,6 +115,7 @@ void CoachNode::check_for_play_state_change() {
                 // instead.
                 global_override.max_speed = 10.0;
                 global_override.min_dist_from_ball = 0;
+                break;
         }
 
         // publish new necessary information
