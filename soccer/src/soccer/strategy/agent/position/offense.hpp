@@ -6,12 +6,12 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_msgs/action/robot_move.hpp>
+#include <rj_msgs/msg/collect_motion_command.hpp>
+#include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/intercept_motion_command.hpp>
 #include <rj_msgs/msg/settle_motion_command.hpp>
-#include <rj_msgs/msg/collect_motion_command.hpp>
 
 #include "planning/instant.hpp"
 #include "position.hpp"

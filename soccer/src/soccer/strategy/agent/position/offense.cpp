@@ -22,17 +22,16 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     float SETTLE_BALL_SPEED_THRESHOLD = 0.75;
 
     if ("Receive") {
-        //Fix Imports
+        // Fix Imports
 
-        //Do seek behavior
+        // Do seek behavior
 
         bool ball_slow = ball_vel.norm() < .05;
         double dist_to_ball = (robot_pos - ball_pos).norm();
         bool ball_close = dist_to_ball - (kRobotRadius + kBallRadius) < 0.03;
 
         if (!(msg->has_ball_sense || ball_vel.norm() < SETTLE_BALL_SPEED_THRESHOLD)) {
-
-            //Settle Ball
+            // Settle Ball
             auto settle_cmd = planning::SettleMotionCommand{};
             intent.motion_command = settle_cmd;
             intent.motion_command_name = "settle";
@@ -41,8 +40,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
             return intent;
 
         } else if (!(ball_slow && ball_close) {
-
-            //Capture Ball
+            // Capture Ball
             auto collect_cmd = planning::CollectMotionCommand{};
             intent.motion_command = collect_cmd;
             intent.motion_command_name = "collect";
@@ -51,8 +49,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
             return intent;
 
         } else {
-
-            return std:nullopt;
+            return std : nullopt;
 
         }
     }
