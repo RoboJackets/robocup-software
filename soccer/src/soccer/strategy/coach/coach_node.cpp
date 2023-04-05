@@ -182,7 +182,7 @@ void CoachNode::overrides_callback(const rj_msgs::msg::PositionAssignment::Share
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
-    current_field_dimensions_ = *msg;
+    current_field_dimensions_ = rj_convert::convert_from_ros(*msg);
     have_field_dimensions_ = true;
 }
 
@@ -202,20 +202,8 @@ void CoachNode::publish_static_obstacles() {
 
 rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
     // Create defense areas as rectangular area obstacles
-
-    // Create our defense area using field dimensions
-    float def_long_dist = current_field_dimensions_.penalty_long_dist / 2.0f;
-    float def_short_dist = current_field_dimensions_.penalty_short_dist;
-    float line_width = current_field_dimensions_.line_width;
-    float field_length = current_field_dimensions_.length;
-
-    rj_geometry::Point o_top_left{def_long_dist + line_width, 0.0};
-
-    rj_geometry::Point o_bot_right{-def_long_dist - line_width, def_short_dist};
-
-    auto our_defense_area{std::make_shared<rj_geometry::Rect>(o_top_left, o_bot_right)};
-
-    // Create opponent defense area using field dimensions
+    auto our_defense_area{std::make_shared<rj_geometry::Rect>(
+        std::move(current_field_dimensions_.our_defense_area()))};
 
     // Sometimes there is a greater distance we need to keep:
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
@@ -225,16 +213,14 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
                                     current_play_state_.restart == PlayState::Restart::Free);
 
     // Also add a slack around the box
-    double slack_around_box = 0.1;
-    double extra_dist = is_extra_dist_necessary ? 0.2 + slack_around_box : 0;
-    double left_x = def_long_dist + line_width + extra_dist;
+    float slack_around_box{0.3f};
 
-    rj_geometry::Point t_bot_left{left_x, field_length};
-
-    rj_geometry::Point t_top_right{-left_x,
-                                   field_length - (def_short_dist + line_width + extra_dist)};
-
-    auto their_defense_area{std::make_shared<rj_geometry::Rect>(t_bot_left, t_top_right)};
+    auto their_defense_area =
+        is_extra_dist_necessary
+            ? std::make_shared<rj_geometry::Rect>(
+                  std::move(current_field_dimensions_.their_defense_area_padded(slack_around_box)))
+            : std::make_shared<rj_geometry::Rect>(
+                  std::move(current_field_dimensions_.their_defense_area()));
 
     // Combine both defense areas into ShapeSet
     rj_geometry::ShapeSet def_area_obstacles{};
@@ -247,9 +233,9 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
 rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {
     // Create physical walls of the goals as static obstacles
     double physical_goal_board_width = 0.1;
-    float goal_width = current_field_dimensions_.goal_width;
-    float goal_depth = current_field_dimensions_.goal_depth;
-    float field_length = current_field_dimensions_.length;
+    float goal_width = current_field_dimensions_.goal_width();
+    float goal_depth = current_field_dimensions_.goal_depth();
+    float field_length = current_field_dimensions_.length();
 
     // Each goal is three rectangles
     rj_geometry::Point og1_1{goal_width / 2, -goal_depth};
