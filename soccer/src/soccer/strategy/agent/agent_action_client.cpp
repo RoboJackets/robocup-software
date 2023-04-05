@@ -83,7 +83,7 @@ void AgentActionClient::get_task() {
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
@@ -151,7 +151,7 @@ void AgentActionClient::goal_response_callback(
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
@@ -170,7 +170,7 @@ void AgentActionClient::feedback_callback(
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
@@ -186,7 +186,7 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
@@ -212,7 +212,7 @@ void AgentActionClient::get_communication() {
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
@@ -359,7 +359,7 @@ void AgentActionClient::check_communication_timeout() {
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
