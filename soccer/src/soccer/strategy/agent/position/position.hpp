@@ -252,6 +252,12 @@ protected:
     // Request
     std::optional<communication::PosAgentRequestWrapper> communication_request_;
 
+    // farthest distance the robot is willing to go to receive a pass
+    static constexpr double ball_receive_distance_ = 0.1;
+
+    // farthest distance the robot is willing to go before it declares it has lost the ball
+    static constexpr double ball_lost_distance_ = 0.5;
+
 private:
     // private to avoid allowing WorldState to be accessed directly by derived
     // classes (must use thread-safe getter)

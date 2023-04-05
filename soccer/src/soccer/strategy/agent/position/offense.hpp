@@ -51,9 +51,6 @@ private:
 
     // current state of the offensive agent (state machine)
     State current_state_ = IDLING;
-
-    double BALL_RECEIVE_DISTANCE = 0.1;
-    double BALL_LOST_DISTANCE = 0.5;
 };
 
 }  // namespace strategy

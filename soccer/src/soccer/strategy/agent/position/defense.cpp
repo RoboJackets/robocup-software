@@ -25,14 +25,18 @@ Defense::State Defense::update_state() {
             break;
         case RECEIVING:
             // transition to idling if we are close enough to the ball
-            if (distance_to_ball < BALL_RECEIVE_DISTANCE) {
+            if (distance_to_ball < ball_receive_distance_) {
                 next_state = IDLING;
             }
             break;
         case PASSING:
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
-            if (distance_to_ball > BALL_LOST_DISTANCE) {
+            if (check_is_done()) {
+                next_state = IDLING;
+            }
+            
+            if (distance_to_ball > ball_lost_distance_) {
                 next_state = IDLING;
             }
             break;

@@ -60,9 +60,6 @@ private:
 
     // current state of the defense agent (state machine)
     State current_state_ = IDLING;
-
-    static constexpr double BALL_RECEIVE_DISTANCE = 0.1;
-    static constexpr double BALL_LOST_DISTANCE = 0.5;
 };
 
 }  // namespace strategy
