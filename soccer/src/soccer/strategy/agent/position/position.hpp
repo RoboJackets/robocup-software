@@ -8,7 +8,6 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 
 #include "rclcpp/rclcpp.hpp"
@@ -146,11 +145,6 @@ protected:
      * @return false if world_state is invalid (nullptr), true otherwise
      */
     bool assert_world_state_valid();
-
-    /*
-     * @brief return an empty robot intent for our robot_id_.
-     */
-    rj_msgs::msg::RobotIntent get_empty_intent() const;
 
     /*
      * @brief getter for is_done that clears the flag before returning

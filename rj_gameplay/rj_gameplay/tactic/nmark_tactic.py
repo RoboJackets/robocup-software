@@ -61,7 +61,6 @@ class NMarkTactic(stp.tactic.Tactic):
                 self.assigned_roles.append(role(robot, self.opponents_to_mark[i]))
 
     def tick(self, world_state: stp.rc.WorldState) -> List[Tuple[int, RobotIntent]]:
-
         self.opponents_to_mark = get_opponents_to_mark(world_state, self.num_markers)
 
         if len(self._role_requests) != len(self.assigned_roles):

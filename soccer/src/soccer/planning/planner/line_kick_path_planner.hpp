@@ -2,8 +2,8 @@
 
 #include <optional>
 
+#include "planning/planner/path_planner.hpp"
 #include "planning/trajectory.hpp"
-#include "planning/planner/planner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -11,17 +11,20 @@ class ConfigDouble;
 namespace planning {
 
 /**
- * Planner which plans a path to line kick a ball.
+ * PathPlanner which plans a path to line kick a ball.
  * Uses the System State object to get the position of the ball
  * and predict its Path. It chooses the closest intersection point
  * with the ball Path it can reach in time and plans a Path so the
  * ball and robot intersect at the same time.
  *
  * TODO(Kyle): Overhaul this entire planner. It's sketchy right now.
+ *
+ * Params taken from MotionCommand:
+ *   target.position - planner will kick to this point
  */
-class LineKickPlanner : public PlannerForCommandType<planning::LineKickMotionCommand> {
+class LineKickPathPlanner : public PathPlanner {
 public:
-    LineKickPlanner() : PlannerForCommandType<planning::LineKickMotionCommand>("LineKickPlanner"){};
+    LineKickPathPlanner() : PathPlanner("line_kick"){};
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {

@@ -17,16 +17,15 @@ class BallClassifier(fsm.StateMachine):
         kickoff = 6
 
     def __init__(self) -> None:
-
         super().__init__(start_state=BallClassifier.State.no_possession)
 
         self.team: Team = None  # represents the team currently with posession
         self.robot: rc.Robot = (
             None  # represents the robot which currently has possesion
         )
-        self.prev_possesions: List[
-            rc.Robot
-        ] = None  # represents the previous robots which had the ball in this possesion of the ball
+        self.prev_possesions: List[rc.Robot] = (
+            None  # represents the previous robots which had the ball in this possesion of the ball
+        )
 
         self.add_transition(
             BallClassifier.State.no_possession,

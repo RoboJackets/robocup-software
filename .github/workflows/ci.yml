@@ -55,77 +55,10 @@ jobs:
           echo "::remove-matcher owner=clang-tidy::"
         if: always()
 
-  mypy:
-    runs-on: ubuntu-latest
-    container:
-      image: robojackets/robocup-software:foxy
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Config git
-        run: "git config --global --add safe.directory /__w/robocup-software/robocup-software"
+  fix-style:
+    # Check if the PR is not raised by this workflow and is not from a fork
+    if: startsWith(github.head_ref, 'fix-code-style') == false && github.event.pull_request.head.repo.full_name == github.repository
 
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo python3 -m pip install pylint
-          sudo ./util/ubuntu-setup --yes
-
-      - name: Generate files
-        run: |
-          source /opt/ros/foxy/setup.bash
-          source install/setup.bash
-          export CMAKE_PREFIX_PATH=/opt/ros/foxy
-          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja rj_msgs rj_geometry_msgs rj_drawing_msgs)
-
-
-      - name: Run mypy
-        run: |
-          source /opt/ros/foxy/setup.bash
-          source install/setup.bash
-          echo "::add-matcher::ci/mypy.json"
-          mypy --ignore-missing-imports rj_gameplay/rj_gameplay rj_gameplay/stp
-          echo "::remove-matcher owner=mypy::"
-
-  pylint:
-    runs-on: ubuntu-latest
-    container:
-      image: robojackets/robocup-software:foxy
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Config git
-        run: "git config --global --add safe.directory /__w/robocup-software/robocup-software"
-
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo python3 -m pip install pylint
-          sudo ./util/ubuntu-setup --yes
-
-      - name: Generate files
-        run: |
-          source /opt/ros/foxy/setup.bash
-          source install/setup.bash
-          export CMAKE_PREFIX_PATH=/opt/ros/foxy
-          (mkdir build-debug && cd build-debug && cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install .. && ninja rj_msgs rj_geometry_msgs rj_drawing_msgs)
-
-      - name: Run pylint
-        run: |
-          source /opt/ros/foxy/setup.bash
-          source install/setup.bash
-          echo "::add-matcher::ci/pylint.json"
-          pylint rj_gameplay/rj_gameplay rj_gameplay/stp
-          echo "::remove-matcher owner=pylint-warning::"
-          echo "::remove-matcher owner=pylint-error::"
-
-  style:
     runs-on: ubuntu-latest
     container:
       image: ros:foxy
@@ -150,19 +83,42 @@ jobs:
         run: |
           apt-get update && apt-get -y install clang-format sudo git python3-pip
           sudo pip3 install --upgrade flake8-diff flake8 pip
+          sudo pip3 install --upgrade black
 
-      # check formatting style (C++)
-      - name: Run clang-format
+      - name: Make ${{ github.head_ref }} branch exist
         run: |
-          echo "::add-matcher::ci/clang-format.json"
-          git diff -U0 --no-color ${{ github.base_ref }} HEAD | python3 util/clang-format-diff.py -binary clang-format -p1 -dry_run
-          echo "::remove-matcher owner=clang-format::"
+            git checkout -b ${{ github.head_ref }}
+            git checkout -
 
-      - name: Run flake8
-        if: always()
+      - name: Run style on all changed files
+        id: style-check
         run: |
-          echo "::add-matcher::ci/flake8.json"
-          find /usr/ | grep flake8
-          flake8-diff --standard-flake8-output --vcs git ${{ github.base_ref }}
-          echo "::remove-matcher owner=flake8-error::"
-          echo "::remove-matcher owner=flake8-warning::"
+            # check formatting style (C++)
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
+
+            # for Python files
+            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --preview
+
+            if ! git diff-index --quiet HEAD; then
+              echo "::set-output name=changed::true"
+            else
+              echo "::set-output name=changed::false"
+            fi
+
+      - name: Create PR with style fixes
+        if: steps.style-check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "automated style fixes"
+          title: Fix Code Style On ${{ github.head_ref }}
+          body: This pull request contains automatic style formatting for PR \#${{ github.event.number }}. @${{ github.event.pull_request.user.login }}, please merge this branch into your own to pass style checks!
+          labels: style fixes, automated PR
+          branch: fix-code-style/${{ github.head_ref }}
+          base: ${{ github.head_ref }}
+          reviewers: ${{ github.event.pull_request.user.login }}
+
+      - name: Fail if style changes were made
+        if: steps.style-check.outputs.changed == 'true'
+        run: exit 1
+
+

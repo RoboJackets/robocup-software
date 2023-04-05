@@ -3,15 +3,20 @@
 #include <mutex>
 #include <optional>
 
+#include <QComboBox>
 #include <QMainWindow>
+#include <QPushButton>
 #include <QTime>
 #include <QTimer>
 #include <QtGui/QStandardItemModel>
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_convert/ros_convert.hpp>
+#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
+#include <strategy/coach/coach_node.hpp>
 
 #include "field_view.hpp"
 #include "processor.hpp"
@@ -29,6 +34,7 @@ QString NonLiveStyle("border:2px solid red");
 };  // namespace
 
 enum Side { Yellow, Blue };
+
 /**
  * main gui thread class
  */
@@ -89,6 +95,41 @@ private Q_SLOTS:
     void on_actionTeamBlue_triggered();
     void on_manualID_currentIndexChanged(int value);
     void on_goalieID_currentIndexChanged(int value);
+
+    // 16 robot positions
+    void on_robotPosition_0_currentIndexChanged(int value);
+    void on_robotPosition_1_currentIndexChanged(int value);
+    void on_robotPosition_2_currentIndexChanged(int value);
+    void on_robotPosition_3_currentIndexChanged(int value);
+    void on_robotPosition_4_currentIndexChanged(int value);
+    void on_robotPosition_5_currentIndexChanged(int value);
+    void on_robotPosition_6_currentIndexChanged(int value);
+    void on_robotPosition_7_currentIndexChanged(int value);
+    void on_robotPosition_8_currentIndexChanged(int value);
+    void on_robotPosition_9_currentIndexChanged(int value);
+    void on_robotPosition_10_currentIndexChanged(int value);
+    void on_robotPosition_11_currentIndexChanged(int value);
+    void on_robotPosition_12_currentIndexChanged(int value);
+    void on_robotPosition_13_currentIndexChanged(int value);
+    void on_robotPosition_14_currentIndexChanged(int value);
+    void on_robotPosition_15_currentIndexChanged(int value);
+
+    void on_positionReset_0_clicked();
+    void on_positionReset_1_clicked();
+    void on_positionReset_2_clicked();
+    void on_positionReset_3_clicked();
+    void on_positionReset_4_clicked();
+    void on_positionReset_5_clicked();
+    void on_positionReset_6_clicked();
+    void on_positionReset_7_clicked();
+    void on_positionReset_8_clicked();
+    void on_positionReset_9_clicked();
+    void on_positionReset_10_clicked();
+    void on_positionReset_11_clicked();
+    void on_positionReset_12_clicked();
+    void on_positionReset_13_clicked();
+    void on_positionReset_14_clicked();
+    void on_positionReset_15_clicked();
 
     void on_actionUse_Field_Oriented_Controls_toggled(bool value);
     void on_actionUse_Multiple_Joysticks_toggled(bool value);
@@ -156,14 +197,8 @@ private Q_SLOTS:
     void on_fastForceStart_clicked();
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
-    void on_fastDirectBlue_clicked();
-    void on_fastDirectYellow_clicked();
-    void on_fastIndirectBlue_clicked();
-    void on_fastIndirectYellow_clicked();
-
-    // Testing
-    void on_addToTable_clicked();
-    void on_testRun_clicked();
+    void on_fastBlue_clicked();
+    void on_fastYellow_clicked();
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
@@ -196,6 +231,35 @@ private:
     // This is used specificially via StripChart and ProtobufTree
     // To export a larger amount of data.
     std::vector<std::shared_ptr<Packet::LogFrame>> _longHistory{};
+
+    // Manual Position Controls
+
+    // UI elements
+    std::array<QComboBox*, kNumShells> positionDropdowns;
+    std::array<QPushButton*, kNumShells> positionResetButtons;
+
+    // Overrides
+    std::array<strategy::OverridePosition::OverridePosition, kNumShells> positionOverrides;
+
+    /*
+     * Updates the dropdown for a robot to reflect its current position.
+     */
+    void updatePosition(int robot);
+    /*
+     * Sets which dropdown represents the goalie — disabling it and ensuring the previous goalie
+     * dropdown is re-enabled.
+     */
+    void setGoalieDropdown(int robot);
+    /*
+     * Callback when a dropdown is changed (whether by user or program)
+     */
+    void onPositionDropdownChanged(int robot, int value);
+    /*
+     * Callback when a reset button is clicked
+     */
+    void onResetButtonClicked(int robot);
+
+    rclcpp::Publisher<rj_msgs::msg::PositionAssignment>::SharedPtr override_pub_;
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};

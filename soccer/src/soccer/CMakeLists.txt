@@ -33,15 +33,15 @@ set(ROBOCUP_LIB_SRC
     planning/primitives/trapezoidal_motion.cpp
     planning/primitives/velocity_profiling.cpp
     planning/planner/motion_command.cpp
-    planning/planner/collect_planner.cpp
+    planning/planner/collect_path_planner.cpp
     planning/planner/escape_obstacles_path_planner.cpp
-    planning/planner/intercept_planner.cpp
-    planning/planner/line_kick_planner.cpp
-    planning/planner/path_target_planner.cpp
+    planning/planner/intercept_path_planner.cpp
+    planning/planner/line_kick_path_planner.cpp
+    planning/planner/path_target_path_planner.cpp
     planning/planner/pivot_path_planner.cpp
     planning/planner/plan_request.cpp
-    planning/planner/settle_planner.cpp
-    planning/planner/goalie_idle_planner.cpp
+    planning/planner/settle_path_planner.cpp
+    planning/planner/goalie_idle_path_planner.cpp
     planning/planner_node.cpp
     planning/trajectory.cpp
     planning/trajectory_utils.cpp
@@ -71,6 +71,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp
     ros2_temp/referee_sub.cpp
+    ros2_temp/coach_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     strategy/agent/agent_action_client.cpp
@@ -79,6 +80,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/defense.cpp
+    strategy/agent/position/waller.cpp
         )
 
 set(SOCCER_TEST_SRC

@@ -152,8 +152,10 @@ def check_clang_apply_replacements_binary(args):
         subprocess.check_call([args.clang_apply_replacements_binary, "--version"])
     except:
         print(
-            "Unable to run clang-apply-replacements. Is clang-apply-replacements "
-            "binary correctly specified?",
+            (
+                "Unable to run clang-apply-replacements. Is clang-apply-replacements "
+                "binary correctly specified?"
+            ),
             file=sys.stderr,
         )
         traceback.print_exc()
@@ -205,15 +207,17 @@ def run_tidy(args, tmpdir, build_path, queue, lock, failed_files):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Runs clang-tidy over all files "
-        "in a compilation database. Requires "
-        "clang-tidy and clang-apply-replacements in "
-        "$PATH."
+        description=(
+            "Runs clang-tidy over all files "
+            "in a compilation database. Requires "
+            "clang-tidy and clang-apply-replacements in "
+            "$PATH."
+        )
     )
     parser.add_argument(
         "-allow-enabling-alpha-checkers",
         action="store_true",
-        help="allow alpha checkers from " "clang-analyzer.",
+        help="allow alpha checkers from clang-analyzer.",
     )
     parser.add_argument(
         "-clang-tidy-binary",
@@ -230,34 +234,40 @@ def main():
     parser.add_argument(
         "-checks",
         default=None,
-        help="checks filter, when not specified, use clang-tidy " "default",
+        help="checks filter, when not specified, use clang-tidy default",
     )
     parser.add_argument(
         "-config",
         default=None,
-        help="Specifies a configuration in YAML/JSON format: "
-        "  -config=\"{Checks: '*', "
-        "                       CheckOptions: [{key: x, "
-        '                                       value: y}]}" '
-        "When the value is empty, clang-tidy will "
-        "attempt to find a file named .clang-tidy for "
-        "each source file in its parent directories.",
+        help=(
+            "Specifies a configuration in YAML/JSON format: "
+            "  -config=\"{Checks: '*', "
+            "                       CheckOptions: [{key: x, "
+            '                                       value: y}]}" '
+            "When the value is empty, clang-tidy will "
+            "attempt to find a file named .clang-tidy for "
+            "each source file in its parent directories."
+        ),
     )
     parser.add_argument(
         "-header-filter",
         default=None,
-        help="regular expression matching the names of the "
-        "headers to output diagnostics from. Diagnostics from "
-        "the main file of each translation unit are always "
-        "displayed.",
+        help=(
+            "regular expression matching the names of the "
+            "headers to output diagnostics from. Diagnostics from "
+            "the main file of each translation unit are always "
+            "displayed."
+        ),
     )
     if yaml:
         parser.add_argument(
             "-export-fixes",
             metavar="filename",
             dest="export_fixes",
-            help="Create a yaml file to store suggested fixes in, "
-            "which can be applied with clang-apply-replacements.",
+            help=(
+                "Create a yaml file to store suggested fixes in, "
+                "which can be applied with clang-apply-replacements."
+            ),
         )
     parser.add_argument(
         "-j",
@@ -275,12 +285,12 @@ def main():
     parser.add_argument(
         "-format",
         action="store_true",
-        help="Reformat code " "after applying fixes",
+        help="Reformat code after applying fixes",
     )
     parser.add_argument(
         "-style",
         default="file",
-        help="The style of reformat " "code after applying fixes",
+        help="The style of reformat code after applying fixes",
     )
     parser.add_argument(
         "-p",
@@ -292,14 +302,14 @@ def main():
         dest="extra_arg",
         action="append",
         default=[],
-        help="Additional argument to append to the compiler " "command line.",
+        help="Additional argument to append to the compiler command line.",
     )
     parser.add_argument(
         "-extra-arg-before",
         dest="extra_arg_before",
         action="append",
         default=[],
-        help="Additional argument to prepend to the compiler " "command line.",
+        help="Additional argument to prepend to the compiler command line.",
     )
     parser.add_argument(
         "-quiet", action="store_true", help="Run clang-tidy in quiet mode"
