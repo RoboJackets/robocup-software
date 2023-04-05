@@ -35,10 +35,8 @@ class ClangTidyConverter:
 
     def print_junit_file(self, output_file):
         # Write the header.
-        output_file.write(
-            """<?xml version="1.0" encoding="UTF-8" ?>
-<testsuites>"""
-        )
+        output_file.write("""<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>""")
 
         sorted_errors = sorted(self.errors, key=lambda x: x.file)
 
