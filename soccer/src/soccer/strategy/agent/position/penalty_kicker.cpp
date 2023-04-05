@@ -27,8 +27,7 @@ std::optional<RobotIntent> PenaltyKicker::derived_get_task(RobotIntent intent) {
 
     // Create Motion Command
     planning::LinearMotionInstant goal{target_pt, target_vel};
-    intent.motion_command = planning::PathTargetMotionCommand{goal, face_option, ignore_ball};
-    intent.motion_command_name = "path_target";
+    intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
     return intent;
 }
 
