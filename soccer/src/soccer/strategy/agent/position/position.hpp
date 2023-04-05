@@ -16,6 +16,7 @@
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
+#include "game_state.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
@@ -67,6 +68,7 @@ public:
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
     void update_field_dimensions(FieldDimensions field_dimensions);
+    void update_play_state(PlayState play_state);
     const std::string get_name();
 
     /**
@@ -132,6 +134,9 @@ protected:
     int match_restart_{};  // TODO: this is an enum, get from PlayState
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
+
+    PlayState play_state_ = PlayState::halt();
+    bool have_play_state_ = false;
 
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
