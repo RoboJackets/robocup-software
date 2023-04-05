@@ -152,7 +152,7 @@ public:
 
     /**
      * @brief method called in acknowledge_pass that updates the position to its next state
-     * 
+     *
      */
     virtual void derived_acknowledge_pass() = 0;
 
@@ -164,8 +164,9 @@ public:
     virtual void pass_ball(int robot_id);
 
     /**
-     * @brief method called in pass ball that updates the position to its corresponding passing state.
-     * 
+     * @brief method called in pass ball that updates the position to its corresponding passing
+     * state.
+     *
      */
     virtual void derived_pass_ball() = 0;
 
@@ -180,9 +181,9 @@ public:
         communication::BallInTransitRequest ball_in_transit_request);
 
     /**
-     * @brief method called in acknowledge_ball_in_transit to update the position to its corresponding
-     * next state
-     * 
+     * @brief method called in acknowledge_ball_in_transit to update the position to its
+     * corresponding next state
+     *
      */
     virtual void derived_acknowledge_ball_in_transit() = 0;
 
@@ -242,7 +243,7 @@ protected:
 
     // the maximum distance from the robot to the ball for the robot to begin
     // chasing the ball
-    const double max_receive_distance = 1.0; // m
+    const double max_receive_distance = 1.0;  // m
 
     // Whether or not this robot should be chasing the ball on receive
     // set to true when the ball gets close to this robot

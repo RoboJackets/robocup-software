@@ -129,7 +129,7 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
         communication::generate_uid(acknowledge);
         comm_response.response = acknowledge;
     }
-    
+
     return comm_response;
 }
 

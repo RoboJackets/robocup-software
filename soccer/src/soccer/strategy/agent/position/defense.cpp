@@ -100,13 +100,9 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     return std::nullopt;
 }
 
-void Defense::derived_acknowledge_pass() {
-    current_state_ = FACING;
-}
+void Defense::derived_acknowledge_pass() { current_state_ = FACING; }
 
-void Defense::derived_pass_ball() {
-    current_state_ = PASSING;
-}
+void Defense::derived_pass_ball() { current_state_ = PASSING; }
 
 void Defense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
