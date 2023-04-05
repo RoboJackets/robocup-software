@@ -10,7 +10,7 @@ DebugDrawInterface::DebugDrawInterface(Context* context, rclcpp::Executor* execu
     : context_(context) {
     node_ = std::make_shared<rclcpp::Node>("_debug_draw_interface");
     debug_draw_sub_ = node_->create_subscription<rj_drawing_msgs::msg::DebugDraw>(
-        viz::topics::kDebugDrawPub, rclcpp::QoS(kDebugDrawQueueSize),
+        viz::topics::kDebugDrawTopic, rclcpp::QoS(kDebugDrawQueueSize),
         [this](rj_drawing_msgs::msg::DebugDraw::SharedPtr debug_draw) {  // NOLINT
             latest_[debug_draw->layer] = debug_draw;
         });
