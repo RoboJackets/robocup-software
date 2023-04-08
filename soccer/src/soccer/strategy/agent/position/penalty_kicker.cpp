@@ -5,27 +5,24 @@ namespace strategy {
 std::optional<RobotIntent> PenaltyKicker::get_task(RobotIntent intent,
                                                    const WorldState* world_state,
                                                    FieldDimensions field_dimensions) {
-    // Penalty Kicker lines up with the ball
-    // Only robot allowed within 1 m of the ball
-    // Cannot touch the ball
-    // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_penalty_kick
+    // Penalty Kicker kicks the ball into the goal
 
-    // Line up 0.15 meters behind the ball
-    rj_geometry::Point target_pt{world_state->ball.position.x(),
-                                 world_state->ball.position.y() - kRobotRadius - 0.15};
+    rj_geometry::Point goal_corner{
+        field_dimensions.their_goal_loc().x() + 0.5 * field_dimensions.goal_width(),
+        field_dimensions.their_goal_loc().y()};
 
-    // Stop at end of path
-    rj_geometry::Point target_vel{0.0, 0.0};
+    planning::LinearMotionInstant target{goal_corner};
+    auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+    intent.motion_command = line_kick_cmd;
 
-    // Face ball
-    planning::PathTargetFaceOption face_option{planning::FaceBall{}};
+    // note: the way this is set up makes it impossible to
+    // shoot on time without breakbeam
+    // TODO(Kevin): make intent hold a manip msg instead? to be cleaner?
+    intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+    intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+    intent.kick_speed = 4.0;
+    intent.is_active = true;
 
-    // Avoid ball
-    bool ignore_ball{false};
-
-    // Create Motion Command
-    planning::LinearMotionInstant goal{target_pt, target_vel};
-    intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
     return intent;
 }
 
