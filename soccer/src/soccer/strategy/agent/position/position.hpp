@@ -17,6 +17,7 @@
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
+#include "game_state.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
@@ -201,11 +202,10 @@ protected:
     // fields for coach_state
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
-    int match_state_{};    // TODO: this is an enum, get from PlayState
-    int match_restart_{};  // TODO: this is an enum, get from PlayState
-    bool our_restart_{};
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
+    // TODO(sid-parikh): is this a logical default?
+    PlayState play_state_ = PlayState::halt();
 
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
