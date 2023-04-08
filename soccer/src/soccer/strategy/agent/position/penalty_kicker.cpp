@@ -2,15 +2,13 @@
 
 namespace strategy {
 
-PenaltyKicker::PenaltyKicker(int r_id) : Position(r_id) { position_name_ = "PenaltyKicker"; }
-
-std::optional<RobotIntent> PenaltyKicker::derived_get_task(RobotIntent intent) {
+std::optional<RobotIntent> PenaltyKicker::get_task(RobotIntent intent,
+                                                   const WorldState* world_state,
+                                                   FieldDimensions field_dimensions) {
     // Penalty Kicker lines up with the ball
     // Only robot allowed within 1 m of the ball
     // Cannot touch the ball
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_penalty_kick
-
-    WorldState* world_state = this->world_state();
 
     // Line up 0.15 meters behind the ball
     rj_geometry::Point target_pt{world_state->ball.position.x(),
