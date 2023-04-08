@@ -17,6 +17,7 @@ AgentActionClient::AgentActionClient(int r_id)
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)) {
+
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
@@ -27,10 +28,6 @@ AgentActionClient::AgentActionClient(int r_id)
     coach_state_sub_ = create_subscription<rj_msgs::msg::CoachState>(
         topics::kCoachStateTopic, 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
-
-    play_state_sub_ = create_subscription<rj_msgs::msg::PlayState>(
-        "referee/play_state", 1,
-        [this](rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
     field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
         "config/field_dimensions", 1,
@@ -86,14 +83,6 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
     }
 
     current_position_->update_coach_state(*msg);
-}
-
-void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
-    if (current_position_ == nullptr) {
-        return;
-    }
-
-    current_position_->update_play_state(rj_convert::convert_from_ros(*msg));
 }
 
 void AgentActionClient::field_dimensions_callback(
