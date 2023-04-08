@@ -62,10 +62,6 @@ void Position::update_field_dimensions(FieldDimensions field_dims) {
     field_dimensions_ = std::move(field_dims);
 }
 
-void Position::update_play_state(PlayState play_state) {
-    play_state_ = play_state;
-    have_play_state_ = true;
-}
 
 [[nodiscard]] WorldState* Position::world_state() {
     // thread-safe getter for world_state (see update_world_state())
