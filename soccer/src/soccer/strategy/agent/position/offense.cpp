@@ -5,6 +5,14 @@ namespace strategy {
 Offense::Offense(int r_id) : Position(r_id) { position_name_ = "Offense"; }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
+    if (this->play_state_.is_our_restart() && this->play_state_.is_penalty()) {
+        PenaltyPlayer player{};
+        return player.get_task(intent, this->world_state(), this->field_dimensions_);
+    } else if (this->play_state_.is_penalty_playing() && this->play_state_.is_our_restart()) {
+        PenaltyKicker kicker{};
+        return kicker.get_task(intent, this->world_state(), this->field_dimensions_);
+    }
+
     // FSM: kick -> move away -> repeat
     if (check_is_done()) {
         // switch from kicking -> not kicking or vice versa
