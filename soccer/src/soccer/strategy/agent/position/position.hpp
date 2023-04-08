@@ -12,12 +12,12 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 
+#include "game_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
-#include "game_state.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
