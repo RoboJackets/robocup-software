@@ -1,5 +1,7 @@
 #include "agent_action_client.hpp"
 
+#include "rj_constants/topic_names.hpp"
+
 namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
@@ -20,12 +22,16 @@ AgentActionClient::AgentActionClient(int r_id)
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
-        "vision_filter/world_state", 1,
+        ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     coach_state_sub_ = create_subscription<rj_msgs::msg::CoachState>(
-        "strategy/coach_state", 1,
+        topics::kCoachStateTopic, 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
+
+    field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
+        "config/field_dimensions", 1,
+        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
@@ -41,7 +47,7 @@ AgentActionClient::AgentActionClient(int r_id)
     }
 
     positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
-        "strategy/positions", 1,
+        topics::kPositionsTopic, 1,
         [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { update_position(msg); });
 
     // TODO(Kevin): make ROS param for this
@@ -77,6 +83,15 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
     }
 
     current_position_->update_coach_state(*msg);
+}
+
+void AgentActionClient::field_dimensions_callback(
+    const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    if (current_position_ == nullptr) {
+        return;
+    }
+
+    current_position_->update_field_dimensions(rj_convert::convert_from_ros(*msg));
 }
 
 void AgentActionClient::get_task() {

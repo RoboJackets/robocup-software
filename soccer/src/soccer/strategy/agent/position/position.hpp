@@ -5,6 +5,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include <rj_common/field_dimensions.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
@@ -68,6 +69,7 @@ public:
     // communication with AC
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
+    void update_field_dimensions(FieldDimensions field_dimensions);
     const std::string get_name();
 
     /**
@@ -199,9 +201,12 @@ protected:
     // fields for coach_state
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
-    int match_situation_{};  // TODO: this is an enum, get from coach_node
+    int match_state_{};    // TODO: this is an enum, get from PlayState
+    int match_restart_{};  // TODO: this is an enum, get from PlayState
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
+
+    FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
     /*
      * @return thread-safe ptr to most recent world_state

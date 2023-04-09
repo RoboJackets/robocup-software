@@ -1,33 +1,35 @@
 #include "coach_node.hpp"
 
+#include "rj_constants/topic_names.hpp"
+
 namespace strategy {
 CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", options) {
     coach_state_pub_ =
-        this->create_publisher<rj_msgs::msg::CoachState>("/strategy/coach_state", 10);
+        this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStateTopic, 10);
     coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
-    def_area_obstacles_pub_ =
-        this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/def_area_obstacles", 10);
+    def_area_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
+        ::planning::topics::kDefAreaObstaclesTopic, 10);
 
-    global_obstacles_pub_ =
-        this->create_publisher<rj_geometry_msgs::msg::ShapeSet>("planning/global_obstacles", 10);
+    global_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
+        ::planning::topics::kGlobalObstaclesTopic, 10);
 
     play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
-        "/referee/play_state", 10,
+        ::referee::topics::kPlayStateTopic, 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
     positions_pub_ =
-        this->create_publisher<rj_msgs::msg::PositionAssignment>("/strategy/positions", 10);
+        this->create_publisher<rj_msgs::msg::PositionAssignment>(topics::kPositionsTopic, 10);
 
     overrides_sub_ = this->create_subscription<rj_msgs::msg::PositionAssignment>(
         "/strategy/position_overrides", 10,
         [this](const rj_msgs::msg::PositionAssignment::SharedPtr msg) { overrides_callback(msg); });
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
-        "/vision_filter/world_state", 10,
+        ::vision_filter::topics::kWorldStateTopic, 10,
         [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     goalie_sub_ = this->create_subscription<rj_msgs::msg::Goalie>(
-        "/referee/our_goalie", 10,
+        ::referee::topics::kGoalieTopic, 10,
         [this](const rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
 
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
@@ -36,14 +38,15 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
     /* ack_array[msg->ID] = true; */
 
     field_dimensions_sub_ = this->create_subscription<rj_msgs::msg::FieldDimensions>(
-        "config/field_dimensions", 10, [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
+        ::config_server::topics::kFieldDimensionsTopic, 10,
+        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
             field_dimensions_callback(msg);
         });
 
     // initialize all of the robot status subscriptions
     for (size_t i = 0; i < kNumShells; i++) {
         robot_status_subs_[i] = this->create_subscription<rj_msgs::msg::RobotStatus>(
-            fmt::format("/radio/robot_status/robot_{}", i), 10,
+            ::radio::topics::robot_status_topic(i), 10,
             [this](const rj_msgs::msg::RobotStatus::SharedPtr msg) {
                 ball_sense_callback(msg, true);
             });
@@ -98,26 +101,7 @@ void CoachNode::coach_ticker() {
 void CoachNode::check_for_play_state_change() {
     if (play_state_has_changed_) {
         rj_msgs::msg::CoachState coach_message;
-
-        switch (current_play_state_.restart) {
-            case PlayState::Restart::Placement:
-                coach_message.match_situation = MatchSituation::ball_placement;
-                break;
-            case PlayState::Restart::Kickoff:
-                coach_message.match_situation = MatchSituation::kickoff;
-                break;
-            case PlayState::Restart::Free:
-                coach_message.match_situation = MatchSituation::free_kick;
-                break;
-            case PlayState::Restart::Penalty:
-                coach_message.match_situation = MatchSituation::penalty_kick;
-                break;
-        }
-
-        if (current_play_state_.state == PlayState::State::Playing) {
-            coach_message.match_situation = MatchSituation::in_play;
-        }
-
+        coach_message.play_state = current_play_state_;
         rj_msgs::msg::GlobalOverride global_override;
 
         switch (current_play_state_.state) {
@@ -134,6 +118,7 @@ void CoachNode::check_for_play_state_change() {
                 // instead.
                 global_override.max_speed = 10.0;
                 global_override.min_dist_from_ball = 0;
+                break;
         }
 
         // publish new necessary information
@@ -200,7 +185,7 @@ void CoachNode::overrides_callback(const rj_msgs::msg::PositionAssignment::Share
 }
 
 void CoachNode::field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
-    current_field_dimensions_ = *msg;
+    current_field_dimensions_ = rj_convert::convert_from_ros(*msg);
     have_field_dimensions_ = true;
 }
 
@@ -220,20 +205,8 @@ void CoachNode::publish_static_obstacles() {
 
 rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
     // Create defense areas as rectangular area obstacles
-
-    // Create our defense area using field dimensions
-    float def_long_dist = current_field_dimensions_.penalty_long_dist / 2.0f;
-    float def_short_dist = current_field_dimensions_.penalty_short_dist;
-    float line_width = current_field_dimensions_.line_width;
-    float field_length = current_field_dimensions_.length;
-
-    rj_geometry::Point o_top_left{def_long_dist + line_width, 0.0};
-
-    rj_geometry::Point o_bot_right{-def_long_dist - line_width, def_short_dist};
-
-    auto our_defense_area{std::make_shared<rj_geometry::Rect>(o_top_left, o_bot_right)};
-
-    // Create opponent defense area using field dimensions
+    auto our_defense_area{std::make_shared<rj_geometry::Rect>(
+        std::move(current_field_dimensions_.our_defense_area()))};
 
     // Sometimes there is a greater distance we need to keep:
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
@@ -243,16 +216,14 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
                                     current_play_state_.restart == PlayState::Restart::Free);
 
     // Also add a slack around the box
-    double slack_around_box = 0.1;
-    double extra_dist = is_extra_dist_necessary ? 0.2 + slack_around_box : 0;
-    double left_x = def_long_dist + line_width + extra_dist;
+    float slack_around_box{0.3f};
 
-    rj_geometry::Point t_bot_left{left_x, field_length};
-
-    rj_geometry::Point t_top_right{-left_x,
-                                   field_length - (def_short_dist + line_width + extra_dist)};
-
-    auto their_defense_area{std::make_shared<rj_geometry::Rect>(t_bot_left, t_top_right)};
+    auto their_defense_area =
+        is_extra_dist_necessary
+            ? std::make_shared<rj_geometry::Rect>(
+                  std::move(current_field_dimensions_.their_defense_area_padded(slack_around_box)))
+            : std::make_shared<rj_geometry::Rect>(
+                  std::move(current_field_dimensions_.their_defense_area()));
 
     // Combine both defense areas into ShapeSet
     rj_geometry::ShapeSet def_area_obstacles{};
@@ -265,9 +236,9 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
 rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {
     // Create physical walls of the goals as static obstacles
     double physical_goal_board_width = 0.1;
-    float goal_width = current_field_dimensions_.goal_width;
-    float goal_depth = current_field_dimensions_.goal_depth;
-    float field_length = current_field_dimensions_.length;
+    float goal_width = current_field_dimensions_.goal_width();
+    float goal_depth = current_field_dimensions_.goal_depth();
+    float field_length = current_field_dimensions_.length();
 
     // Each goal is three rectangles
     rj_geometry::Point og1_1{goal_width / 2, -goal_depth};

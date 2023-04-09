@@ -53,11 +53,13 @@ private:
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
+    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
     void coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg);
+    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
 
     std::unique_ptr<Position> current_position_;
 
