@@ -7,12 +7,7 @@
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
-#include <rj_msgs/msg/goalie_idle_motion_command.hpp>
-#include <rj_msgs/msg/intercept_motion_command.hpp>
-#include <rj_msgs/msg/path_target_motion_command.hpp>
 
-#include "planning/planner/intercept_planner.hpp"
 #include "position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -29,9 +24,9 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
-    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
-    communication::PosAgentResponseWrapper receive_communication_request(
-        communication::AgentPosRequestWrapper request) override;
+    void derived_acknowledge_pass() override;
+    void derived_pass_ball() override;
+    void derived_acknowledge_ball_in_transit() override;
 
 private:
     // temp
@@ -41,7 +36,15 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     // possible states of the Goalie
-    enum State { BLOCKING, CLEARING, IDLING, BALL_NOT_FOUND };
+    enum State {
+        IDLING,          // doing nothing
+        BLOCKING,        // blocking the ball from reaching the goal
+        CLEARING,        // clearing the ball out of the goal box
+        BALL_NOT_FOUND,  // the ball is not in play
+        RECEIVING,       // physically intercepting the ball from a pass
+        PASSING,         // physically kicking the ball at another robot
+        FACING,          // turning to face the passing robot
+    };
 
     /*
      * @return true if ball is heading towards goal at some minimum speed threshold

@@ -481,7 +481,7 @@ class GameplayNode(Node):
             if (
                 game_info.is_stopped()
                 or game_info.their_restart
-                and (game_info.is_indirect() or game_info.is_direct())
+                and game_info.is_free()
             ):
                 global_obstacles.circles.append(
                     geo_msg.Circle(

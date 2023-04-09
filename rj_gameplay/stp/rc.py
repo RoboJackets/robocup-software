@@ -184,7 +184,10 @@ class Robot:
         """
         if not self.is_ours:
             warnings.warn(
-                "Attempting to retrieve lethal fault information from an opposing robot",
+                (
+                    "Attempting to retrieve lethal fault information from an opposing"
+                    " robot"
+                ),
                 RuntimeWarning,
             )
 
@@ -277,10 +280,9 @@ class GameRestart(Enum):
 
     NONE = 0
     KICKOFF = 1
-    DIRECT = 2
-    INDIRECT = 3
-    PENALTY = 4
-    PLACEMENT = 5
+    FREE = 2
+    PENALTY = 3
+    PLACEMENT = 4
 
 
 class Field:
@@ -702,17 +704,11 @@ class GameInfo:
         """
         return self.restart == GameRestart.PENALTY
 
-    def is_direct(self) -> bool:
+    def is_free(self) -> bool:
         """
-        :return: True if the restart is a direct kick.
+        :return: True if the restart is a free kick.
         """
-        return self.restart == GameRestart.DIRECT
-
-    def is_indirect(self) -> bool:
-        """
-        :return: True if the restart is an indirect kick.
-        """
-        return self.restart == GameRestart.INDIRECT
+        return self.restart == GameRestart.FREE
 
     def is_free_placement(self) -> bool:
         """

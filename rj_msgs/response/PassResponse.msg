@@ -1,1 +1,2 @@
 uint32 response_uid
+bool direct_open

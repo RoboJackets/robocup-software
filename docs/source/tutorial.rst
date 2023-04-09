@@ -412,7 +412,7 @@ As a brief overview to help you get started...
 .. code-block::
 
    create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
-            control::topics::manipulator_setpoint_pub(i), rclcpp::QoS(1), [this,
+            control::topics::manipulator_setpoint_topic(i), rclcpp::QoS(1), [this,
             i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {  //
             NOLINT
                 manipulators_cached_.at(i) = *manipulator;
@@ -433,10 +433,10 @@ if you would like.
 
 .. code-block::
 
-   robot_status_pubs_.at(robot_id)->publish(robot_status);
+   robot_status_topics_.at(robot_id)->publish(robot_status);
 
 The arrow operator is used to access a method or element of an object, when
-given a pointer to that object. Above, ``robot_status_pubs_`` is a list of
+given a pointer to that object. Above, ``robot_status_topics_`` is a list of
 pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
 element in that list publishes a robot status using that specific publisher.
 You will learn more about pointers when you take CS 2110, but if you want to

@@ -36,7 +36,6 @@ class OneRobot(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         self.robot = world_state.our_robots[self.robot_id]
         intents = [None for _ in range(16)]
 
@@ -116,7 +115,6 @@ class AllBots(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         if self._state == AllBotsState.INIT_NEAR:
             # evenly space pts along our goal side
             st_pt = np.array([world_state.field.width_m / -2, self._offset])
@@ -181,7 +179,6 @@ class KickBall(stp.play.Play):
         self,
         world_state: stp.rc.WorldState,
     ) -> List[RobotIntent]:
-
         self.robot = world_state.our_robots[self.robot_id]
         intents = [None for _ in range(16)]
         my_robot_intent = None

@@ -14,6 +14,7 @@
 #include <robot_intent.hpp>
 
 #include "robot_status.hpp"
+#include "strategy/coach/coach_node.hpp"
 
 #include "rc-fshare/rtp.hpp"
 
@@ -52,7 +53,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
             int shell, rtp::RobotTxMessage* rtp);
 
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp);
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp,
+                strategy::Positions role);
 
 void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
               int shell, Packet::Robot* proto);

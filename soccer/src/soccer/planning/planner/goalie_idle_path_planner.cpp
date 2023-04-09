@@ -1,9 +1,9 @@
-#include "planning/planner/goalie_idle_planner.hpp"
+#include "planning/planner/goalie_idle_path_planner.hpp"
 
 namespace planning {
 
-Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
-    // lots of this is duplicated from PathTargetPlanner, because there's not
+Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
+    // lots of this is duplicated from PathTargetPathPlanner, because there's not
     // an easy way to convert from one PlanRequest to another
 
     // Collect obstacles
@@ -22,24 +22,22 @@ Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
     }
 
     // Create a new PathTargetMotionCommand to fill in with desired idle_pt
-    auto command = PathTargetMotionCommand{};
     auto idle_pt = get_idle_pt(plan_request.world_state);
-    command.goal.position = idle_pt;
+    LinearMotionInstant target{idle_pt};
 
     // Make robot face ball
     auto angle_function = AngleFns::face_point(plan_request.world_state->ball.position);
 
     // call Replanner to generate a Trajectory
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{plan_request.start, command.goal, static_obstacles, dynamic_obstacles,
+        Replanner::PlanParams{plan_request.start, target, static_obstacles, dynamic_obstacles,
                               plan_request.constraints, angle_function, RJ::Seconds(3.0)},
         std::move(previous_));
 
     // Debug drawing
     if (plan_request.debug_drawer != nullptr) {
         plan_request.debug_drawer->draw_circle(
-            rj_geometry::Circle(command.goal.position, static_cast<float>(draw_radius)),
-            draw_color);
+            rj_geometry::Circle(target.position, static_cast<float>(draw_radius)), draw_color);
     }
 
     // Cache current Trajectory, return
@@ -47,7 +45,7 @@ Trajectory GoalieIdlePlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-rj_geometry::Point GoalieIdlePlanner::get_idle_pt(const WorldState* world_state) {
+rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state) {
     rj_geometry::Point ball_pos = world_state->ball.position;
     // TODO(Kevin): make this depend on team +/-x
     rj_geometry::Point goal_pt{0.0, 0.0};
@@ -60,8 +58,8 @@ rj_geometry::Point GoalieIdlePlanner::get_idle_pt(const WorldState* world_state)
     return idle_pt;
 }
 
-void GoalieIdlePlanner::reset() {}
+void GoalieIdlePathPlanner::reset() {}
 
-bool GoalieIdlePlanner::is_done() const { return false; }
+bool GoalieIdlePathPlanner::is_done() const { return false; }
 
 }  // namespace planning

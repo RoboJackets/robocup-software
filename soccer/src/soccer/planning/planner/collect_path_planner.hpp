@@ -1,19 +1,22 @@
 #pragma once
 
 #include "planning/instant.hpp"
-#include "planning/planner/planner.hpp"
+#include "planning/planner/path_planner.hpp"
 #include "planning/primitives/replanner.hpp"
 #include "rj_geometry/point.hpp"
 
 namespace planning {
 
 /**
- * @brief Planner that tries to move onto and gain control of a slow moving
- * ball.
+ * @brief PathPlanner that tries to move onto and gain control of the ball,
+ * wherever the ball is. Ball MUST be slow-moving before Collect can be called.
+ *
+ * Params taken from MotionCommand:
+ *   None
  */
-class CollectPlanner : public PlannerForCommandType<CollectMotionCommand> {
+class CollectPathPlanner : public PathPlanner {
 public:
-    enum CollectPathPlannerStates {
+    enum CollectPathPathPlannerStates {
         // From start of subbehavior to the start of the slow part of the
         // approach
         CourseApproach,
@@ -23,10 +26,8 @@ public:
         Control
     };
 
-    CollectPlanner()
-        : PlannerForCommandType<CollectMotionCommand>("collect"),
-          average_ball_vel_(0, 0),
-          approach_direction_(0, 0) {}
+    CollectPathPlanner()
+        : PathPlanner("collect"), average_ball_vel_(0, 0), approach_direction_(0, 0) {}
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
@@ -61,8 +62,7 @@ private:
 
     Trajectory previous_;
 
-    CollectPathPlannerStates current_state_ =
-        CollectPathPlannerStates::CourseApproach;
+    CollectPathPathPlannerStates current_state_ = CollectPathPathPlannerStates::CourseApproach;
 
     // Ball Velocity Filtering Variables
     rj_geometry::Point average_ball_vel_;
