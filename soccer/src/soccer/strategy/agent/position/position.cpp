@@ -77,22 +77,156 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-communication::PosAgentRequestWrapper Position::send_communication_request() {
-    return communication_request_;
+std::optional<communication::PosAgentRequestWrapper> Position::send_communication_request() {
+    if (communication_request_ != std::nullopt) {
+        auto saved_comm_req = communication_request_;
+        communication_request_ = std::nullopt;
+        return saved_comm_req;
+    }
+    return std::nullopt;
 }
 
-void Position::receive_communication_response([
-    [maybe_unused]] communication::AgentPosResponseWrapper response) {}
+void Position::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    for (u_int32_t i = 0; i < response.responses.size(); i++) {
+        if (const communication::Acknowledge* acknowledge =
+                std::get_if<communication::Acknowledge>(&response.responses[i])) {
+            // if the acknowledgement is from an incoming pass request -> pass the ball
+            if (const communication::IncomingBallRequest* incoming_ball_request =
+                    std::get_if<communication::IncomingBallRequest>(&response.associated_request)) {
+                pass_ball(response.received_robot_ids[i]);
+            }
 
-communication::PosAgentResponseWrapper Position::receive_communication_request([
-    [maybe_unused]] communication::AgentPosRequestWrapper request) {
-    communication::PosAgentResponseWrapper pos_agent_response{};
-    communication::Acknowledge response{};
-    communication::generate_uid(response);
-    pos_agent_response.response = response;
-    return pos_agent_response;
+        } else if (const communication::PassResponse* pass_response =
+                       std::get_if<communication::PassResponse>(&response.responses[i])) {
+            // get the associated pass request for this response
+            if (const communication::PassRequest* sent_pass_request =
+                    std::get_if<communication::PassRequest>(&response.associated_request)) {
+                if (sent_pass_request->direct) {
+                    // if direct -> pass to first robot
+                    send_pass_confirmation(response.received_robot_ids[i]);
+                } else {
+                    // TODO: handle deciding on indirect passing
+                }
+            }
+        }
+    }
+}
+
+communication::PosAgentResponseWrapper Position::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response{};
+    if (const communication::PassRequest* pass_request =
+            std::get_if<communication::PassRequest>(&request.request)) {
+        communication::PassResponse pass_response = receive_pass_request(*pass_request);
+        comm_response.response = pass_response;
+        // TODO: "IncomingBallRequest" => "IncomingBallRequest" (or smth)
+    } else if (const communication::IncomingBallRequest* incoming_ball_request =
+                   std::get_if<communication::IncomingBallRequest>(&request.request)) {
+        communication::Acknowledge incoming_pass_acknowledge =
+            acknowledge_pass(*incoming_ball_request);
+        comm_response.response = incoming_pass_acknowledge;
+    } else if (const communication::BallInTransitRequest* ball_in_transit_request =
+                   std::get_if<communication::BallInTransitRequest>(&request.request)) {
+        communication::Acknowledge ball_in_transit_acknowledge =
+            acknowledge_ball_in_transit(*ball_in_transit_request);
+        comm_response.response = ball_in_transit_acknowledge;
+    } else {
+        communication::Acknowledge acknowledge{};
+        communication::generate_uid(acknowledge);
+        comm_response.response = acknowledge;
+    }
+
+    return comm_response;
 }
 
 const std::string Position::get_name() { return position_name_; }
+
+void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
+    communication::PassRequest pass_request{};
+    communication::generate_uid(pass_request);
+    pass_request.direct = true;
+    pass_request.from_robot_id = robot_id_;
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = pass_request;
+    communication_request.target_agents = target_robots;
+    communication_request.urgent = true;
+    communication_request.broadcast = false;
+
+    communication_request_ = communication_request;
+}
+
+communication::PassResponse Position::receive_pass_request(
+    communication::PassRequest pass_request) {
+    communication::PassResponse pass_response{};
+    communication::generate_uid(pass_response);
+
+    if (pass_request.direct) {
+        // Handle direct pass request
+        // TODO: Make this rely on actually being open
+        pass_response.direct_open = true;
+    } else {
+        // TODO: Handle indirect pass request
+        pass_response.direct_open = false;
+    }
+
+    return pass_response;
+}
+
+void Position::send_pass_confirmation(u_int8_t target_robot) {
+    communication::IncomingBallRequest incoming_ball_request{};
+    incoming_ball_request.from_robot_id = robot_id_;
+    communication::generate_uid(incoming_ball_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = incoming_ball_request;
+    communication_request.target_agents = {target_robot};
+    communication_request.broadcast = false;
+    communication_request.urgent = true;
+
+    communication_request_ = communication_request;
+}
+
+communication::Acknowledge Position::acknowledge_pass(
+    communication::IncomingBallRequest incoming_ball_request) {
+    communication::Acknowledge acknowledge_response{};
+    communication::generate_uid(acknowledge_response);
+
+    face_robot_id = incoming_ball_request.from_robot_id;
+
+    derived_acknowledge_pass();
+
+    return acknowledge_response;
+}
+
+void Position::pass_ball(int robot_id) {
+    target_robot_id = robot_id;
+
+    communication::BallInTransitRequest ball_in_transit_request{};
+    ball_in_transit_request.from_robot_id = robot_id_;
+    communication::generate_uid(ball_in_transit_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = ball_in_transit_request;
+    communication_request.target_agents = {(u_int8_t)robot_id};
+    communication_request.urgent = true;
+    communication_request.broadcast = false;
+
+    communication_request_ = communication_request;
+
+    derived_pass_ball();
+}
+
+communication::Acknowledge Position::acknowledge_ball_in_transit(
+    communication::BallInTransitRequest ball_in_transit_request) {
+    communication::Acknowledge acknowledge_response{};
+    communication::generate_uid(acknowledge_response);
+
+    face_robot_id = ball_in_transit_request.from_robot_id;
+
+    derived_acknowledge_ball_in_transit();
+
+    return acknowledge_response;
+}
 
 }  // namespace strategy

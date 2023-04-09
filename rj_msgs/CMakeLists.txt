@@ -64,6 +64,8 @@ rosidl_generate_interfaces(
   request/PassRequest.msg
   request/PositionRequest.msg
   request/TestRequest.msg
+  request/IncomingBallRequest.msg
+  request/BallInTransitRequest.msg
 
   # Agent Response Messages
   response/Acknowledge.msg
