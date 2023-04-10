@@ -38,6 +38,7 @@
 class AgentActionClient;
 
 namespace strategy {
+
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
  * The goal is to isolate the strategy logic from the ROS interfacing. This
