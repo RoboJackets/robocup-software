@@ -112,13 +112,12 @@ void ExternalReferee::setup_referee_multicast() {
     } catch (const boost::system::system_error& e) {
         throw std::runtime_error("Failed to bind to shared referee port");
     }
-    // Join multicast group
+
+    // ExternalReferee will find any packets from kRefereeSourceAddress take
+    // them
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeSourceAddress).to_v4();
-    const boost::asio::ip::address_v4 multicast_interface =
-        boost::asio::ip::address::from_string(kRefereeInterface).to_v4();
-    asio_socket_.set_option(
-        boost::asio::ip::multicast::join_group(multicast_address, multicast_interface));
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
 }
 
 void ExternalReferee::update() { io_service_.poll(); }

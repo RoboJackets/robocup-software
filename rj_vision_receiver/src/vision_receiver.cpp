@@ -101,8 +101,9 @@ void VisionReceiver::set_port(const std::string& interface, int port) {
     // take them
     SPDLOG_INFO("VisionReceiver joining kSharedVisionSourceAddress: {}",
                 kSharedVisionSourceAddress);
-    socket_.set_option(boost::asio::ip::multicast::join_group(
-        boost::asio::ip::address::from_string(kSharedVisionSourceAddress).to_v4()));
+    const boost::asio::ip::address_v4 multicast_address =
+        boost::asio::ip::address::from_string(kSharedVisionSourceAddress).to_v4();
+    socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
 
     // Bind the socket.
     boost::system::error_code bind_error;
