@@ -16,7 +16,7 @@ public:
     PenaltyPlayer(int r_id);
     ~PenaltyPlayer() = default;
 
- private:
+private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
 
