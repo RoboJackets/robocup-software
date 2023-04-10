@@ -33,6 +33,11 @@ Goalie::State Goalie::update_state() {
         return CLEARING;
     }
 
+    // when line kick fails but ball leaves box, don't chase it
+    if (!ball_in_box) {
+        return IDLING;
+    }
+
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     double distance_to_ball = robot_position.dist_to(ball_pt);
     if (latest_state_ == PASSING) {
@@ -69,6 +74,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = 4.0;
+        intent.dribbler_speed = 255.0;
         intent.is_active = true;
 
         return intent;
