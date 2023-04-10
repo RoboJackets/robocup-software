@@ -152,7 +152,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
       robot_trajectories_{robot_trajectories},
       global_state_{global_state},
       debug_draw_{
-          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
+          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
           fmt::format("planning_{}", robot_id)} {
     // create map of {planner name -> planner}
     path_planners_[GoalieIdlePathPlanner().name()] = std::make_unique<GoalieIdlePathPlanner>();
@@ -166,16 +166,16 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         std::make_unique<EscapeObstaclesPathPlanner>();
 
     // publish paths to control
-    trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
-        planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
+    trajectory_topic_ = node_->create_publisher<Trajectory::Msg>(
+        planning::topics::trajectory_topic(robot_id), rclcpp::QoS(1).transient_local());
 
     // publish kicker/dribbler cmds directly to radio
     manipulator_pub_ = node->create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
-        control::topics::manipulator_setpoint_pub(robot_id), rclcpp::QoS(10));
+        control::topics::manipulator_setpoint_topic(robot_id), rclcpp::QoS(10));
 
     // for ball sense and possession
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
-        radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
+        radio::topics::robot_status_topic(robot_id), rclcpp::QoS(1),
         [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
             had_break_beam_ = status->has_ball_sense;
         });
@@ -193,8 +193,9 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
     if (robot_alive()) {
         // plan a path and send it to control
         auto plan_request = make_request(intent);
+
         auto trajectory = safe_plan_for_robot(plan_request);
-        trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+        trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
         // send the kick/dribble commands to the radio
         manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()

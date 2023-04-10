@@ -4,7 +4,7 @@
 namespace ros2_temp {
 RawVisionPacketSub::RawVisionPacketSub(Context* context) : context_{context} {
     queue_ = std::make_unique<RawProtobufMsgQueue>("raw_vision_packet_sub",
-                                                   vision_receiver::topics::kRawProtobufPub);
+                                                   vision_receiver::topics::kRawProtobufTopic);
 }
 
 void RawVisionPacketSub::run() {

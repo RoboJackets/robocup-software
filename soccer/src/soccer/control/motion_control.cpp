@@ -42,20 +42,20 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
       drawer_(
-          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
+          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
           fmt::format("motion_control/{}", std::to_string(shell_id))) {
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
-        topics::motion_setpoint_pub(shell_id_), rclcpp::QoS(1));
+        topics::motion_setpoint_topic(shell_id_), rclcpp::QoS(1));
     target_state_pub_ = node->create_publisher<RobotState::Msg>(
-        topics::desired_state_pub(shell_id_), rclcpp::QoS(1));
+        topics::desired_state_topic(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<planning::Trajectory::Msg>(
-        planning::topics::trajectory_pub(shell_id), rclcpp::QoS(1),
+        planning::topics::trajectory_topic(shell_id), rclcpp::QoS(1),
         [this](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
         });
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
-        vision_filter::topics::kWorldStatePub, rclcpp::QoS(1),
+        vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](WorldState::Msg::SharedPtr world_state_msg) {  // NOLINT
             RobotState state =
                 rj_convert::convert_from_ros(world_state_msg->our_robots.at(shell_id_));
@@ -68,7 +68,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
             motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
         });
     play_state_sub_ = node->create_subscription<PlayState::Msg>(
-        referee::topics::kPlayStatePub, rclcpp::QoS(1).transient_local(),
+        referee::topics::kPlayStateTopic, rclcpp::QoS(1).transient_local(),
         [this](PlayState::Msg::SharedPtr play_state_msg) {  // NOLINT
             play_state_ = rj_convert::convert_from_ros(*play_state_msg).state();
         });
