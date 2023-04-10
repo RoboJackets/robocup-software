@@ -30,8 +30,32 @@
 // channel is given on the command line, the first available one is picked based
 // on which soccer-side port can be bound.
 
-static const std::string kRefereeAddress = "224.5.23.1";
-static const std::string kSharedVisionAddress = "224.5.23.2";
+/*
+ * These IP addresses are the multicast addresses we expect referee and vision
+ * data to come from, respectively. These are given by the league.
+ *
+ * In networking terms, the referee packets' source address should match
+ * kRefereeSourceAddress, and same thing for SharedVisionAddress.
+ *
+ * The physical interface we expect to receive these packets from is defined
+ * below.
+ */
+static const std::string kRefereeSourceAddress = "224.5.23.1";
+static const std::string kSharedVisionSourceAddress = "224.5.23.2";
+
+/* These IP addresses are the interfaces (e.g. Ethernet plugged into this
+ * laptop) where we expect ref/vision data to come from. They are (likely)
+ * physical Ethernet links to the network, so this address won't show up in
+ * Wireshark.
+ *
+ * When running sim, this should be localhost = 127.0.0.1.
+ *
+ * Run ifconfig to see list of interfaces on this computer, and pick the right
+ * one (or try them all in worst-case).
+ */
+static const std::string kRefereeInterface = "127.0.0.1";
+// In all but rare cirucmstances, this should match kRefereeInterface.
+static const std::string kVisionInterface = kRefereeInterface;
 
 static const int kSimVisionPort = 10020;  // was 10020 before 1-30-2022
 static const int kSimBlueStatusPort = 30011;
