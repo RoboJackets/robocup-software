@@ -7,7 +7,8 @@ Seeker::Seeker(int seeker_num) {
     seeker_pos_ = seeker_num;
 }
 
-std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState* world_state, FieldDimensions field_dimensions) {
+std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState* world_state,
+                                            FieldDimensions field_dimensions) {
     rj_geometry::Point current_loc = world_state->our_robots[intent.robot_id].pose.position();
     rj_geometry::Point target_pt = get_open_point(world_state, current_loc, field_dimensions);
 
@@ -27,7 +28,8 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
  * Gets a point nearby to the robot that the opposing robots have minimal line-of-sight on
  */
 rj_geometry::Point Seeker::get_open_point(const WorldState* world_state,
-                                          rj_geometry::Point current_loc, FieldDimensions field_dimensions) {
+                                          rj_geometry::Point current_loc,
+                                          FieldDimensions field_dimensions) {
     return Seeker::calculate_open_point(1.0, .2, current_loc, world_state, field_dimensions);
 }
 
@@ -37,7 +39,8 @@ rj_geometry::Point Seeker::get_open_point(const WorldState* world_state,
  */
 rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_prec,
                                                 rj_geometry::Point current_point,
-                                                const WorldState* world_state, FieldDimensions field_dimensions) {
+                                                const WorldState* world_state,
+                                                FieldDimensions field_dimensions) {
     if (current_prec < min_prec) {
         return current_point;
     }
@@ -51,14 +54,18 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
         correct_point(current_point + rj_geometry::Point{-current_prec, 0}, field_dimensions),
         correct_point(current_point + rj_geometry::Point{0, current_prec}, field_dimensions),
         correct_point(current_point + rj_geometry::Point{0, -current_prec}, field_dimensions),
-        correct_point(current_point +
-                      rj_geometry::Point{current_prec * 0.707, current_prec * 0.707}, field_dimensions),
-        correct_point(current_point +
-                      rj_geometry::Point{current_prec * 0.707, -current_prec * 0.707}, field_dimensions),
-        correct_point(current_point +
-                      rj_geometry::Point{-current_prec * 0.707, current_prec * 0.707}, field_dimensions),
-        correct_point(current_point +
-                      rj_geometry::Point{-current_prec * 0.707, -current_prec * 0.707}, field_dimensions)};
+        correct_point(
+            current_point + rj_geometry::Point{current_prec * 0.707, current_prec * 0.707},
+            field_dimensions),
+        correct_point(
+            current_point + rj_geometry::Point{current_prec * 0.707, -current_prec * 0.707},
+            field_dimensions),
+        correct_point(
+            current_point + rj_geometry::Point{-current_prec * 0.707, current_prec * 0.707},
+            field_dimensions),
+        correct_point(
+            current_point + rj_geometry::Point{-current_prec * 0.707, -current_prec * 0.707},
+            field_dimensions)};
 
     for (auto point : check_points) {
         curr_val = max_los(ball_pos, point + random_noise(current_prec), world_state);
