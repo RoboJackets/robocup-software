@@ -5,13 +5,17 @@ namespace strategy {
 Offense::Offense(int r_id) : Position(r_id) { position_name_ = "Offense"; }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
-    if (this->play_state_.is_our_restart() && this->play_state_.is_penalty()) {
-        PenaltyPlayer player{};
-        return player.get_task(intent, this->world_state(), this->field_dimensions_);
-    } else if (this->play_state_.is_penalty_playing() && this->play_state_.is_our_restart()) {
-        PenaltyKicker kicker{};
-        return kicker.get_task(intent, this->world_state(), this->field_dimensions_);
-    }
+    SPDLOG_INFO("State: {}", this->match_state_);
+    SPDLOG_INFO("Restart: {}", this->match_restart_);
+    // SPDLOG_INFO("Is Setup: {}", this->play_state_.is_our_setup());
+
+    // if (this->play_state_.is_our_restart() && this->play_state_.is_penalty()) {
+    //     PenaltyPlayer player{};
+    //     return player.get_task(intent, this->world_state(), this->field_dimensions_);
+    // } else if (this->play_state_.is_penalty_playing() && this->play_state_.is_our_restart()) {
+    //     PenaltyKicker kicker{};
+    //     return kicker.get_task(intent, this->world_state(), this->field_dimensions_);
+    // }
 
     // FSM: kick -> move away -> repeat
     if (check_is_done()) {
