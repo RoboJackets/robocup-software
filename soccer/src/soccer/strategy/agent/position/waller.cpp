@@ -8,7 +8,8 @@ Waller::Waller(int waller_num, int total_wallers) {
     total_wallers_ = total_wallers;
 }
 
-std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState* world_state) {
+std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState* world_state,
+                                            FieldDimensions field_dimensions) {
     rj_geometry::Point ball_location{world_state->ball.position};
 
     // Get Goal Location (Always (0,0)) as of creation
@@ -17,9 +18,9 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     // Creates Minimum wall radius is slightly greater than  box bounds
     // Dimension accessors should be edited when we figure out how we are doing dimensions realtime
     // from vision
-    float box_w{FieldDimensions::kDefaultDimensions.penalty_long_dist()};
-    float box_h{FieldDimensions::kDefaultDimensions.penalty_short_dist()};
-    float line_w{FieldDimensions::kDefaultDimensions.line_width()};
+    float box_w{field_dimensions.penalty_long_dist()};
+    float box_h{field_dimensions.penalty_short_dist()};
+    float line_w{field_dimensions.line_width()};
     double min_wall_rad{(kRobotRadius * 4.0f) + line_w +
                         hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)))};
 

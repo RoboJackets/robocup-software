@@ -2,7 +2,6 @@
 
 namespace strategy {
 
-// TODO(Kevin): lock Goalie id to id given by the ref
 Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
@@ -28,9 +27,8 @@ Goalie::State Goalie::update_state() {
     bool ball_is_slow = world_state->ball.velocity.mag() < 0.5;  // m/s
 
     rj_geometry::Point ball_pt = world_state->ball.position;
-    // TODO(Kevin): account for field direction when field coords
-    // added in
-    bool ball_in_box = ball_pt.y() < 1.0 && fabs(ball_pt.x()) < 1.0;  // m
+
+    bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     if (ball_is_slow && ball_in_box) {
         return CLEARING;
     }
@@ -47,7 +45,6 @@ Goalie::State Goalie::update_state() {
         }
     }
 
-    // otherwise, default to idling
     return latest_state_;
 }
 
@@ -77,7 +74,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         return intent;
     } else if (latest_state_ == BALL_NOT_FOUND) {
         // TODO: make point dependent on team
-        rj_geometry::Point target_pt{0, 0.5};
+        rj_geometry::Point target_pt = this->field_dimensions_.our_defense_area().center();
         rj_geometry::Point target_vel{0.0, 0.0};
 
         planning::PathTargetFaceOption face_option = planning::FaceTarget{};
@@ -90,6 +87,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", target, face_option, ignore_ball};
         return intent;
     } else if (latest_state_ == RECEIVING) {
+        // TODO(https://app.clickup.com/t/8677rrgjn): Convert RECEIVING state into role_interface
         // intercept the bal
         rj_geometry::Point current_position =
             world_state()->get_robot(true, robot_id_).pose.position();
@@ -98,6 +96,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.motion_command = receive_intercept_cmd;
         return intent;
     } else if (latest_state_ == PASSING) {
+        // TODO(https://app.clickup.com/t/8677rrgjn): Convert PASSING state into role_interface
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
             world_state()->get_robot(true, target_robot_id).pose.position();
@@ -105,7 +104,6 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         auto pass_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = pass_kick_cmd;
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         // TODO: Adjust the kick speed based on distance
         intent.kick_speed = 4.0;
@@ -133,39 +131,16 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
     double time_to_cross = std::abs(ball_pos.y() / ball_vel.y());
     double cross_x = ball_pos.x() + ball_vel.x() * time_to_cross;
 
-    bool shot_on_target =
-        std::abs(cross_x) < 0.5;  // TODO(Kevin): add field to world_state to avoid hardcoding this
+    bool shot_on_target = std::abs(cross_x) < this->field_dimensions_.goal_width() / 2.0;
+
     bool ball_is_fast = ball_vel.mag() > 1.0;
     return ball_is_fast && shot_on_target;
 }
 
-communication::Acknowledge Goalie::acknowledge_pass(
-    communication::IncomingPassRequest incoming_pass_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_pass_request);
-    // Update current state
-    latest_state_ = FACING;
-    // Return acknowledge response
-    return acknowledge_response;
-}
+void Goalie::derived_acknowledge_pass() { latest_state_ = FACING; }
 
-void Goalie::pass_ball(int robot_id) {
-    // Call to super
-    Position::pass_ball(robot_id);
-    // Update current state
-    latest_state_ = PASSING;
-}
+void Goalie::derived_pass_ball() { latest_state_ = PASSING; }
 
-communication::Acknowledge Goalie::acknowledge_ball_in_transit(
-    communication::BallInTransitRequest ball_in_transit_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_ball_in_transit(ball_in_transit_request);
-    // Update current state
-    latest_state_ = RECEIVING;
-    // Return acknowledge response
-    return acknowledge_response;
-}
+void Goalie::derived_acknowledge_ball_in_transit() { latest_state_ = RECEIVING; }
 
 }  // namespace strategy

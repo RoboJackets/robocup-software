@@ -12,7 +12,7 @@
 #include "rj_msgs/msg/agent_request.hpp"
 #include "rj_msgs/msg/agent_response.hpp"
 #include "rj_msgs/msg/agent_response_variant.hpp"
-#include "rj_msgs/msg/incoming_pass_request.hpp"
+#include "rj_msgs/msg/incoming_ball_request.hpp"
 #include "rj_msgs/msg/join_wall_request.hpp"
 #include "rj_msgs/msg/join_wall_response.hpp"
 #include "rj_msgs/msg/leave_wall_request.hpp"
@@ -28,6 +28,14 @@ namespace strategy::communication {
 
 // BEGIN REQUEST TYPES //
 
+/**
+ * @brief request sent by an agent to one or many agents indicating
+ * that it would like to pass the bass.
+ *
+ * pass requests exist so that agents can find out which other agents
+ * are open for passes.
+ *
+ */
 struct PassRequest {
     u_int32_t request_uid;
     bool direct;
@@ -35,22 +43,57 @@ struct PassRequest {
 };
 bool operator==(const PassRequest& a, const PassRequest& b);
 
+/**
+ * @brief request sent by an agent to one or many agents indicating
+ * that it would like to know the current position the agent is playing.
+ *
+ * position requests were originally used for testing, however they may be
+ * useful for coordinating complex behaviors.  For example, agent a may need
+ * to know that agent b is currently a waller before attempting to ask agent b
+ * for help.
+ */
 struct PositionRequest {
     u_int32_t request_uid;
 };
 bool operator==(const PositionRequest& a, const PositionRequest& b);
 
+/**
+ * @brief request sent by an agent to one or many target agents that
+ * can be used for testing communication between different agents.
+ *
+ * the test request was used mainly for testing that messages were being successfully
+ * sent between the various agents.
+ *
+ */
 struct TestRequest {
     u_int32_t request_uid;
 };
 bool operator==(const TestRequest& a, const TestRequest& b);
 
-struct IncomingPassRequest {
+/**
+ * @brief request sent by an agent to a specific agent indicating that
+ * this agent is going to kick the ball to the other agent iff the other
+ * agent acknowledges this message.
+ *
+ * agents will send an incoming ball request to the agent they will be passing
+ * to.
+ *
+ */
+struct IncomingBallRequest {
     u_int32_t request_uid;
     u_int8_t from_robot_id;
 };
-bool operator==(const IncomingPassRequest& a, const IncomingPassRequest& b);
+bool operator==(const IncomingBallRequest& a, const IncomingBallRequest& b);
 
+/**
+ * @brief request sent by an agent to a specific agent indicating the
+ * ball has left this agent's possession and is currently headed for the
+ * other agent.
+ *
+ * an agent will send a BallInTransitRequest to a robot after they have
+ * kicked the ball so the other robot knows to begin receiving the ball.
+ *
+ */
 struct BallInTransitRequest {
     u_int32_t request_uid;
     u_int8_t from_robot_id;
@@ -69,30 +112,63 @@ struct LeaveWallRequest {
 };
 bool operator==(const LeaveWallRequest& a, const LeaveWallRequest& b);
 
-using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingPassRequest,
+using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingBallRequest,
                                   BallInTransitRequest, JoinWallRequest, LeaveWallRequest>;
 
 // END REQUEST TYPES //
 
 // BEGIN RESPONSE TYPES //
 
+/**
+ * @brief general response given by an agent to any request to let the sender know
+ * that this agent has read the message, but will not be sending any additional data.
+ *
+ * acknowledge can be general purposely used whenever behaviour for a specific
+ * request does not need to be specified for a specific role or position.
+ *
+ */
 struct Acknowledge {
     u_int32_t response_uid;
 };
 bool operator==(const Acknowledge& a, const Acknowledge& b);
 
+/**
+ * @brief response from an open agent that will let the sender know that the
+ * receiver is open for a pass.
+ *
+ * the pass response is used to notify the sender that this robot is either
+ * open or not open to direct or (in the future) leading passes.
+ *
+ */
 struct PassResponse {
     u_int32_t response_uid;
     bool direct_open;
 };
 bool operator==(const PassResponse& a, const PassResponse& b);
 
+/**
+ * @brief response containing a given agent's position (in string) to a position
+ * request from another agent.
+ *
+ * the position response is used to return the name of the position or role
+ * the receiving robot is playing which is currently not used, but could be
+ * useful in the future.
+ *
+ */
 struct PositionResponse {
     u_int32_t response_uid;
     std::string position;
 };
 bool operator==(const PositionResponse& a, const PositionResponse& b);
 
+/**
+ * @brief response containing some test message that can be used for testing the
+ * sending capabilities between senders and receivers.
+ *
+ * If things aren't working send the test response with a message of your
+ * choosing.
+ *
+ */
 struct TestResponse {
     u_int32_t response_uid;
     std::string message;
@@ -114,6 +190,14 @@ bool operator==(const LeaveWallResponse& a, const LeaveWallResponse& b);
 using AgentResponseVariant = std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse,
                                           JoinWallResponse, LeaveWallResponse>;
 
+/**
+ * @brief response message that is sent from the receiver of the request to the
+ * sender of the request with an accompanying response.
+ *
+ * The agent response is the actual thing that gets sent from a receiver back
+ * to the sender.
+ *
+ */
 struct AgentResponse {
     AgentRequest associated_request;
     AgentResponseVariant response;
@@ -124,6 +208,9 @@ bool operator==(const AgentResponse& a, const AgentResponse& b);
 
 /**
  * @brief Wraps a communication request by giving the intended destination of the communication.
+ *
+ * positions will create this and send it to their agent action client which will
+ * send out the request according to their specifications.
  *
  */
 struct PosAgentRequestWrapper {
@@ -137,6 +224,10 @@ struct PosAgentRequestWrapper {
 /**
  * @brief Wraps a communication response to ensure symmetry for agent-to-agent communication.
  *
+ * this wrapper is placed on agent responses to promote symmetry across the request
+ * response system to make understanding easier.  All this struct does is make explicit
+ * that this response is going from the position to the agent.
+ *
  */
 struct PosAgentResponseWrapper {
     AgentResponseVariant response;
@@ -145,6 +236,11 @@ struct PosAgentResponseWrapper {
 /**
  * @brief Wraps a communication request to ensure symmetry for agent-to-agent communication.
  *
+ * Like the PosAgentResponseWrapper, this struct does nothing other than make the request
+ * response system more symmetrical and (hopefully) more easy to understand.  All this struct
+ * does is make it explicit that this request is being passed from the agent to the agent to
+ * the position.
+ *
  */
 struct AgentPosRequestWrapper {
     AgentRequest request;
@@ -152,6 +248,11 @@ struct AgentPosRequestWrapper {
 
 /**
  * @brief Wraps a communication response by giving the robot the communication is from.
+ *
+ * the AgentPosResponseWrapper is the actual thing being passed from the agent to the position
+ * once either the timeout period was reached or enough responses were received.  Ideally, the
+ * contents of this wrapper should contain all of the non-message specific fields that a position
+ * will need to handle a response.
  *
  */
 struct AgentPosResponseWrapper {
@@ -168,7 +269,7 @@ struct AgentPosResponseWrapper {
 void generate_uid(PassRequest& request);
 void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);
-void generate_uid(IncomingPassRequest& request);
+void generate_uid(IncomingBallRequest& request);
 void generate_uid(BallInTransitRequest& request);
 void generate_uid(JoinWallRequest& request);
 void generate_uid(LeaveWallRequest& request);
@@ -240,23 +341,23 @@ struct RosConverter<strategy::communication::TestRequest, rj_msgs::msg::TestRequ
 ASSOCIATE_CPP_ROS(strategy::communication::TestRequest, rj_msgs::msg::TestRequest);
 
 template <>
-struct RosConverter<strategy::communication::IncomingPassRequest,
-                    rj_msgs::msg::IncomingPassRequest> {
-    static rj_msgs::msg::IncomingPassRequest to_ros(
-        const strategy::communication::IncomingPassRequest& from) {
-        rj_msgs::msg::IncomingPassRequest result;
+struct RosConverter<strategy::communication::IncomingBallRequest,
+                    rj_msgs::msg::IncomingBallRequest> {
+    static rj_msgs::msg::IncomingBallRequest to_ros(
+        const strategy::communication::IncomingBallRequest& from) {
+        rj_msgs::msg::IncomingBallRequest result;
         result.request_uid = from.request_uid;
         result.from_robot_id = from.from_robot_id;
         return result;
     }
-
-    static strategy::communication::IncomingPassRequest from_ros(
-        const rj_msgs::msg::IncomingPassRequest& from) {
-        return strategy::communication::IncomingPassRequest{from.request_uid, from.from_robot_id};
+    
+    static strategy::communication::IncomingBallRequest from_ros(
+        const rj_msgs::msg::IncomingBallRequest& from) {
+        return strategy::communication::IncomingBallRequest{from.request_uid, from.from_robot_id};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::IncomingPassRequest, rj_msgs::msg::IncomingPassRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::IncomingBallRequest, rj_msgs::msg::IncomingBallRequest);
 
 template <>
 struct RosConverter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest> {
@@ -326,9 +427,9 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* pass_request =
                        std::get_if<strategy::communication::PassRequest>(&from)) {
             result.pass_request.emplace_back(convert_to_ros(*pass_request));
-        } else if (const auto* incoming_ass_request =
-                       std::get_if<strategy::communication::IncomingPassRequest>(&from)) {
-            result.incoming_pass_request.emplace_back(convert_to_ros(*incoming_ass_request));
+        } else if (const auto* incoming_ball_request =
+                       std::get_if<strategy::communication::IncomingBallRequest>(&from)) {
+            result.incoming_ball_request.emplace_back(convert_to_ros(*incoming_ball_request));
         } else if (const auto* ball_in_transit_request =
                        std::get_if<strategy::communication::BallInTransitRequest>(&from)) {
             result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
@@ -352,8 +453,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result = convert_from_ros(from.position_request.front());
         } else if (!from.pass_request.empty()) {
             result = convert_from_ros(from.pass_request.front());
-        } else if (!from.incoming_pass_request.empty()) {
-            result = convert_from_ros(from.incoming_pass_request.front());
+        } else if (!from.incoming_ball_request.empty()) {
+            result = convert_from_ros(from.incoming_ball_request.front());
         } else if (!from.ball_in_transit_request.empty()) {
             result = convert_from_ros(from.ball_in_transit_request.front());
         } else if (!from.join_wall_request.empty()) {

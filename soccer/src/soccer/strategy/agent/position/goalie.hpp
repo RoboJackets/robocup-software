@@ -8,7 +8,6 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 
-#include "planning/planner/intercept_path_planner.hpp"
 #include "position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -25,11 +24,9 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
-    communication::Acknowledge acknowledge_pass(
-        communication::IncomingPassRequest incoming_pass_request) override;
-    void pass_ball(int robot_id) override;
-    communication::Acknowledge acknowledge_ball_in_transit(
-        communication::BallInTransitRequest ball_in_transit_request) override;
+    void derived_acknowledge_pass() override;
+    void derived_pass_ball() override;
+    void derived_acknowledge_ball_in_transit() override;
 
 private:
     // temp

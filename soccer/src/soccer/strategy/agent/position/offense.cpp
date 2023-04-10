@@ -39,23 +39,28 @@ Offense::State Offense::update_state() {
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
             if (check_is_done()) {
+                // SPDLOG_INFO("\033[92mRobot {} is finished passing\033[0m", robot_id_);
+                SPDLOG_INFO("\033[92mRobot {} finished pass - is done\033[0m", robot_id_);
                 next_state = IDLING;
             }
 
-            if (distance_to_ball > BALL_LOST_DISTANCE) {
+            if (distance_to_ball > ball_lost_distance_) {
+                //     SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
+                //                 robot_id_);
+                SPDLOG_INFO("\033[92mRobot {} finished pass\033[0m", robot_id_);
                 next_state = IDLING;
             }
             break;
         case SHOOTING:
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
-            if (distance_to_ball > BALL_LOST_DISTANCE) {
+            if (distance_to_ball > ball_lost_distance_) {
                 next_state = IDLING;
             }
             break;
         case RECEIVING:
             // transition to idling if we are close enough to the ball
-            if (distance_to_ball < BALL_RECEIVE_DISTANCE) {
+            if (distance_to_ball < ball_receive_distance_) {
                 next_state = IDLING;
             }
             break;
@@ -65,7 +70,7 @@ Offense::State Offense::update_state() {
                 /* SPDLOG_INFO("\033[92m ball pos {}{} \033[0m", ball_position.x(),
                  * ball_position.y()); */
 
-                // send direct pass request to robot 3
+                // send direct pass request to robot 4
                 send_direct_pass_request({4});
 
                 // go to IDLING (pass received will go to PASSING)
@@ -77,17 +82,19 @@ Offense::State Offense::update_state() {
                 next_state = IDLING;
             }
     }
-
+    
     return next_state;
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
-        // Face the ball
+        // Do nothing
+        auto empty_motion_cmd = planning::MotionCommand{};
+        intent.motion_command = empty_motion_cmd;
+        return intent;
     } else if (current_state_ == SEARCHING) {
-        // TODO: DEFINE SEARCHING BEHAVIOR
+        // DEFINE SEARCHING BEHAVIOR
     } else if (current_state_ == PASSING) {
-        // TODO: FIX LINE KICK
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
             world_state()->get_robot(true, target_robot_id).pose.position();
@@ -143,33 +150,13 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     return std::nullopt;
 }
 
-communication::Acknowledge Offense::acknowledge_pass(
-    communication::IncomingPassRequest incoming_pass_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_pass_request);
-    // Return acknowledge response
-    return acknowledge_response;
-}
+void Offense::derived_acknowledge_pass() { current_state_ = FACING; }
 
-void Offense::pass_ball(int robot_id) {
-    // Call to super
-    Position::pass_ball(robot_id);
-    // Update current state
-    current_state_ = PASSING;
-}
+void Offense::derived_pass_ball() { current_state_ = PASSING; }
 
-communication::Acknowledge Offense::acknowledge_ball_in_transit(
-    communication::BallInTransitRequest ball_in_transit_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_ball_in_transit(ball_in_transit_request);
-    // Update current state
+void Offense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
-    // Reset chasing_ball
     chasing_ball = false;
-    // Return acknowledge response
-    return acknowledge_response;
 }
 
 }  // namespace strategy

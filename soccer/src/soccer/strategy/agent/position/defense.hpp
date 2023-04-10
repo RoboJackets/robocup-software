@@ -28,14 +28,9 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    communication::Acknowledge acknowledge_pass(
-        communication::IncomingPassRequest incoming_pass_request) override;
-    void pass_ball(int robot_id) override;
-    communication::Acknowledge acknowledge_ball_in_transit(
-        communication::BallInTransitRequest ball_in_transit_request) override;
-    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
-    communication::PosAgentResponseWrapper receive_communication_request(
-        communication::AgentPosRequestWrapper request) override;
+    void derived_acknowledge_pass() override;
+    void derived_pass_ball() override;
+    void derived_acknowledge_ball_in_transit() override;
 
 private:
     int move_ct_ = 0;

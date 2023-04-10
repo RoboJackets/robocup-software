@@ -25,11 +25,9 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
-    communication::Acknowledge acknowledge_pass(
-        communication::IncomingPassRequest incoming_pass_request) override;
-    void pass_ball(int robot_id) override;
-    communication::Acknowledge acknowledge_ball_in_transit(
-        communication::BallInTransitRequest ball_in_transit_request) override;
+    void derived_acknowledge_pass() override;
+    void derived_pass_ball() override;
+    void derived_acknowledge_ball_in_transit() override;
 
 private:
     bool kicking_{true};
@@ -53,9 +51,6 @@ private:
 
     // current state of the offensive agent (state machine)
     State current_state_ = IDLING;
-
-    double BALL_RECEIVE_DISTANCE = 0.1;
-    double BALL_LOST_DISTANCE = 0.5;
 };
 
 }  // namespace strategy

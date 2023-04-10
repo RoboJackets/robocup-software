@@ -5,6 +5,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include <rj_common/field_dimensions.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
@@ -22,7 +23,7 @@
 
 // Requests
 #include <rj_msgs/msg/ball_in_transit_request.hpp>
-#include <rj_msgs/msg/incoming_pass_request.hpp>
+#include <rj_msgs/msg/incoming_ball_request.hpp>
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
@@ -68,6 +69,7 @@ public:
     // communication with AC
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
+    void update_field_dimensions(FieldDimensions field_dimensions);
     const std::string get_name();
 
     /**
@@ -143,19 +145,32 @@ public:
     /**
      * @brief acknowledges the pass confirmation from another robot
      *
-     * @param incoming_pass_request the request that a ball will be coming to this robot
+     * @param incoming_ball_request the request that a ball will be coming to this robot
      * @return communication::Acknowledge acknowledgement that the other robot may pass to this
      * robot
      */
     virtual communication::Acknowledge acknowledge_pass(
-        communication::IncomingPassRequest incoming_pass_request);
+        communication::IncomingBallRequest incoming_ball_request);
 
     /**
-     * @brief physically update the state of the robot to be passing the ball
+     * @brief method called in acknowledge_pass that updates the position to its next state
+     *
+     */
+    virtual void derived_acknowledge_pass() = 0;
+
+    /**
+     * @brief update the robot state to be passing the ball
      *
      * @param robot_id the robot id of the robot to pass the ball to
      */
     virtual void pass_ball(int robot_id);
+
+    /**
+     * @brief method called in pass ball that updates the position to its corresponding passing
+     * state.
+     *
+     */
+    virtual void derived_pass_ball() = 0;
 
     /**
      * @brief the ball is on the way, so the robot should change its state accordingly
@@ -166,6 +181,13 @@ public:
      */
     virtual communication::Acknowledge acknowledge_ball_in_transit(
         communication::BallInTransitRequest ball_in_transit_request);
+
+    /**
+     * @brief method called in acknowledge_ball_in_transit to update the position to its
+     * corresponding next state
+     *
+     */
+    virtual void derived_acknowledge_ball_in_transit() = 0;
 
 protected:
     // should be overriden in subclass constructors
@@ -179,9 +201,12 @@ protected:
     // fields for coach_state
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
-    int match_situation_{};  // TODO: this is an enum, get from coach_node
+    int match_state_{};    // TODO: this is an enum, get from PlayState
+    int match_restart_{};  // TODO: this is an enum, get from PlayState
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
+
+    FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
     /*
      * @return thread-safe ptr to most recent world_state
@@ -223,7 +248,7 @@ protected:
 
     // the maximum distance from the robot to the ball for the robot to begin
     // chasing the ball
-    const double max_receive_distance = 1.0;
+    const double max_receive_distance = 1.0;  // m
 
     // Whether or not this robot should be chasing the ball on receive
     // set to true when the ball gets close to this robot
@@ -231,6 +256,12 @@ protected:
 
     // Request
     std::optional<communication::PosAgentRequestWrapper> communication_request_;
+
+    // farthest distance the robot is willing to go to receive a pass
+    static constexpr double ball_receive_distance_ = 0.1;
+
+    // farthest distance the robot is willing to go before it declares it has lost the ball
+    static constexpr double ball_lost_distance_ = 0.5;
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived

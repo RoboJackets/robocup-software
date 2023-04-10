@@ -87,7 +87,7 @@ private:
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
 
-    rj_msgs::msg::FieldDimensions current_field_dimensions_;
+    FieldDimensions current_field_dimensions_;
     bool have_field_dimensions_ = false;
 
     /*

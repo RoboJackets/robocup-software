@@ -36,7 +36,8 @@ public:
      * @param [RobotIntent intent] [RobotIntent of the Defensive Robot]
      * @return [RobotIntent with next target point for the robot]
      */
-    std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* world_state) override;
+    std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* world_state,
+                                        FieldDimensions field_dimensions) override;
 
 private:
     std::string defense_type_;
