@@ -264,7 +264,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // TODO (PR #1970): fix TrajectoryCollection
     // make a copy instead of getting the actual shared_ptr to Trajectory
     std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
-
     for (size_t i = 0; i < kNumShells; i++) {
         // TODO(Kevin): check that priority works (seems like
         // robot_trajectories_ is passed on init, when no planning has occured

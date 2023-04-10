@@ -6,7 +6,7 @@
 TestRequest[<=1] test_request
 PositionRequest[<=1] position_request
 PassRequest[<=1] pass_request
-IncomingPassRequest[<=1] incoming_pass_request
+IncomingBallRequest[<=1] incoming_ball_request
 BallInTransitRequest[<=1] ball_in_transit_request
 JoinWallRequest[<=1] join_wall_request
 LeaveWallRequest[<=1] leave_wall_request

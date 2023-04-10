@@ -119,7 +119,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
             std::get_if<communication::PassRequest>(&request.request)) {
         communication::PassResponse pass_response = receive_pass_request(*pass_request);
         comm_response.response = pass_response;
-        // TODO: "IncomingBallRequest" => "IncomingBallRequest" (or smth)
     } else if (const communication::IncomingBallRequest* incoming_ball_request =
                    std::get_if<communication::IncomingBallRequest>(&request.request)) {
         communication::Acknowledge incoming_pass_acknowledge =

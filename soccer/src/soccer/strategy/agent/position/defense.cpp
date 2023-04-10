@@ -106,40 +106,21 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             // SPDLOG_INFO("\033[92mRobot {} is walling as waller {} out of {}\033[0m", robot_id_,
             // waller_id_, walling_robots_.size());
             Waller waller{waller_id_, (int)walling_robots_.size()};
-            return waller.get_task(intent, world_state());
+            return waller.get_task(intent, world_state(), this->field_dimensions_);
         }
+    } else if (current_state_ = FACING) {
+        rj_geometry::Point robot_position =
+            world_state()->get_robot(true, robot_id_).pose.position();
+        auto current_location_instant =
+            planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
+        auto face_ball = planning::FaceBall{};
+        auto face_ball_cmd =
+            planning::MotionCommand{"path_target", current_location_instant, face_ball};
+        intent.motion_command = face_ball_cmd;
+        return intent;
     }
 
     return std::nullopt;
-}
-
-communication::Acknowledge Defense::acknowledge_pass(
-    communication::IncomingPassRequest incoming_pass_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_pass(incoming_pass_request);
-    // Update current state
-    current_state_ = FACING;
-    // Return acknowledge response
-    return acknowledge_response;
-}
-
-void Defense::pass_ball(int robot_id) {
-    // Call to super
-    Position::pass_ball(robot_id);
-    // Update current state
-    current_state_ = PASSING;
-}
-
-communication::Acknowledge Defense::acknowledge_ball_in_transit(
-    communication::BallInTransitRequest ball_in_transit_request) {
-    // Call to super
-    communication::Acknowledge acknowledge_response =
-        Position::acknowledge_ball_in_transit(ball_in_transit_request);
-    // Update current state
-    current_state_ = RECEIVING;
-    // Return acknowledge response
-    return acknowledge_response;
 }
 
 void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {
@@ -155,35 +136,7 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
                 handle_join_wall_response(*join_response);
             }
         }
-        return intent;
-    } else if (current_state_ == PASSING) {
-        // TODO(https://app.clickup.com/t/8677rrgjn): Convert PASSING state into role_interface
-        // attempt to pass the ball to the target robot
-        rj_geometry::Point target_robot_pos =
-            world_state()->get_robot(true, target_robot_id).pose.position();
-        planning::LinearMotionInstant target{target_robot_pos};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
-        intent.motion_command = line_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        // NOTE: Check we can actually use break beams
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        // TODO: Adjust the kick speed based on distance
-        intent.kick_speed = 4.0;
-        intent.is_active = true;
-        return intent;
-    } else if (current_state_ = FACING) {
-        rj_geometry::Point robot_position =
-            world_state()->get_robot(true, robot_id_).pose.position();
-        auto current_location_instant =
-            planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
-        auto face_ball = planning::FaceBall{};
-        auto face_ball_cmd =
-            planning::MotionCommand{"path_target", current_location_instant, face_ball};
-        intent.motion_command = face_ball_cmd;
-        return intent;
     }
-
-    return std::nullopt;
 }
 
 communication::PosAgentResponseWrapper Defense::receive_communication_request(

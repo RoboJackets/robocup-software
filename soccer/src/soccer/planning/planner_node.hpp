@@ -221,8 +221,9 @@ private:
     [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
-    std::unordered_map<std::string, std::shared_ptr<PathPlanner>> planners_;
-    std::shared_ptr<PathPlanner> default_planner_;
+
+    // unique_ptrs here because we don't want to transfer ownership of
+    // thePathPlanner objects anywhere else
     // (must be some type of ptr for polymorphism)
     std::unordered_map<std::string, std::unique_ptr<PathPlanner>> path_planners_;
     // EscapeObstaclesPathPlanner is our default path planner
@@ -237,6 +238,7 @@ private:
     PathPlanner* current_path_planner_{default_path_planner_.get()};
 
     int robot_id_;
+    TrajectoryCollection* robot_trajectories_;
     const GlobalState& global_state_;
 
     bool had_break_beam_ = false;

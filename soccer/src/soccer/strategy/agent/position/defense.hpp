@@ -28,6 +28,9 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
+    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+    communication::PosAgentResponseWrapper receive_communication_request(communication::AgentPosRequestWrapper request) override;
+
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
