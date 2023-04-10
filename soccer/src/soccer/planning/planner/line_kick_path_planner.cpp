@@ -12,10 +12,14 @@ using namespace rj_geometry;
 
 namespace planning {
 
+// TODO(Kevin): this planner should respect goal zone obstacles (which would be
+// easier with composability)
 Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     // TODO(?): ros param these
-    const float approach_speed = 0.25;
 
+    // speed at which to approach the ball
+    const float approach_speed = 0.05;
+    // distance at which to stand back from the ball before kicking
     const float ball_avoid_distance = 0.10;
 
     const MotionCommand& command = plan_request.motion_command;
@@ -152,6 +156,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     return Trajectory{};
     // (Kevin) pretty sure everything under this line is not used
 
+#if 0
     if (!prev_path_.empty() && target_kick_pos_) {
         auto previous_duration_remaining = prev_path_.end_time() - start_instant.stamp;
 
@@ -268,6 +273,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     path.stamp(RJ::now());
     prev_path_ = path;
     return path;
+#endif
 }
 
 bool LineKickPathPlanner::is_done() const {
