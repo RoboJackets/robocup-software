@@ -108,10 +108,12 @@ void CoachNode::check_for_play_state_change() {
             case PlayState::State::Halt:
                 global_override.max_speed = 0;
                 global_override.min_dist_from_ball = 0;
+                global_override.max_dribbler_speed = 0;
                 break;
             case PlayState::State::Stop:
                 global_override.max_speed = 1.5;
                 global_override.min_dist_from_ball = 0.5;
+                global_override.max_dribbler_speed = 0;
                 break;
             case PlayState::State::Playing:
                 // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number
