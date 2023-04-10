@@ -5,7 +5,7 @@
 #include <rj_constants/constants.hpp>
 
 #include "planning/instant.hpp"
-#include "planning/planner/planner.hpp"
+#include "planning/planner/path_planner.hpp"
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
 #include "planning/trajectory_utils.hpp"

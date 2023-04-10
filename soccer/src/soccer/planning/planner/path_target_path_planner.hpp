@@ -3,7 +3,7 @@
 
 #include <rj_geometry/shape_set.hpp>
 
-#include "planner.hpp"
+#include "path_planner.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/replanner.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
@@ -51,8 +51,7 @@ private:
      * @return AngleFunction that corresponds to input
      * PathTargetFaceOption in given PlanRequest
      */
-    [[nodiscard]] static AngleFunction get_angle_function(
-        const PlanRequest& request);
+    [[nodiscard]] static AngleFunction get_angle_function(const PlanRequest& request);
 
     Trajectory previous_;
 

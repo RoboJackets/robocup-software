@@ -3,8 +3,8 @@
 #include <spdlog/spdlog.h>
 
 #include "planning/instant.hpp"
-#include "planning/planner/path_target_planner.hpp"
-#include "planning/planner/planner.hpp"
+#include "planning/planner/path_planner.hpp"
+#include "planning/planner/path_target_path_planner.hpp"
 #include "planning/primitives/replanner.hpp"
 #include "planning/trajectory.hpp"
 #include "rj_geometry/point.hpp"
@@ -25,7 +25,7 @@ public:
     GoalieIdlePathPlanner() : PathPlanner("goalie_idle") {}
 
     /*
-     * From PathPlanner superclass (see planner.hpp).
+     * From PathPlanner superclass (see path_planner.hpp).
      */
     Trajectory plan(const PlanRequest& plan_request) override;
     void reset() override;

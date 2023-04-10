@@ -138,15 +138,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
         comm_response.response = acknowledge;
     }
 
-    // TEST CODE: UNCOMMENT TO TEST
-    // if (const communication::TestRequest* test_request =
-    //                std::get_if<communication::TestRequest>(&request.request)) {
-    //     communication::TestResponse test_response{};
-    //     test_response.message = fmt::format("An offensive player (robot: {}) says hi",
-    //     robot_id_); communication::generate_uid(test_response); comm_response.response =
-    //     test_response;
-    // }
-
     return comm_response;
 }
 

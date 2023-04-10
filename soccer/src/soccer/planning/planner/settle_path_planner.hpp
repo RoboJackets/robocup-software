@@ -1,7 +1,7 @@
 #pragma once
 
 #include "planning/instant.hpp"
-#include "planning/planner/planner.hpp"
+#include "planning/planner/path_planner.hpp"
 #include "planning/primitives/replanner.hpp"
 
 class Configuration;

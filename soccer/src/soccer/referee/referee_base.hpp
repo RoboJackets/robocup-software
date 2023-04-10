@@ -54,7 +54,7 @@ protected:
      * This is always the play state for the YELLOW team (i.e. yellow restarts correspond to OURS)
      */
     void set_play_state(const PlayState& state) {
-        // Some commands (basically anything that puts us into Setup, like direct/indirect kicks and
+        // Some commands (basically anything that puts us into Setup, like free kicks and
         // normal starts, need us to know where the ball started when the state was entered.
         if (state.wait_for_kick()) {
             // We only change the placement point if the command has changed.

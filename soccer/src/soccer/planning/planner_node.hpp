@@ -19,8 +19,9 @@
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
+#include "planner/path_planner.hpp"
 #include "planner/plan_request.hpp"
-#include "planner/planner.hpp"
+#include "planning/planner/escape_obstacles_path_planner.hpp"
 #include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
@@ -119,7 +120,7 @@ private:
 /**
  * @brief Handles one robot's planning, which for us is a translation of RobotIntent to
  * Trajectory. Bundles together all relevant ROS pub/subs and forwards
- * RobotIntents to the appropriate PathPlanner (see planner.hpp).
+ * RobotIntents to the appropriate PathPlanner (see path_planner.hpp).
  *
  * In general, prefers default behavior and WARN-level logs over crashing.
  *
@@ -222,10 +223,20 @@ private:
     rclcpp::Node* node_;
     std::unordered_map<std::string, std::shared_ptr<PathPlanner>> planners_;
     std::shared_ptr<PathPlanner> default_planner_;
-    std::shared_ptr<PathPlanner> current_planner_;
+    // (must be some type of ptr for polymorphism)
+    std::unordered_map<std::string, std::unique_ptr<PathPlanner>> path_planners_;
+    // EscapeObstaclesPathPlanner is our default path planner
+    // because when robots start inside of an obstacle, all other planners will fail
+    // TODO(Kevin): make EscapeObstaclesPathPlanner default start of all planner FSM so this doesn't
+    // happen
+    std::unique_ptr<PathPlanner> default_path_planner_{
+        std::make_unique<EscapeObstaclesPathPlanner>()};
+
+    // raw ptr here because current_path_planner_ should not take ownership
+    // from any of the unique_ptrs to PathPlanners
+    PathPlanner* current_path_planner_{default_path_planner_.get()};
 
     int robot_id_;
-    TrajectoryCollection* robot_trajectories_;
     const GlobalState& global_state_;
 
     bool had_break_beam_ = false;
@@ -250,7 +261,7 @@ public:
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:
-    std::vector<std::shared_ptr<PlannerForRobot>> robots_planners_;
+    std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
     TrajectoryCollection robot_trajectories_;
     GlobalState global_state_;
     ::params::LocalROS2ParamProvider param_provider_;

@@ -1,13 +1,14 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
 #include <functional>
 #include <optional>
+
+#include <rj_geometry/point.hpp>
 #include <rrt/Tree.hpp>
 
-#include "path_target_planner.hpp"
+#include "path_target_path_planner.hpp"
+#include "planning/planner/path_planner.hpp"
 #include "planning/planner/plan_request.hpp"
-#include "planning/planner/planner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -52,7 +53,6 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
-    // TODO(Kevin): delete this if unused
     /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
 };
