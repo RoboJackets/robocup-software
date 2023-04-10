@@ -115,6 +115,7 @@ void ExternalReferee::setup_referee_multicast() {
 
     // ExternalReferee will find any packets from kRefereeSourceAddress take
     // them
+    SPDLOG_INFO("ExternalReferee joining kRefereeSourceAddress: {}", kRefereeSourceAddress);
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeSourceAddress).to_v4();
     asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
