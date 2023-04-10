@@ -43,7 +43,12 @@
 static const std::string kRefereeSourceAddress = "224.5.23.1";
 static const std::string kSharedVisionSourceAddress = "224.5.23.2";
 
-/* These IP addresses are the interfaces (e.g. Ethernet plugged into this
+/*
+ * UPDATE (4/9/2023): these are no longer necessary. Both VisionReceiver and
+ * ExternalReferee now simply join the multicast group and listen for their
+ * respective source addresses above.
+ *
+ * These IP addresses are the interfaces (e.g. Ethernet plugged into this
  * laptop) where we expect ref/vision data to come from. They are (likely)
  * physical Ethernet links to the network, so this address won't show up in
  * Wireshark.
@@ -54,8 +59,8 @@ static const std::string kSharedVisionSourceAddress = "224.5.23.2";
  * one (or try them all in worst-case).
  */
 static const std::string kRefereeInterface = "127.0.0.1";
-// In all but rare cirucmstances, this should match kRefereeInterface.
-static const std::string kVisionInterface = kRefereeInterface;
+static const std::string kVisionInterface =
+    kRefereeInterface;  // In all but rare cirucmstances, this should match kRefereeInterface.
 
 static const int kSimVisionPort = 10020;  // was 10020 before 1-30-2022
 static const int kSimBlueStatusPort = 30011;
