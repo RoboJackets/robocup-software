@@ -11,19 +11,13 @@
 
 namespace strategy {
 
-class PenaltyPlayer : public RoleInterface {
+class PenaltyPlayer : public Position {
 public:
-    PenaltyPlayer() = default;
+    PenaltyPlayer(int r_id);
     ~PenaltyPlayer() = default;
 
-    /**
-     * @brief  Returns a behavior which aims to line up behind the ball prior to kick
-     *
-     * @param [RobotIntent intent] [RobotIntent of the Offensive Robot]
-     * @return [RobotIntent with next target point for the robot]
-     */
-    std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* world_state,
-                                        FieldDimensions field_dimensions) override;
+ private:
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
 
 }  // namespace strategy

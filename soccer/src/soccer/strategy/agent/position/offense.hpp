@@ -14,7 +14,7 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "game_state.hpp"
-#include "penalty_kicker.hpp"
+#include "goal_kicker.hpp"
 #include "penalty_player.hpp"
 
 namespace strategy {
