@@ -82,7 +82,6 @@ Offense::State Offense::update_state() {
                 next_state = IDLING;
             }
     }
-
     return next_state;
 }
 
@@ -93,7 +92,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == SEARCHING) {
-        // DEFINE SEARCHING BEHAVIOR
+        Seeker seeker{0};
+        return seeker.get_task(intent, world_state(), Position::field_dimensions_);
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
