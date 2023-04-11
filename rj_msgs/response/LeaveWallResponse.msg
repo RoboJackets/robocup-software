@@ -1,0 +1,2 @@
+uin32 response_uid
+uint8 robot_id

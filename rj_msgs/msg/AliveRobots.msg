@@ -1,0 +1,1 @@
+uint8[] alive_robots
