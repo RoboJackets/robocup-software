@@ -337,46 +337,10 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
 }
 
 rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {
-    // Create physical walls of the goals as static obstacles
-    double physical_goal_board_width = 0.1;
-    float goal_width = current_field_dimensions_.goal_width();
-    float goal_depth = current_field_dimensions_.goal_depth();
-    float field_length = current_field_dimensions_.length();
-
-    // Each goal is three rectangles
-    rj_geometry::Point og1_1{goal_width / 2, -goal_depth};
-    rj_geometry::Point og1_2{-goal_width / 2, -goal_depth - physical_goal_board_width};
-    auto our_goal_1{std::make_shared<rj_geometry::Rect>(og1_1, og1_2)};
-
-    rj_geometry::Point og2_1{goal_width / 2, -goal_depth};
-    rj_geometry::Point og2_2{goal_width / 2 + physical_goal_board_width, 0.0};
-    auto our_goal_2{std::make_shared<rj_geometry::Rect>(og2_1, og2_2)};
-
-    rj_geometry::Point og3_1{-goal_width / 2, -goal_depth};
-    rj_geometry::Point og3_2{-goal_width / 2 - physical_goal_board_width, 0.0};
-    auto our_goal_3{std::make_shared<rj_geometry::Rect>(og3_1, og3_2)};
-
-    rj_geometry::Point tg1_1{goal_width / 2, field_length + goal_depth};
-    rj_geometry::Point tg1_2{-goal_width / 2,
-                             field_length + goal_depth + physical_goal_board_width};
-    auto their_goal_1{std::make_shared<rj_geometry::Rect>(tg1_1, tg1_2)};
-
-    rj_geometry::Point tg2_1{goal_width / 2, field_length + goal_depth};
-    rj_geometry::Point tg2_2{goal_width / 2 + physical_goal_board_width, field_length};
-    auto their_goal_2{std::make_shared<rj_geometry::Rect>(tg2_1, tg2_2)};
-
-    rj_geometry::Point tg3_1{-goal_width / 2, field_length + goal_depth};
-    rj_geometry::Point tg3_2{-goal_width / 2 - physical_goal_board_width, field_length};
-    auto their_goal_3{std::make_shared<rj_geometry::Rect>(tg3_1, tg3_2)};
-
     // Put all the walls into a ShapeSet and publish it
     rj_geometry::ShapeSet goal_wall_obstacles{};
-    goal_wall_obstacles.add(our_goal_1);
-    goal_wall_obstacles.add(our_goal_2);
-    goal_wall_obstacles.add(our_goal_3);
-    goal_wall_obstacles.add(their_goal_1);
-    goal_wall_obstacles.add(their_goal_2);
-    goal_wall_obstacles.add(their_goal_3);
+    goal_wall_obstacles.add(current_field_dimensions_.our_goal_walls());
+    goal_wall_obstacles.add(current_field_dimensions_.their_goal_walls());
 
     return goal_wall_obstacles;
 }
