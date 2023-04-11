@@ -9,9 +9,9 @@
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -158,7 +158,7 @@ public:
      * @brief method called in acknowledge_pass that updates the position to its next state
      *
      */
-    virtual void derived_acknowledge_pass() { };
+    virtual void derived_acknowledge_pass(){};
 
     /**
      * @brief update the robot state to be passing the ball
@@ -172,7 +172,7 @@ public:
      * state.
      *
      */
-    virtual void derived_pass_ball() { };
+    virtual void derived_pass_ball(){};
 
     /**
      * @brief the ball is on the way, so the robot should change its state accordingly
@@ -189,7 +189,7 @@ public:
      * corresponding next state
      *
      */
-    virtual void derived_acknowledge_ball_in_transit() { };
+    virtual void derived_acknowledge_ball_in_transit(){};
 
 protected:
     // should be overriden in subclass constructors

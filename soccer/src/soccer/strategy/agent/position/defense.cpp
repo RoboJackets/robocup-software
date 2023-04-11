@@ -20,7 +20,7 @@ Defense::State Defense::update_state() {
 
     if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
         send_leave_wall_request();
-        walling_robots_ = {(u_int8_t) robot_id_};
+        walling_robots_ = {(u_int8_t)robot_id_};
         waller_id_ = -1;
     }
 
@@ -64,7 +64,8 @@ Defense::State Defense::update_state() {
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     if (robot_id_ == 2 || robot_id_ == 4 || robot_id_ == 5) {
-        SPDLOG_INFO("\033[92mRobot {} is Waller Num {} out of {}\033[0m", robot_id_, waller_id_, walling_robots_.size());
+        SPDLOG_INFO("\033[92mRobot {} is Waller Num {} out of {}\033[0m", robot_id_, waller_id_,
+                    walling_robots_.size());
     }
 
     if (current_state_ == IDLING) {
@@ -267,7 +268,8 @@ void Defense::derived_acknowledge_ball_in_transit() {
 }
 
 int Defense::get_waller_id() {
-    return find(walling_robots_.begin(), walling_robots_.end(), robot_id_) - walling_robots_.begin() + 1;
+    return find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
+           walling_robots_.begin() + 1;
 }
 
 }  // namespace strategy

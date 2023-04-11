@@ -82,7 +82,7 @@ Offense::State Offense::update_state() {
                 next_state = IDLING;
             }
     }
-    
+
     return next_state;
 }
 
