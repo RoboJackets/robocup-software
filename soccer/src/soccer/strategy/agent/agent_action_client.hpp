@@ -11,7 +11,9 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
+#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
@@ -54,12 +56,16 @@ private:
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
+    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
     void coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
+    void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
+    void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
 
     std::unique_ptr<Position> current_position_;
 
@@ -124,8 +130,21 @@ private:
      *
      */
     void get_communication();
-    communication::AgentRequest last_communication_;
     std::vector<communication::AgentPosResponseWrapper> buffered_responses_;
+
+    rclcpp::TimerBase::SharedPtr update_alive_robots_timer_;
+    /**
+     * @brief Updates the current positions list of alive robots (1/second)
+     *
+     */
+    void update_position_alive_robots();
+
+    FieldDimensions field_dimensions_;
+    std::vector<u_int8_t> alive_robots_ = {};
+    bool is_simulated_ = false;
+    static constexpr double field_padding_ = 0.3;
+
+    bool check_robot_alive(u_int8_t robot_id);
 
     // timeout check
     /**
@@ -148,7 +167,6 @@ private:
     [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
-
 };  // class AgentActionClient
 
 }  // namespace strategy
