@@ -11,11 +11,11 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
+#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rclcpp/rclcpp.hpp"
@@ -135,7 +135,7 @@ private:
     rclcpp::TimerBase::SharedPtr update_alive_robots_timer_;
     /**
      * @brief Updates the current positions list of alive robots (1/second)
-     * 
+     *
      */
     void update_position_alive_robots();
 

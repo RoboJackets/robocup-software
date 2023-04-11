@@ -38,7 +38,9 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     // Calculate the target point
     rj_geometry::Point target_point{};
 
-    target_point = mid_point + ball_dir_vector * ((total_wallers_ - waller_pos_ - (total_wallers_ / 2)) * wall_spacing);
+    target_point =
+        mid_point +
+        ball_dir_vector * ((total_wallers_ - waller_pos_ - (total_wallers_ / 2)) * wall_spacing);
 
     // if (total_wallers_ % 2 == 0) {
     //     target_point =

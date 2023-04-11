@@ -350,7 +350,7 @@ struct RosConverter<strategy::communication::IncomingBallRequest,
         result.from_robot_id = from.from_robot_id;
         return result;
     }
-    
+
     static strategy::communication::IncomingBallRequest from_ros(
         const rj_msgs::msg::IncomingBallRequest& from) {
         return strategy::communication::IncomingBallRequest{from.request_uid, from.from_robot_id};

@@ -71,9 +71,8 @@ AgentActionClient::AgentActionClient(int r_id)
             check_communication_timeout();
         });
 
-    update_alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(1000), [this]() {
-        update_position_alive_robots();
-    });
+    update_alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(1000),
+                                                   [this]() { update_position_alive_robots(); });
 
     if (r_id == 0) {
         current_position_ = std::make_unique<Goalie>(r_id);
@@ -126,10 +125,12 @@ void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings:
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
     if (!is_simulated_) {
-        return std::find(alive_robots_.begin(), alive_robots_.end(), robot_id) != alive_robots_.end();
+        return std::find(alive_robots_.begin(), alive_robots_.end(), robot_id) !=
+               alive_robots_.end();
     } else {
         if (this->world_state()->get_robot(true, robot_id).visible) {
-            rj_geometry::Point robot_position = this->world_state()->get_robot(true, robot_id).pose.position();
+            rj_geometry::Point robot_position =
+                this->world_state()->get_robot(true, robot_id).pose.position();
             rj_geometry::Rect padded_field_rect = field_dimensions_.field_coordinates();
             padded_field_rect.pad(field_padding_);
             return padded_field_rect.contains_point(robot_position);
@@ -316,8 +317,8 @@ void AgentActionClient::get_communication() {
             if (i != robot_id_ && check_robot_alive(i)) {
                 robot_communication_cli_[i]->async_send_request(
                     request, [this, i](const std::shared_future<
-                                        rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                            response) {
+                                       rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                           response) {
                         receive_response_callback(response, ((u_int8_t)i));
                     });
                 sent_robot_ids.push_back(i);
@@ -330,8 +331,8 @@ void AgentActionClient::get_communication() {
             if (i != robot_id_ && check_robot_alive(i)) {
                 robot_communication_cli_[i]->async_send_request(
                     request, [this, i](const std::shared_future<
-                                        rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                            response) { receive_response_callback(response, i); });
+                                       rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                           response) { receive_response_callback(response, i); });
                 sent_robot_ids.push_back(i);
             }
         }
