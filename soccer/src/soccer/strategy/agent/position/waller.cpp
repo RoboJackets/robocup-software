@@ -42,14 +42,6 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
         mid_point +
         ball_dir_vector * ((total_wallers_ - waller_pos_ - (total_wallers_ / 2)) * wall_spacing);
 
-    // if (total_wallers_ % 2 == 0) {
-    //     target_point =
-    //         mid_point + ball_dir_vector * ((total_wallers_ - waller_pos_ - 0.5) * wall_spacing);
-    // } else {
-    //     target_point =
-    //         mid_point + ball_dir_vector * ((total_wallers_ - waller_pos_) * wall_spacing);
-    // }
-
     target_point = target_point.rotate(mid_point, M_PI / 2);
 
     // Stop at end of path
