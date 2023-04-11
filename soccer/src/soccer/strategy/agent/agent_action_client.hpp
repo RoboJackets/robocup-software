@@ -20,8 +20,10 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
 #include "strategy/agent/position/defense.hpp"
+#include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
 #include "world_state.hpp"
 

@@ -8,14 +8,14 @@
 
 #include <rj_msgs/action/robot_move.hpp>
 
+#include "game_state.hpp"
+#include "goal_kicker.hpp"
+#include "penalty_player.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/time.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
-#include "game_state.hpp"
-#include "goal_kicker.hpp"
-#include "penalty_player.hpp"
 
 namespace strategy {
 
