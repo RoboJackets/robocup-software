@@ -63,10 +63,6 @@ Defense::State Defense::update_state() {
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
-    if (robot_id_ == 2 || robot_id_ == 4 || robot_id_ == 5) {
-        SPDLOG_INFO("\033[92mRobot {} is Waller Num {} out of {}\033[0m", robot_id_, waller_id_, walling_robots_.size());
-    }
-
     if (current_state_ == IDLING) {
         // DO NOTHING
     } else if (current_state_ == SEARCHING) {
