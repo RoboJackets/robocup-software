@@ -51,8 +51,8 @@ VisionReceiver::VisionReceiver()
     // set vision interface and port
     set_port(param_vision_interface_, param_port_);
 
-    raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
-    detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
+    raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufTopic, 10);
+    detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFrameTopic, 10);
 
     // Spin off threads for the networking part and the publishing part.
     network_thread_ = std::thread{&VisionReceiver::receive_thread, this};

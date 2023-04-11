@@ -203,6 +203,21 @@ release binary>``. (You can tab-complete this by typing ``./`` and then hitting
 tab.) The binary will output a message saying it has launched the UI at a
 specific URL--click that link to open the UI. 
 
+Using external referee in an M1 Mac (ARM64 architecture)
+--------------------------------------------------
+The SSL game controller repo only provides the AMD64 release, which will not work with ARM64 architectures.
+We will need to compile the ssl-game-controller from the source ourselves.
+
+Clone the SSL-game-controller repo the same way as above.
+
+Then, install the latest ARM64 version Go (this is because the ssl-game-controller uses Go). Instructions and install file can be found in Go's official website.
+
+Then, install the latest ARM64 version of npm. This can be done via ``sudo apt install npm`` and then use npm to upgrade npm itself by running ``sudo npm install npm -g``
+
+In the ssl-game-controller repo, run ./install.sh
+
+Launch the game controller by running ``~/go/bin/ssl-game-controller``
+
 .. image:: ./_static/ssl-gc-ui.png
 
 Operation instructions can be found in the FAQ of the SSL GC repo.

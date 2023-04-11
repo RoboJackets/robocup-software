@@ -7,7 +7,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
 
 #include "marker.hpp"
 #include "planning/instant.hpp"
@@ -30,9 +29,9 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
-    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
-    communication::PosAgentResponseWrapper receive_communication_request(
-        communication::AgentPosRequestWrapper request) override;
+    void derived_acknowledge_pass() override;
+    void derived_pass_ball() override;
+    void derived_acknowledge_ball_in_transit() override;
 
 private:
     int move_ct_ = 0;
@@ -47,6 +46,21 @@ private:
      * @return [RobotIntent with next target point for the robot]
      */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    enum State {
+        IDLING,     // simply staying in place
+        SEARCHING,  // moving around on the field to do something
+        RECEIVING,  // physically intercepting the ball from a pass
+        PASSING,    // physically kicking the ball towards another robot
+        FACING,     // turning to face the passing robot
+    };
+
+    State update_state();
+
+    std::optional<RobotIntent> state_to_task(RobotIntent intent);
+
+    // current state of the defense agent (state machine)
+    State current_state_ = IDLING;
 };
 
 }  // namespace strategy

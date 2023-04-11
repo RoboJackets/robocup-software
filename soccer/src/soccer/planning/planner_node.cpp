@@ -1,19 +1,20 @@
 #include "planner_node.hpp"
 
+#include <boost/algorithm/string.hpp>
 #include <spdlog/spdlog.h>
 
 #include <rj_constants/topic_names.hpp>
 #include <ros_debug_drawer.hpp>
 
 #include "instant.hpp"
-#include "planning/planner/collect_planner.hpp"
+#include "planning/planner/collect_path_planner.hpp"
 #include "planning/planner/escape_obstacles_path_planner.hpp"
-#include "planning/planner/goalie_idle_planner.hpp"
-#include "planning/planner/intercept_planner.hpp"
-#include "planning/planner/line_kick_planner.hpp"
-#include "planning/planner/path_target_planner.hpp"
+#include "planning/planner/goalie_idle_path_planner.hpp"
+#include "planning/planner/intercept_path_planner.hpp"
+#include "planning/planner/line_kick_path_planner.hpp"
+#include "planning/planner/path_target_path_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
-#include "planning/planner/settle_planner.hpp"
+#include "planning/planner/settle_path_planner.hpp"
 
 namespace planning {
 
@@ -24,7 +25,7 @@ PlannerNode::PlannerNode()
     : rclcpp::Node("planner", rclcpp::NodeOptions{}
                                   .automatically_declare_parameters_from_overrides(true)
                                   .allow_undeclared_parameters(true)),
-      shared_state_(this),
+      global_state_(this),
       param_provider_{this, kPlanningParamModule} {
     // for _1, _2 etc. below
     using namespace std::placeholders;
@@ -38,11 +39,11 @@ PlannerNode::PlannerNode()
         std::bind(&PlannerNode::handle_accepted, this, _1));
 
     // set up PlannerForRobot objects
-    robots_planners_.reserve(kNumShells);
+    robot_planners_.reserve(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
         auto planner =
-            std::make_shared<PlannerForRobot>(i, this, &robot_trajectories_, &shared_state_);
-        robots_planners_.emplace_back(std::move(planner));
+            std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_, global_state_);
+        robot_planners_.emplace_back(std::move(planner));
     }
 }
 
@@ -94,7 +95,8 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
     // get correct PlannerForRobot object for this robot_id
     int robot_id = goal->robot_intent.robot_id;
-    std::shared_ptr<PlannerForRobot> my_robot_planner = robots_planners_[robot_id];
+    // reference to unique_ptr to avoid transferring ownership
+    PlannerForRobot& my_robot_planner = *robot_planners_[robot_id];
 
     auto& robot_task = server_task_states_.at(robot_id);
 
@@ -116,13 +118,13 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         }
 
         // pub Trajectory based on the RobotIntent
-        my_robot_planner->execute_intent(rj_convert::convert_from_ros(goal->robot_intent));
+        my_robot_planner.execute_intent(rj_convert::convert_from_ros(goal->robot_intent));
 
         /*
         // TODO (PR #1970): fix TrajectoryCollection
         // send feedback
         std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-        if (auto time_left = my_robot_planner->get_time_left()) {
+        if (auto time_left = my_robot_planner.get_time_left()) {
             feedback->time_left = rj_convert::convert_to_ros(time_left.value());
             goal_handle->publish_feedback(feedback);
         }
@@ -130,7 +132,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory
-        if (my_robot_planner->is_done()) {
+        if (my_robot_planner.is_done()) {
             if (rclcpp::ok()) {
                 result->is_done = true;
                 goal_handle->succeed(result);
@@ -144,36 +146,36 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                  TrajectoryCollection* robot_trajectories,
-                                 SharedStateInfo* shared_state)
+                                 const GlobalState& global_state)
     : node_{node},
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
-      shared_state_{shared_state},
+      global_state_{global_state},
       debug_draw_{
-          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawPub, 10),
+          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
           fmt::format("planning_{}", robot_id)} {
-    planners_.push_back(std::make_shared<GoalieIdlePlanner>());
-    planners_.push_back(std::make_shared<InterceptPlanner>());
-    planners_.push_back(std::make_shared<PathTargetPlanner>());
-    planners_.push_back(std::make_shared<SettlePlanner>());
-    planners_.push_back(std::make_shared<CollectPlanner>());
-    planners_.push_back(std::make_shared<LineKickPlanner>());
-    planners_.push_back(std::make_shared<PivotPathPlanner>());
-
-    // The empty planner should always be last.
-    planners_.push_back(std::make_shared<EscapeObstaclesPathPlanner>());
+    // create map of {planner name -> planner}
+    path_planners_[GoalieIdlePathPlanner().name()] = std::make_unique<GoalieIdlePathPlanner>();
+    path_planners_[InterceptPathPlanner().name()] = std::make_unique<InterceptPathPlanner>();
+    path_planners_[PathTargetPathPlanner().name()] = std::make_unique<PathTargetPathPlanner>();
+    path_planners_[SettlePathPlanner().name()] = std::make_unique<SettlePathPlanner>();
+    path_planners_[CollectPathPlanner().name()] = std::make_unique<CollectPathPlanner>();
+    path_planners_[LineKickPathPlanner().name()] = std::make_unique<LineKickPathPlanner>();
+    path_planners_[PivotPathPlanner().name()] = std::make_unique<PivotPathPlanner>();
+    path_planners_[EscapeObstaclesPathPlanner().name()] =
+        std::make_unique<EscapeObstaclesPathPlanner>();
 
     // publish paths to control
-    trajectory_pub_ = node_->create_publisher<Trajectory::Msg>(
-        planning::topics::trajectory_pub(robot_id), rclcpp::QoS(1).transient_local());
+    trajectory_topic_ = node_->create_publisher<Trajectory::Msg>(
+        planning::topics::trajectory_topic(robot_id), rclcpp::QoS(1).transient_local());
 
     // publish kicker/dribbler cmds directly to radio
     manipulator_pub_ = node->create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
-        control::topics::manipulator_setpoint_pub(robot_id), rclcpp::QoS(10));
+        control::topics::manipulator_setpoint_topic(robot_id), rclcpp::QoS(10));
 
     // for ball sense and possession
     robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
-        radio::topics::robot_status_pub(robot_id), rclcpp::QoS(1),
+        radio::topics::robot_status_topic(robot_id), rclcpp::QoS(1),
         [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
             had_break_beam_ = status->has_ball_sense;
         });
@@ -191,8 +193,9 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
     if (robot_alive()) {
         // plan a path and send it to control
         auto plan_request = make_request(intent);
-        auto trajectory = plan_for_robot(plan_request);
-        trajectory_pub_->publish(rj_convert::convert_to_ros(trajectory));
+
+        auto trajectory = safe_plan_for_robot(plan_request);
+        trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
         // send the kick/dribble commands to the radio
         manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
@@ -213,11 +216,11 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
 void PlannerForRobot::plan_hypothetical_robot_path(
     const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
     std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
-    const auto intent = rj_convert::convert_from_ros(request->intent);
-    auto plan_request = make_request(intent);
-    auto trajectory = plan_for_robot(plan_request);
-    RJ::Seconds trajectory_duration = trajectory.duration();
-    response->estimate = rj_convert::convert_to_ros(trajectory_duration);
+    /* const auto intent = rj_convert::convert_from_ros(request->intent); */
+    /* auto plan_request = make_request(intent); */
+    /* auto trajectory = safe_plan_for_robot(plan_request); */
+    /* RJ::Seconds trajectory_duration = trajectory.duration(); */
+    /* response->estimate = rj_convert::convert_to_ros(trajectory_duration); */
 }
 
 std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
@@ -237,19 +240,22 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
-    const auto* world_state = shared_state_->world_state();
-    const auto global_obstacles = shared_state_->global_obstacles();
-    const auto def_area_obstacles = shared_state_->def_area_obstacles();
-    const auto goalie_id = shared_state_->goalie_id();
-    const auto play_state = shared_state_->play_state();
-    const bool is_goalie = goalie_id == robot_id_;
-    const auto min_dist_from_ball = shared_state_->coach_state().global_override.min_dist_from_ball;
-    const auto max_robot_speed = shared_state_->coach_state().global_override.max_speed;
+    // pass global_state_ directly
+    const auto* world_state = global_state_.world_state();
+    const auto goalie_id = global_state_.goalie_id();
+    const auto play_state = global_state_.play_state();
+    const auto min_dist_from_ball = global_state_.coach_state().global_override.min_dist_from_ball;
+    const auto max_robot_speed = global_state_.coach_state().global_override.max_speed;
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
+
+    const auto global_obstacles = global_state_.global_obstacles();
     rj_geometry::ShapeSet real_obstacles = global_obstacles;
+
+    const auto def_area_obstacles = global_state_.def_area_obstacles();
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
+    const bool is_goalie = goalie_id == robot_id_;
     if (!is_goalie) {
         virtual_obstacles.add(def_area_obstacles);
     }
@@ -281,11 +287,11 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // generation)
     if (max_robot_speed == 0.0f) {
         // If coach node has speed set to 0,
-        // choose not to move by replacing the MotionCommand with an empty one.
-        motion_command = EmptyMotionCommand{};
+        // force HALT by replacing the MotionCommand with an empty one.
+        motion_command = MotionCommand{};
     } else if (max_robot_speed < 0.0f) {
         // If coach node has speed set to negative, assume infinity.
-        // Negative numbers cause crashes, but 10 is an effectively infinite limit.
+        // Negative numbers cause crashes, but 10 m/s is an effectively infinite limit.
         motion_command = intent.motion_command;
         constraints.mot.max_speed = 10.0f;
     } else {
@@ -307,72 +313,84 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        min_dist_from_ball};
 }
 
-Trajectory PlannerForRobot::plan_for_robot(const planning::PlanRequest& request) {
-    // Try each planner in sequence until we find one that is applicable.
-    // This gives the planners a sort of "priority" - this makes sense, because
-    // the empty planner is always last.
-    Trajectory trajectory;
-    for (auto& planner : planners_) {
-        // If this planner could possibly plan for this command, try to make
-        // a plan.
-        if (trajectory.empty() && planner->is_applicable(request.motion_command)) {
-            current_planner_ = planner;
-            trajectory = planner->plan(request);
-        }
-
-        // If it fails, or if the planner was not used, the trajectory will
-        // still be empty. Reset the planner.
-        if (trajectory.empty()) {
-            current_planner_ = nullptr;
-            planner->reset();
-        } else {
-            if (!trajectory.angles_valid()) {
-                throw std::runtime_error("Trajectory returned from " + planner->name() +
-                                         " has no angle profile!");
-            }
-
-            if (!trajectory.time_created().has_value()) {
-                throw std::runtime_error("Trajectory returned from " + planner->name() +
-                                         " has no timestamp!");
-            }
-        }
+Trajectory PlannerForRobot::unsafe_plan_for_robot(const planning::PlanRequest& request) {
+    if (path_planners_.count(request.motion_command.name) == 0) {
+        throw std::runtime_error(fmt::format("ID {}: MotionCommand name <{}> does not exist!",
+                                             robot_id_, request.motion_command.name));
     }
+
+    // get Trajectory from the planner requested in MotionCommand
+    current_path_planner_ = path_planners_[request.motion_command.name].get();
+    Trajectory trajectory = current_path_planner_->plan(request);
 
     if (trajectory.empty()) {
-        SPDLOG_ERROR("No valid planner! Did you forget to specify a default planner?");
-        trajectory = Trajectory{{request.start}};
-        trajectory.set_debug_text("Error: No Valid Planners");
-    } else {
-        // draw robot's desired path
-        std::vector<rj_geometry::Point> path;
-        std::transform(trajectory.instants().begin(), trajectory.instants().end(),
-                       std::back_inserter(path),
-                       [](const auto& instant) { return instant.position(); });
-        debug_draw_.draw_path(path);
-
-        // draw robot's desired endpoint
-        debug_draw_.draw_circle(rj_geometry::Circle(path.back(), kRobotRadius), Qt::black);
+        // empty Trajectory means current_path_planner_ has failed
+        // if current_path_planner_ fails, reset it before throwing exception
+        current_path_planner_->reset();
+        throw std::runtime_error(fmt::format("PathPlanner <{}> failed to create valid Trajectory!",
+                                             current_path_planner_->name()));
     }
-    debug_draw_.draw_shapes(shared_state_->global_obstacles(), QColor(255, 0, 0, 30));
-    debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
 
+    if (!trajectory.angles_valid()) {
+        throw std::runtime_error(fmt::format("Trajectory returned from <{}> has no angle profile!",
+                                             current_path_planner_->name()));
+    }
+
+    if (!trajectory.time_created().has_value()) {
+        throw std::runtime_error(fmt::format("Trajectory returned from <{}> has no timestamp!",
+                                             current_path_planner_->name()));
+    }
+
+    return trajectory;
+}
+
+Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& request) {
+    Trajectory trajectory;
+    try {
+        trajectory = unsafe_plan_for_robot(request);
+    } catch (std::runtime_error exception) {
+        SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
+        SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
+
+        current_path_planner_ = default_path_planner_.get();
+        trajectory = current_path_planner_->plan(request);
+        // TODO(Kevin): planning should be able to send empty Trajectory
+        // without crashing, instead of resorting to default planner
+        // (currently the ros_convert throws "cannot serialize trajectory with
+        // invalid angles")
+    }
+
+    // draw robot's desired path
+    std::vector<rj_geometry::Point> path;
+    std::transform(trajectory.instants().begin(), trajectory.instants().end(),
+                   std::back_inserter(path),
+                   [](const auto& instant) { return instant.position(); });
+    debug_draw_.draw_path(path);
+
+    // draw robot's desired endpoint
+    debug_draw_.draw_circle(rj_geometry::Circle(path.back(), kRobotRadius), Qt::black);
+
+    // draw obstacles for this robot
+    // TODO: these will stack atop each other, since each robot draws obstacles
+    debug_draw_.draw_shapes(global_state_.global_obstacles(), QColor(255, 0, 0, 30));
+    debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
     debug_draw_.publish();
 
     return trajectory;
 }
 
 bool PlannerForRobot::robot_alive() const {
-    return shared_state_->world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < shared_state_->world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+    return global_state_.world_state()->our_robots.at(robot_id_).visible &&
+           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
 }
 
 bool PlannerForRobot::is_done() const {
     // no segfaults
-    if (current_planner_ == nullptr) {
+    if (current_path_planner_ == nullptr) {
         return false;
     }
 
-    return current_planner_->is_done();
+    return current_path_planner_->is_done();
 }
 
 }  // namespace planning

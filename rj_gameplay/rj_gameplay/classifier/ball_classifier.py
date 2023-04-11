@@ -23,9 +23,9 @@ class BallClassifier(fsm.StateMachine):
         self.robot: rc.Robot = (
             None  # represents the robot which currently has possesion
         )
-        self.prev_possesions: List[
-            rc.Robot
-        ] = None  # represents the previous robots which had the ball in this possesion of the ball
+        self.prev_possesions: List[rc.Robot] = (
+            None  # represents the previous robots which had the ball in this possesion of the ball
+        )
 
         self.add_transition(
             BallClassifier.State.no_possession,

@@ -1,5 +1,7 @@
 #include "agent_action_client.hpp"
 
+#include "rj_constants/topic_names.hpp"
+
 namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
@@ -20,12 +22,16 @@ AgentActionClient::AgentActionClient(int r_id)
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
-        "vision_filter/world_state", 1,
+        ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     coach_state_sub_ = create_subscription<rj_msgs::msg::CoachState>(
-        "strategy/coach_state", 1,
+        topics::kCoachStateTopic, 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
+
+    field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
+        "config/field_dimensions", 1,
+        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
@@ -41,7 +47,7 @@ AgentActionClient::AgentActionClient(int r_id)
     }
 
     positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
-        "strategy/positions", 1,
+        topics::kPositionsTopic, 1,
         [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { update_position(msg); });
 
     // TODO(Kevin): make ROS param for this
@@ -79,7 +85,17 @@ void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::Sha
     current_position_->update_coach_state(*msg);
 }
 
+void AgentActionClient::field_dimensions_callback(
+    const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    if (current_position_ == nullptr) {
+        return;
+    }
+
+    current_position_->update_field_dimensions(rj_convert::convert_from_ros(*msg));
+}
+
 void AgentActionClient::get_task() {
+    // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -104,10 +120,6 @@ void AgentActionClient::get_task() {
 }
 
 void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-    // TODO remove this debug
-    /* for (int i = 0; i < 6; i++) { */
-    /*     SPDLOG_INFO("position at {}: {}", i, msg->client_positions.at(i)); */
-    /* } */
     std::unique_ptr<Position> next_position_;
     switch (msg->client_positions[robot_id_]) {
         case 0:
@@ -151,6 +163,17 @@ void AgentActionClient::send_new_goal() {
 
 void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
+    // Initialize default positions (if not already initialized)
+    if (current_position_ == nullptr) {
+        if (robot_id_ == 0) {
+            current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 1) {
+            current_position_ = std::make_unique<Defense>(robot_id_);
+        } else {
+            current_position_ = std::make_unique<Offense>(robot_id_);
+        }
+    }
+
     auto goal_handle = future.get();
     if (!goal_handle) {
         current_position_->set_goal_canceled();
@@ -159,11 +182,33 @@ void AgentActionClient::goal_response_callback(
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
+    // Initialize default positions (if not already initialized)
+    if (current_position_ == nullptr) {
+        if (robot_id_ == 0) {
+            current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 1) {
+            current_position_ = std::make_unique<Defense>(robot_id_);
+        } else {
+            current_position_ = std::make_unique<Offense>(robot_id_);
+        }
+    }
+
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
     current_position_->set_time_left(time_left);
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
+    // Initialize default positions (if not already initialized)
+    if (current_position_ == nullptr) {
+        if (robot_id_ == 0) {
+            current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 1) {
+            current_position_ = std::make_unique<Defense>(robot_id_);
+        } else {
+            current_position_ = std::make_unique<Offense>(robot_id_);
+        }
+    }
+
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
@@ -179,6 +224,7 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
 }
 
 void AgentActionClient::get_communication() {
+    // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -189,8 +235,12 @@ void AgentActionClient::get_communication() {
         }
     }
 
-    communication::PosAgentRequestWrapper communication_request =
-        current_position_->send_communication_request();
+    auto optional_communication_request = current_position_->send_communication_request();
+    if (!optional_communication_request.has_value()) {
+        return;
+    }
+
+    auto communication_request = optional_communication_request.value();
 
     bool robots_visible = false;
     for (u_int8_t i = 0; i < kNumShells; i++) {
@@ -200,7 +250,8 @@ void AgentActionClient::get_communication() {
         }
     }
 
-    if (!(communication_request.request == last_communication_) && robots_visible) {
+    if (robots_visible) {
+        // SPDLOG_INFO("\033[92mSENDING REQUEST\033[0m");
         // update the last communication
         last_communication_ = communication_request.request;
         // create a buffer to hold the responses and the outgoing request
@@ -246,7 +297,6 @@ void AgentActionClient::get_communication() {
 void AgentActionClient::receive_communication_callback(
     const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
     const std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
-    // TODO (https://app.clickup.com/t/867796fh2): change this default to defense? or NOP?
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
@@ -277,18 +327,6 @@ void AgentActionClient::receive_communication_callback(
 void AgentActionClient::receive_response_callback(
     const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
     u_int8_t robot_id) {
-    // TODO (https://app.clickup.com/t/867796fh2): change this default to defense? or NOP?
-    if (current_position_ == nullptr) {
-        // TODO (https://app.clickup.com/t/867796fh2): change this once coach node merged
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
-
     // Convert response from other agent to c++
     communication::AgentResponse agent_response =
         rj_convert::convert_from_ros(response.get()->agent_response);
@@ -333,18 +371,19 @@ void AgentActionClient::receive_response_callback(
 }
 
 void AgentActionClient::check_communication_timeout() {
+    // Initialize default positions (if not already initialized)
+    if (current_position_ == nullptr) {
+        if (robot_id_ == 0) {
+            current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 1) {
+            current_position_ = std::make_unique<Defense>(robot_id_);
+        } else {
+            current_position_ = std::make_unique<Offense>(robot_id_);
+        }
+    }
+
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {
-            if (current_position_ == nullptr) {
-                if (robot_id_ == 0) {
-                    current_position_ = std::make_unique<Goalie>(robot_id_);
-                } else if (robot_id_ == 1) {
-                    current_position_ = std::make_unique<Defense>(robot_id_);
-                } else {
-                    current_position_ = std::make_unique<Offense>(robot_id_);
-                }
-            }
-
             current_position_->receive_communication_response(buffered_responses_[i]);
             buffered_responses_.erase(buffered_responses_.begin() + i);
         }

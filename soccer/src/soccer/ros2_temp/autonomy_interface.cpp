@@ -17,14 +17,14 @@ AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executo
     status_subs_.reserve(kNumShells);
     for (int i = 0; i < kNumShells; i++) {
         status_subs_.emplace_back(node_->create_subscription<rj_msgs::msg::RobotStatus>(
-            radio::topics::robot_status_pub(i), rclcpp::QoS(1),
+            radio::topics::robot_status_topic(i), rclcpp::QoS(1),
             [this, i](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
                 ConvertRx::ros_to_status(*status, &context_->robot_status.at(i));
             }));
     }
 
     gameplay_debug_text_sub_ = node_->create_subscription<std_msgs::msg::String>(
-        gameplay::topics::kDebugTextPub, 1, [this](std_msgs::msg::String::SharedPtr message) {
+        gameplay::topics::kDebugTextTopic, 1, [this](std_msgs::msg::String::SharedPtr message) {
             context_->behavior_tree = message->data;
         });
 }

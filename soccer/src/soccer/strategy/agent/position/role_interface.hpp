@@ -5,7 +5,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/empty_motion_command.hpp>
 
 #include "planning/instant.hpp"
 #include "position.hpp"
@@ -41,8 +40,8 @@ public:
      * @param [RobotIntent intent] [RobotIntent of the Robot]
      * @return [RobotIntent with next target point for the robot]
      */
-    virtual std::optional<RobotIntent> get_task(RobotIntent intent,
-                                                const WorldState* world_state) = 0;
+    virtual std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* world_state,
+                                                FieldDimensions field_dimensions) = 0;
 
 private:
 };

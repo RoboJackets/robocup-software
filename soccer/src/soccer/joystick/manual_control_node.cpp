@@ -50,9 +50,9 @@ ManualControlNode::ManualControlNode()
 
     for (unsigned int i = 0; i < kNumShells; i++) {
         motion_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::MotionSetpoint>(
-            control::topics::motion_setpoint_pub(i), 10));
+            control::topics::motion_setpoint_topic(i), 10));
         manipulator_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
-            control::topics::manipulator_setpoint_pub(i), 10));
+            control::topics::manipulator_setpoint_topic(i), 10));
     }
 
     timer_ = create_wall_timer(std::chrono::microseconds(1'000'000 / 60), [this]() {
