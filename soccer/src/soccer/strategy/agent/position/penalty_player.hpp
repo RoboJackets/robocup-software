@@ -11,6 +11,9 @@
 
 namespace strategy {
 
+/**
+ * This position stays 0.15 meters behind the ball at all times.
+ */
 class PenaltyPlayer : public Position {
 public:
     PenaltyPlayer(int r_id);

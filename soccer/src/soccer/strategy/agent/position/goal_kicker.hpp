@@ -11,6 +11,9 @@
 
 namespace strategy {
 
+/**
+ * This position constantly attempts to kick the ball into the goal.
+ */
 class GoalKicker : public Position {
 public:
     GoalKicker(int r_id);
