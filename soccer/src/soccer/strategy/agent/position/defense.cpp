@@ -103,8 +103,6 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == WALLING) {
         if (walling_robots_.size() > 0) {
-            // SPDLOG_INFO("\033[92mRobot {} is walling as waller {} out of {}\033[0m", robot_id_,
-            // waller_id_, walling_robots_.size());
             Waller waller{waller_id_, (int)walling_robots_.size()};
             return waller.get_task(intent, world_state(), this->field_dimensions_);
         }
@@ -197,15 +195,13 @@ communication::JoinWallResponse Defense::handle_join_wall_request(
             walling_robots_.insert(walling_robots_.begin() + i, join_request.robot_id);
             // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_request.robot_id, i, robot_id_);
-            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
-                         walling_robots_.begin();
+            waller_id_ = get_waller_id();
             // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id_,
             // robot_id_);
             break;
         } else if (i == walling_robots_.size() - 1) {
             walling_robots_.push_back(join_request.robot_id);
-            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
-                         walling_robots_.begin();
+            waller_id_ = get_waller_id();
             // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_request.robot_id, i+1, robot_id_);
         }
@@ -223,8 +219,7 @@ communication::Acknowledge Defense::handle_leave_wall_request(
     for (int i = walling_robots_.size() - 1; i > 0; i--) {
         if (walling_robots_[i] == leave_request.robot_id) {
             walling_robots_.erase(walling_robots_.begin() + i);
-            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
-                         walling_robots_.begin();
+            waller_id_ = get_waller_id();
             break;
         } else if (walling_robots_[i] > leave_request.robot_id) {
             break;
@@ -245,15 +240,13 @@ void Defense::handle_join_wall_response(communication::JoinWallResponse join_res
             walling_robots_.insert(walling_robots_.begin() + i, join_response.robot_id);
             // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_response.robot_id, i, robot_id_);
-            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
-                         walling_robots_.begin();
+            waller_id_ = get_waller_id();
             // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id_,
             // robot_id_);
             return;
         } else if (i == walling_robots_.size() - 1) {
             walling_robots_.push_back(join_response.robot_id);
-            waller_id_ = find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
-                         walling_robots_.begin();
+            waller_id_ = get_waller_id();
             // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
             // {}\033[0m", join_response.robot_id, i+1, robot_id_);
         }
@@ -267,6 +260,10 @@ void Defense::derived_pass_ball() { current_state_ = PASSING; }
 void Defense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
     chasing_ball = false;
+}
+
+int Defense::get_waller_id() {
+    return find(walling_robots_.begin(), walling_robots_.end(), robot_id_) - walling_robots_.begin() + 1;
 }
 
 }  // namespace strategy

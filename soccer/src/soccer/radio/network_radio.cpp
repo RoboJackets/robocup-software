@@ -10,6 +10,8 @@
 #include "packet_convert.hpp"
 #include "rj_geometry/util.hpp"
 
+#include <rj_msgs/msg/alive_robots.hpp>
+
 using namespace boost::asio;
 using ip::udp;
 
@@ -30,6 +32,11 @@ NetworkRadio::NetworkRadio() : socket_(io_service_), recv_buffer_{}, send_buffer
     socket_.bind(udp::endpoint(udp::v4(), param_server_port_));
 
     start_receive();
+
+    alive_robots_pub_ = this->create_publisher<rj_msgs::msg::AliveRobots>(
+        "strategy/alive_robots", rclcpp::QoS(1));
+
+    alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(16), [this]() { publish_alive_robots(); });
 }
 
 void NetworkRadio::start_receive() {
@@ -135,5 +142,19 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
 }
 
 void NetworkRadio::switch_team(bool /*blue_team*/) {}
+
+void NetworkRadio::publish_alive_robots() {
+    // copy the values from robot_ip_map_ into a vector
+    std::vector<u_int8_t> alive_robots;
+    alive_robots.reserve(robot_ip_map_.size());
+    std::transform(robot_ip_map_.begin(), robot_ip_map_.end(), back_inserter(alive_robots), [] (std::pair<boost::asio::ip::udp::endpoint, int> const & pair) {
+        return (u_int8_t) pair.second;
+    });
+
+    // publish a message containing the alive robots
+    rj_msgs::msg::AliveRobots alive_message{};
+    alive_message.alive_robots = alive_robots;
+    alive_robots_pub_->publish(alive_message);
+}
 
 }  // namespace radio

@@ -11,6 +11,7 @@
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -70,6 +71,7 @@ public:
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
     void update_field_dimensions(FieldDimensions field_dimensions);
+    void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
 
     /**
@@ -156,7 +158,7 @@ public:
      * @brief method called in acknowledge_pass that updates the position to its next state
      *
      */
-    virtual void derived_acknowledge_pass() = 0;
+    virtual void derived_acknowledge_pass() { };
 
     /**
      * @brief update the robot state to be passing the ball
@@ -170,7 +172,7 @@ public:
      * state.
      *
      */
-    virtual void derived_pass_ball() = 0;
+    virtual void derived_pass_ball() { };
 
     /**
      * @brief the ball is on the way, so the robot should change its state accordingly
@@ -187,7 +189,7 @@ public:
      * corresponding next state
      *
      */
-    virtual void derived_acknowledge_ball_in_transit() = 0;
+    virtual void derived_acknowledge_ball_in_transit() { };
 
 protected:
     // should be overriden in subclass constructors
@@ -262,6 +264,9 @@ protected:
 
     // farthest distance the robot is willing to go before it declares it has lost the ball
     static constexpr double ball_lost_distance_ = 0.5;
+
+    // vector of alive robots from the agent action client
+    std::vector<u_int8_t> alive_robots_ = {};
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived

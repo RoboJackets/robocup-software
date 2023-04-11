@@ -257,7 +257,7 @@ struct AgentPosRequestWrapper {
  */
 struct AgentPosResponseWrapper {
     AgentRequest associated_request;
-    std::vector<u_int8_t> from_robot_ids;
+    std::vector<u_int8_t> to_robot_ids;
     std::vector<u_int8_t> received_robot_ids;
     bool broadcast;
     bool urgent;

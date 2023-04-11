@@ -106,6 +106,7 @@ private:
     int waller_id_ = -1;
 
     // current state of the defense agent (state machine)
+    int get_waller_id();
     State current_state_ = JOINING_WALL;
 
     double BALL_RECEIVE_DISTANCE = 0.1;
