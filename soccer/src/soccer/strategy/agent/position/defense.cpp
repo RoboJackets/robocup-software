@@ -20,7 +20,7 @@ Defense::State Defense::update_state() {
 
     if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
         send_leave_wall_request();
-        walling_robots_ = {(u_int8_t) robot_id_};
+        walling_robots_ = {(u_int8_t)robot_id_};
         waller_id_ = -1;
     }
 
@@ -263,7 +263,8 @@ void Defense::derived_acknowledge_ball_in_transit() {
 }
 
 int Defense::get_waller_id() {
-    return find(walling_robots_.begin(), walling_robots_.end(), robot_id_) - walling_robots_.begin() + 1;
+    return find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
+           walling_robots_.begin() + 1;
 }
 
 }  // namespace strategy

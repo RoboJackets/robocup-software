@@ -7,14 +7,13 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/config.hpp>
 
+#include <rj_msgs/msg/alive_robots.hpp>
 #include <robot_intent.hpp>
 
 #include "radio.hpp"
 #include "strategy/coach/coach_node.hpp"
 
 #include "rc-fshare/rtp.hpp"
-
-#include <rj_msgs/msg/alive_robots.hpp>
 
 namespace radio {
 
@@ -67,7 +66,7 @@ protected:
 
     /**
      * @brief Publish a vector of alive robots to the "strategy/alive_robots" endpoint
-     * 
+     *
      */
     void publish_alive_robots();
 };
