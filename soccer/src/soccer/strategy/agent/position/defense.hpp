@@ -53,7 +53,6 @@ private:
         IDLING,        // simply staying in place
         JOINING_WALL,  // send message to find its place in the wall
         WALLING,       // participating in the wall
-        LEAVING_WALL,  // send message to leave the wall
         SEARCHING,     // moving around on the field to do something
         RECEIVING,     // physically intercepting the ball from a pass
         PASSING,       // physically kicking the ball towards another robot
