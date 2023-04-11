@@ -28,4 +28,10 @@ std::optional<RobotIntent> GoalKicker::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
+void GoalKicker::derived_acknowledge_pass() {}
+
+void GoalKicker::derived_pass_ball() {}
+
+void GoalKicker::derived_acknowledge_ball_in_transit() {}
+
 }  // namespace strategy

@@ -31,4 +31,10 @@ std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
+void PenaltyPlayer::derived_acknowledge_pass() {}
+
+void PenaltyPlayer::derived_pass_ball() {}
+
+void PenaltyPlayer::derived_acknowledge_ball_in_transit() {}
+
 }  // namespace strategy

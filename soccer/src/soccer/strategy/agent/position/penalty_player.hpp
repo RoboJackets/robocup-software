@@ -16,6 +16,19 @@ public:
     PenaltyPlayer(int r_id);
     ~PenaltyPlayer() = default;
 
+    /**
+     * @brief Does nothing; this position is a special case
+     */
+    void derived_acknowledge_pass() override;
+    /**
+     * @brief Does nothing; this position is a special case
+     */
+    void derived_pass_ball() override;
+    /**
+     * @brief Does nothing; this position is a special case
+     */
+    void derived_acknowledge_ball_in_transit() override;
+
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
