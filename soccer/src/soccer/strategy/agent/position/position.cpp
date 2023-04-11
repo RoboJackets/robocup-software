@@ -49,9 +49,6 @@ void Position::update_world_state(WorldState world_state) {
 }
 
 void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
-    match_state_ = msg.play_state.state;
-    match_restart_ = msg.play_state.restart;
-    our_restart_ = msg.play_state.our_restart;
     our_possession_ = msg.our_possession;
     // TODO: how is planner supposed to get this global override info?
     global_override_ = msg.global_override;
