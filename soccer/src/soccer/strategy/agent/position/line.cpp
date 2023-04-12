@@ -26,7 +26,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
         double y = field_dimensions_.our_left_goal_post_coordinate().y();
         double x = field_dimensions_.our_left_corner().x();
         // double x = field_dimensions_.our_right_corner().x(); // IF OTHER SIDE
-        finalPos =  (y < fieldLength ? 1 : -1) * fieldLength / (visibleRobots - 1) * r_id_ + y;
+        finalPos = (y < fieldLength ? 1 : -1) * fieldLength / (visibleRobots - 1) * r_id_ + y;
         target_pt = rj_geometry::Point(x, finalPos);
     }
 
