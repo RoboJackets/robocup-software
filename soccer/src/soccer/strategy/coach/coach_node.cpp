@@ -140,16 +140,6 @@ void CoachNode::assign_positions() {
     std::array<uint32_t, kNumShells> positions{};
     positions[goalie_id_] = Positions::Goalie;
 
-    // if (this->match_state_ == PlayState::State::Setup &&
-    //     this->match_restart_ == PlayState::Restart::Penalty && this->our_restart_) {
-    //     PenaltyPlayer player{};
-    //     return player.get_task(intent, this->world_state(), this->field_dimensions_);
-    // } else if (this->match_state_ == PlayState::State::Ready &&
-    //            this->match_restart_ == PlayState::Restart::Penalty && this->our_restart_) {
-    //     PenaltyKicker kicker{};
-    //     return kicker.get_task(intent, this->world_state(), this->field_dimensions_);
-    // }
-
     switch (current_play_state_.restart) {
         case PlayState::Restart::Penalty:
             assign_positions_penalty(positions);
@@ -179,7 +169,7 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
         }
     }
 
-    // If our restart, then we have some more actions. Otherwise, all Line is fine
+    // If our restart, then we need a robot to kick. Otherwise, all Line is fine
     if (current_play_state_.our_restart) {
         switch (current_play_state_.state) {
             case PlayState::State::Setup:
@@ -207,14 +197,15 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
 }
 
 void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& positions) {
-    if (current_play_state_.our_restart) {
-        for (size_t i = 0; i < kNumShells; i++) {
-            if (i != goalie_id_) {
-                // TODO: Update this position to Line
-                positions[i] = Positions::Defense;
-            }
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            // Non-kicking robots play defense
+            positions[i] = Positions::Defense;
         }
+    }
 
+    // If our restart, make one a kicker
+    if (current_play_state_.our_restart) {
         switch (current_play_state_.state) {
             case PlayState::State::Setup:
                 // Lowest non-goalie robot set to Penalty Player
@@ -237,9 +228,40 @@ void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& posit
                 SPDLOG_WARN("Invalid state for kickoff restart");
                 assign_positions_normal(positions);
         }
-    } else {
-        // TODO: What do we do on the other team's kickoff
-        assign_positions_normal(positions);
+    }
+}
+
+void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            // Non-kicking robots play defense
+            positions[i] = Positions::Defense;
+        }
+    }
+
+    // If our restart, make one a kicker
+    if (current_play_state_.our_restart) {
+        switch (current_play_state_.state) {
+            case PlayState::State::Setup:
+                // Lowest non-goalie robot set to Penalty Player
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::PenaltyPlayer;
+                } else {
+                    positions[0] = Positions::PenaltyPlayer;
+                }
+                break;
+            case PlayState::State::Ready:
+                // Lowest non-goalie robot set to Goal Kicker
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::GoalKicker;
+                } else {
+                    positions[0] = Positions::GoalKicker;
+                }
+                break;
+            default:
+                SPDLOG_WARN("Invalid state for free kick restart");
+                assign_positions_normal(positions);
+        }
     }
 }
 

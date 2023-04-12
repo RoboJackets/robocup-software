@@ -119,6 +119,7 @@ private:
     // Helpers for assign_positions
     void assign_positions_penalty(std::array<uint32_t, kNumShells>& positions);
     void assign_positions_kickoff(std::array<uint32_t, kNumShells>& positions);
+    void assign_positions_freekick(std::array<uint32_t, kNumShells>& positions);
     void assign_positions_normal(std::array<uint32_t, kNumShells>& positions);
 
     /*
