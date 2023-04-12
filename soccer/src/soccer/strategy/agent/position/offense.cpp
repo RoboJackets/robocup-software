@@ -89,6 +89,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == SEARCHING) {
         // DEFINE SEARCHING BEHAVIOR
+        auto empty_motion_cmd = planning::MotionCommand{};
+        intent.motion_command = empty_motion_cmd;
+        return intent;
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
@@ -104,7 +107,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == SHOOTING) {
-        SPDLOG_INFO("\033[92mRobot {} is SHOOTING\033[0m", robot_id_);
         // TODO: Shoot the ball at the goal
         rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
         planning::LinearMotionInstant target{their_goal_pos};
@@ -209,6 +211,7 @@ communication::ScorerResponse Offense::receive_scorer_request(communication::Sco
     // Switch scorers if better scorer
     if (scorer && scorer_request.ball_distance < ball_distance) {
         scorer = false;
+        current_state_ = FACING;
     }    
 
     return scorer_response;
