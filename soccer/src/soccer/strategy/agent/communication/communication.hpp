@@ -105,8 +105,6 @@ bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
  */
 struct ScorerRequest {
     u_int32_t request_uid;
-    u_int8_t robot_id;
-    double goal_distance;
 };
 bool operator==(const ScorerRequest& a, const ScorerRequest& b);
 
@@ -185,7 +183,7 @@ bool operator==(const TestResponse& a, const TestResponse& b);
 struct ScorerResponse {
     u_int32_t response_uid;
     u_int8_t robot_id;
-    double goal_distance;
+    double ball_distance;
 };
 bool operator==(const ScorerResponse& a, const ScorerResponse& b);
 
@@ -389,8 +387,6 @@ struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::Scorer
         const strategy::communication::ScorerRequest& from) {
         rj_msgs::msg::ScorerRequest result;
         result.request_uid = from.request_uid;
-        result.robot_id = from.robot_id;
-        result.goal_distance = from.goal_distance;
         return result;
     }
 
@@ -398,8 +394,6 @@ struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::Scorer
         const rj_msgs::msg::ScorerRequest& from) {
         return strategy::communication::ScorerRequest{
             from.request_uid,
-            from.robot_id,
-            from.goal_distance
         };
     }
 };
@@ -539,7 +533,7 @@ struct RosConverter<strategy::communication::ScorerResponse, rj_msgs::msg::Score
         rj_msgs::msg::ScorerResponse result;
         result.response_uid = from.response_uid;
         result.robot_id = from.robot_id;
-        result.goal_distance = from.goal_distance;
+        result.ball_distance = from.ball_distance;
         return result;
     }
 
@@ -547,7 +541,7 @@ struct RosConverter<strategy::communication::ScorerResponse, rj_msgs::msg::Score
         strategy::communication::ScorerResponse result{
             from.response_uid,
             from.robot_id,
-            from.goal_distance
+            from.ball_distance
         };
         return result;
     }

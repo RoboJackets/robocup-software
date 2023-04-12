@@ -1,3 +1,3 @@
 uint32 response_uid
 uint8 robot_id
-float64 goal_distance
+float64 ball_distance

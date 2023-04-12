@@ -25,6 +25,9 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
+    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+    communication::PosAgentResponseWrapper receive_communication_request(communication::AgentPosRequestWrapper request) override;
+
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
@@ -51,6 +54,12 @@ private:
 
     // current state of the offensive agent (state machine)
     State current_state_ = IDLING;
+
+    bool scorer = false;
+
+    void send_scorer_request();
+    communication::ScorerResponse receive_scorer_request(communication::ScorerRequest scorer_request);
+    void handle_scorer_response(std::vector<communication::AgentResponseVariant> scorer_responses);
 };
 
 }  // namespace strategy

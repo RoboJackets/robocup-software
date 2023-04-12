@@ -4,11 +4,13 @@ namespace strategy {
 
 Offense::Offense(int r_id) : Position(r_id) {
     position_name_ = "Offense";
-    if (r_id == 2) {
-        current_state_ = STEALING;
-    } else {
-        current_state_ = FACING;
-    }
+    send_scorer_request();
+    current_state_ = FACING;
+    // if (r_id == 2) {
+    //     current_state_ = STEALING;
+    // } else {
+    //     current_state_ = FACING;
+    // }
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
@@ -148,6 +150,71 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
     // should be impossible to reach, but this is an EmptyMotionCommand
     return std::nullopt;
+}
+
+void Offense::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    Position::receive_communication_response(response);
+
+
+    // Check to see if we are dealing with scorer requests
+    if (const communication::ScorerRequest* scorer_response = std::get_if<communication::ScorerRequest>(&response.associated_request)) {
+        handle_scorer_response(response.responses);
+        return;
+    }
+}
+
+communication::PosAgentResponseWrapper Offense::receive_communication_request(communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response = Position::receive_communication_request(request);
+
+    // If a scorer request was received override the position receive_communication_request return
+    if (const communication::ScorerRequest* scorer_request = std::get_if<communication::ScorerRequest>(&request.request)) {
+        communication::ScorerResponse scorer_response = receive_scorer_request(*scorer_request);
+        comm_response.response = scorer_response;
+    }
+
+    return comm_response;
+}
+
+void Offense::send_scorer_request() {
+    communication::ScorerRequest scorer_request{};
+    communication::generate_uid(scorer_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = scorer_request;
+    communication_request.broadcast = true;
+
+    communication_request_ = communication_request;
+}
+
+communication::ScorerResponse Offense::receive_scorer_request(communication::ScorerRequest scorer_request) {
+    communication::ScorerResponse scorer_response{};
+    communication::generate_uid(scorer_response);
+    scorer_response.robot_id = robot_id_;
+
+    // Calculate distance to ball
+    rj_geometry::Point robot_position = world_state()->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point ball_position = world_state()->ball.position;
+    double ball_distance = robot_position.dist_to(ball_position);
+    scorer_response.ball_distance = ball_distance;
+
+    return scorer_response;
+}
+
+void Offense::handle_scorer_response(std::vector<communication::AgentResponseVariant> responses) {
+    rj_geometry::Point this_robot_position = world_state()->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point ball_position = world_state()->ball.position;
+    double this_ball_distance = this_robot_position.dist_to(ball_position);
+
+    for (communication::AgentResponseVariant response : responses) {
+        if (const communication::ScorerResponse* scorer_response = std::get_if<communication::ScorerResponse>(&response)) {
+            if (scorer_response->ball_distance < this_ball_distance) {
+                return;
+            }
+        }
+    }
+
+    // Make this robot the scorer
+    scorer = true;
 }
 
 void Offense::derived_acknowledge_pass() { current_state_ = FACING; }
