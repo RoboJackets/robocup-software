@@ -61,7 +61,8 @@ Offense::State Offense::update_state() {
             }
             break;
         case STEALING:
-            // The collect planner check_is_done() is wonky so I added a second clause to check distance
+            // The collect planner check_is_done() is wonky so I added a second clause to check
+            // distance
             if (check_is_done() || distance_to_ball < ball_receive_distance_) {
                 // send direct pass request to robot 4
                 if (scorer) {
@@ -161,17 +162,21 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
     Position::receive_communication_response(response);
 
     // Check to see if we are dealing with scorer requests
-    if (const communication::ScorerRequest* scorer_response = std::get_if<communication::ScorerRequest>(&response.associated_request)) {
+    if (const communication::ScorerRequest* scorer_response =
+            std::get_if<communication::ScorerRequest>(&response.associated_request)) {
         handle_scorer_response(response.responses);
         return;
     }
 }
 
-communication::PosAgentResponseWrapper Offense::receive_communication_request(communication::AgentPosRequestWrapper request) {
-    communication::PosAgentResponseWrapper comm_response = Position::receive_communication_request(request);
+communication::PosAgentResponseWrapper Offense::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response =
+        Position::receive_communication_request(request);
 
     // If a scorer request was received override the position receive_communication_request return
-    if (const communication::ScorerRequest* scorer_request = std::get_if<communication::ScorerRequest>(&request.request)) {
+    if (const communication::ScorerRequest* scorer_request =
+            std::get_if<communication::ScorerRequest>(&request.request)) {
         communication::ScorerResponse scorer_response = receive_scorer_request(*scorer_request);
         comm_response.response = scorer_response;
     }
@@ -197,7 +202,8 @@ void Offense::send_scorer_request() {
     communication_request_ = communication_request;
 }
 
-communication::ScorerResponse Offense::receive_scorer_request(communication::ScorerRequest scorer_request) {
+communication::ScorerResponse Offense::receive_scorer_request(
+    communication::ScorerRequest scorer_request) {
     communication::ScorerResponse scorer_response{};
     communication::generate_uid(scorer_response);
     scorer_response.robot_id = robot_id_;
@@ -212,18 +218,20 @@ communication::ScorerResponse Offense::receive_scorer_request(communication::Sco
     if (scorer && scorer_request.ball_distance < ball_distance) {
         scorer = false;
         current_state_ = FACING;
-    }    
+    }
 
     return scorer_response;
 }
 
 void Offense::handle_scorer_response(std::vector<communication::AgentResponseVariant> responses) {
-    rj_geometry::Point this_robot_position = world_state()->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point this_robot_position =
+        world_state()->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = world_state()->ball.position;
     double this_ball_distance = this_robot_position.dist_to(ball_position);
 
     for (communication::AgentResponseVariant response : responses) {
-        if (const communication::ScorerResponse* scorer_response = std::get_if<communication::ScorerResponse>(&response)) {
+        if (const communication::ScorerResponse* scorer_response =
+                std::get_if<communication::ScorerResponse>(&response)) {
             if (scorer_response->ball_distance < this_ball_distance) {
                 return;
             }

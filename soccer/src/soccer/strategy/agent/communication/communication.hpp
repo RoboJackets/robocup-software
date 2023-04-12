@@ -17,10 +17,10 @@
 #include "rj_msgs/msg/pass_response.hpp"
 #include "rj_msgs/msg/position_request.hpp"
 #include "rj_msgs/msg/position_response.hpp"
-#include "rj_msgs/msg/test_request.hpp"
-#include "rj_msgs/msg/test_response.hpp"
 #include "rj_msgs/msg/scorer_request.hpp"
 #include "rj_msgs/msg/scorer_response.hpp"
+#include "rj_msgs/msg/test_request.hpp"
+#include "rj_msgs/msg/test_response.hpp"
 
 namespace strategy::communication {
 
@@ -101,7 +101,7 @@ bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
 /**
  * @brief request sent by an agent to determine whether or not it should be going to steal
  * the ball to then shoot the ball
- * 
+ *
  */
 struct ScorerRequest {
     u_int32_t request_uid;
@@ -180,7 +180,7 @@ bool operator==(const TestResponse& a, const TestResponse& b);
  * @brief response to return to another robot asking to be the scorer (only offensive
  * robots will return this response to let another offensive robot know whether or not
  * they should be the scorer)
- * 
+ *
  */
 struct ScorerResponse {
     u_int32_t response_uid;
@@ -385,8 +385,7 @@ ASSOCIATE_CPP_ROS(strategy::communication::BallInTransitRequest,
 
 template <>
 struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest> {
-    static rj_msgs::msg::ScorerRequest to_ros(
-        const strategy::communication::ScorerRequest& from) {
+    static rj_msgs::msg::ScorerRequest to_ros(const strategy::communication::ScorerRequest& from) {
         rj_msgs::msg::ScorerRequest result;
         result.request_uid = from.request_uid;
         result.robot_id = from.robot_id;
@@ -424,7 +423,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* ball_in_transit_request =
                        std::get_if<strategy::communication::BallInTransitRequest>(&from)) {
             result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
-        } else if (const auto* scorer_request = std::get_if<strategy::communication::ScorerRequest>(&from)) {
+        } else if (const auto* scorer_request =
+                       std::get_if<strategy::communication::ScorerRequest>(&from)) {
             result.scorer_request.emplace_back(convert_to_ros(*scorer_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
@@ -535,7 +535,8 @@ ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_msgs::msg::TestRespo
 
 template <>
 struct RosConverter<strategy::communication::ScorerResponse, rj_msgs::msg::ScorerResponse> {
-    static rj_msgs::msg::ScorerResponse to_ros(const strategy::communication::ScorerResponse& from) {
+    static rj_msgs::msg::ScorerResponse to_ros(
+        const strategy::communication::ScorerResponse& from) {
         rj_msgs::msg::ScorerResponse result;
         result.response_uid = from.response_uid;
         result.robot_id = from.robot_id;
@@ -543,12 +544,10 @@ struct RosConverter<strategy::communication::ScorerResponse, rj_msgs::msg::Score
         return result;
     }
 
-    static strategy::communication::ScorerResponse from_ros(const rj_msgs::msg::ScorerResponse& from) {
-        strategy::communication::ScorerResponse result{
-            from.response_uid,
-            from.robot_id,
-            from.ball_distance
-        };
+    static strategy::communication::ScorerResponse from_ros(
+        const rj_msgs::msg::ScorerResponse& from) {
+        strategy::communication::ScorerResponse result{from.response_uid, from.robot_id,
+                                                       from.ball_distance};
         return result;
     }
 };
@@ -573,7 +572,8 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
         } else if (const auto* pass_response =
                        std::get_if<strategy::communication::PassResponse>(&(from.response))) {
             result.response.pass_response.emplace_back(convert_to_ros(*pass_response));
-        } else if (const auto* scorer_response = std::get_if<strategy::communication::ScorerResponse>(&(from.response))) {
+        } else if (const auto* scorer_response =
+                       std::get_if<strategy::communication::ScorerResponse>(&(from.response))) {
             result.response.scorer_response.emplace_back(convert_to_ros(*scorer_response));
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");

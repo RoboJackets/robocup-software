@@ -26,7 +26,8 @@ public:
     ~Offense() override = default;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
-    communication::PosAgentResponseWrapper receive_communication_request(communication::AgentPosRequestWrapper request) override;
+    communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request) override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
@@ -60,23 +61,24 @@ private:
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
-     * 
+     *
      */
     void send_scorer_request();
 
     /**
      * @brief Finds this robot's distance to the ball and sends it back to the robot who asked if
      * it should be the scorer
-     * 
+     *
      * @param scorer_request request from the prospective scorer robot
      * @return communication::ScorerResponse this robots response to the prospective scorer robot
      */
-    communication::ScorerResponse receive_scorer_request(communication::ScorerRequest scorer_request);
+    communication::ScorerResponse receive_scorer_request(
+        communication::ScorerRequest scorer_request);
 
     /**
      * @brief This agent can go through the distance of every other offensive robot from the goal
      * to decide whether this robot should become the scorer.
-     * 
+     *
      * @param scorer_responses a vector of the distance to the ball for each other offense robot
      */
     void handle_scorer_response(std::vector<communication::AgentResponseVariant> scorer_responses);
