@@ -8,6 +8,7 @@
 
 #include <rj_msgs/action/robot_move.hpp>
 
+#include "marker.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/field_dimensions.hpp"
@@ -59,7 +60,7 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     // current state of the defense agent (state machine)
-    State current_state_ = IDLING;
+    State current_state_ = SEARCHING;
 };
 
 }  // namespace strategy

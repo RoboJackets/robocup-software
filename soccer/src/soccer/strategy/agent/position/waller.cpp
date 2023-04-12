@@ -12,7 +12,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     rj_geometry::Point ball_location{world_state->ball.position};
 
     // Get Goal Location (Always (0,0)) as of creation
-    rj_geometry::Point goal_center_point{0, 0};
+    rj_geometry::Point goal_center_point{field_dimensions.our_goal_loc()};
 
     // Creates Minimum wall radius is slightly greater than  box bounds
     // Dimension accessors should be edited when we figure out how we are doing dimensions realtime
