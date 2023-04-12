@@ -73,6 +73,7 @@ rosidl_generate_interfaces(
   response/PassResponse.msg
   response/PositionResponse.msg
   response/TestResponse.msg
+  response/ScorerResponse.msg
 
   # Services
   srv/AgentCommunication.srv

@@ -20,6 +20,7 @@
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
 #include "rj_msgs/msg/scorer_request.hpp"
+#include "rj_msgs/msg/scorer_response.hpp"
 
 namespace strategy::communication {
 
@@ -176,11 +177,24 @@ struct TestResponse {
 bool operator==(const TestResponse& a, const TestResponse& b);
 
 /**
+ * @brief response to return to another robot asking to be the scorer (only offensive
+ * robots will return this response to let another offensive robot know whether or not
+ * they should be the scorer)
+ * 
+ */
+struct ScorerResponse {
+    u_int32_t response_uid;
+    u_int8_t robot_id;
+    double goal_distance;
+};
+bool operator==(const ScorerResponse& a, const ScorerResponse& b);
+
+/**
  * @brief conglomeration of the different response types.
  *
  */
 using AgentResponseVariant =
-    std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse>;
+    std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse, ScorerResponse>;
 
 /**
  * @brief response message that is sent from the receiver of the request to the
@@ -269,6 +283,7 @@ void generate_uid(Acknowledge& response);
 void generate_uid(PassResponse& response);
 void generate_uid(PositionResponse& response);
 void generate_uid(TestResponse& response);
+void generate_uid(ScorerResponse& response);
 
 }  // namespace strategy::communication
 
@@ -519,6 +534,28 @@ struct RosConverter<strategy::communication::TestResponse, rj_msgs::msg::TestRes
 ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_msgs::msg::TestResponse);
 
 template <>
+struct RosConverter<strategy::communication::ScorerResponse, rj_msgs::msg::ScorerResponse> {
+    static rj_msgs::msg::ScorerResponse to_ros(const strategy::communication::ScorerResponse& from) {
+        rj_msgs::msg::ScorerResponse result;
+        result.response_uid = from.response_uid;
+        result.robot_id = from.robot_id;
+        result.goal_distance = from.goal_distance;
+        return result;
+    }
+
+    static strategy::communication::ScorerResponse from_ros(const rj_msgs::msg::ScorerResponse& from) {
+        strategy::communication::ScorerResponse result{
+            from.response_uid,
+            from.robot_id,
+            from.goal_distance
+        };
+        return result;
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::ScorerResponse, rj_msgs::msg::ScorerResponse);
+
+template <>
 struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {
     static rj_msgs::msg::AgentResponse to_ros(const strategy::communication::AgentResponse& from) {
         rj_msgs::msg::AgentResponse result;
@@ -536,6 +573,8 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
         } else if (const auto* pass_response =
                        std::get_if<strategy::communication::PassResponse>(&(from.response))) {
             result.response.pass_response.emplace_back(convert_to_ros(*pass_response));
+        } else if (const auto* scorer_response = std::get_if<strategy::communication::ScorerResponse>(&(from.response))) {
+            result.response.scorer_response.emplace_back(convert_to_ros(*scorer_response));
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");
         }
@@ -554,6 +593,8 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
             result.response = convert_from_ros(from.response.position_response.front());
         } else if (!from.response.pass_response.empty()) {
             result.response = convert_from_ros(from.response.pass_response.front());
+        } else if (!from.response.scorer_response.empty()) {
+            result.response = convert_from_ros(from.response.scorer_response.front());
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");
         }

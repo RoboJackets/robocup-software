@@ -48,6 +48,10 @@ bool operator==(const TestResponse& a, const TestResponse& b) {
     return a.response_uid == b.response_uid;
 }
 
+bool operator==(const ScorerResponse& a, const ScorerResponse& b) {
+    return a.response_uid == b.response_uid;
+}
+
 bool operator==(const AgentResponse& a, const AgentResponse& b) {
     return (a.associated_request == b.associated_request) && (a.response == b.response);
 }
@@ -116,6 +120,13 @@ void generate_uid(PositionResponse& response) {
 }
 
 void generate_uid(TestResponse& response) {
+    response_uid_mutex.lock();
+    response.response_uid = response_uid;
+    response_uid++;
+    response_uid_mutex.unlock();
+}
+
+void generate_uid(ScorerResponse& response) {
     response_uid_mutex.lock();
     response.response_uid = response_uid;
     response_uid++;
