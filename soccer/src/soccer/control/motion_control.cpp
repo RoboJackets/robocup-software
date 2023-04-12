@@ -17,7 +17,7 @@ using rj_geometry::Twist;
 
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.0,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.4,
                "Maximum velocity limit (motion control) (m/s)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 5.0,
                "Maximum angular velocity limit (motion control) (rad/s)");
