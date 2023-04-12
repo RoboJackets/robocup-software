@@ -20,8 +20,12 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
+            next_state = SEARCHING;
             break;
         case SEARCHING:
+            // if(distance_to_ball < max_receive_distance) {
+            //     next_state = RECEIVING;
+            // }
             break;
         case RECEIVING:
             // transition to idling if we are close enough to the ball
@@ -53,6 +57,8 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
         // DO NOTHING
     } else if (current_state_ == SEARCHING) {
+        Marker marker{0.75};
+        return marker.get_task(intent, world_state(), field_dimensions_);
         // TODO(https://app.clickup.com/t/8677qektb): Define defensive searching behavior
     } else if (current_state_ == RECEIVING) {
         // check how far we are from the ball

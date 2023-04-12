@@ -60,7 +60,7 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     // current state of the defense agent (state machine)
-    State current_state_ = IDLING;
+    State current_state_ = SEARCHING;
 };
 
 }  // namespace strategy
