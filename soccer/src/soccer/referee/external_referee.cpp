@@ -36,11 +36,6 @@ static const int kKickVerifyTimeMs = 250;
 // the ref halts/stops, make this false
 static const bool kCancelBallPlaceOnHalt = true;
 
-// this IP addr should be where the external ref sends messages
-// see PR #1887 for last time this file was used w/ external interface
-// run ifconfig to see list of interfaces on this computer
-DEFINE_STRING(kRefereeParamModule, interface, "127.0.0.1", "The interface for referee operation");
-
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
     this->get_parameter("team_name", param_team_name_);
     SPDLOG_INFO("ExternalReferee team_name: {}", param_team_name_);
@@ -74,7 +69,7 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
     SSL_Referee ref_packet;
     if (!ref_packet.ParseFromArray(recv_buffer_.data(), num_bytes)) {
         SPDLOG_ERROR("Got bad packet of {} bytes from {}", num_bytes, sender_endpoint_);
-        SPDLOG_ERROR("Address: {}", fmt::ptr(&kRefereeAddress));
+        SPDLOG_ERROR("Address: {}", fmt::ptr(&kRefereeSourceAddress));
         return;
     }
 
@@ -117,13 +112,13 @@ void ExternalReferee::setup_referee_multicast() {
     } catch (const boost::system::system_error& e) {
         throw std::runtime_error("Failed to bind to shared referee port");
     }
-    // Join multicast group
+
+    // ExternalReferee will find any packets from kRefereeSourceAddress take
+    // them
+    SPDLOG_INFO("ExternalReferee joining kRefereeSourceAddress: {}", kRefereeSourceAddress);
     const boost::asio::ip::address_v4 multicast_address =
-        boost::asio::ip::address::from_string(kRefereeAddress).to_v4();
-    const boost::asio::ip::address_v4 multicast_interface =
-        boost::asio::ip::address::from_string(PARAM_interface).to_v4();
-    asio_socket_.set_option(
-        boost::asio::ip::multicast::join_group(multicast_address, multicast_interface));
+        boost::asio::ip::address::from_string(kRefereeSourceAddress).to_v4();
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
 }
 
 void ExternalReferee::update() { io_service_.poll(); }
