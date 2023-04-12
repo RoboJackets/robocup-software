@@ -43,14 +43,14 @@ Offense::State Offense::update_state() {
             // stolen)
             if (check_is_done()) {
                 // SPDLOG_INFO("\033[92mRobot {} is finished passing\033[0m", robot_id_);
-                SPDLOG_INFO("\033[92mRobot {} finished pass - is done\033[0m", robot_id_);
+                // SPDLOG_INFO("\033[92mRobot {} finished pass - is done\033[0m", robot_id_);
                 next_state = IDLING;
             }
 
             if (distance_to_ball > ball_lost_distance_) {
                 //     SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
                 //                 robot_id_);
-                SPDLOG_INFO("\033[92mRobot {} finished pass\033[0m", robot_id_);
+                // SPDLOG_INFO("\033[92mRobot {} finished pass\033[0m", robot_id_);
                 next_state = IDLING;
             }
             break;
@@ -84,6 +84,19 @@ Offense::State Offense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
+    }
+
+    // If this robot is the scorer, they can bypass everything and either receive the ball or score
+    if (scorer) {
+        if (current_state_ == STEALING) {
+            if (check_is_done()) {
+                next_state = SHOOTING;
+            }
+        } else if (current_state_ == SHOOTING) {
+            if (check_is_done()) {
+                next_state = STEALING;
+            }
+        }
     }
 
     return next_state;
