@@ -246,7 +246,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto play_state = global_state_.play_state();
     const auto min_dist_from_ball = global_state_.coach_state().global_override.min_dist_from_ball;
     const auto max_robot_speed = global_state_.coach_state().global_override.max_speed;
-    intent.dribbler_speed = global_state_.coach_state().global_override.max_dribbler_speed;
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 

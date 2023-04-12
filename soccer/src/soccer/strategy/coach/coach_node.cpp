@@ -120,6 +120,7 @@ void CoachNode::check_for_play_state_change() {
                 // instead.
                 global_override.max_speed = 10.0;
                 global_override.min_dist_from_ball = 0;
+                global_override.max_dribbler_speed = 255;
                 break;
         }
 
