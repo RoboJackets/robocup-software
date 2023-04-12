@@ -4,8 +4,7 @@ namespace strategy {
 
 Offense::Offense(int r_id) : Position(r_id) {
     position_name_ = "Offense";
-    send_scorer_request();
-    current_state_ = FACING;
+    current_state_ = IDLING;
     // if (r_id == 2) {
     //     current_state_ = STEALING;
     // } else {
@@ -34,6 +33,8 @@ Offense::State Offense::update_state() {
 
     switch (current_state_) {
         case IDLING:
+            send_scorer_request();
+            next_state = SEARCHING;
             break;
         case SEARCHING:
             break;
@@ -155,7 +156,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 void Offense::receive_communication_response(communication::AgentPosResponseWrapper response) {
     Position::receive_communication_response(response);
 
-
     // Check to see if we are dealing with scorer requests
     if (const communication::ScorerRequest* scorer_response = std::get_if<communication::ScorerRequest>(&response.associated_request)) {
         handle_scorer_response(response.responses);
@@ -178,6 +178,13 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(co
 void Offense::send_scorer_request() {
     communication::ScorerRequest scorer_request{};
     communication::generate_uid(scorer_request);
+    scorer_request.robot_id = robot_id_;
+
+    // Calculate distance to ball
+    rj_geometry::Point robot_position = world_state()->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point ball_position = world_state()->ball.position;
+    double ball_distance = robot_position.dist_to(ball_position);
+    scorer_request.ball_distance = ball_distance;
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = scorer_request;
@@ -196,6 +203,11 @@ communication::ScorerResponse Offense::receive_scorer_request(communication::Sco
     rj_geometry::Point ball_position = world_state()->ball.position;
     double ball_distance = robot_position.dist_to(ball_position);
     scorer_response.ball_distance = ball_distance;
+
+    // Switch scorers if better scorer
+    if (scorer && scorer_request.ball_distance < ball_distance) {
+        scorer = false;
+    }    
 
     return scorer_response;
 }
