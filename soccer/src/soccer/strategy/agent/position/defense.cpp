@@ -2,11 +2,48 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
+Defense::Defense(int r_id, int goalie_id) : Position(r_id), goalie_id_(goalie_id) {
+    position_name_ = "Defense";
+}
+
+Defense::Defense(int r_id) : Position(r_id), goalie_id_(0) {
+    position_name_ = "Defense";
+}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
-    current_state_ = update_state();
-    return state_to_task(intent);
+    if (!this->assert_world_state_valid()) {
+        return intent;
+    }
+
+    if (current_role_ == Role::NONE) {
+        // The three lowest-numbered non-goalie robots are wallers.
+        WorldState* world_state = this->world_state();
+
+        std::vector<int> visible_robot_ids{};
+        for (int i = 0; i < world_state->our_robots.size(); ++i) {
+            if (i != goalie_id_ && world_state->our_robots.at(i).visible) {
+                visible_robot_ids.push_back(i);
+            }
+        }
+
+        if (visible_robot_ids.size() > 3 && this->robot_id_ > visible_robot_ids.at(3)) {
+            current_role_ = Role::MARKER;
+        } else {
+            current_role_ = Role::WALLER;
+        }
+    }
+
+    // Role is now guaranteed to be assigned.
+    if (current_role_ == Role::WALLER) {
+        Waller waller{0};
+        return waller.get_task(intent, this->world_state(), field_dimensions_);
+    } else if (current_role_ == Role::MARKER) {
+        Marker marker{0.75};
+        return marker.get_task(intent, this->world_state(), field_dimensions_);
+    }
+
+    // current_state_ = update_state();
+    // return state_to_task(intent);
 }
 
 Defense::State Defense::update_state() {
@@ -95,7 +132,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.kick_speed = 4.0;
         intent.is_active = true;
         return intent;
-    } else if (current_state_ = FACING) {
+    } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             world_state()->get_robot(true, robot_id_).pose.position();
         auto current_location_instant =
