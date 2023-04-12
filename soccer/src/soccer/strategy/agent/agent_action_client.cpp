@@ -34,7 +34,8 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     goalie_sub_ = create_subscription<rj_msgs::msg::Goalie>(
-        topics::kGoalieTopic, 1, [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
+        topics::kGoalieTopic, 1,
+        [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
