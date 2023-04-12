@@ -2,19 +2,19 @@
 
 namespace strategy {
 Marker::Marker(double factor) : factor{factor} {}
-std::optional<RobotIntent> Marker::get_task(RobotIntent intent,
-                                            const WorldState* const world_state, FieldDimensions field_dimensions) {
+std::optional<RobotIntent> Marker::get_task(RobotIntent intent, const WorldState* const world_state,
+                                            FieldDimensions field_dimensions) {
     auto goal_center = field_dimensions.our_goal_loc();  // TODO: replace with field coordinates
 
     int closestId = 0;
     int closestDist = 9999999;
-    //FInds closest enemy to goal
-    for(int i = 0; i < kNumShells; i++) {
+    // FInds closest enemy to goal
+    for (int i = 0; i < kNumShells; i++) {
         RobotState robot = world_state->get_robot(false, i);
-        if(robot.visible) {
-            if((robot.pose.position()-goal_center).mag() < closestDist) {
+        if (robot.visible) {
+            if ((robot.pose.position() - goal_center).mag() < closestDist) {
                 closestId = i;
-                closestDist = (robot.pose.position()-goal_center).mag();
+                closestDist = (robot.pose.position() - goal_center).mag();
             }
         }
     }
@@ -26,9 +26,10 @@ std::optional<RobotIntent> Marker::get_task(RobotIntent intent,
     //     (world_state->ball.position - goal_center) * factor + goal_center,
     //     rj_geometry::Point{0.0, 0.0}};
     planning::LinearMotionInstant goal{
-        (world_state->get_robot(false, closestId).pose.position() - goal_center) * factor + goal_center,
+        (world_state->get_robot(false, closestId).pose.position() - goal_center) * factor +
+            goal_center,
         rj_geometry::Point{0.0, 0.0}};
-    
+
     intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, IGNORE_BALL};
     return intent;
 }
