@@ -5,11 +5,6 @@ namespace strategy {
 Offense::Offense(int r_id) : Position(r_id) {
     position_name_ = "Offense";
     current_state_ = IDLING;
-    // if (r_id == 2) {
-    //     current_state_ = STEALING;
-    // } else {
-    //     current_state_ = FACING;
-    // }
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
@@ -37,28 +32,26 @@ Offense::State Offense::update_state() {
             next_state = SEARCHING;
             break;
         case SEARCHING:
+            if (scorer) {
+                next_state = STEALING;
+            }
             break;
         case PASSING:
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
             if (check_is_done()) {
-                // SPDLOG_INFO("\033[92mRobot {} is finished passing\033[0m", robot_id_);
-                // SPDLOG_INFO("\033[92mRobot {} finished pass - is done\033[0m", robot_id_);
                 next_state = IDLING;
             }
 
             if (distance_to_ball > ball_lost_distance_) {
-                //     SPDLOG_INFO("\033[92mRobot {} is finished pass - ball_lost_distance\033[0m",
-                //                 robot_id_);
-                // SPDLOG_INFO("\033[92mRobot {} finished pass\033[0m", robot_id_);
                 next_state = IDLING;
             }
             break;
         case SHOOTING:
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
-            if (distance_to_ball > ball_lost_distance_) {
-                next_state = IDLING;
+            if (check_is_done()) {
+                next_state = SEARCHING;
             }
             break;
         case RECEIVING:
@@ -68,35 +61,21 @@ Offense::State Offense::update_state() {
             }
             break;
         case STEALING:
-            // transition to idling if we are close enough to the ball
-            if (check_is_done()) {
-                /* SPDLOG_INFO("\033[92m ball pos {}{} \033[0m", ball_position.x(),
-                 * ball_position.y()); */
-
+            // The collect planner check_is_done() is wonky so I added a second clause to check distance
+            if (check_is_done() || distance_to_ball < ball_receive_distance_) {
                 // send direct pass request to robot 4
-                send_direct_pass_request({4});
-
-                // go to IDLING (pass received will go to PASSING)
-                next_state = SEARCHING;
+                if (scorer) {
+                    next_state = SHOOTING;
+                } else {
+                    send_direct_pass_request({4});
+                    next_state = SEARCHING;
+                }
             }
             break;
         case FACING:
             if (check_is_done()) {
                 next_state = IDLING;
             }
-    }
-
-    // If this robot is the scorer, they can bypass everything and either receive the ball or score
-    if (scorer) {
-        if (current_state_ == STEALING) {
-            if (check_is_done()) {
-                next_state = SHOOTING;
-            }
-        } else if (current_state_ == SHOOTING) {
-            if (check_is_done()) {
-                next_state = STEALING;
-            }
-        }
     }
 
     return next_state;
@@ -125,7 +104,17 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == SHOOTING) {
+        SPDLOG_INFO("\033[92mRobot {} is SHOOTING\033[0m", robot_id_);
         // TODO: Shoot the ball at the goal
+        rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+        planning::LinearMotionInstant target{their_goal_pos};
+        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+        intent.motion_command = line_kick_cmd;
+        intent.shoot_mode = RobotIntent::ShootMode::KICK;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 4.0;
+        intent.is_active = true;
+        return intent;
     } else if (current_state_ == RECEIVING) {
         // check how far we are from the ball
         rj_geometry::Point robot_position =
