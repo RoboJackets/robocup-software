@@ -46,6 +46,6 @@ private:
     std::optional<double> cached_angle_change_;
 
     // TODO(Kevin): ros param this
-    double IS_DONE_ANGLE_CHANGE_THRESH = 2.0;
+    double IS_DONE_ANGLE_CHANGE_THRESH = 1.0;
 };
 }  // namespace planning
