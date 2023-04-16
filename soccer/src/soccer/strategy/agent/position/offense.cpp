@@ -109,7 +109,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == SHOOTING) {
-        // TODO: Shoot the ball at the goal
         rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
         planning::LinearMotionInstant target{their_goal_pos};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
@@ -140,9 +139,18 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == STEALING) {
         // intercept the ball
-        auto collect_cmd = planning::MotionCommand{"collect"};
-        intent.motion_command = collect_cmd;
-        return intent;
+        // if ball fast, use settle, otherwise collect
+        if (world_state()->ball.velocity.mag() > 0.75) {
+            auto settle_cmd = planning::MotionCommand{"settle"};
+            intent.motion_command = settle_cmd;
+            intent.dribbler_speed = 255.0;
+            return intent;
+        } else {
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
+            intent.dribbler_speed = 255.0;
+            return intent;
+        }
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             world_state()->get_robot(true, robot_id_).pose.position();
