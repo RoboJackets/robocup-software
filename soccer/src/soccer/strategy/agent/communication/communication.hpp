@@ -17,11 +17,11 @@
 #include "rj_msgs/msg/pass_response.hpp"
 #include "rj_msgs/msg/position_request.hpp"
 #include "rj_msgs/msg/position_response.hpp"
+#include "rj_msgs/msg/reset_scorer_request.hpp"
 #include "rj_msgs/msg/scorer_request.hpp"
 #include "rj_msgs/msg/scorer_response.hpp"
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
-#include "rj_msgs/msg/reset_scorer_request.hpp"
 
 namespace strategy::communication {
 
@@ -113,7 +113,7 @@ bool operator==(const ScorerRequest& a, const ScorerRequest& b);
 
 /**
  * @brief request sent by a scorer after they shoot to avoid double touch penalties.
- * 
+ *
  */
 struct ResetScorerRequest {
     u_int32_t request_uid;
@@ -418,13 +418,15 @@ ASSOCIATE_CPP_ROS(strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRe
 
 template <>
 struct RosConverter<strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest> {
-    static rj_msgs::msg::ResetScorerRequest to_ros(const strategy::communication::ResetScorerRequest& from) {
+    static rj_msgs::msg::ResetScorerRequest to_ros(
+        const strategy::communication::ResetScorerRequest& from) {
         rj_msgs::msg::ResetScorerRequest result;
         result.request_uid = from.request_uid;
         return result;
     }
 
-    static strategy::communication::ResetScorerRequest from_ros(const rj_msgs::msg::ResetScorerRequest& from) {
+    static strategy::communication::ResetScorerRequest from_ros(
+        const rj_msgs::msg::ResetScorerRequest& from) {
         return strategy::communication::ResetScorerRequest{
             from.request_uid,
         };
@@ -454,7 +456,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* scorer_request =
                        std::get_if<strategy::communication::ScorerRequest>(&from)) {
             result.scorer_request.emplace_back(convert_to_ros(*scorer_request));
-        } else if (const auto* reset_scorer_request = std::get_if<strategy::communication::ResetScorerRequest>(&from)) {
+        } else if (const auto* reset_scorer_request =
+                       std::get_if<strategy::communication::ResetScorerRequest>(&from)) {
             result.reset_scorer_request.emplace_back(convert_to_ros(*reset_scorer_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");

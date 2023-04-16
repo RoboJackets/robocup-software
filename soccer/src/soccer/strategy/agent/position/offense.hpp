@@ -58,6 +58,7 @@ private:
     State current_state_ = IDLING;
 
     bool scorer_ = false;
+    bool last_scorer_ = false;
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
@@ -81,7 +82,26 @@ private:
      *
      * @param scorer_responses a vector of the distance to the ball for each other offense robot
      */
-    void handle_scorer_response(const std::vector<communication::AgentResponseVariant>& scorer_responses);
+    void handle_scorer_response(
+        const std::vector<communication::AgentResponseVariant>& scorer_responses);
+
+    /**
+     * @brief Send a request to the other offensive agents to let them know to reset who is the
+     * scorer.
+     *
+     */
+    void send_reset_scorer_request();
+
+    /**
+     * @brief When the scorer is being reset all offense robots should send a scorer requests
+     * and reset their last_scorer_ flag.
+     *
+     * @param reset_scorer_request the reset scorer request
+     * @return communication::Acknowledge acknowledgement that this robot will reset their scorer
+     * status
+     */
+    communication::Acknowledge receive_reset_scorer_request(
+        communication::ResetScorerRequest reset_scorer_request);
 };
 
 }  // namespace strategy
