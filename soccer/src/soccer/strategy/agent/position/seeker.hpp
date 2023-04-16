@@ -18,9 +18,10 @@
 #include "role_interface.hpp"
 
 namespace strategy {
-/*
-The seeker role provides the offensive movement for moving off the ball and opening up for a pass.
-*/
+/**
+ * The seeker role provides the offensive movement for moving off the ball and opening up for a
+ * pass.
+ */
 class Seeker : public RoleInterface {
 public:
     Seeker(int seeker_num);
@@ -36,13 +37,32 @@ public:
                                         FieldDimensions field_dimensions) override;
 
 private:
+    /*
+     * Gets a point nearby to the robot that the opposing/friendly robots have minimal line-of-sight
+     * on
+     */
     rj_geometry::Point get_open_point(const WorldState* world_state, rj_geometry::Point current_loc,
                                       FieldDimensions field_dimensions);
+    /**
+     * Corrects point to prevent it from being out of bounds or in the box. Also, prevents too many
+     * robots from being in one area.
+     */
     rj_geometry::Point correct_point(rj_geometry::Point p, FieldDimensions field_dimensions);
+    /**
+     * Generates random noise for potential point.
+     */
     rj_geometry::Point random_noise(double prec);
+    /*
+     * Iteratively calculates an optimal point with minimal line of sight by focusing on smaller and
+     * smaller areas
+     */
     rj_geometry::Point calculate_open_point(double, double, rj_geometry::Point,
                                             const WorldState* world_state,
                                             FieldDimensions field_dimensions);
+    /*
+     * Calculates the max line-of-sight that any of the opposing/friendly robots have on the balls
+     * relative to the current_point
+     */
     double max_los(rj_geometry::Point, rj_geometry::Point, const WorldState* world_state);
 
     int seeker_pos_;
