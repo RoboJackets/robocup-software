@@ -26,58 +26,55 @@ Offense::State Offense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
-    switch (current_state_) {
-        case IDLING:
-            send_scorer_request();
-            next_state = SEARCHING;
-            break;
-        case SEARCHING:
-            if (scorer_) {
-                next_state = STEALING;
-            }
-            break;
-        case PASSING:
-            // transition to idling if we no longer have the ball (i.e. it was passed or it was
-            // stolen)
-            if (check_is_done()) {
-                next_state = IDLING;
-            }
+    if (current_state_ == IDLING) {
+        send_scorer_request();
+        next_state = SEARCHING;
+    } else if (current_state_ == SEARCHING) {
+        if (scorer_) {
+            next_state = STEALING;
+        }
+    } else if (current_state_ == PASSING) {
+        // transition to idling if we no longer have the ball (i.e. it was passed or it was
+        // stolen)
+        if (check_is_done()) {
+            next_state = IDLING;
+        }
 
-            if (distance_to_ball > ball_lost_distance_) {
-                next_state = IDLING;
+        if (distance_to_ball > ball_lost_distance_) {
+            next_state = IDLING;
+        }
+    } else if (current_state_ == PREPARING_SHOT) {
+        if (check_is_done()) {
+            next_state = SHOOTING;
+        }
+    } else if (current_state_ == SHOOTING) {
+        // transition to idling if we no longer have the ball (i.e. it was passed or it was
+        // stolen)
+        if (check_is_done() || distance_to_ball > ball_lost_distance_) {
+            send_reset_scorer_request();
+            next_state = SEARCHING;
+        }
+    } else if (current_state_ == RECEIVING) {
+        // transition to idling if we are close enough to the ball
+        if (distance_to_ball < ball_receive_distance_) {
+            next_state = IDLING;
+        }
+    } else if (current_state_ == STEALING) {
+        // The collect planner check_is_done() is wonky so I added a second clause to check
+        // distance
+        if (check_is_done() || distance_to_ball < ball_receive_distance_) {
+            // send direct pass request to robot 4
+            if (scorer_) {
+                next_state = PREPARING_SHOT;
+            } else {
+                /* send_direct_pass_request({4}); */
+                /* next_state = SEARCHING; */
             }
-            break;
-        case SHOOTING:
-            // transition to idling if we no longer have the ball (i.e. it was passed or it was
-            // stolen)
-            if (check_is_done() || distance_to_ball > ball_lost_distance_) {
-                send_reset_scorer_request();
-                next_state = SEARCHING;
-            }
-            break;
-        case RECEIVING:
-            // transition to idling if we are close enough to the ball
-            if (distance_to_ball < ball_receive_distance_) {
-                next_state = IDLING;
-            }
-            break;
-        case STEALING:
-            // The collect planner check_is_done() is wonky so I added a second clause to check
-            // distance
-            if (check_is_done() || distance_to_ball < ball_receive_distance_) {
-                // send direct pass request to robot 4
-                if (scorer_) {
-                    next_state = SHOOTING;
-                } else {
-                    send_direct_pass_request({4});
-                    next_state = SEARCHING;
-                }
-            }
-            break;
-        case FACING:
-            if (check_is_done()) {
-                next_state = IDLING;
-            }
+        }
+    } else if (current_state_ == FACING) {
+        if (check_is_done()) {
+            next_state = IDLING;
+        }
     }
 
     return next_state;
@@ -107,6 +104,20 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         // TODO: Adjust the kick speed based on distance
         intent.kick_speed = 4.0;
         intent.is_active = true;
+        return intent;
+    } else if (current_state_ == PREPARING_SHOT) {
+        // pivot around ball...
+        auto ball_pt = world_state()->ball.position;
+
+        // ...to face their goal
+        rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+        planning::LinearMotionInstant target_instant{their_goal_pos};
+
+        auto pivot_cmd = planning::MotionCommand{"pivot"};
+        pivot_cmd.target = target_instant;
+        pivot_cmd.pivot_point = ball_pt;
+        intent.motion_command = pivot_cmd;
+        intent.dribbler_speed = 255.0;
         return intent;
     } else if (current_state_ == SHOOTING) {
         rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();

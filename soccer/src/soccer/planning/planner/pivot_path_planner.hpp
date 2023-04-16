@@ -13,8 +13,8 @@ namespace planning {
  * the ball to <command.target.position>.
  *
  * Params taken from MotionCommand:
- *   target.pivot_point - planner will pivot about this point
- *   target.position - planner will stop on this point when done pivoting
+ *   target.pivot_point - robot will pivot about this point
+ *   target.position - robot will face this point when done
  */
 class PivotPathPlanner : public PathPlanner {
 public:
@@ -46,7 +46,6 @@ private:
     std::optional<double> cached_angle_change_;
 
     // TODO(Kevin): ros param this
-    // in gameplay it is 0.05, this is just to see the change
-    double IS_DONE_ANGLE_CHANGE_THRESH = 0.1;
+    double IS_DONE_ANGLE_CHANGE_THRESH = 2.0;
 };
 }  // namespace planning

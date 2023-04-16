@@ -40,14 +40,15 @@ private:
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 
     enum State {
-        IDLING,     // simply staying in place
-        SEARCHING,  // moving around on the field to get open
-        PASSING,    // physically kicking the ball towards another robot
-        SHOOTING,   // physically kicking the ball towards the net
-        RECEIVING,  // physically intercepting the ball from a pass (gets possession)
-        STEALING,   // attempting to intercept the ball from the other team
-        FACING,     // turning to face the ball
-        SCORER,     // overrides everything and will attempt to steal the bal and shoot it
+        IDLING,          // simply staying in place
+        SEARCHING,       // moving around on the field to get open
+        PASSING,         // physically kicking the ball towards another robot
+        PREPARING_SHOT,  // pivot around ball in preparation for shot
+        SHOOTING,        // physically kicking the ball towards the net
+        RECEIVING,       // physically intercepting the ball from a pass (gets possession)
+        STEALING,        // attempting to intercept the ball from the other team
+        FACING,          // turning to face the ball
+        SCORER,          // overrides everything and will attempt to steal the bal and shoot it
     };
 
     State update_state();
