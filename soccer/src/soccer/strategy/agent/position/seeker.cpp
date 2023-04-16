@@ -4,7 +4,7 @@ namespace strategy {
 
 Seeker::Seeker(int seeker_num) {
     offense_type_ = "Seeker";
-    seeker_pos_ = seeker_num;
+    seeker_pos_ = seeker_num;  // Equal to robot_id
 }
 
 std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState* world_state,
@@ -82,13 +82,14 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
  * Generates random noise for potential point.
  */
 rj_geometry::Point Seeker::random_noise(double prec) {
-    double x = (double)rand() / RAND_MAX * prec * .33;
-    double y = (double)rand() / RAND_MAX * prec * .33;
+    double x = (double)rand() / RAND_MAX * prec;
+    double y = (double)rand() / RAND_MAX * prec;
     return rj_geometry::Point{x, y};
 }
 
 /**
- * Corrects point to prevent it from being out of bounds or in the box.
+ * Corrects point to prevent it from being out of bounds or in the box. Also, prevents too many
+ * robots from being in one area.
  */
 rj_geometry::Point Seeker::correct_point(rj_geometry::Point p, FieldDimensions field_dimensions) {
     double BORDER_BUFFER = .2;
@@ -123,6 +124,31 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p, FieldDimensions f
             x = -1.0 - BORDER_BUFFER;
         }
     }
+
+    // Assigns robots to horizontal thirds
+    if (seeker_pos_ % 3 == 0) {
+        // Assign left
+        if (x > field_dimensions.field_x_left_coord() + field_dimensions.width() / 3) {
+            x = field_dimensions.field_x_left_coord() + field_dimensions.width() / 3 -
+                BORDER_BUFFER;
+        }
+    } else if (seeker_pos_ % 3 == 1) {
+        // Assign right
+        if (x < field_dimensions.field_x_right_coord() - field_dimensions.width() / 3) {
+            x = field_dimensions.field_x_right_coord() - field_dimensions.width() / 3 +
+                BORDER_BUFFER;
+        }
+    } else {
+        // Assign middle
+        if (x < field_dimensions.field_x_left_coord() + field_dimensions.width() / 3) {
+            x = field_dimensions.field_x_left_coord() + field_dimensions.width() / 3 +
+                BORDER_BUFFER;
+        } else if (x > field_dimensions.field_x_right_coord() - field_dimensions.width() / 3) {
+            x = field_dimensions.field_x_right_coord() - field_dimensions.width() / 3 -
+                BORDER_BUFFER;
+        }
+    }
+
     return rj_geometry::Point(x, y);
 }
 
@@ -142,11 +168,19 @@ double Seeker::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_p
         }
     }
 
+    for (auto robot : world_state->our_robots) {
+        curr_dp = (current_point - ball_pos).norm().dot((robot.pose.position() - ball_pos).norm());
+        curr_dp *= curr_dp;
+        if (curr_dp > max) {
+            max = curr_dp;
+        }
+    }
+
     // Additional heuristics for calculating optimal point
     double ball_proximity_loss = (current_point - ball_pos).mag() * .005;
-    double goal_distance_loss = (9.0 - current_point.y()) * .002;
+    double goal_distance_loss = (9.0 - current_point.y()) * .003;
 
-    return max + goal_distance_loss + ball_proximity_loss;
+    return max + ball_proximity_loss + goal_distance_loss;
 }
 
 }  // namespace strategy

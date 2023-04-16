@@ -92,7 +92,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == SEARCHING) {
-        Seeker seeker{0};
+        Seeker seeker{robot_id_};
         return seeker.get_task(intent, world_state(), Position::field_dimensions_);
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
