@@ -102,7 +102,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == WALLING) {
-        if (walling_robots_.size() > 0) {
+        if (!walling_robots_.empty()) {
             Waller waller{waller_id_, (int)walling_robots_.size()};
             return waller.get_task(intent, world_state(), this->field_dimensions_);
         }
@@ -128,9 +128,8 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
     // Handle join wall response
     if (const communication::JoinWallRequest* join_request =
             std::get_if<communication::JoinWallRequest>(&response.associated_request)) {
-        for (u_int32_t i = 0; i < response.responses.size(); i++) {
-            if (const communication::JoinWallResponse* join_response =
-                    std::get_if<communication::JoinWallResponse>(&response.responses[i])) {
+        for (communication::AgentResponseVariant response : response.responses) {
+            if (const communication::JoinWallResponse* join_response = std::get_if<communication::JoinWallResponse>(&response)) {
                 handle_join_wall_response(*join_response);
             }
         }

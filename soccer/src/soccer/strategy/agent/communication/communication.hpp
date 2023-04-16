@@ -100,12 +100,20 @@ struct BallInTransitRequest {
 };
 bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
 
+/**
+ * @brief request sent by an agent when it wants to join the wall.
+ *
+ */
 struct JoinWallRequest {
     u_int32_t request_uid;
     u_int8_t robot_id;
 };
 bool operator==(const JoinWallRequest& a, const JoinWallRequest& b);
 
+/**
+ * @brief request sent by an agent when it wants to leave the wall.
+ *
+ */
 struct LeaveWallRequest {
     u_int32_t request_uid;
     u_int8_t robot_id;
@@ -175,12 +183,21 @@ struct TestResponse {
 };
 bool operator==(const TestResponse& a, const TestResponse& b);
 
+/**
+ * @brief response from other robots who are currently apart of the wall so this
+ * robot can figure out where they are in the wall of robots.
+ *
+ */
 struct JoinWallResponse {
     u_int32_t response_uid;
     u_int8_t robot_id;
 };
 bool operator==(const JoinWallResponse& a, const JoinWallResponse& b);
 
+/**
+ * @brief response from other robots who are currently apart of the wall.
+ *
+ */
 struct LeaveWallResponse {
     u_int32_t response_uid;
     u_int8_t robot_id;
@@ -256,13 +273,13 @@ struct AgentPosRequestWrapper {
  *
  */
 struct AgentPosResponseWrapper {
-    AgentRequest associated_request;
-    std::vector<u_int8_t> to_robot_ids;
-    std::vector<u_int8_t> received_robot_ids;
-    bool broadcast;
-    bool urgent;
-    RJ::Time created;
-    std::vector<AgentResponseVariant> responses;
+    AgentRequest associated_request;           // the request sent for the given response
+    std::vector<u_int8_t> to_robot_ids;        // the robot ids the request was sent to
+    std::vector<u_int8_t> received_robot_ids;  // the robot ids responses were found from
+    bool broadcast;                            // true if the response should go to every robot
+    bool urgent;                               // true if only the first response should be handled
+    RJ::Time created;                          // the time the request was created
+    std::vector<AgentResponseVariant> responses;  // a list of the response from the other agent
 };
 
 // TODO (https://app.clickup.com/t/8677c0tqe): Make this templated and less ugly

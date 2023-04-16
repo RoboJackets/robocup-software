@@ -144,6 +144,14 @@ private:
     bool is_simulated_ = false;
     static constexpr double field_padding_ = 0.3;
 
+    /**
+     * @brief checks whether a robot is visible, in the field, and (if the game is not
+     * simulated) whether or not the robot is in the alive robots list.
+     *
+     * @param robot_id the id of the robot to check alive
+     * @return true if robot is connected, visible, and near the field
+     * @return false if the robot is not connected or is not visible
+     */
     bool check_robot_alive(u_int8_t robot_id);
 
     // timeout check
