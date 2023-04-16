@@ -33,7 +33,7 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     goalie_sub_ = create_subscription<rj_msgs::msg::Goalie>(
-        topics::kGoalieTopic, 1,
+        referee::topics::kGoalieTopic, 1,
         [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
@@ -98,9 +98,12 @@ void AgentActionClient::field_dimensions_callback(
 }
 
 void AgentActionClient::goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg) {
-    goalie_id_ = msg->goalie_id;
-}
+    if (current_position_ == nullptr) {
+        return;
+    }
 
+    current_position_->update_goalie_id(msg->goalie_id);
+}
 
 void AgentActionClient::get_task() {
     // Initialize default positions (if not already initialized)

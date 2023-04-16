@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id), goalie_id_(0) { position_name_ = "Defense"; }
+Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     if (!this->assert_world_state_valid()) {

@@ -241,7 +241,7 @@ protected:
     // us to set this once initially
     const int robot_id_;
 
-    int goalie_id_;
+    int goalie_id_{0};
 
     // the robot our robot is going to be passing to
     int target_robot_id;
