@@ -105,7 +105,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         // TODO(https://app.clickup.com/t/8677rrgjn): Convert PASSING state into role_interface
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
-            world_state()->get_robot(true, target_robot_id).pose.position();
+            world_state()->get_robot(true, target_robot_id_).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
         auto pass_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = pass_kick_cmd;

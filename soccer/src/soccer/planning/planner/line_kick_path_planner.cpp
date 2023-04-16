@@ -14,9 +14,9 @@ namespace planning {
 
 Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     // TODO(?): ros param these
-    const float approach_speed = 0.25;
+    const float approach_speed = 0.05;
 
-    const float ball_avoid_distance = 0.10;
+    const float ball_avoid_distance = 0.05;
 
     const MotionCommand& command = plan_request.motion_command;
 

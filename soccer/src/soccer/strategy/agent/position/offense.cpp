@@ -32,8 +32,10 @@ Offense::State Offense::update_state() {
             next_state = SEARCHING;
             break;
         case SEARCHING:
-            if (scorer_) {
-                next_state = STEALING;
+            /* if (scorer_) { */
+            if (robot_id_ == 2) {
+                SPDLOG_INFO("{} I am scorer", robot_id_);
+                next_state = SHOOTING;
             }
             break;
         case PASSING:
@@ -50,9 +52,14 @@ Offense::State Offense::update_state() {
         case SHOOTING:
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
-            if (check_is_done() || distance_to_ball > ball_lost_distance_) {
-                send_reset_scorer_request();
-                next_state = SEARCHING;
+            // hacky substate
+            if (pivoting_ && check_is_done()) {  // of the pivot_kick (which doesn't kick)
+                pivoting_ = false;
+            } else {
+                if (check_is_done() || distance_to_ball > ball_lost_distance_) {
+                    send_reset_scorer_request();
+                    next_state = SEARCHING;
+                }
             }
             break;
         case RECEIVING:
@@ -65,13 +72,14 @@ Offense::State Offense::update_state() {
             // The collect planner check_is_done() is wonky so I added a second clause to check
             // distance
             if (check_is_done() || distance_to_ball < ball_receive_distance_) {
-                // send direct pass request to robot 4
                 if (scorer_) {
                     next_state = SHOOTING;
-                } else {
-                    send_direct_pass_request({4});
-                    next_state = SEARCHING;
                 }
+                /* } else { */
+                /*     // send direct pass request to robot 4 */
+                /*     send_direct_pass_request({4}); */
+                /*     next_state = SEARCHING; */
+                /* } */
             }
             break;
         case FACING:
@@ -97,26 +105,44 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
-            world_state()->get_robot(true, target_robot_id).pose.position();
+            world_state()->get_robot(true, target_robot_id_).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
+
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
+        // TODO: shouldn't need to manually add this robot intent every time
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        // TODO: Adjust the kick speed based on distance
-        intent.kick_speed = 4.0;
+        intent.kick_speed = 4.0;  // TODO: Adjust the kick speed based on distance
         intent.is_active = true;
         return intent;
     } else if (current_state_ == SHOOTING) {
-        // TODO: Shoot the ball at the goal
+        // pivot_kick currently only lines up the robot to execute a pivot kick
+        // b/c stupid ManipulatorSetpoint only accessible via RobotIntent here,
+        // which controls kick
+
         rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
         planning::LinearMotionInstant target{their_goal_pos};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
-        intent.motion_command = line_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 4.0;
+
+        if (pivoting_) {
+            SPDLOG_INFO("{} pivoting", robot_id_);
+            // get ball, pivot in place
+            auto pivot_kick_cmd = planning::MotionCommand{"pivot_kick", target};
+            intent.motion_command = pivot_kick_cmd;
+            // TODO: shouldn't need to manually add this to robot intent every time
+            intent.dribbler_speed = 255.0;
+        } else {
+            SPDLOG_INFO("{} not pivoting", robot_id_);
+            // send kick
+            auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+            intent.motion_command = line_kick_cmd;
+
+            // TODO: shouldn't need to manually add this to robot intent every time
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 4.0;
+        }
+
         intent.is_active = true;
         return intent;
     } else if (current_state_ == RECEIVING) {
@@ -140,9 +166,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == STEALING) {
         // intercept the ball
-        auto collect_cmd = planning::MotionCommand{"collect"};
-        intent.motion_command = collect_cmd;
-        return intent;
+        /* auto collect_cmd = planning::MotionCommand{"collect"}; */
+        /* intent.motion_command = collect_cmd; */
+        /* return intent; */
+        // TODO: remove STEALING if this works
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             world_state()->get_robot(true, robot_id_).pose.position();

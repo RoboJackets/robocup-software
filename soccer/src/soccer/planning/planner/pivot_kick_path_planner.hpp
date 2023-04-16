@@ -5,6 +5,11 @@
 #include "planning/planner/path_planner.hpp"
 #include "planning/trajectory.hpp"
 
+// subtask planners
+#include "collect_path_planner.hpp"
+#include "pivot_path_planner.hpp"
+#include "settle_path_planner.hpp"
+
 namespace planning {
 
 class PivotKickPathPlanner : public PathPlanner {
@@ -18,19 +23,18 @@ public:
 
 private:
     enum State {
-        CAPTURE,  // get ball
+        SETTLE,   // slow ball
+        COLLECT,  // get ball
         PIVOT,    // orbit to face target
         KICK,     // actuate kicker
         DONE      // tried to kick (maybe missed)
     };
-    State current_state_ = State::CAPTURE;
+    State current_state_{State::COLLECT};
     State update_state();
-    bool subskill_is_done_ = false;
 
-    // TODO: this is why composable planners would be good
-    Trajectory plan_capture();
-    Trajectory plan_pivot();
-    Trajectory plan_kick();
+    SettlePathPlanner settle_path_planner_{};
+    CollectPathPlanner collect_path_planner_{};
+    PivotPathPlanner pivot_path_planner_{};
 };
 
 }  // namespace planning

@@ -59,6 +59,7 @@ private:
 
     bool scorer_ = false;
     bool last_scorer_ = false;
+    bool pivoting_ = true;
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer

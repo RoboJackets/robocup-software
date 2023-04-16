@@ -200,7 +200,7 @@ communication::Acknowledge Position::acknowledge_pass(
 }
 
 void Position::pass_ball(int robot_id) {
-    target_robot_id = robot_id;
+    target_robot_id_ = robot_id;
 
     communication::BallInTransitRequest ball_in_transit_request{};
     ball_in_transit_request.from_robot_id = robot_id_;

@@ -241,7 +241,7 @@ protected:
     const int robot_id_;
 
     // the robot our robot is going to be passing to
-    int target_robot_id;
+    int target_robot_id_;
 
     // the robot our robot will be facing (useful for passing)
     int face_robot_id;

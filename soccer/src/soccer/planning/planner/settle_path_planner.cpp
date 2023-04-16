@@ -63,12 +63,13 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     // course or the ball state changes significantly
     check_solution_validity(ball, start_instant, delta_pos);
 
-    if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_segment(
-            Segment(ball.position, ball.position + average_ball_vel_ * 10), QColor(255, 255, 255));
-        plan_request.debug_drawer->draw_text("Average Ball Velocity",
-                                             ball.position + average_ball_vel_ * 5);
-    }
+    /* if (plan_request.debug_drawer != nullptr) { */
+    /*     plan_request.debug_drawer->draw_segment( */
+    /*         Segment(ball.position, ball.position + average_ball_vel_ * 10), QColor(255, 255,
+     * 255)); */
+    /*     plan_request.debug_drawer->draw_text("Average Ball Velocity", */
+    /*                                          ball.position + average_ball_vel_ * 5); */
+    /* } */
 
     // Check if we should transition from intercept to dampen
     // Start instant may be changed in that case since we want to start changing
@@ -392,10 +393,10 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     // Save vector and use that?
     BallState ball = plan_request.world_state->ball;
 
-    if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_text("Damping", ball.position + Point(.1, .1),
-                                             QColor(255, 255, 255));
-    }
+    /* if (plan_request.debug_drawer != nullptr) { */
+    /*     plan_request.debug_drawer->draw_text("Damping", ball.position + Point(.1, .1), */
+    /*                                          QColor(255, 255, 255)); */
+    /* } */
 
     if (path_created_for_dampen_ && !previous_.empty()) {
         return previous_;
@@ -540,9 +541,9 @@ void SettlePathPlanner::reset() {
 bool SettlePathPlanner::is_done() const {
     // FSM: Intercept -> Dampen
     // (see process_state_transition())
-    if (current_state_ != SettlePathPlannerStates::Dampen) {
-        return false;
-    }
+    /* if (current_state_ != SettlePathPlannerStates::Dampen) { */
+    /*     return false; */
+    /* } */
 
     // Dampen is done when the ball is slow-ish, let collect handle actually
     // taking possession
