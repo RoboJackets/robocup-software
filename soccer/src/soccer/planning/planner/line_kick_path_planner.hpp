@@ -27,6 +27,10 @@ public:
     LineKickPathPlanner() : PathPlanner("line_kick"){};
     Trajectory plan(const PlanRequest& plan_request) override;
 
+    // TODO(Kevin): docs
+    Trajectory get_behind_ball(const PlanRequest& plan_request);
+    Trajectory drive_through_ball(const PlanRequest& plan_request);
+
     void reset() override {
         prev_path_ = {};
         final_approach_ = false;
@@ -36,6 +40,12 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
+    // speed at which to approach the ball
+    const float approach_speed_ = 0.05;
+
+    // distance at which to stand back from the ball before kicking
+    const float ball_avoid_distance_ = 0.10;
+
     Trajectory prev_path_;
     bool final_approach_ = false;
     std::optional<rj_geometry::Point> target_kick_pos_;
