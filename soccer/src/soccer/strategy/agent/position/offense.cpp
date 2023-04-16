@@ -32,7 +32,7 @@ Offense::State Offense::update_state() {
             next_state = SEARCHING;
             break;
         case SEARCHING:
-            if (scorer) {
+            if (scorer_) {
                 next_state = STEALING;
             }
             break;
@@ -65,7 +65,7 @@ Offense::State Offense::update_state() {
             // distance
             if (check_is_done() || distance_to_ball < ball_receive_distance_) {
                 // send direct pass request to robot 4
-                if (scorer) {
+                if (scorer_) {
                     next_state = SHOOTING;
                 } else {
                     send_direct_pass_request({4});
@@ -215,15 +215,15 @@ communication::ScorerResponse Offense::receive_scorer_request(
     scorer_response.ball_distance = ball_distance;
 
     // Switch scorers if better scorer
-    if (scorer && scorer_request.ball_distance < ball_distance) {
-        scorer = false;
+    if (scorer_ && scorer_request.ball_distance < ball_distance) {
+        scorer_ = false;
         current_state_ = FACING;
     }
 
     return scorer_response;
 }
 
-void Offense::handle_scorer_response(std::vector<communication::AgentResponseVariant> responses) {
+void Offense::handle_scorer_response(const std::vector<communication::AgentResponseVariant>& responses) {
     rj_geometry::Point this_robot_position =
         world_state()->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = world_state()->ball.position;
@@ -239,7 +239,7 @@ void Offense::handle_scorer_response(std::vector<communication::AgentResponseVar
     }
 
     // Make this robot the scorer
-    scorer = true;
+    scorer_ = true;
 }
 
 void Offense::derived_acknowledge_pass() { current_state_ = FACING; }
