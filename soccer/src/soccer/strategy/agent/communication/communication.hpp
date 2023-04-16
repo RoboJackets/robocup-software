@@ -21,6 +21,7 @@
 #include "rj_msgs/msg/scorer_response.hpp"
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
+#include "rj_msgs/msg/reset_scorer_request.hpp"
 
 namespace strategy::communication {
 
@@ -111,10 +112,19 @@ struct ScorerRequest {
 bool operator==(const ScorerRequest& a, const ScorerRequest& b);
 
 /**
+ * @brief request sent by a scorer after they shoot to avoid double touch penalties.
+ * 
+ */
+struct ResetScorerRequest {
+    u_int32_t request_uid;
+};
+bool operator==(const ResetScorerRequest& a, const ResetScorerRequest& b);
+
+/**
  * @brief a conglomeration of the different request types.
  */
 using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingBallRequest,
-                                  BallInTransitRequest, ScorerRequest>;
+                                  BallInTransitRequest, ScorerRequest, ResetScorerRequest>;
 
 // END REQUEST TYPES //
 
@@ -278,6 +288,7 @@ void generate_uid(TestRequest& request);
 void generate_uid(IncomingBallRequest& request);
 void generate_uid(BallInTransitRequest& request);
 void generate_uid(ScorerRequest& request);
+void generate_uid(ResetScorerRequest& request);
 
 void generate_uid(Acknowledge& response);
 void generate_uid(PassResponse& response);
@@ -406,6 +417,23 @@ struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::Scorer
 ASSOCIATE_CPP_ROS(strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest);
 
 template <>
+struct RosConverter<strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest> {
+    static rj_msgs::msg::ResetScorerRequest to_ros(const strategy::communication::ResetScorerRequest& from) {
+        rj_msgs::msg::ResetScorerRequest result;
+        result.request_uid = from.request_uid;
+        return result;
+    }
+
+    static strategy::communication::ResetScorerRequest from_ros(const rj_msgs::msg::ResetScorerRequest& from) {
+        return strategy::communication::ResetScorerRequest{
+            from.request_uid,
+        };
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest);
+
+template <>
 struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
     static rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {
         rj_msgs::msg::AgentRequest result;
@@ -426,6 +454,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* scorer_request =
                        std::get_if<strategy::communication::ScorerRequest>(&from)) {
             result.scorer_request.emplace_back(convert_to_ros(*scorer_request));
+        } else if (const auto* reset_scorer_request = std::get_if<strategy::communication::ResetScorerRequest>(&from)) {
+            result.reset_scorer_request.emplace_back(convert_to_ros(*reset_scorer_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
@@ -446,6 +476,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result = convert_from_ros(from.ball_in_transit_request.front());
         } else if (!from.scorer_request.empty()) {
             result = convert_from_ros(from.scorer_request.front());
+        } else if (!from.reset_scorer_request.empty()) {
+            result = convert_from_ros(from.reset_scorer_request.front());
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }

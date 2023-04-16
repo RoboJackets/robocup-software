@@ -9,3 +9,4 @@ PassRequest[<=1] pass_request
 IncomingBallRequest[<=1] incoming_ball_request
 BallInTransitRequest[<=1] ball_in_transit_request
 ScorerRequest[<=1] scorer_request
+ResetScorerRequest[<=1] reset_scorer_request
