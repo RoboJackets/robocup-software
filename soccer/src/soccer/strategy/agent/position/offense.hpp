@@ -100,8 +100,7 @@ private:
      * @return communication::Acknowledge acknowledgement that this robot will reset their scorer
      * status
      */
-    communication::Acknowledge receive_reset_scorer_request(
-        communication::ResetScorerRequest reset_scorer_request);
+    communication::Acknowledge receive_reset_scorer_request();
 };
 
 }  // namespace strategy

@@ -180,9 +180,9 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
             std::get_if<communication::ScorerRequest>(&request.request)) {
         communication::ScorerResponse scorer_response = receive_scorer_request(*scorer_request);
         comm_response.response = scorer_response;
-    } else if (const communication::ResetScorerRequest* reset_scorer_request =
+    } else if (const communication::ResetScorerRequest* _ =
                    std::get_if<communication::ResetScorerRequest>(&request.request)) {
-        communication::Acknowledge response = receive_reset_scorer_request(*reset_scorer_request);
+        communication::Acknowledge response = receive_reset_scorer_request();
         comm_response.response = response;
     }
 
@@ -246,8 +246,7 @@ communication::ScorerResponse Offense::receive_scorer_request(
     return scorer_response;
 }
 
-communication::Acknowledge Offense::receive_reset_scorer_request(
-    communication::ResetScorerRequest reset_scorer_request) {
+communication::Acknowledge Offense::receive_reset_scorer_request() {
     communication::Acknowledge acknowledge{};
     communication::generate_uid(acknowledge);
 
