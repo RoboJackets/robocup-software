@@ -2,10 +2,6 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id, int goalie_id) : Position(r_id), goalie_id_(goalie_id) {
-    position_name_ = "Defense";
-}
-
 Defense::Defense(int r_id) : Position(r_id), goalie_id_(0) { position_name_ = "Defense"; }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
@@ -19,7 +15,7 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
 
         std::vector<int> visible_robot_ids{};
         for (int i = 0; i < world_state->our_robots.size(); ++i) {
-            if (i != goalie_id_ && world_state->our_robots.at(i).visible) {
+            if (i != this->goalie_id_ && world_state->our_robots.at(i).visible) {
                 visible_robot_ids.push_back(i);
             }
         }

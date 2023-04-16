@@ -70,6 +70,7 @@ public:
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
     void update_field_dimensions(FieldDimensions field_dimensions);
+    void update_goalie_id(int goalie_id);
     const std::string get_name();
 
     /**
@@ -239,6 +240,8 @@ protected:
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
+
+    int goalie_id_;
 
     // the robot our robot is going to be passing to
     int target_robot_id;

@@ -54,8 +54,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
-    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
-
+       rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
@@ -63,11 +62,10 @@ private:
     void coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg);
+    std::unique_ptr<Position> current_position_;
 
     // Keep goalie id
     int goalie_id_{0};
-
-    std::unique_ptr<Position> current_position_;
 
     // ROS ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;

@@ -26,7 +26,6 @@ namespace strategy {
  */
 class Defense : public Position {
 public:
-    Defense(int r_id, int goalie_id);
     Defense(int r_id);
     ~Defense() override = default;
 
@@ -37,7 +36,6 @@ public:
 private:
     enum Role { WALLER, MARKER, NONE };
     Role current_role_ = NONE;
-    const int goalie_id_;
 
     int move_ct_ = 0;
 
