@@ -20,17 +20,15 @@ public:
     Line(int r_id, int scenario);
     ~Line() override = default;
 
-    void derived_acknowledge_pass() override {};
-    void derived_pass_ball() override {};
-    void derived_acknowledge_ball_in_transit() override {};
+    void derived_acknowledge_pass() override{};
+    void derived_pass_ball() override{};
+    void derived_acknowledge_ball_in_transit() override{};
 
 private:
-
     int r_id_;
     int scenario_;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-
 };
 
 }  // namespace strategy
