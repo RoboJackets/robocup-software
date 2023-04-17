@@ -58,7 +58,9 @@ static const std::string kSharedVisionSourceAddress = "224.5.23.2";
  * Run ifconfig to see list of interfaces on this computer, and pick the right
  * one (or try them all in worst-case).
  */
-static const std::string kRefereeInterface = "127.0.0.1";
+
+/* static const std::string kRefereeInterface = "192.168.20.119"; */
+static const std::string kRefereeInterface = "172.0.0.1";
 static const std::string kVisionInterface =
     kRefereeInterface;  // In all but rare cirucmstances, this should match kRefereeInterface.
 
