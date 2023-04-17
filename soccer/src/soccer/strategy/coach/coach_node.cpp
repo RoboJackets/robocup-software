@@ -114,6 +114,7 @@ void CoachNode::check_for_play_state_change() {
                 global_override.min_dist_from_ball = 0.5;
                 break;
             case PlayState::State::Playing:
+            default:
                 // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number
                 // instead.
                 global_override.max_speed = 10.0;
@@ -138,6 +139,132 @@ void CoachNode::assign_positions() {
     rj_msgs::msg::PositionAssignment positions_message;
     std::array<uint32_t, kNumShells> positions{};
     positions[goalie_id_] = Positions::Goalie;
+
+    switch (current_play_state_.restart) {
+        case PlayState::Restart::Penalty:
+            assign_positions_penalty(positions);
+            break;
+        case PlayState::Restart::Kickoff:
+            assign_positions_kickoff(positions);
+            break;
+        case PlayState::Free:
+            assign_positions_freekick(positions);
+        case PlayState::Restart::Placement:
+            // TODO: Placement Position Assignment
+        case PlayState::Restart::None:
+        default:
+            // Normal Play
+            assign_positions_normal(positions);
+    }
+
+    positions_message.client_positions = positions;
+    positions_pub_->publish(positions_message);
+}
+
+void CoachNode::assign_positions_sideline(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        positions[i] = Positions::SideLineup;
+    }
+}
+
+void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            positions[i] = Positions::PenaltyLineup;
+        }
+    }
+
+    // If our restart, then we need a robot to kick. Otherwise, all Line is fine
+    if (current_play_state_.our_restart) {
+        switch (current_play_state_.state) {
+            case PlayState::State::Setup:
+                // Lowest non-goalie robot set to PenaltyPlayer
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::PenaltyPlayer;
+                } else {
+                    positions[0] = Positions::PenaltyPlayer;
+                }
+                break;
+            case PlayState::State::Ready:
+            case PlayState::State::PenaltyPlaying:
+                // Lowest non-goalie robot set to Goal Kicker
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::GoalKicker;
+                } else {
+                    positions[0] = Positions::GoalKicker;
+                }
+                break;
+            default:
+                SPDLOG_WARN("Invalid state for penalty restart");
+                assign_positions_normal(positions);
+        }
+    }
+}
+
+void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            // Non-kicking robots play defense
+            positions[i] = Positions::Defense;
+        }
+    }
+
+    // If our restart, make one a kicker
+    if (current_play_state_.our_restart) {
+        switch (current_play_state_.state) {
+            case PlayState::State::Setup:
+                // Lowest non-goalie robot set to Penalty Player
+                // TODO: Update this position to Kickoff Player?
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::PenaltyPlayer;
+                } else {
+                    positions[0] = Positions::PenaltyPlayer;
+                }
+                break;
+            case PlayState::State::Ready:
+                // Lowest non-goalie robot set to Goal Kicker
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::GoalKicker;
+                } else {
+                    positions[0] = Positions::GoalKicker;
+                }
+                break;
+            default:
+                SPDLOG_WARN("Invalid state for kickoff restart");
+                assign_positions_normal(positions);
+        }
+    }
+}
+
+void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            // Non-kicking robots play defense
+            positions[i] = Positions::Defense;
+        }
+    }
+
+    // If our restart, make one a kicker
+    if (current_play_state_.our_restart) {
+        switch (current_play_state_.state) {
+            // Free Kick does not have setup state
+            case PlayState::State::Ready:
+                // Lowest non-goalie robot set to Goal Kicker
+                if (goalie_id_ == 0) {
+                    // Offense role should shoot. Placeholder for now.
+                    positions[1] = Positions::Offense;
+                } else {
+                    positions[0] = Positions::Offense;
+                }
+                break;
+            default:
+                SPDLOG_WARN("Invalid state for free kick restart");
+                assign_positions_normal(positions);
+        }
+    }
+}
+
+void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positions) {
     if (!possessing_) {
         // All robots set to defense
         for (int i = 0; i < kNumShells; i++) {
@@ -174,9 +301,6 @@ void CoachNode::assign_positions() {
             }
         }
     }
-
-    positions_message.client_positions = positions;
-    positions_pub_->publish(positions_message);
 }
 
 void CoachNode::overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
@@ -234,46 +358,10 @@ rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
 }
 
 rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {
-    // Create physical walls of the goals as static obstacles
-    double physical_goal_board_width = 0.1;
-    float goal_width = current_field_dimensions_.goal_width();
-    float goal_depth = current_field_dimensions_.goal_depth();
-    float field_length = current_field_dimensions_.length();
-
-    // Each goal is three rectangles
-    rj_geometry::Point og1_1{goal_width / 2, -goal_depth};
-    rj_geometry::Point og1_2{-goal_width / 2, -goal_depth - physical_goal_board_width};
-    auto our_goal_1{std::make_shared<rj_geometry::Rect>(og1_1, og1_2)};
-
-    rj_geometry::Point og2_1{goal_width / 2, -goal_depth};
-    rj_geometry::Point og2_2{goal_width / 2 + physical_goal_board_width, 0.0};
-    auto our_goal_2{std::make_shared<rj_geometry::Rect>(og2_1, og2_2)};
-
-    rj_geometry::Point og3_1{-goal_width / 2, -goal_depth};
-    rj_geometry::Point og3_2{-goal_width / 2 - physical_goal_board_width, 0.0};
-    auto our_goal_3{std::make_shared<rj_geometry::Rect>(og3_1, og3_2)};
-
-    rj_geometry::Point tg1_1{goal_width / 2, field_length + goal_depth};
-    rj_geometry::Point tg1_2{-goal_width / 2,
-                             field_length + goal_depth + physical_goal_board_width};
-    auto their_goal_1{std::make_shared<rj_geometry::Rect>(tg1_1, tg1_2)};
-
-    rj_geometry::Point tg2_1{goal_width / 2, field_length + goal_depth};
-    rj_geometry::Point tg2_2{goal_width / 2 + physical_goal_board_width, field_length};
-    auto their_goal_2{std::make_shared<rj_geometry::Rect>(tg2_1, tg2_2)};
-
-    rj_geometry::Point tg3_1{-goal_width / 2, field_length + goal_depth};
-    rj_geometry::Point tg3_2{-goal_width / 2 - physical_goal_board_width, field_length};
-    auto their_goal_3{std::make_shared<rj_geometry::Rect>(tg3_1, tg3_2)};
-
     // Put all the walls into a ShapeSet and publish it
     rj_geometry::ShapeSet goal_wall_obstacles{};
-    goal_wall_obstacles.add(our_goal_1);
-    goal_wall_obstacles.add(our_goal_2);
-    goal_wall_obstacles.add(our_goal_3);
-    goal_wall_obstacles.add(their_goal_1);
-    goal_wall_obstacles.add(their_goal_2);
-    goal_wall_obstacles.add(their_goal_3);
+    goal_wall_obstacles.add(current_field_dimensions_.our_goal_walls());
+    goal_wall_obstacles.add(current_field_dimensions_.their_goal_walls());
 
     return goal_wall_obstacles;
 }

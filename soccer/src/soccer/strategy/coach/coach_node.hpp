@@ -33,7 +33,7 @@ enum MatchSituation {
     in_play,         // normal play
 };
 
-enum Positions { Goalie, Defense, Offense, PenaltyLineup, SideLineup };
+enum Positions { Goalie, Defense, Offense, PenaltyPlayer, GoalKicker, PenaltyLineup, SideLineup };
 
 // These values are explicitly declared because they are the ints that are published to
 // strategy/positions i.e. the same values as strategy::Positions
@@ -42,9 +42,11 @@ enum OverridePosition {
     Goalie = 0,
     Defense = 1,
     Offense = 2,
-    None = 3,
-    PenaltyLineup = 4,
-    SideLineup = 5
+    PenaltyPlayer = 3,
+    GoalKicker = 4,
+    PenaltyLineup = 5,
+    SideLineup = 6,
+    None = 7
 };
 }  // namespace OverridePosition
 
@@ -122,6 +124,13 @@ private:
      * Publishes new Position to the topic /strategy/Position (message type PositionAssignment)
      */
     void assign_positions();
+
+    // Helpers for assign_positions
+    void assign_positions_sideline(std::array<uint32_t, kNumShells>& positions);
+    void assign_positions_penalty(std::array<uint32_t, kNumShells>& positions);
+    void assign_positions_kickoff(std::array<uint32_t, kNumShells>& positions);
+    void assign_positions_freekick(std::array<uint32_t, kNumShells>& positions);
+    void assign_positions_normal(std::array<uint32_t, kNumShells>& positions);
 
     /*
      * Publishes the static obstacles.
