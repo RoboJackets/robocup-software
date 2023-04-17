@@ -34,9 +34,6 @@ NetworkRadio::NetworkRadio() : socket_(io_service_), recv_buffer_{}, send_buffer
 
     alive_robots_pub_ =
         this->create_publisher<rj_msgs::msg::AliveRobots>("strategy/alive_robots", rclcpp::QoS(1));
-
-    alive_robots_timer_ =
-        create_wall_timer(std::chrono::milliseconds(16), [this]() { publish_alive_robots(); });
 }
 
 void NetworkRadio::start_receive() {
@@ -73,6 +70,7 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
             // Remove the endpoint from the IP map and the connection list
             assert(robot_ip_map_.erase(connection.endpoint) == 1);  // NOLINT
             connections_.at(robot_id) = std::nullopt;
+            publish_alive_robots();
         } else {
             // Send to the given IP address
             const udp::endpoint& robot_endpoint = connection.endpoint;
@@ -118,12 +116,14 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
         connections_.at(iter->second) = std::nullopt;
         robot_ip_map_.erase(iter);
         connections_.at(robot_id) = std::nullopt;
+        publish_alive_robots();
     }
 
     // Update assignments.
     if (!connections_.at(robot_id)) {
         connections_.at(robot_id) = RobotConnection{robot_endpoint_, RJ::now()};
         robot_ip_map_.insert({robot_endpoint_, robot_id});
+        publish_alive_robots();
     } else {
         // Update the timeout watchdog
         connections_.at(robot_id)->last_received = RJ::now();
@@ -144,13 +144,16 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
 void NetworkRadio::switch_team(bool /*blue_team*/) {}
 
 void NetworkRadio::publish_alive_robots() {
-    // copy the values from robot_ip_map_ into a vector
-    std::vector<u_int8_t> alive_robots;
-    alive_robots.reserve(robot_ip_map_.size());
-    std::transform(robot_ip_map_.begin(), robot_ip_map_.end(), back_inserter(alive_robots),
-                   [](std::pair<boost::asio::ip::udp::endpoint, int> const& pair) {
-                       return (u_int8_t)pair.second;
-                   });
+    std::vector<u_int8_t> alive_robots = {};
+    for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        try {
+            if (connections_.at(robot_id) != std::nullopt) {
+                alive_robots.push_back(robot_id);
+            }
+        } catch (std::out_of_range err) {
+            continue;
+        }
+    }
 
     // publish a message containing the alive robots
     rj_msgs::msg::AliveRobots alive_message{};

@@ -117,10 +117,14 @@ void AgentActionClient::field_dimensions_callback(
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
     alive_robots_ = msg->alive_robots;
+    for (u_int8_t alive_robot_id : alive_robots_) {
+        SPDLOG_INFO("\022[92mRobot {} is Alive\033[0m", alive_robot_id);
+    }
 }
 
 void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
     is_simulated_ = msg->simulation;
+    SPDLOG_INFO("\033[92mIs Simulated: {}\033[0m", is_simulated_);
 }
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
