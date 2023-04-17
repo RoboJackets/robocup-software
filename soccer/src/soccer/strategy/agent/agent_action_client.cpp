@@ -35,7 +35,7 @@ AgentActionClient::AgentActionClient(int r_id)
     goalie_sub_ = create_subscription<rj_msgs::msg::Goalie>(
         referee::topics::kGoalieTopic, 1,
         [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
-        
+
     alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
         "strategy/alive_robots", 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });

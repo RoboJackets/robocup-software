@@ -148,7 +148,8 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
     if (const communication::JoinWallRequest* join_request =
             std::get_if<communication::JoinWallRequest>(&response.associated_request)) {
         for (communication::AgentResponseVariant response : response.responses) {
-            if (const communication::JoinWallResponse* join_response = std::get_if<communication::JoinWallResponse>(&response)) {
+            if (const communication::JoinWallResponse* join_response =
+                    std::get_if<communication::JoinWallResponse>(&response)) {
                 handle_join_wall_response(*join_response);
             }
         }

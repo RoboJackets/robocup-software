@@ -14,8 +14,8 @@
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
+#include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
