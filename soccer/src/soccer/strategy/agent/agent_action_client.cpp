@@ -142,7 +142,6 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
         case 6:
             next_position_ = std::make_unique<Line>(robot_id_, 1);
             break;
-
     };
 
     if (current_position_ == nullptr ||
