@@ -104,7 +104,6 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     std::vector<DynamicObstacle> dynamic_obstacles;
     fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
 
-    SPDLOG_WARN("current_state_ {}", current_state_);
     switch (current_state_) {
         // Moves from the current location to the slow point of approach
         case CoarseApproach:
