@@ -148,7 +148,7 @@ void CoachNode::assign_positions() {
             assign_positions_kickoff(positions);
             break;
         case PlayState::Restart::Free:
-            // TODO: Free Kick Position Assignment
+            assign_positions_freekick(positions);
         case PlayState::Restart::Placement:
             // TODO: Placement Position Assignment
         case PlayState::Restart::None:
@@ -242,20 +242,14 @@ void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& posi
     // If our restart, make one a kicker
     if (current_play_state_.our_restart) {
         switch (current_play_state_.state) {
-            case PlayState::State::Setup:
-                // Lowest non-goalie robot set to Penalty Player
-                if (goalie_id_ == 0) {
-                    positions[1] = Positions::PenaltyPlayer;
-                } else {
-                    positions[0] = Positions::PenaltyPlayer;
-                }
-                break;
+            // Free Kick does not have setup state
             case PlayState::State::Ready:
                 // Lowest non-goalie robot set to Goal Kicker
                 if (goalie_id_ == 0) {
-                    positions[1] = Positions::GoalKicker;
+                    // Offense role should shoot. Placeholder for now.
+                    positions[1] = Positions::Offense;
                 } else {
-                    positions[0] = Positions::GoalKicker;
+                    positions[0] = Positions::Offense;
                 }
                 break;
             default:
