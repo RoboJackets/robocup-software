@@ -44,7 +44,7 @@ private:
     int waller_pos_;
     int total_wallers_;
 
-    static constexpr double robot_diameter_multiplier_ = 2.5;
+    static constexpr double robot_diameter_multiplier_ = 1.5;
 };
 
 }  // namespace strategy
