@@ -17,7 +17,6 @@ AgentActionClient::AgentActionClient(int r_id)
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)) {
-
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
@@ -130,6 +129,12 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
             break;
         case 2:
             next_position_ = std::make_unique<Offense>(robot_id_);
+            break;
+        case 3:
+            next_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
+            break;
+        case 4:
+            next_position_ = std::make_unique<GoalKicker>(robot_id_);
             break;
     };
 
