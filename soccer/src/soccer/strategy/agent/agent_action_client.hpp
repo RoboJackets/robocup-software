@@ -9,8 +9,8 @@
 
 #include <spdlog/spdlog.h>
 
-#include <rj_constants/constants.hpp>
 #include <rj_common/time.hpp>
+#include <rj_constants/constants.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
