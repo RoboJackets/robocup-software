@@ -71,11 +71,8 @@ public:
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
     void update_field_dimensions(FieldDimensions field_dimensions);
-<<<<<<< HEAD
-    void update_goalie_id(int goalie_id);
-=======
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
->>>>>>> waller_comm
+    void update_goalie_id(int goalie_id);
     const std::string get_name();
 
     /**
@@ -162,7 +159,7 @@ public:
      * @brief method called in acknowledge_pass that updates the position to its next state
      *
      */
-    virtual void derived_acknowledge_pass(){};
+    virtual void derived_acknowledge_pass() = 0;
 
     /**
      * @brief update the robot state to be passing the ball
@@ -176,7 +173,7 @@ public:
      * state.
      *
      */
-    virtual void derived_pass_ball(){};
+    virtual void derived_pass_ball() = 0;
 
     /**
      * @brief the ball is on the way, so the robot should change its state accordingly
@@ -193,7 +190,7 @@ public:
      * corresponding next state
      *
      */
-    virtual void derived_acknowledge_ball_in_transit(){};
+    virtual void derived_acknowledge_ball_in_transit() = 0;
 
 protected:
     // should be overriden in subclass constructors
@@ -246,7 +243,7 @@ protected:
     // us to set this once initially
     const int robot_id_;
 
-    int goalie_id_{0};
+    int goalie_id_ = 0;
 
     // the robot our robot is going to be passing to
     int target_robot_id;

@@ -38,9 +38,6 @@ public:
     void derived_acknowledge_ball_in_transit() override;
 
 private:
-    enum Role { WALLER, MARKER, NONE };
-    Role current_role_ = NONE;
-
     int move_ct_ = 0;
 
     /**
@@ -58,6 +55,7 @@ private:
         IDLING,        // simply staying in place
         JOINING_WALL,  // send message to find its place in the wall
         WALLING,       // participating in the wall
+        MARKING,       // marking a specified robot
         SEARCHING,     // moving around on the field to do something
         RECEIVING,     // physically intercepting the ball from a pass
         PASSING,       // physically kicking the ball towards another robot
@@ -112,6 +110,8 @@ private:
     // current state of the defense agent (state machine)
     int get_waller_id();
     State current_state_ = JOINING_WALL;
+
+    static constexpr int num_wallers_ = 1;
 };
 
 }  // namespace strategy

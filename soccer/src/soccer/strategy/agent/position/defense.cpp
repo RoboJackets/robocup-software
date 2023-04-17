@@ -9,35 +9,8 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
         return intent;
     }
 
-    if (current_role_ == Role::NONE) {
-        // The three lowest-numbered non-goalie robots are wallers.
-        WorldState* world_state = this->world_state();
-
-        std::vector<int> visible_robot_ids{};
-        for (int i = 0; i < world_state->our_robots.size(); ++i) {
-            if (i != this->goalie_id_ && world_state->our_robots.at(i).visible) {
-                visible_robot_ids.push_back(i);
-            }
-        }
-
-        if (visible_robot_ids.size() > 3 && this->robot_id_ > visible_robot_ids.at(3)) {
-            current_role_ = Role::MARKER;
-        } else {
-            current_role_ = Role::WALLER;
-        }
-    }
-
-    // Role is now guaranteed to be assigned.
-    if (current_role_ == Role::WALLER) {
-        Waller waller{0};
-        return waller.get_task(intent, this->world_state(), field_dimensions_);
-    } else if (current_role_ == Role::MARKER) {
-        Marker marker{0.75};
-        return marker.get_task(intent, this->world_state(), field_dimensions_);
-    }
-
-    // current_state_ = update_state();
-    // return state_to_task(intent);
+    current_state_ = update_state();
+    return state_to_task(intent);
 }
 
 Defense::State Defense::update_state() {
@@ -62,14 +35,20 @@ Defense::State Defense::update_state() {
         case JOINING_WALL:
             send_join_wall_request();
             next_state = WALLING;
+            if (robot_id_ == 3) {
+                next_state = SEARCHING;
+            }
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
         case WALLING:
+            if (waller_id_ > num_wallers_) {
+                send_leave_wall_request();
+                next_state = MARKING;
+            }
+            break;
+        case MARKING:
             break;
         case SEARCHING:
-            // if(distance_to_ball < max_receive_distance) {
-            //     next_state = RECEIVING;
-            // }
             break;
         case RECEIVING:
             // transition to idling if we are close enough to the ball
@@ -153,6 +132,9 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
         return intent;
+    } else if (current_state_ == MARKING) {
+        Marker marker{0.75};
+        return marker.get_task(intent, world_state(), field_dimensions_);
     }
 
     return std::nullopt;
