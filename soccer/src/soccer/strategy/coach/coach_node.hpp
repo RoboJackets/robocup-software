@@ -33,7 +33,11 @@ enum MatchSituation {
     in_play,         // normal play
 };
 
+<<<<<<< HEAD
 enum Positions { Goalie, Defense, Offense, PenaltyPlayer, GoalKicker, PenaltyLineup, SideLineup };
+=======
+enum Positions { Goalie, Defense, Offense, PenaltyPlayer, GoalKicker };
+>>>>>>> ros2
 
 // These values are explicitly declared because they are the ints that are published to
 // strategy/positions i.e. the same values as strategy::Positions
