@@ -193,17 +193,11 @@ communication::JoinWallResponse Defense::handle_join_wall_request(
             break;
         } else if (walling_robots_[i] > join_request.robot_id) {
             walling_robots_.insert(walling_robots_.begin() + i, join_request.robot_id);
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
-            // {}\033[0m", join_request.robot_id, i, robot_id_);
             waller_id_ = get_waller_id();
-            // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id_,
-            // robot_id_);
             break;
         } else if (i == walling_robots_.size() - 1) {
             walling_robots_.push_back(join_request.robot_id);
             waller_id_ = get_waller_id();
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
-            // {}\033[0m", join_request.robot_id, i+1, robot_id_);
         }
     }
 
@@ -221,7 +215,7 @@ communication::Acknowledge Defense::handle_leave_wall_request(
             walling_robots_.erase(walling_robots_.begin() + i);
             waller_id_ = get_waller_id();
             break;
-        } else if (walling_robots_[i] > leave_request.robot_id) {
+        } else if (walling_robots_[i] < leave_request.robot_id) {
             break;
         }
     }
@@ -238,17 +232,11 @@ void Defense::handle_join_wall_response(communication::JoinWallResponse join_res
             return;
         } else if (walling_robots_[i] > join_response.robot_id) {
             walling_robots_.insert(walling_robots_.begin() + i, join_response.robot_id);
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
-            // {}\033[0m", join_response.robot_id, i, robot_id_);
             waller_id_ = get_waller_id();
-            // SPDLOG_INFO("\033[92mUpdating waller id to {} for robot {}\033[0m", waller_id_,
-            // robot_id_);
             return;
         } else if (i == walling_robots_.size() - 1) {
             walling_robots_.push_back(join_response.robot_id);
             waller_id_ = get_waller_id();
-            // SPDLOG_INFO("\033[92mAdding robot id {} to location {} in walling_robots_ for robot
-            // {}\033[0m", join_response.robot_id, i+1, robot_id_);
         }
     }
 }
@@ -266,5 +254,13 @@ int Defense::get_waller_id() {
     return find(walling_robots_.begin(), walling_robots_.end(), robot_id_) -
            walling_robots_.begin() + 1;
 }
+
+void Defense::die() {
+    if (current_state_ == WALLING) {
+        send_leave_wall_request();
+    }
+}
+
+void Defense::revive() { current_state_ = JOINING_WALL; }
 
 }  // namespace strategy

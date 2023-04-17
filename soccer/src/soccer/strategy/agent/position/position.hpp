@@ -191,6 +191,20 @@ public:
      */
     virtual void derived_acknowledge_ball_in_transit(){};
 
+    /**
+     * @brief When a robot dies on field (or is reassigned by the coach) they should call their
+     * implementation of die to inform necessary robots that they died.
+     *
+     */
+    virtual void die(){};
+
+    /**
+     * @brief When a robot goes dark on the field and comes back to life revive will take care
+     * of bringing them back into the correct state.
+     *
+     */
+    virtual void revive(){};
+
 protected:
     // should be overriden in subclass constructors
     std::string position_name_{"Position"};
@@ -267,6 +281,9 @@ protected:
 
     // vector of alive robots from the agent action client
     std::vector<u_int8_t> alive_robots_ = {};
+
+    // true if this robot is alive
+    bool alive = false;
 
 private:
     // private to avoid allowing WorldState to be accessed directly by derived

@@ -64,6 +64,16 @@ void Position::update_field_dimensions(FieldDimensions field_dims) {
 
 void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
     alive_robots_ = alive_robots;
+
+    if (alive &&
+        std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) != alive_robots_.end()) {
+        alive = false;
+        die();
+    } else if (!alive && std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) ==
+                             alive_robots_.end()) {
+        alive = true;
+        revive();
+    }
 }
 
 [[nodiscard]] WorldState* Position::world_state() {
