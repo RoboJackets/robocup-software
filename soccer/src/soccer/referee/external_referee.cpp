@@ -118,7 +118,10 @@ void ExternalReferee::setup_referee_multicast() {
     SPDLOG_INFO("ExternalReferee joining kRefereeSourceAddress: {}", kRefereeSourceAddress);
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeSourceAddress).to_v4();
-    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
+    const boost::asio::ip::address_v4 multicast_interface =
+        boost::asio::ip::address::from_string(kRefereeInterface).to_v4();
+    asio_socket_.set_option(
+        boost::asio::ip::multicast::join_group(multicast_address, multicast_interface));
 }
 
 void ExternalReferee::update() { io_service_.poll(); }
