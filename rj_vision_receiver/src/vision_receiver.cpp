@@ -97,15 +97,13 @@ void VisionReceiver::set_port(const std::string& interface, int port) {
     socket_.open(udp::v4());
     socket_.set_option(udp::socket::reuse_address(true));
 
-    if (!interface.empty()) {
-        socket_.set_option(boost::asio::ip::multicast::join_group(
-            boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4(),
-            boost::asio::ip::address::from_string(interface).to_v4()));
-    } else {
-        SPDLOG_INFO("VisionReceiver joining kSharedVisionAddress: {}", kSharedVisionAddress);
-        socket_.set_option(boost::asio::ip::multicast::join_group(
-            boost::asio::ip::address::from_string(kSharedVisionAddress).to_v4()));
-    }
+    // VisionReceiver will find any packets from kSharedVisionSourceAddressand
+    // take them
+    SPDLOG_INFO("VisionReceiver joining kSharedVisionSourceAddress: {}",
+                kSharedVisionSourceAddress);
+    const boost::asio::ip::address_v4 multicast_address =
+        boost::asio::ip::address::from_string(kSharedVisionSourceAddress).to_v4();
+    socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
 
     // Bind the socket.
     boost::system::error_code bind_error;
