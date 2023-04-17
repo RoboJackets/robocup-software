@@ -40,9 +40,15 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
     bool ignore_ball{true};
 
     // Create Motion Command
-    planning::LinearMotionInstant target{target_pt, target_vel};
-    intent.motion_command =
-        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+    if (world_state->ball.velocity.mag() <= 0.5) {
+        planning::LinearMotionInstant target{target_pt, target_vel};
+        intent.motion_command =
+            planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+        return intent;
+    }
+
+    auto empty_motion_cmd = planning::MotionCommand{};
+    intent.motion_command = empty_motion_cmd;
     return intent;
 }
 
