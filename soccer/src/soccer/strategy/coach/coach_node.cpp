@@ -161,7 +161,6 @@ void CoachNode::assign_positions() {
     positions_pub_->publish(positions_message);
 }
 
-<<<<<<< HEAD
 void CoachNode::assign_positions_sideline(std::array<uint32_t, kNumShells>& positions) {
     for (size_t i = 0; i < kNumShells; i++) {
         positions[i] = Positions::SideLineup;
@@ -172,13 +171,6 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
     for (size_t i = 0; i < kNumShells; i++) {
         if (i != goalie_id_) {
             positions[i] = Positions::PenaltyLineup;
-=======
-void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& positions) {
-    for (size_t i = 0; i < kNumShells; i++) {
-        if (i != goalie_id_) {
-            // TODO: Update this position to Line
-            positions[i] = Positions::Defense;
->>>>>>> ros2
         }
     }
 
