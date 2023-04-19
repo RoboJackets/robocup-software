@@ -17,11 +17,11 @@ ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell
 
     manipulator_pub_ = manipulator_pub;
     coach_state_sub_ = node->create_subscription<rj_msgs::msg::CoachState>(
-            "/strategy/coach_state", rclcpp::QoS(1),
-            [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
-                last_coach_state_ = *coach_state;
-                dribbler_speed_ = last_coach_state_.global_override.max_dribbler_speed;
-            });
+        "/strategy/coach_state", rclcpp::QoS(1),
+        [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
+            last_coach_state_ = *coach_state;
+            dribbler_speed_ = last_coach_state_.global_override.max_dribbler_speed;
+        });
 
     intent_sub_ = node->create_subscription<rj_msgs::msg::RobotIntent>(
         gameplay::topics::robot_intent_topic(shell_id), rclcpp::QoS(1),

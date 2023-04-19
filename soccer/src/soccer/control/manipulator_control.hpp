@@ -3,10 +3,10 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_intent.hpp>
 #include <rj_param_utils/param.hpp>
-#include <rj_msgs/msg/coach_state.hpp>
 
 namespace control {
 
