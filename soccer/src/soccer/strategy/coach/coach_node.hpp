@@ -33,7 +33,15 @@ enum MatchSituation {
     in_play,         // normal play
 };
 
-enum Positions { Goalie, Defense, Offense, PenaltyPlayer, GoalKicker, PenaltyLineup, SideLineup };
+enum Positions {
+    Goalie,
+    Defense,
+    Offense,
+    PenaltyPlayer,
+    GoalKicker,
+    OurSideLineup,
+    TheirSideLineup
+};
 
 // These values are explicitly declared because they are the ints that are published to
 // strategy/positions i.e. the same values as strategy::Positions
@@ -44,8 +52,8 @@ enum OverridePosition {
     Offense = 2,
     PenaltyPlayer = 3,
     GoalKicker = 4,
-    PenaltyLineup = 5,
-    SideLineup = 6,
+    OurSideLineup = 5,
+    TheirSideLineup = 6,
     None = 7
 };
 }  // namespace OverridePosition

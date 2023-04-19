@@ -13,22 +13,24 @@
 namespace strategy {
 
 /*
- * The Line position moves a robot to its designated position along a particular line
+ * Vertical line on our side
  */
-class Line : public Position {
+class TheirSideLineup : public Position {
 public:
-    Line(int r_id, int scenario);
-    ~Line() override = default;
+    TheirSideLineup(int r_id);
+    ~TheirSideLineup() override = default;
 
     void derived_acknowledge_pass() override{};
     void derived_pass_ball() override{};
     void derived_acknowledge_ball_in_transit() override{};
 
 private:
-    int r_id_;
-    int scenario_;
+    int r_id_{};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    rj_geometry::Point init_ball_pos_{};
+    bool init_ball_pos_valid_{false};
 };
 
 }  // namespace strategy

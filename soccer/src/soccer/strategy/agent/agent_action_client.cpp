@@ -137,10 +137,10 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
             next_position_ = std::make_unique<GoalKicker>(robot_id_);
             break;
         case 5:
-            next_position_ = std::make_unique<Line>(robot_id_, 0);
+            next_position_ = std::make_unique<OurSideLineup>(robot_id_);
             break;
         case 6:
-            next_position_ = std::make_unique<Line>(robot_id_, 1);
+            next_position_ = std::make_unique<TheirSideLineup>(robot_id_);
             break;
     };
 

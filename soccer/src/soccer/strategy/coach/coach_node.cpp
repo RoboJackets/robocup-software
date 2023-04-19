@@ -161,21 +161,15 @@ void CoachNode::assign_positions() {
     positions_pub_->publish(positions_message);
 }
 
-void CoachNode::assign_positions_sideline(std::array<uint32_t, kNumShells>& positions) {
-    for (size_t i = 0; i < kNumShells; i++) {
-        positions[i] = Positions::SideLineup;
-    }
-}
-
 void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& positions) {
-    for (size_t i = 0; i < kNumShells; i++) {
-        if (i != goalie_id_) {
-            positions[i] = Positions::PenaltyLineup;
-        }
-    }
-
     // If our restart, then we need a robot to kick. Otherwise, all Line is fine
     if (current_play_state_.our_restart) {
+        for (size_t i = 0; i < kNumShells; i++) {
+            if (i != goalie_id_) {
+                positions[i] = Positions::OurSideLineup;
+            }
+        }
+
         switch (current_play_state_.state) {
             case PlayState::State::Setup:
                 // Lowest non-goalie robot set to PenaltyPlayer
@@ -197,6 +191,12 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
             default:
                 SPDLOG_WARN("Invalid state for penalty restart");
                 assign_positions_normal(positions);
+        }
+    } else {
+        for (size_t i = 0; i < kNumShells; i++) {
+            if (i != goalie_id_) {
+                positions[i] = Positions::TheirSideLineup;
+            }
         }
     }
 }
