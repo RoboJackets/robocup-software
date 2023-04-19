@@ -1,5 +1,7 @@
 #include "goalie.hpp"
 
+#include <spdlog/spdlog.h>
+
 namespace strategy {
 
 Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
@@ -30,7 +32,12 @@ Goalie::State Goalie::update_state() {
 
     bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     if (ball_is_slow && ball_in_box) {
-        return CLEARING;
+        if (latest_state_ != CLEARING) {
+            return PREPARING_SHOT;
+        } else if (latest_state_ == PREPARING_SHOT && check_is_done()) {
+            // when PREPARING_SHOT is done, CLEAR
+            return CLEARING;
+        }
     }
 
     // when line kick fails but ball leaves box, don't chase it
@@ -63,8 +70,21 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         auto goalie_idle_cmd = planning::MotionCommand{"goalie_idle"};
         intent.motion_command = goalie_idle_cmd;
         return intent;
+    } else if (latest_state_ == PREPARING_SHOT) {
+        // pivot around ball...
+        auto ball_pt = world_state()->ball.position;
+
+        // ...to face their goal
+        planning::LinearMotionInstant target_instant{clear_point_};
+
+        auto pivot_cmd = planning::MotionCommand{"pivot"};
+        pivot_cmd.target = target_instant;
+        pivot_cmd.pivot_point = ball_pt;
+        intent.motion_command = pivot_cmd;
+        intent.dribbler_speed = 255.0;
+        return intent;
     } else if (latest_state_ == CLEARING) {
-        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 4.5}};
+        planning::LinearMotionInstant target{clear_point_};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
 
