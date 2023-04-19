@@ -17,10 +17,12 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
     if (scenario_ == 0) {
         auto ball_pos = world_state->ball.position;
         double goal_y = field_dimensions_.our_left_goal_post_coordinate().y();
-        int dir = ball_pos.y() - goal_y < 0 ? 1 : -1;
-        double fieldWidth = field_dimensions_.floor_border_width();
+        // Positive is our_restart, Negative is their_restart
+        int dir = field_dimensions_.center_point().y() - ball_pos.y()< 0 ? 1 : -1;
+        double fieldWidth =  field_dimensions_.floor_border_width();
+        double finalY = dir > 0 ? field_dimensions_.our_defense_area().center().y() : field_dimensions_.their_defense_area().center().y();
         finalPos = fieldWidth / (visibleRobots - 1) * r_id_ - visibleRobots / 2 / 3 + ball_pos.x();
-        target_pt = rj_geometry::Point(finalPos, ball_pos.y() + dir * 0.5);
+        target_pt = rj_geometry::Point(finalPos, finalY);
     } else if (scenario_ == 1) {
         double fieldLength = field_dimensions_.floor_length() / 2;
         double y = field_dimensions_.our_left_goal_post_coordinate().y();
