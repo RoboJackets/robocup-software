@@ -27,6 +27,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
 
     rj_msgs::msg::CoachState last_coach_state_{};
+    double dribbler_speed_ = 0;
 };
 
 }  // namespace control

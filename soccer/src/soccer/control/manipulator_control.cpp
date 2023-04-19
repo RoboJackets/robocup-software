@@ -20,6 +20,7 @@ ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell
             "/strategy/coach_state", rclcpp::QoS(1),
             [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
                 last_coach_state_ = *coach_state;
+                dribbler_speed_ = last_coach_state_.global_override.max_dribbler_speed;
             });
 
     intent_sub_ = node->create_subscription<rj_msgs::msg::RobotIntent>(
@@ -29,7 +30,7 @@ ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell
                                          .shoot_mode(intent->shoot_mode)
                                          .trigger_mode(intent->trigger_mode)
                                          .kick_speed(intent->kick_speed)
-                                         .dribbler_speed(this->last_coach_state_.global_override.max_dribbler_speed));
+                                         .dribbler_speed(dribbler_speed_));
         });
 }
 
