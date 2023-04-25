@@ -28,9 +28,16 @@ public:
     Defense(int r_id);
     ~Defense() override = default;
 
+    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+    communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request) override;
+
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
+
+    void die() override;
+    void revive() override;
 
 private:
     int move_ct_ = 0;
@@ -47,19 +54,63 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        IDLING,     // simply staying in place
-        SEARCHING,  // moving around on the field to do something
-        RECEIVING,  // physically intercepting the ball from a pass
-        PASSING,    // physically kicking the ball towards another robot
-        FACING,     // turning to face the passing robot
+        IDLING,        // simply staying in place
+        JOINING_WALL,  // send message to find its place in the wall
+        WALLING,       // participating in the wall
+        SEARCHING,     // moving around on the field to do something
+        RECEIVING,     // physically intercepting the ball from a pass
+        PASSING,       // physically kicking the ball towards another robot
+        FACING,        // turning to face the passing robot
     };
 
     State update_state();
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
+    /**
+     * @brief Sends a JoinWallRequest in broadcast to the other robots
+     */
+    void send_join_wall_request();
+
+    /**
+     * @brief Sends a LeaveWallRequest to each of the robots in walling_robots_.
+     */
+    void send_leave_wall_request();
+
+    /**
+     * @brief Adds the new waller to this robot's list of wallers and updates this robot's position
+     * in the wall.
+     *
+     * @param join_request the request received from another robot about joining the wall
+     * @return communication::JoinWallResponse A confirmation for the other robot to join the wall
+     * with this robot's ID
+     */
+    communication::JoinWallResponse handle_join_wall_request(
+        communication::JoinWallRequest join_request);
+
+    /**
+     * @brief Removes a given robot from this robot's list of wallers.
+     *
+     * @param leave_request the request from the robot who is leaving the wall
+     * @return communication::Acknowledge acknowledgement of the other robot's communication
+     */
+    communication::Acknowledge handle_leave_wall_request(
+        communication::LeaveWallRequest leave_request);
+
+    /**
+     * @brief Handles the response from the currently walling robots to find this robot's place in
+     * the wall.
+     *
+     * @param join_response the response from another robot that this robot can join the wall
+     */
+    void handle_join_wall_response(communication::JoinWallResponse join_response);
+
+    std::vector<u_int8_t> walling_robots_ = {};
+    int waller_id_ = -1;
+
     // current state of the defense agent (state machine)
-    State current_state_ = IDLING;
+    int get_waller_id();
+    State current_state_ = JOINING_WALL;
 };
 
 }  // namespace strategy
