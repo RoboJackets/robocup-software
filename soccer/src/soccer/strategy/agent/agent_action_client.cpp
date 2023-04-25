@@ -181,7 +181,7 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
     if (current_position_ == nullptr) {
         current_position_ = std::move(next_position_);
     } else if (next_position_->get_name() != current_position_->get_name()) {
-        // Call robot's die functionality
+        // When a disconnected robot is found, notify the position
         current_position_->die();
         // Send any final death communications from robot
         get_communication();
