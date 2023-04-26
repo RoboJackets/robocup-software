@@ -24,8 +24,8 @@ public:
     void derived_pass_ball() override{};
     void derived_acknowledge_ball_in_transit() override{};
 
-private:   
-    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;    
+private:
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
 
 }  // namespace strategy

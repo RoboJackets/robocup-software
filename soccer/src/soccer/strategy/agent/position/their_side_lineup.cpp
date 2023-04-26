@@ -2,9 +2,7 @@
 
 namespace strategy {
 
-TheirSideLineup::TheirSideLineup(int r_id) : Position(r_id) {
-    position_name_ = "Line";
-}
+TheirSideLineup::TheirSideLineup(int r_id) : Position(r_id) { position_name_ = "Line"; }
 
 std::optional<RobotIntent> TheirSideLineup::derived_get_task(RobotIntent intent) {
     WorldState* world_state = this->world_state();
@@ -14,7 +12,8 @@ std::optional<RobotIntent> TheirSideLineup::derived_get_task(RobotIntent intent)
     double fieldLength = field_dimensions_.floor_length() / 2;
     double y = field_dimensions_.their_left_goal_post_coordinate().y();
     double x = field_dimensions_.their_left_corner().x();
-    double finalPos = (y < fieldLength ? 1 : -1) * fieldLength / (visibleRobots - 1) * robot_id_ + y;
+    double finalPos =
+        (y < fieldLength ? 1 : -1) * fieldLength / (visibleRobots - 1) * robot_id_ + y;
     target_pt = rj_geometry::Point(x, finalPos);
 
     // Stop at end of path
