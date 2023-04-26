@@ -13,7 +13,7 @@
 namespace strategy {
 
 /*
- * Vertical line on our side
+ * Vertical line on thier side
  */
 class TheirSideLineup : public Position {
 public:
@@ -24,13 +24,8 @@ public:
     void derived_pass_ball() override{};
     void derived_acknowledge_ball_in_transit() override{};
 
-private:
-    int r_id_{};
-
-    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-
-    rj_geometry::Point init_ball_pos_{};
-    bool init_ball_pos_valid_{false};
+private:   
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;    
 };
 
 }  // namespace strategy
