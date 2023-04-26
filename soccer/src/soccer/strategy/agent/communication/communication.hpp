@@ -148,7 +148,8 @@ bool operator==(const LeaveWallRequest& a, const LeaveWallRequest& b);
  * @brief a conglomeration of the different request types.
  */
 using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingBallRequest,
-                                  BallInTransitRequest, ScorerRequest, ResetScorerRequest, JoinWallRequest, LeaveWallRequest>;
+                                  BallInTransitRequest, ScorerRequest, ResetScorerRequest,
+                                  JoinWallRequest, LeaveWallRequest>;
 
 // END REQUEST TYPES //
 
