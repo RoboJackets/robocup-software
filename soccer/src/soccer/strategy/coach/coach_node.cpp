@@ -411,7 +411,8 @@ rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {
 
 bool CoachNode::check_robot_alive(u_int8_t robot_id) {
     if (!is_simulated_) {
-        return std::find(alive_robots_.begin(), alive_robots_.end(), robot_id) != alive_robots_.end();
+        return std::find(alive_robots_.begin(), alive_robots_.end(), robot_id) !=
+               alive_robots_.end();
     } else {
         // TODO (Nathaniel): In the future store a world state reference and check the robots
         // location to determine if the robot is alive

@@ -7,7 +7,9 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
+#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/play_state.hpp>
@@ -15,8 +17,6 @@
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "game_state.hpp"
