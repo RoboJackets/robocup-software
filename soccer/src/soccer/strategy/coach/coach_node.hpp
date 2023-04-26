@@ -15,6 +15,8 @@
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
+#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "game_state.hpp"
@@ -83,6 +85,11 @@ private:
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
     rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
 
+    // Subscriber to get the alive robots for non-simulated games
+    rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
+    // Subscriber to determine whether the game mode is simulated or real play
+    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+
     rj_msgs::msg::PlayState current_play_state_;
     bool possessing_ = false;
     bool play_state_has_changed_ = true;
@@ -105,6 +112,8 @@ private:
     void goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg);
     void overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
     void check_for_play_state_change();
+    void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
+    void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
     /*
      * Handles actions the Coach does every tick. Currently calls assign_positions() and
      * check_for_play_state_change.
@@ -138,6 +147,20 @@ private:
      * crash into them.
      */
     rj_geometry::ShapeSet create_goal_wall_obstacles();
+
+    std::vector<u_int8_t> alive_robots_ = {};
+    bool is_simulated_ = false;
+    static constexpr double field_padding_ = 0.3;
+
+    /**
+     * @brief checks whether a robot is visible, in the field, and (if the game is not
+     * simulated) whether or not the robot is in the alive robots list.
+     *
+     * @param robot_id the id of the robot to check alive
+     * @return true if robot is connected, visible, and near the field
+     * @return false if the robot is not connected or is not visible
+     */
+    bool check_robot_alive(u_int8_t robot_id);
 };
 
 }  // namespace strategy
