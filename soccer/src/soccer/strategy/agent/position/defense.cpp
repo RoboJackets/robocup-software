@@ -64,6 +64,9 @@ Defense::State Defense::update_state() {
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
+        auto empty_motion_cmd = planning::MotionCommand{};
+        intent.motion_command = empty_motion_cmd;
+        return intent;
         // DO NOTHING
     } else if (current_state_ == SEARCHING) {
         // TODO(https://app.clickup.com/t/8677qektb): Define defensive searching behavior

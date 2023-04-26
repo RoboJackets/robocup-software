@@ -42,20 +42,27 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // Add our robots, either static or dynamic depending on whether they have
     // already been planned. In both cases, radius is based on velocity like
     // above for opp robots.
+    // TODO: reenable dynamic obstacles for our robots (currently
+    // TrajectoryCollection is never filled at planner level)
     for (size_t shell = 0; shell < kNumShells; shell++) {
-        const auto& robot = in.world_state->our_robots.at(shell);
-        if (!robot.visible || shell == in.shell_id) {
+        const auto& our_robot = in.world_state->our_robots.at(shell);
+        if (!our_robot.visible || shell == in.shell_id) {
             continue;
         }
 
-        const Trajectory* ptr_to_traj = std::get<0>(in.planned_trajectories->get(shell)).get();
-        if (out_dynamic != nullptr && ptr_to_traj != nullptr) {
-            // Dynamic obstacle
-            out_dynamic->emplace_back(obs_radius, ptr_to_traj);
-        } else {
-            // Static obstacle
-            out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
-        }
+        /* const Trajectory* ptr_to_traj = std::get<0>(in.planned_trajectories->get(shell)).get();
+         */
+        /* if (out_dynamic != nullptr && ptr_to_traj != nullptr) { */
+        /*     // Dynamic obstacle */
+        /*     out_dynamic->emplace_back(obs_radius, ptr_to_traj); */
+        /* } else { */
+        /*     // Static obstacle */
+        /*     out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius)); */
+        /* } */
+
+        // Static obstacle
+        fill_robot_obstacle(our_robot, obs_center, obs_radius);
+        out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
     }
 
     // Finally, add the ball as a dynamic obstacle.

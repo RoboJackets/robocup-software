@@ -19,7 +19,7 @@ public:
     enum CollectPathPathPlannerStates {
         // From start of subbehavior to the start of the slow part of the
         // approach
-        CourseApproach,
+        CoarseApproach,
         // From the slow part of the approach to the touching of the ball
         FineApproach,
         // From touching the ball to stopped with the ball in the mouth
@@ -62,7 +62,7 @@ private:
 
     Trajectory previous_;
 
-    CollectPathPathPlannerStates current_state_ = CollectPathPathPlannerStates::CourseApproach;
+    CollectPathPathPlannerStates current_state_ = CollectPathPathPlannerStates::CoarseApproach;
 
     // Ball Velocity Filtering Variables
     rj_geometry::Point average_ball_vel_;
