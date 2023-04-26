@@ -49,8 +49,6 @@ void Position::update_world_state(WorldState world_state) {
 }
 
 void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
-    match_state_ = msg.play_state.state;
-    match_restart_ = msg.play_state.restart;
     our_possession_ = msg.our_possession;
     // TODO: how is planner supposed to get this global override info?
     global_override_ = msg.global_override;
@@ -60,6 +58,20 @@ void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
 
 void Position::update_field_dimensions(FieldDimensions field_dims) {
     field_dimensions_ = std::move(field_dims);
+}
+
+void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
+    alive_robots_ = alive_robots;
+
+    if (alive &&
+        std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) != alive_robots_.end()) {
+        alive = false;
+        die();
+    } else if (!alive && std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) ==
+                             alive_robots_.end()) {
+        alive = true;
+        revive();
+    }
 }
 
 [[nodiscard]] WorldState* Position::world_state() {
@@ -119,7 +131,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
             std::get_if<communication::PassRequest>(&request.request)) {
         communication::PassResponse pass_response = receive_pass_request(*pass_request);
         comm_response.response = pass_response;
-        // TODO: "IncomingBallRequest" => "IncomingBallRequest" (or smth)
     } else if (const communication::IncomingBallRequest* incoming_ball_request =
                    std::get_if<communication::IncomingBallRequest>(&request.request)) {
         communication::Acknowledge incoming_pass_acknowledge =
@@ -152,7 +163,6 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication_request.target_agents = target_robots;
     communication_request.urgent = true;
     communication_request.broadcast = false;
-
     communication_request_ = communication_request;
 }
 

@@ -7,6 +7,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/config.hpp>
 
+#include <rj_msgs/msg/alive_robots.hpp>
 #include <robot_intent.hpp>
 
 #include "radio.hpp"
@@ -59,6 +60,15 @@ protected:
     std::vector<std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>> send_buffers_{};
 
     constexpr static std::chrono::duration kTimeout = std::chrono::milliseconds(250);
+
+    rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
+    rclcpp::TimerBase::SharedPtr alive_robots_timer_;
+
+    /**
+     * @brief Publish a vector of alive robots to the "strategy/alive_robots" endpoint
+     *
+     */
+    void publish_alive_robots();
 };
 
 }  // namespace radio
