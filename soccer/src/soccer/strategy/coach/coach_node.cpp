@@ -261,30 +261,18 @@ void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& posi
 
 void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positions) {
     if (!possessing_) {
-        // All robots set to defense
+        // except goalie, all robots set to defense
         for (int i = 0; i < kNumShells; i++) {
             if (i != goalie_id_) {
                 positions[i] = Positions::Defense;
             }
         }
-        // Lowest non-goalie robot set to offense
-        if (goalie_id_ == 0) {
-            positions[1] = Positions::Offense;
-        } else {
-            positions[0] = Positions::Offense;
-        }
     } else {
-        // All robots set to offense
+        // except goalie, all robots set to offense
         for (int i = 0; i < kNumShells; i++) {
             if (i != goalie_id_) {
                 positions[i] = Positions::Offense;
             }
-        }
-        // Lowest non-goalie robot set to defense
-        if (goalie_id_ == 0) {
-            positions[1] = Positions::Defense;
-        } else {
-            positions[0] = Positions::Defense;
         }
     }
 

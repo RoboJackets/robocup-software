@@ -67,6 +67,8 @@ rosidl_generate_interfaces(
   request/TestRequest.msg
   request/IncomingBallRequest.msg
   request/BallInTransitRequest.msg
+  request/ScorerRequest.msg
+  request/ResetScorerRequest.msg
   request/JoinWallRequest.msg
   request/LeaveWallRequest.msg
 
@@ -75,6 +77,7 @@ rosidl_generate_interfaces(
   response/PassResponse.msg
   response/PositionResponse.msg
   response/TestResponse.msg
+  response/ScorerResponse.msg
   response/JoinWallResponse.msg
   response/LeaveWallResponse.msg
 
