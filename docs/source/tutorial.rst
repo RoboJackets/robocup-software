@@ -185,8 +185,7 @@ C++ can be difficult. Some advice from an older version of this tutorial:
    read through the sections "Basics of C++", "Program structure", and "Classes"
    of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
 
-**TODO: move the information on header files in C++ from section 6 to here. adapt
-it so it is more generic and doesn't involve ros2. **
+**TODO: move the information on header files in C++ from section 6 to here. adapt it so it is more generic and doesn't involve ros2. **
 
 Take a look at both the headers and source files for the ``offense``, ``defense``, 
 and ``goalie`` positions defined in the ``strategy`` directory. Also take some time
@@ -209,12 +208,9 @@ run a lap around the field. This will be a chance to work with motion commands,
 which is the primary interface between the strategy and planning layers, as well
 as create your own state machine. 
 
-**TODO: create boilerplate position class ``Runner``
-   and instructions for filling it out, showing example MotionCommands and 
-   other hints as necessary**
+**TODO: create boilerplate position class ``Runner``and instructions for filling it out, showing example MotionCommands and other hints as necessary**
 
-**TODO: move/copy instructions for building,
-   (excluding CMake, which will be done ahead of time for Runner)**
+**TODO: move/copy instructions for building, (excluding CMake, which will be done ahead of time for Runner)**
 
 
 4. ROS CLI Basics
