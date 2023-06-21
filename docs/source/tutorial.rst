@@ -1,9 +1,6 @@
 Tutorial
 =============
 
-**Section 3 on rj_gameplay and Python is outdated as of 12/28/2022.**
-(The other sections still apply.)
-
 This page is meant to teach new RoboCup Software members the basics of what
 they'll need to contribute. It will introduce the Robot Operating System (ROS),
 the command-line, GitHub, git, Python, C++, and the general shape of our stack.
@@ -103,7 +100,15 @@ command-line and git, let's get started using GitHub.
    git is a command line version-control tool. GitHub is a website to host
    shared files, and is well-integrated with git, but is not the same thing.
 
-First, use git to create a new branch under this naming scheme:
+First, use git to checkout the branch that contains starter code for this
+project, and then pull its latest version:
+
+.. code-block:: bash
+
+   git checkout tutorial-2023-starter
+   git pull
+
+Next, create a new branch under this naming scheme:
 
 .. code-block:: bash
 
@@ -112,9 +117,18 @@ First, use git to create a new branch under this naming scheme:
 For instance, the author's branch would be named
 ``kevin-fu/robocup-sw-tutorial``.
 
-Launch soccer (our UI) and the
-ER-force simulator, same way as you did in the installation guide, then select
-this play as the test play to see it in action. 
+Launch soccer (our UI) and the ER-force simulator, same way as you did in the 
+installation guide. Press the green check mark. You should see four wallers
+and one goalie move into position. Click anywhere on the field to place the 
+ball in that location. You should see all five robots move between the ball
+and the goal.
+
+Open the file ``soccer/src/soccer/strategy/agent/position/waller.cpp``. 
+Find the line of code that calculates the ``wall_spacing`` and double its value.
+
+Re-build the project (``make again``) and run the simulator again. You should
+see the wallers more spread out. Note that this is probably a less effective wall!
+This change is just for educational purposes. Take a screenshot of your new wall.
 
 Now that you've made a change to the repo, run ``git status``. You should see
 that whatever files you changed show up in red, which indicates that they are
@@ -130,8 +144,9 @@ how, or see the previous section on git), then commit them:
    <commit msg> should be a present-tense description of what you've changed. In
    this case, "change to 4 wallers" is fine.
 
-   Without the -m flag, git commit will open a nano, a text editor, and ask you
-   to type in a commit msg. -m is a bit faster.
+   Without the -m flag, git commit will open a nano (or whatever your
+   default text editor is set to) and ask you to type in 
+   a commit msg. -m is a bit faster.
 
 When you commit, you should see our pre-commit hooks run. These are automated
 programs that make your code comply with standardized style guidelines. If one
@@ -150,79 +165,57 @@ description, you can delete the template and write something simple like
 "Completes RC SW tutorials." Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
-1. rj_gameplay and Python
--------------------------
+3. C++ and Strategy
+--------------------
 
-In this section, you'll be tasked with creating a new Python class to give our
-robots some new tricks on the field. This section is one of two coding-heavy
-sections, and should present a significant challenge.
+This section of the tutorial is designed to get your feet wet with C++ and our strategy 
+stack, without worrying about ROS2, which you will learn about after this section. 
 
- * If you don't know Python, but you've coded in some other language before,
-   Python is likely an easier language to learn than the one you already know.
-   (Just look at some of the .py files in this repo and you'll see.)
- * If you've never coded before this club, hopefully you are in CS 1301/1371,
-   and you'll start learning how to code very shortly. In that case, skip to
-   section #4 for now, continue working, and come back here at the end of
-   section #5 when it becomes necessary to have this section done.
- * If you've never coded before and you're not in an introductory CS course,
-   you'll have to go through a Python tutorial like `this one
-   <https://docs.python.org/3/tutorial/>`_ to learn the ropes.
+There are many layers to our codebase, but the strategy layer is the one 
+you will likely interact with the most. It is the layer responsible for deciding
+what each robot does on a high level, similar to what a coach may tell players on a 
+real soccer team. The strategy layer is focused on deciding how to play soccer
+rather than how to move robots or manage motion control.
 
-Your task is to create a Runner Role that can make any arbitrary robot run
-around the perimeter of the field. This should hopefully distract the other team
-and keep them from being able to score on us. **Read the rest of this section
-before starting.**
+C++ can be difficult. Some advice from an older version of this tutorial:
 
-The coordinates of the field are in the ``world_state`` object that is passed
-through every single gameplay element. Search the ``rj_gameplay`` folder for
-``world_state.field`` to figure out how to get those coordinates--you will
-eventually find the file where the field coords are passed in, and from there it
-will be obvious how to use them. Do this search with ``grep``, not by hand.
+   This is a real hurdle. If you already have Java or C
+   experience, the syntax is similar enough to where you'll be able to work
+   through this section, even if it takes you some time. If you aren't so lucky,
+   read through the sections "Basics of C++", "Program structure", and "Classes"
+   of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
 
-A Role defines a complex, single-robot behavior, like the Goalie, or a Passer.
-See the Design Docs linked in `this PR
-<https://github.com/RoboJackets/robocup-software/pull/1811>`_ for more detail.
-The superclass for all Roles is defined in ``rj_gameplay/stp/role/__init__.py``,
-and the subclasses that define actual Roles are in
-``rj_gameplay/rj_gameplay/role/``. All roles use a finite state machine, or FSM,
-which is really just a good mental model for writing programs that change over
-the course of time. Look at the existing files to figure out how to structure
-and implement your role to use an FSM.
+**TODO: move the information on header files in C++ from section 6 to here. adapt
+it so it is more generic and doesn't involve ros2. **
 
-If you've never heard of a superclass before, see `this website
-<https://www.whitman.edu/mathematics/java_tutorial/java/objects/inheritance.html>`_
-for a quick introduction. If you want to learn more about FSMs, see `this link
-<https://flaviocopes.com/finite-state-machines/>`_.
+Take a look at both the headers and source files for the ``offense``, ``defense``, 
+and ``goalie`` positions defined in the ``strategy`` directory. Also take some time
+to understand how the ``strategy`` directory is organized.
 
-To test your Role, you'll have to write a Tactic that uses it, and put that
-Tactic into a Play. This is a little complicated. Look at the Defense Play you
-modified earlier. The Goalie Tactic in this play is really just a wrapper for
-the Goalie Role (as in, it doesn't do much but call the Goalie Role and ask it
-what to do). This is how your Runner Role should be included. Put it in the
-Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner. Remember to
-test often with the sim.
+You might have noticed that the three positions have a similar structure. Crucially,
+they implement two methods: ``state_to_task`` and ``update_state``.  This is our
+implementation of a finite state machine. You should take some time to understand
+this concept if you're not familiar. One place you can get started is 
+`this article <https://medium.com/@mlbors/what-is-a-finite-state-machine-6d8dec727e2c>`_ 
 
-.. image::
+Each position defines its own states within its header file. There is more to these
+classes than just the state methods, namely the implementation of our communication
+system, but don't worry about that for this tutorial. We've gone ahead and created
+another position for you called Runner. Open up ``runner.hpp`` and ``runner.cpp`` 
+to look at that. 
 
-   ./_static/basic_defense.drawio.png
+Right now, this position does nothing. Your goal will be to make this position
+run a lap around the field. This will be a chance to work with motion commands,
+which is the primary interface between the strategy and planning layers, as well
+as create your own state machine. 
 
-There are many ways to assign a Role to a given robot (see the design doc linked
-above for more detail). In this case, assign robot 1 to be our runner. (That's
-our most in-shape robot, so it can handle the extra miles.) Do this the same
-way that the Goalie Role always picks robot 0 to be the goalie.
+**TODO: create boilerplate position class ``Runner``
+   and instructions for filling it out, showing example MotionCommands and 
+   other hints as necessary**
 
-You may have noticed there's a lot of file-finding in this section. Use the
-option in your IDE or text editor that allows you to see a full folder at once.
-For instance, in VS Code, there is an option to open a full folder, which
-displays all the subfolders and files in the left toolbar. If you open
-``robocup-software/rj_gameplay`` like this, it should be a lot easier to
-navigate these files.
+**TODO: move/copy instructions for building,
+   (excluding CMake, which will be done ahead of time for Runner)**
 
-If you've read this whole section and are feeling a little intimidated, that's
-normal. The paragraphs above form a nice to-do list for you to follow. Just try
-your best, one step at a time, and eventually you'll have a working piece of
-software to be proud of. You'll use this same Runner Role again later on, so
-you'll get to savor your success then!
 
 4. ROS CLI Basics
 -----------------
@@ -329,13 +322,7 @@ on any of the readings from section 4 that you need to. Ignore
 "Prerequisites"--our workspace is already set up for you, and we'll walk through
 instructions for building your code here.
 
-This section is by far the most difficult of the tutorial. If you've made it
-this far, though, you should have everything you need for this section *except
-for* C++ knowledge. This is a real hurdle. If you already have Java or C
-experience, the syntax is similar enough to where you'll be able to work
-through this section, even if it takes you some time. If you aren't so lucky,
-read through the sections "Basics of C++", "Program structure", and "Classes"
-of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
+This section is by far the most difficult of the tutorial. 
 
 **Read the rest of this section before starting.**
 
