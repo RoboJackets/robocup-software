@@ -25,7 +25,6 @@ public:
 private:
     ::params::LocalROS2ParamProvider param_provider_;
     std::vector<MotionControl> controllers_{};
-    std::vector<ManipulatorControl> manipulators_{};
 };
 
 }  // namespace control
