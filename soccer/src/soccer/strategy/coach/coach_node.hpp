@@ -84,6 +84,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_subs_[kNumShells];
     rclcpp::TimerBase::SharedPtr coach_action_callback_timer_;
+    rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
 
     // Subscriber to get the alive robots for non-simulated games
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
@@ -114,6 +115,10 @@ private:
     void check_for_play_state_change();
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
+    void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
+
+    rclcpp::TimerBase::SharedPtr update_alive_robots_timer_;
+    std::vector<u_int8_t> alive_robots_ = {};
     /*
      * Handles actions the Coach does every tick. Currently calls assign_positions() and
      * check_for_play_state_change.

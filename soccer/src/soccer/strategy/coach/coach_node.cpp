@@ -40,6 +40,10 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         "config/game_settings", 1,
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
+    alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
+        "strategy/alive_robots", 1,
+        [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
+
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
     // save state of acknowledgements, only spam until some long time has passed, or ack
     // received
@@ -59,6 +63,9 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
                 ball_sense_callback(msg, true);
             });
     }
+
+    update_alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(1000),
+                                                   [this]() { update_position_alive_robots(); });
 
     current_play_state_.state = PlayState::State::Halt;
     current_play_state_.restart = PlayState::Restart::Kickoff;
@@ -418,6 +425,10 @@ bool CoachNode::check_robot_alive(u_int8_t robot_id) {
         // location to determine if the robot is alive
         return true;
     }
+}
+
+void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
+    alive_robots_ = msg->alive_robots;
 }
 
 }  // namespace strategy
