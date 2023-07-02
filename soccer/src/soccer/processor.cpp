@@ -88,7 +88,7 @@ void Processor::run() {
         ////////////////
         // Inputs
         // TODO(#1558): Backport spin_all and use it for our main executor.
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; rclcpp::ok() && i < 20; i++) {
             ros_executor_->spin_some();
         }
         // spin_all doesn't exist yet

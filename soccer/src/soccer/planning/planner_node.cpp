@@ -202,7 +202,7 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
                                       .shoot_mode(intent.shoot_mode)
                                       .trigger_mode(intent.trigger_mode)
                                       .kick_speed(intent.kick_speed)
-                                      .dribbler_speed(plan_request.dribble_speed));
+                                      .dribbler_speed(plan_request.dribbler_speed));
 
         /*
         // TODO (PR #1970): fix TrajectoryCollection
@@ -299,7 +299,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         constraints.mot.max_speed = max_robot_speed;
     }
 
-    float dribble_speed = std::min(intent.dribbler_speed, max_dribbler_speed);
+    float dribble_speed =
+        std::min(static_cast<float>(intent.dribbler_speed), static_cast<float>(max_dribbler_speed));
 
     return PlanRequest{start,
                        motion_command,
