@@ -202,7 +202,7 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
                                       .shoot_mode(intent.shoot_mode)
                                       .trigger_mode(intent.trigger_mode)
                                       .kick_speed(intent.kick_speed)
-                                      .dribbler_speed(intent.dribbler_speed));
+                                      .dribbler_speed(plan_request.dribble_speed));
 
         /*
         // TODO (PR #1970): fix TrajectoryCollection
@@ -246,7 +246,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto play_state = global_state_.play_state();
     const auto min_dist_from_ball = global_state_.coach_state().global_override.min_dist_from_ball;
     const auto max_robot_speed = global_state_.coach_state().global_override.max_speed;
-
+    const auto max_dribbler_speed = global_state_.coach_state().global_override.max_dribbler_speed;
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
@@ -299,6 +299,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         constraints.mot.max_speed = max_robot_speed;
     }
 
+    float dribble_speed = std::min(intent.dribbler_speed, max_dribbler_speed);
+
     return PlanRequest{start,
                        motion_command,
                        constraints,
@@ -310,7 +312,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        intent.priority,
                        &debug_draw_,
                        had_break_beam_,
-                       min_dist_from_ball};
+                       min_dist_from_ball,
+                       dribble_speed};
 }
 
 Trajectory PlannerForRobot::unsafe_plan_for_robot(const planning::PlanRequest& request) {
