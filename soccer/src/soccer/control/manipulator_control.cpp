@@ -25,8 +25,8 @@ ManipulatorControl::ManipulatorControl(int shell_id, rclcpp::Node* node) : shell
 
     intent_sub_ = node->create_subscription<rj_msgs::msg::RobotIntent>(
         gameplay::topics::robot_intent_topic(shell_id), rclcpp::QoS(1),
-        [manipulator_pub, this](rj_msgs::msg::RobotIntent::SharedPtr intent) {  // NOLINT
-            manipulator_pub->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
+        [this](rj_msgs::msg::RobotIntent::SharedPtr intent) {  // NOLINT
+            manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
                                          .shoot_mode(intent->shoot_mode)
                                          .trigger_mode(intent->trigger_mode)
                                          .kick_speed(intent->kick_speed)

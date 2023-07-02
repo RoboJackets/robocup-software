@@ -112,15 +112,9 @@ First, use git to create a new branch under this naming scheme:
 For instance, the author's branch would be named
 ``kevin-fu/robocup-sw-tutorial``.
 
-Then take a look at the defense play in
-``rj_gameplay/rj_gameplay/play/defense.py``. Launch soccer (our UI) and the
+Launch soccer (our UI) and the
 ER-force simulator, same way as you did in the installation guide, then select
-this play as the test play to see it in action. Click the green checkmark in our
-UI. You should see 3 robots form a wall, 2 robots mark the opposing team, and 1
-robot play goalie.
-
-Figure out which line(s) to change so that 4 robots form a wall instead of 3.
-When done, take a screenshot of the four wallers.
+this play as the test play to see it in action. 
 
 Now that you've made a change to the repo, run ``git status``. You should see
 that whatever files you changed show up in red, which indicates that they are
@@ -156,7 +150,7 @@ description, you can delete the template and write something simple like
 "Completes RC SW tutorials." Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
-3. rj_gameplay and Python
+1. rj_gameplay and Python
 -------------------------
 
 In this section, you'll be tasked with creating a new Python class to give our
