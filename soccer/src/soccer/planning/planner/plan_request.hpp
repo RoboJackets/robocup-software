@@ -111,8 +111,8 @@ struct PlanRequest {
 
     /**
      * Dribbler Speed
-    */
-   float dribbler_speed = 0;
+     */
+    float dribbler_speed = 0;
 };
 
 /**
