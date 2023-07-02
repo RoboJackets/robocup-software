@@ -32,6 +32,14 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         ::referee::topics::kGoalieTopic, 10,
         [this](const rj_msgs::msg::Goalie::SharedPtr msg) { goalie_callback(msg); });
 
+    alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
+        "strategy/alive_robots", 1,
+        [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
+
+    game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(
+        "config/game_settings", 1,
+        [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
+
     // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
     // save state of acknowledgements, only spam until some long time has passed, or ack
     // received
@@ -91,6 +99,14 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
             play_state_has_changed_ = true;
         }
     }
+}
+
+void CoachNode::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
+    alive_robots_ = msg->alive_robots;
+}
+
+void CoachNode::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
+    is_simulated_ = msg->simulation;
 }
 
 void CoachNode::coach_ticker() {
@@ -260,30 +276,74 @@ void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& posi
 }
 
 void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positions) {
-    if (!possessing_) {
-        // except goalie, all robots set to defense
-        for (int i = 0; i < kNumShells; i++) {
-            if (i != goalie_id_) {
-                positions[i] = Positions::Defense;
+    // BEGIN COMP 2023 PATCH CODE
+
+    // Assign Robots to positions in the following order:
+    //  1. 1 Goalie
+    //  2. 2 Offense
+    //  3. Remaining Defense (always 1 defender)
+    int assign_num = 0;
+    for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        if (check_robot_alive(robot_id)) {
+            switch (assign_num) {
+                case 0:
+                    positions[robot_id] = Positions::Goalie;
+                    break;
+                case 1:
+                    positions[robot_id] = Positions::Offense;
+                    break;
+                case 2:
+                    positions[robot_id] = Positions::Defense;
+                    break;
+                case 3:
+                    positions[robot_id] = Positions::Offense;
+                    break;
+                default:
+                    positions[robot_id] = Positions::Defense;
+                    break;
             }
-        }
-    } else {
-        // except goalie, all robots set to offense
-        for (int i = 0; i < kNumShells; i++) {
-            if (i != goalie_id_) {
-                positions[i] = Positions::Offense;
-            }
+            assign_num++;
         }
     }
 
-    // Check Overrides
-    if (have_overrides_) {
-        for (int i = 0; i < kNumShells; i++) {
-            if (i != goalie_id_ && current_overrides_[i] == 1 || current_overrides_[i] == 2) {
-                positions[i] = current_overrides_[i];
-            }
-        }
-    }
+    // END COMP 2023 PATCH CODE
+
+    // if (!possessing_) {
+    //     // All robots set to defense
+    //     for (int i = 0; i < kNumShells; i++) {
+    //         if (i != goalie_id_) {
+    //             positions[i] = Positions::Defense;
+    //         }
+    //     }
+    //     // Lowest non-goalie robot set to offense
+    //     if (goalie_id_ == 0) {
+    //         positions[1] = Positions::Offense;
+    //     } else {
+    //         positions[0] = Positions::Offense;
+    //     }
+    // } else {
+    //     // All robots set to offense
+    //     for (int i = 0; i < kNumShells; i++) {
+    //         if (i != goalie_id_) {
+    //             positions[i] = Positions::Offense;
+    //         }
+    //     }
+    //     // Lowest non-goalie robot set to defense
+    //     if (goalie_id_ == 0) {
+    //         positions[1] = Positions::Defense;
+    //     } else {
+    //         positions[0] = Positions::Defense;
+    //     }
+    // }
+
+    // // Check Overrides
+    // if (have_overrides_) {
+    //     for (int i = 0; i < kNumShells; i++) {
+    //         if (i != goalie_id_ && current_overrides_[i] == 1 || current_overrides_[i] == 2) {
+    //             positions[i] = current_overrides_[i];
+    //         }
+    //     }
+    // }
 }
 
 void CoachNode::overrides_callback(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
@@ -347,6 +407,17 @@ rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {
     goal_wall_obstacles.add(current_field_dimensions_.their_goal_walls());
 
     return goal_wall_obstacles;
+}
+
+bool CoachNode::check_robot_alive(u_int8_t robot_id) {
+    if (!is_simulated_) {
+        return std::find(alive_robots_.begin(), alive_robots_.end(), robot_id) !=
+               alive_robots_.end();
+    } else {
+        // TODO (Nathaniel): In the future store a world state reference and check the robots
+        // location to determine if the robot is alive
+        return true;
+    }
 }
 
 }  // namespace strategy
