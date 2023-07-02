@@ -29,11 +29,6 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     RobotConstraints robot_constraints = plan_request.constraints;
     MotionConstraints& motion_constraints = robot_constraints.mot;
 
-    // List of obstacles
-    ShapeSet obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(plan_request, &obstacles, &dynamic_obstacles, false);
-
     // The small beginning part of the previous path
     Trajectory partial_path;
 
@@ -104,22 +99,29 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     // Check if we should transition to control from approach
     process_state_transition(ball, start_instant);
 
+    // List of obstacles
+    ShapeSet static_obstacles;
+    std::vector<DynamicObstacle> dynamic_obstacles;
+    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
+
     switch (current_state_) {
         // Moves from the current location to the slow point of approach
-        case CourseApproach:
-            previous_ = coarse_approach(plan_request, start_instant, obstacles, dynamic_obstacles);
+        case CoarseApproach:
+            previous_ =
+                coarse_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
             break;
         // Moves from the slow point of approach to just before point of contact
         case FineApproach:
-            previous_ = fine_approach(plan_request, start_instant, obstacles, dynamic_obstacles);
+            previous_ =
+                fine_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
             break;
         // Move through the ball and stop
         case Control:
-            previous_ = control(plan_request, partial_start_instant, partial_path, obstacles,
+            previous_ = control(plan_request, partial_start_instant, partial_path, static_obstacles,
                                 dynamic_obstacles);
             break;
         default:
-            previous_ = invalid(plan_request, obstacles, dynamic_obstacles);
+            previous_ = invalid(plan_request, static_obstacles, dynamic_obstacles);
             break;
     }
 
@@ -134,7 +136,7 @@ void CollectPathPlanner::check_solution_validity(BallState ball, RobotInstant st
     //
     // See if we are not near the ball and both almost stopped
     if (!near_ball && current_state_ == Control) {
-        current_state_ = CourseApproach;
+        current_state_ = CoarseApproach;
         approach_direction_created_ = false;
         control_path_created_ = false;
     }
@@ -148,8 +150,14 @@ void CollectPathPlanner::process_state_transition(BallState ball, RobotInstant s
 
     // If we are in range to the slow dist
     if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
-        current_state_ == CourseApproach) {
+        current_state_ == CoarseApproach) {
         current_state_ = FineApproach;
+    }
+
+    // If the ball gets knocked far away, go back to CoarseApproach
+    if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius &&
+        current_state_ == FineApproach) {
+        current_state_ = CoarseApproach;
     }
 
     // If we are close enough to the target point near the ball
@@ -379,8 +387,7 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
 Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
                                        const rj_geometry::ShapeSet& static_obstacles,
                                        const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    SPDLOG_WARN("Invalid state in collect planner. Restarting");
-    current_state_ = CourseApproach;
+    current_state_ = CoarseApproach;
 
     // Stop movement until next frame since it's the safest option
     // programmatically
@@ -398,7 +405,7 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
 
 void CollectPathPlanner::reset() {
     previous_ = Trajectory();
-    current_state_ = CollectPathPathPlannerStates::CourseApproach;
+    current_state_ = CollectPathPathPlannerStates::CoarseApproach;
     average_ball_vel_initialized_ = false;
     approach_direction_created_ = false;
     control_path_created_ = false;
@@ -406,7 +413,7 @@ void CollectPathPlanner::reset() {
 }
 
 bool CollectPathPlanner::is_done() const {
-    // FSM: CourseApproach -> FineApproach -> Control
+    // FSM: CoarseApproach -> FineApproach -> Control
     // (see process_state_transition())
     if (current_state_ != Control) {
         return false;

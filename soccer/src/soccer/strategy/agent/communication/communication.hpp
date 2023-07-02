@@ -13,10 +13,17 @@
 #include "rj_msgs/msg/agent_response.hpp"
 #include "rj_msgs/msg/agent_response_variant.hpp"
 #include "rj_msgs/msg/incoming_ball_request.hpp"
+#include "rj_msgs/msg/join_wall_request.hpp"
+#include "rj_msgs/msg/join_wall_response.hpp"
+#include "rj_msgs/msg/leave_wall_request.hpp"
+#include "rj_msgs/msg/leave_wall_response.hpp"
 #include "rj_msgs/msg/pass_request.hpp"
 #include "rj_msgs/msg/pass_response.hpp"
 #include "rj_msgs/msg/position_request.hpp"
 #include "rj_msgs/msg/position_response.hpp"
+#include "rj_msgs/msg/reset_scorer_request.hpp"
+#include "rj_msgs/msg/scorer_request.hpp"
+#include "rj_msgs/msg/scorer_response.hpp"
 #include "rj_msgs/msg/test_request.hpp"
 #include "rj_msgs/msg/test_response.hpp"
 
@@ -97,10 +104,52 @@ struct BallInTransitRequest {
 bool operator==(const BallInTransitRequest& a, const BallInTransitRequest& b);
 
 /**
+ * @brief request sent by an agent to determine whether or not it should be going to steal
+ * the ball to then shoot the ball
+ *
+ */
+struct ScorerRequest {
+    u_int32_t request_uid;
+    u_int8_t robot_id;
+    double ball_distance;
+};
+bool operator==(const ScorerRequest& a, const ScorerRequest& b);
+
+/**
+ * @brief request sent by a scorer after they shoot to avoid double touch penalties.
+ *
+ */
+struct ResetScorerRequest {
+    u_int32_t request_uid;
+};
+bool operator==(const ResetScorerRequest& a, const ResetScorerRequest& b);
+
+/**
+ * @brief request sent by an agent when it wants to join the wall.
+ *
+ */
+struct JoinWallRequest {
+    u_int32_t request_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const JoinWallRequest& a, const JoinWallRequest& b);
+
+/**
+ * @brief request sent by an agent when it wants to leave the wall.
+ *
+ */
+struct LeaveWallRequest {
+    u_int32_t request_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const LeaveWallRequest& a, const LeaveWallRequest& b);
+
+/**
  * @brief a conglomeration of the different request types.
  */
 using AgentRequest = std::variant<PassRequest, TestRequest, PositionRequest, IncomingBallRequest,
-                                  BallInTransitRequest>;
+                                  BallInTransitRequest, ScorerRequest, ResetScorerRequest,
+                                  JoinWallRequest, LeaveWallRequest>;
 
 // END REQUEST TYPES //
 
@@ -163,11 +212,45 @@ struct TestResponse {
 bool operator==(const TestResponse& a, const TestResponse& b);
 
 /**
+ * @brief response to return to another robot asking to be the scorer (only offensive
+ * robots will return this response to let another offensive robot know whether or not
+ * they should be the scorer)
+ *
+ */
+struct ScorerResponse {
+    u_int32_t response_uid;
+    u_int8_t robot_id;
+    double ball_distance;
+};
+bool operator==(const ScorerResponse& a, const ScorerResponse& b);
+
+/**
+ * @brief response from other robots who are currently apart of the wall so this
+ * robot can figure out where they are in the wall of robots.
+ *
+ */
+struct JoinWallResponse {
+    u_int32_t response_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const JoinWallResponse& a, const JoinWallResponse& b);
+
+/**
+ * @brief response from other robots who are currently apart of the wall.
+ *
+ */
+struct LeaveWallResponse {
+    u_int32_t response_uid;
+    u_int8_t robot_id;
+};
+bool operator==(const LeaveWallResponse& a, const LeaveWallResponse& b);
+
+/**
  * @brief conglomeration of the different response types.
  *
  */
-using AgentResponseVariant =
-    std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse>;
+using AgentResponseVariant = std::variant<Acknowledge, PassResponse, PositionResponse, TestResponse,
+                                          JoinWallResponse, LeaveWallResponse, ScorerResponse>;
 
 /**
  * @brief response message that is sent from the receiver of the request to the
@@ -235,13 +318,13 @@ struct AgentPosRequestWrapper {
  *
  */
 struct AgentPosResponseWrapper {
-    AgentRequest associated_request;
-    std::vector<u_int8_t> from_robot_ids;
-    std::vector<u_int8_t> received_robot_ids;
-    bool broadcast;
-    bool urgent;
-    RJ::Time created;
-    std::vector<AgentResponseVariant> responses;
+    AgentRequest associated_request;           // the request sent for the given response
+    std::vector<u_int8_t> to_robot_ids;        // the robot ids the request was sent to
+    std::vector<u_int8_t> received_robot_ids;  // the robot ids responses were found from
+    bool broadcast;                            // true if the response should go to every robot
+    bool urgent;                               // true if only the first response should be handled
+    RJ::Time created;                          // the time the request was created
+    std::vector<AgentResponseVariant> responses;  // a list of the response from the other agent
 };
 
 // TODO (https://app.clickup.com/t/8677c0tqe): Make this templated and less ugly
@@ -250,11 +333,18 @@ void generate_uid(PositionRequest& request);
 void generate_uid(TestRequest& request);
 void generate_uid(IncomingBallRequest& request);
 void generate_uid(BallInTransitRequest& request);
+void generate_uid(ScorerRequest& request);
+void generate_uid(ResetScorerRequest& request);
+void generate_uid(JoinWallRequest& request);
+void generate_uid(LeaveWallRequest& request);
 
 void generate_uid(Acknowledge& response);
 void generate_uid(PassResponse& response);
 void generate_uid(PositionResponse& response);
 void generate_uid(TestResponse& response);
+void generate_uid(ScorerResponse& response);
+void generate_uid(JoinWallResponse& response);
+void generate_uid(LeaveWallResponse& response);
 
 }  // namespace strategy::communication
 
@@ -335,6 +425,42 @@ struct RosConverter<strategy::communication::IncomingBallRequest,
 ASSOCIATE_CPP_ROS(strategy::communication::IncomingBallRequest, rj_msgs::msg::IncomingBallRequest);
 
 template <>
+struct RosConverter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest> {
+    static rj_msgs::msg::JoinWallRequest to_ros(
+        const strategy::communication::JoinWallRequest& from) {
+        rj_msgs::msg::JoinWallRequest result;
+        result.request_uid = from.request_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::JoinWallRequest from_ros(
+        const rj_msgs::msg::JoinWallRequest& from) {
+        return strategy::communication::JoinWallRequest{from.request_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest);
+
+template <>
+struct RosConverter<strategy::communication::LeaveWallRequest, rj_msgs::msg::LeaveWallRequest> {
+    static rj_msgs::msg::LeaveWallRequest to_ros(
+        const strategy::communication::LeaveWallRequest& from) {
+        rj_msgs::msg::LeaveWallRequest result;
+        result.request_uid = from.request_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::LeaveWallRequest from_ros(
+        const rj_msgs::msg::LeaveWallRequest& from) {
+        return strategy::communication::LeaveWallRequest{from.request_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::LeaveWallRequest, rj_msgs::msg::LeaveWallRequest);
+
+template <>
 struct RosConverter<strategy::communication::BallInTransitRequest,
                     rj_msgs::msg::BallInTransitRequest> {
     static rj_msgs::msg::BallInTransitRequest to_ros(
@@ -355,6 +481,47 @@ ASSOCIATE_CPP_ROS(strategy::communication::BallInTransitRequest,
                   rj_msgs::msg::BallInTransitRequest);
 
 template <>
+struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest> {
+    static rj_msgs::msg::ScorerRequest to_ros(const strategy::communication::ScorerRequest& from) {
+        rj_msgs::msg::ScorerRequest result;
+        result.request_uid = from.request_uid;
+        result.robot_id = from.robot_id;
+        result.ball_distance = from.ball_distance;
+        return result;
+    }
+
+    static strategy::communication::ScorerRequest from_ros(
+        const rj_msgs::msg::ScorerRequest& from) {
+        return strategy::communication::ScorerRequest{
+            from.request_uid,
+            from.robot_id,
+            from.ball_distance,
+        };
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest);
+
+template <>
+struct RosConverter<strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest> {
+    static rj_msgs::msg::ResetScorerRequest to_ros(
+        const strategy::communication::ResetScorerRequest& from) {
+        rj_msgs::msg::ResetScorerRequest result;
+        result.request_uid = from.request_uid;
+        return result;
+    }
+
+    static strategy::communication::ResetScorerRequest from_ros(
+        const rj_msgs::msg::ResetScorerRequest& from) {
+        return strategy::communication::ResetScorerRequest{
+            from.request_uid,
+        };
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest);
+
+template <>
 struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
     static rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {
         rj_msgs::msg::AgentRequest result;
@@ -372,6 +539,18 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* ball_in_transit_request =
                        std::get_if<strategy::communication::BallInTransitRequest>(&from)) {
             result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
+        } else if (const auto* scorer_request =
+                       std::get_if<strategy::communication::ScorerRequest>(&from)) {
+            result.scorer_request.emplace_back(convert_to_ros(*scorer_request));
+        } else if (const auto* reset_scorer_request =
+                       std::get_if<strategy::communication::ResetScorerRequest>(&from)) {
+            result.reset_scorer_request.emplace_back(convert_to_ros(*reset_scorer_request));
+        } else if (const auto* join_wall_request =
+                       std::get_if<strategy::communication::JoinWallRequest>(&from)) {
+            result.join_wall_request.emplace_back(convert_to_ros(*join_wall_request));
+        } else if (const auto* leave_wall_request =
+                       std::get_if<strategy::communication::LeaveWallRequest>(&from)) {
+            result.leave_wall_request.emplace_back(convert_to_ros(*leave_wall_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
@@ -390,6 +569,14 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result = convert_from_ros(from.incoming_ball_request.front());
         } else if (!from.ball_in_transit_request.empty()) {
             result = convert_from_ros(from.ball_in_transit_request.front());
+        } else if (!from.scorer_request.empty()) {
+            result = convert_from_ros(from.scorer_request.front());
+        } else if (!from.reset_scorer_request.empty()) {
+            result = convert_from_ros(from.reset_scorer_request.front());
+        } else if (!from.join_wall_request.empty()) {
+            result = convert_from_ros(from.join_wall_request.front());
+        } else if (!from.leave_wall_request.empty()) {
+            result = convert_from_ros(from.leave_wall_request.front());
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
@@ -478,6 +665,63 @@ struct RosConverter<strategy::communication::TestResponse, rj_msgs::msg::TestRes
 ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_msgs::msg::TestResponse);
 
 template <>
+struct RosConverter<strategy::communication::ScorerResponse, rj_msgs::msg::ScorerResponse> {
+    static rj_msgs::msg::ScorerResponse to_ros(
+        const strategy::communication::ScorerResponse& from) {
+        rj_msgs::msg::ScorerResponse result;
+        result.response_uid = from.response_uid;
+        result.robot_id = from.robot_id;
+        result.ball_distance = from.ball_distance;
+        return result;
+    }
+
+    static strategy::communication::ScorerResponse from_ros(
+        const rj_msgs::msg::ScorerResponse& from) {
+        strategy::communication::ScorerResponse result{from.response_uid, from.robot_id,
+                                                       from.ball_distance};
+        return result;
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::ScorerResponse, rj_msgs::msg::ScorerResponse);
+
+template <>
+struct RosConverter<strategy::communication::JoinWallResponse, rj_msgs::msg::JoinWallResponse> {
+    static rj_msgs::msg::JoinWallResponse to_ros(
+        const strategy::communication::JoinWallResponse& from) {
+        rj_msgs::msg::JoinWallResponse result;
+        result.response_uid = from.response_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::JoinWallResponse from_ros(
+        const rj_msgs::msg::JoinWallResponse& from) {
+        return strategy::communication::JoinWallResponse{from.response_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::JoinWallResponse, rj_msgs::msg::JoinWallResponse);
+
+template <>
+struct RosConverter<strategy::communication::LeaveWallResponse, rj_msgs::msg::LeaveWallResponse> {
+    static rj_msgs::msg::LeaveWallResponse to_ros(
+        const strategy::communication::LeaveWallResponse& from) {
+        rj_msgs::msg::LeaveWallResponse result;
+        result.response_uid = from.response_uid;
+        result.robot_id = from.robot_id;
+        return result;
+    }
+
+    static strategy::communication::LeaveWallResponse from_ros(
+        const rj_msgs::msg::LeaveWallResponse& from) {
+        return strategy::communication::LeaveWallResponse{from.response_uid, from.robot_id};
+    }
+};
+
+ASSOCIATE_CPP_ROS(strategy::communication::LeaveWallResponse, rj_msgs::msg::LeaveWallResponse);
+
+template <>
 struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {
     static rj_msgs::msg::AgentResponse to_ros(const strategy::communication::AgentResponse& from) {
         rj_msgs::msg::AgentResponse result;
@@ -495,6 +739,15 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
         } else if (const auto* pass_response =
                        std::get_if<strategy::communication::PassResponse>(&(from.response))) {
             result.response.pass_response.emplace_back(convert_to_ros(*pass_response));
+        } else if (const auto* scorer_response =
+                       std::get_if<strategy::communication::ScorerResponse>(&(from.response))) {
+            result.response.scorer_response.emplace_back(convert_to_ros(*scorer_response));
+        } else if (const auto* join_wall_response =
+                       std::get_if<strategy::communication::JoinWallResponse>(&(from.response))) {
+            result.response.join_wall_response.emplace_back(convert_to_ros(*join_wall_response));
+        } else if (const auto* leave_wall_response =
+                       std::get_if<strategy::communication::LeaveWallResponse>(&(from.response))) {
+            result.response.leave_wall_response.emplace_back(convert_to_ros(*leave_wall_response));
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");
         }
@@ -513,6 +766,12 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
             result.response = convert_from_ros(from.response.position_response.front());
         } else if (!from.response.pass_response.empty()) {
             result.response = convert_from_ros(from.response.pass_response.front());
+        } else if (!from.response.scorer_response.empty()) {
+            result.response = convert_from_ros(from.response.scorer_response.front());
+        } else if (!from.response.join_wall_response.empty()) {
+            result.response = convert_from_ros(from.response.join_wall_response.front());
+        } else if (!from.response.leave_wall_response.empty()) {
+            result.response = convert_from_ros(from.response.leave_wall_response.front());
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");
         }

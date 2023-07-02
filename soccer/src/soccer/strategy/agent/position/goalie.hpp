@@ -29,6 +29,9 @@ public:
     void derived_acknowledge_ball_in_transit() override;
 
 private:
+    // point goalie will aim for when clearing balls
+    const rj_geometry::Point clear_point_{0.0, 4.5};
+
     // temp
     int send_idle_ct_ = 0;
 
@@ -40,6 +43,7 @@ private:
         IDLING,          // doing nothing
         BLOCKING,        // blocking the ball from reaching the goal
         CLEARING,        // clearing the ball out of the goal box
+        PREPARING_SHOT,  // pivot around ball in preparation for shot
         BALL_NOT_FOUND,  // the ball is not in play
         RECEIVING,       // physically intercepting the ball from a pass
         PASSING,         // physically kicking the ball at another robot
