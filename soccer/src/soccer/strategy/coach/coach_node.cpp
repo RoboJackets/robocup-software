@@ -285,21 +285,24 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
     //  1. 1 Goalie
     //  2. 2 Offense
     //  3. Remaining Defense (always 1 defender)
+
+    /**
+     * Robot 0 - working kicker (0)
+     * Robot 1 - working kicker (2)
+     * Robot 2 - static obstacle (5)
+     * Robot 3 - bad kicker (4)
+     * Robot 4 - working kicker (3)
+     * Robot 5 - working kicker (best) (1)
+     */
     int assign_num = 0;
-    for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+    for (u_int8_t robot_id : robot_rankings) {
         if (check_robot_alive(robot_id)) {
             switch (assign_num) {
                 case 0:
-                    positions[robot_id] = Positions::Goalie;
+                    positions[robot_id] = Positions::Offense;
                     break;
                 case 1:
-                    positions[robot_id] = Positions::Offense;
-                    break;
-                case 2:
-                    positions[robot_id] = Positions::Defense;
-                    break;
-                case 3:
-                    positions[robot_id] = Positions::Offense;
+                    positions[robot_id] = Positions::Goalie;
                     break;
                 default:
                     positions[robot_id] = Positions::Defense;
