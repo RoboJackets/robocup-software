@@ -161,6 +161,16 @@ private:
      * @return false if the robot is not connected or is not visible
      */
     bool check_robot_alive(u_int8_t robot_id);
+
+    /** COMP 2023
+    * Robot 0 - working kicker (1)
+    * Robot 1 - working kicker (2)
+    * Robot 2 - static obstacle (5)
+    * Robot 3 - bad kicker (4)
+    * Robot 4 - working kicker (3)
+    * Robot 5 - working kicker (best) (0)
+    */
+    std::vector<u_int8_t> robot_rankings = {5, 0, 1, 4, 3, 2};
 };
 
 }  // namespace strategy
