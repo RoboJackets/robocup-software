@@ -11,7 +11,7 @@
 namespace strategy {
 class Marker : public RoleInterface {
 private:
-    const double factor = 0.5;
+    const double factor = 0.25;
 
 public:
     Marker();

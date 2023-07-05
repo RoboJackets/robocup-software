@@ -57,6 +57,8 @@ Defense::State Defense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
+        case MARKING:
+            break;
     }
 
     return next_state;
@@ -109,7 +111,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             Waller waller{waller_id_, (int)walling_robots_.size()};
             return waller.get_task(intent, world_state(), this->field_dimensions_);
         }
-    } else if (current_state_ = FACING) {
+    } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             world_state()->get_robot(true, robot_id_).pose.position();
         auto current_location_instant =
@@ -119,6 +121,9 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
         return intent;
+    } else if (current_state_ == MARKING) {
+        RobotMarker marker{(u_int8_t) this->robot_id_};
+        return marker.get_task(intent, world_state(), this->field_dimensions_);
     }
 
     return std::nullopt;

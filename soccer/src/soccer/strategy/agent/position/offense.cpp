@@ -89,6 +89,11 @@ Offense::State Offense::update_state() {
         }
     }
 
+    if (this->field_dimensions_.their_defense_area_padded(0.3).contains_point(world_state->ball.position)) {
+        next_state = MARKING;
+        marking_timeout_ = RJ::now() + RJ::Seconds(1);
+    }
+
     return next_state;
 }
 

@@ -151,6 +151,8 @@ void CoachNode::check_for_play_state_change() {
         publish_static_obstacles();
 
         play_state_has_changed_ = false;
+
+        // assign_positions();
     }
 }
 
@@ -175,6 +177,10 @@ void CoachNode::assign_positions() {
             // Normal Play
             assign_positions_normal(positions);
     }
+
+    // if (current_play_state_.state == PlayState::State::Stop) {
+    //     assign_positions_stop(positions);
+    // }
 
     positions_message.client_positions = positions;
     positions_pub_->publish(positions_message);
@@ -277,6 +283,33 @@ void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& posi
         }
     }
 }
+
+// void CoachNode::assign_positions_stop(std::array<uint32_t, kNumShells>& positions) {
+//     int assign_num = 0;
+//     bool goalie_assigned = false;
+//     if (check_robot_alive(goalie_id_)) {
+//         goalie_assigned = true;
+//     }
+
+//     for (u_int8_t robot_id : robot_rankings) {
+//         if (check_robot_alive(robot_id)) {
+//             switch (assign_num) {
+//                 case 0:
+//                     positions[robot_id] = Positions::Offense;
+//                     break;
+//                 case 1:
+//                     if (!goalie_assigned || robot_id == goalie_id_) {
+//                         positions[robot_id] = Positions::Goalie;
+//                         break;
+//                     }
+//                 default:
+//                     positions[robot_id] = Positions::Defense;
+//                     break;
+//             }
+//             assign_num++;
+//         }
+//     }
+// }
 
 void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positions) {
     // BEGIN COMP 2023 PATCH CODE

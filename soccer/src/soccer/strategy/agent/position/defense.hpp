@@ -16,6 +16,7 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "waller.hpp"
+#include "robot_marker.hpp"
 
 namespace strategy {
 
@@ -61,6 +62,7 @@ private:
         RECEIVING,     // physically intercepting the ball from a pass
         PASSING,       // physically kicking the ball towards another robot
         FACING,        // turning to face the passing robot
+        MARKING,
     };
 
     State update_state();
@@ -110,7 +112,7 @@ private:
 
     // current state of the defense agent (state machine)
     int get_waller_id();
-    State current_state_ = JOINING_WALL;
+    State current_state_ = MARKING;
 };
 
 }  // namespace strategy
