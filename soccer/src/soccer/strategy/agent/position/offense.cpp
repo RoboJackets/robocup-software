@@ -33,7 +33,7 @@ Offense::State Offense::update_state() {
         }
     } else if (current_state_ == STEALING) {
         SPDLOG_INFO("STEALING");
-        if (check_is_done()) {
+        if (check_is_done() && distance_to_ball < ball_lost_distance_) {
             next_state = PREPARING_SHOT;
         }
     } else if (current_state_ == PREPARING_SHOT) {
@@ -43,7 +43,7 @@ Offense::State Offense::update_state() {
         }
     } else if (current_state_ == SHOOTING) {
         SPDLOG_INFO("SHOOTING");
-        if (check_is_done()) {
+        if (check_is_done() || distance_to_ball > ball_lost_distance_) {
             next_state = MARKING;
             timeout = RJ::now() + RJ::Seconds(3);
         }
