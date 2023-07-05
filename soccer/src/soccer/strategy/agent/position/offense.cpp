@@ -33,9 +33,6 @@ Offense::State Offense::update_state() {
         send_scorer_request();
         next_state = SEARCHING;
     } else if (current_state_ == SEARCHING) {
-        if (RJ::now() > reset_timestamp) {
-            next_state = STEALING;
-        }
     } else if (current_state_ == PASSING) {
         // transition to idling if we no longer have the ball (i.e. it was passed or it was
         // stolen)
@@ -55,7 +52,6 @@ Offense::State Offense::update_state() {
         // stolen)
         if (check_is_done() || distance_to_ball > ball_lost_distance_) {
             send_reset_scorer_request();
-            reset_timestamp = RJ::now() + RJ::Seconds(5.0);
             next_state = SEARCHING;
         }
     } else if (current_state_ == RECEIVING) {
@@ -79,7 +75,6 @@ Offense::State Offense::update_state() {
             //     /* next_state = SEARCHING; */
             // }
         }
-        first_steal = false;
     } else if (current_state_ == FACING) {
         if (check_is_done()) {
             next_state = IDLING;
@@ -96,8 +91,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == SEARCHING) {
-        Marker marker{};
-        return marker.get_task(intent, world_state(), this->field_dimensions_);
+        // Marker marker{};
+        // return marker.get_task(intent, world_state(), this->field_dimensions_);
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
