@@ -67,6 +67,7 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
         const RobotConnection& connection = maybe_connection.value();
         // Check if we've timed out.
         if (RJ::now() > connection.last_received + kTimeout) {
+            SPDLOG_INFO("removing Robot {}", robot_id);
             // Remove the endpoint from the IP map and the connection list
             assert(robot_ip_map_.erase(connection.endpoint) == 1);  // NOLINT
             connections_.at(robot_id) = std::nullopt;
