@@ -27,25 +27,65 @@ Offense::State Offense::update_state() {
     double distance_to_ball = robot_position.dist_to(ball_position);
 
     if (current_state_ == MARKING) {
+        shoot_start_time_valid_ = false;
         SPDLOG_INFO("MARKING");
-        if (RJ::now() > timeout) {
+        if (RJ::now() > marking_timeout_) {
             next_state = STEALING;
         }
     } else if (current_state_ == STEALING) {
         SPDLOG_INFO("STEALING");
-        if (check_is_done() && distance_to_ball < ball_lost_distance_) {
-            next_state = PREPARING_SHOT;
-        }
+        // SKIP STEALING
+        /* if (check_is_done() && distance_to_ball < ball_lost_distance_) { */
+        next_state = PREPARING_SHOT;
+        /* } */
     } else if (current_state_ == PREPARING_SHOT) {
+        // start timeout for shooting
+        if (!shoot_start_time_valid_) {
+            shoot_start_time_valid_ = true;
+            shoot_start_time_ = RJ::now();
+            SPDLOG_INFO("validating shoot start time");
+        }
+
+        // if taking too long give up
+        if (shoot_start_time_valid_ && (RJ::now() - shoot_start_time_ > max_shoot_duration_)) {
+            SPDLOG_INFO("shoot_start_time_valid_ {}", shoot_start_time_valid_);
+            SPDLOG_INFO("elapsed {}", (RJ::now() - shoot_start_time_).count());
+
+            next_state = MARKING;
+            marking_timeout_ = RJ::now() + RJ::Seconds(3);
+            shoot_start_time_valid_ = false;
+            SPDLOG_INFO("timeout shoot start time");
+        }
+
         SPDLOG_INFO("PREPARING_SHOT");
         if (check_is_done()) {
+            SPDLOG_INFO("done PREPARING_SHOT");
             next_state = SHOOTING;
         }
     } else if (current_state_ == SHOOTING) {
-        SPDLOG_INFO("SHOOTING");
-        if (check_is_done() || distance_to_ball > ball_lost_distance_) {
+        // start timeout for shooting
+        if (!shoot_start_time_valid_) {
+            shoot_start_time_valid_ = true;
+            shoot_start_time_ = RJ::now();
+            SPDLOG_INFO("validating shoot start time");
+        }
+
+        // if taking too long give up
+        if (shoot_start_time_valid_ && (RJ::now() - shoot_start_time_ > max_shoot_duration_)) {
+            SPDLOG_INFO("shoot_start_time_valid_ {}", shoot_start_time_valid_);
+            SPDLOG_INFO("elapsed {}", (RJ::now() - shoot_start_time_).count());
+
             next_state = MARKING;
-            timeout = RJ::now() + RJ::Seconds(3);
+            marking_timeout_ = RJ::now() + RJ::Seconds(3);
+            shoot_start_time_valid_ = false;
+            SPDLOG_INFO("timeout shoot start time");
+        }
+
+        SPDLOG_INFO("SHOOTING");
+        if (check_is_done()) {
+            next_state = MARKING;
+            shoot_start_time_valid_ = false;
+            marking_timeout_ = RJ::now() + RJ::Seconds(3);
         }
     }
 
@@ -53,7 +93,7 @@ Offense::State Offense::update_state() {
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
-    if (current_state_  == MARKING) {
+    if (current_state_ == MARKING) {
         Marker marker{};
         return marker.get_task(intent, world_state(), this->field_dimensions_);
     } else if (current_state_ == STEALING) {

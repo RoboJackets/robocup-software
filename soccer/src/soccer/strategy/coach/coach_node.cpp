@@ -299,7 +299,6 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
         if (check_robot_alive(robot_id)) {
             switch (assign_num) {
                 case 0:
-                    SPDLOG_INFO("Offense: {}", robot_id);
                     positions[robot_id] = Positions::Offense;
                     break;
                 case 1:

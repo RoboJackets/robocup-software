@@ -8,12 +8,12 @@
 
 #include <rj_msgs/action/robot_move.hpp>
 
+#include "marker.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/time.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
-#include "marker.hpp"
 
 namespace strategy {
 
@@ -99,7 +99,13 @@ private:
      */
     communication::Acknowledge receive_reset_scorer_request();
 
-    RJ::Time timeout = RJ::now();
+    RJ::Time marking_timeout_ = RJ::now();
+
+    // after X seconds, give up on kicking and go back to mark
+    // also reset marking_timeout_
+    RJ::Time shoot_start_time_ = RJ::now();
+    bool shoot_start_time_valid_ = false;
+    RJ::Seconds max_shoot_duration_ = RJ::Seconds(2);
 };
 
 }  // namespace strategy

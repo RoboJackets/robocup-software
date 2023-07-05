@@ -47,5 +47,6 @@ private:
 
     // TODO(Kevin): ros param this
     double IS_DONE_ANGLE_CHANGE_THRESH = 1.0;
+    static constexpr double PIVOT_RADIUS_ = 2.0 * kRobotRadius;
 };
 }  // namespace planning
