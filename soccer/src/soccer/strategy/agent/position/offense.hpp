@@ -13,6 +13,7 @@
 #include "rj_common/time.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
+#include "marker.hpp"
 
 namespace strategy {
 
@@ -40,15 +41,10 @@ private:
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 
     enum State {
-        IDLING,          // simply staying in place
-        SEARCHING,       // moving around on the field to get open
-        PASSING,         // physically kicking the ball towards another robot
-        PREPARING_SHOT,  // pivot around ball in preparation for shot
-        SHOOTING,        // physically kicking the ball towards the net
-        RECEIVING,       // physically intercepting the ball from a pass (gets possession)
-        STEALING,        // attempting to intercept the ball from the other team
-        FACING,          // turning to face the ball
-        SCORER,          // overrides everything and will attempt to steal the bal and shoot it
+        MARKING,
+        STEALING,
+        PREPARING_SHOT,
+        SHOOTING,
     };
 
     State update_state();
@@ -56,7 +52,7 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     // current state of the offensive agent (state machine)
-    State current_state_ = IDLING;
+    State current_state_ = STEALING;
 
     bool scorer_ = false;
     bool last_scorer_ = false;
@@ -102,6 +98,8 @@ private:
      * status
      */
     communication::Acknowledge receive_reset_scorer_request();
+
+    RJ::Time timeout = RJ::now();
 };
 
 }  // namespace strategy
