@@ -106,6 +106,7 @@ private:
     RJ::Time shoot_start_time_ = RJ::now();
     bool shoot_start_time_valid_ = false;
     RJ::Seconds max_shoot_duration_ = RJ::Seconds(2);
+    RJ::Seconds max_prep_shoot_duration_ = RJ::Seconds(3);
 };
 
 }  // namespace strategy

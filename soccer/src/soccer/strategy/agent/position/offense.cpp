@@ -47,7 +47,7 @@ Offense::State Offense::update_state() {
         }
 
         // if taking too long give up
-        if (shoot_start_time_valid_ && (RJ::now() - shoot_start_time_ > max_shoot_duration_)) {
+        if (shoot_start_time_valid_ && (RJ::now() - shoot_start_time_ > max_prep_shoot_duration_)) {
             SPDLOG_INFO("shoot_start_time_valid_ {}", shoot_start_time_valid_);
             SPDLOG_INFO("elapsed {}", (RJ::now() - shoot_start_time_).count());
 
