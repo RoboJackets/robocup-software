@@ -1,4 +1,4 @@
-#pragma once
+"#pragma once
 
 #include <cmath>
 
@@ -13,6 +13,7 @@
 #include "rj_common/time.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
+#include "marker.hpp"
 
 namespace strategy {
 
@@ -58,7 +59,7 @@ private:
     // current state of the offensive agent (state machine)
     State current_state_ = IDLING;
 
-    bool scorer_ = false;
+    bool scorer_ = true;
     bool last_scorer_ = false;
 
     /**
@@ -102,6 +103,11 @@ private:
      * status
      */
     communication::Acknowledge receive_reset_scorer_request();
+
+    RJ::Time reset_timestamp = RJ::now();
+
+    bool first_steal = true;
 };
 
 }  // namespace strategy
+"

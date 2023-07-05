@@ -26,11 +26,14 @@ Offense::State Offense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
+    SPDLOG_INFO("CURRENT STATE: {}", current_state_);
+    SPDLOG_INFO("DIST TO BALL {}", distance_to_ball);
+
     if (current_state_ == IDLING) {
         send_scorer_request();
         next_state = SEARCHING;
     } else if (current_state_ == SEARCHING) {
-        if (scorer_) {
+        if (RJ::now() > reset_timestamp) {
             next_state = STEALING;
         }
     } else if (current_state_ == PASSING) {
@@ -52,6 +55,7 @@ Offense::State Offense::update_state() {
         // stolen)
         if (check_is_done() || distance_to_ball > ball_lost_distance_) {
             send_reset_scorer_request();
+            reset_timestamp = RJ::now() + RJ::Seconds(5.0);
             next_state = SEARCHING;
         }
     } else if (current_state_ == RECEIVING) {
@@ -62,15 +66,20 @@ Offense::State Offense::update_state() {
     } else if (current_state_ == STEALING) {
         // The collect planner check_is_done() is wonky so I added a second clause to check
         // distance
-        if (check_is_done() || distance_to_ball < ball_receive_distance_) {
+        SPDLOG_INFO("STEALING");
+        if ((check_is_done())) {
+            /// TODO: WHY IS THIS CHANGING
+            SPDLOG_INFO("DONE, final dist to ball {}", distance_to_ball);
+            next_state = PREPARING_SHOT;
             // send direct pass request to robot 4
-            if (scorer_) {
-                next_state = PREPARING_SHOT;
-            } else {
-                /* send_direct_pass_request({4}); */
-                /* next_state = SEARCHING; */
-            }
+            // if (scorer_) {
+            //     next_state = PREPARING_SHOT;
+            // } else {
+            //     /* send_direct_pass_request({4}); */
+            //     /* next_state = SEARCHING; */
+            // }
         }
+        first_steal = false;
     } else if (current_state_ == FACING) {
         if (check_is_done()) {
             next_state = IDLING;
@@ -87,10 +96,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == SEARCHING) {
-        // DEFINE SEARCHING BEHAVIOR
-        auto empty_motion_cmd = planning::MotionCommand{};
-        intent.motion_command = empty_motion_cmd;
-        return intent;
+        Marker marker{};
+        return marker.get_task(intent, world_state(), this->field_dimensions_);
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
@@ -236,7 +243,6 @@ void Offense::send_reset_scorer_request() {
 
     communication_request_ = communication_request;
     last_scorer_ = true;
-    scorer_ = false;
 }
 
 communication::ScorerResponse Offense::receive_scorer_request(
@@ -253,7 +259,6 @@ communication::ScorerResponse Offense::receive_scorer_request(
 
     // Switch scorers if better scorer
     if (scorer_ && scorer_request.ball_distance < ball_distance) {
-        scorer_ = false;
         current_state_ = FACING;
     }
 
