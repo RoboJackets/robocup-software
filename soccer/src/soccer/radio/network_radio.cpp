@@ -66,7 +66,7 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
     if (maybe_connection) {
         const RobotConnection& connection = maybe_connection.value();
         // Check if we've timed out.
-        if (RJ::now() + kTimeout < connection.last_received) {
+        if (RJ::now() > connection.last_received + kTimeout) {
             // Remove the endpoint from the IP map and the connection list
             assert(robot_ip_map_.erase(connection.endpoint) == 1);  // NOLINT
             connections_.at(robot_id) = std::nullopt;
@@ -158,6 +158,10 @@ void NetworkRadio::publish_alive_robots() {
     // publish a message containing the alive robots
     rj_msgs::msg::AliveRobots alive_message{};
     alive_message.alive_robots = alive_robots;
+    SPDLOG_INFO("ALIVE_ROBOTS:");
+    for (u_int8_t alive_robot : alive_robots) {
+        SPDLOG_INFO("Robot {}", alive_robot);
+    }
     alive_robots_pub_->publish(alive_message);
 }
 
