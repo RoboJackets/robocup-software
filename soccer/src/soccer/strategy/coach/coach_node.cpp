@@ -103,6 +103,7 @@ void CoachNode::ball_sense_callback(const rj_msgs::msg::RobotStatus::SharedPtr m
 
 void CoachNode::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
     alive_robots_ = msg->alive_robots;
+    assign_positions();
 }
 
 void CoachNode::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
