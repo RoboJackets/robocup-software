@@ -112,7 +112,7 @@ private:
 
     // current state of the defense agent (state machine)
     int get_waller_id();
-    State current_state_ = MARKING;
+    State current_state_ = JOINING_WALL;
 };
 
 }  // namespace strategy
