@@ -40,14 +40,12 @@ private:
 
     // possible states of the Goalie
     enum State {
-        IDLING,          // doing nothing
+        NOT_IN_BOX,
+        IDLING,
         BLOCKING,        // blocking the ball from reaching the goal
         CLEARING,        // clearing the ball out of the goal box
         PREPARING_SHOT,  // pivot around ball in preparation for shot
         BALL_NOT_FOUND,  // the ball is not in play
-        RECEIVING,       // physically intercepting the ball from a pass
-        PASSING,         // physically kicking the ball at another robot
-        FACING,          // turning to face the passing robot
     };
 
     /*
@@ -79,7 +77,7 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     // current state of Goalie (state machine)
-    State latest_state_ = IDLING;
+    State latest_state_ = BALL_NOT_FOUND;
 };
 
 }  // namespace strategy

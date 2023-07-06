@@ -28,12 +28,10 @@ Offense::State Offense::update_state() {
 
     if (current_state_ == MARKING) {
         shoot_start_time_valid_ = false;
-        SPDLOG_INFO("MARKING");
         if (RJ::now() > marking_timeout_) {
             next_state = STEALING;
         }
     } else if (current_state_ == STEALING) {
-        SPDLOG_INFO("STEALING");
         // SKIP STEALING
         /* if (check_is_done() && distance_to_ball < ball_lost_distance_) { */
         next_state = PREPARING_SHOT;
@@ -43,23 +41,16 @@ Offense::State Offense::update_state() {
         if (!shoot_start_time_valid_) {
             shoot_start_time_valid_ = true;
             shoot_start_time_ = RJ::now();
-            SPDLOG_INFO("validating shoot start time");
         }
 
         // if taking too long give up
         if (shoot_start_time_valid_ && (RJ::now() - shoot_start_time_ > max_prep_shoot_duration_)) {
-            SPDLOG_INFO("shoot_start_time_valid_ {}", shoot_start_time_valid_);
-            SPDLOG_INFO("elapsed {}", (RJ::now() - shoot_start_time_).count());
-
             next_state = MARKING;
             marking_timeout_ = RJ::now() + RJ::Seconds(3);
             shoot_start_time_valid_ = false;
-            SPDLOG_INFO("timeout shoot start time");
         }
 
-        SPDLOG_INFO("PREPARING_SHOT");
         if (check_is_done()) {
-            SPDLOG_INFO("done PREPARING_SHOT");
             next_state = SHOOTING;
         }
     } else if (current_state_ == SHOOTING) {
@@ -67,21 +58,15 @@ Offense::State Offense::update_state() {
         if (!shoot_start_time_valid_) {
             shoot_start_time_valid_ = true;
             shoot_start_time_ = RJ::now();
-            SPDLOG_INFO("validating shoot start time");
         }
 
         // if taking too long give up
         if (shoot_start_time_valid_ && (RJ::now() - shoot_start_time_ > max_shoot_duration_)) {
-            SPDLOG_INFO("shoot_start_time_valid_ {}", shoot_start_time_valid_);
-            SPDLOG_INFO("elapsed {}", (RJ::now() - shoot_start_time_).count());
-
             next_state = MARKING;
             marking_timeout_ = RJ::now() + RJ::Seconds(3);
             shoot_start_time_valid_ = false;
-            SPDLOG_INFO("timeout shoot start time");
         }
 
-        SPDLOG_INFO("SHOOTING");
         if (check_is_done()) {
             next_state = MARKING;
             shoot_start_time_valid_ = false;
@@ -89,7 +74,8 @@ Offense::State Offense::update_state() {
         }
     }
 
-    if (this->field_dimensions_.their_defense_area_padded(0.3).contains_point(world_state->ball.position)) {
+    if (this->field_dimensions_.their_defense_area_padded(0.3).contains_point(world_state->ball.position)
+    || this->field_dimensions_.our_defense_area().contains_point(world_state->ball.position)) {
         next_state = MARKING;
         marking_timeout_ = RJ::now() + RJ::Seconds(1);
     }
