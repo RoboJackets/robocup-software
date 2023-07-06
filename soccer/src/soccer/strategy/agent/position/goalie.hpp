@@ -48,6 +48,34 @@ private:
         BALL_NOT_FOUND,  // the ball is not in play
     };
 
+    bool check_ball_in_box(WorldState* world_state) {
+        bool retval = false;
+
+        rj_geometry::Point ball_pt = world_state->ball.position;
+        bool geo_ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
+
+        if (geo_ball_in_box && !ball_in_box_start_time_valid_) {
+            // when timer hasn't started but ball in box, start it
+            ball_in_box_start_time_ = RJ::now();
+            ball_in_box_start_time_valid_ = true;
+        } else {
+            // when timer started
+            if (geo_ball_in_box) {
+                // if in box, check for duration
+                if (RJ::now() - ball_in_box_start_time_ > max_ball_in_duration) {
+                    retval = true;
+                }
+            } else {
+                // when ball leaves box, reset timer
+                ball_in_box_start_time_valid_ = false;
+            }
+        }
+        return retval;
+    }
+    RJ::Time ball_in_box_start_time_ = RJ::now();
+    bool ball_in_box_start_time_valid_ = false;
+    RJ::Seconds max_ball_in_duration = RJ::Seconds(0.2);
+
     /*
      * @return true if ball is heading towards goal at some minimum speed threshold
      */

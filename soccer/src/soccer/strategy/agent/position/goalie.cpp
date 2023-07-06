@@ -14,7 +14,7 @@ std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
 Goalie::State Goalie::update_state() {
     // if a shot is coming, override all and go block it
     WorldState* world_state = this->world_state();
-    
+
     bool ball_found = world_state->ball.visible;
     if (!ball_found) {
         return BALL_NOT_FOUND;
@@ -25,7 +25,7 @@ Goalie::State Goalie::update_state() {
 
     rj_geometry::Point ball_pt = world_state->ball.position;
 
-    bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
+    bool ball_in_box = check_ball_in_box(world_state);
 
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     double distance_to_ball = robot_position.dist_to(ball_pt);
@@ -49,7 +49,7 @@ Goalie::State Goalie::update_state() {
             return BLOCKING;
         }
     } else if (latest_state_ == PREPARING_SHOT) {
-        if (check_is_done()) {
+        if (check_is_done() || !ball_in_box) {
             return CLEARING;
         } else if (!ball_in_box) {
             return BLOCKING;
@@ -71,7 +71,7 @@ Goalie::State Goalie::update_state() {
 
 std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
     if (latest_state_ == BLOCKING) {
-        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 0.1}};
+        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 0.2}};
         auto intercept_cmd = planning::MotionCommand{"intercept", target};
         intent.motion_command = intercept_cmd;
         return intent;
@@ -79,7 +79,8 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         // // pivot around ball...
         // auto ball_pt = world_state()->ball.position;
 
-        // // ...to face their goal        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+        // // ...to face their goal        auto line_kick_cmd = planning::MotionCommand{"line_kick",
+        // target};
 
         // planning::LinearMotionInstant target_instant{clear_point_};
 
@@ -123,12 +124,12 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         planning::LinearMotionInstant target{their_goal_pos};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
+        intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 4.0;
+        intent.kick_speed = 3.0;
         intent.is_active = true;
         return intent;
-    } else if (latest_state_ == NOT_IN_BOX || latest_state_ == IDLING || latest_state_ == BALL_NOT_FOUND) {
+    } else if (latest_state_ == NOT_IN_BOX || latest_state_ == BALL_NOT_FOUND) {
         rj_geometry::Point target_pt = this->field_dimensions_.our_defense_area().center();
         rj_geometry::Point target_vel{0.0, 0.0};
 
@@ -140,7 +141,10 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         planning::LinearMotionInstant target{target_pt, target_vel};
         intent.motion_command =
             planning::MotionCommand{"path_target", target, face_option, ignore_ball};
-        return intent; 
+        return intent;
+    } else if (latest_state_ == IDLING) {
+        intent.motion_command = planning::MotionCommand{"goalie_idle"};
+        return intent;
     }
 
     // should be impossible to reach, but this is equivalent to
