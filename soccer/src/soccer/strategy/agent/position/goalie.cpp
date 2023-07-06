@@ -36,32 +36,36 @@ Goalie::State Goalie::update_state() {
         return NOT_IN_BOX;
     }
 
+    if (shot_on_goal_detected(world_state)) {
+        return BLOCKING;
+    }
+
     if (latest_state_ == BALL_NOT_FOUND) {
         if (ball_found) {
-            return BLOCKING;
+            return IDLING;
         }
     } else if (latest_state_ == BLOCKING) {
         if (ball_in_box && ball_is_slow) {
             return PREPARING_SHOT;
+        } else if (check_is_done() || !ball_in_box) {
+            return IDLING;
         }
     } else if (latest_state_ == CLEARING) {
         if (check_is_done() || !ball_in_box) {
-            return BLOCKING;
+            return IDLING;
         }
     } else if (latest_state_ == PREPARING_SHOT) {
         if (check_is_done() || !ball_in_box) {
             return CLEARING;
         } else if (!ball_in_box) {
-            return BLOCKING;
+            return IDLING;
         }
     } else if (latest_state_ == NOT_IN_BOX) {
         if (in_box) {
             return IDLING;
         }
     } else if (latest_state_ == IDLING) {
-        if (ball_in_box && !ball_is_slow) {
-            return BLOCKING;
-        } else if (ball_in_box && ball_is_slow) {
+        if (ball_in_box) {
             return PREPARING_SHOT;
         }
     }
