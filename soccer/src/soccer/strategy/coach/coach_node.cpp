@@ -170,7 +170,8 @@ void CoachNode::assign_positions() {
             assign_positions_kickoff(positions);
             break;
         case PlayState::Restart::Free:
-            assign_positions_freekick(positions);
+            assign_positions_penalty(positions);
+            break;
         case PlayState::Restart::Placement:
             // TODO: Placement Position Assignment
         case PlayState::Restart::None:
@@ -258,31 +259,31 @@ void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& posit
 }
 
 void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& positions) {
-    for (size_t i = 0; i < kNumShells; i++) {
-        if (i != goalie_id_) {
-            // Non-kicking robots play defense
-            positions[i] = Positions::Defense;
-        }
-    }
+    // for (size_t i = 0; i < kNumShells; i++) {
+    //     if (i != goalie_id_) {
+    //         // Non-kicking robots play defense
+    //         positions[i] = Positions::Defense;
+    //     }
+    // }
 
-    // If our restart, make one a kicker
-    if (current_play_state_.our_restart) {
-        switch (current_play_state_.state) {
-            // Free Kick does not have setup state
-            case PlayState::State::Ready:
-                // Lowest non-goalie robot set to Goal Kicker
-                if (goalie_id_ == 0) {
-                    // Offense role should shoot. Placeholder for now.
-                    positions[1] = Positions::Offense;
-                } else {
-                    positions[0] = Positions::Offense;
-                }
-                break;
-            default:
-                SPDLOG_WARN("Invalid state for free kick restart");
-                assign_positions_normal(positions);
-        }
-    }
+    // // If our restart, make one a kicker
+    // if (current_play_state_.our_restart) {
+    //     switch (current_play_state_.state) {
+    //         // Free Kick does not have setup state
+    //         case PlayState::State::Ready:
+    //             // Lowest non-goalie robot set to Goal Kicker
+    //             if (goalie_id_ == 0) {
+    //                 // Offense role should shoot. Placeholder for now.
+    //                 positions[1] = Positions::Offense;
+    //             } else {
+    //                 positions[0] = Positions::Offense;
+    //             }
+    //             break;
+    //         default:
+    //             SPDLOG_WARN("Invalid state for free kick restart");
+    //             assign_positions_normal(positions);
+    //     }
+    // }
 }
 
 // void CoachNode::assign_positions_stop(std::array<uint32_t, kNumShells>& positions) {
@@ -333,7 +334,11 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
         if (robot_id != goalie_id_ && check_robot_alive(robot_id)) {
             switch (assign_num) {
                 case 0:
-                    positions[robot_id] = Positions::Offense;
+                    if (current_play_state_.state != PlayState::State::Stop) {
+                        positions[robot_id] = Positions::Offense;
+                    } else {
+                        positions[robot_id] = Positions::Defense;
+                    }
                     break;
                 default:
                     positions[robot_id] = Positions::Defense;
