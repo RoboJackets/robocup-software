@@ -201,19 +201,33 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
         switch (current_play_state_.state) {
             case PlayState::State::Setup:
                 // Lowest non-goalie robot set to PenaltyPlayer
-                if (goalie_id_ == 0) {
-                    positions[1] = Positions::PenaltyPlayer;
+                if (check_robot_alive(offense_one_)) {
+                    positions[offense_one_] = Positions::PenaltyPlayer;
+                } else if (check_robot_alive(offense_two_)) {
+                    positions[offense_two_] = Positions::PenaltyPlayer;
                 } else {
-                    positions[0] = Positions::PenaltyPlayer;
+                    for (u_int8_t id : alive_robots_) {
+                        if (check_robot_alive(id) && id != goalie_id_) {
+                            positions[id] = Positions::PenaltyPlayer;
+                            break;
+                        }
+                    }
                 }
                 break;
             case PlayState::State::Ready:
             case PlayState::State::PenaltyPlaying:
                 // Lowest non-goalie robot set to Goal Kicker
-                if (goalie_id_ == 0) {
-                    positions[1] = Positions::GoalKicker;
+                if (check_robot_alive(offense_one_)) {
+                    positions[offense_one_] = Positions::GoalKicker;
+                } else if (check_robot_alive(offense_two_)) {
+                    positions[offense_two_] = Positions::GoalKicker;
                 } else {
-                    positions[0] = Positions::GoalKicker;
+                    for (u_int8_t id : alive_robots_) {
+                        if (check_robot_alive(id) && id != goalie_id_) {
+                            positions[id] = Positions::GoalKicker;
+                            break;
+                        }
+                    }
                 }
                 break;
             default:
@@ -321,31 +335,35 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
     //  2. 2 Offense
     //  3. Remaining Defense (always 1 defender)
 
-    /** COMP 2023
-     * Robot 0 - working kicker (1)
-     * Robot 1 - working kicker (2)
-     * Robot 2 - static obstacle (5)
-     * Robot 3 - bad kicker (4)
-     * Robot 4 - working kicker (3)
-     * Robot 5 - working kicker (best) (0)
-     */
     int assign_num = 0;
     auto play_state = rj_convert::convert_from_ros(current_play_state_);
-    for (u_int8_t robot_id : robot_rankings) {
-        if (robot_id != goalie_id_ && check_robot_alive(robot_id)) {
-            switch (assign_num) {
-                case 0:
-                    if (play_state.is_playing() || play_state.is_our_restart()) {
-                        positions[robot_id] = Positions::Offense;
-                    } else {
-                        positions[robot_id] = Positions::Defense;
-                    }
-                    break;
-                default:
+    if (is_simulated_) {
+        for (u_int8_t robot_id = 0; robot_id < 6; robot_id++) {
+            if (robot_id == goalie_id_) {
+                positions[robot_id] = Positions::Goalie;
+            } else if (robot_id == offense_one_) {
+                if (play_state.is_playing() || play_state.is_our_restart()) {
+                    positions[robot_id] = Positions::Offense;
+                } else {
                     positions[robot_id] = Positions::Defense;
-                    break;
+                }
+            } else {
+                positions[robot_id] = Positions::Defense;
             }
-            assign_num++;
+        }
+    } else {
+        for (u_int8_t robot_id : alive_robots_) {
+            if (robot_id == goalie_id_) {
+                positions[robot_id] = Positions::Goalie;
+            } else if (robot_id == offense_one_) {
+                if (play_state.is_playing() || play_state.is_our_restart()) {
+                    positions[robot_id] = Positions::Offense;
+                } else {
+                    positions[robot_id] = Positions::Defense;
+                }
+            } else {
+                positions[robot_id] = Positions::Defense;
+            }
         }
     }
 
