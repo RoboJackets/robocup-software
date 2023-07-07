@@ -330,11 +330,12 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
      * Robot 5 - working kicker (best) (0)
      */
     int assign_num = 0;
+    auto play_state = rj_convert::convert_from_ros(current_play_state_);
     for (u_int8_t robot_id : robot_rankings) {
         if (robot_id != goalie_id_ && check_robot_alive(robot_id)) {
             switch (assign_num) {
                 case 0:
-                    if (current_play_state_.state != PlayState::State::Stop) {
+                    if (play_state.is_playing() || play_state.is_our_restart()) {
                         positions[robot_id] = Positions::Offense;
                     } else {
                         positions[robot_id] = Positions::Defense;
