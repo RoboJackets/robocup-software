@@ -129,7 +129,9 @@ void CoachNode::check_for_play_state_change() {
                 break;
             case PlayState::State::Stop:
                 global_override.max_speed = 1.5;
-                global_override.min_dist_from_ball = 0.5;
+                // TODO: ros param this
+                // by rules is 0.5, we do 0.65 for safety
+                global_override.min_dist_from_ball = 0.65;
                 global_override.max_dribbler_speed = 0;
                 break;
             case PlayState::State::Playing:
