@@ -44,7 +44,8 @@ private:
     int waller_pos_;
     int total_wallers_;
 
-    static constexpr double robot_diameter_multiplier_ = 1.5;
+    // TODO: make this ROS param
+    static constexpr double robot_diameter_multiplier_ = 1.2;
 };
 
 }  // namespace strategy
