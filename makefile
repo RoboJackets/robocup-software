@@ -72,7 +72,7 @@ run-sim:
 # run our stack with default flags
 # TODO: actually name our software stack something
 run-our-stack:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=True
+	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=True
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
@@ -82,11 +82,11 @@ run-sim-ex: run-sim-external
 
 # run on real field computer with real robots and internal ref (our UI)
 run-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False
+	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False
 
 # run on real field computer with real robots and external ref (SSL GC)
 run-real-ex:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False 
+	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False 
 
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
