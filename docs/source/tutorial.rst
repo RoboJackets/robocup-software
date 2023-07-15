@@ -89,6 +89,11 @@ from above, as well as a working knowledge of Git (which you can get either
 `online <https://rogerdudler.github.io/git-guide/>`_ or from the "Contributing"
 page).
 
+Once you've installed, play around with the simulator a little bit. Be familiar 
+with how to move the ball (click), take a shot (right click and drag), move a robot
+(click and drag), and issue the basic referee commands: stop, halt, and force start.
+(Buttons in the top left)
+
 2. GitHub Basics
 ----------------
 
@@ -105,7 +110,7 @@ project, and then pull its latest version:
 
 .. code-block:: bash
 
-   git checkout tutorial-2023-starter
+   git checkout ros2
    git pull
 
 Next, create a new branch under this naming scheme:
@@ -165,55 +170,7 @@ description, you can delete the template and write something simple like
 "Completes RC SW tutorials." Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
-3. C++ and Strategy
---------------------
-
-This section of the tutorial is designed to get your feet wet with C++ and our strategy 
-stack, without worrying about ROS2, which you will learn about after this section. 
-
-There are many layers to our codebase, but the strategy layer is the one 
-you will likely interact with the most. It is the layer responsible for deciding
-what each robot does on a high level, similar to what a coach may tell players on a 
-real soccer team. The strategy layer is focused on deciding how to play soccer
-rather than how to move robots or manage motion control.
-
-C++ can be difficult. Some advice from an older version of this tutorial:
-
-   This is a real hurdle. If you already have Java or C
-   experience, the syntax is similar enough to where you'll be able to work
-   through this section, even if it takes you some time. If you aren't so lucky,
-   read through the sections "Basics of C++", "Program structure", and "Classes"
-   of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
-
-**TODO: move the information on header files in C++ from section 6 to here. adapt it so it is more generic and doesn't involve ros2. **
-
-Take a look at both the headers and source files for the ``offense``, ``defense``, 
-and ``goalie`` positions defined in the ``strategy`` directory. Also take some time
-to understand how the ``strategy`` directory is organized.
-
-You might have noticed that the three positions have a similar structure. Crucially,
-they implement two methods: ``state_to_task`` and ``update_state``.  This is our
-implementation of a finite state machine. You should take some time to understand
-this concept if you're not familiar. One place you can get started is 
-`this article <https://medium.com/@mlbors/what-is-a-finite-state-machine-6d8dec727e2c>`_ 
-
-Each position defines its own states within its header file. There is more to these
-classes than just the state methods, namely the implementation of our communication
-system, but don't worry about that for this tutorial. We've gone ahead and created
-another position for you called Runner. Open up ``runner.hpp`` and ``runner.cpp`` 
-to look at that. 
-
-Right now, this position does nothing. Your goal will be to make this position
-run a lap around the field. This will be a chance to work with motion commands,
-which is the primary interface between the strategy and planning layers, as well
-as create your own state machine. 
-
-**TODO: create boilerplate position class ``Runner``and instructions for filling it out, showing example MotionCommands and other hints as necessary**
-
-**TODO: move/copy instructions for building, (excluding CMake, which will be done ahead of time for Runner)**
-
-
-4. ROS CLI Basics
+1. ROS CLI Basics
 -----------------
 
 This section is our variation of the ROS 2 `"Beginner: CLI Tools"
@@ -531,7 +488,108 @@ normal. The paragraphs above form a nice guide and checklist for you to follow.
 Just try your best, one step at a time, and eventually you'll have a working
 piece of software to be proud of.
 
-7. Conclusion
+7. Action Clients and building a position
+-----------------------------------------
+
+Background
+~~~~~~~~~~~
+
+This section is one last ROS tutorial. 
+
+First, read this page and do some research if you need to to get an Understanding
+of ROS actions. Our strategy stack is centered around an Action Server and six
+Action Clients, each of which represent a robot on the field. 
+
+Also take a second to understand the difference within our stack between
+strategy and planning. Strategy is responsible for high level decisions,
+such as where a robot should be moving to, if it should be kicking, and
+how it should react to other robots and the referee. Planning is responsible
+for taking the instructions from strategy and turn them into trajectories
+for a robot to follow and specific commands a physical robot can execute,
+which are relayed to our physical robots by the radio.
+
+The Action Server is housed by the Planner node, which is the node responsible for turning requests
+for robot actions into actual trajectories for the robot to follow.
+
+The Action Clients are housed in AgentActionClient nodes, which contains some 
+other useful subscriptions to get information about the field and referee.
+
+At any given time, a given AgentActionClient is playing a single position. 
+Take a look through ``agent_action_client.cpp`` to get an understanding of how
+that works. It creates a Position instance and asks said Position for its task,
+which it then relays to the planner using ROS actions. 
+
+As you can see, strategy decisions are delegated to the Positions. This makes some
+sense with respect to soccer—players play differently based on their position.
+
+There are three major positions: Offense, Defense, and Goalie. You may see
+some others, but these are only for special game cases.
+
+Take some time to read through Offense, Defense, and Goalie, paying special 
+attention to how they each implement ``state_to_task`` and ``update_state``.
+This is called a finite state machine, and it is a crucial concept to get the 
+hang of. Here's `a simple article to get you started.<https://medium.com/@mlbors/what-is-a-finite-state-machine-6d8dec727e2c>`_
+
+Instructions
+~~~~~~~~~~~~
+
+This is the most open-ended part of the tutorial, but you got this! 
+Remember, if you get stuck, ask your peers first. We're a very collaborative
+team. If you're still stuck, your software lead is happy to give you some hints
+and troubleshoot bugs.
+
+Your task is to create a new position, like Offense, Defense, or Goalie. Your
+new position will be called Runner. Note that this class is not a ROS node
+like the last class you made, but it will be a subclass of ``position.hpp``. 
+
+Some useful resources will be the `classes<https://www.learncpp.com/cpp-tutorial/classes-and-class-members/>`_
+and `inheritance<https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/>`_ C++ tutorials.
+
+Your runner will be a robot that takes laps around the field. It should run in a rectangle that you choose.
+If you're feeling creative, the shape it runs in can be any polygon with 4 or more sides. 
+
+A runner's process looks like this:
+
+#. Run along first side of shape 
+#. Continue until done
+#. Run along second side of shape
+#. Continue until done
+#. Run along third side of shape
+#. Continue until done
+
+etc, starting over when it finishes the shape.
+
+Hopefully, you're seeing how this list lends nicely to a state machine, where states are sides
+and you know to switch states based on when the robot has reached a vertex (the end of its path).
+
+You will need to look through the other positions to figure out the details of creating this position,
+but here are some more hints.
+
+* The motion command for driving in a straight line is ``"path_target"``.
+* You will probably need to override some methods relating to passing, but you can leave their implementations empty. They don't need to do anything in your position, as your robot will not pass the ball
+* The simulator tells you the coordinates of your cursor—these are the same coordinates you can use in your motion commands.
+
+Testing
+~~~~~~~
+
+Testing a new position is a bit complicated. The files you need to change are ``coach_node.hpp``, ``coach_node.cpp``, and ``agent_action_client.cpp``.
+
+Open these files, search for "Offense," and add your Runner class in all the necessary places.
+
+You only want one Runner robot, so just set the robot with ID 1 to always be a Runner.
+
+This part is admittedly more work than it should be, and isn't the focus of your tutorial. 
+As such, your software lead is happy to help you through it if need be. Also, this part of the
+strategy stack is currently being changed, and ``coach_node`` is likely to be removed, which is
+why the tutorial skips teaching you about it.
+
+Wrapping up
+~~~~~~~~~~~
+Make sure that you are periodically commiting your changes. This makes it easy for you to revert things if you need to!
+
+Once robot 1 is successfully running in a rectangle (or other shape), you're finished! Congratulations!
+
+8. Conclusion
 -------------
 
 Finally, tag your software lead for review on your pull request. For your final
