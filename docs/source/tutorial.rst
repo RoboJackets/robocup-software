@@ -65,8 +65,7 @@ ask for help.
 0. Command-Line Basics
 ----------------------
 
-If you've never heard of or used the command-line before, `this website
-<https://ubuntu.com/tutorials/command-line-for-beginners#1-overview>`_ is
+If you've never heard of or used the command-line before, `Command Line Basics`_ is
 wonderful for beginners.
 
 .. image:: ./_static/ubuntu_cli_tutorial.png
@@ -93,7 +92,7 @@ Some tips about learning how to use commands:
 
 See "Installation". That page will assume you have the Command-Line Basics
 from above, as well as a working knowledge of Git (which you can get either
-`online <https://rogerdudler.github.io/git-guide/>`_ or from the "Contributing"
+online (`Git Guide`_) or from the "Contributing"
 page).
 
 Once you've installed, play around with the simulator a little bit. Be familiar 
@@ -182,8 +181,8 @@ comment below your brand new PR. Nice work!
 3. ROS CLI Basics
 -----------------
 
-This section is our variation of the ROS 2 `"Beginner: CLI Tools"
-<https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>`_ tutorials. We
+This section is our variation of the ROS 2 `Beginner CLI Tools`_
+ tutorials. We
 do things slightly differently (and don't use all of the ROS 2 features
 described in those tutorials), so this is intended to keep you from having to
 read all of those docs.
@@ -242,8 +241,7 @@ interface for the many tools ROS includes.
 
 To use it, open a new terminal, source ROS (like you do before running our
 stack), and run :sh:`rqt`. (This should have been installed with the rest of the
-stack when you ran :sh:`./util/ubuntu-setup`; if not, see `this guide
-<http://wiki.ros.org/rqt/UserGuide/Install/Groovy>`_.) You should see a blank
+stack when you ran :sh:`./util/ubuntu-setup`; if not, see `Install Groovy`_.) You should see a blank
 GUI pop up.
 
 .. image:: ./_static/blank_rqt.png
@@ -271,13 +269,11 @@ the runner (and every other robot on our team) move much more quickly.
 Take a screen recording of this whole process and send it to your software lead
 via Slack. Feel free to play around with any other params you see!
 
-5. ROS and C++
+1. ROS and C++
 --------------
 
 Much like the last section, this section is our version of an official ROS
-tutorial. This time we'll reprise `Writing a simple publisher and subscriber
-(C++)
-<http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_.
+tutorial. This time we'll reprise `Writing a simple publisher and subscriber (C++)`_.
 Before continuing, read the "Background" section of that tutorial, and brush up
 on any of the readings from section 4 that you need to. Ignore
 "Prerequisites"--our workspace is already set up for you, and we'll walk through
@@ -295,7 +291,7 @@ and picks a fruit to match. Our robots have to stay motivated somehow!
 
 You can find the team color by subscribing to the relevant topic (this should
 become obvious after looking at the list of topics). To "pick a fruit", publish
-a `standard string msg <http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html>`_ 
+a standard `String Msg`_ 
 to a new topic ``/team_fruit``.
  * When our team color is yellow, publish "banana" to ``/team_fruit``.
  * When our team color is blue, publish "blueberries" to ``/team_fruit``.
@@ -311,8 +307,7 @@ This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
 files. 
 
-(For more information, check out `this
-<https://cplusplus.com/articles/Gw6AC542/>`_ resource.)
+(For more information, check out `Headers and Includes`_ resource.)
 
 Let's take a look at a real example in our codebase to make this more
 understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
@@ -337,7 +332,7 @@ As a brief overview to help you get started...
 
 * The header file also categorizes all variables and methods of the Radio
   class into :cpp:`public`, :cpp:`protected`, and :cpp:`private`. These are known
-  as "access specifiers". `This article <https://www.w3schools.com/cpp/cpp_access_specifiers.asp>`_
+  as "access specifiers". This article on `Access Specifiers`_
   sums them up nicely.
 
 * Both files are enclosed under a namespace. Namespaces are an organizational
@@ -364,7 +359,7 @@ don't want to reuse a function (since without a name, you can't reference that
 function anywhere else). and requires less lines of code when compared to
 having another function. 
 
-Read more `about lambdas here <https://www.programiz.com/cpp-programming/lambda-expression>`_
+Read more about `Lambda Expressions`_
 if you would like.
 
 * The existing codebase also makes heavy use of *pointers*. You will see this
@@ -379,13 +374,11 @@ given a pointer to that object. Above, :cpp:`robot_status_topics_` is a list of
 pointers to ROS publisher objects. Calling :cpp:`->publish(robot_status)` on one
 element in that list publishes a robot status using that specific publisher.
 You will learn more about pointers when you take CS 2110, but if you want to
-get a headstart, see `this
-resource <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm>`_.
+get a headstart, see `C++ Member Operators`_.
 
 * Finally, the docstrings in the radio header file state that the Radio class
   abstract superclass of the network_radio and sim_radio nodes. (If you are
-  unfamiliar with the concept of abstraction, `here
-  <https://www.pythontutorial.net/python-oop/python-abstract-class/>`_ is more
+  unfamiliar with the concept of abstraction, `C++ Abstract Classes`_ is more
   information.) The concrete subclasses are NetworkRadio and SimRadio.
 
 You might be wondering: okay, this is great, but how do I compile and run my
@@ -394,7 +387,7 @@ new node?
 Well, both NetworkRadio and SimRadio have an associated <name>_main.cpp file
 (e.g. ``sim_radio_node_main``) which contains the main function for its
 respective node. This structure is intended to make writing the CMake files for
-the directory easier. We use `CMake <https://cmake.org/overview/>`_ to compile
+the directory easier. We use `CMake`_ to compile
 our C++ programs on a variety of different hardware architectures. 
 
 As a result, to compile and use your new node, you'll need to add your new
@@ -446,8 +439,7 @@ directory and open the file that seems most relevant to your new node.
 
 Like the CMake section, this part is a lot of copying what already exists and
 changing it to match your new node's names. If you want to read more about ROS
-launch files, `the tutorial page <https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html>`_
-is a great place to start.
+launch files, the `Launch Files Tutorial`_ is a great place to start.
 
 
 Testing
@@ -528,7 +520,7 @@ some others, but these are only for special game cases.
 Take some time to read through Offense, Defense, and Goalie, paying special 
 attention to how they each implement ``state_to_task`` and ``update_state``.
 This is called a finite state machine, and it is a crucial concept to get the 
-hang of. Here's `a simple article to get you started. <https://medium.com/@mlbors/what-is-a-finite-state-machine-6d8dec727e2c>`_
+hang of. Here's a simple article to get you started: `Finite State Machines`_ 
 
 Instructions
 ~~~~~~~~~~~~
@@ -544,8 +536,8 @@ like the last class you made, but it will be a subclass of ``position.hpp``.
 
 Some useful C++ resources:
 
-* `classes <https://www.learncpp.com/cpp-tutorial/classes-and-class-members/>`_
-* `inheritance <https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/>`_ 
+* `C++ Classes`_
+* `C++ Inheritance`_ 
 
 Your runner will be a robot that takes laps around the field. It should run in a rectangle that you choose.
 If you're feeling creative, the shape it runs in can be any polygon with 4 or more sides. 
@@ -608,3 +600,72 @@ Congratulations! This was a long journey, but if you've made it this far, you
 have proved yourself worthy of your teammates' trust, and are ready to work on
 real features. We hope this was a helpful first step in your long robotics
 career.
+
+8. Resources (again)
+--------------------
+
+Here are all the external links from this document, copied again for your easy reference
+
+* `Command Line Basics`_
+  
+.. _Command Line Basics: https://ubuntu.com/tutorials/command-line-for-beginners#1-overview
+
+* `Git Guide`_
+  
+.. _Git Guide: https://rogerdudler.github.io/git-guide/
+
+* `Beginner CLI Tools`_
+  
+.. _Beginner CLI Tools: https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>
+
+* `Install Groovy`_
+
+.. _Install Groovy: http://wiki.ros.org/rqt/UserGuide/Install/Groovy
+
+* `Writing a simple publisher and subscriber (C++)`_
+
+.. _Writing a simple publisher and subscriber (C++): http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html
+
+* `String Msg`_
+
+.. _String Msg: http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html
+
+* `Headers and Includes`_
+
+.. _Headers and Includes: https://cplusplus.com/articles/Gw6AC542/
+
+* `Access Specifiers`_
+  
+.. _Access Specifiers: https://www.w3schools.com/cpp/cpp_access_specifiers.asp
+
+* `Lambda Expressions`_
+
+.. _Lambda Expressions: https://www.programiz.com/cpp-programming/lambda-expression
+
+* `C++ Member Operators`_
+
+.. _C++ Member Operators: https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm
+
+* `C++ Abstract Classes`_
+
+.. _C++ Abstract Classes: https://en.wikibooks.org/wiki/C%2B%2B_Programming/Classes/Abstract_Classes
+
+* `CMake`_
+
+.. _CMake: https://cmake.org/overview/
+
+* `Launch Files Tutorial`_
+
+.. _Launch Files Tutorial: https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html
+
+* `Finite State Machines`_ 
+
+.. _Finite State Machines: https://medium.com/@mlbors/what-is-a-finite-state-machine-6d8dec727e2c
+
+* `C++ Classes`_
+
+.. _C++ Classes: https://www.learncpp.com/cpp-tutorial/classes-and-class-members/
+
+* `C++ Inheritance`_ 
+
+.. _C++ Inheritance: https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/
