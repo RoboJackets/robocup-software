@@ -6,4 +6,6 @@ set(TEST_RJ_CONVERT_SRCS ros_convert_test.cpp)
 # ======================================================================
 # Add sources
 # ======================================================================
-target_sources(test_rj_convert PRIVATE ${TEST_RJ_CONVERT_SRCS})
+if (BUILD_TESTING)
+    target_sources(test_rj_convert PRIVATE ${TEST_RJ_CONVERT_SRCS})
+endif()

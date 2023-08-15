@@ -28,6 +28,7 @@
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
 #include "world_state.hpp"
+#include <soccer/robot_intent.hpp>
 
 // Communication
 #include "communication/communication.hpp"

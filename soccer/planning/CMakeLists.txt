@@ -13,14 +13,16 @@ ament_target_dependencies(planning_types PUBLIC ${SOCCER_COMMON_AMENT_LIBS})
 add_library(planning)
 target_sources(planning PRIVATE
         trajectory_utils.cpp
-        planner/collect_planner.cpp
+        planner/collect_path_planner.cpp
         planner/escape_obstacles_path_planner.cpp
-        planner/intercept_planner.cpp
-        planner/line_kick_planner.cpp
-        planner/path_target_planner.cpp
+        planner/goalie_idle_path_planner.cpp
+        planner/intercept_path_planner.cpp
+        planner/line_kick_path_planner.cpp
+        planner/motion_command.cpp
+        planner/path_target_path_planner.cpp
         planner/pivot_path_planner.cpp
         planner/plan_request.cpp
-        planner/settle_planner.cpp
+        planner/settle_path_planner.cpp
         primitives/angle_planning.cpp
         primitives/create_path.cpp
         primitives/path_smoothing.cpp

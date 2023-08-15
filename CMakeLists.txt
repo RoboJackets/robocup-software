@@ -55,7 +55,7 @@ endif()
 # ======================================================================
 
 # A separate flag for now
-option(BUILD_TESTING "Build tests." ON)
+option(BUILD_TESTING "Build tests." OFF)
 
 # include cmake files in the 'cmake folder'
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")

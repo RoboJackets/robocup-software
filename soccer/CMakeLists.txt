@@ -129,6 +129,7 @@ target_sources(soccer PRIVATE
         ros2_temp/debug_draw_interface.cpp
         ros2_temp/raw_vision_packet_sub.cpp
         ros2_temp/referee_sub.cpp
+        ros2_temp/coach_sub.cpp
         ros2_temp/soccer_config_client.cpp)
 target_link_libraries(soccer PUBLIC
         ${SOCCER_COMMON_LIBS}
