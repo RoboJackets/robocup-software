@@ -2,7 +2,8 @@
 add_library(planning_types)
 target_sources(planning_types PRIVATE
         planning_params.cpp
-        trajectory.cpp)
+        trajectory.cpp
+        planner/motion_command.cpp)
 target_link_libraries(planning_types PUBLIC
         ${SOCCER_COMMON_LIBS}
         ${SOCCER_COMMON_SYSTEM_LIBS}
@@ -18,7 +19,6 @@ target_sources(planning PRIVATE
         planner/goalie_idle_path_planner.cpp
         planner/intercept_path_planner.cpp
         planner/line_kick_path_planner.cpp
-        planner/motion_command.cpp
         planner/path_target_path_planner.cpp
         planner/pivot_path_planner.cpp
         planner/plan_request.cpp

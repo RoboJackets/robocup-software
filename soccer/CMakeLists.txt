@@ -93,14 +93,18 @@ target_sources(soccer_common PRIVATE
         battery_profile.cpp
         debug_drawer.cpp
         global_params.cpp
-        world_state.cpp)
+        world_state.cpp
+        robot_intent.cpp)
 target_include_directories(soccer_common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(soccer_common SYSTEM PUBLIC ${EIGEN_INCLUDE_DIRECTORIES})
 ament_target_dependencies(soccer_common PUBLIC ${SOCCER_COMMON_AMENT_LIBS})
 target_link_libraries(soccer_common PUBLIC
         ${SOCCER_COMMON_LIBS}
-        ${SOCCER_COMMON_SYSTEM_LIBS})
+        ${SOCCER_COMMON_SYSTEM_LIBS}
+        # needed for motion command, but this feels janky TODO(sid-parikh): make sure this is best
+        planning_types)
 
+# soccer directories
 add_subdirectory(planning)
 add_subdirectory(control)
 add_subdirectory(joystick)
@@ -124,7 +128,6 @@ add_library(soccer)
 target_sources(soccer PRIVATE
         logger.cpp
         processor.cpp
-        debug_drawer.cpp
         ros2_temp/autonomy_interface.cpp
         ros2_temp/debug_draw_interface.cpp
         ros2_temp/raw_vision_packet_sub.cpp
@@ -194,6 +197,26 @@ target_link_libraries(global_param_server_node PUBLIC
         ${SOCCER_COMMON_LIBS}
         ${SOCCER_COMMON_SYSTEM_LIBS}
         soccer_common)
+
+# Log viewer node
+#add_executable(log_viewer)
+#
+#target_sources(log_viewer PRIVATE
+#        log_viewer.cpp
+#        ui/qt/log_icons.qrc
+#        ui/qt/log_icons.qrc)
+#
+#set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+#
+#target_link_libraries(log_viewer PRIVATE
+#        Qt5::Core
+#        Qt5::Widgets
+#        Qt5::OpenGL
+#        Qt5::Xml
+#        Qt5::Svg
+#        soccer
+#        ${PROTOBUF_LIBRARIES}
+#)
 
 # ======================================================================
 # Packaging

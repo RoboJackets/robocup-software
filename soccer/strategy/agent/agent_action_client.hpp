@@ -18,17 +18,17 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
-#include "rj_msgs/action/robot_move.hpp"
-#include "strategy/agent/position/defense.hpp"
-#include "strategy/agent/position/goal_kicker.hpp"
-#include "strategy/agent/position/goalie.hpp"
-#include "strategy/agent/position/offense.hpp"
-#include "strategy/agent/position/penalty_player.hpp"
-#include "strategy/agent/position/position.hpp"
-#include "world_state.hpp"
-#include <soccer/robot_intent.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <rj_msgs/action/robot_move.hpp>
+#include "position/defense.hpp"
+#include "position/goal_kicker.hpp"
+#include "position/goalie.hpp"
+#include "position/offense.hpp"
+#include "position/penalty_player.hpp"
+#include "position/position.hpp"
+#include <world_state.hpp>
+#include "../../robot_intent.hpp"
 
 // Communication
 #include "communication/communication.hpp"

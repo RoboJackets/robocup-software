@@ -26,6 +26,6 @@ target_link_libraries(coach_node PUBLIC
         strategy)
 
 add_executable(agent_action_client_node
-        agent/agent_action_client.cpp)
+        agent/agent_action_client_main.cpp)
 target_link_libraries(agent_action_client_node PUBLIC
         strategy)
