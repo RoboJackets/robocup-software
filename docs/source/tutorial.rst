@@ -342,9 +342,9 @@ As a brief overview to help you get started...
 
 * Both files are enclosed under a namespace. Namespaces are an organizational
   tool in C++ which helps organize large codebases. For instance, the radio.hpp
-  file defines ``namespace radio``, so when other files use the ``SimRadio``
-  object, they reference ``radio::SimRadio``. Give your SoccerMom node a
-  ``tutorial`` namespace.
+  file defines :cpp:`namespace radio`, so when other files use the :cpp:`SimRadio`
+  object, they reference :cpp:`radio::SimRadio`. Give your SoccerMom node a
+  :cpp:`tutorial` namespace.
 
 * The existing codebase makes heavy use of *lambda expressions*. For instance,
   in radio.cpp:
