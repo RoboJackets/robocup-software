@@ -140,7 +140,9 @@ Find the line of code that calculates the ``wall_spacing`` and double its value.
 
 Re-build the project (:sh:`make again`) and run the simulator again. You should
 see the wallers more spread out. Note that this is probably a less effective wall!
-This change is just for educational purposes. Take a screenshot of your new wall.
+This change is just for educational purposes. 
+
+**Take a screenshot of your new wall.***
 
 Now that you've made a change to the repo, run ``git status``. You should see
 that whatever files you changed show up in red, which indicates that they are
@@ -495,32 +497,29 @@ piece of software to be proud of.
 Background
 ~~~~~~~~~~~
 
-This section is one last ROS tutorial. 
+This last section introduces more concepts of ROS and our strategy. 
 
-First, read this page and do some research if you need to to get an Understanding
+First, read this page and do some research if you need to get an understanding
 of ROS actions. Our strategy stack is centered around an Action Server and six
 Action Clients, each of which represent a robot on the field. 
 
-Also take a second to understand the difference within our stack between
-strategy and planning. Strategy is responsible for high level decisions,
-such as where a robot should be moving to, if it should be kicking, and
-how it should react to other robots and the referee. Planning is responsible
-for taking the instructions from strategy and turn them into trajectories
-for a robot to follow and specific commands a physical robot can execute,
+Also, take a second to understand the difference between
+strategy and planning in our stack. Strategy is responsible for high level decisions,
+such as robot movement, kicking procedure, robot communication, and referee interaction. Planning is responsible
+for taking the instructions from strategy and turning them into trajectories and commands a robot can execute,
 which are relayed to our physical robots by the radio.
 
 The Action Server is housed by the Planner node, which is the node responsible for turning requests
-for robot actions into actual trajectories for the robot to follow.
+for robot actions into trajectories for the robot to follow.
 
-The Action Clients are housed in AgentActionClient nodes, which contains some 
+The Action Clients are created by the AgentActionClient node which contain some 
 other useful subscriptions to get information about the field and referee.
 
-At any given time, a given AgentActionClient is playing a single position. 
-Take a look through ``agent_action_client.cpp`` to get an understanding of how
-that works. It creates a Position instance and asks said Position for its task,
-which it then relays to the planner using ROS actions. 
+At any given time, an AgentActionClient is playing a single position. 
+It creates a Position instance and checks for its task,
+which it then relays to the planner using ROS actions. Take a look through ``agent_action_client.cpp`` to get a better understanding of this process. 
 
-As you can see, strategy decisions are delegated to the Positions. This makes some
+Strategy decisions are delegated to the Positions. This makes
 sense with respect to soccer—players play differently based on their position.
 
 There are three major positions: Offense, Defense, and Goalie. You may see
@@ -535,7 +534,7 @@ Instructions
 ~~~~~~~~~~~~
 
 This is the most open-ended part of the tutorial, but you got this! 
-Remember, if you get stuck, ask your peers first. We're a very collaborative
+Remember, if you get stuck, ask Google first. Then, check with your peers. We're a very collaborative
 team. If you're still stuck, your software lead is happy to give you some hints
 and troubleshoot bugs.
 
@@ -543,8 +542,10 @@ Your task is to create a new position, like Offense, Defense, or Goalie. Your
 new position will be called Runner. Note that this class is not a ROS node
 like the last class you made, but it will be a subclass of ``position.hpp``. 
 
-Some useful resources will be the `classes <https://www.learncpp.com/cpp-tutorial/classes-and-class-members/>`_
-and `inheritance <https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/>`_ C++ tutorials.
+Some useful C++ resources:
+
+* `classes <https://www.learncpp.com/cpp-tutorial/classes-and-class-members/>`_
+* `inheritance <https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/>`_ 
 
 Your runner will be a robot that takes laps around the field. It should run in a rectangle that you choose.
 If you're feeling creative, the shape it runs in can be any polygon with 4 or more sides. 
