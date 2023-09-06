@@ -11,7 +11,7 @@ endif
 
 # Tell CMake to create compile_commands.json for debug builds for clang-tidy
 DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=/home/robojackets/iwyu/build/bin/include-what-you-use
 # FOR MACHINES WITHOUT CLANG:
 # 1) try installing w/ ./util/ubuntu-setup
 # 2) change clang/clang++ to gcc/g++ above
