@@ -41,7 +41,7 @@ protected:
         boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(kBaseStationAddress), kBaseStationPort);
     // TODO: Make this not hardcoded
     boost::asio::ip::udp::endpoint bound_endpoint = 
-        boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string("10.42.0.1"), kIncomingBaseStationDataPort);
+        boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string("0.0.0.0"), kIncomingBaseStationDataPort);
     boost::asio::ip::udp::socket socket;
 
     void receive_packet(const boost::system::error_code& error, std::size_t num_bytes);
