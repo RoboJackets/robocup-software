@@ -64,6 +64,11 @@ static const std::string kRefereeInterface = "192.168.20.119";
 static const std::string kVisionInterface =
     kRefereeInterface;  // In all but rare cirucmstances, this should match kRefereeInterface.
 
+static const std::string kBaseStationAddress = "10.42.0.252";
+static const int kBaseStationPort = 8000;
+
+static const int kIncomingBaseStationDataPort = 8000;
+
 static const int kSimVisionPort = 10020;  // was 10020 before 1-30-2022
 static const int kSimBlueStatusPort = 30011;
 static const int kSimYellowStatusPort = 30012;
