@@ -18,7 +18,9 @@ namespace radio {
 
 NetworkRadio::NetworkRadio() : socket(io_service), recv_buffer_{}, send_buffers_(kNumShells), last_heard_from{} {
     socket.open(udp::v4());
+    SPDLOG_INFO("Socket Opened");
     socket.bind(bound_endpoint);
+    SPDLOG_INFO("Socket bound");
 
     start_receive();
 
