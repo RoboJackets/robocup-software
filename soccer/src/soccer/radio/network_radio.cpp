@@ -18,9 +18,7 @@ namespace radio {
 
 NetworkRadio::NetworkRadio() : socket(io_service), recv_buffer_{}, send_buffers_(kNumShells), last_heard_from{} {
     socket.open(udp::v4());
-    SPDLOG_INFO("Socket Opened");
-    socket.bind(bound_endpoint);
-    SPDLOG_INFO("Socket bound");
+    socket.bind(udp::endpoint(udp::v4(), kIncomingBaseStationDataPort));
 
     start_receive();
 
@@ -28,13 +26,9 @@ NetworkRadio::NetworkRadio() : socket(io_service), recv_buffer_{}, send_buffers_
         this->create_publisher<rj_msgs::msg::AliveRobots>("strategy/alive_robots", rclcpp::QoS(1));
 }
 
-NetworkRadio::~NetworkRadio() {
-    socket.close();
-}
-
 void NetworkRadio::start_receive() {
-    socket.async_receive(
-        boost::asio::buffer(recv_buffer_),
+    socket.async_receive_from(
+        boost::asio::buffer(recv_buffer_), bound_endpoint,
         [this](const boost::system::error_code& error, std::size_t num_bytes) {
             receive_packet(error, num_bytes);
         }
@@ -44,6 +38,7 @@ void NetworkRadio::start_receive() {
 void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                         const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                         strategy::Positions role) {
+
     // Build the control packet for this robot.
     std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
@@ -61,7 +56,7 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
         boost::asio::buffer(forward_packet_buffer), base_station_endpoint,
         [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
             if (static_cast<bool>(error)) {
-                SPDLOG_ERROR("Error Sending: {}", error);
+                SPDLOG_ERROR("Error Sending: {}", error.message());
             }
         }
     );

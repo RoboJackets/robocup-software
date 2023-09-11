@@ -28,7 +28,6 @@ namespace radio {
 class NetworkRadio : public Radio {
 public:
     NetworkRadio();
-    ~NetworkRadio();
 
 protected:
     void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
@@ -41,14 +40,16 @@ protected:
         boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(kBaseStationAddress), kBaseStationPort);
     // TODO: Make this not hardcoded
     boost::asio::ip::udp::endpoint bound_endpoint = 
-        boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string("0.0.0.0"), kIncomingBaseStationDataPort);
+        boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), kIncomingBaseStationDataPort);
+
+    // Fuck Around and Find Out
+    // https://stackoverflow.com/questions/26243008/error-initializing-a-boost-udp-socket-with-a-boost-io-service
+    boost::asio::io_service io_service;
     boost::asio::ip::udp::socket socket;
 
     void receive_packet(const boost::system::error_code& error, std::size_t num_bytes);
 
     void start_receive();
-
-    boost::asio::io_service io_service;
 
     // Written by `async_receive_from`.
     std::array<char, rtp::ReverseSize> recv_buffer_;
