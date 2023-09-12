@@ -7,7 +7,6 @@
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_topic_utils/async_message_queue.hpp>
 
-#include "manipulator_control.hpp"
 #include "motion_control.hpp"
 #include "motion_setpoint.hpp"
 #include "node.hpp"
