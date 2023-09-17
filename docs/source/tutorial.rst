@@ -155,7 +155,7 @@ how, or see the previous section on git), then commit them:
 .. note::
 
    <commit msg> should be a present-tense description of what you've changed. In
-   this case, "change to 4 wallers" is fine.
+   this case, "double wall spacing" is fine.
 
    Without the -m flag, git commit will open a nano (or whatever your
    default text editor is set to) and ask you to type in 
@@ -269,7 +269,7 @@ the runner (and every other robot on our team) move much more quickly.
 Take a screen recording of this whole process and send it to your software lead
 via Slack. Feel free to play around with any other params you see!
 
-1. ROS and C++
+5. ROS and C++
 --------------
 
 Much like the last section, this section is our version of an official ROS
