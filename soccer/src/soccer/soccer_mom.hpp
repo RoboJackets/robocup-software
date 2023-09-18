@@ -10,15 +10,16 @@
 namespace soccer_mom {
 
 class SoccerMom : public rclcpp::Node {
-    public:
-        SoccerMom();
-    private:
-        void timer_callback();
-        rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
-        rclcpp::TimerBase::SharedPtr tick_timer_;
-        rclcpp::Publisher<std_msgs::msg::String> team_color_pub_;
-        size_t count_;
-        bool blue_team_;
+public:
+    SoccerMom();
+
+private:
+    void timer_callback();
+    rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
+    rclcpp::TimerBase::SharedPtr tick_timer_;
+    rclcpp::Publisher<std_msgs::msg::String> team_color_pub_;
+    size_t count_;
+    bool blue_team_;
 };
 
 }  // namespace soccer_mom
