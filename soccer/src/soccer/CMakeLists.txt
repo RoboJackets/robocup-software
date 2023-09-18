@@ -164,7 +164,7 @@ target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
 # ---- sim_radio_node ----
 target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
-target_sources(soccer_mom_node PRIVATE $(SOCCER_MOM_NODE_SRC))
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # ---- coach_node ----
 target_sources(coach_node PRIVATE ${COACH_NODE_SRC})
