@@ -34,6 +34,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
 
     // Calculate the wall spacing
     auto wall_spacing = robot_diameter_multiplier_ * kRobotDiameter + kBallRadius;
+    wall_spacing *= 2;
 
     // Calculate the target point
     rj_geometry::Point target_point{};
