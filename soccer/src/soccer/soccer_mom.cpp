@@ -14,7 +14,9 @@ SoccerMom::SoccerMom() : Node{"soccer_mom"} {
     tick_timer_ = this->create_wall_timer(500ms, std::bind(&SoccerMom::timer_callback, this));
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
-        [this](const rj_msgs::msg::TeamColor::SharedPtr& color) { blue_team_ = color->is_blue; });
+        [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
+            blue_team_ = color->is_blue;
+        });
 }
 
 void SoccerMom::timer_callback() {

@@ -152,7 +152,7 @@ def generate_launch_description():
                 package="rj_robocup",
                 executable="soccer_mom_node",
                 output="screen",
-                parameters=[param_config_filepath],
+                # parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             Node(
