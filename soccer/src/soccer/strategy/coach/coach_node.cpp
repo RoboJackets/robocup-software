@@ -40,6 +40,11 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         "config/game_settings", 1,
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
+    // TODO: (https://app.clickup.com/t/867796fh2)sub to acknowledgement topic from AC
+    // save state of acknowledgements, only spam until some long time has passed, or ack
+    // received
+    /* ack_array[msg->ID] = true; */
+
     field_dimensions_sub_ = this->create_subscription<rj_msgs::msg::FieldDimensions>(
         ::config_server::topics::kFieldDimensionsTopic, 10,
         [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {

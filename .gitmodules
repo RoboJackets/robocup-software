@@ -1,7 +1,6 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest
-    branch = main
 [submodule "external/style-configs"]
 	path = external/style-configs
 	url = https://github.com/robojackets/style-configs
@@ -11,7 +10,6 @@
 [submodule "external/robocup-fshare"]
 	path = external/robocup-fshare
 	url = https://github.com/robojackets/robocup-fshare
-    branch = master
 [submodule "external/sdlcontrollerdb"]
 	path = external/sdlcontrollerdb
 	url = https://github.com/gabomdq/SDL_GameControllerDB
