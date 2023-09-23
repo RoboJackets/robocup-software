@@ -52,10 +52,10 @@ protected:
     void start_receive();
 
     // Written by `async_receive_from`.
-    std::array<char, rtp::ReverseSize> recv_buffer_;
+    std::array<char, sizeof(rtp::RobotStatusMessage)> recv_buffer_;
 
     // Read from by `async_send_to`
-    std::vector<std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>> send_buffers_{};
+    std::vector<std::array<uint8_t, sizeof(rtp::ControlMessage)>> send_buffers_{};
 
     constexpr static std::chrono::duration kTimeout = std::chrono::milliseconds(250);
 

@@ -50,10 +50,10 @@ void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status);
 namespace ConvertTx {
 
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
-            int shell, rtp::RobotTxMessage* rtp);
+            int shell, rtp::ControlMessage* rtp);
 
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp,
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::ControlMessage* rtp,
                 strategy::Positions role);
 
 void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
@@ -67,5 +67,3 @@ void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 RobotCommand* sim);
 
 }  // namespace ConvertTx
-
-void fill_header(rtp::Header* header);

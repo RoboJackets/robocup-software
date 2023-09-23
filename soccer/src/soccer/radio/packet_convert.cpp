@@ -35,24 +35,24 @@ void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* stat
         return;
     }
 
-    status->shell_id = rtp_message.uid;
+    status->shell_id = rtp_message.robot_id;
 
     status->timestamp = RJ::now();
     status->version = RobotStatus::HardwareVersion::kFleet2018;
     status->twist_estimate = std::nullopt;
     status->pose_estimate = std::nullopt;
     status->battery_voltage =
-        static_cast<float>(rtp_message.battVoltage) * rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
+        static_cast<float>(rtp_message.battery_voltage) * rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
     status->kicker_voltage = 0;
-    status->has_ball = rtp_message.ballSenseStatus;
-    status->kicker = rtp_message.kickHealthy
-                         ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
+    status->has_ball = rtp_message.ball_sense_status;
+    status->kicker = rtp_message.kick_healthy
+                         ? (rtp_message.kick_status ? RobotStatus::KickerState::kCharged
                                                    : RobotStatus::KickerState::kCharging)
                          : RobotStatus::KickerState::kFailed;
     for (int i = 0; i < 5; i++) {
-        status->motors_healthy[i] = (rtp_message.motorErrors & (1u << i)) == 0;
+        status->motors_healthy[i] = (rtp_message.motor_errors & (1u << i)) == 0;
     }
-    status->fpga_healthy = rtp_message.fpgaStatus == 0u;
+    status->fpga_healthy = rtp_message.fpga_status == 0u;
 }
 
 void sim_to_status(const RobotFeedback& sim, RobotStatus* status) {
@@ -162,43 +162,37 @@ namespace ConvertTx {
 
 // NOLINT(cppcoreguidelines-pro-type-union-access)
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            rtp::RobotTxMessage* rtp_message) {
-    rtp_message->uid = shell;
-    rtp::ControlMessage control_message{};
+            rtp::ControlMessage* rtp_message) {
+    rtp_message->robot_id = shell;
 
-    control_message.bodyX =
+    rtp_message->body_x =
         static_cast<int16_t>(setpoint.xvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.bodyY =
+    rtp_message->body_y =
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.bodyW =
+    rtp_message->body_w =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.dribbler =
+    rtp_message->dribbler_speed =
         std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed * kMaxDribble), 0, 255);
 
     if (intent.shoot_mode == RobotIntent::ShootMode::CHIP) {
-        control_message.shootMode = 1;
-        control_message.kickStrength = chipper_speed_to_strength(intent.kick_speed);
+        rtp_message->shoot_mode = 1;
+        rtp_message->kick_strength = chipper_speed_to_strength(intent.kick_speed);
     } else {
-        control_message.shootMode = 0;
-        control_message.kickStrength = kicker_speed_to_strength(intent.kick_speed);
+        rtp_message->shoot_mode = 0;
+        rtp_message->kick_strength = kicker_speed_to_strength(intent.kick_speed);
     }
 
     switch (intent.trigger_mode) {
         case RobotIntent::TriggerMode::STAND_DOWN:
-            control_message.triggerMode = 0;
+            rtp_message->trigger_mode = 0;
             break;
         case RobotIntent::TriggerMode::IMMEDIATE:
-            control_message.triggerMode = 1;
+            rtp_message->trigger_mode = 1;
             break;
         case RobotIntent::TriggerMode::ON_BREAK_BEAM:
-            control_message.triggerMode = 2;
+            rtp_message->trigger_mode = 2;
             break;
     }
-
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
-    rtp_message->message.controlMessage = control_message;
-
-    rtp_message->messageType = rtp::RobotTxMessage::ControlMessageType;
 }
 
 void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
@@ -271,27 +265,25 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * intent.dribbler_speed));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::RobotTxMessage* rtp,
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::ControlMessage* rtp,
                 strategy::Positions role) {
-    rtp->uid = shell;
-    rtp->messageType = rtp::RobotTxMessage::ControlMessageType;
+    rtp->robot_id = shell;
 
-    auto& control_message = rtp->message.controlMessage;  // NOLINT
-    control_message.bodyX =
+    rtp->body_x =
         static_cast<int16_t>(motion.velocity_x_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.bodyY =
+    rtp->body_y =
         static_cast<int16_t>(motion.velocity_y_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.bodyW =
+    rtp->body_w =
         static_cast<int16_t>(motion.velocity_z_radps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    control_message.dribbler = manipulator.dribbler_speed;
+    rtp->dribbler_speed = manipulator.dribbler_speed;
     if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
-        control_message.kickStrength = kicker_speed_to_strength(manipulator.kick_speed);
+        rtp->kick_strength = kicker_speed_to_strength(manipulator.kick_speed);
     } else {
-        control_message.kickStrength = chipper_speed_to_strength(manipulator.kick_speed);
+        rtp->kick_strength = chipper_speed_to_strength(manipulator.kick_speed);
     }
-    control_message.shootMode = manipulator.shoot_mode;
-    control_message.triggerMode = manipulator.trigger_mode;
-    control_message.role = role;
+    rtp->shoot_mode = manipulator.shoot_mode;
+    rtp->trigger_mode = manipulator.trigger_mode;
+    rtp->role = role;
 }
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
@@ -329,9 +321,3 @@ void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
 }
 
 }  // namespace ConvertTx
-
-void fill_header(rtp::Header* header) {
-    header->port = rtp::PortType::CONTROL;
-    header->address = rtp::BROADCAST_ADDRESS;
-    header->type = rtp::MessageType::CONTROL;
-}

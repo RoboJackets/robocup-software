@@ -40,15 +40,11 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
                         strategy::Positions role) {
 
     // Build the control packet for this robot.
-    std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
+    std::array<uint8_t, sizeof(rtp::ControlMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
-    fill_header(header);
-
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    auto* body = reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
+    auto* body = reinterpret_cast<rtp::ControlMessage*>(&forward_packet_buffer[0]);
 
     ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role);
 
@@ -72,14 +68,14 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
         SPDLOG_ERROR("Error sending: {}.", error);
         return;
     }
-    if (num_bytes != rtp::ReverseSize) {
-        SPDLOG_ERROR("Invalid packet length: expected {}, got {}", rtp::ReverseSize, num_bytes);
+    if (num_bytes != sizeof(rtp::RobotStatusMessage)) {
+        SPDLOG_ERROR("Invalid packet length: expected {}, got {}", sizeof(rtp::RobotStatusMessage), num_bytes);
         return;
     }
 
-    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&recv_buffer_[rtp::HeaderSize]);
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&recv_buffer_[0]);
 
-    int robot_id = msg->uid;
+    int robot_id = msg->robot_id;
 
     last_heard_from[robot_id] = RJ::now();
 
