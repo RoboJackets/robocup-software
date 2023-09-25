@@ -23,6 +23,7 @@
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/runner.hpp"
 #include "strategy/agent/position/position.hpp"
 
 namespace strategy {
@@ -35,7 +36,7 @@ enum MatchSituation {
     in_play,         // normal play
 };
 
-enum Positions { Goalie, Defense, Offense, PenaltyPlayer, GoalKicker };
+enum Positions { Goalie, Defense, Runner, Offense, PenaltyPlayer, GoalKicker };
 
 // These values are explicitly declared because they are the ints that are published to
 // strategy/positions i.e. the same values as strategy::Positions

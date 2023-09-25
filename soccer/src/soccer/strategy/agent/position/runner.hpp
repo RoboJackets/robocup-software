@@ -13,12 +13,11 @@ namespace strategy {
 
 class Runner : public Position {
 public:
-public
     Runner(int r_id);
     ~Runner() override = default;
 
 private:
-    std::optional<RobotIntent> derived_get_task(RobotIntnt intent) override;
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
         RUNFIRSTSIDE,
@@ -32,11 +31,11 @@ private:
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-    rj_geometry::Point initial_position;
+    rj_geometry::Point initial_position_;
 
     State latest_state_ = IDLING;
 
-    double side_length = 50;
+    constexpr static double kSideLength = 1.0;
 };
 
 }  // namespace strategy
