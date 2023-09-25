@@ -3,8 +3,7 @@
 namespace strategy {
 
 Runner::Runner(int r_id) : Position(r_id) {
-    position_name_ = "Runner"
-    WorldState* world_state = this->world_state();
+    position_name_ = "Runner" WorldState* world_state = this->world_state();
 }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
@@ -42,8 +41,6 @@ Runner::State Runner::update_state() {
     return latest_state_;
 }
 
-std::optional<RobotIntent> state_to_task(RobotIntent intent) {
-}
+std::optional<RobotIntent> state_to_task(RobotIntent intent) {}
 
-
-} // namespace strategy
+}  // namespace strategy

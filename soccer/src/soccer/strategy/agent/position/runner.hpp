@@ -13,7 +13,8 @@ namespace strategy {
 
 class Runner : public Position {
 public:
-    public Runner(int r_id);
+public
+    Runner(int r_id);
     ~Runner() override = default;
 
 private:
@@ -38,4 +39,4 @@ private:
     double side_length = 50;
 };
 
-} // namespace strategy
+}  // namespace strategy
