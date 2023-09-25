@@ -47,6 +47,7 @@ def generate_launch_description():
     direction_flag = LaunchConfiguration("direction_flag")
 
     run_sim = LaunchConfiguration("run_sim")
+    run_soccer_mom = LaunchConfiguration("run_soccer_mom")
     sim_flag = LaunchConfiguration("sim_flag")
 
     use_internal_ref = LaunchConfiguration("use_internal_ref")
@@ -85,6 +86,7 @@ def generate_launch_description():
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
+            DeclareLaunchArgument("run_soccer_mom", default_value="True"),
             DeclareLaunchArgument("sim_flag", default_value="-sim"),
             DeclareLaunchArgument(
                 "param_config",
@@ -143,6 +145,14 @@ def generate_launch_description():
                 condition=IfCondition(PythonExpression([run_sim])),
                 package="rj_robocup",
                 executable="sim_radio_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                condition=IfCondition(PythonExpression([run_soccer_mom])),
+                package="rj_robocup",
+                executable="soccer_mom_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
