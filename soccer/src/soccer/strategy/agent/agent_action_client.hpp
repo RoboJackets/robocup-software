@@ -55,7 +55,6 @@ public:
 private:
     // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
@@ -69,8 +68,6 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
 
-    std::unique_ptr<Position> current_position_;
-
     // ROS ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;
     void goal_response_callback(std::shared_future<GoalHandleRobotMove::SharedPtr> future);
@@ -79,21 +76,6 @@ private:
 
     void result_callback(const GoalHandleRobotMove::WrappedResult& result);
 
-    /**
-     * @brief send a goal to the planning ActionServer, based on the Position's get_task().
-     */
-    void send_new_goal();
-
-    /**
-     * @brief calls and executes current_positions_'s current desired task
-     */
-    void get_task();
-    rclcpp::TimerBase::SharedPtr get_task_timer_;
-
-    /*
-     * Updates the current position based on the robot ID and the given Position message.
-     */
-    void update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
     // note that this is our RobotIntent struct (robot_intent.hpp), not a
     // pre-generated ROS msg type
     RobotIntent last_task_;
@@ -133,13 +115,6 @@ private:
      */
     void get_communication();
     std::vector<communication::AgentPosResponseWrapper> buffered_responses_;
-
-    rclcpp::TimerBase::SharedPtr update_alive_robots_timer_;
-    /**
-     * @brief Updates the current positions list of alive robots (1/second)
-     *
-     */
-    void update_position_alive_robots();
 
     FieldDimensions field_dimensions_;
     std::vector<u_int8_t> alive_robots_ = {};

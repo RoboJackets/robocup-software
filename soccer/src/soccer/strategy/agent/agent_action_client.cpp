@@ -24,10 +24,6 @@ AgentActionClient::AgentActionClient(int r_id)
         ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
-    coach_state_sub_ = create_subscription<rj_msgs::msg::CoachState>(
-        topics::kCoachStateTopic, 1,
-        [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
-
     field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
         "config/field_dimensions", 1,
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
@@ -70,16 +66,6 @@ AgentActionClient::AgentActionClient(int r_id)
             check_communication_timeout();
         });
 
-    update_alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(1000),
-                                                   [this]() { update_position_alive_robots(); });
-
-    if (r_id == 0) {
-        current_position_ = std::make_unique<Goalie>(r_id);
-    } else if (r_id == 1 || r_id == 3 || r_id == 5) {
-        current_position_ = std::make_unique<Defense>(r_id);
-    } else if (r_id == 2 || r_id == 4) {
-        current_position_ = std::make_unique<Offense>(r_id);
-    }
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -138,96 +124,20 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
     }
 }
 
-void AgentActionClient::get_task() {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
-
-    auto optional_task = current_position_->get_task();
-    if (optional_task.has_value()) {
-        RobotIntent task = optional_task.value();
-
-        // note that because these are our RobotIntent structs, this comparison
-        // uses our custom struct overloads
-        if (task != last_task_) {
-            last_task_ = task;
-            send_new_goal();
-        }
-    }
+[[nodiscard]] WorldState* AgentActionClient::world_state() {
+    // thread-safe getter for world_state
+    auto lock = std::lock_guard(world_state_mutex_);
+    return &last_world_state_;
 }
 
-void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-    std::unique_ptr<Position> next_position_;
-    switch (msg->client_positions[robot_id_]) {
-        case 0:
-            next_position_ = std::make_unique<Goalie>(robot_id_);
-            break;
-        case 1:
-            next_position_ = std::make_unique<Defense>(robot_id_);
-            break;
-        case 2:
-            next_position_ = std::make_unique<Offense>(robot_id_);
-            break;
-        case 3:
-            next_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
-            break;
-        case 4:
-            next_position_ = std::make_unique<GoalKicker>(robot_id_);
-            break;
-    };
 
-    if (current_position_ == nullptr) {
-        current_position_ = std::move(next_position_);
-    } else if (next_position_->get_name() != current_position_->get_name()) {
-        // When a disconnected robot is found, notify the position
-        current_position_->die();
-        // Send any final death communications from robot
-        get_communication();
-        current_position_ = std::move(next_position_);
-    }
+// With the get_task function deleted, we need to initialize the new class once
+// in the initializer. This will call the class which will analyze the
+// situation based on the current tick.
 
-    // TODO: send acknowledgement back to coach node (w/ robot ID)
-}
-
-void AgentActionClient::send_new_goal() {
-    using namespace std::placeholders;
-
-    if (!client_ptr_->wait_for_action_server()) {
-        SPDLOG_ERROR("Action server not available after waiting");
-        rclcpp::shutdown();
-    }
-
-    auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
-
-    auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
-    send_goal_options.goal_response_callback =
-        std::bind(&AgentActionClient::goal_response_callback, this, _1);
-    send_goal_options.feedback_callback =
-        std::bind(&AgentActionClient::feedback_callback, this, _1, _2);
-    send_goal_options.result_callback = std::bind(&AgentActionClient::result_callback, this, _1);
-    client_ptr_->async_send_goal(goal_msg, send_goal_options);
-}
 
 void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     auto goal_handle = future.get();
     if (!goal_handle) {
@@ -237,18 +147,9 @@ void AgentActionClient::goal_response_callback(
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
+    if (current_position_ == nullptr) {
     current_position_->set_time_left(time_left);
 }
 
@@ -282,17 +183,6 @@ void AgentActionClient::get_communication() {
     // Don't even humor requests from robots that aren't alive
     if (!check_robot_alive(robot_id_)) {
         return;
-    }
-
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
     }
 
     bool any_robots_alive = false;
@@ -451,28 +341,5 @@ void AgentActionClient::check_communication_timeout() {
     }
 }
 
-[[nodiscard]] WorldState* AgentActionClient::world_state() {
-    // thread-safe getter for world_state
-    auto lock = std::lock_guard(world_state_mutex_);
-    return &last_world_state_;
-}
-
-void AgentActionClient::update_position_alive_robots() {
-    if (current_position_ == nullptr) {
-        return;
-    }
-
-    if (!is_simulated_) {
-        current_position_->update_alive_robots(alive_robots_);
-    } else {
-        std::vector<u_int8_t> alive_robots = {};
-        for (u_int8_t i = 0; i < kNumShells; i++) {
-            if (check_robot_alive(i)) {
-                alive_robots.push_back(i);
-            }
-        }
-        current_position_->update_alive_robots(std::move(alive_robots));
-    }
-}
 
 }  // namespace strategy
