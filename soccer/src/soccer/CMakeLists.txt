@@ -2,11 +2,11 @@
 # Set Sources
 # ======================================================================
 set(SOCCER_UIS
-        ui/qt/ConfigFileTab.ui
-        ui/qt/LogViewer.ui
-        ui/qt/MainWindow.ui
-        ui/qt/RefereeTab.ui
-        ui/qt/RobotStatusWidget.ui)
+    ui/qt/ConfigFileTab.ui
+    ui/qt/LogViewer.ui
+    ui/qt/MainWindow.ui
+    ui/qt/RefereeTab.ui
+    ui/qt/RobotStatusWidget.ui)
 
 set(SOCCER_RSRC ui/qt/main_icons.qrc)
 
@@ -78,16 +78,17 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/position.cpp
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
+    strategy/agent/position/runner.cpp
     strategy/agent/position/defense.cpp
     strategy/agent/position/waller.cpp
     strategy/agent/position/goal_kicker.cpp
     strategy/agent/position/penalty_player.cpp
-        )
+    tutorial/soccer_mom.cpp)
 
 set(SOCCER_TEST_SRC
     battery_profile_test.cpp
     ball_test.cpp
-        control/trapezoidal_motion_test.cpp
+    control/trapezoidal_motion_test.cpp
     control/motion_control_test.cpp
     optimization/gradient_ascent_1d_test.cpp
     optimization/parallel_gradient_ascent_1d_test.cpp
@@ -102,7 +103,7 @@ set(SOCCER_TEST_SRC
     planning/tests/trapezoidal_motion_test.cpp
     planning/tests/velocity_profiling_test.cpp
     test_main.cpp
-        logger_test.cpp)
+    logger_test.cpp)
 
 set(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
 
@@ -119,6 +120,8 @@ set(PLANNER_NODE_SRC planning/planner_node_main.cpp)
 set(CONTROL_NODE_SRC control/control_node_main.cpp)
 
 set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
+
+set(SOCCER_MOM_NODE_SRC tutorial/soccer_mom_node_main.cpp)
 
 set(COACH_NODE_SRC strategy/coach/coach_node_main.cpp)
 
@@ -160,6 +163,9 @@ target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
+
+# ---- soccer_mom node ----
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # ---- coach_node ----
 target_sources(coach_node PRIVATE ${COACH_NODE_SRC})

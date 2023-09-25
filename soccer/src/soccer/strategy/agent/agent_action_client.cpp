@@ -1,5 +1,7 @@
 #include "agent_action_client.hpp"
 
+#include <memory>
+
 #include "rj_constants/topic_names.hpp"
 
 namespace strategy {
@@ -75,10 +77,12 @@ AgentActionClient::AgentActionClient(int r_id)
 
     if (r_id == 0) {
         current_position_ = std::make_unique<Goalie>(r_id);
-    } else if (r_id == 1 || r_id == 3 || r_id == 5) {
+    } else if (r_id == 3 || r_id == 5) {
         current_position_ = std::make_unique<Defense>(r_id);
     } else if (r_id == 2 || r_id == 4) {
         current_position_ = std::make_unique<Offense>(r_id);
+    } else if (r_id == 1) {
+        current_position_ = std::make_unique<Runner>(r_id);
     }
 }
 
@@ -144,7 +148,7 @@ void AgentActionClient::get_task() {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else {
             current_position_ = std::make_unique<Offense>(robot_id_);
         }
@@ -182,6 +186,9 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
             next_position_ = std::make_unique<GoalKicker>(robot_id_);
             break;
     };
+    if (robot_id_ == 1) {
+        next_position_ = std::make_unique<Runner>(robot_id_);
+    }
 
     if (current_position_ == nullptr) {
         current_position_ = std::move(next_position_);
@@ -223,7 +230,7 @@ void AgentActionClient::goal_response_callback(
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else {
             current_position_ = std::make_unique<Offense>(robot_id_);
         }
@@ -242,7 +249,7 @@ void AgentActionClient::feedback_callback(
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else {
             current_position_ = std::make_unique<Offense>(robot_id_);
         }
@@ -258,7 +265,7 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else {
             current_position_ = std::make_unique<Offense>(robot_id_);
         }
@@ -289,8 +296,8 @@ void AgentActionClient::get_communication() {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
+            current_position_ = std::make_unique<Runner>(robot_id_);
+        } else if (robot_id_ == 2) {
             current_position_ = std::make_unique<Offense>(robot_id_);
         }
     }
@@ -437,7 +444,7 @@ void AgentActionClient::check_communication_timeout() {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
         } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else {
             current_position_ = std::make_unique<Offense>(robot_id_);
         }

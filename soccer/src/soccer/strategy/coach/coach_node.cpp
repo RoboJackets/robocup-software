@@ -305,6 +305,9 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
                     positions[robot_id] = Positions::Defense;
                     break;
             }
+            if (robot_id == 1) {
+                positions[robot_id] = Positions::Runner;
+            }
             assign_num++;
         }
     }
