@@ -25,7 +25,7 @@ Runner::State Runner::update_state() {
                 return RUNSECONDSIDE;
             }
         case RUNSECONDSIDE:
-            if ((initial_position_.x() - robot_position.x()) < kSideLength) {
+            if ((initial_position_.x() - robot_position.x()) > kSideLength) {
                 initial_position_ = robot_position;
                 return RUNTHIRDSIDE;
             }
