@@ -29,7 +29,7 @@ public:
     CollectPathPlanner()
         : PathPlanner("collect"), average_ball_vel_(0, 0), approach_direction_(0, 0) {}
 
-    Trajectory plan(const PlanRequest& plan_request) override;
+    Trajectory plan(const GlobalState& global_state, const RobotIntent& robot_intent, const DebugDrawer& debug_draw);
 
     void reset() override;
     [[nodiscard]] bool is_done() const override;

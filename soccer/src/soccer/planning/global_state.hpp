@@ -1,0 +1,114 @@
+#pragma once
+
+#include <unordered_map>
+#include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+
+#include <context.hpp>
+#include <rj_common/time.hpp>
+#include <rj_constants/topic_names.hpp>
+#include <rj_msgs/action/robot_move.hpp>
+#include <rj_msgs/msg/coach_state.hpp>
+#include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_msgs/msg/robot_status.hpp>
+#include <rj_msgs/srv/plan_hypothetical_path.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
+
+#include "node.hpp"
+#include "planner/path_planner.hpp"
+#include "planner/plan_request.hpp"
+#include "planning/planner/escape_obstacles_path_planner.hpp"
+#include "planning/trajectory_collection.hpp"
+#include "planning_params.hpp"
+#include "robot_intent.hpp"
+#include "trajectory.hpp"
+#include "world_state.hpp"
+/**
+ * Aggregates info from other ROS nodes into an unchanging "global state" for
+ * each planner. Read-only (from PlannerNode's perspective).
+ *
+ * ("Global state" in quotes since many of these fields can be changed by other
+ * nodes; however, to PlannerNode these are immutable.)
+ */
+class GlobalState {
+public:
+    GlobalState(rclcpp::Node* node) {
+        play_state_sub_ = node->create_subscription<rj_msgs::msg::PlayState>(
+            referee::topics::kPlayStateTopic, rclcpp::QoS(1),
+            [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
+                last_play_state_ = rj_convert::convert_from_ros(*state);
+            });
+        game_settings_sub_ = node->create_subscription<rj_msgs::msg::GameSettings>(
+            config_server::topics::kGameSettingsTopic, rclcpp::QoS(1),
+            [this](rj_msgs::msg::GameSettings::SharedPtr settings) {  // NOLINT
+                last_game_settings_ = rj_convert::convert_from_ros(*settings);
+            });
+        goalie_sub_ = node->create_subscription<rj_msgs::msg::Goalie>(
+            referee::topics::kGoalieTopic, rclcpp::QoS(1),
+            [this](rj_msgs::msg::Goalie::SharedPtr goalie) {  // NOLINT
+                last_goalie_id_ = goalie->goalie_id;
+            });
+        global_obstacles_sub_ = node->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
+            planning::topics::kGlobalObstaclesTopic, rclcpp::QoS(1),
+            [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr global_obstacles) {  // NOLINT
+                last_global_obstacles_ = rj_convert::convert_from_ros(*global_obstacles);
+            });
+        def_area_obstacles_sub_ = node->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
+            planning::topics::kDefAreaObstaclesTopic, rclcpp::QoS(1),
+            [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr def_area_obstacles) {  // NOLINT
+                last_def_area_obstacles_ = rj_convert::convert_from_ros(*def_area_obstacles);
+            });
+        world_state_sub_ = node->create_subscription<rj_msgs::msg::WorldState>(
+            vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
+            [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
+                last_world_state_ = rj_convert::convert_from_ros(*world_state);
+            });
+        coach_state_sub_ = node->create_subscription<rj_msgs::msg::CoachState>(
+            "/strategy/coach_state", rclcpp::QoS(1),
+            [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
+                last_coach_state_ = *coach_state;
+            });
+    }
+
+    [[nodiscard]] PlayState play_state() const {
+        return last_play_state_;
+    }
+    [[nodiscard]] GameSettings game_settings() const {
+        return last_game_settings_;
+    }
+    [[nodiscard]] int goalie_id() const {
+        return last_goalie_id_;
+    }
+    [[nodiscard]] rj_geometry::ShapeSet global_obstacles() const {
+        return last_global_obstacles_;
+    }
+    [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const {
+        return last_def_area_obstacles_;
+    }
+    [[nodiscard]] const WorldState* world_state() const {
+        return &last_world_state_;
+    }
+    [[nodiscard]] const rj_msgs::msg::CoachState coach_state() const {
+        return last_coach_state_;
+    }
+
+private:
+    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
+    rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_sub_;
+    rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_sub_;
+    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
+
+    PlayState last_play_state_ = PlayState::halt();
+    GameSettings last_game_settings_;
+    int last_goalie_id_;
+    rj_geometry::ShapeSet last_global_obstacles_;
+    rj_geometry::ShapeSet last_def_area_obstacles_;
+    WorldState last_world_state_;
+    rj_msgs::msg::CoachState last_coach_state_;
+};

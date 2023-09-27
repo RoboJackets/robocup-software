@@ -1,4 +1,5 @@
 #include "plan_request.hpp"
+#include "planning/global_state.hpp"
 
 namespace planning {
 
@@ -18,20 +19,27 @@ void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center
     obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
 }
 
-void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
+void fill_obstacles(const GlobalState& global_state, const RobotIntent& robot_intent, rj_geometry::ShapeSet* out_static,
                     std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
-                    Trajectory* out_ball_trajectory) {
+                    Trajectory* out_ball_trajectory, DebugDrawer& debug_drawer) {
     out_static->clear();
-    out_static->add(in.field_obstacles);
-    out_static->add(in.virtual_obstacles);
 
+    const bool is_goalie = global_state.goalie_id() == robot_intent.robot_id;
+    if (!is_goalie) {
+        out_static->add(global_state.def_area_obstacles());
+    }
+
+    out_static->add(robot_intent.local_obstacles);
+    out_static->add(global_state.global_obstacles());
+
+    const auto* world_state = global_state.world_state();
     rj_geometry::Point obs_center{0.0, 0.0};
     double obs_radius{1.0};
 
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
     for (size_t shell = 0; shell < kNumShells; shell++) {
-        const RobotState& their_robot = in.world_state->their_robots.at(shell);
+        const RobotState& their_robot = world_state->their_robots.at(shell);
         fill_robot_obstacle(their_robot, obs_center, obs_radius);
 
         if (their_robot.visible) {
@@ -45,8 +53,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // TODO: reenable dynamic obstacles for our robots (currently
     // TrajectoryCollection is never filled at planner level)
     for (size_t shell = 0; shell < kNumShells; shell++) {
-        const auto& our_robot = in.world_state->our_robots.at(shell);
-        if (!our_robot.visible || shell == in.shell_id) {
+        const auto& our_robot = world_state->our_robots.at(shell);
+        if (!our_robot.visible || shell == static_cast<unsigned int>(robot_intent.robot_id)) {
             continue;
         }
 
@@ -70,17 +78,15 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // don't interfere with them.)
     if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
         // Where should we store the ball trajectory?
-        *out_ball_trajectory = in.world_state->ball.make_trajectory();
-        double radius = kBallRadius + in.min_dist_from_ball;
+        *out_ball_trajectory = world_state->ball.make_trajectory();
+        const double radius = kBallRadius + global_state.coach_state().global_override.min_dist_from_ball;
 
         out_dynamic->emplace_back(radius, out_ball_trajectory);
 
-        if (in.debug_drawer != nullptr) {
-            QColor draw_color = Qt::red;
-            in.debug_drawer->draw_circle(
-                rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
-                draw_color);
-        }
+        QColor draw_color = Qt::red;
+        debug_drawer.draw_circle(
+            world_state->ball.position, static_cast<float>(radius), draw_color);
+
     }
 }
 

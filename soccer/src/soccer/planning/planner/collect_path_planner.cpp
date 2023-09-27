@@ -13,8 +13,12 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
-    BallState ball = plan_request.world_state->ball;
+
+Trajectory plan(const GlobalState& global_state, const RobotIntent& robot_intent, const DebugDrawer& debug_draw) {
+
+    const WorldState* world_state = global_state.world_state();
+
+    BallState ball = world_state->ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
