@@ -56,6 +56,7 @@ private:
     // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
@@ -64,6 +65,7 @@ private:
 
     // callbacks for subs
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
+    void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg);
     void coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
