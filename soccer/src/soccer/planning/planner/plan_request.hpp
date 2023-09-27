@@ -13,6 +13,7 @@
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory_collection.hpp"
+#include "robot_intent.hpp"
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
 
@@ -25,27 +26,33 @@ namespace planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(RobotInstant start, RobotIntent robotIntent,  // NOLINT
-                RobotConstraints constraints,
-                 TrajectoryCollection* planned_trajectories,
-                 int8_t priority = 0,
-                rj_drawing::RosDebugDrawer* debug_drawer = nullptr,
-                 float dribbler_speed = 0)
+    PlanRequest(const GlobalState& global_state, RobotInstant start, RobotIntent robot_intent,
+                TrajectoryCollection* planned_trajectories, int8_t priority = 0,
+                rj_drawing::RosDebugDrawer* debug_drawer, float dribbler_speed = 0)
         : start(start),
-          constraints(constraints),
+          robot_intent(robot_intent),
           planned_trajectories(planned_trajectories),
           priority(priority),
           debug_drawer(debug_drawer),
-          dribbler_speed(dribbler_speed) {}
+          dribbler_speed(dribbler_speed),
+          global_state(global_state) {}
 
-    GlobalState& global_state;
+    PlanRequest(const GlobalState& global_state, RobotIntent robot_intent,
+                rj_drawing::RosDebugDrawer* debug_drawer);
+
+    const GlobalState& global_state;
+    RobotInstant start;
+    RobotIntent robot_intent;
+    TrajectoryCollection* planned_trajectories;
+    int8_t priority;
+    rj_drawing::RosDebugDrawer* debug_drawer;
+    float dribbler_speed;
 
     /**
      * Allows debug drawing in the world. If this is nullptr, no debug drawing
      * should be performed.
      */
     rj_drawing::RosDebugDrawer* debug_drawer;
-
 };
 
 /**

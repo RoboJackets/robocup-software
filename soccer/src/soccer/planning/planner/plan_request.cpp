@@ -1,7 +1,16 @@
 #include "plan_request.hpp"
+
 #include "planning/global_state.hpp"
 
 namespace planning {
+
+PlanRequest::PlanRequest(const GlobalState& global_state, RobotIntent robot_intent,
+                         rj_drawing::RosDebugDrawer* debug_drawer) {
+    
+    const auto* world_state = global_state.world_state();
+    const auto goalie_id = global_state.goalie_id();
+    
+}
 
 void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
                          double& obs_radius) {
@@ -19,9 +28,9 @@ void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center
     obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
 }
 
-void fill_obstacles(const GlobalState& global_state, const RobotIntent& robot_intent, rj_geometry::ShapeSet* out_static,
-                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
-                    Trajectory* out_ball_trajectory, DebugDrawer& debug_drawer) {
+void fill_obstacles(const GlobalState& global_state, const RobotIntent& robot_intent,
+                    rj_geometry::ShapeSet* out_static, std::vector<DynamicObstacle>* out_dynamic,
+                    bool avoid_ball, Trajectory* out_ball_trajectory, DebugDrawer& debug_drawer) {
     out_static->clear();
 
     const bool is_goalie = global_state.goalie_id() == robot_intent.robot_id;
@@ -79,14 +88,14 @@ void fill_obstacles(const GlobalState& global_state, const RobotIntent& robot_in
     if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
         // Where should we store the ball trajectory?
         *out_ball_trajectory = world_state->ball.make_trajectory();
-        const double radius = kBallRadius + global_state.coach_state().global_override.min_dist_from_ball;
+        const double radius =
+            kBallRadius + global_state.coach_state().global_override.min_dist_from_ball;
 
         out_dynamic->emplace_back(radius, out_ball_trajectory);
 
         QColor draw_color = Qt::red;
-        debug_drawer.draw_circle(
-            world_state->ball.position, static_cast<float>(radius), draw_color);
-
+        debug_drawer.draw_circle(world_state->ball.position, static_cast<float>(radius),
+                                 draw_color);
     }
 }
 

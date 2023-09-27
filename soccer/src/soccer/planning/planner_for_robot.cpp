@@ -112,7 +112,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const GlobalState& global_state,
     // draw robot's desired path
     std::vector<rj_geometry::Point> path;
     std::transform(trajectory.instants().begin(), trajectory.instants().end(),
-                   std::back_inserter(path),
+                   utd::back_inserter(path),
                    [](const auto& instant) { return instant.position(); });
     debug_draw_.draw_path(path);
 
@@ -127,7 +127,6 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const GlobalState& global_state,
     debug_draw_.publish();
 
     return trajectory;
-}
 void PlannerForRobot::execute_intent(const RobotIntent& intent) {
     if (robot_alive()) {
         // plan a path and send it to control
