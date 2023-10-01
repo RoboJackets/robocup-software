@@ -82,6 +82,7 @@ add_executable(external_referee_node)
 add_executable(planner_node)
 add_executable(control_node)
 add_executable(sim_radio_node)
+add_executable(SoccerMom)
 add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
@@ -228,6 +229,9 @@ target_link_libraries(internal_referee_node PRIVATE ${REFEREE_NODE_DEPS_SYSTEM_L
 # -- sim_radio_node --
 target_link_libraries(sim_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
         ${RADIO_NODE_DEPS_LIBRARIES})
+        
+target_link_libraries(SoccerMom PRIVATE ${SOCCER_MOM_DEPS_SYSTEM_LIBRARIES}
+	${SOCCER_MOM_DEPS_LIBRARIES})
 
 target_link_libraries(coach_node PRIVATE ${COACH_NODE_DEPS_SYSTEM_LIBRARIES}
         ${COACH_NODE_DEPS_LIBRARIES})
@@ -295,7 +299,8 @@ install(
         rj_vision_filter
         planner_node
         control_node
-        sim_radio_node
+        sim_radio_node,
+        SoccerMom
         coach_node
         network_radio_node
         manual_control_node
