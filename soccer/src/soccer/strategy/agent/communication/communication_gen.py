@@ -14,7 +14,8 @@ def map_message_type_to_cpp_type(msg_type):
     elif "string" in msg_type:
         return "std::" + msg_type + ";"
     elif "float64" in msg_type:
-        return "double " + msg_type + ";"
+        space_loc = msg_type.find(" ")
+        return "double " + msg_type[space_loc + 1:] + ";"
     return msg_type + ";"
 
 def convert_individual_hpp(msg, path, msg_type):
