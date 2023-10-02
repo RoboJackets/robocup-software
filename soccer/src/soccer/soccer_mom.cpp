@@ -18,7 +18,6 @@ SoccerMom::SoccerMom() : Node{"soccer_mom"} {
         });
 }
 
-
 void SoccerMom::callback(const rj_msgs::msg::TeamColor::SharedPtr& color) {
     blue_team_ = color->is_blue;
     auto message = std_msgs::msg::String();
@@ -26,4 +25,4 @@ void SoccerMom::callback(const rj_msgs::msg::TeamColor::SharedPtr& color) {
     SPDLOG_INFO("Publishing: {}", message.data);
     team_color_pub_->publish(message);
 }
-}  
+}  // namespace soccer_mom

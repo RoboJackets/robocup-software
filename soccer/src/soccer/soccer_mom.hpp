@@ -23,4 +23,4 @@ private:
     bool blue_team_;
 };
 
-}  
+}  // namespace soccer_mom
