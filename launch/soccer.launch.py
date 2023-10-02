@@ -148,12 +148,12 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
-            	condition=IfCondition(PythonExpression([run_sim])),
-            	package="rj_robocup",
-            	executable="SoccerMom",
-            	output="screen",
-            	parameters=[param_config_filepath],
-            	on_exit=Shutdown(),
+                condition=IfCondition(PythonExpression([run_sim])),
+                package="rj_robocup",
+                executable="soccer_mom_node",
+                output="screen",
+                # parameters=[param_config_filepath],
+                on_exit=Shutdown(),
             ),
             Node(
                 condition=IfCondition(PythonExpression(["not ", run_sim])),
