@@ -128,9 +128,9 @@ def create_hpp_files(requests, requestPath, responses, responsePath):
 
 def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp = "#pragma once\n\n#include <mutex>\n#include <string>\n#include <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include <rj_convert/ros_convert.hpp>\n\n"
-    hpp += "#include \"agent_request.hpp\"\n"
-    hpp += "#include \"agent_response.hpp\"\n"
-    hpp += "#include \"agent_response_variant.hpp\"\n"
+    hpp += "#include \"rj_msgs/msg/agent_request.hpp\"\n"
+    hpp += "#include \"rj_msgs/msg/agent_response.hpp\"\n"
+    hpp += "#include \"rj_msgs/msg/agent_response_variant.hpp\"\n"
 
     for name in hpp_names:
         hpp += "#include \"" + name + "\"\n"
