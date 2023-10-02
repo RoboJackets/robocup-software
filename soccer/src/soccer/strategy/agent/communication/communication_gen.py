@@ -276,7 +276,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
         hpp += "if (const auto* " + msgName + " = std::get_if<strategy::communication::" + response[:-4] + ">(&(from.response))) {\n"
-        hpp += "\t\t\tresult." + msgName + ".emplace_back(convert_to_ros(*" + msgName + "));\n"
+        hpp += "\t\t\tresult.response." + msgName + ".emplace_back(convert_to_ros(*" + msgName + "));\n"
         hpp += "\t\t} else "
     hpp += "{\n"
     hpp += "\t\t\tthrow std::runtime_error(\"Invalid variant of AgentResponse\");\n"
@@ -290,7 +290,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
         hpp += "if (from." + msgName + ".empty()) {\n"
-        hpp += "\t\t\tresult = convert_from_ros(from." + msgName + ".front());\n"
+        hpp += "\t\t\tresult.response = convert_from_ros(from." + msgName + ".front());\n"
         hpp += "\t\t} else "
     hpp += "{\n"
     hpp += "\t\t\tthrow std::runtime_error(\"Invalid variant of AgentResponse\");\n"
