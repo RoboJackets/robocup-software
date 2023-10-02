@@ -17,20 +17,17 @@ Runner::State Runner::update_state() {
 
     switch (current_state_) {
         case RIGHT:
-	    if (robot_position.x() <= field_dimensions_.field_x_left_coord() + 1.1)
-	         next_state = UP;
+            if (robot_position.x() <= field_dimensions_.field_x_left_coord() + 1.1) next_state = UP;
             break;
         case UP:
-	    if (robot_position.y() <= 1.1)
-	         next_state = LEFT;
+            if (robot_position.y() <= 1.1) next_state = LEFT;
             break;
         case LEFT:
-	    if (robot_position.x() >= field_dimensions_.field_x_right_coord() - 1.1)
-	         next_state = DOWN;
+            if (robot_position.x() >= field_dimensions_.field_x_right_coord() - 1.1)
+                next_state = DOWN;
             break;
         case DOWN:
-	    if (robot_position.y() >= field_dimensions_.length() - 1.1)
-		 next_state = RIGHT;
+            if (robot_position.y() >= field_dimensions_.length() - 1.1) next_state = RIGHT;
             break;
     }
 
@@ -38,33 +35,33 @@ Runner::State Runner::update_state() {
 }
 
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
-        rj_geometry::Point robot_position =
-            world_state()->get_robot(true, robot_id_).pose.position();
-	rj_geometry::Point destination;
+    rj_geometry::Point robot_position = world_state()->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point destination;
 
-	switch(current_state_){
-		case RIGHT:
-			destination = rj_geometry::Point{field_dimensions_.field_x_left_coord() + 1, field_dimensions_.length() - 1};
-			break;
-		case UP:
-			destination = rj_geometry::Point{field_dimensions_.field_x_left_coord() + 1, 1};
-			break;
-		case LEFT:
-			destination = rj_geometry::Point{field_dimensions_.field_x_right_coord() - 1,  1};
-			break;
-		case DOWN:
-			destination = rj_geometry::Point{field_dimensions_.field_x_right_coord() - 1, field_dimensions_.length() - 1};
-			break;
-	}	
+    switch (current_state_) {
+        case RIGHT:
+            destination = rj_geometry::Point{field_dimensions_.field_x_left_coord() + 1,
+                                             field_dimensions_.length() - 1};
+            break;
+        case UP:
+            destination = rj_geometry::Point{field_dimensions_.field_x_left_coord() + 1, 1};
+            break;
+        case LEFT:
+            destination = rj_geometry::Point{field_dimensions_.field_x_right_coord() - 1, 1};
+            break;
+        case DOWN:
+            destination = rj_geometry::Point{field_dimensions_.field_x_right_coord() - 1,
+                                             field_dimensions_.length() - 1};
+            break;
+    }
 
-	auto goal =
-            planning::LinearMotionInstant{destination, {0.0, 0.0}};
-	auto move_direction = planning::MotionCommand{"path_target", goal, planning::FaceTarget{}, true};
+    auto goal = planning::LinearMotionInstant{destination, {0.0, 0.0}};
+    auto move_direction =
+        planning::MotionCommand{"path_target", goal, planning::FaceTarget{}, true};
 
-	intent.motion_command = move_direction;
-	return intent;
+    intent.motion_command = move_direction;
+    return intent;
 }
-
 
 void Runner::derived_acknowledge_pass() {}
 

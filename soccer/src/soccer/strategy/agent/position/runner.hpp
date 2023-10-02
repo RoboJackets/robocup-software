@@ -31,15 +31,9 @@ public:
     void derived_acknowledge_ball_in_transit() override;
 
 private:
-
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State {
-	    RIGHT,
-	    UP,
-	    LEFT,
-	    DOWN
-    };
+    enum State { RIGHT, UP, LEFT, DOWN };
 
     State update_state();
 
