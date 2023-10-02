@@ -289,8 +289,8 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\tresult.associated_request = convert_from_ros(from.associated_request);\n\t\t"
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
-        hpp += "if (from." + msgName + ".empty()) {\n"
-        hpp += "\t\t\tresult.response = convert_from_ros(from." + msgName + ".front());\n"
+        hpp += "if (from.response." + msgName + ".empty()) {\n"
+        hpp += "\t\t\tresult.response = convert_from_ros(from.response." + msgName + ".front());\n"
         hpp += "\t\t} else "
     hpp += "{\n"
     hpp += "\t\t\tthrow std::runtime_error(\"Invalid variant of AgentResponse\");\n"
