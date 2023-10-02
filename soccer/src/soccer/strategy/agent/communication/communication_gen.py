@@ -81,8 +81,8 @@ def convert_cpp(requests, responses, hpp_names):
         cpp += "\treturn a.response_uid == b.response_uid;\n"
         cpp += "}\n\n"
 
-    cpp += "bool operator==(const AgentRequest& a, const AgentRequest& b) {\n"
-    cpp += "\treturn (a.request == b.request) && (a.response == b.response);\n"
+    cpp += "bool operator==(const AgentResponse& a, const AgentResponse& b) {\n"
+    cpp += "\treturn (a.associated_request == b.associated_request) && (a.response == b.response);\n"
     cpp += "}\n\n"
 
     for request in requests:
@@ -275,6 +275,8 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\tresult.associated_request = convert_to_ros(from.associated_request);\n\t\t"
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
+        if msgName == "acknowledge":
+            msgName = "acknowledge_response"
         hpp += "if (const auto* " + msgName + " = std::get_if<strategy::communication::" + response[:-4] + ">(&(from.response))) {\n"
         hpp += "\t\t\tresult.response." + msgName + ".emplace_back(convert_to_ros(*" + msgName + "));\n"
         hpp += "\t\t} else "
@@ -289,6 +291,8 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\tresult.associated_request = convert_from_ros(from.associated_request);\n\t\t"
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
+        if msgName == "acknowledge":
+            msgName = "acknowledge_response"
         hpp += "if (from.response." + msgName + ".empty()) {\n"
         hpp += "\t\t\tresult.response = convert_from_ros(from.response." + msgName + ".front());\n"
         hpp += "\t\t} else "
