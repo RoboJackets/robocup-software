@@ -234,7 +234,9 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\tRJ::Time created;\n"
     hpp += "\tstd::vector<AgentResponseVariant> responses;\n"
     hpp += "};\n\n"
+    hpp += "}\n\n"
 
+    hpp += "namespace rj_convert {\n\n"
     hpp += "template <>\n"
     hpp += "struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {\n"
     hpp += "\tstatic rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {\n"
