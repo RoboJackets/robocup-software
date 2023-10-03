@@ -117,6 +117,13 @@ def generate_launch_description():
             # random order (there are Executors to change that)
             Node(
                 package="rj_robocup",
+                executable="sim_soccer_mom_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
                 executable="vision_receiver",
                 output="screen",
                 parameters=[param_config_filepath],
