@@ -43,6 +43,17 @@ AgentActionClient::AgentActionClient(int r_id)
             receive_communication_callback(request, response);
         });
 
+    //Default Positions with the Position class
+
+    //TODO (Prabhanjan): change to unique instance of Analyzer class
+    if (robot_id_ == 0) {
+        current_position_ = std::make_unique<Goalie>(robot_id_);
+    } else if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Offense>(robot_id_);
+    } else {
+        current_position_ = std::make_unique<Defense>(robot_id_);
+    }
+
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
         robot_communication_cli_[i] =
@@ -70,7 +81,6 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     }
 
     WorldState world_state = rj_convert::convert_from_ros(*msg);
-    current_position_->update_world_state(world_state);
     // avoid mutex issues w/ world state (probably not an issue in AC, but
     // already here so why not)
     auto lock = std::lock_guard(world_state_mutex_);
@@ -85,7 +95,6 @@ void AgentActionClient::field_dimensions_callback(
 
     FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
     field_dimensions_ = field_dimensions;
-    current_position_->update_field_dimensions(field_dimensions);
 }
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
@@ -113,18 +122,14 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 }
 
 void AgentActionClient::get_task() {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
+    auto lock = std::lock_guard(world_state_mutex_);
 
-    auto optional_task = current_position_->get_task();
+    //This is where the analyzer class would call a method that would
+    //get the best Position according to the rule function. It would then update
+    //the last_task.
+
+    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_);
+
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
 
@@ -189,16 +194,6 @@ void AgentActionClient::feedback_callback(
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
@@ -357,16 +352,6 @@ void AgentActionClient::receive_response_callback(
 }
 
 void AgentActionClient::check_communication_timeout() {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {

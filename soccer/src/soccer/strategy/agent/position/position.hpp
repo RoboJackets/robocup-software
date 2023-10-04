@@ -66,12 +66,10 @@ public:
      * Uses the Template Method + non-virtual interface:
      * https://www.sandordargo.com/blog/2022/08/24/tmp-and-nvi
      */
-    std::optional<RobotIntent> get_task();
+
+    std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions);
 
     // communication with AC
-    void update_world_state(WorldState world_state);
-    void update_coach_state(rj_msgs::msg::CoachState coach_state);
-    void update_field_dimensions(FieldDimensions field_dimensions);
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
 
