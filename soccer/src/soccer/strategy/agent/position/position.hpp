@@ -222,11 +222,6 @@ protected:
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
     /*
-     * @return thread-safe ptr to most recent world_state
-     */
-    [[nodiscard]] WorldState* world_state();
-
-    /*
      * @brief assert world_state is valid before using it in get_task().
      *
      * Since ROS nodes launch in a random order, often the agents will launch
@@ -282,12 +277,10 @@ protected:
     // true if this robot is alive
     bool alive = false;
 
-private:
-    // private to avoid allowing WorldState to be accessed directly by derived
-    // classes (must use thread-safe getter)
+    // protected to allow WorldState to be accessed directly by derived
     WorldState last_world_state_;
-    mutable std::mutex world_state_mutex_;
 
+private:
     /**
      * @brief allow derived classes to change behavior of get_task(). See
      * get_task() above.

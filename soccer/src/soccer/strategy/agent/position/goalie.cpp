@@ -13,7 +13,7 @@ std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
 
 Goalie::State Goalie::update_state() {
     // if a shot is coming, override all and go block it
-    WorldState* world_state = this->world_state();
+    WorldState* world_state = last_state_world;
 
     // if no ball found, stop and return to box immediately
     if (!world_state->ball.visible) {
@@ -72,7 +72,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         return intent;
     } else if (latest_state_ == PREPARING_SHOT) {
         // pivot around ball...
-        auto ball_pt = world_state()->ball.position;
+        auto ball_pt = last_state_world->ball.position;
 
         // ...to face their goal
         planning::LinearMotionInstant target_instant{clear_point_};
@@ -116,7 +116,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         // TODO(https://app.clickup.com/t/8677rrgjn): Convert RECEIVING state into role_interface
         // intercept the bal
         rj_geometry::Point current_position =
-            world_state()->get_robot(true, robot_id_).pose.position();
+            last_state_world->get_robot(true, robot_id_).pose.position();
         planning::LinearMotionInstant target{current_position};
         auto receive_intercept_cmd = planning::MotionCommand{"intercept", target};
         intent.motion_command = receive_intercept_cmd;
@@ -125,7 +125,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         // TODO(https://app.clickup.com/t/8677rrgjn): Convert PASSING state into role_interface
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
-            world_state()->get_robot(true, target_robot_id).pose.position();
+            last_state_world->get_robot(true, target_robot_id).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
         auto pass_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = pass_kick_cmd;
