@@ -71,6 +71,7 @@ public:
     // communication with AC
     void update_world_state(WorldState world_state);
     void update_coach_state(rj_msgs::msg::CoachState coach_state);
+    void update_play_state(rj_msgs::msg::PlayState msg);
     void update_field_dimensions(FieldDimensions field_dimensions);
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
@@ -220,6 +221,9 @@ protected:
     // (if so match world_state below)
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
+    rj_msgs::msg::PlayState current_play_state_;
+
+
 
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 

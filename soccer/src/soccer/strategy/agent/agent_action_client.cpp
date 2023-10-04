@@ -100,15 +100,19 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
 }
 
 void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
-    return;
-}
-
-void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    current_position_->update_coach_state(*msg);
+    current_position_->update_play_state(*msg);
+}
+
+void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg) {
+    // if (current_position_ == nullptr) {
+    //     return;
+    // }
+
+    // current_position_->update_coach_state(*msg);
 }
 
 void AgentActionClient::field_dimensions_callback(
