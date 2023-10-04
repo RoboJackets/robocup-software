@@ -223,8 +223,6 @@ protected:
     rj_msgs::msg::GlobalOverride global_override_{};
     rj_msgs::msg::PlayState current_play_state_;
 
-
-
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
     /*
