@@ -312,6 +312,19 @@ def create_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     with open("communication.hpp", "w") as f:
         f.write(hpp)
 
+def add_to_cmake(hpp_names):
+    cpp_names = [i[:-4] + ".cpp" for i in hpp_names]
+    with open("../../../CMakeLists.txt", "r") as f:
+        contents = f.read().split("\n")
+        for i in range(len(contents)):
+            if "communication.cpp" in contents[i]:
+                for name in cpp_names:
+                    contents.insert(i, "\tstrategy/agent/communication/" + name)
+                break
+
+    with open("../../../CMakeLists.txt", "w") as f:
+        f.write("\n".join(contents))
+
 if __name__ == "__main__":
     path_request = "../../../../../../rj_msgs/request"
     path_response = "../../../../../../rj_msgs/response"
@@ -322,5 +335,6 @@ if __name__ == "__main__":
     hpp_names = create_hpp_files(requests_msgs, path_request, response_msgs, path_response)
     create_cpp_file(requests_msgs, response_msgs, hpp_names)
     create_main_hpp_file(requests_msgs, response_msgs, hpp_names)
+    add_to_cmake(hpp_names)
 
         
