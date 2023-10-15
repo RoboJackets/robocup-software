@@ -33,7 +33,7 @@ def generate_launch_description():
     """
 
     # LaunchConfiguration objects are like uninitialized variables, e.g.
-    #  > bool run_sim;
+    #  > bool _sim;
     # to be later filled in by a LaunchArgument
 
     # output port from field comp's perspective (NetworkRadio only)
