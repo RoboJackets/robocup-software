@@ -17,7 +17,7 @@ Runner::State Runner::update_state() {
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     switch (latest_state_) {
         case IDLING:
-            initial_position_ = robot_position;
+            initi+al_position_ = robot_position;
             return RUN_FIRST_SIDE;
         case RUN_FIRST_SIDE:
             if ((robot_position.y() - initial_position_.y()) > kSideLength) {

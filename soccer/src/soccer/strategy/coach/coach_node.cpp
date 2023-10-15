@@ -293,7 +293,7 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
                     positions[robot_id] = Positions::Goalie;
                     break;
                 case 1:
-                    positions[robot_id] = Positions::Offense;
+                    positions[robot_id] = Positions::Runner;
                     break;
                 case 2:
                     positions[robot_id] = Positions::Defense;
