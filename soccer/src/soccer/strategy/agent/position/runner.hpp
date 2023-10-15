@@ -19,7 +19,7 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    //did not know this was also in C lol
+    // did not know this was also in C lol
     enum State {
         RUN_FIRST_SIDE,
         RUN_SECOND_SIDE,
@@ -39,4 +39,4 @@ private:
     constexpr static double kSideLength = 1.0;
 };
 
-}  
+}  // namespace strategy
