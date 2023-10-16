@@ -257,7 +257,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\tstrategy::communication::AgentRequest result;\n\t\t"
     for request in requests_msgs:
         msgName = convert_msg_to_hpp_include(request)[22:-5]
-        hpp += "if (from." + msgName + ".empty()) {\n"
+        hpp += "if (!from." + msgName + ".empty()) {\n"
         hpp += "\t\t\tresult = convert_from_ros(from." + msgName + ".front());\n"
         hpp += "\t\t} else "
     hpp += "{\n"
@@ -293,7 +293,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         msgName = convert_msg_to_hpp_include(response)[22:-5]
         if msgName == "acknowledge":
             msgName = "acknowledge_response"
-        hpp += "if (from.response." + msgName + ".empty()) {\n"
+        hpp += "if (!from.response." + msgName + ".empty()) {\n"
         hpp += "\t\t\tresult.response = convert_from_ros(from.response." + msgName + ".front());\n"
         hpp += "\t\t} else "
     hpp += "{\n"
