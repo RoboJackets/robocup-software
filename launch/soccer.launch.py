@@ -189,14 +189,15 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
-            Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-                package="rj_robocup",
-                executable="coach_node",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
+
+            #Node(
+                #condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+                #package="rj_robocup",
+                #executable="coach_node",
+                #output="screen",
+                #parameters=[param_config_filepath],
+                #on_exit=Shutdown(),
+            #),
             # spawn internal_ref/external_ref based on internal_ref LaunchArgument
             Node(
                 condition=IfCondition(PythonExpression([use_internal_ref])),
