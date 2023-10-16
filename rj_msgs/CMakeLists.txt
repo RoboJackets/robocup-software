@@ -34,7 +34,6 @@ rosidl_generate_interfaces(
   msg/FieldDimensions.msg
   msg/FieldOrientation.msg
   msg/GameSettings.msg
-  msg/GlobalOverride.msg
   msg/Goalie.msg
   msg/ManipulatorSetpoint.msg
   msg/MatchState.msg

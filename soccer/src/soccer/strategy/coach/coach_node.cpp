@@ -118,31 +118,6 @@ void CoachNode::check_for_play_state_change() {
     if (play_state_has_changed_) {
         rj_msgs::msg::CoachState coach_message;
         coach_message.play_state = current_play_state_;
-        rj_msgs::msg::GlobalOverride global_override;
-
-        switch (current_play_state_.state) {
-            case PlayState::State::Halt:
-                global_override.max_speed = 0;
-                global_override.min_dist_from_ball = 0;
-                global_override.max_dribbler_speed = 0;
-                break;
-            case PlayState::State::Stop:
-                global_override.max_speed = 1.5;
-                global_override.min_dist_from_ball = 0.5;
-                global_override.max_dribbler_speed = 0;
-                break;
-            case PlayState::State::Playing:
-            default:
-                // Unbounded speed. Setting to -1 or 0 crashes planner, so use large number
-                // instead.
-                global_override.max_speed = 10.0;
-                global_override.min_dist_from_ball = 0;
-                global_override.max_dribbler_speed = 255;
-                break;
-        }
-
-        // publish new necessary information
-        coach_message.global_override = global_override;
 
         coach_message.our_possession = possessing_;
 

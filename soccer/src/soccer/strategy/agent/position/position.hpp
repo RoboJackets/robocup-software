@@ -11,7 +11,6 @@
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/global_override.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -219,7 +218,6 @@ protected:
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
     bool our_possession_{};
-    rj_msgs::msg::GlobalOverride global_override_{};
 
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 
