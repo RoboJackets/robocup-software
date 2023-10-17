@@ -4,47 +4,66 @@
 
 namespace planning {
 
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
-                         double& obs_radius) {
-    // params for obstacle shift
-    double obs_center_shift = 0.5;
-    double obs_radius_inflation = 1.0;
+PlanRequest::PlanRequest(const RobotIntent& intent, const GlobalState& global_state) {
+    // Copy world state and play state from planner's global state
+    this->world_state = global_state.world_state();
+    this->play_state = global_state.play_state();
 
-    // shift obs center off robot
-    obs_center =
-        robot.pose.position() + (robot.velocity.linear() * kRobotRadius * obs_center_shift);
+    // Get robot ID from intent
+    this->shell_id = static_cast<unsigned int>(intent.robot_id);
 
-    // inflate obs radius if needed
-    double vel_mag = robot.velocity.linear().mag();
-    double safety_margin = vel_mag * obs_radius_inflation;
-    obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
-}
+    // Copy global overrides from planner's global state
+    const rj_msgs::msg::GlobalOverride global_override = global_state.coach_state().global_override;
+    this->min_dist_from_ball = global_override.min_dist_from_ball;
 
-void fill_obstacles(const GlobalState& global_state, const RobotIntent& robot_intent,
-                    rj_geometry::ShapeSet* out_static, std::vector<DynamicObstacle>* out_dynamic,
-                    bool avoid_ball, Trajectory* out_ball_trajectory, DebugDrawer& debug_drawer) {
-    out_static->clear();
+    // Use World State info to create our starting Instant
+    const auto& robot = this->world_state.our_robots.at(robot_id_);
+    this->start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
-    const bool is_goalie = global_state.goalie_id() == robot_intent.robot_id;
-    if (!is_goalie) {
-        out_static->add(global_state.def_area_obstacles());
+    // Copy MotionCommand and Constraints based on max robot speed
+    const float max_robot_speed = global_override.max_speed;
+    // Attempting to create trajectories with max speeds <= 0 crashes the planner (during RRT
+    // generation)
+    if (max_robot_speed == 0.0f) {
+        // If coach node has speed set to 0,
+        // force HALT by replacing the MotionCommand with an empty one.
+        this->motion_command = MotionCommand{};
+    } else if (max_robot_speed < 0.0f) {
+        // If coach node has speed set to negative, assume infinity.
+        // Negative numbers cause crashes, but 10 m/s is an effectively infinite limit.
+        this->motion_command = intent.motion_command;
+        this->constraints.mot.max_speed = 10.0f;
+    } else {
+        this->motion_command = intent.motion_command;
+        this->constraints.mot.max_speed = max_robot_speed;
     }
 
-    out_static->add(robot_intent.local_obstacles);
-    out_static->add(global_state.global_obstacles());
+    // Set dribbler speed to min of desired and limit
+    const int max_dribbler_speed = global_override.max_dribbler_speed;
+    this->dribbler_speed =
+        std::min(static_cast<float>(intent.dribbler_speed), static_cast<float>(max_dribbler_speed));
 
-    const auto* world_state = global_state.world_state();
+    // Set up static obstacles
+    this->static_obstacles.add(global_state.global_obstacles());
+    this->static_obstacles.add(intent.local_obstacles)
+
+        // Add defense area obstacles if we are not the goalie
+        if (this->shell_id != global_state.goalie_id()) {
+        this->static_obstacles.add(global_state_.def_area_obstacles());
+    }
+
     rj_geometry::Point obs_center{0.0, 0.0};
     double obs_radius{1.0};
 
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
     for (size_t shell = 0; shell < kNumShells; shell++) {
-        const RobotState& their_robot = world_state->their_robots.at(shell);
+        const RobotState& their_robot = this->world_state.their_robots.at(shell);
         fill_robot_obstacle(their_robot, obs_center, obs_radius);
 
         if (their_robot.visible) {
-            out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
+            this->static_obstacles.add(
+                std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
         }
     }
 
@@ -54,7 +73,7 @@ void fill_obstacles(const GlobalState& global_state, const RobotIntent& robot_in
     // TODO: reenable dynamic obstacles for our robots (currently
     // TrajectoryCollection is never filled at planner level)
     for (size_t shell = 0; shell < kNumShells; shell++) {
-        const auto& our_robot = world_state->our_robots.at(shell);
+        const auto& our_robot = this->world_state.our_robots.at(shell);
         if (!our_robot.visible || shell == static_cast<unsigned int>(robot_intent.robot_id)) {
             continue;
         }
@@ -71,24 +90,38 @@ void fill_obstacles(const GlobalState& global_state, const RobotIntent& robot_in
 
         // Static obstacle
         fill_robot_obstacle(our_robot, obs_center, obs_radius);
-        out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
+        this->static_obstacles.add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
     }
 
     // Finally, add the ball as a dynamic obstacle.
     // (This is for when the other team is trying to do ball placement, so we
     // don't interfere with them.)
     if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
-        // Where should we store the ball trajectory?
-        *out_ball_trajectory = world_state->ball.make_trajectory();
+        this->ball_trajectory = this->world_state.ball.make_trajectory();
+
         const double radius =
             kBallRadius + global_state.coach_state().global_override.min_dist_from_ball;
 
-        out_dynamic->emplace_back(radius, out_ball_trajectory);
+        out_dynamic->emplace_back(radius, &this->ball_trajectory);
 
-        QColor draw_color = Qt::red;
-        debug_drawer.draw_circle(world_state->ball.position, static_cast<float>(radius),
-                                 draw_color);
+        debug_drawer.draw_circle(world_state->ball.position, static_cast<float>(radius), Qt::red);
     }
+}
+
+void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
+                         double& obs_radius) {
+    // params for obstacle shift
+    constexpr double obs_center_shift{0.5};
+    constexpr double obs_radius_inflation{1.0};
+
+    // shift obs center off robot
+    obs_center =
+        robot.pose.position() + (robot.velocity.linear() * kRobotRadius * obs_center_shift);
+
+    // inflate obs radius if needed
+    const double vel_mag = robot.velocity.linear().mag();
+    const double safety_margin = vel_mag * obs_radius_inflation;
+    obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
 }
 
 }  // namespace planning

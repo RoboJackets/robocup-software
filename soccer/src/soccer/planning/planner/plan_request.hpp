@@ -26,30 +26,87 @@ namespace planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(const GlobalState& global_state, RobotInstant start, RobotIntent robot_intent,
-                TrajectoryCollection* planned_trajectories, int8_t priority = 0,
-                rj_drawing::RosDebugDrawer* debug_drawer, float dribbler_speed = 0)
-        : start(start),
-          robot_intent(robot_intent),
-          planned_trajectories(planned_trajectories),
-          priority(priority),
-          debug_drawer(debug_drawer),
-          dribbler_speed(dribbler_speed),
-          global_state(global_state) {}
+    PlanRequest(const RobotIntent& intent, const GlobalState& global_state);
 
-    const GlobalState& global_state;
-    RobotInstant start;
-    RobotIntent robot_intent;
-    TrajectoryCollection* planned_trajectories;
-    int8_t priority;
-    rj_drawing::RosDebugDrawer* debug_drawer;
-    float dribbler_speed;
+    /**
+     * The robot's starting state.
+     */
+    RobotInstant start{};
+
+    /**
+     * The goal to plan for.
+     */
+    MotionCommand motion_command{};
+
+    /**
+     * Angular and linear acceleration and velocity constraints on the robot.
+     */
+    RobotConstraints constraints{};
+
+    /**
+     * A vector of dynamic obstacles. Filled with trajectories for our robots that have already been
+     * planned
+     */
+    std::vector<DynamicObstacle> dynamic_obstacles{};
+
+    /**
+     * Static obstacles. This will be filled with field obstacles, local (virtual) obstacles,
+     * opponent robots, and our robots that have not yet been planned.
+     */
+    rj_geometry::ShapeSet static_obstacles{};
+
+    /**
+     * The robot's shell ID. Used for debug drawing.
+     */
+    unsigned shell_id{};
+
+    /**
+     * The state of the world, containing robot and ball states.
+     *
+     * For obstacle-avoidance purposes, obstacles should be used instead. This
+     * can be used for lookup of robots/balls by ID.
+     */
+    WorldState world_state{};
+
+    /**
+     * The state of the game and referee
+     */
+    PlayState play_state{};
+
+    /**
+     * The priority of this plan request.
+     */
+    int8_t priority = 0;
 
     /**
      * Allows debug drawing in the world. If this is nullptr, no debug drawing
      * should be performed.
      */
-    rj_drawing::RosDebugDrawer* debug_drawer;
+    rj_drawing::RosDebugDrawer* debug_drawer = nullptr;
+
+    // Whether the robot has a ball
+    bool ball_sense = false;
+
+    /**
+     * How far away to stay from the ball, if the MotionCommand chooses to avoid the ball.
+     */
+    float min_dist_from_ball = 0;
+
+    /**
+     * Dribbler Speed
+     */
+    float dribbler_speed = 0;
+
+    /**
+     * Allows debug drawing in the world. If this is nullptr, no debug drawing
+     * should be performed.
+     */
+    rj_drawing::RosDebugDrawer* debug_drawer{};
+
+    /**
+     * Store the ball's trajectory if we want to avoid it.
+     */
+    Trajectory ball_trajectory{};
 };
 
 /**
@@ -82,25 +139,3 @@ struct PlanRequest {
  */
 void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
                          double& obs_radius);
-
-/**
- * Fill the obstacle fields.
- *
- * @param in the plan request.
- * @param out_static an (empty) vector of static obstacles to be populated.
- *  This will be filled with field obstacles, local (virtual) obstacles,
- *  opponent robots, and our robots that have not yet been planned.
- * @param out_dynamic an (empty) vector of dynamic obstacles to be populated.
- *  This will be filled with trajectories for our robots that have already been
- *  planned.
- * @param avoid_ball whether to avoid the ball. If this is true, out_ball_trajectory
- *  should point to a valid trajectory.
- * @param ball_trajectory temporary storage for the ball trajectory. This must
- *  outlive the usage of out_dynamic. If avoid_ball == false, this should be
- *  nullptr.
- */
-void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
-                    Trajectory* out_ball_trajectory = nullptr);
-
-}  // namespace planning

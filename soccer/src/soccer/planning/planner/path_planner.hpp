@@ -2,7 +2,6 @@
 
 #include "motion_command.hpp"
 #include "plan_request.hpp"
-#include "planning/global_state.hpp"
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
 
@@ -36,8 +35,7 @@ public:
      * @return A Trajectory for the robot (or empty Trajectory if planning
      * fails).
      */
-    virtual Trajectory plan(const GlobalState& global_state, const RobotIntent& robot_intent,
-                            const DebugDrawer& debug_draw) = 0;
+    virtual Trajectory plan(const PlanRequest& request) = 0;
 
     /**
      * Reset this planner. Called if this planner fails to generate a valid
