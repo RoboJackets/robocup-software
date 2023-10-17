@@ -4,14 +4,6 @@
 
 namespace planning {
 
-PlanRequest::PlanRequest(const GlobalState& global_state, RobotIntent robot_intent,
-                         rj_drawing::RosDebugDrawer* debug_drawer) {
-    
-    const auto* world_state = global_state.world_state();
-    const auto goalie_id = global_state.goalie_id();
-    
-}
-
 void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
                          double& obs_radius) {
     // params for obstacle shift

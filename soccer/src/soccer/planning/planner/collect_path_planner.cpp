@@ -8,21 +8,21 @@
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
 #include "planning/primitives/rrt_util.hpp"
+#include "plan_request.hpp"
 
 using namespace rj_geometry;
 
 namespace planning {
 
-
-Trajectory plan(const GlobalState& global_state, const RobotIntent& robot_intent, const DebugDrawer& debug_draw) {
-
+Trajectory plan(const GlobalState& global_state, const PlanRequest& plan_request,
+                const DebugDrawer& debug_draw) {
     const WorldState* world_state = global_state.world_state();
 
     BallState ball = world_state->ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
-    const MotionCommand& command = plan_request.motion_command;
+    const MotionCommand& command = plan_request.robot_intent.motion_command;
 
     // Start state for specified robot
     RobotInstant start_instant = plan_request.start;

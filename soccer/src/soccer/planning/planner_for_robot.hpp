@@ -133,7 +133,8 @@ private:
      * @return Trajectory (timestamped series of poses & twists) that satisfies
      * the PlanRequest as well as possible
      */
-    planning::Trajectory safe_plan_for_robot(const GlobalState& global_state, const RobotIntent& robot_intent);
+    planning::Trajectory safe_plan_for_robot(const GlobalState& global_state,
+                                             const RobotIntent& robot_intent);
 
     /*
      * @brief Get a Trajectory based on the string name given in MotionCommand.
@@ -146,7 +147,8 @@ private:
      * @return Trajectory (timestamped series of poses & twists) that satisfies
      * the PlanRequest as well as possible
      */
-    planning::Trajectory unsafe_plan_for_robot(const GlobalState& global_state, const RobotIntent& robot_intent);
+    planning::Trajectory unsafe_plan_for_robot(const GlobalState& global_state,
+                                               const RobotIntent& robot_intent);
 
     /*
      * @brief Check that robot is visible in world_state and that world_state has been
@@ -160,11 +162,10 @@ private:
     // because when robots start inside of an obstacle, all other planners will fail
     // TODO(Kevin): make EscapeObstaclesPathPlanner default start of all planner FSM so this doesn't
     // happen
-    unique_ptr<PathPlanner> default_path_planner_{
-        make_unique<EscapeObstaclesPathPlanner>()};
+    unique_ptr<PathPlanner> default_path_planner_{make_unique<EscapeObstaclesPathPlanner>()};
 
     // Current path planner; needs to be a pointer for polymporphism
-    std::unique_ptr<PathPlanner> current_path_planner_ {};
+    std::unique_ptr<PathPlanner> current_path_planner_{};
 
     int robot_id_;
     planning::TrajectoryCollection* robot_trajectories_;
@@ -180,4 +181,4 @@ private:
 
     rj_drawing::RosDebugDrawer debug_draw_;
 };
-} // namespace planning
+}  // namespace planning

@@ -73,27 +73,15 @@ public:
             });
     }
 
-    [[nodiscard]] PlayState play_state() const {
-        return last_play_state_;
-    }
-    [[nodiscard]] GameSettings game_settings() const {
-        return last_game_settings_;
-    }
-    [[nodiscard]] int goalie_id() const {
-        return last_goalie_id_;
-    }
-    [[nodiscard]] rj_geometry::ShapeSet global_obstacles() const {
-        return last_global_obstacles_;
-    }
+    [[nodiscard]] PlayState play_state() const { return last_play_state_; }
+    [[nodiscard]] GameSettings game_settings() const { return last_game_settings_; }
+    [[nodiscard]] int goalie_id() const { return last_goalie_id_; }
+    [[nodiscard]] rj_geometry::ShapeSet global_obstacles() const { return last_global_obstacles_; }
     [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const {
         return last_def_area_obstacles_;
     }
-    [[nodiscard]] const WorldState* world_state() const {
-        return &last_world_state_;
-    }
-    [[nodiscard]] const rj_msgs::msg::CoachState coach_state() const {
-        return last_coach_state_;
-    }
+    [[nodiscard]] const WorldState* world_state() const { return &last_world_state_; }
+    [[nodiscard]] const rj_msgs::msg::CoachState coach_state() const { return last_coach_state_; }
 
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;

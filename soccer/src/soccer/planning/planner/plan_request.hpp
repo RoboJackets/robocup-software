@@ -37,9 +37,6 @@ struct PlanRequest {
           dribbler_speed(dribbler_speed),
           global_state(global_state) {}
 
-    PlanRequest(const GlobalState& global_state, RobotIntent robot_intent,
-                rj_drawing::RosDebugDrawer* debug_drawer);
-
     const GlobalState& global_state;
     RobotInstant start;
     RobotIntent robot_intent;

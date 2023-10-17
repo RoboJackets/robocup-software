@@ -43,15 +43,24 @@ public:
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:
+    // Planners handle main planning logic
     std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
+
+    // Currently unused, but supposed to store trajectories for each robot
     TrajectoryCollection robot_trajectories_;
+
+    // Planning's representation of the global state of the world
     GlobalState global_state_;
+
+    // ROS2 parameter provider
     ::params::LocalROS2ParamProvider param_provider_;
+
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action
     rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const RobotMove::Goal> goal);
+
     rclcpp_action::CancelResponse handle_cancel(
         const std::shared_ptr<GoalHandleRobotMove> goal_handle);
     void handle_accepted(const std::shared_ptr<GoalHandleRobotMove> goal_handle);
