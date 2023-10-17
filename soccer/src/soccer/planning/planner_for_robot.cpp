@@ -131,7 +131,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const GlobalState& global_state,
 void PlannerForRobot::execute_intent(const RobotIntent& intent) {
     if (robot_alive()) {
         // plan a path and send it to control
-        PlanRequest request {intent, global_state_};
+        PlanRequest request{intent, global_state_};
 
         auto trajectory = safe_plan_for_robot(global_state_, intent);
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));

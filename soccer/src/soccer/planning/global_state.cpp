@@ -18,8 +18,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
         });
 
     goalie_sub_ = node->create_subscription<rj_msgs::msg::Goalie>(
-        referee::topics::kGoalieTopic, rclcpp::QoS(1),
-        [&](rj_msgs::msg::Goalie::SharedPtr goalie) {
+        referee::topics::kGoalieTopic, rclcpp::QoS(1), [&](rj_msgs::msg::Goalie::SharedPtr goalie) {
             std::lock_guard<std::mutex> lock(last_goalie_id_mutex_);
             last_goalie_id_ = goalie->goalie_id;
         });
@@ -88,4 +87,4 @@ GlobalState::GlobalState(rclcpp::Node* node) {
     return last_coach_state_;
 }
 
-} // namespace planning
+}  // namespace planning
