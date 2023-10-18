@@ -19,7 +19,7 @@ Trajectory InterceptPathPlanner::plan(const PlanRequest& plan_request) {
     // rotation
     const MotionConstraints& motion_constraints = plan_request.constraints.mot;
 
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
     latest_ball_state_ = ball;
 
     // Time for ball to hit target point

@@ -6,17 +6,9 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     // lots of this is duplicated from PathTargetPathPlanner, because there's not
     // an easy way to convert from one PlanRequest to another
 
-    // Collect obstacles
-    rj_geometry::ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
-    bool ignore_ball = true;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, ignore_ball,
-                   &ball_trajectory);
-
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
-    if (static_obstacles.hit(plan_request.start.position())) {
+    if (plan_request.static_obstacles.hit(plan_request.start.position())) {
         reset();
         return Trajectory();
     }
@@ -26,11 +18,11 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     LinearMotionInstant target{idle_pt};
 
     // Make robot face ball
-    auto angle_function = AngleFns::face_point(plan_request.world_state->ball.position);
+    auto angle_function = AngleFns::face_point(plan_request.world_state.ball.position);
 
     // call Replanner to generate a Trajectory
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{plan_request.start, target, static_obstacles, dynamic_obstacles,
+        Replanner::PlanParams{plan_request.start, target, plan_request.static_obstacles, plan_request.dynamic_obstacles,
                               plan_request.constraints, angle_function, RJ::Seconds(3.0)},
         std::move(previous_));
 
@@ -45,8 +37,8 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state) {
-    rj_geometry::Point ball_pos = world_state->ball.position;
+rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState& world_state) {
+    rj_geometry::Point ball_pos = world_state.ball.position;
     // TODO(Kevin): make this depend on team +/-x
     rj_geometry::Point goal_pt{0.0, 0.0};
 

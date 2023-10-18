@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include <planning/motion_constraints.hpp>
 #include <planning/planner/motion_command.hpp>
@@ -10,12 +11,14 @@
 
 #include "context.hpp"
 #include "planning/dynamic_obstacle.hpp"
+#include "planning/global_state.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory_collection.hpp"
 #include "robot_intent.hpp"
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
+#include "planning/global_state.hpp"
 
 namespace planning {
 
@@ -26,7 +29,8 @@ namespace planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(const RobotIntent& intent, const GlobalState& global_state);
+    PlanRequest(const RobotIntent& intent, const GlobalState& global_state,
+                rj_drawing::RosDebugDrawer* debug_draw);
 
     /**
      * The robot's starting state.
@@ -71,7 +75,7 @@ struct PlanRequest {
     /**
      * The state of the game and referee
      */
-    PlayState play_state{};
+    PlayState play_state;
 
     /**
      * The priority of this plan request.
@@ -98,15 +102,10 @@ struct PlanRequest {
     float dribbler_speed = 0;
 
     /**
-     * Allows debug drawing in the world. If this is nullptr, no debug drawing
-     * should be performed.
-     */
-    rj_drawing::RosDebugDrawer* debug_drawer{};
-
-    /**
      * Store the ball's trajectory if we want to avoid it.
      */
     Trajectory ball_trajectory{};
+
 };
 
 /**
@@ -137,5 +136,5 @@ struct PlanRequest {
  * Numbers tuned by looking at output of planning/test_scripts/visualize_obs.py.
  *
  */
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
-                         double& obs_radius);
+static rj_geometry::Circle create_robot_obstacle(const RobotState& robot);
+}  // namespace planning

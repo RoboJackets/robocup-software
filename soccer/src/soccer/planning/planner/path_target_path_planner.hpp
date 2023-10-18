@@ -3,11 +3,12 @@
 
 #include <rj_geometry/shape_set.hpp>
 
-#include "path_planner.hpp"
+#include "planning/planner/path_planner.hpp"
 #include "planning/instant.hpp"
 #include "planning/primitives/replanner.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
 #include "rj_geometry/pose.hpp"
+#include "planning/planner/plan_request.hpp"
 
 namespace planning {
 

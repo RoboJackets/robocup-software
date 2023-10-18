@@ -5,7 +5,9 @@
 #include "control/trapezoidal_motion.hpp"
 #include "escape_obstacles_path_planner.hpp"
 #include "planning/primitives/create_path.hpp"
+#include "planning/primitives/replanner.hpp"
 #include "planning/trajectory_utils.hpp"
+#include "rj_common/utils.hpp"
 
 using namespace std;
 using namespace rj_geometry;
@@ -20,7 +22,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
 
     const MotionCommand& command = plan_request.motion_command;
 
-    if (plan_request.virtual_obstacles.hit(plan_request.start.position())) {
+    if (plan_request.static_obstacles.hit(plan_request.start.position())) {
         prev_path_ = Trajectory{};
         return prev_path_;
     }
@@ -34,7 +36,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
     const auto& rotation_constraints = plan_request.constraints.rot;
-    const auto& ball = plan_request.world_state->ball;
+    const auto& ball = plan_request.world_state.ball;
 
     // track ball velocity to know if done or not
     if (!average_ball_vel_initialized_) {
@@ -54,11 +56,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         final_approach_ = false;
     }
 
-    ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false, nullptr);
-
-    auto obstacles_with_ball = static_obstacles;
+    auto obstacles_with_ball = plan_request.static_obstacles;
     const RJ::Time cur_time = start_instant.stamp;
     obstacles_with_ball.add(
         make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
@@ -116,7 +114,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
                 start_instant,
                 target,
                 obstacles_with_ball,
-                dynamic_obstacles,
+                plan_request.dynamic_obstacles,
                 plan_request.constraints,
                 AngleFns::face_angle(ball.position.angle_to(command.target.position))};
             path = Replanner::create_plan(params, prev_path_);
@@ -136,8 +134,8 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
 
             Replanner::PlanParams params{start_instant,
                                          target,
-                                         static_obstacles,
-                                         dynamic_obstacles,
+                                         plan_request.static_obstacles,
+                                         plan_request.dynamic_obstacles,
                                          plan_request.constraints,
                                          AngleFns::face_point(command.target.position)};
             path = Replanner::create_plan(params, prev_path_);
@@ -165,8 +163,8 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
 
             Replanner::PlanParams params{start_instant,
                                          target,
-                                         static_obstacles,
-                                         dynamic_obstacles,
+                                         plan_request.static_obstacles,
+                                         plan_request.dynamic_obstacles,
                                          plan_request.constraints,
                                          AngleFns::face_point(command.target.position)};
             Trajectory path = Replanner::create_plan(params, prev_path_);
@@ -183,7 +181,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         }
 
         if (prev_path_.check_time(start_instant.stamp) &&
-            !trajectory_hits_static(prev_path_, static_obstacles, start_instant.stamp, nullptr) &&
+            !trajectory_hits_static(prev_path_, plan_request.static_obstacles, start_instant.stamp, nullptr) &&
             end_time_adjusted < intercept_time && reuse_path_count_ < 10) {
             reuse_path_count_++;
             Point near_point;
@@ -253,11 +251,12 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     target.position -= target.velocity.normalized(kRobotRadius * 3);
 
     auto ball_path = ball.make_trajectory();
+    auto dynamic_obstacles = plan_request.dynamic_obstacles;
     dynamic_obstacles.emplace_back(kBallRadius, &ball_path);
 
     Replanner::PlanParams params{start_instant,
                                  target,
-                                 static_obstacles,
+                                 plan_request.static_obstacles,
                                  dynamic_obstacles,
                                  plan_request.constraints,
                                  AngleFns::face_point(command.target.position)};

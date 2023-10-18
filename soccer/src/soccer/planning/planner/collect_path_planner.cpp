@@ -14,7 +14,7 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
@@ -99,29 +99,24 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     // Check if we should transition to control from approach
     process_state_transition(ball, start_instant);
 
-    // List of obstacles
-    ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
-
     switch (current_state_) {
         // Moves from the current location to the slow point of approach
         case CoarseApproach:
             previous_ =
-                coarse_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
+                coarse_approach(plan_request, start_instant, plan_request.static_obstacles, plan_request.dynamic_obstacles);
             break;
         // Moves from the slow point of approach to just before point of contact
         case FineApproach:
             previous_ =
-                fine_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
+                fine_approach(plan_request, start_instant, plan_request.static_obstacles, plan_request.dynamic_obstacles);
             break;
         // Move through the ball and stop
         case Control:
-            previous_ = control(plan_request, partial_start_instant, partial_path, static_obstacles,
-                                dynamic_obstacles);
+            previous_ = control(plan_request, partial_start_instant, partial_path, plan_request.static_obstacles,
+                                plan_request.dynamic_obstacles);
             break;
         default:
-            previous_ = invalid(plan_request, static_obstacles, dynamic_obstacles);
+            previous_ = invalid(plan_request, plan_request.static_obstacles, plan_request.dynamic_obstacles);
             break;
     }
 
@@ -173,7 +168,7 @@ Trajectory CollectPathPlanner::coarse_approach(
     const PlanRequest& plan_request, RobotInstant start,
     const rj_geometry::ShapeSet& static_obstacles,
     const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
 
     // There are two paths that get combined together
     //
@@ -231,7 +226,7 @@ Trajectory CollectPathPlanner::fine_approach(
     const PlanRequest& plan_request, RobotInstant start_instant,
     const rj_geometry::ShapeSet& /* static_obstacles */,
     const std::vector<DynamicObstacle>& /* dynamic_obstacles */) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
     MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;
 
@@ -287,7 +282,7 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
                                        const Trajectory& /* partial_path */,
                                        const rj_geometry::ShapeSet& static_obstacles,
                                        const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
     RobotConstraints robot_constraints = plan_request.constraints;
     MotionConstraints& motion_constraints = robot_constraints.mot;
 
@@ -396,7 +391,7 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
     Replanner::PlanParams params{
         plan_request.start,       target,
         static_obstacles,         dynamic_obstacles,
-        plan_request.constraints, AngleFns::face_point(plan_request.world_state->ball.position)};
+        plan_request.constraints, AngleFns::face_point(plan_request.world_state.ball.position)};
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in collect");
 

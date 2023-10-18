@@ -1,8 +1,6 @@
 #pragma once
 
 #include <mutex>
-#include <unordered_map>
-#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -19,14 +17,12 @@
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "node.hpp"
-#include "planner/path_planner.hpp"
-#include "planner/plan_request.hpp"
-#include "planning/planner/escape_obstacles_path_planner.hpp"
-#include "planning/trajectory_collection.hpp"
-#include "planning_params.hpp"
-#include "robot_intent.hpp"
-#include "trajectory.hpp"
 #include "world_state.hpp"
+#include "game_settings.hpp"
+#include "rj_geometry/shape_set.hpp"
+#include "game_state.hpp"
+
+namespace planning {
 
 class GlobalState {
 public:
@@ -70,3 +66,4 @@ private:
     rj_msgs::msg::CoachState last_coach_state_;
     std::mutex last_coach_state_mutex_;
 };
+} // namespace planning

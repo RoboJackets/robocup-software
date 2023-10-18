@@ -14,17 +14,10 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
-    // Collect obstacles
-    ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
-    const MotionCommand& command = request.motion_command;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
-                   &ball_trajectory);
-
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
-    if (static_obstacles.hit(request.start.position())) {
+    auto& command = request.motion_command;
+    if (request.static_obstacles.hit(request.start.position())) {
         reset();
         return Trajectory();
     }
@@ -40,7 +33,7 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
 
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{request.start, target_instant, static_obstacles, dynamic_obstacles,
+        Replanner::PlanParams{request.start, target_instant, request.static_obstacles, request.dynamic_obstacles,
                               request.constraints, angle_function, RJ::Seconds(3.0)},
         std::move(previous_));
 
@@ -79,7 +72,7 @@ AngleFunction PathTargetPathPlanner::get_angle_function(const PlanRequest& reque
     }
 
     if (std::holds_alternative<FaceBall>(face_option)) {
-        auto ball_pos = request.world_state->ball.position;
+        auto ball_pos = request.world_state.ball.position;
         return AngleFns::face_point(ball_pos);
     }
 

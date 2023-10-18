@@ -35,7 +35,7 @@ public:
      * @return Point for Goalie to stand in when no shot is coming. Expects
      * ball to be slow.
      */
-    static rj_geometry::Point get_idle_pt(const WorldState* world_state);
+    static rj_geometry::Point get_idle_pt(const WorldState& world_state);
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;

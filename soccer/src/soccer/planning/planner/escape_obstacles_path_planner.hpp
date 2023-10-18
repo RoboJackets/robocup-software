@@ -1,17 +1,12 @@
 #pragma once
 
-#include <functional>
-#include <optional>
-
-#include <rj_geometry/point.hpp>
-#include <rrt/Tree.hpp>
-
-#include "path_target_path_planner.hpp"
-#include "planning/planner/path_planner.hpp"
-#include "planning/planner/plan_request.hpp"
-
-class Configuration;
-class ConfigDouble;
+#include <optional>                      // for optional, nullopt
+#include <rj_geometry/point.hpp>         // for Point
+#include <string>                        // for allocator, string
+#include "planning/planning_params.hpp"  // for PARAM_step_size
+#include "planning/trajectory.hpp"       // for Trajectory
+namespace planning { struct PlanRequest; }
+namespace rj_geometry { class ShapeSet; }
 
 namespace planning {
 /**

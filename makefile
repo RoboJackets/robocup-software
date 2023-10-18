@@ -30,7 +30,7 @@ endef
 
 define cmake_build_target_perf
 	mkdir -p build-release-debug
- 	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
+ 	cd build-release-debug && cmake -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=/home/robojackets/iwyu/build/bin/include-what-you-use -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 all-perf:

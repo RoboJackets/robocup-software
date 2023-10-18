@@ -15,6 +15,8 @@
 
 struct PlayState {
 public:
+    PlayState() : PlayState{State::Halt, Restart::None, false, {}} {};
+
     using Msg = rj_msgs::msg::PlayState;
 
     enum State {

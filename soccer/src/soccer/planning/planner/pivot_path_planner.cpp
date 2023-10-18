@@ -23,10 +23,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
 
-    rj_geometry::ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, false);
-
     const MotionCommand& command = request.motion_command;
 
     double radius = pivot::PARAM_radius_multiplier * kRobotRadius;
@@ -64,7 +60,7 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
         std::min(new_constraints.max_speed, rotation_constraints.max_speed * radius) * .5;
 
     double start_angle = pivot_point.angle_to(
-        request.world_state->get_robot(true, request.shell_id).pose.position());
+        request.world_state.get_robot(true, request.shell_id).pose.position());
     double target_angle = pivot_point.angle_to(final_position);
     double angle_change = fix_angle_radians(target_angle - start_angle);
 

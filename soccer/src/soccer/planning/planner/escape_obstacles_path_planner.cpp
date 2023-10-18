@@ -1,14 +1,22 @@
 #include "escape_obstacles_path_planner.hpp"
-
-#include <optional>
-#include <vector>
-
-#include "planning/planning_params.hpp"
-#include "planning/primitives/angle_planning.hpp"
-#include "planning/primitives/create_path.hpp"
-#include "planning/primitives/robo_cup_state_space.hpp"
-#include "planning/primitives/rrt_util.hpp"
-
+#include <stddef.h>                                      // for size_t
+#include <functional>                                    // for function
+#include <memory>                                        // for make_shared
+#include <optional>                                      // for optional
+#include <rrt/Tree.hpp>                                  // for Tree, Node
+#include <vector>                                        // for allocator
+#include "planning/instant.hpp"                          // for RobotInstant
+#include "planning/planner/plan_request.hpp"             // for PlanRequest
+#include "planning/planning_params.hpp"                  // for PARAM_goal_c...
+#include "planning/primitives/angle_planning.hpp"        // for plan_angles
+#include "planning/primitives/create_path.hpp"           // for simple
+#include "planning/primitives/robo_cup_state_space.hpp"  // for RoboCupState...
+#include "planning/robot_constraints.hpp"                // for RobotConstra...
+#include "rj_common/field_dimensions.hpp"                // for FieldDimensions
+#include "rj_common/time.hpp"                            // for now
+#include "rj_geometry/point.hpp"                         // for Point, rj_ge...
+#include "rj_geometry/pose.hpp"                          // for Twist
+#include "rj_geometry/shape_set.hpp"                     // for ShapeSet
 using namespace rj_geometry;
 namespace planning {
 
@@ -16,10 +24,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
 
-    rj_geometry::ShapeSet obstacles;
-    fill_obstacles(plan_request, &obstacles, nullptr, false, nullptr);
-
-    if (!obstacles.hit(start_instant.position())) {
+    if (!plan_request.static_obstacles.hit(start_instant.position())) {
         // Keep moving, but slow down the current velocity. This allows us to
         // keep continuity when we have short disruptions in planners (i.e.
         // single frame delay).
@@ -32,7 +37,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     }
 
     Point unblocked =
-        find_non_blocked_goal(start_instant.position(), previous_target_, obstacles, 300);
+        find_non_blocked_goal(start_instant.position(), previous_target_, plan_request.static_obstacles, 300);
 
     std::optional<Point> opt_prev_pt;
 

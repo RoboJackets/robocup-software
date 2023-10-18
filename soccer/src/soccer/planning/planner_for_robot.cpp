@@ -131,7 +131,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const GlobalState& global_state,
 void PlannerForRobot::execute_intent(const RobotIntent& intent) {
     if (robot_alive()) {
         // plan a path and send it to control
-        PlanRequest request {intent, global_state_};
+        PlanRequest request{intent, global_state_, &debug_draw_};
 
         auto trajectory = safe_plan_for_robot(global_state_, intent);
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
@@ -185,65 +185,10 @@ std::unique_ptr<planning::PathPlanner> PlannerForRobot::make_path_planner(const 
 std::unique_ptr<PathPlanner> PlannerForRobot::make_default_planner() {
     return std::make_unique<EscapeObstaclesPathPlanner>();
 }
-PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
-    // pass global_state_ directly
-    const auto* world_state = global_state_.world_state();
-    const auto goalie_id = global_state_.goalie_id();
-    const auto play_state = global_state_.play_state();
-    const auto min_dist_from_ball = global_state_.coach_state().global_override.min_dist_from_ball;
-    const auto max_robot_speed = global_state_.coach_state().global_override.max_speed;
-    const auto max_dribbler_speed = global_state_.coach_state().global_override.max_dribbler_speed;
-    const auto& robot = world_state->our_robots.at(robot_id_);
-    const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
-    const auto global_obstacles = global_state_.global_obstacles();
-    rj_geometry::ShapeSet real_obstacles = global_obstacles;
-
-    const auto def_area_obstacles = global_state_.def_area_obstacles();
-    rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
-    const bool is_goalie = goalie_id == robot_id_;
-    if (!is_goalie) {
-        virtual_obstacles.add(def_area_obstacles);
-    }
-
-    RobotConstraints constraints;
-    MotionCommand motion_command;
-    // Attempting to create trajectories with max speeds <= 0 crashes the planner (during RRT
-    // generation)
-    if (max_robot_speed == 0.0f) {
-        // If coach node has speed set to 0,
-        // force HALT by replacing the MotionCommand with an empty one.
-        motion_command = MotionCommand{};
-    } else if (max_robot_speed < 0.0f) {
-        // If coach node has speed set to negative, assume infinity.
-        // Negative numbers cause crashes, but 10 m/s is an effectively infinite limit.
-        motion_command = intent.motion_command;
-        constraints.mot.max_speed = 10.0f;
-    } else {
-        motion_command = intent.motion_command;
-        constraints.mot.max_speed = max_robot_speed;
-    }
-
-    float dribble_speed =
-        min(static_cast<float>(intent.dribbler_speed), static_cast<float>(max_dribbler_speed));
-
-    return PlanRequest{start,
-                       motion_command,
-                       constraints,
-                       move(real_obstacles),
-                       move(virtual_obstacles),
-                       robot_trajectories_,
-                       static_cast<unsigned int>(robot_id_),
-                       world_state,
-                       intent.priority,
-                       &debug_draw_,
-                       had_break_beam_,
-                       min_dist_from_ball,
-                       dribble_speed};
-}
 bool PlannerForRobot::robot_alive() const {
-    return global_state_.world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+    return global_state_.world_state().our_robots.at(robot_id_).visible &&
+           RJ::now() < global_state_.world_state().last_updated_time + RJ::Seconds(PARAM_timeout);
 }
 bool PlannerForRobot::is_done() const {
     // no segfaults
