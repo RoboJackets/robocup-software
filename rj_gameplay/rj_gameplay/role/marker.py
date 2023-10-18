@@ -12,9 +12,62 @@ class MarkerRole(stp.role.Role):
         super().__init__(robot)
 
         self.mark_skill = None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         self.target_robot = target_robot
 
-    def tick(
+    def tick     (
         self, world_state: stp.rc.WorldState, target_robot: stp.rc.Robot
     ) -> RobotIntent:
         if target_robot is not None:
@@ -28,5 +81,5 @@ class MarkerRole(stp.role.Role):
 
         return intent
 
-    def is_done(self, world_state: stp.rc.WorldState) -> bool:
+    def is_done        (           self,world_state: stp.rc.WorldState) -> bool:
         return self._state == "done"
