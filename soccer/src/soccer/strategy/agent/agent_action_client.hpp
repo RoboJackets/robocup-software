@@ -67,8 +67,6 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
 
-    std::unique_ptr<Position> current_position_;
-
     Analyzer situation_analyzer = Analyzer(robot_id_);
 
     // ROS ActionClient spec, for calls to planning ActionServer

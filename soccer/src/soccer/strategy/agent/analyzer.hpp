@@ -47,10 +47,12 @@ public:
      * @brief return a Position based on the current world state?
      */
 
-    std::unique_ptr<Position> get_behavior(WorldState& world_state, FieldDimensions& field_dimensions);
+    std::unique_ptr<Position> get_init_position(WorldState& world_state, FieldDimensions& field_dimensions);
+
+    std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions);
 
 private:
-    std::unique_ptr<Position> best_position_;
+    std::unique_ptr<Position> current_position_;
 
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 

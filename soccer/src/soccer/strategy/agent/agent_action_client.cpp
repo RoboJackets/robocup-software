@@ -120,7 +120,7 @@ void AgentActionClient::get_task() {
     //get the best Position according to the rule function. It would then update
     //the last_task.
 
-    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_);
+    auto optional_task = situation_analyzer->get_task(last_world_state_, field_dimensions_);
 
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
