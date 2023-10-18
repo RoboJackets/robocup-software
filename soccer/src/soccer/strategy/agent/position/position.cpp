@@ -8,7 +8,7 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state, FieldDime
     // Point class variables to parameter references
     // TODO (Prabhanjan): Don't copy references into local vars
     field_dimensions_ = field_dimensions;
-    last_world_state_ = world_state;
+    last_world_state_ = &world_state;
 
     // init an intent with our robot id
     RobotIntent intent = RobotIntent{};
@@ -60,15 +60,9 @@ void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
     }
 }
 
-[[nodiscard]] WorldState* Position::world_state() {
-    // thread-safe getter for world_state (see update_world_state())
-    auto lock = std::lock_guard(world_state_mutex_);
-    return &last_world_state_;
-}
 
 bool Position::assert_world_state_valid() {
-    WorldState* world_state = this->world_state();  // thread-safe getter
-    if (world_state == nullptr) {
+    if (last_world_state_ == nullptr) {
         SPDLOG_WARN("WorldState!");
         return false;
     }

@@ -28,6 +28,7 @@
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
 #include "world_state.hpp"
+#include "strategy/agent/analyzer.hpp"
 
 // Communication
 #include "communication/communication.hpp"
@@ -67,6 +68,8 @@ private:
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
 
     std::unique_ptr<Position> current_position_;
+
+    Analyzer situation_analyzer = Analyzer(robot_id_);
 
     // ROS ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;

@@ -11,7 +11,7 @@ std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_penalty_kick
     // Line up 0.15 meters behind the ball
 
-    WorldState* world_state = last_state_world;
+    WorldState* world_state = last_world_state_;
 
     rj_geometry::Point target_pt{world_state->ball.position.x(),
                                  world_state->ball.position.y() - kRobotRadius - 0.15};

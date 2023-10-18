@@ -278,7 +278,7 @@ protected:
     bool alive = false;
 
     // protected to allow WorldState to be accessed directly by derived
-    WorldState last_world_state_;
+    WorldState* last_world_state_;
 
 private:
     /**

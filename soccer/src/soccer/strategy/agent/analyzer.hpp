@@ -14,6 +14,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
+
+#include "strategy/agent/position/position.hpp"
+#include "strategy/agent/position/goalie.hpp"
+#include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/defense.hpp"
+
 #include "robot_intent.hpp"
 #include "world_state.hpp"
 
@@ -41,7 +47,7 @@ public:
      * @brief return a Position based on the current world state?
      */
 
-    std::optional<Position> get_behavior(WorldState& world_state, FieldDimensions& field_dimensions);
+    std::unique_ptr<Position> get_behavior(WorldState& world_state, FieldDimensions& field_dimensions);
 
 private:
     std::unique_ptr<Position> best_position_;
@@ -64,7 +70,7 @@ private:
     const int robot_id_;
 
     // protected to allow WorldState to be accessed directly by derived
-    WorldState last_world_state_;
+    WorldState* last_world_state_;
 };
 
 }  // namespace strategy

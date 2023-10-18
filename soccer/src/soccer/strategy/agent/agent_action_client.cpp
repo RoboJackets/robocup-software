@@ -46,13 +46,7 @@ AgentActionClient::AgentActionClient(int r_id)
     //Default Positions with the Position class
 
     //TODO (Prabhanjan): change to unique instance of Analyzer class
-    if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
-    } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
-    }
+    current_position_ = situation_analyzer.get_behavior(last_world_state_, field_dimensions_);
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
@@ -60,12 +54,10 @@ AgentActionClient::AgentActionClient(int r_id)
             create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
 
-    // TODO(Kevin): make ROS param for this
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 
-    // TODO(Kevin): make ROS param for this
     int agent_communication_hz = 60;
     get_communication_timer_ =
         create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
