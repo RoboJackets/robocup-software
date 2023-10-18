@@ -12,6 +12,7 @@
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
+#include <rj_msgs/msg/detail/field_dimensions__struct.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
@@ -44,6 +45,7 @@ public:
             referee::topics::kPlayStateTopic, rclcpp::QoS(1),
             [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
                 last_play_state_ = rj_convert::convert_from_ros(*state);
+                set_static_obstacles();
             });
         game_settings_sub_ = node->create_subscription<rj_msgs::msg::GameSettings>(
             config_server::topics::kGameSettingsTopic, rclcpp::QoS(1),
@@ -60,11 +62,6 @@ public:
             [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr global_obstacles) {  // NOLINT
                 last_global_obstacles_ = rj_convert::convert_from_ros(*global_obstacles);
             });
-        def_area_obstacles_sub_ = node->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
-            planning::topics::kDefAreaObstaclesTopic, rclcpp::QoS(1),
-            [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr def_area_obstacles) {  // NOLINT
-                last_def_area_obstacles_ = rj_convert::convert_from_ros(*def_area_obstacles);
-            });
         world_state_sub_ = node->create_subscription<rj_msgs::msg::WorldState>(
             vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
             [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
@@ -74,6 +71,12 @@ public:
             "/strategy/coach_state", rclcpp::QoS(1),
             [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
                 last_coach_state_ = *coach_state;
+            });
+        field_dimensions_sub_ = node->create_subscription<rj_msgs::msg::FieldDimensions>(
+            ::config_server::topics::kFieldDimensionsTopic, 10,
+            [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
+                current_field_dimensions_ = rj_convert::convert_from_ros(*msg);
+                have_field_dimensions_ = true;
             });
     }
 
@@ -107,14 +110,55 @@ private:
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
+    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 
     PlayState last_play_state_ = PlayState::halt();
+    FieldDimensions current_field_dimensions_;
+    bool have_field_dimensions_ = false;
     GameSettings last_game_settings_;
     int last_goalie_id_;
     rj_geometry::ShapeSet last_global_obstacles_;
     rj_geometry::ShapeSet last_def_area_obstacles_;
     WorldState last_world_state_;
     rj_msgs::msg::CoachState last_coach_state_;
+
+    rj_geometry::ShapeSet create_defense_area_obstacles() {
+        // need field dimensions and to be initialized for this to
+        // work
+        // Create defense areas as rectangular area obstacles
+        auto our_defense_area{std::make_shared<rj_geometry::Rect>(
+            std::move(current_field_dimensions_.our_defense_area()))};
+
+        // Sometimes there is a greater distance we need to keep:
+        // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
+        // TODO(sid-parikh): update this conditional. gameplay_node used different set of checks
+        // than rules imply
+        bool is_extra_dist_necessary = (last_play_state_.state() == PlayState::State::Stop ||
+                                        last_play_state_.restart() == PlayState::Restart::Free);
+
+        // Also add a slack around the box
+        float slack_around_box{0.3f};
+
+        auto their_defense_area =
+            is_extra_dist_necessary
+                ? std::make_shared<rj_geometry::Rect>(
+                      std::move(current_field_dimensions_.their_defense_area_padded(slack_around_box)))
+                : std::make_shared<rj_geometry::Rect>(
+                      std::move(current_field_dimensions_.their_defense_area()));
+
+        // Combine both defense areas into ShapeSet
+        rj_geometry::ShapeSet def_area_obstacles{};
+        def_area_obstacles.add(our_defense_area);
+        def_area_obstacles.add(their_defense_area);
+
+        return def_area_obstacles;
+    }
+
+    void set_static_obstacles() {
+        if (have_field_dimensions_) {
+            last_def_area_obstacles_ = create_defense_area_obstacles();
+        }
+    }
 };
 
 /**
