@@ -83,8 +83,7 @@ AgentActionClient::AgentActionClient(int r_id)
     // else if (r_id == 1) {
     if (r_id == 1) {
         current_position_ = std::make_unique<Runner>(r_id);
-    }
-    else {
+    } else {
         current_position_ = std::make_unique<Goalie>(r_id);
     }
 }
