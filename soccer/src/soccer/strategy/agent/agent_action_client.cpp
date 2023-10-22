@@ -73,12 +73,19 @@ AgentActionClient::AgentActionClient(int r_id)
     update_alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(1000),
                                                    [this]() { update_position_alive_robots(); });
 
-    if (r_id == 0) {
+    // if (r_id == 0) {
+    //     current_position_ = std::make_unique<Goalie>(r_id);
+    // } else if (r_id == 3 || r_id == 5) {
+    //     current_position_ = std::make_unique<Defense>(r_id);
+    // } else if (r_id == 2 || r_id == 4) {
+    //     current_position_ = std::make_unique<Offense>(r_id);
+    // }
+    // else if (r_id == 1) {
+    if (r_id == 1) {
+        current_position_ = std::make_unique<Runner>(r_id);
+    }
+    else {
         current_position_ = std::make_unique<Goalie>(r_id);
-    } else if (r_id == 1 || r_id == 3 || r_id == 5) {
-        current_position_ = std::make_unique<Defense>(r_id);
-    } else if (r_id == 2 || r_id == 4) {
-        current_position_ = std::make_unique<Offense>(r_id);
     }
 }
 
@@ -143,10 +150,12 @@ void AgentActionClient::get_task() {
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 2) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         }
     }
 
@@ -170,13 +179,13 @@ void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::
             next_position_ = std::make_unique<Goalie>(robot_id_);
             break;
         case 1:
-            next_position_ = std::make_unique<Defense>(robot_id_);
+            next_position_ = std::make_unique<Runner>(robot_id_);
             break;
         case 2:
-            next_position_ = std::make_unique<Offense>(robot_id_);
+            next_position_ = std::make_unique<Runner>(robot_id_);
             break;
         case 3:
-            next_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
+            next_position_ = std::make_unique<Defense>(robot_id_);
             break;
         case 4:
             next_position_ = std::make_unique<GoalKicker>(robot_id_);
@@ -222,10 +231,12 @@ void AgentActionClient::goal_response_callback(
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 2) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         }
     }
 
@@ -241,10 +252,12 @@ void AgentActionClient::feedback_callback(
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 2) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         }
     }
 
@@ -257,10 +270,12 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 2) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         }
     }
 
@@ -288,10 +303,12 @@ void AgentActionClient::get_communication() {
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 2) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         }
     }
 
@@ -436,10 +453,12 @@ void AgentActionClient::check_communication_timeout() {
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
             current_position_ = std::make_unique<Goalie>(robot_id_);
+        } else if (robot_id_ == 2) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
         } else if (robot_id_ == 1) {
             current_position_ = std::make_unique<Defense>(robot_id_);
         } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
+            current_position_ = std::make_unique<Goalie>(robot_id_);
         }
     }
 
