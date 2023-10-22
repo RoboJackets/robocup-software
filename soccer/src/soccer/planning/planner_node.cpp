@@ -249,7 +249,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     double max_robot_speed = 10.0;
     int max_dribbler_speed = 255;
 
-    switch(play_state.state()) {
+    switch (play_state.state()) {
         case PlayState::State::Halt:
             min_dist_from_ball = 0.0;
             max_robot_speed = 0.0;
