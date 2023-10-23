@@ -312,6 +312,39 @@ def create_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     with open("communication.hpp", "w") as f:
         f.write(hpp)
 
+def update_cmake(requests_msgs, response_msgs):
+    with open("../../../../../../rj_msgs/CMakeLists.txt", "r") as f:
+        contents = f.read().split("\n")
+
+    start = contents.index("  # Agent Request Messages")
+    end = contents.index("  # Services")
+
+    requests = ["  request/" + request for request in requests_msgs]
+    responses = ["  response/" + response for response in response_msgs]
+
+    contents = contents[:start] + ["  # Agent Request Messages"] + requests + ["\n  # Agent Response Messages"] + responses + [""] + contents[end:]
+    
+    with open("../../../../../../rj_msgs/CMakeLists.txt", "w") as f:
+        f.write("\n".join(contents))
+    
+def update_agent_message(requests_msgs, response_msgs):
+    with open("../../../../../../rj_msgs/msg/AgentRequest.msg", "r") as f:
+        contents = f.read().split("\n")
+
+    end = contents.index("# ACKNOWLEDGE REQUEST DOES NOT (AND SHOULD NOT) EXIST")
+
+    requests = [request[:-4] + "[<=1] " + convert_msg_to_hpp_include(request)[22:-5] for request in requests_msgs]
+    responses = [response[:-4] + "[<=1] " + convert_msg_to_hpp_include(response)[22:-5] for response in response_msgs]
+
+    contents = contents[:end + 1] + requests
+    
+    with open("../../../../../../rj_msgs/msg/AgentRequest.msg", "w") as f:
+        f.write("\n".join(contents))
+
+    with open("../../../../../../rj_msgs/msg/AgentResponseVariant.msg", "w") as f:
+        f.write("\n".join(responses))
+    
+
 if __name__ == "__main__":
     path_request = "../../../../../../rj_msgs/request"
     path_response = "../../../../../../rj_msgs/response"
@@ -322,4 +355,6 @@ if __name__ == "__main__":
     hpp_names = create_hpp_files(requests_msgs, path_request, response_msgs, path_response)
     create_cpp_file(requests_msgs, response_msgs, hpp_names)
     create_main_hpp_file(requests_msgs, response_msgs, hpp_names)
+    update_cmake(requests_msgs, response_msgs)
+    update_agent_message(requests_msgs, response_msgs)
         
