@@ -17,24 +17,18 @@ namespace strategy {
 
 class Runner : public Position {
 public:
-	Runner(int r_id);
-   ~Runner() override = default;
-
+    Runner(int r_id);
+    ~Runner() override = default;
 
 private:
-	std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-	enum State {
-		RUNNING_LEFT,
-		RUNNING_TOP,
-		RUNNING_RIGHT,
-		RUNNING_BOTTOM
-	};
+    enum State { RUNNING_LEFT, RUNNING_TOP, RUNNING_RIGHT, RUNNING_BOTTOM };
 
-	State update_state();
+    State update_state();
 
-	std::optional<RobotIntent> state_to_task(RobotIntent intent);
+    std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-	State current_state_;
+    State current_state_;
 };
-}
+}  // namespace strategy

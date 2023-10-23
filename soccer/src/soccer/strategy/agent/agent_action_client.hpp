@@ -25,9 +25,9 @@
 #include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
-#include "strategy/agent/position/runner.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
+#include "strategy/agent/position/runner.hpp"
 #include "world_state.hpp"
 
 // Communication
