@@ -69,7 +69,7 @@ Trajectory PlannerForRobot::unsafe_plan_for_robot(const GlobalState& global_stat
         current_path_planner_ = std::move(new_planner);
     }
 
-    Trajectory trajectory = current_path_planner_->plan(global_state, robot_intent, debug_draw_);
+    Trajectory trajectory = current_path_planner_->plan(PlanRequest{robot_intent, global_state, &debug_draw_});
 
     if (trajectory.empty()) {
         // empty Trajectory means current_path_planner_ has failed
@@ -101,7 +101,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const GlobalState& global_state,
         SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
 
         current_path_planner_ = make_default_planner();
-        trajectory = current_path_planner_->plan(global_state, robot_intent, debug_draw_);
+        trajectory = current_path_planner_->plan(PlanRequest{robot_intent, global_state, &debug_draw_});
 
         // TODO(Kevin): planning should be able to send empty Trajectory
         // without crashing, instead of resorting to default planner

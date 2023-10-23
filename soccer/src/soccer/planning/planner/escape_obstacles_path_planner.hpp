@@ -5,6 +5,7 @@
 #include <string>                        // for allocator, string
 #include "planning/planning_params.hpp"  // for PARAM_step_size
 #include "planning/trajectory.hpp"       // for Trajectory
+#include "planning/planner/path_planner.hpp"
 namespace planning { struct PlanRequest; }
 namespace rj_geometry { class ShapeSet; }
 

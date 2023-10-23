@@ -46,24 +46,24 @@ private:
     rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
 
     PlayState last_play_state_;
-    std::mutex last_play_state_mutex_;
+    mutable std::mutex last_play_state_mutex_;
 
     GameSettings last_game_settings_;
-    std::mutex last_game_settings_mutex_;
+    mutable std::mutex last_game_settings_mutex_;
 
     int last_goalie_id_;
-    std::mutex last_goalie_id_mutex_;
+    mutable std::mutex last_goalie_id_mutex_;
 
     rj_geometry::ShapeSet last_global_obstacles_;
-    std::mutex last_global_obstacles_mutex_;
+    mutable std::mutex last_global_obstacles_mutex_;
 
     rj_geometry::ShapeSet last_def_area_obstacles_;
-    std::mutex last_def_area_obstacles_mutex_;
+    mutable std::mutex last_def_area_obstacles_mutex_;
 
     WorldState last_world_state_;
-    std::mutex last_world_state_mutex_;
+    mutable std::mutex last_world_state_mutex_;
 
     rj_msgs::msg::CoachState last_coach_state_;
-    std::mutex last_coach_state_mutex_;
+    mutable std::mutex last_coach_state_mutex_;
 };
 } // namespace planning

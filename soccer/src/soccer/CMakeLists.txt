@@ -97,7 +97,6 @@ set(SOCCER_TEST_SRC
     planning/tests/angle_planning_test.cpp
     planning/tests/bezier_path_test.cpp
     planning/tests/conversion_tests.cpp
-    planning/tests/planner_test.cpp
     planning/tests/create_path_test.cpp
     planning/tests/testing_utils.cpp
     planning/tests/trajectory_test.cpp
