@@ -275,8 +275,6 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\tresult.associated_request = convert_to_ros(from.associated_request);\n\t\t"
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
-        if msgName == "acknowledge":
-            msgName = "acknowledge_response"
         hpp += "if (const auto* " + msgName + " = std::get_if<strategy::communication::" + response[:-4] + ">(&(from.response))) {\n"
         hpp += "\t\t\tresult.response." + msgName + ".emplace_back(convert_to_ros(*" + msgName + "));\n"
         hpp += "\t\t} else "
@@ -291,8 +289,6 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\tresult.associated_request = convert_from_ros(from.associated_request);\n\t\t"
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
-        if msgName == "acknowledge":
-            msgName = "acknowledge_response"
         hpp += "if (!from.response." + msgName + ".empty()) {\n"
         hpp += "\t\t\tresult.response = convert_from_ros(from.response." + msgName + ".front());\n"
         hpp += "\t\t} else "
