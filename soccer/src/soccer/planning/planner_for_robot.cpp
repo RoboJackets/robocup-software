@@ -56,7 +56,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
 Trajectory PlannerForRobot::unsafe_plan_for_robot(const GlobalState& global_state,
                                                   const RobotIntent& robot_intent) {
     // We should only create a new planner if the motion command has changed
-    if (robot_intent.motion_command.name != current_path_planner_->name()) {
+    if (!current_path_planner_ || robot_intent.motion_command.name != current_path_planner_->name()) {
         std::unique_ptr<PathPlanner> new_planner =
             make_path_planner(robot_intent.motion_command.name);
 
