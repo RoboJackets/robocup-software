@@ -45,6 +45,7 @@ public:
             referee::topics::kPlayStateTopic, rclcpp::QoS(1),
             [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
                 last_play_state_ = rj_convert::convert_from_ros(*state);
+                have_play_state_ = true;
                 set_static_obstacles();
             });
         game_settings_sub_ = node->create_subscription<rj_msgs::msg::GameSettings>(
@@ -77,6 +78,7 @@ public:
             [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
                 current_field_dimensions_ = rj_convert::convert_from_ros(*msg);
                 have_field_dimensions_ = true;
+                set_static_obstacles();
             });
     }
 
@@ -115,6 +117,7 @@ private:
     PlayState last_play_state_ = PlayState::halt();
     FieldDimensions current_field_dimensions_;
     bool have_field_dimensions_ = false;
+    bool have_play_state_ = false;
     GameSettings last_game_settings_;
     int last_goalie_id_;
     rj_geometry::ShapeSet last_global_obstacles_;
@@ -155,7 +158,7 @@ private:
     }
 
     void set_static_obstacles() {
-        if (have_field_dimensions_) {
+        if (have_field_dimensions_ && have_play_state_) {
             last_def_area_obstacles_ = create_defense_area_obstacles();
         }
     }
