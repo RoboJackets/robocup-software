@@ -44,9 +44,7 @@ AgentActionClient::AgentActionClient(int r_id)
         });
 
     //Default Positions with the Position class
-
-    //TODO (Prabhanjan): change to unique instance of Analyzer class
-    current_position_ = situation_analyzer.get_behavior(last_world_state_, field_dimensions_);
+    current_position_ = std::make_unique<RootRobotPosition>(robot_id_);
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
@@ -116,11 +114,7 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 void AgentActionClient::get_task() {
     auto lock = std::lock_guard(world_state_mutex_);
 
-    //This is where the analyzer class would call a method that would
-    //get the best Position according to the rule function. It would then update
-    //the last_task.
-
-    auto optional_task = situation_analyzer->get_task(last_world_state_, field_dimensions_);
+    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_);
 
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();

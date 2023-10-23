@@ -21,14 +21,11 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
-#include "strategy/agent/position/defense.hpp"
-#include "strategy/agent/position/goal_kicker.hpp"
-#include "strategy/agent/position/goalie.hpp"
-#include "strategy/agent/position/offense.hpp"
-#include "strategy/agent/position/penalty_player.hpp"
+
 #include "strategy/agent/position/position.hpp"
+#include "strategy/agent/position/root_robot_position.hpp"
+
 #include "world_state.hpp"
-#include "strategy/agent/analyzer.hpp"
 
 // Communication
 #include "communication/communication.hpp"
@@ -67,7 +64,7 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
 
-    Analyzer situation_analyzer = Analyzer(robot_id_);
+    std::unique_ptr<Position> current_position_;
 
     // ROS ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;

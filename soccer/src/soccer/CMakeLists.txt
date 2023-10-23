@@ -74,9 +74,9 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     strategy/agent/agent_action_client.cpp
-    strategy/agent/analyzer.cpp
     strategy/agent/communication/communication.cpp
     strategy/agent/position/position.cpp
+    strategy/agent/position/root_robot_position.cpp
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/defense.cpp
