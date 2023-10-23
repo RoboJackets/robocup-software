@@ -50,6 +50,7 @@ set(ROBOCUP_LIB_SRC
     radio/network_radio.cpp
     radio/packet_convert.cpp
     radio/sim_radio.cpp
+    soccer_mom.cpp
     strategy/coach/coach_node.cpp
     radio/radio.cpp
     referee/referee_base.cpp
@@ -130,6 +131,8 @@ set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
 set(AGENT_ACTION_CLIENT_NODE_SRC strategy/agent/agent_action_client_main.cpp)
 
+set(SOCCER_MOM_NODE_SRC soccer_mom_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -161,10 +164,13 @@ target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
 # ---- sim_radio_node ----
 target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
+# ---- soccer_mom_node ----
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
+
 # ---- coach_node ----
 target_sources(coach_node PRIVATE ${COACH_NODE_SRC})
 
-# ---- sim_radio_node ----
+# ---- network_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
 
 # ---- manual_control_node ----
