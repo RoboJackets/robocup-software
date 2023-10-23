@@ -9,7 +9,7 @@ if (robot_id_ == 0) {
     } else if (robot_id_ == 1) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
-        current_position_ = std::make_unique<RootRobotPosition>(robot_id_);
+        current_position_ = std::make_unique<Defense>(robot_id_);
     }
 
 }
