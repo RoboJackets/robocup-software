@@ -1,6 +1,5 @@
 """ This file contains custom checkers for pylint.
 """
-
 from typing import List
 
 import astroid.node_classes

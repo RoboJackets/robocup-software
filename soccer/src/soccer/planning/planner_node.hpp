@@ -116,8 +116,8 @@ private:
 
     PlayState last_play_state_ = PlayState::halt();
     FieldDimensions current_field_dimensions_;
-    bool have_field_dimensions_ = false;
-    bool have_play_state_ = false;
+    bool have_field_dimensions_;
+    bool have_play_state_;
     GameSettings last_game_settings_;
     int last_goalie_id_;
     rj_geometry::ShapeSet last_global_obstacles_;
