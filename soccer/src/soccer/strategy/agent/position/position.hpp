@@ -84,7 +84,7 @@ public:
      * Outside classes can only set to true, Position/derived classes can clear
      * with check_is_done().
      */
-    void set_is_done();
+    virtual void set_is_done();
 
     /**
      * @brief setter for goal_canceled_

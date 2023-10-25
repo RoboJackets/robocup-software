@@ -39,6 +39,7 @@ public:
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
 
+    void set_is_done() override;
     void die() override;
     void revive() override;
 
