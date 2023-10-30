@@ -252,7 +252,10 @@ void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& posit
 
 void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& positions) {
     for (size_t i = 0; i < kNumShells; i++) {
-        if (i != goalie_id_) {
+        if (i != goalie_id_ && i == 1) {
+            positions[i] = Positions::Runner;
+        }
+        else if (i != goalie_id_ && i != 1) {
             // Non-kicking robots play defense
             positions[i] = Positions::Defense;
         }
@@ -293,7 +296,7 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
                     positions[robot_id] = Positions::Goalie;
                     break;
                 case 1:
-                    positions[robot_id] = Positions::Offense;
+                    positions[robot_id] = Positions::Runner;
                     break;
                 case 2:
                     positions[robot_id] = Positions::Defense;
