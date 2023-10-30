@@ -23,7 +23,7 @@
 #include "rj_msgs/action/robot_move.hpp"
 
 #include "strategy/agent/position/position.hpp"
-#include "strategy/agent/position/root_robot_position.hpp"
+#include "strategy/agent/position/robot_factory_position.hpp"
 
 #include "world_state.hpp"
 

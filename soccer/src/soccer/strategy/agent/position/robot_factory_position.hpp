@@ -7,6 +7,9 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
+#include <spdlog/spdlog.h>
+
+
 
 #include "planning/instant.hpp"
 #include "position.hpp"
@@ -25,11 +28,14 @@
 
 namespace strategy {
 
+/*
+* Based on the Factory Design pattern.
+*/
 
-class RootRobotPosition : public Position {
+class RobotFactoryPosition : public Position {
 public:
-    RootRobotPosition(int r_id);
-    ~RootRobotPosition() override = default;
+    RobotFactoryPosition(int r_id);
+    ~RobotFactoryPosition() override = default;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(

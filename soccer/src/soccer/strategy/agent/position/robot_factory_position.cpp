@@ -1,8 +1,8 @@
-#include "root_robot_position.hpp"
+#include "robot_factory_position.hpp"
 
 namespace strategy {
 
-RootRobotPosition::RootRobotPosition(int r_id) : Position(r_id) { position_name_ = "RootRobotPosition";
+RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) { position_name_ = "RobotFactoryPosition";
 
 if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -14,41 +14,45 @@ if (robot_id_ == 0) {
 
 }
 
-std::optional<RobotIntent> RootRobotPosition::derived_get_task(RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(RobotIntent intent) {
     // This is where the current_position can be reassigned based on the PlayState
     return current_position_->get_task(*last_world_state_, field_dimensions_);
 }
 
-void RootRobotPosition::receive_communication_response(communication::AgentPosResponseWrapper response) {
+void RobotFactoryPosition::receive_communication_response(communication::AgentPosResponseWrapper response) {
     // Call to super
     current_position_->receive_communication_response(response);
 
 }
 
-communication::PosAgentResponseWrapper RootRobotPosition::receive_communication_request(
+communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
 
     // Return the response
     return current_position_->receive_communication_request(request);
 }
 
-void RootRobotPosition::derived_acknowledge_pass() {
+void RobotFactoryPosition::derived_acknowledge_pass() {
     current_position_->derived_acknowledge_pass();
 }
 
-void RootRobotPosition::derived_pass_ball() {
+void RobotFactoryPosition::derived_pass_ball() {
     current_position_->derived_pass_ball();
 }
 
-void RootRobotPosition::derived_acknowledge_ball_in_transit() {
+void RobotFactoryPosition::derived_acknowledge_ball_in_transit() {
     current_position_->derived_acknowledge_ball_in_transit();
 }
 
-void RootRobotPosition::die() {
+void RobotFactoryPosition::set_is_done() {
+    current_position_->set_is_done();
+}
+
+void RobotFactoryPosition::die() {
     current_position_->die();
 }
 
-void RootRobotPosition::revive() {
+void RobotFactoryPosition::revive() {
     current_position_->revive();
 }
 

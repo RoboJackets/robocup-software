@@ -44,7 +44,7 @@ AgentActionClient::AgentActionClient(int r_id)
         });
 
     //Default Positions with the Position class
-    current_position_ = std::make_unique<RootRobotPosition>(robot_id_);
+    current_position_ = std::make_unique<RobotFactoryPosition>(robot_id_);
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
@@ -116,12 +116,20 @@ void AgentActionClient::get_task() {
 
     auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_);
 
+    if (robot_id_ == 1) {
+        SPDLOG_INFO("ID: {} get_task: {}", robot_id_, optional_task->motion_command.name);
+    }
+
+
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
 
         // note that because these are our RobotIntent structs, this comparison
         // uses our custom struct overloads
         if (task != last_task_) {
+            if (robot_id_ == 1) {
+                            SPDLOG_INFO("New task: {} Last task: {}", task.motion_command.name, last_task_.motion_command.name);
+            }
             last_task_ = task;
             send_new_goal();
         }
@@ -134,6 +142,10 @@ void AgentActionClient::send_new_goal() {
     if (!client_ptr_->wait_for_action_server()) {
         SPDLOG_ERROR("Action server not available after waiting");
         rclcpp::shutdown();
+    }
+
+    if (robot_id_ == 1) {
+        SPDLOG_INFO("{} gets a new goal", robot_id_);
     }
 
     auto goal_msg = RobotMove::Goal();
