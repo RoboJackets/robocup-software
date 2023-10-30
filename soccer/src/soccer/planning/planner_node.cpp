@@ -143,30 +143,8 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
     robot_task.is_executing = false;
 }
 
-void PlannerForRobot::plan_hypothetical_robot_path(
-    const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
-    std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
-    /* const auto intent = rj_convert::convert_from_ros(request->intent); */
-    /* auto plan_request = make_request(intent); */
-    /* auto trajectory = safe_plan_for_robot(plan_request); */
-    /* RJ::Seconds trajectory_duration = trajectory.duration(); */
-    /* response->estimate = rj_convert::convert_to_ros(trajectory_duration); */
-}
 
-std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
-    // TODO(p-nayak): why does this say 3s even when the robot is on its point?
-    // get the Traj out of the relevant [Trajectory, priority] tuple in
-    // robot_trajectories_
+Message Kevin Fu
 
-    /*
-    // TODO (PR #1970): fix TrajectoryCollection
-    const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
-    if (!latest_traj) {
-        return std::nullopt;
-    }
-    return latest_traj->end_time() - RJ::now();
-    */
-    return std::nullopt;
-}
 
 }  // namespace planning

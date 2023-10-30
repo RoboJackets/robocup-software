@@ -139,6 +139,7 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 }
 
 void AgentActionClient::get_task() {
+
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {

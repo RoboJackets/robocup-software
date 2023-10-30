@@ -7,6 +7,9 @@ namespace planning {
 PlanRequest::PlanRequest(const RobotIntent& intent, const GlobalState& global_state,
                          rj_drawing::RosDebugDrawer* debug_draw)
     : debug_drawer{debug_draw} {
+
+
+    assert(debug_draw);
     // Copy world state and play state from planner's global state
     this->world_state = global_state.world_state();
     this->play_state = global_state.play_state();

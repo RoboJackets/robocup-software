@@ -77,12 +77,12 @@ GlobalState::GlobalState(rclcpp::Node* node) {
     return last_def_area_obstacles_;
 }
 
-[[nodiscard]] const WorldState GlobalState::world_state() const {
+[[nodiscard]] WorldState GlobalState::world_state() const {
     auto lock = std::lock_guard(last_world_state_mutex_);
     return last_world_state_;
 }
 
-[[nodiscard]] const rj_msgs::msg::CoachState GlobalState::coach_state() const {
+[[nodiscard]] rj_msgs::msg::CoachState GlobalState::coach_state() const {
     auto lock = std::lock_guard(last_coach_state_mutex_);
     return last_coach_state_;
 }
