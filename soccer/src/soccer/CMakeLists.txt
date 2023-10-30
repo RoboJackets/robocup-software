@@ -52,6 +52,8 @@ set(ROBOCUP_LIB_SRC
     radio/sim_radio.cpp
     strategy/coach/coach_node.cpp
     radio/radio.cpp
+    radio/soccer_mom.cpp
+    radio/soccer_mom_node_main.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
     referee/internal_referee.cpp
@@ -119,6 +121,8 @@ set(PLANNER_NODE_SRC planning/planner_node_main.cpp)
 set(CONTROL_NODE_SRC control/control_node_main.cpp)
 
 set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
+
+set(SOCCER_MOM_NODE_SRC radio/soccer_mom_node_main.cpp)
 
 set(COACH_NODE_SRC strategy/coach/coach_node_main.cpp)
 
