@@ -28,7 +28,7 @@ AgentActionClient::AgentActionClient(int r_id)
         topics::kCoachStateTopic, 1,
         [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
 
-    play_state_sub_ = this->create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = create_subscription<rj_msgs::msg::PlayState>(
         ::referee::topics::kPlayStateTopic, 10,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 

@@ -245,9 +245,9 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto goalie_id = global_state_.goalie_id();
     const auto play_state = global_state_.play_state();
 
-    float min_dist_from_ball;
-    float max_robot_speed;
-    float max_dribbler_speed;
+    float min_dist_from_ball{};
+    float max_robot_speed{};
+    float max_dribbler_speed{};
 
     // Global Override code
     // rj_msgs::msg::GlobalOverride global_override;
