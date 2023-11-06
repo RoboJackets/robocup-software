@@ -46,6 +46,12 @@ bool Position::check_goal_canceled() {
     return false;
 }
 
+void Position::update_play_state(rj_msgs::msg::PlayState msg) { current_play_state_ = msg; }
+
+void Position::update_field_dimensions(FieldDimensions field_dims) {
+    field_dimensions_ = std::move(field_dims);
+}
+
 void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
     alive_robots_ = alive_robots;
 

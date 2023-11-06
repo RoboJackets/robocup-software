@@ -37,6 +37,8 @@ public:
     RobotFactoryPosition(int r_id);
     ~RobotFactoryPosition() override = default;
 
+    std::optional<RobotIntent> get_task(WorldState&, FieldDimensions&) override;
+
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;

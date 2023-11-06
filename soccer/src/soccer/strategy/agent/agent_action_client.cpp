@@ -24,6 +24,10 @@ AgentActionClient::AgentActionClient(int r_id)
         ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
+    play_state_sub_ = create_subscription<rj_msgs::msg::PlayState>(
+        ::referee::topics::kPlayStateTopic, 10,
+        [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
+
     field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
         "config/field_dimensions", 1,
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
@@ -75,6 +79,14 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     // already here so why not)
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
+}
+
+void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+    if (current_position_ == nullptr) {
+        return;
+    }
+
+    current_position_->update_play_state(*msg);
 }
 
 void AgentActionClient::field_dimensions_callback(

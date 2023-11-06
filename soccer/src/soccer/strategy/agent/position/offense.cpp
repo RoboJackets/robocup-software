@@ -8,7 +8,9 @@ Offense::Offense(int r_id) : Position(r_id) {
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
+    SPDLOG_INFO("MY ID: {} in offense derived task!\n", robot_id_);
     current_state_ = update_state();
+    SPDLOG_INFO("My current offense state is {}", current_state_);
     return state_to_task(intent);
 }
 
