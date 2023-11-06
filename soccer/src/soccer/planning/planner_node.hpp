@@ -15,12 +15,12 @@
 #include "node.hpp"
 #include "planner/path_planner.hpp"
 #include "planner/plan_request.hpp"
+#include "planner_for_robot.hpp"
 #include "planning/trajectory_collection.hpp"
 #include "planning_params.hpp"
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
-#include "planner_for_robot.hpp"
 
 namespace planning {
 

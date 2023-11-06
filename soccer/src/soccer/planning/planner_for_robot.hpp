@@ -3,6 +3,7 @@
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
+
 #include "global_state.hpp"
 
 namespace planning {
