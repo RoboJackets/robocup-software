@@ -254,8 +254,7 @@ void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& posi
     for (size_t i = 0; i < kNumShells; i++) {
         if (i != goalie_id_ && i == 1) {
             positions[i] = Positions::Runner;
-        }
-        else if (i != goalie_id_ && i != 1) {
+        } else if (i != goalie_id_ && i != 1) {
             // Non-kicking robots play defense
             positions[i] = Positions::Defense;
         }
