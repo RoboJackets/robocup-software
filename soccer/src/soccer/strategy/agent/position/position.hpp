@@ -67,7 +67,8 @@ public:
      * https://www.sandordargo.com/blog/2022/08/24/tmp-and-nvi
      */
 
-    virtual std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions);
+    virtual std::optional<RobotIntent> get_task(WorldState& world_state,
+                                                FieldDimensions& field_dimensions);
 
     // communication with AC
     void update_play_state(rj_msgs::msg::PlayState msg);

@@ -4,7 +4,8 @@ namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
-std::optional<RobotIntent> Position::get_task(WorldState& world_state, FieldDimensions& field_dimensions) {
+std::optional<RobotIntent> Position::get_task(WorldState& world_state,
+                                              FieldDimensions& field_dimensions) {
     // Point class variables to parameter references
     // TODO (Prabhanjan): Don't copy references into local vars
     field_dimensions_ = field_dimensions;

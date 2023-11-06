@@ -8,9 +8,9 @@ Offense::Offense(int r_id) : Position(r_id) {
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
-    //SPDLOG_INFO("MY ID: {} in offense derived task!\n", robot_id_);
+    // SPDLOG_INFO("MY ID: {} in offense derived task!\n", robot_id_);
     current_state_ = update_state();
-    //SPDLOG_INFO("My current offense state is {}", current_state_);
+    // SPDLOG_INFO("My current offense state is {}", current_state_);
     return state_to_task(intent);
 }
 
@@ -216,7 +216,8 @@ void Offense::send_scorer_request() {
     scorer_request.robot_id = robot_id_;
 
     // Calculate distance to ball
-    rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = last_world_state_->ball.position;
     double ball_distance = robot_position.dist_to(ball_position);
     scorer_request.ball_distance = ball_distance;
@@ -248,7 +249,8 @@ communication::ScorerResponse Offense::receive_scorer_request(
     scorer_response.robot_id = robot_id_;
 
     // Calculate distance to ball
-    rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = last_world_state_->ball.position;
     double ball_distance = robot_position.dist_to(ball_position);
     scorer_response.ball_distance = ball_distance;

@@ -47,7 +47,7 @@ AgentActionClient::AgentActionClient(int r_id)
             receive_communication_callback(request, response);
         });
 
-    //Default Positions with the Position class
+    // Default Positions with the Position class
     current_position_ = std::make_unique<RobotFactoryPosition>(robot_id_);
 
     // Create clients
@@ -135,7 +135,8 @@ void AgentActionClient::get_task() {
         // uses our custom struct overloads
         if (task != last_task_) {
             if (robot_id_ == 1) {
-                            SPDLOG_INFO("New task: {} Last task: {}", task.motion_command.name, last_task_.motion_command.name);
+                SPDLOG_INFO("New task: {} Last task: {}", task.motion_command.name,
+                            last_task_.motion_command.name);
             }
             last_task_ = task;
             send_new_goal();
@@ -167,18 +168,15 @@ void AgentActionClient::send_new_goal() {
     client_ptr_->async_send_goal(goal_msg, send_goal_options);
 }
 
-
 [[nodiscard]] WorldState* AgentActionClient::world_state() {
     // thread-safe getter for world_state
     auto lock = std::lock_guard(world_state_mutex_);
     return &last_world_state_;
 }
 
-
 // With the get_task function deleted, we need to initialize the new class once
 // in the initializer. This will call the class which will analyze the
 // situation based on the current tick.
-
 
 void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
@@ -194,7 +192,7 @@ void AgentActionClient::feedback_callback(
 
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
     if (current_position_ == nullptr) {
-    current_position_->set_time_left(time_left);
+        current_position_->set_time_left(time_left);
     }
 }
 
