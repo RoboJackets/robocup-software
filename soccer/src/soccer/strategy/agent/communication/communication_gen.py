@@ -23,7 +23,11 @@ def map_message_type_to_cpp_type(msg_type):
 
 def convert_individual_hpp(msg, path, msg_type):
     msgName = msg[:-4]  # Stripping .msg from the end
-    hpp = "#pragma once \n\n#include <mutex>\n#include <string>\n#include <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include <rj_convert/ros_convert.hpp>\n"
+    hpp = (
+        "#pragma once \n\n#include <mutex>\n#include <string>\n#include"
+        " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
+        " <rj_convert/ros_convert.hpp>\n"
+    )
     hpp += convert_msg_to_hpp_include(msg)
     hpp += "\n\n"
     hpp += "namespace strategy::communication {\n\n"
@@ -110,7 +114,10 @@ def convert_cpp(requests, responses, hpp_names):
         cpp += "}\n\n"
 
     cpp += "bool operator==(const AgentResponse& a, const AgentResponse& b) {\n"
-    cpp += "\treturn (a.associated_request == b.associated_request) && (a.response == b.response);\n"
+    cpp += (
+        "\treturn (a.associated_request == b.associated_request) && (a.response =="
+        " b.response);\n"
+    )
     cpp += "}\n\n"
 
     for request in requests:
@@ -161,7 +168,11 @@ def create_hpp_files(requests, requestPath, responses, responsePath):
 
 
 def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
-    hpp = "#pragma once\n\n#include <mutex>\n#include <string>\n#include <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include <rj_convert/ros_convert.hpp>\n\n"
+    hpp = (
+        "#pragma once\n\n#include <mutex>\n#include <string>\n#include"
+        " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
+        " <rj_convert/ros_convert.hpp>\n\n"
+    )
     hpp += '#include "rj_msgs/msg/agent_request.hpp"\n'
     hpp += '#include "rj_msgs/msg/agent_response.hpp"\n'
     hpp += '#include "rj_msgs/msg/agent_response_variant.hpp"\n'
@@ -190,7 +201,10 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp = hpp[:-2] + ">;\n\n"
 
     hpp += "/**\n"
-    hpp += "* @brief response message that is sent from the receiver of the request to the\n"
+    hpp += (
+        "* @brief response message that is sent from the receiver of the request to"
+        " the\n"
+    )
     hpp += "* sender of the request with an accompanying response.\n"
     hpp += "*\n"
     hpp += (
@@ -207,10 +221,16 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "bool operator==(const AgentResponse& a, const AgentResponse& b);\n\n"
 
     hpp += "/**\n"
-    hpp += "* @brief Wraps a communication request by giving the intended destination of the\n"
+    hpp += (
+        "* @brief Wraps a communication request by giving the intended destination of"
+        " the\n"
+    )
     hpp += "* communication.\n"
     hpp += "*\n"
-    hpp += "* positions will create this and send it to their agent action client which will\n"
+    hpp += (
+        "* positions will create this and send it to their agent action client which"
+        " will\n"
+    )
     hpp += "* send out the request according to their specifications.\n"
     hpp += "*\n"
     hpp += "*/\n"
@@ -223,11 +243,20 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "};\n\n"
 
     hpp += "/**\n"
-    hpp += "* @brief Wraps a communication response to ensure symmetry for agent-to-agent\n"
+    hpp += (
+        "* @brief Wraps a communication response to ensure symmetry for"
+        " agent-to-agent\n"
+    )
     hpp += "* communication.\n"
     hpp += "*\n"
-    hpp += "* this wrapper is placed on agent responses to promote symmetry across the request\n"
-    hpp += "* response system to make understanding easier.  All this struct does is make explicit\n"
+    hpp += (
+        "* this wrapper is placed on agent responses to promote symmetry across the"
+        " request\n"
+    )
+    hpp += (
+        "* response system to make understanding easier.  All this struct does is make"
+        " explicit\n"
+    )
     hpp += "* that this response is going from the position to the agent.\n"
     hpp += "*\n"
     hpp += "*/\n"
@@ -241,9 +270,18 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     )
     hpp += "* communication.\n"
     hpp += "*\n"
-    hpp += "* Like the PosAgentResponseWrapper, this struct does nothing other than make the request\n"
-    hpp += "* response system more symmetrical and (hopefully) more easy to understand.  All this struct\n"
-    hpp += "* does is make it explicit that this request is being passed from the agent to the agent to\n"
+    hpp += (
+        "* Like the PosAgentResponseWrapper, this struct does nothing other than make"
+        " the request\n"
+    )
+    hpp += (
+        "* response system more symmetrical and (hopefully) more easy to understand. "
+        " All this struct\n"
+    )
+    hpp += (
+        "* does is make it explicit that this request is being passed from the agent to"
+        " the agent to\n"
+    )
     hpp += "* the position.\n"
     hpp += "*\n"
     hpp += "*/\n"
@@ -252,11 +290,23 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "};\n\n"
 
     hpp += "/**\n"
-    hpp += "* @brief Wraps a communication response by giving the robot the communication is from.\n"
+    hpp += (
+        "* @brief Wraps a communication response by giving the robot the communication"
+        " is from.\n"
+    )
     hpp += "*\n"
-    hpp += "* the AgentPosResponseWrapper is the actual thing being passed from the agent to the position\n"
-    hpp += "* once either the timeout period was reached or enough responses were received.  Ideally, the\n"
-    hpp += "* contents of this wrapper should contain all of the non-message specific fields that a position\n"
+    hpp += (
+        "* the AgentPosResponseWrapper is the actual thing being passed from the agent"
+        " to the position\n"
+    )
+    hpp += (
+        "* once either the timeout period was reached or enough responses were"
+        " received.  Ideally, the\n"
+    )
+    hpp += (
+        "* contents of this wrapper should contain all of the non-message specific"
+        " fields that a position\n"
+    )
     hpp += "* will need to handle a response.\n"
     hpp += "*\n"
     hpp += "*/\n"
@@ -273,8 +323,14 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
 
     hpp += "namespace rj_convert {\n\n"
     hpp += "template <>\n"
-    hpp += "struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {\n"
-    hpp += "\tstatic rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {\n"
+    hpp += (
+        "struct RosConverter<strategy::communication::AgentRequest,"
+        " rj_msgs::msg::AgentRequest> {\n"
+    )
+    hpp += (
+        "\tstatic rj_msgs::msg::AgentRequest to_ros(const"
+        " strategy::communication::AgentRequest& from) {\n"
+    )
     hpp += "\t\trj_msgs::msg::AgentRequest result;\n"
     hpp += "\t\t"
     for request in requests_msgs:
@@ -300,7 +356,10 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\treturn result;\n"
     hpp += "\t}\n\n"
 
-    hpp += "\tstatic strategy::communication::AgentRequest from_ros(const rj_msgs::msg::AgentRequest& from) {\n"
+    hpp += (
+        "\tstatic strategy::communication::AgentRequest from_ros(const"
+        " rj_msgs::msg::AgentRequest& from) {\n"
+    )
     hpp += "\t\tstrategy::communication::AgentRequest result;\n\t\t"
     for request in requests_msgs:
         msgName = convert_msg_to_hpp_include(request)[22:-5]
@@ -313,11 +372,20 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\treturn result;\n"
     hpp += "\t}\n\n"
     hpp += "};\n\n"
-    hpp += "ASSOCIATE_CPP_ROS(strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest);\n\n"
+    hpp += (
+        "ASSOCIATE_CPP_ROS(strategy::communication::AgentRequest,"
+        " rj_msgs::msg::AgentRequest);\n\n"
+    )
 
     hpp += "template <>\n"
-    hpp += "struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {\n"
-    hpp += "\tstatic rj_msgs::msg::AgentResponse to_ros(const strategy::communication::AgentResponse& from) {\n"
+    hpp += (
+        "struct RosConverter<strategy::communication::AgentResponse,"
+        " rj_msgs::msg::AgentResponse> {\n"
+    )
+    hpp += (
+        "\tstatic rj_msgs::msg::AgentResponse to_ros(const"
+        " strategy::communication::AgentResponse& from) {\n"
+    )
     hpp += "\t\trj_msgs::msg::AgentResponse result;\n"
     hpp += (
         "\t\tresult.associated_request = convert_to_ros(from.associated_request);\n\t\t"
@@ -345,9 +413,15 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t\treturn result;\n"
     hpp += "\t}\n\n"
 
-    hpp += "\tstatic strategy::communication::AgentResponse from_ros(const rj_msgs::msg::AgentResponse& from) {\n"
+    hpp += (
+        "\tstatic strategy::communication::AgentResponse from_ros(const"
+        " rj_msgs::msg::AgentResponse& from) {\n"
+    )
     hpp += "\t\tstrategy::communication::AgentResponse result;\n"
-    hpp += "\t\tresult.associated_request = convert_from_ros(from.associated_request);\n\t\t"
+    hpp += (
+        "\t\tresult.associated_request ="
+        " convert_from_ros(from.associated_request);\n\t\t"
+    )
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
         hpp += "if (!from.response." + msgName + ".empty()) {\n"
@@ -364,7 +438,10 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "\t}\n\n"
     hpp += "};\n\n"
 
-    hpp += "ASSOCIATE_CPP_ROS(strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse);\n\n"
+    hpp += (
+        "ASSOCIATE_CPP_ROS(strategy::communication::AgentResponse,"
+        " rj_msgs::msg::AgentResponse);\n\n"
+    )
     hpp += "}"
     return hpp
 
