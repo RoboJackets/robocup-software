@@ -42,6 +42,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner/settle_path_planner.cpp
     planning/planner/goalie_idle_path_planner.cpp
     planning/planner_node.cpp
+    planning/planner_for_robot.cpp
     planning/trajectory.cpp
     planning/trajectory_utils.cpp
     planning/trajectory_collection.cpp
