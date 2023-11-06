@@ -65,6 +65,10 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
     }
 
+    //Adding ball as a static obstacle (because dynamic obstacles are not working)
+    double ball_vel = in.world_state->ball.velocity.linear().mag();
+    out_static->add(std::make_shared<rj_geometry::Circle>(in.world_state->ball.position, kBallRadius * (1.0 + ball_vel) + in.min_dist_from_ball));
+
     // Finally, add the ball as a dynamic obstacle.
     // (This is for when the other team is trying to do ball placement, so we
     // don't interfere with them.)
