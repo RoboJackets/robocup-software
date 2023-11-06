@@ -1,6 +1,8 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 
