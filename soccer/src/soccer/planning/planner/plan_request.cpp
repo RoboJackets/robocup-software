@@ -65,9 +65,10 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
     }
 
-    //Adding ball as a static obstacle (because dynamic obstacles are not working)
-    double ball_vel = in.world_state->ball.velocity.linear().mag();
-    out_static->add(std::make_shared<rj_geometry::Circle>(in.world_state->ball.position, kBallRadius * (1.0 + ball_vel) + in.min_dist_from_ball));
+    // Adding ball as a static obstacle (because dynamic obstacles are not working)
+    double ball_vel = in.world_state->ball.velocity.mag();
+    out_static->add(std::make_shared<rj_geometry::Circle>(
+        in.world_state->ball.position, kBallRadius * (1.0 + ball_vel) + in.min_dist_from_ball));
 
     // Finally, add the ball as a dynamic obstacle.
     // (This is for when the other team is trying to do ball placement, so we
@@ -75,7 +76,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
         // Where should we store the ball trajectory?
         *out_ball_trajectory = in.world_state->ball.make_trajectory();
-        double radius = kBallRadius + in.min_dist_from_ball;
+        double radius = kBallRadius * (1.0 + ball_vel) + in.min_dist_from_ball;
 
         out_dynamic->emplace_back(radius, out_ball_trajectory);
 
