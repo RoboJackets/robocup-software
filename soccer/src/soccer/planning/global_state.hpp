@@ -4,8 +4,6 @@
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 
-#include "planning/planner/escape_obstacles_path_planner.hpp"
-
 namespace planning {
 
 /**
