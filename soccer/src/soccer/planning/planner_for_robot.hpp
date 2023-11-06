@@ -3,9 +3,9 @@
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
-#include "planning/planner/escape_obstacles_path_planner.hpp"
 
 #include "global_state.hpp"
+#include "planning/planner/escape_obstacles_path_planner.hpp"
 
 namespace planning {
 
