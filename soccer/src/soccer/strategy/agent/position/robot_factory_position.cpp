@@ -14,27 +14,25 @@ if (robot_id_ == 0) {
 
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& ws, FieldDimensions& fd) {
-    return current_position_->get_task(ws, fd);
+std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state, FieldDimensions& field_dimensions) {
+    // This is where the current_position can be reassigned based on the
+    // PlayState
+    return current_position_->get_task(world_state, field_dimensions);
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(RobotIntent intent) {
-    // This is where the current_position can be reassigned based on the
-    // PlayState
-
-
-    SPDLOG_ERROR("This should not be called");
+    SPDLOG_ERROR("RobotFactory derived_get_task() should not be called!");
     return std::nullopt;
+}
 
-    // no longer called
-
-    // return current_position_->get_task(*last_world_state_, field_dimensions_);
+std::optional<communication::PosAgentRequestWrapper> RobotFactoryPosition::send_communication_request() {
+    // Call to super
+    return current_position_->send_communication_request();
 }
 
 void RobotFactoryPosition::receive_communication_response(communication::AgentPosResponseWrapper response) {
     // Call to super
     current_position_->receive_communication_response(response);
-
 }
 
 communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communication_request(

@@ -128,6 +128,8 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
     // Call to super
     Position::receive_communication_response(response);
 
+    SPDLOG_INFO("ID: {} is calling comm response!\n");
+
     // Handle join wall response
     if (const communication::JoinWallRequest* join_request =
             std::get_if<communication::JoinWallRequest>(&response.associated_request)) {
@@ -145,6 +147,8 @@ communication::PosAgentResponseWrapper Defense::receive_communication_request(
     // Call to super
     communication::PosAgentResponseWrapper response =
         Position::receive_communication_request(request);
+
+    SPDLOG_INFO("ID: {} is calling comm request!\n");
 
     // Handle join and leave wall request
     if (const communication::JoinWallRequest* join_request =

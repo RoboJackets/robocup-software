@@ -40,8 +40,11 @@ public:
     std::optional<RobotIntent> get_task(WorldState&, FieldDimensions&) override;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
+
+    std::optional<communication::PosAgentRequestWrapper> send_communication_request() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
@@ -56,7 +59,6 @@ private:
     std::unique_ptr<Position> current_position_;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-
 };
 
 }  // namespace strategy

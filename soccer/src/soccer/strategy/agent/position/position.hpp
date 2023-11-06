@@ -102,7 +102,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    std::optional<communication::PosAgentRequestWrapper> send_communication_request();
+    virtual std::optional<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
