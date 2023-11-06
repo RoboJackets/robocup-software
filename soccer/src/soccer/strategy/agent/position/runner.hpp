@@ -7,6 +7,7 @@
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
+#include <optional>
 
 #include "position.hpp"
 #include "rclcpp/rclcpp.hpp"

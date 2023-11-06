@@ -1,16 +1,17 @@
 #include "runner.hpp"
+#include <optional>
 
 namespace strategy {
 
     Runner::Runner(int r_id) : Position(r_id) { position_name_ = "Runner"; }
 
-    std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
+    std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) override {
         currentState_ = update_state();
         return state_to_task(intent);
     }
 
     Runner::State Runner::update_state() {
-        State next_state = currentState_;
+        auto next_state = currentState_;
         switch (currentState_) {
             case BOTTOM:
                 if(check_is_done()){

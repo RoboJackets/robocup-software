@@ -296,7 +296,7 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
                     positions[robot_id] = Positions::Goalie;
                     break;
                 case 1:
-                    positions[robot_id] = Positions::Runner;
+                    positions[robot_id] = Positions::Offense;
                     break;
                 case 2:
                     positions[robot_id] = Positions::Defense;
@@ -311,6 +311,8 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
             assign_num++;
         }
     }
+
+    positions[1] = Positions::Runner;
 
     // END COMP 2023 PATCH CODE
 

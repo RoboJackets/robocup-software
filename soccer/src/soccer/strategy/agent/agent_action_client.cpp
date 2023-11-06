@@ -169,22 +169,25 @@ void AgentActionClient::get_task() {
 
 void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
     std::unique_ptr<Position> next_position_;
+    // Goalie, Defense, Offense, PenaltyPlayer, GoalKicker, Runner
     switch (msg->client_positions[robot_id_]) {
         case 0:
             next_position_ = std::make_unique<Goalie>(robot_id_);
             break;
         case 1:
-            next_position_ = std::make_unique<Runner>(robot_id_);
+            next_position_ = std::make_unique<Defense>(robot_id_);
             break;
         case 2:
             next_position_ = std::make_unique<Offense>(robot_id_);
             break;
         case 3:
-            next_position_ = std::make_unique<Defense>(robot_id_);
+            next_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
             break;
         case 4:
             next_position_ = std::make_unique<GoalKicker>(robot_id_);
             break;
+        case 5:
+            next_position_ = std::make_unique<Runner>(robot_id_);
     }
 
     if (current_position_ == nullptr) {
