@@ -284,7 +284,6 @@ void AgentActionClient::receive_communication_callback(
     const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
     const std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
     if (current_position_ == nullptr) {
-        SPDLOG_INFO("I am getting stuck here!\n");
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
             rj_convert::convert_from_ros(request->agent_request);
@@ -294,7 +293,6 @@ void AgentActionClient::receive_communication_callback(
         agent_response.response = acknowledge;
         response->agent_response = rj_convert::convert_to_ros(agent_response);
     } else {
-        SPDLOG_INFO("I am NOT getting stuck here!\n");
         // Convert agent request into AgentToPosCommRequest
         communication::AgentPosRequestWrapper agent_request;
         communication::AgentRequest received_request =
