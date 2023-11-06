@@ -5,6 +5,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_constants/topic_names.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
