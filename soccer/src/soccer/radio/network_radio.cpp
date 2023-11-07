@@ -46,7 +46,13 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     auto* body = reinterpret_cast<rtp::ControlMessage*>(&forward_packet_buffer[0]);
 
-    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role);
+    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, _blue_team);
+
+    if (robot_id == 0) {
+        SPDLOG_INFO("Team: {}, Robot id: {}, shoot_mode: {}, trigger_mode: {}, body_x: {}, body_y: {}, body_w: {}, dribbler_speed: {}, kick_strength: {}, role: {}",
+                     _blue_team, robot_id, body->shoot_mode, body->trigger_mode, body->body_x, body->body_y, body->body_w, body->dribbler_speed, body->kick_strength, body->role);
+        SPDLOG_INFO("[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]", forward_packet_buffer[0], forward_packet_buffer[1], forward_packet_buffer[2], forward_packet_buffer[3], forward_packet_buffer[4], forward_packet_buffer[5], forward_packet_buffer[6], forward_packet_buffer[7], forward_packet_buffer[8], forward_packet_buffer[9]);
+    }
 
     socket.async_send_to(
         boost::asio::buffer(forward_packet_buffer), base_station_endpoint,
@@ -91,7 +97,9 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
     start_receive();
 }
 
-void NetworkRadio::switch_team(bool /*blue_team*/) {}
+void NetworkRadio::switch_team(bool blue_team) {
+    _blue_team = blue_team;
+}
 
 void NetworkRadio::publish_alive_robots() {
     std::vector<u_int8_t> alive_robots = {};

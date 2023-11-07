@@ -68,6 +68,9 @@ protected:
      *
      */
     void publish_alive_robots();
+
+private:
+    bool _blue_team = false;
 };
 
 }  // namespace radio

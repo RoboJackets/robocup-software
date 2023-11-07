@@ -162,7 +162,8 @@ namespace ConvertTx {
 
 // NOLINT(cppcoreguidelines-pro-type-union-access)
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            rtp::ControlMessage* rtp_message) {
+            rtp::ControlMessage* rtp_message, bool blue_team) {
+    rtp_message->team = blue_team;
     rtp_message->robot_id = shell;
 
     rtp_message->body_x =
@@ -266,9 +267,9 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::ControlMessage* rtp,
-                strategy::Positions role) {
+                strategy::Positions role, bool blue_team) {
+    rtp->team = blue_team;
     rtp->robot_id = shell;
-
     rtp->body_x =
         static_cast<int16_t>(motion.velocity_x_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp->body_y =
