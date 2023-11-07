@@ -1,14 +1,17 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
+#include <rj_convert/testing/ros_convert_testing.hpp>
 
 #include <rj_constants/topic_names.hpp>
-#include <rj_geometry/point.hpp>
-#include <rj_convert/testing/ros_convert_testing.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/game_settings.hpp>
+#include "world_state.hpp"
+#include "game_state.hpp"
+#include "game_settings.hpp"
 
 #include "game_settings.hpp"
 #include "game_state.hpp"
