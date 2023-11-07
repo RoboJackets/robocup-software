@@ -1,22 +1,23 @@
 #pragma once
 
-#include <optional>
 #include <memory>
+#include <optional>
 #include <unordered_map>
 
 #include <rclcpp/rclcpp.hpp>
+
+#include <rj_common/time.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
-#include <rj_common/time.hpp>
 
 #include "global_state.hpp"
-#include "robot_intent.hpp"
+#include "planning/planner/escape_obstacles_path_planner.hpp"
+#include "planning/planner/path_planner.hpp"
+#include "planning/planner/plan_request.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/trajectory_collection.hpp"
-#include "planning/planner/plan_request.hpp"
-#include "planning/planner/path_planner.hpp"
-#include "planning/planner/escape_obstacles_path_planner.hpp"
+#include "robot_intent.hpp"
 
 namespace planning {
 
