@@ -17,6 +17,7 @@
 #include <unistd.h>
 
 #include "world_state.hpp"
+#include "game_state.hpp"
 
 namespace referee {
 

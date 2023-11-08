@@ -10,7 +10,6 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/global_override.hpp>
 
 #include "rclcpp/rclcpp.hpp"
@@ -18,6 +17,7 @@
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
+#include "game_state.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
@@ -193,7 +193,7 @@ public:
     virtual void derived_acknowledge_ball_in_transit(){};
 
     /**
-     * @brief When a robot disconnects on field (or is reassigned by the coach) they should call their
+     * @brief When a robot disconnects on field they should call their
      * implementation of die to inform necessary robots that they died.
      *
      */
@@ -215,7 +215,6 @@ protected:
     bool is_done_{};
     bool goal_canceled_{};
 
-    // fields for coach_state
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
     bool our_possession_{};

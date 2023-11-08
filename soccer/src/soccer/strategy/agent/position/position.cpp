@@ -1,4 +1,5 @@
 #include "position.hpp"
+#include "game_state.hpp"
 
 namespace strategy {
 

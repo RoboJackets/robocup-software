@@ -69,7 +69,6 @@ static inline std::string trajectory_topic(int robot_id) {
 }  // namespace planning::topics
 
 namespace strategy::topics {
-constexpr auto kCoachStateTopic{"/strategy/coach_state"};
 constexpr auto kPositionsTopic{"/strategy/positions"};
 }  // namespace strategy::topics
 

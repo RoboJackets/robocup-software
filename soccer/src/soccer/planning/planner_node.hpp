@@ -11,7 +11,6 @@
 #include <rj_common/time.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
@@ -28,6 +27,7 @@
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
+#include "game_state.hpp"
 
 namespace planning {
 
@@ -68,11 +68,6 @@ public:
             [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
                 last_world_state_ = rj_convert::convert_from_ros(*world_state);
             });
-        coach_state_sub_ = node->create_subscription<rj_msgs::msg::CoachState>(
-            "/strategy/coach_state", rclcpp::QoS(1),
-            [this](rj_msgs::msg::CoachState::SharedPtr coach_state) {  // NOLINT
-                last_coach_state_ = *coach_state;
-            });
         field_dimensions_sub_ = node->create_subscription<rj_msgs::msg::FieldDimensions>(
             ::config_server::topics::kFieldDimensionsTopic, 10,
             [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
@@ -100,9 +95,6 @@ public:
     [[nodiscard]] const WorldState* world_state() const {
         return &last_world_state_;
     }
-    [[nodiscard]] const rj_msgs::msg::CoachState coach_state() const {
-        return last_coach_state_;
-    }
 
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
@@ -111,7 +103,6 @@ private:
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_sub_;
     rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 
     PlayState last_play_state_ = PlayState::halt();
@@ -123,7 +114,6 @@ private:
     rj_geometry::ShapeSet last_global_obstacles_;
     rj_geometry::ShapeSet last_def_area_obstacles_;
     WorldState last_world_state_;
-    rj_msgs::msg::CoachState last_coach_state_;
 
     rj_geometry::ShapeSet create_defense_area_obstacles() {
         // need field dimensions and to be initialized for this to

@@ -11,6 +11,8 @@
 
 #include <rc-fshare/pid.hpp>
 
+#include "game_state.hpp"
+
 namespace control {
 
 DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);

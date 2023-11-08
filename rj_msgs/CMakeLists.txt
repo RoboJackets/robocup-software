@@ -27,7 +27,6 @@ rosidl_generate_interfaces(
   msg/AliveRobots.msg
   msg/BallState.msg
   msg/BallPlacement.msg
-  msg/CoachState.msg
   msg/DetectionBall.msg
   msg/DetectionFrame.msg
   msg/DetectionRobot.msg
@@ -54,7 +53,6 @@ rosidl_generate_interfaces(
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
-  msg/PositionAssignment.msg
 
   # Communication
   msg/AgentRequest.msg
