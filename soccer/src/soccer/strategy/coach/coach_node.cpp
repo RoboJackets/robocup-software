@@ -8,9 +8,6 @@ CoachNode::CoachNode(const rclcpp::NodeOptions& options) : Node("coach_node", op
         this->create_publisher<rj_msgs::msg::CoachState>(topics::kCoachStateTopic, 10);
     coach_action_callback_timer_ = this->create_wall_timer(100ms, [this]() { coach_ticker(); });
 
-    def_area_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
-        ::planning::topics::kDefAreaObstaclesTopic, 10);
-
     global_obstacles_pub_ = this->create_publisher<rj_geometry_msgs::msg::ShapeSet>(
         ::planning::topics::kGlobalObstaclesTopic, 10);
 
@@ -365,42 +362,10 @@ void CoachNode::goalie_callback(const rj_msgs::msg::Goalie::SharedPtr& msg) {
 
 void CoachNode::publish_static_obstacles() {
     if (have_field_dimensions_) {
-        rj_geometry::ShapeSet defense_area_obstacles = create_defense_area_obstacles();
         rj_geometry::ShapeSet goal_wall_obstacles = create_goal_wall_obstacles();
 
-        def_area_obstacles_pub_->publish(rj_convert::convert_to_ros(defense_area_obstacles));
         global_obstacles_pub_->publish(rj_convert::convert_to_ros(goal_wall_obstacles));
     }
-}
-
-rj_geometry::ShapeSet CoachNode::create_defense_area_obstacles() {
-    // Create defense areas as rectangular area obstacles
-    auto our_defense_area{std::make_shared<rj_geometry::Rect>(
-        std::move(current_field_dimensions_.our_defense_area()))};
-
-    // Sometimes there is a greater distance we need to keep:
-    // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
-    // TODO(sid-parikh): update this conditional. gameplay_node used different set of checks
-    // than rules imply
-    bool is_extra_dist_necessary = (current_play_state_.state == PlayState::State::Stop ||
-                                    current_play_state_.restart == PlayState::Restart::Free);
-
-    // Also add a slack around the box
-    float slack_around_box{0.3f};
-
-    auto their_defense_area =
-        is_extra_dist_necessary
-            ? std::make_shared<rj_geometry::Rect>(
-                  std::move(current_field_dimensions_.their_defense_area_padded(slack_around_box)))
-            : std::make_shared<rj_geometry::Rect>(
-                  std::move(current_field_dimensions_.their_defense_area()));
-
-    // Combine both defense areas into ShapeSet
-    rj_geometry::ShapeSet def_area_obstacles{};
-    def_area_obstacles.add(our_defense_area);
-    def_area_obstacles.add(their_defense_area);
-
-    return def_area_obstacles;
 }
 
 rj_geometry::ShapeSet CoachNode::create_goal_wall_obstacles() {

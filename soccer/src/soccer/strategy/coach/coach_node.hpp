@@ -59,11 +59,6 @@ private:
     rclcpp::Publisher<rj_msgs::msg::CoachState>::SharedPtr coach_state_pub_;
 
     /*
-     * Used to publish the defense areas as shapes for the planner node to recognize as obstacles
-     * for non-goalies.
-     */
-    rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr def_area_obstacles_pub_;
-    /*
      * Used to add the walls of the goals to the list of global obstacles.
      */
     rclcpp::Publisher<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_pub_;
@@ -136,11 +131,6 @@ private:
      */
     void publish_static_obstacles();
 
-    /*
-     * Calculates the defense area as a set of obstacles. The defense area, per the rules, is the
-     * box in front of each goal where only that team's goalie can be in and touch the ball.
-     */
-    rj_geometry::ShapeSet create_defense_area_obstacles();
 
     /*
      * Calculates the physical (3D) walls of the each goal as a set of obstacles, so robots don't
