@@ -29,9 +29,9 @@
 namespace strategy {
 
 /*
-* Based on the Factory Design pattern.
+* A Position that exclusively delegates to another Position.
+* Used to let agents decide which position is best to play based on situation.
 */
-
 class RobotFactoryPosition : public Position {
 public:
     RobotFactoryPosition(int r_id);

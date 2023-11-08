@@ -12,7 +12,7 @@
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/detail/field_dimensions__struct.hpp>
+#include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
