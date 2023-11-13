@@ -97,7 +97,7 @@ jobs:
             git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | python3 util/clang-format-diff.py -binary clang-format-10 -i -p1
 
             # for Python files
-            git diff -U0 --no-color ${{ github.base_ref }} ${{ github.head_ref }} | black . --preview
+            # git diff -U0 --no-color ${{ github.base_ref }} ${{ github.# head_ref }} | black . --preview
 
             if ! git diff-index --quiet HEAD; then
               echo "::set-output name=changed::true"
