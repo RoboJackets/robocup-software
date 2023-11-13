@@ -61,6 +61,7 @@ private:
     std::array<RJ::Time, kNumShells> last_updates_ = {};
 
     ::params::LocalROS2ParamProvider param_provider_;
+    std::array<rj_msgs::msg::MotionSetpoint::SharedPtr, kNumShells> motions_;
 };
 
 }  // namespace radio

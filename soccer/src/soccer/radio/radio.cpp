@@ -37,11 +37,15 @@ Radio::Radio()
             control::topics::motion_setpoint_topic(i), rclcpp::QoS(1),
             [this, i](rj_msgs::msg::MotionSetpoint::SharedPtr motion) {  // NOLINT
                 last_updates_.at(i) = RJ::now();
+                motions_[i] = motion;
+                if (i == 0) {
+                    SPDLOG_INFO("\033[92mRobot 0 Received Normal Communication\033[0m");
+                }
                 send(i, *motion, manipulators_cached_.at(i), positions_.at(i));
             });
     }
 
-    tick_timer_ = create_wall_timer(std::chrono::milliseconds(16), [this]() { tick(); });
+    tick_timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { tick(); });
 }
 
 void Radio::publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {
@@ -69,6 +73,9 @@ void Radio::tick() {
                                          .kick_speed(0)
                                          .dribbler_speed(0);
             last_updates_.at(i) = RJ::now();
+            if (i == 0) {
+                SPDLOG_INFO("\033[92mRobot 0 Timeout Reached\033[0m");
+            }
             send(i, motion, manipulator, positions_.at(i));
         }
     }

@@ -62,6 +62,8 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
 
             // TODO(Kyle): Handle the joystick-controlled case here. In the long run we want to
             // convert this to an action. Should we do that now?
+            // Note (Nate): The Motion Control Node is not spawned when manual control is active
+            // Not sure if this will cause problems, so I guess we'll see
             bool is_joystick_controlled = false;
             MotionSetpoint setpoint;
             run(state, trajectory_, play_state_, is_joystick_controlled, &setpoint);
