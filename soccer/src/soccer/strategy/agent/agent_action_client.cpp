@@ -87,7 +87,9 @@ void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::Share
         return;
     }
 
-    current_position_->update_play_state(*msg);
+    PlayState play_state = rj_convert::convert_from_ros(*msg);
+    play_state_ = play_state;
+    current_position_->update_play_state(play_state);
 }
 
 void AgentActionClient::field_dimensions_callback(
@@ -98,6 +100,7 @@ void AgentActionClient::field_dimensions_callback(
 
     FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
     field_dimensions_ = field_dimensions;
+    current_position_->update_field_dimensions(field_dimensions);
 }
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {

@@ -69,7 +69,7 @@ public:
     virtual std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions);
 
     // communication with AC
-    void update_play_state(rj_msgs::msg::PlayState msg);
+    void update_play_state(PlayState play_state);
     void update_field_dimensions(FieldDimensions field_dimensions);
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
@@ -217,9 +217,8 @@ protected:
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
     bool our_possession_{};
-    rj_msgs::msg::GlobalOverride global_override_{};
-
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
+    PlayState current_play_state_ = PlayState::halt();
 
     /*
      * @brief assert world_state is valid before using it in get_task().
