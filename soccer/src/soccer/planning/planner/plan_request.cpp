@@ -67,10 +67,18 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
-    double radius = kBallRadius * (1.0 + ball.velocity.mag()) + in.min_dist_from_ball;
     if (in.min_dist_from_ball > 0) {
+        double radius = kBallRadius + (1.0 + in.world_state->ball.velocity.mag()) + in.min_dist_from_ball;
         out_static->add(
             std::make_shared<rj_geometry::Circle>(in.world_state->ball.position, radius));
+
+        // Draw ball obstacle in simulator
+        if (in.debug_drawer != nullptr) {
+            QColor draw_color = Qt::red;
+            in.debug_drawer->draw_circle(
+                rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
+                draw_color);
+        }
     }
 
     // Finally, add the ball as a dynamic obstacle.
@@ -80,13 +88,6 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         // Where should we store the ball trajectory?
         *out_ball_trajectory = in.world_state->ball.make_trajectory();
         out_dynamic->emplace_back(radius, out_ball_trajectory);
-
-        if (in.debug_drawer != nullptr) {
-            QColor draw_color = Qt::red;
-            in.debug_drawer->draw_circle(
-                rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
-                draw_color);
-        }
     }
 }
 
