@@ -173,12 +173,10 @@ def build_game_info(
         state,
         restart,
         our_restart,
-        np.array(
-            [
-                play_state_msg.placement_point.x,
-                play_state_msg.placement_point.y,
-            ]
-        ),
+        np.array([
+            play_state_msg.placement_point.x,
+            play_state_msg.placement_point.y,
+        ]),
     )
 
     return game_info
