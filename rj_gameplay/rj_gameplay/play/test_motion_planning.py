@@ -94,9 +94,9 @@ class AllBots(stp.play.Play):
         self._offset = 2.0
 
     def all_moves_done(self, world_state):
-        return self._move_skills and all(
-            [move_skill.is_done(world_state) for move_skill in self._move_skills]
-        )
+        return self._move_skills and all([
+            move_skill.is_done(world_state) for move_skill in self._move_skills
+        ])
 
     def fill_move_skills(self, world_state, st_pt, end_pt):
         self._move_skills = []
@@ -129,18 +129,14 @@ class AllBots(stp.play.Play):
 
         elif self._state == AllBotsState.INIT_FAR:
             # evenly space pts along their goal side
-            st_pt = np.array(
-                [
-                    world_state.field.width_m / -2,
-                    world_state.field.length_m - self._offset,
-                ]
-            )
-            end_pt = np.array(
-                [
-                    world_state.field.width_m / 2,
-                    world_state.field.length_m - self._offset,
-                ]
-            )
+            st_pt = np.array([
+                world_state.field.width_m / -2,
+                world_state.field.length_m - self._offset,
+            ])
+            end_pt = np.array([
+                world_state.field.width_m / 2,
+                world_state.field.length_m - self._offset,
+            ])
             self.fill_move_skills(world_state, st_pt, end_pt)
 
             self._state = AllBotsState.FAR

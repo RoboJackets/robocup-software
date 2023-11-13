@@ -76,4 +76,4 @@ GlobalState::GlobalState(rclcpp::Node* node) {
     return last_coach_state_;
 }
 
-} // namespace planning
+}  // namespace planning
