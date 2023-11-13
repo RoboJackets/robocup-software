@@ -8,6 +8,7 @@
 #include <rj_utils/logging.hpp>
 
 #include "planning/instant.hpp"
+#include "game_state.hpp"
 
 namespace control {
 

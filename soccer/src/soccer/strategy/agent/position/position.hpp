@@ -10,14 +10,13 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/global_override.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
+#include "game_state.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
@@ -71,7 +70,7 @@ public:
                                                 FieldDimensions& field_dimensions);
 
     // communication with AC
-    void update_play_state(rj_msgs::msg::PlayState msg);
+    void update_play_state(PlayState play_state);
     void update_field_dimensions(FieldDimensions field_dimensions);
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
@@ -194,7 +193,7 @@ public:
     virtual void derived_acknowledge_ball_in_transit(){};
 
     /**
-     * @brief When a robot disconnects on field (or is reassigned by the coach) they should call their
+     * @brief When a robot disconnects on field they should call their
      * implementation of die to inform necessary robots that they died.
      *
      */
@@ -216,14 +215,11 @@ protected:
     bool is_done_{};
     bool goal_canceled_{};
 
-    // fields for coach_state
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
     bool our_possession_{};
-    rj_msgs::msg::GlobalOverride global_override_{};
-    rj_msgs::msg::PlayState current_play_state_;
-
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
+    PlayState current_play_state_ = PlayState::halt();
 
     /*
      * @brief assert world_state is valid before using it in get_task().

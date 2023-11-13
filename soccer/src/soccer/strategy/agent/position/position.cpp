@@ -1,4 +1,5 @@
 #include "position.hpp"
+#include "game_state.hpp"
 
 namespace strategy {
 
@@ -47,7 +48,9 @@ bool Position::check_goal_canceled() {
     return false;
 }
 
-void Position::update_play_state(rj_msgs::msg::PlayState msg) { current_play_state_ = msg; }
+void Position::update_play_state(PlayState play_state) {
+    current_play_state_ = std::move(play_state);
+}
 
 void Position::update_field_dimensions(FieldDimensions field_dims) {
     field_dimensions_ = std::move(field_dims);
