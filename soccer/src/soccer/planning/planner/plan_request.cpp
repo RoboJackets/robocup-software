@@ -67,8 +67,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
-    double ball_vel_scaled = in.world_state->ball.velocity.mag() * .1;
-    double radius = kBallRadius + in.min_dist_from_ball * (1.0 + ball_vel_scaled);
+    double radius = kBallRadius * (1.0 + ball.velocity.mag()) + in.min_dist_from_ball;
     if (in.min_dist_from_ball > 0) {
         out_static->add(
             std::make_shared<rj_geometry::Circle>(in.world_state->ball.position, radius));
