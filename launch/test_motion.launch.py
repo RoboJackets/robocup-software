@@ -70,15 +70,13 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
-    return LaunchDescription(
-        [
-            grsim,
-            stdout_linebuf_envvar,
-            config_server,
-            radio,
-            control,
-            vision_receiver,
-            vision_filter,
-            ref_receiver,
-        ]
-    )
+    return LaunchDescription([
+        grsim,
+        stdout_linebuf_envvar,
+        config_server,
+        radio,
+        control,
+        vision_receiver,
+        vision_filter,
+        ref_receiver,
+    ])
