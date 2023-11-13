@@ -10,7 +10,6 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/global_override.hpp>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -219,7 +218,6 @@ protected:
     // (if so match world_state below)
     bool our_possession_{};
     rj_msgs::msg::GlobalOverride global_override_{};
-    rj_msgs::msg::PlayState current_play_state_;
 
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
 

@@ -263,20 +263,16 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             break;
         case PlayState::State::Playing:
         default:
-            // Unbounded speed. Setting to -1 or 0 crashes planner, so use large
-            // number instead.
 
             min_dist_from_ball = 0;
+            // Unbounded speed. Setting to -1 or 0 crashes planner, so use large
+            // number instead.
             max_robot_speed = 10.0;
             max_dribbler_speed = 255;
             break;
     }
 
     // publish new necessary information
-
-    // const auto min_dist_from_ball = global_override.min_dist_from_ball;
-    // const auto max_robot_speed = global_override.max_speed;
-    // const auto max_dribbler_speed = global_override.max_dribbler_speed;
 
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
