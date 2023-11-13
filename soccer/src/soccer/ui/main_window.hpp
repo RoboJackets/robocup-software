@@ -17,9 +17,9 @@
 #include <rj_msgs/srv/set_game_settings.hpp>
 
 #include "field_view.hpp"
+#include "game_state.hpp"
 #include "processor.hpp"
 #include "ui_MainWindow.h"
-#include "game_state.hpp"
 
 #include "rc-fshare/rtp.hpp"
 

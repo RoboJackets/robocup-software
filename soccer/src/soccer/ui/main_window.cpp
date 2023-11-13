@@ -23,13 +23,13 @@
 #include <ui_MainWindow.h>
 
 #include "battery_profile.hpp"
+#include "game_state.hpp"
 #include "radio/radio.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "robot_status_widget.hpp"
 #include "std_msgs/msg/string.hpp"
 
 #include "rc-fshare/git_version.hpp"
-#include "game_state.hpp"
 
 using namespace std;
 using namespace boost;

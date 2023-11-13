@@ -16,15 +16,13 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
+#include "game_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
-
 #include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/robot_factory_position.hpp"
-
 #include "world_state.hpp"
-#include "game_state.hpp"
 
 // Communication
 #include "communication/communication.hpp"
@@ -85,7 +83,6 @@ private:
      */
     void get_task();
     rclcpp::TimerBase::SharedPtr get_task_timer_;
-
 
     // note that this is our RobotIntent struct (robot_intent.hpp), not a
     // pre-generated ROS msg type

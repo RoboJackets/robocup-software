@@ -18,7 +18,6 @@ Radio::Radio()
             switch_team(color->is_blue);
         });
 
-
     for (size_t i = 0; i < kNumShells; i++) {
         robot_status_pubs_.at(i) = create_publisher<rj_msgs::msg::RobotStatus>(
             topics::robot_status_topic(i), rclcpp::QoS(1));

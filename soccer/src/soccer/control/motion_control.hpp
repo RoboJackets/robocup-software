@@ -7,11 +7,10 @@
 #include <rj_param_utils/param.hpp>
 
 #include "control/motion_setpoint.hpp"
+#include "game_state.hpp"
 #include "ros_debug_drawer.hpp"
 
 #include <rc-fshare/pid.hpp>
-
-#include "game_state.hpp"
 
 namespace control {
 

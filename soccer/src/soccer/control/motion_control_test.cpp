@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "motion_control_node.hpp"
 #include "game_state.hpp"
+#include "motion_control_node.hpp"
 
 namespace control::testing {
 

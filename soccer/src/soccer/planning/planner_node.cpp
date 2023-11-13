@@ -185,7 +185,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     hypothetical_path_service_ = node_->create_service<rj_msgs::srv::PlanHypotheticalPath>(
         fmt::format("hypothetical_trajectory_robot_{}", robot_id),
         [this](const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request> request,
-                std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response) {
+               std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response) {
             plan_hypothetical_robot_path(request, response);
         });
 }

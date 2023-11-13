@@ -18,6 +18,7 @@
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 
+#include "game_state.hpp"
 #include "node.hpp"
 #include "planner/path_planner.hpp"
 #include "planner/plan_request.hpp"
@@ -27,7 +28,6 @@
 #include "robot_intent.hpp"
 #include "trajectory.hpp"
 #include "world_state.hpp"
-#include "game_state.hpp"
 
 namespace planning {
 

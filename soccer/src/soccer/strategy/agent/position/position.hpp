@@ -11,12 +11,12 @@
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 
+#include "game_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
-#include "game_state.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
@@ -66,7 +66,8 @@ public:
      * https://www.sandordargo.com/blog/2022/08/24/tmp-and-nvi
      */
 
-    virtual std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions);
+    virtual std::optional<RobotIntent> get_task(WorldState& world_state,
+                                                FieldDimensions& field_dimensions);
 
     // communication with AC
     void update_play_state(PlayState play_state);

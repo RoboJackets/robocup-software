@@ -7,31 +7,27 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
-#include <spdlog/spdlog.h>
 
-
-
+#include "game_state.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
-#include "game_state.hpp"
 #include "rj_common/field_dimensions.hpp"
 #include "rj_common/time.hpp"
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
-
-#include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
+#include "strategy/agent/position/position.hpp"
 
 namespace strategy {
 
 /*
-* A Position that exclusively delegates to another Position.
-* Used to let agents decide which position is best to play based on situation.
-*/
+ * A Position that exclusively delegates to another Position.
+ * Used to let agents decide which position is best to play based on situation.
+ */
 class RobotFactoryPosition : public Position {
 public:
     RobotFactoryPosition(int r_id);
@@ -55,7 +51,6 @@ public:
     void revive() override;
 
 private:
-
     std::unique_ptr<Position> current_position_;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
