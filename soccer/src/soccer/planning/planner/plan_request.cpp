@@ -2,20 +2,22 @@
 
 namespace planning {
 
-void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center,
-                         double& obs_radius) {
+rj_geometry::Circle make_inflated_static_obs(rj_geometry::Point position, rj_geometry::Point velocity, double radius)
+ {
     // params for obstacle shift
-    double obs_center_shift = 0.5;
-    double obs_radius_inflation = 1.0;
+    constexpr double obs_center_shift {0.5};
+    constexpr double obs_radius_inflation {1.0};
 
-    // shift obs center off robot
-    obs_center =
-        robot.pose.position() + (robot.velocity.linear() * kRobotRadius * obs_center_shift);
+    rj_geometry::Point obs_center {position + (velocity * radius * obs_center_shift)};
 
-    // inflate obs radius if needed
-    double vel_mag = robot.velocity.linear().mag();
-    double safety_margin = vel_mag * obs_radius_inflation;
-    obs_radius = kRobotRadius + (kRobotRadius * safety_margin);
+    double safety_margin {velocity.mag() * obs_radius_inflation};
+    double obs_radius {radius + (safety_margin * radius)};
+
+    return rj_geometry::Circle{obs_center, static_cast<float>(obs_radius)};
+ }
+
+rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
+    return make_inflated_static_obs(robot.pose.position(), robot.velocity.linear(), kRobotRadius);
 }
 
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
@@ -25,17 +27,13 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     out_static->add(in.field_obstacles);
     out_static->add(in.virtual_obstacles);
 
-    rj_geometry::Point obs_center{0.0, 0.0};
-    double obs_radius{1.0};
-
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
     for (size_t shell = 0; shell < kNumShells; shell++) {
         const RobotState& their_robot = in.world_state->their_robots.at(shell);
-        fill_robot_obstacle(their_robot, obs_center, obs_radius);
 
         if (their_robot.visible) {
-            out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
+            out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
         }
     }
 
@@ -61,34 +59,22 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         /* } */
 
         // Static obstacle
-        fill_robot_obstacle(our_robot, obs_center, obs_radius);
-        out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
+        out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
     }
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
-    double radius =
-        kBallRadius * (1.0 + in.world_state->ball.velocity.mag()) + in.min_dist_from_ball;
-    if (in.min_dist_from_ball > 0) {
-        out_static->add(
-            std::make_shared<rj_geometry::Circle>(in.world_state->ball.position, radius));
+    if (in.min_dist_from_ball > 0 || avoid_ball) {
+        auto ball_obs = make_inflated_static_obs(in.world_state->ball.position, in.world_state->ball.velocity, kBallRadius);
+        ball_obs.radius(ball_obs.radius() + in.min_dist_from_ball);
 
         // Draw ball obstacle in simulator
         if (in.debug_drawer != nullptr) {
             QColor draw_color = Qt::red;
-            in.debug_drawer->draw_circle(
-                rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
-                draw_color);
+            in.debug_drawer->draw_circle(ball_obs, draw_color);
         }
-    }
 
-    // Finally, add the ball as a dynamic obstacle.
-    // (This is for when the other team is trying to do ball placement, so we
-    // don't interfere with them.)
-    if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
-        // Where should we store the ball trajectory?
-        *out_ball_trajectory = in.world_state->ball.make_trajectory();
-        out_dynamic->emplace_back(radius, out_ball_trajectory);
+        out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
     }
 }
 
