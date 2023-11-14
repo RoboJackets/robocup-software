@@ -63,8 +63,8 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     new_constraints.max_speed =
         std::min(new_constraints.max_speed, rotation_constraints.max_speed * radius) * .5;
 
-    double start_angle = pivot_point.angle_to(
-        request.world_state.get_robot(true, request.shell_id).pose.position());
+    double start_angle =
+        pivot_point.angle_to(request.world_state.get_robot(true, request.shell_id).pose.position());
     double target_angle = pivot_point.angle_to(final_position);
     double angle_change = fix_angle_radians(target_angle - start_angle);
 
