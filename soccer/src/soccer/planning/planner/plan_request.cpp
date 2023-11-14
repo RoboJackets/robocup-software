@@ -31,7 +31,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
     for (size_t shell = 0; shell < kNumShells; shell++) {
-        const RobotState& their_robot = in.world_state->their_robots.at(shell);
+        const RobotState& their_robot = in.world_state.their_robots.at(shell);
         fill_robot_obstacle(their_robot, obs_center, obs_radius);
 
         if (their_robot.visible) {
@@ -45,7 +45,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // TODO: reenable dynamic obstacles for our robots (currently
     // TrajectoryCollection is never filled at planner level)
     for (size_t shell = 0; shell < kNumShells; shell++) {
-        const auto& our_robot = in.world_state->our_robots.at(shell);
+        const auto& our_robot = in.world_state.our_robots.at(shell);
         if (!our_robot.visible || shell == in.shell_id) {
             continue;
         }
@@ -70,7 +70,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // don't interfere with them.)
     if (avoid_ball && out_dynamic != nullptr && out_ball_trajectory != nullptr) {
         // Where should we store the ball trajectory?
-        *out_ball_trajectory = in.world_state->ball.make_trajectory();
+        *out_ball_trajectory = in.world_state.ball.make_trajectory();
         double radius = kBallRadius + in.min_dist_from_ball;
 
         out_dynamic->emplace_back(radius, out_ball_trajectory);
@@ -78,7 +78,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         if (in.debug_drawer != nullptr) {
             QColor draw_color = Qt::red;
             in.debug_drawer->draw_circle(
-                rj_geometry::Circle(in.world_state->ball.position, static_cast<float>(radius)),
+                rj_geometry::Circle(in.world_state.ball.position, static_cast<float>(radius)),
                 draw_color);
         }
     }

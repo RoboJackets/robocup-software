@@ -79,7 +79,7 @@ AngleFunction PathTargetPathPlanner::get_angle_function(const PlanRequest& reque
     }
 
     if (std::holds_alternative<FaceBall>(face_option)) {
-        auto ball_pos = request.world_state->ball.position;
+        auto ball_pos = request.world_state.ball.position;
         return AngleFns::face_point(ball_pos);
     }
 

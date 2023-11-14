@@ -54,7 +54,7 @@ TEST(Planning, path_target_random) {
                             {},
                             {},
                             0,
-                            &world_state,
+                            world_state,
                             2,
                             nullptr};
         Trajectory path = planner.plan(std::move(request));
@@ -94,7 +94,7 @@ TEST(Planning, collect_basic) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -116,7 +116,7 @@ TEST(Planning, collect_obstructed) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -141,7 +141,7 @@ TEST(Planning, collect_pointless_obs) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -163,7 +163,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -185,7 +185,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -207,7 +207,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -241,7 +241,7 @@ TEST(Planning, collect_random) {
                             {},
                             {},
                             0,
-                            &world_state,
+                            world_state,
                             2,
                             nullptr};
         CollectPathPlanner planner;
@@ -272,7 +272,7 @@ TEST(Planning, settle_basic) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -296,7 +296,7 @@ TEST(Planning, settle_pointless_obs) {
                         {},
                         {},
                         0,
-                        &world_state,
+                        world_state,
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -331,7 +331,7 @@ TEST(Planning, settle_random) {
                             {},
                             {},
                             0,
-                            &world_state,
+                            world_state,
                             2,
                             nullptr};
         SettlePathPlanner planner;

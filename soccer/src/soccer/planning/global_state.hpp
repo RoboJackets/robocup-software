@@ -33,8 +33,8 @@ public:
     [[nodiscard]] int goalie_id() const;
     [[nodiscard]] rj_geometry::ShapeSet global_obstacles() const;
     [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const;
-    [[nodiscard]] const WorldState* world_state() const;
-    [[nodiscard]] const rj_msgs::msg::CoachState coach_state() const;
+    [[nodiscard]] WorldState world_state() const;
+    [[nodiscard]] rj_msgs::msg::CoachState coach_state() const;
 
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;

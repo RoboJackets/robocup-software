@@ -14,7 +14,7 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
@@ -173,7 +173,7 @@ Trajectory CollectPathPlanner::coarse_approach(
     const PlanRequest& plan_request, RobotInstant start,
     const rj_geometry::ShapeSet& static_obstacles,
     const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
 
     // There are two paths that get combined together
     //
@@ -231,7 +231,7 @@ Trajectory CollectPathPlanner::fine_approach(
     const PlanRequest& plan_request, RobotInstant start_instant,
     const rj_geometry::ShapeSet& /* static_obstacles */,
     const std::vector<DynamicObstacle>& /* dynamic_obstacles */) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
     MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;
 
@@ -287,7 +287,7 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
                                        const Trajectory& /* partial_path */,
                                        const rj_geometry::ShapeSet& static_obstacles,
                                        const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
     RobotConstraints robot_constraints = plan_request.constraints;
     MotionConstraints& motion_constraints = robot_constraints.mot;
 
@@ -396,7 +396,7 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
     Replanner::PlanParams params{
         plan_request.start,       target,
         static_obstacles,         dynamic_obstacles,
-        plan_request.constraints, AngleFns::face_point(plan_request.world_state->ball.position)};
+        plan_request.constraints, AngleFns::face_point(plan_request.world_state.ball.position)};
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in collect");
 

@@ -19,7 +19,7 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
@@ -170,7 +170,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
                                         const rj_geometry::ShapeSet& static_obstacles,
                                         const std::vector<DynamicObstacle>& dynamic_obstacles,
                                         rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
 
     // Try find best point to intercept using brute force method
     // where we check ever X distance along the ball velocity vector
@@ -390,7 +390,7 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     // TODO(Kyle): Realize the ball will probably bounce off the robot
     // so we can use that vector to stop
     // Save vector and use that?
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = plan_request.world_state.ball;
 
     if (plan_request.debug_drawer != nullptr) {
         plan_request.debug_drawer->draw_text("Damping", ball.position + Point(.1, .1),
@@ -482,7 +482,7 @@ Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
     Replanner::PlanParams params{
         plan_request.start,       target,
         static_obstacles,         dynamic_obstacles,
-        plan_request.constraints, AngleFns::face_point(plan_request.world_state->ball.position)};
+        plan_request.constraints, AngleFns::face_point(plan_request.world_state.ball.position)};
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in settle");
     return path;

@@ -108,13 +108,13 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // pass global_state_ directly
-    const auto* world_state = global_state_.world_state();
+    auto world_state = global_state_.world_state();
     const auto goalie_id = global_state_.goalie_id();
     const auto play_state = global_state_.play_state();
     const auto min_dist_from_ball = global_state_.coach_state().global_override.min_dist_from_ball;
     const auto max_robot_speed = global_state_.coach_state().global_override.max_speed;
     const auto max_dribbler_speed = global_state_.coach_state().global_override.max_dribbler_speed;
-    const auto& robot = world_state->our_robots.at(robot_id_);
+    const auto& robot = world_state.our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
     const auto global_obstacles = global_state_.global_obstacles();
@@ -170,13 +170,13 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         std::min(static_cast<float>(intent.dribbler_speed), static_cast<float>(max_dribbler_speed));
 
     return PlanRequest{start,
-                       motion_command,
+                       std::move(motion_command),
                        constraints,
                        std::move(real_obstacles),
                        std::move(virtual_obstacles),
                        robot_trajectories_,
                        static_cast<unsigned int>(robot_id_),
-                       world_state,
+                       std::move(world_state),
                        intent.priority,
                        &debug_draw_,
                        had_break_beam_,
@@ -251,8 +251,9 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 }
 
 bool PlannerForRobot::robot_alive() const {
-    return global_state_.world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+    auto world_state = global_state_.world_state();
+    return world_state.our_robots.at(robot_id_).visible &&
+           RJ::now() < world_state.last_updated_time + RJ::Seconds(PARAM_timeout);
 }
 
 bool PlannerForRobot::is_done() const {

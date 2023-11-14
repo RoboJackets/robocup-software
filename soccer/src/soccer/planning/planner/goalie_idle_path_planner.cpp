@@ -26,7 +26,7 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     LinearMotionInstant target{idle_pt};
 
     // Make robot face ball
-    auto angle_function = AngleFns::face_point(plan_request.world_state->ball.position);
+    auto angle_function = AngleFns::face_point(plan_request.world_state.ball.position);
 
     // call Replanner to generate a Trajectory
     Trajectory trajectory = Replanner::create_plan(
@@ -45,8 +45,8 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state) {
-    rj_geometry::Point ball_pos = world_state->ball.position;
+rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState& world_state) {
+    rj_geometry::Point ball_pos = world_state.ball.position;
     // TODO(Kevin): make this depend on team +/-x
     rj_geometry::Point goal_pt{0.0, 0.0};
 
