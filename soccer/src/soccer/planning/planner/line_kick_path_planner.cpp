@@ -12,7 +12,8 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) { //NOLINT(readability-function-cognitive-complexity)
+Trajectory LineKickPathPlanner::plan(
+    const PlanRequest& plan_request) {  // NOLINT(readability-function-cognitive-complexity)
     // TODO(?): ros param these
     const float approach_speed = 0.05;
 
@@ -64,32 +65,33 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) { //NOLINT
         make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
 
     // This segfaults. Please rewrite the entire thing.
-//#if 0
-//    if (final_approach_ && target_kick_pos_) {
-//        RJ::Seconds duration_into_path = cur_time - prev_path_.begin_time();
-//
-//        RobotInstant target = prev_path_.last();
-//        RJ::Time time = ball.query_time_near(*target_kick_pos_);
-//
-//        auto time_left = prev_path_.duration() - duration_into_path;
-//
-//        if (time_left < RJ::Seconds(-0.3) || time_left > RJ::Seconds(5.0)) {
-//            final_approach_ = false;
-//            prev_path_ = {};
-//        } else if (time_left < RJ::Seconds(0)) {
-//            prev_path_.set_debug_text("reuse past done " + std::to_string(time_left.count()));
-//            return prev_path_;
-//        } else {
-//            RJ::Seconds time_for_ball = time - cur_time;
-//            prev_path_.scale_duration(prev_path_.duration() * (time_left / time_for_ball),
-//                                      start_instant.stamp);
-//            prev_path_.set_debug_text("reuse final slow " + std::to_string(time_for_ball.count()) +
-//                                      " " + std::to_string(time_left.count()));
-//            prev_path_.stamp(RJ::now());
-//            return prev_path_;
-//        }
-//    }
-//#endif
+    //#if 0
+    //    if (final_approach_ && target_kick_pos_) {
+    //        RJ::Seconds duration_into_path = cur_time - prev_path_.begin_time();
+    //
+    //        RobotInstant target = prev_path_.last();
+    //        RJ::Time time = ball.query_time_near(*target_kick_pos_);
+    //
+    //        auto time_left = prev_path_.duration() - duration_into_path;
+    //
+    //        if (time_left < RJ::Seconds(-0.3) || time_left > RJ::Seconds(5.0)) {
+    //            final_approach_ = false;
+    //            prev_path_ = {};
+    //        } else if (time_left < RJ::Seconds(0)) {
+    //            prev_path_.set_debug_text("reuse past done " + std::to_string(time_left.count()));
+    //            return prev_path_;
+    //        } else {
+    //            RJ::Seconds time_for_ball = time - cur_time;
+    //            prev_path_.scale_duration(prev_path_.duration() * (time_left / time_for_ball),
+    //                                      start_instant.stamp);
+    //            prev_path_.set_debug_text("reuse final slow " +
+    //            std::to_string(time_for_ball.count()) +
+    //                                      " " + std::to_string(time_left.count()));
+    //            prev_path_.stamp(RJ::now());
+    //            return prev_path_;
+    //        }
+    //    }
+    //#endif
 
     // only plan line kick if not is_done
     if (!this->is_done()) {

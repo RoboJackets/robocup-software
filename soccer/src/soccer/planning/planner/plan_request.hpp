@@ -28,7 +28,7 @@ struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
-                unsigned shell_id,  WorldState world_state, int8_t priority = 0,
+                unsigned shell_id, WorldState world_state, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
                 float min_dist_from_ball = 0, float dribbler_speed = 0)
         : start(start),
