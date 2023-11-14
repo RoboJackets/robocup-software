@@ -16,7 +16,7 @@ WorldRobot::WorldRobot() : is_valid_(false) {}
 
 WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
                        const std::list<KalmanRobot>& kalman_robots)
-    : team_(team), robot_id_(robot_id), is_valid_(true), time_(calc_time) {
+    : team_(team), robot_id_(robot_id), time_(calc_time), is_valid_(true) {
     // Theta's are converted to rect coords then back to polar to convert
     rj_geometry::Point pos_cartesian_avg;
     rj_geometry::Point theta_cartesian_avg;
