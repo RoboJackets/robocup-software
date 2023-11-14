@@ -167,6 +167,6 @@ def test_tkdict_keys_values_items():
     assert all([a == b for a, b in zip(tkdict.values(), expected_values)])
 
     # Test .items().
-    assert all(
-        [a == b for a, b in zip(tkdict.items(), zip(expected_keys, expected_values))]
-    )
+    assert all([
+        a == b for a, b in zip(tkdict.items(), zip(expected_keys, expected_values))
+    ])

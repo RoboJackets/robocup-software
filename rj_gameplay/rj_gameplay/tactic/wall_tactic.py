@@ -58,9 +58,9 @@ class WallTactic(stp.tactic.Tactic):
 
         # get vector to define walling direction
         ball_goal_dir = (ball_pt - goal_pt) / (np.linalg.norm(ball_pt - goal_pt) + 1e-9)
-        wall_dir = np.array(
-            [ball_goal_dir[1], -ball_goal_dir[0]]
-        )  # perp of above vector
+        wall_dir = np.array([
+            ball_goal_dir[1], -ball_goal_dir[0]
+        ])  # perp of above vector
 
         # find endpoints of wall
         mid_pt = goal_pt + (ball_goal_dir * MIN_WALL_RAD)
