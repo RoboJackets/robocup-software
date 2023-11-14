@@ -2,19 +2,19 @@
 
 namespace planning {
 
-rj_geometry::Circle make_inflated_static_obs(rj_geometry::Point position, rj_geometry::Point velocity, double radius)
- {
+rj_geometry::Circle make_inflated_static_obs(rj_geometry::Point position,
+                                             rj_geometry::Point velocity, double radius) {
     // params for obstacle shift
-    constexpr double obs_center_shift {0.5};
-    constexpr double obs_radius_inflation {1.0};
+    constexpr double obs_center_shift{0.5};
+    constexpr double obs_radius_inflation{1.0};
 
-    rj_geometry::Point obs_center {position + (velocity * radius * obs_center_shift)};
+    rj_geometry::Point obs_center{position + (velocity * radius * obs_center_shift)};
 
-    double safety_margin {velocity.mag() * obs_radius_inflation};
-    double obs_radius {radius + (safety_margin * radius)};
+    double safety_margin{velocity.mag() * obs_radius_inflation};
+    double obs_radius{radius + (safety_margin * radius)};
 
     return rj_geometry::Circle{obs_center, static_cast<float>(obs_radius)};
- }
+}
 
 rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
     return make_inflated_static_obs(robot.pose.position(), robot.velocity.linear(), kRobotRadius);
@@ -33,7 +33,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         const RobotState& their_robot = in.world_state->their_robots.at(shell);
 
         if (their_robot.visible) {
-            out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
+            out_static->add(
+                std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
         }
     }
 
@@ -65,7 +66,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
     if (in.min_dist_from_ball > 0 || avoid_ball) {
-        auto ball_obs = make_inflated_static_obs(in.world_state->ball.position, in.world_state->ball.velocity, kBallRadius);
+        auto ball_obs = make_inflated_static_obs(in.world_state->ball.position,
+                                                 in.world_state->ball.velocity, kBallRadius);
         ball_obs.radius(ball_obs.radius() + in.min_dist_from_ball);
 
         // Draw ball obstacle in simulator
