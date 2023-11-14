@@ -66,10 +66,12 @@ class XFormation(stp.formations.Formations):
         centroids = []
         regions = self.get_regions
         for region in regions:
-            centroid = np.array([
-                ((region[0] + region[1]) / 2),
-                ((region[2] + region[3]) / 2),
-            ])
+            centroid = np.array(
+                [
+                    ((region[0] + region[1]) / 2),
+                    ((region[2] + region[3]) / 2),
+                ]
+            )
             centroids.append(centroid)
 
         return centroids

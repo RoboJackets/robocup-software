@@ -89,11 +89,13 @@ class Tactic(ABC):
             text += ", ".join(temp)
         text += "\nRoles Assigned: "
         if self.assigned_roles:
-            text += ", ".join([
-                f"({role.__class__.__name__}, {robot.id})"
-                for role, robot in itertools.zip_longest(
-                    self.assigned_roles, self.assigned_robots
-                )
-                if robot != None and role != None
-            ])
+            text += ", ".join(
+                [
+                    f"({role.__class__.__name__}, {robot.id})"
+                    for role, robot in itertools.zip_longest(
+                        self.assigned_roles, self.assigned_robots
+                    )
+                    if robot != None and role != None
+                ]
+            )
         return text
