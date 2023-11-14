@@ -24,6 +24,7 @@ set(ROBOCUP_LIB_SRC
     optimization/parallel_gradient_ascent_1d.cpp
     optimization/nelder_mead_2d.cpp
     optimization/python_function_wrapper.cpp
+    planning/global_state.cpp
     planning/primitives/angle_planning.cpp
     planning/primitives/create_path.cpp
     planning/primitives/path_smoothing.cpp
