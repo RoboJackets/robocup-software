@@ -138,10 +138,6 @@ void AgentActionClient::get_task() {
         // note that because these are our RobotIntent structs, this comparison
         // uses our custom struct overloads
         if (task != last_task_) {
-            if (robot_id_ == 1) {
-                SPDLOG_INFO("New task: {} Last task: {}", task.motion_command.name,
-                            last_task_.motion_command.name);
-            }
             last_task_ = task;
             send_new_goal();
         }
@@ -154,10 +150,6 @@ void AgentActionClient::send_new_goal() {
     if (!client_ptr_->wait_for_action_server()) {
         SPDLOG_ERROR("Action server not available after waiting");
         rclcpp::shutdown();
-    }
-
-    if (robot_id_ == 1) {
-        SPDLOG_INFO("{} gets a new goal", robot_id_);
     }
 
     auto goal_msg = RobotMove::Goal();

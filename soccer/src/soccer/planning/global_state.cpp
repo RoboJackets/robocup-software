@@ -6,8 +6,6 @@ GlobalState::GlobalState(rclcpp::Node* node) {
     play_state_sub_ = node->create_subscription<rj_msgs::msg::PlayState>(
         referee::topics::kPlayStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
-            SPDLOG_INFO("Got new play state");
-
             {
                 auto lock = std::lock_guard(last_play_state_mutex_);
                 last_play_state_ = rj_convert::convert_from_ros(*state);

@@ -248,8 +248,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     try {
         trajectory = unsafe_plan_for_robot(request);
     } catch (std::runtime_error exception) {
-        SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
-        SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
+        // SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
+        // SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
 
         current_path_planner_ = default_path_planner_.get();
         trajectory = current_path_planner_->plan(request);
