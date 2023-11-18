@@ -106,7 +106,7 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
 }
 
 void GlobalState::set_static_obstacles() {
-    std::scoped_lock{last_field_dimensions_mutex_, last_play_state_mutex_,
+    std::scoped_lock lock{last_field_dimensions_mutex_, last_play_state_mutex_,
                      last_def_area_obstacles_mutex_};
 
     if (have_field_dimensions_ && have_play_state_) {

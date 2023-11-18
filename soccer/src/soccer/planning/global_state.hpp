@@ -60,8 +60,8 @@ private:
     bool have_field_dimensions_{};
     mutable std::mutex last_field_dimensions_mutex_{};
 
-    rj_geometry::ShapeSet create_defense_area_obstacles(void);
-    void set_static_obstacles(void);
+    rj_geometry::ShapeSet create_defense_area_obstacles();
+    void set_static_obstacles();
 };
 
 }  // namespace planning
