@@ -39,7 +39,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
         });
     field_dimensions_sub_ = node->create_subscription<rj_msgs::msg::FieldDimensions>(
         ::config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
-        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) { // NOLINT
+        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {  // NOLINT
             {
                 auto lock = std::lock_guard(last_field_dimensions_mutex_);
                 last_field_dimensions_ = rj_convert::convert_from_ros(*msg);

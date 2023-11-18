@@ -38,7 +38,8 @@ public:
     RobotFactoryPosition& operator=(const RobotFactoryPosition& other) = default;
     RobotFactoryPosition& operator=(RobotFactoryPosition&& other) = default;
 
-    std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions) override;
+    std::optional<RobotIntent> get_task(WorldState& world_state,
+                                        FieldDimensions& field_dimensions) override;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
 

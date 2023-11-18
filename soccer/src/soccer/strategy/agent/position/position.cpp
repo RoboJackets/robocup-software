@@ -49,9 +49,7 @@ bool Position::check_goal_canceled() {
     return false;
 }
 
-void Position::update_play_state(const PlayState& play_state) {
-    current_play_state_ = play_state;
-}
+void Position::update_play_state(const PlayState& play_state) { current_play_state_ = play_state; }
 
 void Position::update_field_dimensions(const FieldDimensions& field_dims) {
     field_dimensions_ = field_dims;
