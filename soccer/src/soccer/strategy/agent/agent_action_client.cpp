@@ -30,7 +30,7 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
     field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
-        "config/field_dimensions", 1,
+        "config/field_dimensions", rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(

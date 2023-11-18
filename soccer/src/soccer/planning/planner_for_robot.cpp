@@ -1,5 +1,6 @@
 #include "planner_for_robot.hpp"
 
+#include "game_state.hpp"
 #include "planning/planner/collect_path_planner.hpp"
 #include "planning/planner/escape_obstacles_path_planner.hpp"
 #include "planning/planner/goalie_idle_path_planner.hpp"
@@ -111,9 +112,36 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto* world_state = global_state_.world_state();
     const auto goalie_id = global_state_.goalie_id();
     const auto play_state = global_state_.play_state();
-    const auto min_dist_from_ball = global_state_.coach_state().global_override.min_dist_from_ball;
-    const auto max_robot_speed = global_state_.coach_state().global_override.max_speed;
-    const auto max_dribbler_speed = global_state_.coach_state().global_override.max_dribbler_speed;
+
+    float min_dist_from_ball{};
+    float max_robot_speed{};
+    float max_dribbler_speed{};
+
+    // Global Overrides
+    switch (play_state.state()) {
+        case PlayState::State::Halt:
+            min_dist_from_ball = 0;
+            max_robot_speed = 0;
+            max_dribbler_speed = 0;
+            break;
+        case PlayState::State::Stop:
+            min_dist_from_ball = 0.5;
+            max_robot_speed = 1.5;
+            max_dribbler_speed = 0;
+            break;
+        case PlayState::State::Playing:
+        default:
+
+            min_dist_from_ball = 0;
+            // Unbounded speed. Setting to -1 or 0 crashes planner, so use large
+            // number instead.
+            max_robot_speed = 10.0;
+            max_dribbler_speed = 255;
+            break;
+    }
+
+    // publish new necessary information
+
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
@@ -153,11 +181,11 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // Attempting to create trajectories with max speeds <= 0 crashes the planner (during RRT
     // generation)
     if (max_robot_speed == 0.0f) {
-        // If coach node has speed set to 0,
+        // If override speed is set to 0,
         // force HALT by replacing the MotionCommand with an empty one.
         motion_command = MotionCommand{};
     } else if (max_robot_speed < 0.0f) {
-        // If coach node has speed set to negative, assume infinity.
+        // If override speed set to negative, assume infinity.
         // Negative numbers cause crashes, but 10 m/s is an effectively infinite limit.
         motion_command = intent.motion_command;
         constraints.mot.max_speed = 10.0f;
