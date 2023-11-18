@@ -39,11 +39,10 @@ GlobalState::GlobalState(rclcpp::Node* node) {
         });
     field_dimensions_sub_ = node->create_subscription<rj_msgs::msg::FieldDimensions>(
         ::config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
-        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
-            SPDLOG_INFO("Got new field dims");
+        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) { // NOLINT
             {
                 auto lock = std::lock_guard(last_field_dimensions_mutex_);
-                last_field_dimensions = rj_convert::convert_from_ros(*msg);
+                last_field_dimensions_ = rj_convert::convert_from_ros(*msg);
                 have_field_dimensions_ = true;
             }
             set_static_obstacles();
@@ -81,7 +80,7 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     // work
     // Create defense areas as rectangular area obstacles
     auto our_defense_area{
-        std::make_shared<rj_geometry::Rect>(last_field_dimensions.our_defense_area())};
+        std::make_shared<rj_geometry::Rect>(last_field_dimensions_.our_defense_area())};
 
     // Sometimes there is a greater distance we need to keep:
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
@@ -94,8 +93,8 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     auto their_defense_area =
         is_extra_dist_necessary
             ? std::make_shared<rj_geometry::Rect>(
-                  last_field_dimensions.their_defense_area_padded(slack_around_box))
-            : std::make_shared<rj_geometry::Rect>(last_field_dimensions.their_defense_area());
+                  last_field_dimensions_.their_defense_area_padded(slack_around_box))
+            : std::make_shared<rj_geometry::Rect>(last_field_dimensions_.their_defense_area());
 
     // Combine both defense areas into ShapeSet
     rj_geometry::ShapeSet def_area_obstacles{};
@@ -107,7 +106,7 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
 
 void GlobalState::set_static_obstacles() {
     std::scoped_lock lock{last_field_dimensions_mutex_, last_play_state_mutex_,
-                     last_def_area_obstacles_mutex_};
+                          last_def_area_obstacles_mutex_};
 
     if (have_field_dimensions_ && have_play_state_) {
         // SPDLOG_INFO("Creating new defense obstacles");

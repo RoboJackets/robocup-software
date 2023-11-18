@@ -56,7 +56,7 @@ private:
     mutable std::mutex last_def_area_obstacles_mutex_{};
     WorldState last_world_state_{};
     mutable std::mutex last_world_state_mutex_{};
-    FieldDimensions last_field_dimensions{FieldDimensions::kDefaultDimensions};
+    FieldDimensions last_field_dimensions_{FieldDimensions::kDefaultDimensions};
     bool have_field_dimensions_{};
     mutable std::mutex last_field_dimensions_mutex_{};
 

@@ -26,7 +26,7 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     play_state_sub_ = create_subscription<rj_msgs::msg::PlayState>(
-        ::referee::topics::kPlayStateTopic, 10,
+        ::referee::topics::kPlayStateTopic, 1,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
     field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(

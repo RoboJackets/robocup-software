@@ -70,8 +70,8 @@ public:
                                                 FieldDimensions& field_dimensions);
 
     // communication with AC
-    void update_play_state(PlayState play_state);
-    void update_field_dimensions(FieldDimensions field_dimensions);
+    void update_play_state(const PlayState& play_state);
+    void update_field_dimensions(const FieldDimensions& field_dimensions);
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
 
