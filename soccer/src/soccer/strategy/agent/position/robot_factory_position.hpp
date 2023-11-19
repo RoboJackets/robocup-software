@@ -33,10 +33,12 @@ public:
     RobotFactoryPosition(int r_id);
     ~RobotFactoryPosition() override = default;
 
-    RobotFactoryPosition(const RobotFactoryPosition& other) = default;
-    RobotFactoryPosition(RobotFactoryPosition&& other) = default;
-    RobotFactoryPosition& operator=(const RobotFactoryPosition& other) = default;
-    RobotFactoryPosition& operator=(RobotFactoryPosition&& other) = default;
+    // Copy and move for this class is really annoying because it contains
+    // a unique_ptr to an abstract class.
+    RobotFactoryPosition(const RobotFactoryPosition& other) = delete;
+    RobotFactoryPosition(RobotFactoryPosition&& other) = delete;
+    RobotFactoryPosition& operator=(const RobotFactoryPosition& other) = delete;
+    RobotFactoryPosition& operator=(RobotFactoryPosition&& other) = delete;
 
     std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions) override;
 
