@@ -21,7 +21,8 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     return current_position_->get_task(world_state, field_dimensions);
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([[maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
     SPDLOG_ERROR("RobotFactory derived_get_task() should not be called!");
     return std::nullopt;
 }
