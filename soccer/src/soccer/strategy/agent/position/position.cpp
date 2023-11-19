@@ -1,10 +1,18 @@
 #include "position.hpp"
 
+#include "game_state.hpp"
+
 namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
-std::optional<RobotIntent> Position::get_task() {
+std::optional<RobotIntent> Position::get_task(WorldState& world_state,
+                                              FieldDimensions& field_dimensions) {
+    // Point class variables to parameter references
+    // TODO (Prabhanjan): Don't copy references into local vars
+    field_dimensions_ = field_dimensions;
+    last_world_state_ = &world_state;
+
     // init an intent with our robot id
     RobotIntent intent = RobotIntent{};
     intent.robot_id = robot_id_;
@@ -41,23 +49,10 @@ bool Position::check_goal_canceled() {
     return false;
 }
 
-void Position::update_world_state(WorldState world_state) {
-    // mutex lock here as the world state could be accessed while callback from
-    // AC is updating it = undefined behavior = crashes
-    auto lock = std::lock_guard(world_state_mutex_);
-    last_world_state_ = std::move(world_state);
-}
+void Position::update_play_state(const PlayState& play_state) { current_play_state_ = play_state; }
 
-void Position::update_coach_state(rj_msgs::msg::CoachState msg) {
-    our_possession_ = msg.our_possession;
-    // TODO: how is planner supposed to get this global override info?
-    global_override_ = msg.global_override;
-    /* SPDLOG_INFO("match_restart {}, match_state {}, our_possession {}", match_restart_,
-     * match_state_, our_possession_); */
-}
-
-void Position::update_field_dimensions(FieldDimensions field_dims) {
-    field_dimensions_ = std::move(field_dims);
+void Position::update_field_dimensions(const FieldDimensions& field_dims) {
+    field_dimensions_ = field_dims;
 }
 
 void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
@@ -74,15 +69,9 @@ void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
     }
 }
 
-[[nodiscard]] WorldState* Position::world_state() {
-    // thread-safe getter for world_state (see update_world_state())
-    auto lock = std::lock_guard(world_state_mutex_);
-    return &last_world_state_;
-}
 
 bool Position::assert_world_state_valid() {
-    WorldState* world_state = this->world_state();  // thread-safe getter
-    if (world_state == nullptr) {
+    if (last_world_state_ == nullptr) {
         SPDLOG_WARN("WorldState!");
         return false;
     }

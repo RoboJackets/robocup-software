@@ -6,7 +6,6 @@
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/match_state.hpp>
 #include <rj_msgs/msg/play_state.hpp>
-#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>

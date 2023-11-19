@@ -1,5 +1,6 @@
 #include "agent_action_client.hpp"
 
+#include "game_state.hpp"
 #include "rj_constants/topic_names.hpp"
 
 namespace strategy {
@@ -24,12 +25,12 @@ AgentActionClient::AgentActionClient(int r_id)
         ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
-    coach_state_sub_ = create_subscription<rj_msgs::msg::CoachState>(
-        topics::kCoachStateTopic, 1,
-        [this](rj_msgs::msg::CoachState::SharedPtr msg) { coach_state_callback(msg); });
+    play_state_sub_ = create_subscription<rj_msgs::msg::PlayState>(
+        ::referee::topics::kPlayStateTopic, 1,
+        [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
     field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
-        "config/field_dimensions", 1,
+        "config/field_dimensions", rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
@@ -47,22 +48,19 @@ AgentActionClient::AgentActionClient(int r_id)
             receive_communication_callback(request, response);
         });
 
+    // Default Positions with the Position class
+    current_position_ = std::make_unique<RobotFactoryPosition>(robot_id_);
+
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
         robot_communication_cli_[i] =
             create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
 
-    positions_sub_ = create_subscription<rj_msgs::msg::PositionAssignment>(
-        topics::kPositionsTopic, 1,
-        [this](rj_msgs::msg::PositionAssignment::SharedPtr msg) { update_position(msg); });
-
-    // TODO(Kevin): make ROS param for this
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 
-    // TODO(Kevin): make ROS param for this
     int agent_communication_hz = 60;
     get_communication_timer_ =
         create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
@@ -70,16 +68,6 @@ AgentActionClient::AgentActionClient(int r_id)
             check_communication_timeout();
         });
 
-    update_alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(1000),
-                                                   [this]() { update_position_alive_robots(); });
-
-    if (r_id == 0) {
-        current_position_ = std::make_unique<Goalie>(r_id);
-    } else if (r_id == 1 || r_id == 3 || r_id == 5) {
-        current_position_ = std::make_unique<Defense>(r_id);
-    } else if (r_id == 2 || r_id == 4) {
-        current_position_ = std::make_unique<Offense>(r_id);
-    }
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -88,19 +76,20 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     }
 
     WorldState world_state = rj_convert::convert_from_ros(*msg);
-    current_position_->update_world_state(world_state);
     // avoid mutex issues w/ world state (probably not an issue in AC, but
     // already here so why not)
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
 }
 
-void AgentActionClient::coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg) {
+void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    current_position_->update_coach_state(*msg);
+    PlayState play_state = rj_convert::convert_from_ros(*msg);
+    play_state_ = play_state;
+    current_position_->update_play_state(play_state);
 }
 
 void AgentActionClient::field_dimensions_callback(
@@ -139,18 +128,10 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 }
 
 void AgentActionClient::get_task() {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
+    auto lock = std::lock_guard(world_state_mutex_);
 
-    auto optional_task = current_position_->get_task();
+    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_);
+
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
 
@@ -161,39 +142,6 @@ void AgentActionClient::get_task() {
             send_new_goal();
         }
     }
-}
-
-void AgentActionClient::update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg) {
-    std::unique_ptr<Position> next_position_;
-    switch (msg->client_positions[robot_id_]) {
-        case 0:
-            next_position_ = std::make_unique<Goalie>(robot_id_);
-            break;
-        case 1:
-            next_position_ = std::make_unique<Defense>(robot_id_);
-            break;
-        case 2:
-            next_position_ = std::make_unique<Offense>(robot_id_);
-            break;
-        case 3:
-            next_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
-            break;
-        case 4:
-            next_position_ = std::make_unique<GoalKicker>(robot_id_);
-            break;
-    };
-
-    if (current_position_ == nullptr) {
-        current_position_ = std::move(next_position_);
-    } else if (next_position_->get_name() != current_position_->get_name()) {
-        // When a disconnected robot is found, notify the position
-        current_position_->die();
-        // Send any final death communications from robot
-        get_communication();
-        current_position_ = std::move(next_position_);
-    }
-
-    // TODO: send acknowledgement back to coach node (w/ robot ID)
 }
 
 void AgentActionClient::send_new_goal() {
@@ -216,18 +164,18 @@ void AgentActionClient::send_new_goal() {
     client_ptr_->async_send_goal(goal_msg, send_goal_options);
 }
 
+[[nodiscard]] WorldState* AgentActionClient::world_state() {
+    // thread-safe getter for world_state
+    auto lock = std::lock_guard(world_state_mutex_);
+    return &last_world_state_;
+}
+
+// With the get_task function deleted, we need to initialize the new class once
+// in the initializer. This will call the class which will analyze the
+// situation based on the current tick.
+
 void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     auto goal_handle = future.get();
     if (!goal_handle) {
@@ -237,32 +185,14 @@ void AgentActionClient::goal_response_callback(
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
-    current_position_->set_time_left(time_left);
+    if (current_position_ == nullptr) {
+        current_position_->set_time_left(time_left);
+    }
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
@@ -282,17 +212,6 @@ void AgentActionClient::get_communication() {
     // Don't even humor requests from robots that aren't alive
     if (!check_robot_alive(robot_id_)) {
         return;
-    }
-
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
     }
 
     bool any_robots_alive = false;
@@ -432,16 +351,6 @@ void AgentActionClient::receive_response_callback(
 }
 
 void AgentActionClient::check_communication_timeout() {
-    // Initialize default positions (if not already initialized)
-    if (current_position_ == nullptr) {
-        if (robot_id_ == 0) {
-            current_position_ = std::make_unique<Goalie>(robot_id_);
-        } else if (robot_id_ == 1) {
-            current_position_ = std::make_unique<Defense>(robot_id_);
-        } else {
-            current_position_ = std::make_unique<Offense>(robot_id_);
-        }
-    }
 
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {
@@ -451,28 +360,5 @@ void AgentActionClient::check_communication_timeout() {
     }
 }
 
-[[nodiscard]] WorldState* AgentActionClient::world_state() {
-    // thread-safe getter for world_state
-    auto lock = std::lock_guard(world_state_mutex_);
-    return &last_world_state_;
-}
-
-void AgentActionClient::update_position_alive_robots() {
-    if (current_position_ == nullptr) {
-        return;
-    }
-
-    if (!is_simulated_) {
-        current_position_->update_alive_robots(alive_robots_);
-    } else {
-        std::vector<u_int8_t> alive_robots = {};
-        for (u_int8_t i = 0; i < kNumShells; i++) {
-            if (check_robot_alive(i)) {
-                alive_robots.push_back(i);
-            }
-        }
-        current_position_->update_alive_robots(std::move(alive_robots));
-    }
-}
 
 }  // namespace strategy
