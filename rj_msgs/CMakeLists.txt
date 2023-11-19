@@ -59,24 +59,24 @@ rosidl_generate_interfaces(
   msg/AgentResponseVariant.msg
 
   # Agent Request Messages
-  request/PassRequest.msg
+  request/ResetScorerRequest.msg
   request/PositionRequest.msg
   request/TestRequest.msg
-  request/IncomingBallRequest.msg
   request/BallInTransitRequest.msg
   request/ScorerRequest.msg
-  request/ResetScorerRequest.msg
-  request/JoinWallRequest.msg
+  request/IncomingBallRequest.msg
+  request/PassRequest.msg
   request/LeaveWallRequest.msg
+  request/JoinWallRequest.msg
 
   # Agent Response Messages
+  response/LeaveWallResponse.msg
   response/Acknowledge.msg
   response/PassResponse.msg
-  response/PositionResponse.msg
-  response/TestResponse.msg
-  response/ScorerResponse.msg
   response/JoinWallResponse.msg
-  response/LeaveWallResponse.msg
+  response/PositionResponse.msg
+  response/ScorerResponse.msg
+  response/TestResponse.msg
 
   # Services
   srv/AgentCommunication.srv
