@@ -10,6 +10,7 @@
 
 #include "../global_state.hpp"
 #include "context.hpp"
+#include "../global_state.hpp"
 #include "planning/dynamic_obstacle.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
@@ -29,9 +30,9 @@ struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
-                unsigned shell_id, const WorldState* world_state, PlayState play_state,
-                int8_t priority = 0, rj_drawing::RosDebugDrawer* debug_drawer = nullptr,
-                bool ball_sense = false, float min_dist_from_ball = 0, float dribbler_speed = 0)
+                unsigned shell_id, const WorldState* world_state, PlayState play_state, int8_t priority = 0,
+                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
+                float min_dist_from_ball = 0, float dribbler_speed = 0)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -41,6 +42,7 @@ struct PlanRequest {
           shell_id(shell_id),
           priority(priority),
           world_state(world_state),
+          play_state_(play_state),
           play_state(play_state),
           debug_drawer(debug_drawer),
           ball_sense(ball_sense),
@@ -119,6 +121,7 @@ struct PlanRequest {
      * Dribbler Speed
      */
     float dribbler_speed = 0;
+
 };
 
 /**
