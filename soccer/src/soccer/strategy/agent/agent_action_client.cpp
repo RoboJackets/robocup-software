@@ -208,16 +208,20 @@ void AgentActionClient::send_new_goal() {
     goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
-    send_goal_options.goal_response_callback =
-        std::bind(&AgentActionClient::goal_response_callback, this, _1);
-    send_goal_options.feedback_callback =
-        std::bind(&AgentActionClient::feedback_callback, this, _1, _2);
-    send_goal_options.result_callback = std::bind(&AgentActionClient::result_callback, this, _1);
+    send_goal_options.goal_response_callback = [this](auto arg) {
+        goal_response_callback(arg);
+    };
+    send_goal_options.feedback_callback = [this](auto arg1, auto arg2) {
+        feedback_callback(arg1, arg2);
+    };
+    send_goal_options.result_callback = [this](auto arg) {
+        result_callback(arg);
+    };
     client_ptr_->async_send_goal(goal_msg, send_goal_options);
 }
 
 void AgentActionClient::goal_response_callback(
-    std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
+    GoalHandleRobotMove::SharedPtr goal_handle) {
     // Initialize default positions (if not already initialized)
     if (current_position_ == nullptr) {
         if (robot_id_ == 0) {
@@ -229,7 +233,6 @@ void AgentActionClient::goal_response_callback(
         }
     }
 
-    auto goal_handle = future.get();
     if (!goal_handle) {
         current_position_->set_goal_canceled();
     }

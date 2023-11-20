@@ -2,7 +2,7 @@ SHELL=/bin/bash -o pipefail
 MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
-export CMAKE_PREFIX_PATH=/opt/ros/foxy
+export CMAKE_PREFIX_PATH=/opt/ros/humble
 
 # circleci has 2 cores, but advertises 32, which causes OOMs
 ifeq ($(CIRCLECI), true)
@@ -20,17 +20,17 @@ CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX="$(shell pwd)/install" -DNO_WALL=ON -DCMAKE_C
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build-debug
- 	cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
+ 	cd build-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_release
 	mkdir -p build-release
- 	cd build-release && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
+ 	cd build-release && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_perf
 	mkdir -p build-release-debug
- 	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
+ 	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 all-perf:

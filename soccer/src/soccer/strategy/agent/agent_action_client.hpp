@@ -73,7 +73,7 @@ private:
 
     // ROS ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;
-    void goal_response_callback(std::shared_future<GoalHandleRobotMove::SharedPtr> future);
+    void goal_response_callback(GoalHandleRobotMove::SharedPtr future);
     void feedback_callback(GoalHandleRobotMove::SharedPtr,
                            const std::shared_ptr<const RobotMove::Feedback> feedback);
 
