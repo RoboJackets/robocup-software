@@ -1,0 +1,28 @@
+#include <rclcpp/rclcpp.hpp>
+#include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_msgs/msg/motion_setpoint.hpp>
+#include <rj_msgs/msg/robot_status.hpp>
+#include <rj_msgs/msg/team_color.hpp>
+#include <rj_param_utils/param.hpp>
+#include <rj_param_utils/ros2_local_param_provider.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include "std_msgs/msg/string.hpp"
+
+#include <rj_utils/logging.hpp>
+#include "global_params.hpp"
+
+namespace tutorial {
+class SoccerMom : public rclcpp::Node {
+    public:
+        SoccerMom();
+    private:
+        void timer_callback();
+        void topic_callback(const std_msgs::msg::String & msg) const;
+        rclcpp::TimerBase::SharedPtr timer;
+        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher;
+        //rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription;
+        rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr subscription;
+        std::string teamColor;
+};
+}
