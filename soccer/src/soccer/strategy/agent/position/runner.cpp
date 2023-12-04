@@ -38,7 +38,7 @@ Runner::State Runner::update_state() {
 
     return next_state;
 }
-// (-2,1) topleft(2,1) (2,7) (-2,7)
+// (-2,1) topleft (2,1) (2,7) (-2,7)
 
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     rj_geometry::Point robot_position =
@@ -46,25 +46,25 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     
     if (current_state_ == LEFT) {
         auto motion_instance =
-                planning::LinearMotionInstant{robot_position, rj_geometry::Point{2, 1}};
+                planning::LinearMotionInstant{rj_geometry::Point{2, 1}, {0,0}};
         auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, planning::FaceTarget{}};
         intent.motion_command = face_ball_cmd;
         return intent;
     } else if (current_state_ == DOWN) {
         auto motion_instance =
-                planning::LinearMotionInstant{robot_position, rj_geometry::Point{2, 7}};
+                planning::LinearMotionInstant{rj_geometry::Point{2, 7}, {0,0}};
         auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, planning::FaceTarget{}};
         intent.motion_command = face_ball_cmd;
         return intent;
     } else if (current_state_ == RIGHT) {
         auto motion_instance =
-                planning::LinearMotionInstant{robot_position, rj_geometry::Point{-2, 7}};
+                planning::LinearMotionInstant{rj_geometry::Point{-2, 7}, {0,0}};
         auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, planning::FaceTarget{}};
         intent.motion_command = face_ball_cmd;
         return intent;
     } else if (current_state_ == UP) {
         auto motion_instance =
-                planning::LinearMotionInstant{robot_position, rj_geometry::Point{-2, 1}};
+                planning::LinearMotionInstant{rj_geometry::Point{-2, 1}, {0,0}};
         auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, planning::FaceTarget{}};
         intent.motion_command = face_ball_cmd;
         return intent;
