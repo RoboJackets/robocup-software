@@ -48,7 +48,7 @@ private:
         RECEIVING,       // physically intercepting the ball from a pass (gets possession)
         STEALING,        // attempting to intercept the ball from the other team
         FACING,          // turning to face the ball
-        SCORER,          // overrides everything and will attempt to steal the bal and shoot it
+        SCORER,          // overrides everything and will attempt to steal the ball and shoot it
     };
 
     State update_state();
