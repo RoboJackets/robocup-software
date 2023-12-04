@@ -30,7 +30,7 @@ Offense::State Offense::update_state() {
 
     if (current_state_ == IDLING) {
         send_scorer_request();
-        next_state = SEARCHING;
+        next_state = PASSING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
             next_state = STEALING;
@@ -94,9 +94,13 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == PASSING) {
+        //TODO: Remove this pls
+        target_robot_id = 2;
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
             last_world_state_->get_robot(true, target_robot_id).pose.position();
+        rj_geometry::Point this_robot_pos =
+            last_world_state_->get_robot(true, this->robot_id_).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
@@ -104,7 +108,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         // TODO: Adjust the kick speed based on distance
-        intent.kick_speed = 4.0;
+        dist = std::sqrt(std::pow((target_robot_pos.x() - this_robot_pos.x()), 2) +
+            std::pow((target_robot_pos.y() - this_robot_pos.y()), 2));
+        intent.kick_speed = std::sqrt((std::pow(FINAL_BALL_SPEED, 2)) -
+            (2 * BALL_DECEL * dist));
         intent.is_active = true;
         return intent;
     } else if (current_state_ == PREPARING_SHOT) {

@@ -36,6 +36,10 @@ public:
 private:
     bool kicking_{true};
 
+    const float FINAL_BALL_SPEED {0.0f};
+    const float BALL_DECEL {-0.5f};
+    float dist {0.0f};
+
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 
