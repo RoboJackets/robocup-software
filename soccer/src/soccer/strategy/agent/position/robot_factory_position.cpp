@@ -16,8 +16,59 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
 
 std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state,
                                                           FieldDimensions& field_dimensions) {
-    // This is where the current_position can be reassigned based on the
-    // PlayState
+    // If keeper, make no changes
+    if (robot_id_ == 0) {
+        return current_position_->get_task(world_state, field_dimensions);
+    }
+
+    // Get sorted positions of all friendly robots
+    typedef struct std::pair<int, double> RobotPos;  // (robotId, yPosition)
+
+    std::vector<RobotPos> robots_copy;
+    for (int i = 0; i <= 5; i++) {
+        robots_copy.emplace_back(i, world_state.our_robots[i].pose.position().y());
+    }
+
+    std::sort(robots_copy.begin(), robots_copy.end(),
+              [](RobotPos const& a, RobotPos const& b) { return a.second < b.second; });
+
+    // Find relative location of current robot
+    int i = 0;
+    for (RobotPos r : robots_copy) {
+        if (r.first == robot_id_) {
+            break;
+        }
+        i++;
+    }
+
+    // Assigning new position
+    // Checking which half the ball is on (using 1.99 to avoid undetermined behavior on midline)
+    if (world_state.ball.position.y() > field_dimensions.length() / 1.99) {
+        // Offensive mode
+        // 3 robots on offense, 2 robots on defense
+        if (i >= 3) {
+            if (current_position_->get_name().compare("Offense") != 0) {
+                current_position_ = std::make_unique<Offense>(robot_id_);
+            }
+        } else {
+            if (current_position_->get_name().compare("Defense") != 0) {
+                current_position_ = std::make_unique<Defense>(robot_id_);
+            }
+        }
+    } else {
+        // Defensive mode
+        // 4 robots on defense, 1 robot on offense
+        if (i <= 4) {
+            if (current_position_->get_name().compare("Defense") != 0) {
+                current_position_ = std::make_unique<Defense>(robot_id_);
+            }
+        } else {
+            if (current_position_->get_name().compare("Offense") != 0) {
+                current_position_ = std::make_unique<Offense>(robot_id_);
+            }
+        }
+    }
+
     return current_position_->get_task(world_state, field_dimensions);
 }
 
