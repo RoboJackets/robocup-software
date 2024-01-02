@@ -285,15 +285,20 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
     //  1. 1 Goalie
     //  2. 2 Offense
     //  3. Remaining Defense (always 1 defender)
+    RCLCPP_INFO(this->get_logger(), "assigning positions"); 
     int assign_num = 0;
     for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        //RCLCPP_INFO(this->get_logger(), "robot alive: " + check_robot_alive(robot_id));
         if (check_robot_alive(robot_id)) {
+            RCLCPP_INFO(this->get_logger(), "ANSON: Assigning id=%d", robot_id); 
             switch (assign_num) {
                 case 0:
                     positions[robot_id] = Positions::Goalie;
                     break;
                 case 1:
-                    positions[robot_id] = Positions::Offense;
+                    RCLCPP_INFO(this->get_logger(), "ANSON: Assigning Runner! (before)"); 
+                    positions[robot_id] = Positions::Runner; // previously offense
+                    RCLCPP_INFO(this->get_logger(), "ANSON: Assigning Runner!"); 
                     break;
                 case 2:
                     positions[robot_id] = Positions::Defense;
@@ -306,6 +311,8 @@ void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positi
                     break;
             }
             assign_num++;
+        } else {
+            RCLCPP_INFO(this->get_logger(), "ANSON: robot dead, id=%d", robot_id); 
         }
     }
 

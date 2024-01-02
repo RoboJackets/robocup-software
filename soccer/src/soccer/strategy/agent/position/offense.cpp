@@ -4,7 +4,7 @@ namespace strategy {
 
 Offense::Offense(int r_id) : Position(r_id) {
     position_name_ = "Offense";
-    current_state_ = IDLING;
+    current_state_ = IDLING; 
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
@@ -16,6 +16,8 @@ Offense::State Offense::update_state() {
     State next_state = current_state_;
     // handle transitions between current state
     WorldState* world_state = this->world_state();
+
+    SPDLOG_INFO("ANSON: test test test");
 
     // if no ball found, stop and return to box immediately
     if (!world_state->ball.visible) {
