@@ -94,11 +94,11 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == PASSING) {
-        //TODO: Remove this
+        // TODO: Remove this
         /*
             Commented for now, may need for testing later.
         */
-        //this->target_robot_id = 2;
+        // this->target_robot_id = 2;
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
             last_world_state_->get_robot(true, target_robot_id).pose.position();
@@ -110,12 +110,11 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        //Adjusts kick speed based on distance. Refer to 
-        //TIGERS Mannheim eTDP from 2019 for details
-        //See also passer.py in rj_gameplay
+        // Adjusts kick speed based on distance. Refer to
+        // TIGERS Mannheim eTDP from 2019 for details
+        // See also passer.py in rj_gameplay
         dist = target_robot_pos.dist_to(this_robot_pos);
-        intent.kick_speed = std::sqrt((std::pow(FINAL_BALL_SPEED, 2)) -
-            (2 * BALL_DECEL * dist));
+        intent.kick_speed = std::sqrt((std::pow(FINAL_BALL_SPEED, 2)) - (2 * BALL_DECEL * dist));
         intent.is_active = true;
         return intent;
     } else if (current_state_ == PREPARING_SHOT) {
