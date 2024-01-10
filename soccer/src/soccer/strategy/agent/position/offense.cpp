@@ -111,9 +111,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         //Adjusts kick speed based on distance. Refer to 
-        //TIGERS Mannheim eTDP from 2019 for details.
-        dist = std::sqrt(std::pow((target_robot_pos.x() - this_robot_pos.x()), 2) +
-            std::pow((target_robot_pos.y() - this_robot_pos.y()), 2));
+        //TIGERS Mannheim eTDP from 2019 for details
+        //See also passer.py in rj_gameplay
+        dist = target_robot_pos.dist_to(this_robot_pos);
         intent.kick_speed = std::sqrt((std::pow(FINAL_BALL_SPEED, 2)) -
             (2 * BALL_DECEL * dist));
         intent.is_active = true;
