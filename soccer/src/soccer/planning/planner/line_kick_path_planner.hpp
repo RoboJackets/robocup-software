@@ -29,25 +29,20 @@ public:
 
     void reset() override {
         prev_path_ = {};
-        final_approach_ = false;
         target_kick_pos_ = std::nullopt;
-        reuse_path_count_ = 0;
+        latest_state_ = IDLING;
+        average_ball_vel_initialized_ = false;
     }
     [[nodiscard]] bool is_done() const override;
 
 private:
+    State latest_state_ = IDLING;
+    enum State {
+        IDLING, INITIAL_APPROACH, FINAL_APPROACH
+    };
     Trajectory prev_path_;
-    bool final_approach_ = false;
     std::optional<rj_geometry::Point> target_kick_pos_;
-    int reuse_path_count_ = 0;
-
-    // ball velocity filtering vars
-    rj_geometry::Point average_ball_vel_;
     bool average_ball_vel_initialized_ = false;
-
-    // TODO(Kevin): make this a common param ("ball is slow" used
-    // in a lot of places)
-    double IS_DONE_BALL_VEL = 0.5;  // m/s
 };
 
 }  // namespace planning
