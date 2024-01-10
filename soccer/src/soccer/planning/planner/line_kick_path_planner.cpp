@@ -13,6 +13,11 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
+
+    if (plan_request.play_state_ == PlayState::halt() || plan_request.play_state_ == PlayState::stop()) {
+        return Trajectory{};
+    }
+
     // TODO(?): ros param these
     const float approach_speed = 0.05;
 
@@ -64,7 +69,8 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
 
     // This segfaults. Please rewrite the entire thing.
-#if 0
+    // I'm not seeing a segfault
+//#if 0
     if (final_approach_ && target_kick_pos_) {
         RJ::Seconds duration_into_path = cur_time - prev_path_.begin_time();
 
@@ -89,7 +95,11 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
             return prev_path_;
         }
     }
-#endif
+//#endif
+
+    if (target_kick_pos_) {
+        SPDLOG_INFO("Point(" + to_string(target_kick_pos_.value().x()) + ", " + to_string(target_kick_pos_.value().y()) + ")");
+    }
 
     // only plan line kick if not is_done
     if (!this->is_done()) {
@@ -146,10 +156,11 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         target_kick_pos_ = command.target.position;
         path.stamp(RJ::now());
         prev_path_ = path;
+        //SPDLOG_INFO(path);
         return path;
     }
 
-    return Trajectory{};
+    //return Trajectory{};
     // (Kevin) pretty sure everything under this line is not used
 
     if (!prev_path_.empty() && target_kick_pos_) {

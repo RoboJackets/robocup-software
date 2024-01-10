@@ -29,8 +29,8 @@ Offense::State Offense::update_state() {
     double distance_to_ball = robot_position.dist_to(ball_position);
 
     if (current_state_ == IDLING) {
-        // send_scorer_request();
-        next_state = AWAITING_SEND_PASS;
+        send_scorer_request();
+        next_state = PASSING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
             next_state = STEALING;
@@ -98,6 +98,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == PASSING) {
+        target_robot_id = 2;
         rj_geometry::Point target_robot_pos =
             last_world_state_->get_robot(true, target_robot_id).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
