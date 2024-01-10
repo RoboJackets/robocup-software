@@ -13,33 +13,21 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
-
     if (plan_request.play_state_ == PlayState::halt() || plan_request.play_state_ == PlayState::stop()) {
         return Trajectory{};
     }
 
-    // TODO(?): ros param these
-    const float approach_speed = 0.05;
-
-    const float ball_avoid_distance = 0.10;
-
+    BallState ball = plan_request.world_state->ball;
     const MotionCommand& command = plan_request.motion_command;
+    const RobotInstant& start_instant = plan_request.start;
+    const auto& motion_constraints = plan_request.constraints.mot;
+    const auto& rotation_constraints = plan_request.constraints.rot;
 
     if (plan_request.virtual_obstacles.hit(plan_request.start.position())) {
         prev_path_ = Trajectory{};
         return prev_path_;
     }
 
-    if (target_kick_pos_.has_value() &&
-        command.target.position.dist_to(target_kick_pos_.value()) > 0.1) {
-        prev_path_ = Trajectory{};
-        target_kick_pos_ = std::nullopt;
-    }
-
-    const RobotInstant& start_instant = plan_request.start;
-    const auto& motion_constraints = plan_request.constraints.mot;
-    const auto& rotation_constraints = plan_request.constraints.rot;
-    const auto& ball = plan_request.world_state->ball;
 
     // track ball velocity to know if done or not
     if (!average_ball_vel_initialized_) {
