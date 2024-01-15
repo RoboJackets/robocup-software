@@ -140,6 +140,14 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
+                package="rj_robocup",
+                executable="soccer_mom_node",
+                output="screen",
+                arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
                 condition=IfCondition(PythonExpression([run_sim])),
                 package="rj_robocup",
                 executable="sim_radio_node",

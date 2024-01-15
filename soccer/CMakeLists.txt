@@ -83,6 +83,7 @@ add_executable(planner_node)
 add_executable(control_node)
 add_executable(sim_radio_node)
 add_executable(network_radio_node)
+add_executable(soccer_mom_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
 add_executable(coach_node)
@@ -182,6 +183,9 @@ set(CONTROL_NODE_DEPS_LIBRARIES robocup)
 set(PLANNER_NODE_DEPS_SYSTEM_LIBRARIES)
 set(PLANNER_NODE_DEPS_LIBRARIES robocup)
 
+set(SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES)
+set(SOCCER_MOM_NODE_DEPS_LIBRARIES robocup)
+
 set(MANUAL_CONTROL_NODE_DEPS_SYSTEM_LIBRARIES)
 set(MANUAL_CONTROL_NODE_DEPS_LIBRARIES robocup)
 
@@ -231,6 +235,10 @@ target_link_libraries(sim_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
 
 target_link_libraries(coach_node PRIVATE ${COACH_NODE_DEPS_SYSTEM_LIBRARIES}
         ${COACH_NODE_DEPS_LIBRARIES})
+
+# -- soccer_mom_n node --
+target_link_libraries(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${SOCCER_MOM_NODE_DEPS_LIBRARIES})
 
 # -- network_radio_node --
 target_link_libraries(network_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
@@ -296,6 +304,7 @@ install(
         planner_node
         control_node
         sim_radio_node
+        soccer_mom_node
         coach_node
         network_radio_node
         manual_control_node
