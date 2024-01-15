@@ -43,10 +43,12 @@ private:
     State current_state_ = INITIAL_APPROACH;
     PathTargetPathPlanner path_target_{};
     Trajectory prev_path_;
+
     static constexpr double IS_DONE_BALL_VEL = 0.5;
     rj_geometry::Point average_ball_vel_;
-    std::optional<rj_geometry::Point> target_kick_pos_;
     bool average_ball_vel_initialized_ = false;
+    std::optional<rj_geometry::Point> target_kick_pos_;
+
     // Trajectory initial(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
     Trajectory initial(const PlanRequest& plan_request);
     Trajectory final(const PlanRequest& plan_request);

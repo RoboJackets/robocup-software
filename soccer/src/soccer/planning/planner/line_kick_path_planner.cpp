@@ -61,12 +61,40 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     }
 
 Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
+    // Getting ball info
     const BallState& ball = plan_request.world_state->ball;
+
+    // Creating a modified plan_request to send to PathTargetPlanner
     PlanRequest modified_request = plan_request;
-    Point target_pos = ball.position;
-    LinearMotionInstant target{target_pos, {0, 0}};
+
+    // Determining where to navigate to
+    // Goes to where ball is predicted to be in 0.1 seconds
+    // If this prediction is within .1 meters of initial prediction, then the plan is not recalculated
+    const RJ::Seconds predictTime(0.1);
+    const RJ::Time cur_time = plan_request.start.stamp + predictTime;
+    Point ball_prediction = ball.predict_at(cur_time).position;
+    if (target_kick_pos_.has_value()) {
+        double distanceBetween = (target_kick_pos_.value() - ball_prediction).mag();
+        if (distanceBetween > 0.1) {
+            target_kick_pos_ = ball_prediction;
+        } else {
+            return prev_path_;
+        }
+    } else {
+        target_kick_pos_ = ball_prediction;
+    }
+
+    // Determining the velocity
+    Point approach_direction = ball_prediction - plan_request.start.position();
+    double approach_speed = 50.0;
+    Point target_vel = (average_ball_vel_ + approach_direction).normalized() * approach_speed;
+
+    // Updating the motion command
+    LinearMotionInstant target{target_kick_pos_.value(), target_vel};
     MotionCommand modified_command{"line_kick", target};
     modified_request.motion_command = modified_command;
+
+    // Getting the new path from PathTargetPlanner
     Trajectory path = path_target_.plan(modified_request);
     return path;
 }
