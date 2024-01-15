@@ -1,4 +1,4 @@
-#include "line_kick_path_planner.hpp"
+#include "planning/planner/line_kick_path_planner.hpp"
 
 #include <rj_geometry/util.hpp>
 
@@ -17,9 +17,9 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         return Trajectory{};
     }
 
-    BallState ball = plan_request.world_state->ball;
-    const MotionCommand& command = plan_request.motion_command;
-    const RobotInstant& start_instant = plan_request.start;
+    const BallState& ball = plan_request.world_state->ball;
+    // const MotionCommand& command = plan_request.motion_command;
+    // const RobotInstant& start_instant = plan_request.start;
 
     if (!average_ball_vel_initialized_) {
         average_ball_vel_ = ball.velocity;
@@ -34,24 +34,24 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity, 0.8);
     }
 
-    ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false, nullptr);
+    // ShapeSet static_obstacles;
+    // std::vector<DynamicObstacle> dynamic_obstacles;
+    // fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false, nullptr);
 
-    auto obstacles_with_ball = static_obstacles;
-    const RJ::Time cur_time = start_instant.stamp;
-    obstacles_with_ball.add(
-        make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
+    // auto obstacles_with_ball = static_obstacles;
+    // const RJ::Time cur_time = start_instant.stamp;
+    // obstacles_with_ball.add(
+    //     make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
 
-    // only plan line kick if not is_done
+    // // only plan line kick if not is_done
     if (!this->is_done()) {
-
+        state_transition(ball, plan_request.start);
         switch(current_state_) {
             case INITIAL_APPROACH:
-                prev_path_ = initial(ball, command, start_instant, static_obstacles, dynamic_obstacles);
+                prev_path_ = initial(plan_request);
                 break;
             case FINAL_APPROACH:
-                prev_path_ = final(ball, command, start_instant, static_obstacles, dynamic_obstacles);
+                prev_path_ = final(plan_request);
                 break;
 
         }
@@ -59,20 +59,14 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         return prev_path_;
         }
     }
-    return prev_path;
-}
 
-Trajectory LineKickPathPlanner::initial(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles) {
-    Trajectory path;
-    LinearMotionInstant target{ball.position};
-
-    auto ball_trajectory = ball.make_trajectory();
-
+Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
+    Trajectory path = settle_.plan(plan_request);
     return path;
 }
 
-Trajectory LineKickPathPlanner::final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles) {
-    return prev_path;
+Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
+    return prev_path_;
 }
 
 void LineKickPathPlanner::state_transition(BallState ball, RobotInstant start_instant) {
