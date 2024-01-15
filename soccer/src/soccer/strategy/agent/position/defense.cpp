@@ -57,6 +57,8 @@ Defense::State Defense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
+        case MARKING:
+            break;
     }
 
     return next_state;
@@ -119,6 +121,10 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
         return intent;
+    } else if (current_state_ == MARKING) {
+        /*
+        
+        */
     }
 
     return std::nullopt;

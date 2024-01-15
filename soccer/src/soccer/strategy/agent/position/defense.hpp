@@ -61,6 +61,7 @@ private:
         RECEIVING,     // physically intercepting the ball from a pass
         PASSING,       // physically kicking the ball towards another robot
         FACING,        // turning to face the passing robot
+        MARKING
     };
 
     State update_state();
