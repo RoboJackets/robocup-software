@@ -61,7 +61,13 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     }
 
 Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
-    Trajectory path = settle_.plan(plan_request);
+    const BallState& ball = plan_request.world_state->ball;
+    PlanRequest modified_request = plan_request;
+    Point target_pos = ball.position;
+    LinearMotionInstant target{target_pos, {0, 0}};
+    MotionCommand modified_command{"line_kick", target};
+    modified_request.motion_command = modified_command;
+    Trajectory path = path_target_.plan(modified_request);
     return path;
 }
 

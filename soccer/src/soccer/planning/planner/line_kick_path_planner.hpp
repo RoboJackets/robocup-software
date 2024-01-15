@@ -4,7 +4,7 @@
 
 #include "planning/planner/path_planner.hpp"
 #include "planning/trajectory.hpp"
-#include "planning/planner/settle_path_planner.hpp"
+#include "planning/planner/path_target_path_planner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -41,7 +41,7 @@ private:
         INITIAL_APPROACH, FINAL_APPROACH
     };
     State current_state_ = INITIAL_APPROACH;
-    SettlePathPlanner settle_{};
+    PathTargetPathPlanner path_target_{};
     Trajectory prev_path_;
     static constexpr double IS_DONE_BALL_VEL = 0.5;
     rj_geometry::Point average_ball_vel_;
