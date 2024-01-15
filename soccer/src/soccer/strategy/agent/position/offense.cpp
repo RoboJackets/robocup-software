@@ -83,6 +83,7 @@ Offense::State Offense::update_state() {
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
+    float dist {0.0f};
     if (current_state_ == IDLING) {
         // Do nothing
         auto empty_motion_cmd = planning::MotionCommand{};
@@ -94,11 +95,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == PASSING) {
-        //TODO: Remove this
-        /*
-            Commented for now, may need for testing later.
-        */
-        //this->target_robot_id = 2;
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
             last_world_state_->get_robot(true, target_robot_id).pose.position();
