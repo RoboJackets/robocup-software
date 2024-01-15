@@ -828,17 +828,23 @@ void MainWindow::on_actionStopBall_triggered() {
 }
 
 void MainWindow::on_actionResetField_triggered() {
-    const int NUM_COLS = 2;
-    const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(2, -1, 0), 0, false);
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(2, -1, 0), 0, true);
 
-    for (size_t i = 0; i < kRobotsPerTeam; ++i) {
-        double x_pos = +2.5 - i / ROBOTS_PER_COL;
-        double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
-        auto pose = rj_geometry::Pose(x_pos, y_pos, 0);
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(2, 0, 0), 1, false);
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(2, 0, 0), 1, true);
 
-        _ui.fieldView->set_robot_pose(pose, i, false);
-        _ui.fieldView->set_robot_pose(pose, i, true);
-    }
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(2, 1, 0), 2, false);
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(2, 1, 0), 2, true);
+
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(3, -1, 0), 3, false);
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(3, -1, 0), 3, true);
+
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(3, 0, 0), 4, false);
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(3, 0, 0), 4, true);
+
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(3, 1, 0), 5, false);
+    _ui.fieldView->set_robot_pose(rj_geometry::Pose(3, 1, 0), 5, true);
 
     _ui.fieldView->set_ball_position(rj_geometry::Point(0.0, 0.0));
     _ui.fieldView->set_ball_velocity(rj_geometry::Point(0.0, 0.0));
