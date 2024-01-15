@@ -30,19 +30,22 @@ public:
     void reset() override {
         prev_path_ = {};
         target_kick_pos_ = std::nullopt;
-        latest_state_ = IDLING;
+        current_state_ = INITIAL_APPROACH;
         average_ball_vel_initialized_ = false;
     }
     [[nodiscard]] bool is_done() const override;
 
 private:
-    State latest_state_ = IDLING;
+    State current_state_ = IDLING;
     enum State {
-        IDLING, INITIAL_APPROACH, FINAL_APPROACH
+        INITIAL_APPROACH, FINAL_APPROACH
     };
     Trajectory prev_path_;
     std::optional<rj_geometry::Point> target_kick_pos_;
     bool average_ball_vel_initialized_ = false;
+    Trajectory initial(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
+    Trajectory final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
+    void state_transition(BallState ball, RobotInstant start_instant);
 };
 
 }  // namespace planning
