@@ -36,9 +36,8 @@ public:
 private:
     bool kicking_{true};
 
-    static constexpr float FINAL_BALL_SPEED {0.0f};
-    static constexpr float BALL_DECEL {-0.4f};
-    
+    static constexpr float FINAL_BALL_SPEED{0.0f};
+    static constexpr float BALL_DECEL{-0.4f};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
