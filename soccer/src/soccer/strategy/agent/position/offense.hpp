@@ -49,6 +49,7 @@ private:
         STEALING,        // attempting to intercept the ball from the other team
         FACING,          // turning to face the ball
         SCORER,          // overrides everything and will attempt to steal the bal and shoot it
+        AWAITING_SEND_PASS, //is waiting to send a pass to someone else
     };
 
     State update_state();
@@ -60,6 +61,8 @@ private:
 
     bool scorer_ = false;
     bool last_scorer_ = false;
+
+    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
@@ -76,6 +79,7 @@ private:
      */
     communication::ScorerResponse receive_scorer_request(
         communication::ScorerRequest scorer_request);
+
 
     /**
      * @brief This agent can go through the distance of every other offensive robot from the goal
