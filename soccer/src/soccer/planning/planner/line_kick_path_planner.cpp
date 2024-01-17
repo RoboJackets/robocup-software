@@ -13,7 +13,10 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
-    if (plan_request.play_state_ == PlayState::halt() || plan_request.play_state_ == PlayState::stop()) {
+    SPDLOG_INFO("Robot {} state {}", plan_request.shell_id, current_state_);
+
+    if (plan_request.play_state_ == PlayState::halt() ||
+        plan_request.play_state_ == PlayState::stop()) {
         return Trajectory{};
     }
 
@@ -46,65 +49,57 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     // // only plan line kick if not is_done
     if (!this->is_done()) {
         state_transition(ball, plan_request.start);
-        switch(current_state_) {
+        switch (current_state_) {
             case INITIAL_APPROACH:
                 prev_path_ = initial(plan_request);
                 break;
             case FINAL_APPROACH:
                 prev_path_ = final(plan_request);
                 break;
-
         }
         prev_path_.stamp(RJ::now());
         return prev_path_;
-        }
     }
+}
 
 Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
-    // Getting ball info
+    // // Getting ball info
     const BallState& ball = plan_request.world_state->ball;
 
-    // Creating a modified plan_request to send to PathTargetPlanner
+    // // Creating a modified plan_request to send to PathTargetPlanner
     PlanRequest modified_request = plan_request;
 
-    // Determining where to navigate to
-    // Goes to where ball is predicted to be in 0.1 seconds
-    // If this prediction is within .1 meters of initial prediction, then the plan is not recalculated
-    const RJ::Seconds predictTime(0.1);
-    const RJ::Time cur_time = plan_request.start.stamp + predictTime;
-    Point ball_prediction = ball.predict_at(cur_time).position;
-    if (target_kick_pos_.has_value()) {
-        double distanceBetween = (target_kick_pos_.value() - ball_prediction).mag();
-        if (distanceBetween > 0.1) {
-            target_kick_pos_ = ball_prediction;
-        } else {
-            return prev_path_;
-        }
-    } else {
-        target_kick_pos_ = ball_prediction;
-    }
+    // const WorldState* world_state = plan_request.world_state;
 
-    // Determining the velocity
-    Point approach_direction = ball_prediction - plan_request.start.position();
-    double approach_speed = 50.0;
-    Point target_vel = (average_ball_vel_ + approach_direction).normalized() * approach_speed;
+    // Where to navigate to
+    auto distance_from_ball = kBallRadius + kRobotRadius + 0.05;
+
+    auto goal_to_ball = (plan_request.motion_command.target.position - ball.position);
+    auto offset_from_ball = distance_from_ball * goal_to_ball.normalized();
 
     // Updating the motion command
-    LinearMotionInstant target{target_kick_pos_.value(), target_vel};
-    MotionCommand modified_command{"line_kick", target};
+    LinearMotionInstant target{ball.position - offset_from_ball};
+
+    MotionCommand modified_command{"path_target", target, FaceBall{}};
     modified_request.motion_command = modified_command;
 
     // Getting the new path from PathTargetPlanner
     Trajectory path = path_target_.plan(modified_request);
+    // modified_request.motion_command = MotionCommand{"collect"};
+
+    // return collect_planner_.plan(modified_request);
     return path;
 }
 
 Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
-    return prev_path_;
+
+    
+
 }
 
 void LineKickPathPlanner::state_transition(BallState ball, RobotInstant start_instant) {
-    if (current_state_ == INITIAL_APPROACH && (ball.position - start_instant.position()).mag() < 0.1) {
+    if (current_state_ == INITIAL_APPROACH &&
+        (ball.position - start_instant.position()).mag() < 0.01) {
         current_state_ = FINAL_APPROACH;
     }
 }
