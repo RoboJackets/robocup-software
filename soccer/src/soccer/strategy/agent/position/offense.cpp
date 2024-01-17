@@ -216,15 +216,15 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
                    std::get_if<communication::PassRequest>(&request.request)) {
         //If the robot recieves a PassRequest, only process it if we are oppen
         
-        rj_geometry::Point robot_position = world_state()->get_robot(true, robot_id_).pose.position();
-        rj_geometry::Point from_robot_position = world_state()->get_robot(true, pass_request->from_robot_id).pose.position();
+        rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
+        rj_geometry::Point from_robot_position = last_world_state_->get_robot(true, pass_request->from_robot_id).pose.position();
         rj_geometry::Segment pass_path{from_robot_position, robot_position};
         double min_robot_dist = 10000;
         float min_path_dist = 10000;
 
         //Calculates the minimum distance from the current robot to all other robots
         //Also calculates the minimum distance from another robot to the passing line
-        for (auto bot : world_state()->their_robots) {
+        for (auto bot : last_world_state_->their_robots) {
             rj_geometry::Point opp_pos = bot.pose.position();
             min_robot_dist = std::min(min_robot_dist, robot_position.dist_to(opp_pos));
             min_path_dist = std::min(min_path_dist, pass_path.dist_to(opp_pos));
