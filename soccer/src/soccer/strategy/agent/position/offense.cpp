@@ -252,7 +252,6 @@ rj_geometry::Point Offense::calculate_open_point(double current_prec, double min
                 min_val = curr_val;
                 min = point;
             }
-            SPDLOG_INFO("I am {}, possible pt ({}, {}), val {}", robot_id_, point.x(), point.y(), curr_val);
         }
         current_prec *= 0.5;
         current_point = min;
