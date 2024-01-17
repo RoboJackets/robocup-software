@@ -23,6 +23,7 @@
 #include <ui_MainWindow.h>
 
 #include "battery_profile.hpp"
+#include "game_state.hpp"
 #include "radio/radio.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "robot_status_widget.hpp"
@@ -183,32 +184,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
         _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
-
-    positionDropdowns = {
-        _ui.robotPosition_0,  _ui.robotPosition_1,  _ui.robotPosition_2,  _ui.robotPosition_3,
-        _ui.robotPosition_4,  _ui.robotPosition_5,  _ui.robotPosition_6,  _ui.robotPosition_7,
-        _ui.robotPosition_8,  _ui.robotPosition_9,  _ui.robotPosition_10, _ui.robotPosition_11,
-        _ui.robotPosition_12, _ui.robotPosition_13, _ui.robotPosition_14, _ui.robotPosition_15};
-
-    positionOverrides = {
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-        strategy::OverridePosition::None, strategy::OverridePosition::None,
-    };
-
-    positionResetButtons = {
-        _ui.positionReset_0,  _ui.positionReset_1,  _ui.positionReset_2,  _ui.positionReset_3,
-        _ui.positionReset_4,  _ui.positionReset_5,  _ui.positionReset_6,  _ui.positionReset_7,
-        _ui.positionReset_8,  _ui.positionReset_9,  _ui.positionReset_10, _ui.positionReset_11,
-        _ui.positionReset_12, _ui.positionReset_13, _ui.positionReset_14, _ui.positionReset_15};
-
-    override_pub_ = _node->create_publisher<rj_msgs::msg::PositionAssignment>(
-        "/strategy/position_overrides", 10);
 
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
@@ -413,20 +388,6 @@ void MainWindow::updateViews() {
         _longHistory.assign(context_->logs.frames.begin() + start - num_dropped,
                             context_->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
-
-    // Update positions and republish overrides
-    for (size_t i = 0; i < kNumShells; i++) {
-        updatePosition(i);
-    }
-
-    rj_msgs::msg::PositionAssignment msg;
-    std::array<uint32_t, kNumShells> message_overrides{
-        positionOverrides[0],  positionOverrides[1],  positionOverrides[2],  positionOverrides[3],
-        positionOverrides[4],  positionOverrides[5],  positionOverrides[6],  positionOverrides[7],
-        positionOverrides[8],  positionOverrides[9],  positionOverrides[10], positionOverrides[11],
-        positionOverrides[12], positionOverrides[13], positionOverrides[14], positionOverrides[15]};
-    msg.client_positions = message_overrides;
-    override_pub_->publish(msg);
 
     // Set the history vector by taking the last kHistorySize elements of the
     // "long" history, or fewer if _longHistory is shorter.
@@ -1179,173 +1140,3 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
         _ui.debugLayers->sortItems();
     }
 }
-
-////////
-// Position dropdowns
-void MainWindow::updatePosition(int robot) {
-    auto position = positionOverrides[robot];
-    auto givenPosition =
-        static_cast<strategy::OverridePosition::OverridePosition>(context_->robot_positions[robot]);
-    if (givenPosition == strategy::OverridePosition::Goalie ||
-        position == strategy::OverridePosition::None) {
-        position = givenPosition;
-    }
-
-    switch (position) {
-        case strategy::OverridePosition::Defense:
-            if (positionDropdowns[robot]->currentIndex() != 0) {
-                positionDropdowns[robot]->setCurrentIndex(0);
-            }
-            break;
-        case strategy::OverridePosition::Offense:
-            if (positionDropdowns[robot]->currentIndex() != 1) {
-                positionDropdowns[robot]->setCurrentIndex(1);
-            }
-            break;
-        case strategy::OverridePosition::Goalie:
-            if (positionDropdowns[robot]->currentIndex() != 2) {
-                setGoalieDropdown(robot);
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-void MainWindow::setGoalieDropdown(int robot) {
-    // Disable specified and enable rest
-    for (unsigned int i = 0; i < positionDropdowns.size(); i++) {
-        if (i == robot) {
-            positionDropdowns[i]->insertItem(2, QString::fromStdString("Goalie"), Qt::DisplayRole);
-            positionDropdowns[i]->setCurrentIndex(2);
-            positionDropdowns[i]->setEnabled(false);
-        } else {
-            positionDropdowns[i]->setEnabled(true);
-            positionDropdowns[i]->removeItem(2);
-        }
-    }
-}
-
-void MainWindow::onPositionDropdownChanged(int robot, int position) {
-    // The dropdown just changed. If it's not the same as context, it creates an override.
-    // position + 1 because the first item is defense and the second is offense
-    strategy::OverridePosition::OverridePosition newPosition =
-        static_cast<strategy::OverridePosition::OverridePosition>(position + 1);
-    strategy::OverridePosition::OverridePosition givenPosition =
-        static_cast<strategy::OverridePosition::OverridePosition>(context_->robot_positions[robot]);
-    if (newPosition != givenPosition) {
-        switch (newPosition) {
-            case strategy::OverridePosition::Defense:
-                positionOverrides[robot] = strategy::OverridePosition::Defense;
-                positionResetButtons[robot]->setEnabled(true);
-                break;
-            case strategy::OverridePosition::Offense:
-                positionOverrides[robot] = strategy::OverridePosition::Offense;
-                positionResetButtons[robot]->setEnabled(true);
-                break;
-            default:
-                break;
-        }
-    }
-}
-
-void MainWindow::onResetButtonClicked(int robot) {
-    positionOverrides[robot] = strategy::OverridePosition::None;
-    positionResetButtons[robot]->setEnabled(false);
-}
-
-void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
-    onPositionDropdownChanged(0, value);
-}
-
-void MainWindow::on_robotPosition_1_currentIndexChanged(int value) {
-    onPositionDropdownChanged(1, value);
-}
-
-void MainWindow::on_robotPosition_2_currentIndexChanged(int value) {
-    onPositionDropdownChanged(2, value);
-}
-
-void MainWindow::on_robotPosition_3_currentIndexChanged(int value) {
-    onPositionDropdownChanged(3, value);
-}
-
-void MainWindow::on_robotPosition_4_currentIndexChanged(int value) {
-    onPositionDropdownChanged(4, value);
-}
-
-void MainWindow::on_robotPosition_5_currentIndexChanged(int value) {
-    onPositionDropdownChanged(5, value);
-}
-
-void MainWindow::on_robotPosition_6_currentIndexChanged(int value) {
-    onPositionDropdownChanged(6, value);
-}
-
-void MainWindow::on_robotPosition_7_currentIndexChanged(int value) {
-    onPositionDropdownChanged(7, value);
-}
-
-void MainWindow::on_robotPosition_8_currentIndexChanged(int value) {
-    onPositionDropdownChanged(8, value);
-}
-
-void MainWindow::on_robotPosition_9_currentIndexChanged(int value) {
-    onPositionDropdownChanged(9, value);
-}
-
-void MainWindow::on_robotPosition_10_currentIndexChanged(int value) {
-    onPositionDropdownChanged(10, value);
-}
-
-void MainWindow::on_robotPosition_11_currentIndexChanged(int value) {
-    onPositionDropdownChanged(11, value);
-}
-
-void MainWindow::on_robotPosition_12_currentIndexChanged(int value) {
-    onPositionDropdownChanged(12, value);
-}
-
-void MainWindow::on_robotPosition_13_currentIndexChanged(int value) {
-    onPositionDropdownChanged(13, value);
-}
-
-void MainWindow::on_robotPosition_14_currentIndexChanged(int value) {
-    onPositionDropdownChanged(14, value);
-}
-
-void MainWindow::on_robotPosition_15_currentIndexChanged(int value) {
-    onPositionDropdownChanged(15, value);
-}
-
-void MainWindow::on_positionReset_0_clicked() { onResetButtonClicked(0); }
-
-void MainWindow::on_positionReset_1_clicked() { onResetButtonClicked(1); }
-
-void MainWindow::on_positionReset_2_clicked() { onResetButtonClicked(2); }
-
-void MainWindow::on_positionReset_3_clicked() { onResetButtonClicked(3); }
-
-void MainWindow::on_positionReset_4_clicked() { onResetButtonClicked(4); }
-
-void MainWindow::on_positionReset_5_clicked() { onResetButtonClicked(5); }
-
-void MainWindow::on_positionReset_6_clicked() { onResetButtonClicked(6); }
-
-void MainWindow::on_positionReset_7_clicked() { onResetButtonClicked(7); }
-
-void MainWindow::on_positionReset_8_clicked() { onResetButtonClicked(8); }
-
-void MainWindow::on_positionReset_9_clicked() { onResetButtonClicked(9); }
-
-void MainWindow::on_positionReset_10_clicked() { onResetButtonClicked(10); }
-
-void MainWindow::on_positionReset_11_clicked() { onResetButtonClicked(11); }
-
-void MainWindow::on_positionReset_12_clicked() { onResetButtonClicked(12); }
-
-void MainWindow::on_positionReset_13_clicked() { onResetButtonClicked(13); }
-
-void MainWindow::on_positionReset_14_clicked() { onResetButtonClicked(14); }
-
-void MainWindow::on_positionReset_15_clicked() { onResetButtonClicked(15); }

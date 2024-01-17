@@ -10,9 +10,8 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/coach_state.hpp>
-#include <rj_msgs/msg/global_override.hpp>
 
+#include "game_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
@@ -66,12 +65,13 @@ public:
      * Uses the Template Method + non-virtual interface:
      * https://www.sandordargo.com/blog/2022/08/24/tmp-and-nvi
      */
-    std::optional<RobotIntent> get_task();
+
+    virtual std::optional<RobotIntent> get_task(WorldState& world_state,
+                                                FieldDimensions& field_dimensions);
 
     // communication with AC
-    void update_world_state(WorldState world_state);
-    void update_coach_state(rj_msgs::msg::CoachState coach_state);
-    void update_field_dimensions(FieldDimensions field_dimensions);
+    void update_play_state(const PlayState& play_state);
+    void update_field_dimensions(const FieldDimensions& field_dimensions);
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
 
@@ -86,7 +86,7 @@ public:
      * Outside classes can only set to true, Position/derived classes can clear
      * with check_is_done().
      */
-    void set_is_done();
+    virtual void set_is_done();
 
     /**
      * @brief setter for goal_canceled_
@@ -102,7 +102,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    std::optional<communication::PosAgentRequestWrapper> send_communication_request();
+    virtual std::optional<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -193,7 +193,7 @@ public:
     virtual void derived_acknowledge_ball_in_transit(){};
 
     /**
-     * @brief When a robot disconnects on field (or is reassigned by the coach) they should call their
+     * @brief When a robot disconnects on field they should call their
      * implementation of die to inform necessary robots that they died.
      *
      */
@@ -215,18 +215,11 @@ protected:
     bool is_done_{};
     bool goal_canceled_{};
 
-    // fields for coach_state
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
     bool our_possession_{};
-    rj_msgs::msg::GlobalOverride global_override_{};
-
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
-
-    /*
-     * @return thread-safe ptr to most recent world_state
-     */
-    [[nodiscard]] WorldState* world_state();
+    PlayState current_play_state_ = PlayState::halt();
 
     /*
      * @brief assert world_state is valid before using it in get_task().
@@ -284,12 +277,10 @@ protected:
     // true if this robot is alive
     bool alive = false;
 
-private:
-    // private to avoid allowing WorldState to be accessed directly by derived
-    // classes (must use thread-safe getter)
-    WorldState last_world_state_;
-    mutable std::mutex world_state_mutex_;
+    // protected to allow WorldState to be accessed directly by derived
+    WorldState* last_world_state_;
 
+private:
     /**
      * @brief allow derived classes to change behavior of get_task(). See
      * get_task() above.

@@ -36,6 +36,7 @@ struct Context {
     // Radio -> Gameplay
     std::array<RobotStatus, kNumShells> robot_status;
     // Coach -> Positions
+    // TODO(sid-parikh) Delete Robot_Positions UI stuff
     std::array<uint32_t, kNumShells> robot_positions;
     // MainWindow -> Manual control
     std::array<bool, kNumShells> is_joystick_controlled{};

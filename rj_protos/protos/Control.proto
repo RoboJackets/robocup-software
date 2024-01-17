@@ -13,7 +13,7 @@ message Control {
         ON_BREAK_BEAM = 2;
     }
 
-    // LEDs on the robot display different colors based on current role from Coach
+    // LEDs on the robot display different colors based on current role
     enum Role {
         GOALIE = 0;
         DEFENSE = 1;
