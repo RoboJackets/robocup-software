@@ -1,8 +1,10 @@
 #include "defense.hpp"
+#include "marker.hpp"
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
+Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; 
+if (this->robot_id_ == 4) current_state_ = MARKING;}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
@@ -122,9 +124,8 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.motion_command = face_ball_cmd;
         return intent;
     } else if (current_state_ == MARKING) {
-        /*
-        
-        */
+        Marker marker{(u_int8_t) this->robot_id_};
+        return marker.get_task(intent, last_world_state_, this->field_dimensions_);
     }
 
     return std::nullopt;
