@@ -5,6 +5,7 @@
 #include "planning/planner/path_planner.hpp"
 #include "planning/trajectory.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
+#include "planning/planner/collect_path_planner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -42,6 +43,7 @@ private:
     };
     State current_state_ = INITIAL_APPROACH;
     PathTargetPathPlanner path_target_{};
+    CollectPathPlanner collect_planner_{};
     Trajectory prev_path_;
 
     static constexpr double IS_DONE_BALL_VEL = 0.5;
@@ -54,6 +56,7 @@ private:
     Trajectory final(const PlanRequest& plan_request);
     // Trajectory final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
     void state_transition(BallState ball, RobotInstant start_instant);
+
 };
 
 }  // namespace planning

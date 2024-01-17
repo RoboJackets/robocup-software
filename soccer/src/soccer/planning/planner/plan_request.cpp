@@ -67,7 +67,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     // Only added when STOP state is enabled
     if (in.min_dist_from_ball > 0 || avoid_ball) {
         auto ball_obs = make_inflated_static_obs(in.world_state->ball.position,
-                                                 in.world_state->ball.velocity, kBallRadius);
+                                                 in.world_state->ball.velocity, kBallRadius + kAvoidBallDistance);
         ball_obs.radius(ball_obs.radius() + in.min_dist_from_ball);
 
         // Draw ball obstacle in simulator

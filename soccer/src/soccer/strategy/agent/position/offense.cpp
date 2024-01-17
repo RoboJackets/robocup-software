@@ -30,7 +30,7 @@ Offense::State Offense::update_state() {
 
     if (current_state_ == IDLING) {
         send_scorer_request();
-        next_state = PASSING;
+        next_state = SHOOTING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
             next_state = STEALING;
@@ -79,10 +79,13 @@ Offense::State Offense::update_state() {
         }
     }
 
-    return next_state;
+    return SHOOTING;
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
+
+    SPDLOG_INFO(current_state_);
+
     if (current_state_ == IDLING) {
         // Do nothing
         auto empty_motion_cmd = planning::MotionCommand{};
@@ -131,6 +134,11 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = 4.0;
         intent.is_active = true;
+
+        // intent.motion_command = planning::MotionCommand{
+        //     "path_target", planning::LinearMotionInstant{last_world_state_->ball.position, {0.0}},
+        //     planning::FaceBall{}};
+
         return intent;
     } else if (current_state_ == RECEIVING) {
         // check how far we are from the ball
