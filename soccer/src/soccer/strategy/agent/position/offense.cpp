@@ -83,7 +83,7 @@ Offense::State Offense::update_state() {
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
-    float dist {0.0f};
+    float dist{0.0f};
     if (current_state_ == IDLING) {
         // Do nothing
         auto empty_motion_cmd = planning::MotionCommand{};
@@ -106,12 +106,11 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        //Adjusts kick speed based on distance. Refer to 
-        //TIGERS Mannheim eTDP from 2019 for details
-        //See also passer.py in rj_gameplay
+        // Adjusts kick speed based on distance. Refer to
+        // TIGERS Mannheim eTDP from 2019 for details
+        // See also passer.py in rj_gameplay
         dist = target_robot_pos.dist_to(this_robot_pos);
-        intent.kick_speed = std::sqrt((std::pow(FINAL_BALL_SPEED, 2)) -
-            (2 * BALL_DECEL * dist));
+        intent.kick_speed = std::sqrt((std::pow(FINAL_BALL_SPEED, 2)) - (2 * BALL_DECEL * dist));
         intent.is_active = true;
         return intent;
     } else if (current_state_ == PREPARING_SHOT) {
