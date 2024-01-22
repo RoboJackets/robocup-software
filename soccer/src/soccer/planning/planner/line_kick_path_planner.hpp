@@ -2,10 +2,10 @@
 
 #include <optional>
 
-#include "planning/planner/path_planner.hpp"
-#include "planning/trajectory.hpp"
-#include "planning/planner/path_target_path_planner.hpp"
 #include "planning/planner/collect_path_planner.hpp"
+#include "planning/planner/path_planner.hpp"
+#include "planning/planner/path_target_path_planner.hpp"
+#include "planning/trajectory.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -38,9 +38,7 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
-    enum State {
-        INITIAL_APPROACH, FINAL_APPROACH
-    };
+    enum State { INITIAL_APPROACH, FINAL_APPROACH };
     State current_state_ = INITIAL_APPROACH;
     PathTargetPathPlanner path_target_{};
     CollectPathPlanner collect_planner_{};
@@ -51,10 +49,12 @@ private:
     bool average_ball_vel_initialized_ = false;
     std::optional<rj_geometry::Point> target_kick_pos_;
 
-    // Trajectory initial(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
+    // Trajectory initial(BallState ball, MotionCommand command, RobotInstant start_instant,
+    // ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
     Trajectory initial(const PlanRequest& plan_request);
     Trajectory final(const PlanRequest& plan_request);
-    // Trajectory final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
+    // Trajectory final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet
+    // static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
     void state_transition(BallState ball, RobotInstant start_instant);
 
     // PlayState::State current_state_;
