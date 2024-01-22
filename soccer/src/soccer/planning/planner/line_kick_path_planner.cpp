@@ -47,19 +47,19 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
     //     make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
 
     // // only plan line kick if not is_done
-    if (!this->is_done()) {
-        state_transition(ball, plan_request.start);
-        switch (current_state_) {
-            case INITIAL_APPROACH:
-                prev_path_ = initial(plan_request);
-                break;
-            case FINAL_APPROACH:
-                prev_path_ = final(plan_request);
-                break;
-        }
-        prev_path_.stamp(RJ::now());
-        return prev_path_;
+    // if (!this->is_done()) {
+    state_transition(ball, plan_request.start);
+    switch (current_state_) {
+        case INITIAL_APPROACH:
+            prev_path_ = initial(plan_request);
+            break;
+        case FINAL_APPROACH:
+            prev_path_ = final(plan_request);
+            break;
     }
+    prev_path_.stamp(RJ::now());
+    return prev_path_;
+    // }
 }
 
 Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
