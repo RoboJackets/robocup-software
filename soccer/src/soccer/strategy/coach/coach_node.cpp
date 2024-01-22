@@ -194,7 +194,7 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
             case PlayState::State::Setup:
                 // Lowest non-goalie robot set to PenaltyPlayer
                 if (goalie_id_ == 0) {
-                    positions[1] = Positions::PenaltyPlayer;
+                    positions[1] = Positions::Runner;
                 } else {
                     positions[0] = Positions::PenaltyPlayer;
                 }
@@ -203,9 +203,9 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
             case PlayState::State::PenaltyPlaying:
                 // Lowest non-goalie robot set to Goal Kicker
                 if (goalie_id_ == 0) {
-                    positions[1] = Positions::GoalKicker;
+                    positions[1] = Positions::Runner;
                 } else {
-                    positions[0] = Positions::GoalKicker;
+                    positions[0] = Positions::Runner;
                 }
                 break;
             default:
@@ -230,7 +230,7 @@ void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& posit
                 // Lowest non-goalie robot set to Penalty Player
                 // TODO: Update this position to Kickoff Player?
                 if (goalie_id_ == 0) {
-                    positions[1] = Positions::PenaltyPlayer;
+                    positions[1] = Positions::Runner;
                 } else {
                     positions[0] = Positions::PenaltyPlayer;
                 }
@@ -238,9 +238,9 @@ void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& posit
             case PlayState::State::Ready:
                 // Lowest non-goalie robot set to Goal Kicker
                 if (goalie_id_ == 0) {
-                    positions[1] = Positions::GoalKicker;
+                    positions[1] = Positions::Runner;
                 } else {
-                    positions[0] = Positions::GoalKicker;
+                    positions[0] = Positions::Runner;
                 }
                 break;
             default:
@@ -266,9 +266,9 @@ void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& posi
                 // Lowest non-goalie robot set to Goal Kicker
                 if (goalie_id_ == 0) {
                     // Offense role should shoot. Placeholder for now.
-                    positions[1] = Positions::Offense;
+                    positions[1] = Positions::Runner;
                 } else {
-                    positions[0] = Positions::Offense;
+                    positions[0] = Positions::PenaltyPlayer;
                 }
                 break;
             default:
