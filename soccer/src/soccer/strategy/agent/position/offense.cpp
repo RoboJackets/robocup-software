@@ -58,7 +58,7 @@ Offense::State Offense::update_state() {
         }
     } else if (current_state_ == RECEIVING) {
         // transition to idling if we are close enough to the ball
-        if (distance_to_ball < 2*ball_receive_distance_) {
+        if (distance_to_ball < 2 * ball_receive_distance_) {
             next_state = IDLING;
         }
     } else if (current_state_ == STEALING) {
@@ -78,20 +78,20 @@ Offense::State Offense::update_state() {
             next_state = IDLING;
         }
     } else if (current_state_ == AWAITING_SEND_PASS) {
-        //Only sends a pass request every 0.2 seconds
+        // Only sends a pass request every 0.2 seconds
         auto cur = std::chrono::high_resolution_clock::now();
         auto diff = cur - start;
-        if (distance_to_ball < ball_lost_distance_ && diff.count() > 0.2){
+        if (distance_to_ball < ball_lost_distance_ && diff.count() > 0.2) {
             Position::broadcast_direct_pass_request();
             start = std::chrono::high_resolution_clock::now();
         }
-    } else if (current_state_ ==  SEEKING) {
-        // if the ball comes close to it while it's trying to seek, it should no longer be trying to seek
+    } else if (current_state_ == SEEKING) {
+        // if the ball comes close to it while it's trying to seek, it should no longer be trying to
+        // seek
         if (distance_to_ball < ball_receive_distance_) {
             // next_state = RECEIVING;
         }
     }
-    
 
     return next_state;
 }
@@ -192,17 +192,19 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == SEEKING) {
-        //Determine target position for seeking
-        rj_geometry::Point current_loc = last_world_state_->get_robot(true, robot_id_).pose.position(); 
+        // Determine target position for seeking
+        rj_geometry::Point current_loc =
+            last_world_state_->get_robot(true, robot_id_).pose.position();
         rj_geometry::Point curr_target = intent.motion_command.target.position;
-        //Only look for a new position if we are done with current movement
+        // Only look for a new position if we are done with current movement
         if (check_is_done() || target_pt == rj_geometry::Point{0, 0}) {
             target_pt = get_open_point(last_world_state_, current_loc, field_dimensions_);
         }
         planning::PathTargetFaceOption face_option = planning::FaceBall{};
         bool ignore_ball = false;
         planning::LinearMotionInstant goal{target_pt, rj_geometry::Point{0.0, 0.0}};
-        intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+        intent.motion_command =
+            planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
         return intent;
     }
 
@@ -211,15 +213,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 }
 
 rj_geometry::Point Offense::get_open_point(const WorldState* world_state,
-                                          rj_geometry::Point current_loc,
-                                          FieldDimensions field_dimensions) {
+                                           rj_geometry::Point current_loc,
+                                           FieldDimensions field_dimensions) {
     return Offense::calculate_open_point(3.0, .2, current_loc, world_state, field_dimensions);
 }
 
 rj_geometry::Point Offense::calculate_open_point(double current_prec, double min_prec,
-                                                rj_geometry::Point current_point,
-                                                const WorldState* world_state,
-                                                FieldDimensions field_dimensions) {
+                                                 rj_geometry::Point current_point,
+                                                 const WorldState* world_state,
+                                                 FieldDimensions field_dimensions) {
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state->ball.position;
         rj_geometry::Point min = current_point;
@@ -325,17 +327,17 @@ rj_geometry::Point Offense::correct_point(rj_geometry::Point p, FieldDimensions 
 }
 
 double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                       const WorldState* world_state) {
-    //Determines 'how good' a point is
-    //A higher value is a worse point
+                        const WorldState* world_state) {
+    // Determines 'how good' a point is
+    // A higher value is a worse point
 
-    //Does not go into the goalie boxes
+    // Does not go into the goalie boxes
     rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
     if (goal_box.contains_point(current_point)) {
         return 10000000;
     }
 
-    //Line of Sight Heuristic
+    // Line of Sight Heuristic
     double max = 0;
     double curr_dp;
     for (auto robot : world_state->their_robots) {
@@ -346,8 +348,8 @@ double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_
         }
     }
 
-    //Whether the path from ball to the point is blocked
-    //Same logic in passing to check if target is open
+    // Whether the path from ball to the point is blocked
+    // Same logic in passing to check if target is open
     rj_geometry::Segment pass_path{ball_pos, current_point};
     double min_robot_dist = 10000;
     float min_path_dist = 10000;
@@ -362,11 +364,11 @@ double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_
         min_robot_dist = std::min(min_robot_dist, current_point.dist_to(ally_pos));
         min_path_dist = std::min(min_path_dist, pass_path.dist_to(ally_pos));
     }
-    
+
     min_path_dist = 0.1 / min_path_dist;
     min_robot_dist = 0.1 / min_robot_dist;
 
-    //More Line of Sight Heuristics
+    // More Line of Sight Heuristics
     for (auto robot : world_state->our_robots) {
         curr_dp = (current_point - ball_pos).norm().dot((robot.pose.position() - ball_pos).norm());
         curr_dp *= curr_dp;
@@ -379,7 +381,7 @@ double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_
     double ball_proximity_loss = (current_point - ball_pos).mag() * .002;
     double goal_distance_loss = (9.0 - current_point.y()) * .008;
 
-    //Final evaluation
+    // Final evaluation
     return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist;
 }
 
@@ -410,24 +412,27 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         comm_response.response = response;
     } else if (const communication::PassRequest* pass_request =
                    std::get_if<communication::PassRequest>(&request.request)) {
-        //If the robot recieves a PassRequest, only process it if we are oppen
-        
-        rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
-        rj_geometry::Point from_robot_position = last_world_state_->get_robot(true, pass_request->from_robot_id).pose.position();
+        // If the robot recieves a PassRequest, only process it if we are oppen
+
+        rj_geometry::Point robot_position =
+            last_world_state_->get_robot(true, robot_id_).pose.position();
+        rj_geometry::Point from_robot_position =
+            last_world_state_->get_robot(true, pass_request->from_robot_id).pose.position();
         rj_geometry::Segment pass_path{from_robot_position, robot_position};
         double min_robot_dist = 10000;
         float min_path_dist = 10000;
 
-        //Calculates the minimum distance from the current robot to all other robots
-        //Also calculates the minimum distance from another robot to the passing line
+        // Calculates the minimum distance from the current robot to all other robots
+        // Also calculates the minimum distance from another robot to the passing line
         for (auto bot : last_world_state_->their_robots) {
             rj_geometry::Point opp_pos = bot.pose.position();
             min_robot_dist = std::min(min_robot_dist, robot_position.dist_to(opp_pos));
             min_path_dist = std::min(min_path_dist, pass_path.dist_to(opp_pos));
         }
 
-        //If the current robot is far enough away from other robots and there are no other robots in the passing line, process the request
-        //Currently, max_receive_distance is used to determine when we are open, but this may need to change
+        // If the current robot is far enough away from other robots and there are no other robots
+        // in the passing line, process the request Currently, max_receive_distance is used to
+        // determine when we are open, but this may need to change
         if (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance) {
             communication::PassResponse response = Position::receive_pass_request(*pass_request);
             comm_response.response = response;
