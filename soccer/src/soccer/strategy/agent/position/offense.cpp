@@ -30,11 +30,7 @@ Offense::State Offense::update_state() {
 
     if (current_state_ == IDLING) {
         // send_scorer_request();
-        if (robot_id_ == 4) {
-            next_state = AWAITING_SEND_PASS;
-        } else {
-            next_state = SEEKING;
-        }
+        next_state = SEEKING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
             next_state = STEALING;
@@ -82,6 +78,7 @@ Offense::State Offense::update_state() {
             next_state = IDLING;
         }
     } else if (current_state_ == AWAITING_SEND_PASS) {
+        //Only sends a pass request every 0.2 seconds
         auto cur = std::chrono::high_resolution_clock::now();
         auto diff = cur - start;
         if (distance_to_ball < ball_lost_distance_ && diff.count() > 0.2){
@@ -91,7 +88,7 @@ Offense::State Offense::update_state() {
     } else if (current_state_ ==  SEEKING) {
         // if the ball comes close to it while it's trying to seek, it should no longer be trying to seek
         if (distance_to_ball < ball_receive_distance_) {
-            // next_state = IDLING;
+            // next_state = RECEIVING;
         }
     }
     
