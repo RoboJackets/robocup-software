@@ -33,10 +33,18 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity, 0.8);
     }
 
-    // only process state transition if already started the planning
-    if (has_created_plan) {
-        process_state_transition();
-    }
+    // ShapeSet static_obstacles;
+    // std::vector<DynamicObstacle> dynamic_obstacles;
+    // fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false, nullptr);
+
+    // auto obstacles_with_ball = static_obstacles;
+    // const RJ::Time cur_time = start_instant.stamp;
+    // obstacles_with_ball.add(
+    //     make_shared<Circle>(ball.predict_at(cur_time).position, ball_avoid_distance));
+
+    // // only plan line kick if not is_done
+    // if (!this->is_done()) {
+    state_transition(ball, plan_request.start);
     switch (current_state_) {
         case INITIAL_APPROACH:
             prev_path_ = initial(plan_request);
@@ -46,8 +54,8 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
             break;
     }
     prev_path_.stamp(RJ::now());
-    has_created_plan = true;
     return prev_path_;
+    // }
 }
 
 Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
