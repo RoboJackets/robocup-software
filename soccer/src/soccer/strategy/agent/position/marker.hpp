@@ -7,6 +7,7 @@
 #include "rj_geometry/point.hpp"
 #include "role_interface.hpp"
 #include <rj_msgs/msg/robot_state.hpp>
+#include <rj_geometry/segment.hpp>
 
 
 namespace strategy {
@@ -18,7 +19,7 @@ private:
 public:
     Marker(u_int8_t robot_id);
     ~Marker() = default;
-    virtual std::optional<RobotIntent> get_task(RobotIntent intent,
+    std::optional<RobotIntent> get_task(RobotIntent intent,
                                                 const WorldState* const world_state, FieldDimensions field_dimensions) override;
 };
 }  // namespace strategy
