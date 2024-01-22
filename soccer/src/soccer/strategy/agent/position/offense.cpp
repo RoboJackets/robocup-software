@@ -87,7 +87,6 @@ Offense::State Offense::update_state() {
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
-
     SPDLOG_INFO(current_state_);
 
     if (current_state_ == IDLING) {
@@ -140,8 +139,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
 
         // intent.motion_command = planning::MotionCommand{
-        //     "path_target", planning::LinearMotionInstant{last_world_state_->ball.position, {0.0}},
-        //     planning::FaceBall{}};
+        //     "path_target", planning::LinearMotionInstant{last_world_state_->ball.position,
+        //     {0.0}}, planning::FaceBall{}};
 
         return intent;
     } else if (current_state_ == RECEIVING) {
