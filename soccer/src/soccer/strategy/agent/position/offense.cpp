@@ -195,14 +195,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == SEEKING) {
+        //Determine target position for seeking
         rj_geometry::Point current_loc = last_world_state_->get_robot(true, robot_id_).pose.position(); 
         rj_geometry::Point curr_target = intent.motion_command.target.position;
+        //Only look for a new position if we are done with current movement
         if (check_is_done() || target_pt == rj_geometry::Point{0, 0}) {
             target_pt = get_open_point(last_world_state_, current_loc, field_dimensions_);
         }
         planning::PathTargetFaceOption face_option = planning::FaceBall{};
         bool ignore_ball = false;
-        // SPDLOG_INFO("Robot ID: {}, Target Pt: ({}, {})", robot_id_, target_pt.x(), target_pt.y());
         planning::LinearMotionInstant goal{target_pt, rj_geometry::Point{0.0, 0.0}};
         intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
         return intent;
@@ -328,13 +329,16 @@ rj_geometry::Point Offense::correct_point(rj_geometry::Point p, FieldDimensions 
 
 double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
                        const WorldState* world_state) {
+    //Determines 'how good' a point is
+    //A higher value is a worse point
 
-
+    //Does not go into the goalie boxes
     rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
     if (goal_box.contains_point(current_point)) {
         return 10000000;
     }
 
+    //Line of Sight Heuristic
     double max = 0;
     double curr_dp;
     for (auto robot : world_state->their_robots) {
@@ -345,6 +349,8 @@ double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_
         }
     }
 
+    //Whether the path from ball to the point is blocked
+    //Same logic in passing to check if target is open
     rj_geometry::Segment pass_path{ball_pos, current_point};
     double min_robot_dist = 10000;
     float min_path_dist = 10000;
@@ -363,6 +369,7 @@ double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_
     min_path_dist = 0.1 / min_path_dist;
     min_robot_dist = 0.1 / min_robot_dist;
 
+    //More Line of Sight Heuristics
     for (auto robot : world_state->our_robots) {
         curr_dp = (current_point - ball_pos).norm().dot((robot.pose.position() - ball_pos).norm());
         curr_dp *= curr_dp;
@@ -375,6 +382,7 @@ double Offense::max_los(rj_geometry::Point ball_pos, rj_geometry::Point current_
     double ball_proximity_loss = (current_point - ball_pos).mag() * .002;
     double goal_distance_loss = (9.0 - current_point.y()) * .008;
 
+    //Final evaluation
     return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist;
 }
 
