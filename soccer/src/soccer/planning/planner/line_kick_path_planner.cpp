@@ -69,37 +69,51 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     // // Creating a modified plan_request to send to PathTargetPlanner
     PlanRequest modified_request = plan_request;
 
-    // const WorldState* world_state = plan_request.world_state;
-
     // Where to navigate to
     auto distance_from_ball = kBallRadius + kRobotRadius + 0.05;
 
-    auto goal_to_ball = (plan_request.motion_command.target.position - ball.position);
+    auto ball_position = ball.predict_at(RJ::now() + RJ::Seconds{0.5}).position;
+
+    auto goal_to_ball = (plan_request.motion_command.target.position - ball_position);
     auto offset_from_ball = distance_from_ball * goal_to_ball.normalized();
 
     // Updating the motion command
-    LinearMotionInstant target{ball.position - offset_from_ball};
+    LinearMotionInstant target{ball_position - offset_from_ball};
 
-    MotionCommand modified_command{"path_target", target, FaceBall{}};
+    MotionCommand modified_command{"path_target", target, FacePoint{plan_request.motion_command.target.position}};
     modified_request.motion_command = modified_command;
 
     // Getting the new path from PathTargetPlanner
     Trajectory path = path_target_.plan(modified_request);
-    // modified_request.motion_command = MotionCommand{"collect"};
 
-    // return collect_planner_.plan(modified_request);
     return path;
 }
 
 Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
-
+    // remove ball from obstacles not needed?
     
+    const BallState& ball = plan_request.world_state->ball;
 
+    // // Creating a modified plan_request to send to PathTargetPlanner
+    PlanRequest modified_request = plan_request;
+
+    //velocity
+    auto goal_to_ball = (plan_request.motion_command.target.position - ball.position);
+    auto vel = goal_to_ball.normalized() * 1.0;
+
+    LinearMotionInstant target{ball.position, vel};
+    MotionCommand modified_command{"path_target", target, FacePoint{plan_request.motion_command.target.position}, true};
+    modified_request.motion_command = modified_command;
+
+    // Getting the new path from PathTargetPlanner
+    Trajectory path = path_target_.plan(modified_request);
+
+    return path;
 }
 
 void LineKickPathPlanner::state_transition(BallState ball, RobotInstant start_instant) {
     if (current_state_ == INITIAL_APPROACH &&
-        (ball.position - start_instant.position()).mag() < 0.01) {
+        (path_target_.is_done())) {
         current_state_ = FINAL_APPROACH;
     }
 }
