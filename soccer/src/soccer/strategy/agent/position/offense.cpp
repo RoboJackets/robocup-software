@@ -29,8 +29,8 @@ Offense::State Offense::update_state() {
     double distance_to_ball = robot_position.dist_to(ball_position);
 
     if (current_state_ == IDLING) {
-        send_scorer_request();
-        next_state = SEARCHING;
+        // send_scorer_request();
+        next_state = STEALING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
             next_state = STEALING;
@@ -67,12 +67,14 @@ Offense::State Offense::update_state() {
         if (check_is_done() || distance_to_ball < ball_receive_distance_) {
             // send direct pass request to robot 4
             if (scorer_) {
-                next_state = PREPARING_SHOT;
+                // next_state = PREPARING_SHOT;
             } else {
                 /* send_direct_pass_request({4}); */
                 /* next_state = SEARCHING; */
             }
+            next_state = IDLING;
         }
+        // SPDLOG_INFO("My robot_id is {} and my state is {}", robot_id_, current_state_);
     } else if (current_state_ == FACING) {
         if (check_is_done()) {
             next_state = IDLING;
@@ -144,7 +146,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
             intent.motion_command = face_ball_cmd;
         } else {
-            // intercept the bal
+            // intercept the ball
             chasing_ball = true;
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
