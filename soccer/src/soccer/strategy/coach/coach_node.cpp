@@ -173,7 +173,7 @@ void CoachNode::assign_positions() {
         case PlayState::Restart::None:
         default:
             // Normal Play
-            assign_positions_normal(positions);
+            assign_positions_kickoff(positions);
     }
 
     positions_message.client_positions = positions;
@@ -194,28 +194,129 @@ void CoachNode::assign_positions_penalty(std::array<uint32_t, kNumShells>& posit
             case PlayState::State::Setup:
                 // Lowest non-goalie robot set to PenaltyPlayer
                 if (goalie_id_ == 0) {
-                    positions[1] = Positions::PenaltyPlayer;
+                    positions[1] = Positions::Runner;
                 } else {
                     positions[0] = Positions::PenaltyPlayer;
                 }
+                positions[goalie_id_] = Positions::Runner;
                 break;
             case PlayState::State::Ready:
             case PlayState::State::PenaltyPlaying:
                 // Lowest non-goalie robot set to Goal Kicker
                 if (goalie_id_ == 0) {
-                    positions[1] = Positions::GoalKicker;
+                    positions[1] = Positions::Runner;
                 } else {
                     positions[0] = Positions::GoalKicker;
                 }
                 break;
             default:
                 SPDLOG_WARN("Invalid state for penalty restart");
-                assign_positions_normal(positions);
+                assign_positions_kickoff(positions);
+        }
+    }
+}
+
+void CoachNode::assign_positions_with_runner(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            // Non-kicking robots play defense
+            positions[i] = Positions::Defense;
+        }
+    }
+
+    // If our restart, make one a kicker
+    if (current_play_state_.our_restart) {
+        switch (current_play_state_.state) {
+            case PlayState::State::Setup:
+                // Lowest non-goalie robot set to Penalty Player
+                // TODO: Update this position to Kickoff Player?
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::Runner;
+                } else {
+                    positions[0] = Positions::PenaltyPlayer;
+                }
+                break;
+            case PlayState::State::Ready:
+                // Lowest non-goalie robot set to Goal Kicker
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::Runner;
+                } else {
+                    positions[0] = Positions::GoalKicker;
+                }
+                break;
+            default:
+                SPDLOG_WARN("Invalid state");
+                assign_positions_kickoff(positions);
         }
     }
 }
 
 void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            // Non-kicking robots play defense
+            positions[i] = Positions::Defense;
+        }
+    }
+
+    // If our restart, make one a kicker
+    if (current_play_state_.our_restart) {
+        switch (current_play_state_.state) {
+            case PlayState::State::Setup:
+                // Lowest non-goalie robot set to Penalty Player
+                // TODO: Update this position to Kickoff Player?
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::Runner;
+                } else {
+                    positions[0] = Positions::PenaltyPlayer;
+                }
+                break;
+            case PlayState::State::Ready:
+                // Lowest non-goalie robot set to Goal Kicker
+                if (goalie_id_ == 0) {
+                    positions[1] = Positions::Runner;
+                } else {
+                    positions[0] = Positions::GoalKicker;
+                }
+                break;
+            default:
+                SPDLOG_WARN("Invalid state for kickoff restart");
+                assign_positions_normal(positions);
+        }
+    }
+}
+
+void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& positions) {
+    for (size_t i = 0; i < kNumShells; i++) {
+        if (i != goalie_id_) {
+            // Non-kicking robots play defense
+            positions[i] = Positions::Defense;
+        }
+    }
+
+    // If our restart, make one a kicker
+    if (current_play_state_.our_restart) {
+        switch (current_play_state_.state) {
+            // Free Kick does not have setup state
+            case PlayState::State::Ready:
+                // Lowest non-goalie robot set to Goal Kicker
+                if (goalie_id_ == 0) {
+                    // Offense role should shoot. Placeholder for now.
+                    positions[1] = Positions::Runner;
+                } else {
+                    positions[0] = Positions::Offense;
+                }
+                break;
+            default:
+                SPDLOG_WARN("Invalid state for free kick restart");
+                assign_positions_kickoff(positions);
+        }
+    }
+}
+
+void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positions) {
+    // BEGIN COMP 2023 PATCH CODE
+
     for (size_t i = 0; i < kNumShells; i++) {
         if (i != goalie_id_) {
             // Non-kicking robots play defense
@@ -244,70 +345,39 @@ void CoachNode::assign_positions_kickoff(std::array<uint32_t, kNumShells>& posit
                 }
                 break;
             default:
-                SPDLOG_WARN("Invalid state for kickoff restart");
                 assign_positions_normal(positions);
         }
     }
-}
-
-void CoachNode::assign_positions_freekick(std::array<uint32_t, kNumShells>& positions) {
-    for (size_t i = 0; i < kNumShells; i++) {
-        if (i != goalie_id_) {
-            // Non-kicking robots play defense
-            positions[i] = Positions::Defense;
-        }
-    }
-
-    // If our restart, make one a kicker
-    if (current_play_state_.our_restart) {
-        switch (current_play_state_.state) {
-            // Free Kick does not have setup state
-            case PlayState::State::Ready:
-                // Lowest non-goalie robot set to Goal Kicker
-                if (goalie_id_ == 0) {
-                    // Offense role should shoot. Placeholder for now.
-                    positions[1] = Positions::Offense;
-                } else {
-                    positions[0] = Positions::Offense;
-                }
-                break;
-            default:
-                SPDLOG_WARN("Invalid state for free kick restart");
-                assign_positions_normal(positions);
-        }
-    }
-}
-
-void CoachNode::assign_positions_normal(std::array<uint32_t, kNumShells>& positions) {
-    // BEGIN COMP 2023 PATCH CODE
 
     // Assign Robots to positions in the following order:
     //  1. 1 Goalie
     //  2. 2 Offense
     //  3. Remaining Defense (always 1 defender)
-    int assign_num = 0;
-    for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
-        if (check_robot_alive(robot_id)) {
-            switch (assign_num) {
-                case 0:
-                    positions[robot_id] = Positions::Goalie;
-                    break;
-                case 1:
-                    positions[robot_id] = Positions::Offense;
-                    break;
-                case 2:
-                    positions[robot_id] = Positions::Defense;
-                    break;
-                case 3:
-                    positions[robot_id] = Positions::Offense;
-                    break;
-                default:
-                    positions[robot_id] = Positions::Defense;
-                    break;
-            }
-            assign_num++;
-        }
-    }
+    // int assign_num = 0;
+    // for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+    //     if (check_robot_alive(robot_id)) {
+    //         switch (assign_num) {
+    //             case 0:
+    //                 positions[robot_id] = Positions::Goalie;
+    //                 break;
+    //             case 1:
+    //                 positions[robot_id] = Positions::Offense;
+    //                 break;
+    //             case 2:
+    //                 positions[robot_id] = Positions::Defense;
+    //                 break;
+    //             case 3:
+    //                 positions[robot_id] = Positions::Offense;
+    //                 break;
+    //             default:
+    //                 positions[robot_id] = Positions::Defense;
+    //                 break;
+    //         }
+    //         assign_num++;
+    //     }
+    // }
+
+    //positions[1] = Positions::Runner; //why not just put this into switch/case statement above???
 
     // END COMP 2023 PATCH CODE
 
