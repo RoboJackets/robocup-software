@@ -1,10 +1,9 @@
 #include "defense.hpp"
-#include "marker.hpp"
+
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; 
-if (this->robot_id_ == 4) current_state_ = MARKING;}
+Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense";}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
@@ -63,10 +62,18 @@ Defense::State Defense::update_state() {
             break;
     }
 
+    if (robot_id_ == 2) {
+        next_state = MARKING;
+    }
+
     return next_state;
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
+
+    // if (robot_id_ == 2) {
+    //     SPDLOG_INFO("{} current state of 2", current_state_);
+    // }
     if (current_state_ == IDLING) {
         auto empty_motion_cmd = planning::MotionCommand{};
         intent.motion_command = empty_motion_cmd;
@@ -113,7 +120,11 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             Waller waller{waller_id_, (int)walling_robots_.size()};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
-    } else if (current_state_ = FACING) {
+    } 
+    else if (current_state_ == MARKING) {
+        Marker marker = Marker((u_int8_t) robot_id_);
+        return marker.get_task(intent, last_world_state_, this->field_dimensions_);
+    }else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             last_world_state_->get_robot(true, robot_id_).pose.position();
         auto current_location_instant =
@@ -123,9 +134,6 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
         return intent;
-    } else if (current_state_ == MARKING) {
-        Marker marker{(u_int8_t) this->robot_id_};
-        return marker.get_task(intent, last_world_state_, this->field_dimensions_);
     }
 
     return std::nullopt;

@@ -16,6 +16,7 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "waller.hpp"
+#include "marker.hpp"
 
 namespace strategy {
 
@@ -63,6 +64,8 @@ private:
         FACING,        // turning to face the passing robot
         MARKING
     };
+
+
 
     State update_state();
 
