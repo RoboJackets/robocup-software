@@ -129,7 +129,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == SHOOTING) {
         rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-        rj_geometry::Point scoring_point = their_goal_pos + field_dimensions_.goal_width() * 3.0 / 8.0;
+        rj_geometry::Point scoring_point =
+            their_goal_pos + field_dimensions_.goal_width() * 3.0 / 8.0;
         planning::LinearMotionInstant target{scoring_point};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
