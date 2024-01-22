@@ -28,9 +28,9 @@ Defense::State Defense::update_state() {
         case IDLING:
             break;
         case JOINING_WALL:
-            send_join_wall_request();
-            next_state = WALLING;
-            walling_robots_ = {(u_int8_t)robot_id_};
+            // send_join_wall_request();
+            // next_state = WALLING;
+            // walling_robots_ = {(u_int8_t)robot_id_};
             break;
         case WALLING:
             break;

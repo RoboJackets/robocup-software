@@ -58,7 +58,7 @@ private:
     // current state of the offensive agent (state machine)
     State current_state_ = IDLING;
 
-    bool scorer_ = false;
+    bool scorer_ = true;
     bool last_scorer_ = false;
 
     /**

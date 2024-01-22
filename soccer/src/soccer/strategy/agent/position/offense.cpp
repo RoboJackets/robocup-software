@@ -10,11 +10,12 @@ Offense::Offense(int r_id) : Position(r_id) {
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // SPDLOG_INFO("MY ID: {} in offense derived task!\n", robot_id_);
     current_state_ = update_state();
-    // SPDLOG_INFO("My current offense state is {}", current_state_);
     return state_to_task(intent);
 }
 
 Offense::State Offense::update_state() {
+    SPDLOG_INFO("My current offense state is {}", current_state_);
+
     State next_state = current_state_;
     // handle transitions between current state
     WorldState* world_state = this->last_world_state_;
@@ -29,11 +30,11 @@ Offense::State Offense::update_state() {
     double distance_to_ball = robot_position.dist_to(ball_position);
 
     if (current_state_ == IDLING) {
-        send_scorer_request();
-        next_state = SEARCHING;
+        // send_scorer_request();
+        next_state = STEALING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
-            next_state = STEALING;
+            next_state = SHOOTING;
         }
     } else if (current_state_ == PASSING) {
         // transition to idling if we no longer have the ball (i.e. it was passed or it was
@@ -46,15 +47,21 @@ Offense::State Offense::update_state() {
             next_state = IDLING;
         }
     } else if (current_state_ == PREPARING_SHOT) {
-        if (check_is_done()) {
+        rj_geometry::Segment line{world_state->get_robot(true, robot_id_).pose.position(), field_dimensions_.our_goal_loc()};
+        double angle = abs(atan(line.delta().y() / line.delta().x()));
+        double robot_angle = abs(world_state->get_robot(true, robot_id_).pose.heading());
+        SPDLOG_INFO("Angle to goall: {}", angle);
+        SPDLOG_INFO("Robot's angle: {}", robot_angle);
+        if (abs(angle + robot_angle) < degrees_to_radians(180)) {
             next_state = SHOOTING;
         }
     } else if (current_state_ == SHOOTING) {
         // transition to idling if we no longer have the ball (i.e. it was passed or it was
         // stolen)
         if (check_is_done() || distance_to_ball > ball_lost_distance_) {
-            send_reset_scorer_request();
-            next_state = SEARCHING;
+            // send_reset_scorer_request();
+            // next_state = SEARCHING;
+            next_state = IDLING;
         }
     } else if (current_state_ == RECEIVING) {
         // transition to idling if we are close enough to the ball
@@ -64,7 +71,7 @@ Offense::State Offense::update_state() {
     } else if (current_state_ == STEALING) {
         // The collect planner check_is_done() is wonky so I added a second clause to check
         // distance
-        if (check_is_done() || distance_to_ball < ball_receive_distance_) {
+        if ((check_is_done() || distance_to_ball < ball_receive_distance_) && last_world_state_->ball.velocity.mag() < 0.1) {
             // send direct pass request to robot 4
             if (scorer_) {
                 next_state = PREPARING_SHOT;
@@ -112,7 +119,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         auto ball_pt = last_world_state_->ball.position;
 
         // ...to face their goal
-        rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+        rj_geometry::Point their_goal_pos = field_dimensions_.our_goal_loc();
         planning::LinearMotionInstant target_instant{their_goal_pos};
 
         auto pivot_cmd = planning::MotionCommand{"pivot"};
@@ -122,7 +129,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.dribbler_speed = 255.0;
         return intent;
     } else if (current_state_ == SHOOTING) {
-        rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+        rj_geometry::Point their_goal_pos = field_dimensions_.our_goal_loc();
         planning::LinearMotionInstant target{their_goal_pos};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
