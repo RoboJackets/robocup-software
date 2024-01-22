@@ -46,7 +46,7 @@ private:
     CollectPathPlanner collect_planner_{};
     Trajectory prev_path_;
 
-    static constexpr double IS_DONE_BALL_VEL = 0.5;
+    static constexpr double IS_DONE_BALL_VEL = 1.5;
     rj_geometry::Point average_ball_vel_;
     bool average_ball_vel_initialized_ = false;
     std::optional<rj_geometry::Point> target_kick_pos_;
@@ -57,6 +57,7 @@ private:
     // Trajectory final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
     void state_transition(BallState ball, RobotInstant start_instant);
 
+    // PlayState::State current_state_;
 };
 
 }  // namespace planning
