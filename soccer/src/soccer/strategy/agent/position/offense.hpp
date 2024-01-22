@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cmath>
 #include <chrono>
+#include <cmath>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -42,17 +42,17 @@ private:
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 
     enum State {
-        IDLING,          // simply staying in place
-        SEARCHING,       // moving around on the field to get open
-        PASSING,         // physically kicking the ball towards another robot
-        PREPARING_SHOT,  // pivot around ball in preparation for shot
-        SHOOTING,        // physically kicking the ball towards the net
-        RECEIVING,       // physically intercepting the ball from a pass (gets possession)
-        STEALING,        // attempting to intercept the ball from the other team
-        FACING,          // turning to face the ball
-        SCORER,          // overrides everything and will attempt to steal the bal and shoot it
-        AWAITING_SEND_PASS, //is waiting to send a pass to someone else
-        SEEKING,         // is trying to get open
+        IDLING,              // simply staying in place
+        SEARCHING,           // moving around on the field to get open
+        PASSING,             // physically kicking the ball towards another robot
+        PREPARING_SHOT,      // pivot around ball in preparation for shot
+        SHOOTING,            // physically kicking the ball towards the net
+        RECEIVING,           // physically intercepting the ball from a pass (gets possession)
+        STEALING,            // attempting to intercept the ball from the other team
+        FACING,              // turning to face the ball
+        SCORER,              // overrides everything and will attempt to steal the bal and shoot it
+        AWAITING_SEND_PASS,  // is waiting to send a pass to someone else
+        SEEKING,             // is trying to get open
     };
 
     State update_state();
@@ -65,8 +65,9 @@ private:
     bool scorer_ = false;
     bool last_scorer_ = false;
 
-    rj_geometry::Point get_open_point(const WorldState* world_state, rj_geometry::Point current_position,
-        FieldDimensions field_dimensions);
+    rj_geometry::Point get_open_point(const WorldState* world_state,
+                                      rj_geometry::Point current_position,
+                                      FieldDimensions field_dimensions);
 
     rj_geometry::Point correct_point(rj_geometry::Point p, FieldDimensions field_dimensions);
     rj_geometry::Point random_noise(double prec);
@@ -78,7 +79,8 @@ private:
     int seeker_pos_;
     std::string offense_type_;
 
-    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
+    std::chrono::time_point<std::chrono::high_resolution_clock> start =
+        std::chrono::high_resolution_clock::now();
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
@@ -95,7 +97,6 @@ private:
      */
     communication::ScorerResponse receive_scorer_request(
         communication::ScorerRequest scorer_request);
-
 
     /**
      * @brief This agent can go through the distance of every other offensive robot from the goal
