@@ -205,6 +205,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        robot_trajectories_,
                        static_cast<unsigned int>(robot_id_),
                        world_state,
+                       play_state,
                        intent.priority,
                        &debug_draw_,
                        had_break_beam_,
