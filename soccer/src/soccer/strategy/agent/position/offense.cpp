@@ -128,10 +128,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.dribbler_speed = 255.0;
         return intent;
     } else if (current_state_ == SHOOTING) {
-        rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-        rj_geometry::Point scoring_point =
-            their_goal_pos + field_dimensions_.goal_width() * 3.0 / 8.0;
-        planning::LinearMotionInstant target{scoring_point};
+        planning::LinearMotionInstant target{calculate_best_shot()};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
@@ -350,6 +347,47 @@ void Offense::derived_pass_ball() { current_state_ = PASSING; }
 void Offense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
     chasing_ball = false;
+}
+
+rj_geometry::Point Offense::calculate_best_shot() {
+
+    // Goal location
+    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    double goal_width = field_dimensions_.goal_width(); // 1.0 meters
+
+    // Ball location
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    rj_geometry::Point best_shot = their_goal_pos;
+    double best_distance = -1.0;
+    rj_geometry::Point increment(0.05, 0);
+    rj_geometry::Point curr_point = their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
+    for (int i = 0; i < 19; i++) {
+        double distance = distance_from_their_robots(ball_position, curr_point);
+        if (distance > best_distance) {
+            best_distance = distance;
+            best_shot = curr_point;
+        }
+        curr_point = curr_point + increment;
+    }
+    return best_shot;
+}
+
+double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) {
+    rj_geometry::Point vec = head - tail;
+    auto their_robots = this->last_world_state_->their_robots;
+    double min_distance = -1.0;
+    for (auto enemy : their_robots) {
+        rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
+        enemy_vec = enemy_vec - (enemy_vec.dot(vec)/vec.dot(vec)) * vec;
+        double distance = enemy_vec.mag();
+        if (min_distance == -1.0) {
+            min_distance = distance;
+        } else if(distance < min_distance) {
+            min_distance = distance;
+        }
+    }
+    return min_distance;
 }
 
 }  // namespace strategy

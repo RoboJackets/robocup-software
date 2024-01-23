@@ -105,6 +105,16 @@ private:
      * status
      */
     communication::Acknowledge receive_reset_scorer_request();
+
+    /**
+     * @brief Calcualtes the best location for a shot
+    */
+    rj_geometry::Point calculate_best_shot();
+
+    /**
+     * @brief Calculates the distance of vector from other team's closest robot
+    */
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point heaad);
 };
 
 }  // namespace strategy
