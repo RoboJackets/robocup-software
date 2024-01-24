@@ -34,6 +34,7 @@ public:
         target_kick_pos_ = std::nullopt;
         current_state_ = INITIAL_APPROACH;
         average_ball_vel_initialized_ = false;
+        has_created_plan = false;
     }
     [[nodiscard]] bool is_done() const override;
 
@@ -44,9 +45,15 @@ private:
     CollectPathPlanner collect_planner_{};
     Trajectory prev_path_;
 
-    static constexpr double IS_DONE_BALL_VEL = 1.5;
+    // These constants could be tuned more
+    static constexpr double kIsDoneBallVel = 1.5;
+    static constexpr double kFinalRobotSpeed = 1.0;
+    static constexpr double kPredictIn = 0.5; // seconds
+    static constexpr double kAvoidBallBy = 0.05;
+
     rj_geometry::Point average_ball_vel_;
     bool average_ball_vel_initialized_ = false;
+    bool has_created_plan = false;
     std::optional<rj_geometry::Point> target_kick_pos_;
 
     // Trajectory initial(BallState ball, MotionCommand command, RobotInstant start_instant,
@@ -55,7 +62,7 @@ private:
     Trajectory final(const PlanRequest& plan_request);
     // Trajectory final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet
     // static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
-    void state_transition(BallState ball, RobotInstant start_instant);
+    void process_state_transition();
 
     // PlayState::State current_state_;
 };
