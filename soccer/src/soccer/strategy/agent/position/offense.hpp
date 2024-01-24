@@ -15,6 +15,8 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 
+#include "seeking.hpp"
+
 namespace strategy {
 
 /*
@@ -35,7 +37,6 @@ public:
     void derived_acknowledge_ball_in_transit() override;
 
 private:
-    rj_geometry::Point target_pt{0.0, 0.0};
     bool kicking_{true};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
@@ -64,17 +65,6 @@ private:
 
     bool scorer_ = false;
     bool last_scorer_ = false;
-
-    rj_geometry::Point get_open_point(const WorldState* world_state,
-                                      rj_geometry::Point current_position,
-                                      FieldDimensions field_dimensions);
-
-    rj_geometry::Point correct_point(rj_geometry::Point p, FieldDimensions field_dimensions);
-    rj_geometry::Point random_noise(double prec);
-    rj_geometry::Point calculate_open_point(double, double, rj_geometry::Point,
-                                            const WorldState* world_state,
-                                            FieldDimensions field_dimensions);
-    double max_los(rj_geometry::Point, rj_geometry::Point, const WorldState* world_state);
 
     int seeker_pos_;
     std::string offense_type_;
