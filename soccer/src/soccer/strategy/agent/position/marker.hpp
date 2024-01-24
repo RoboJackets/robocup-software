@@ -14,12 +14,20 @@ namespace strategy {
 class Marker : public RoleInterface {
 private:
     const double factor = 0.5;
-    u_int8_t target_robot_id = 0;
+    int target {-1};
+
+    const double Y_BOUND {4.5};
 
 public:
     Marker(u_int8_t robot_id);
     ~Marker() = default;
     std::optional<RobotIntent> get_task(RobotIntent intent,
-                                                const WorldState* const world_state, FieldDimensions field_dimensions) override;
+        const WorldState* const world_state,
+        FieldDimensions field_dimensions) override;
+
+    int choose_target(WorldState* ws);
+    int get_target();
+    bool target_out_of_bounds(WorldState* ws);
+    
 };
 }  // namespace strategy

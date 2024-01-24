@@ -43,6 +43,9 @@ public:
     void revive() override;
 
 private:
+
+    //REMOVE REMOVE REMOVE REMOVE REMOVE REMOVE REMOVE PLEASE FOR THE LOVE OF GOD REMOVE
+    bool has_already_run_enter_mark {false};
     int move_ct_ = 0;
 
     /**
@@ -64,7 +67,8 @@ private:
         RECEIVING,     // physically intercepting the ball from a pass
         PASSING,       // physically kicking the ball towards another robot
         FACING,        // turning to face the passing robot
-        MARKING
+        MARKING,
+        ENTERING_MARKING,
     };
 
 
@@ -117,6 +121,9 @@ private:
     // current state of the defense agent (state machine)
     int get_waller_id();
     State current_state_ = JOINING_WALL;
+
+    int get_marker_target_id();
+    Marker marker_;
 };
 
 }  // namespace strategy
