@@ -352,7 +352,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
 rj_geometry::Point Offense::calculate_best_shot() {
 
     // Goal location
-    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    rj_geometry::Point their_goal_pos = field_dimensions_.our_goal_loc();
     double goal_width = field_dimensions_.goal_width(); // 1.0 meters
 
     // Ball location
@@ -375,19 +375,27 @@ rj_geometry::Point Offense::calculate_best_shot() {
 
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) {
     rj_geometry::Point vec = head - tail;
-    auto their_robots = this->last_world_state_->their_robots;
-    double min_distance = -1.0;
+    auto their_robots = this->last_world_state_->our_robots;
+    double min_angle = -0.5;
     for (auto enemy : their_robots) {
         rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
-        enemy_vec = enemy_vec - (enemy_vec.dot(vec)/vec.dot(vec)) * vec;
+        if (enemy_vec.dot(vec) < 0 ) {
+            continue;
+        }
+        auto projection = (enemy_vec.dot(vec)/vec.dot(vec));
+        enemy_vec = enemy_vec - (projection) * vec;
         double distance = enemy_vec.mag();
-        if (min_distance == -1.0) {
-            min_distance = distance;
-        } else if(distance < min_distance) {
-            min_distance = distance;
+        if (distance < (kRobotRadius + kBallRadius)) {
+            return -1.0;
+        }
+        double angle = distance / projection;
+        if (min_angle < 0) {
+            min_angle = angle;
+        } else if(angle < min_angle) {
+            min_angle = angle;
         }
     }
-    return min_distance;
+    return min_angle;
 }
 
 }  // namespace strategy
