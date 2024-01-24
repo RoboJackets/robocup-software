@@ -428,6 +428,7 @@ bool CollectPathPlanner::is_done() const {
     // give some leeway with ball_in_mouth_cutoff
     double ball_in_mouth_cutoff = 0.01;
     double dist_to_ball = (cached_robot_pos_.value() - cached_ball_pos_.value()).mag();
+
     bool ball_in_mouth = dist_to_ball - (kRobotRadius + kBallRadius) < ball_in_mouth_cutoff;
 
     return ball_is_slow && ball_in_mouth;

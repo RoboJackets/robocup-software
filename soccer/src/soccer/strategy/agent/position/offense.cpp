@@ -54,7 +54,7 @@ Offense::State Offense::update_state() {
         // stolen)
         if (check_is_done() || distance_to_ball > ball_lost_distance_) {
             send_reset_scorer_request();
-            next_state = SEARCHING;
+            next_state = IDLING;
         }
     } else if (current_state_ == RECEIVING) {
         // transition to idling if we are close enough to the ball
@@ -64,17 +64,28 @@ Offense::State Offense::update_state() {
     } else if (current_state_ == STEALING) {
         // The collect planner check_is_done() is wonky so I added a second clause to check
         // distance
-        if (check_is_done() || distance_to_ball < ball_receive_distance_) {
+        // SPDLOG_INFO("My robot_id is {} and the distance to the ball is {}", robot_id_, distance_to_ball);
+        if (check_is_done() || distance_to_ball < 0.1) {
             // send direct pass request to robot 4
-            if (scorer_) {
-                // next_state = PREPARING_SHOT;
-            } else {
-                /* send_direct_pass_request({4}); */
-                /* next_state = SEARCHING; */
+            rj_geometry::Point current_loc = last_world_state_->get_robot(true, robot_id_).pose.position();
+            double min_robot_dist = 1000000000;
+
+            for (auto bot: world_state->our_robots) {
+                rj_geometry::Point opp_pos = bot.pose.position();
+                if (opp_pos != current_loc) {
+                    min_robot_dist = std::min(min_robot_dist, current_loc.dist_to(opp_pos));
+                }
             }
-            next_state = IDLING;
+            
+            // SPDLOG_INFO("The min robot dist is {}", min_robot_dist);
+
+            if (min_robot_dist > ball_receive_distance_ * 5) {
+                next_state = PREPARING_SHOT;
+            } else {
+                next_state = IDLING;
+            }
+            
         }
-        // SPDLOG_INFO("My robot_id is {} and my state is {}", robot_id_, current_state_);
     } else if (current_state_ == FACING) {
         if (check_is_done()) {
             next_state = IDLING;
