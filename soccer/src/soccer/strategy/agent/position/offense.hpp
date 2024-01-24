@@ -43,7 +43,7 @@ private:
 
     enum State {
         IDLING,              // simply staying in place
-        SEARCHING,           // moving around on the field to get open
+        SEEKING,             // moving around on the field to get open
         PASSING,             // physically kicking the ball towards another robot
         PREPARING_SHOT,      // pivot around ball in preparation for shot
         SHOOTING,            // physically kicking the ball towards the net
@@ -52,7 +52,6 @@ private:
         FACING,              // turning to face the ball
         SCORER,              // overrides everything and will attempt to steal the bal and shoot it
         AWAITING_SEND_PASS,  // is waiting to send a pass to someone else
-        SEEKING,             // is trying to get open
     };
 
     State update_state();
