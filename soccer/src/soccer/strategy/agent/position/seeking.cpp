@@ -2,24 +2,20 @@
 
 namespace strategy {
 
-Seeking::Seeking(int robot_id) {
-    robot_id_ = robot_id;
-}
+Seeking::Seeking(int robot_id) { robot_id_ = robot_id; }
 
 std::optional<RobotIntent> Seeking::get_task(RobotIntent intent, const WorldState* last_world_state,
-                                            FieldDimensions field_dimensions) {
+                                             FieldDimensions field_dimensions) {
     // Determine target position for seeking
-    rj_geometry::Point current_loc =
-        last_world_state->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point current_loc = last_world_state->get_robot(true, robot_id_).pose.position();
 
     target_pt = get_open_point(last_world_state, current_loc, field_dimensions);
 
     planning::PathTargetFaceOption face_option = planning::FaceBall{};
     bool ignore_ball = false;
     planning::LinearMotionInstant goal{target_pt, rj_geometry::Point{0.0, 0.0}};
-    intent.motion_command =
-        planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
-        
+    intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+
     return intent;
 }
 
@@ -56,7 +52,6 @@ rj_geometry::Point Seeking::calculate_open_point(double current_prec, double min
             correct_point(
                 current_point + rj_geometry::Point{-current_prec * 0.707, -current_prec * 0.707},
                 field_dimensions)};
-
 
         // Finds the best point out of the ones checked
         for (auto point : check_points) {
@@ -134,7 +129,7 @@ rj_geometry::Point Seeking::correct_point(rj_geometry::Point p, FieldDimensions 
 }
 
 double Seeking::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                        const WorldState* world_state) {
+                           const WorldState* world_state) {
     // Determines 'how good' a point is
     // A higher value is a worse point
 
