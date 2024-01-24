@@ -188,8 +188,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == SEEKING) {
-        //Only get a new target position if we have reached our target
-        if (check_is_done() || last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
+        // Only get a new target position if we have reached our target
+        if (check_is_done() ||
+            last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
             Seeking seeker{robot_id_};
             return seeker.get_task(intent, last_world_state_, this->field_dimensions_);
         }
