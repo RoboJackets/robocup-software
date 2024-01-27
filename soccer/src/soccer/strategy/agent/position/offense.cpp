@@ -29,8 +29,8 @@ Offense::State Offense::update_state() {
     double distance_to_ball = robot_position.dist_to(ball_position);
 
     if (current_state_ == IDLING) {
-        // send_scorer_request();
-        next_state = AWAITING_SEND_PASS;
+        send_scorer_request();
+        next_state = SHOOTING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
             next_state = STEALING;
@@ -83,10 +83,12 @@ Offense::State Offense::update_state() {
         }
     }
 
-    return next_state;
+    return SHOOTING;
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
+    SPDLOG_INFO(current_state_);
+
     if (current_state_ == IDLING) {
         // Do nothing
         auto empty_motion_cmd = planning::MotionCommand{};
@@ -98,6 +100,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == PASSING) {
+        target_robot_id = 2;
         rj_geometry::Point target_robot_pos =
             last_world_state_->get_robot(true, target_robot_id).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
@@ -126,13 +129,20 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == SHOOTING) {
         rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-        planning::LinearMotionInstant target{their_goal_pos};
+        rj_geometry::Point scoring_point =
+            their_goal_pos + field_dimensions_.goal_width() * 3.0 / 8.0;
+        planning::LinearMotionInstant target{scoring_point};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = 4.0;
         intent.is_active = true;
+
+        // intent.motion_command = planning::MotionCommand{
+        //     "path_target", planning::LinearMotionInstant{last_world_state_->ball.position,
+        //     {0.0}}, planning::FaceBall{}};
+
         return intent;
     } else if (current_state_ == RECEIVING) {
         // check how far we are from the ball
