@@ -13,8 +13,8 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
-    if (plan_request.play_state_ == PlayState::halt() ||
-        plan_request.play_state_ == PlayState::stop()) {
+    if (plan_request.play_state == PlayState::halt() ||
+        plan_request.play_state == PlayState::stop()) {
         return Trajectory{};
     }
 

@@ -41,7 +41,6 @@ struct PlanRequest {
           shell_id(shell_id),
           priority(priority),
           world_state(world_state),
-          play_state_(play_state),
           play_state(play_state),
           debug_drawer(debug_drawer),
           ball_sense(ball_sense),
