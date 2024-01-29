@@ -88,7 +88,7 @@ private:
      * @return rj_geometry::Point The corrected point
      */
     [[nodiscard]] rj_geometry::Point correct_point(rj_geometry::Point point,
-                                     const FieldDimensions& field_dimensions) const;
+                                                   const FieldDimensions& field_dimensions) const;
 
     /**
      * @brief Calculates how 'good' a target point is
