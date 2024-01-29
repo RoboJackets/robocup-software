@@ -43,6 +43,8 @@ public:
 private:
     int move_ct_ = 0;
 
+    static constexpr int MAX_WALLERS {3};
+
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
      *  to do based on the game situation. The method will continuously look to assign
@@ -62,8 +64,8 @@ private:
         RECEIVING,     // physically intercepting the ball from a pass
         PASSING,       // physically kicking the ball towards another robot
         FACING,        // turning to face the passing robot
-        MARKING,
-        ENTERING_MARKING,
+        MARKING,       // Following closely to an offense robot
+        ENTERING_MARKING, // Choosing/waiting for a robot to mark
     };
 
 
