@@ -216,17 +216,17 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 }
 
 bool Offense::has_open_shot() {
-
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-    double goal_width = field_dimensions_.goal_width(); // 1.0 meters
+    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
 
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
     double best_distance = -1.0;
     rj_geometry::Point increment(0.05, 0);
-    rj_geometry::Point curr_point = their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
+    rj_geometry::Point curr_point =
+        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
     for (int i = 0; i < 19; i++) {
         double distance = distance_from_their_robots(ball_position, curr_point);
         if (distance > best_distance) {
@@ -244,11 +244,11 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
     double min_angle = -0.5;
     for (auto enemy : their_robots) {
         rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
-        if (enemy_vec.dot(vec) < 0 ) {
+        if (enemy_vec.dot(vec) < 0) {
             continue;
         }
-        auto projection = (enemy_vec.dot(vec)/vec.dot(vec));
-        enemy_vec = enemy_vec - (projection) * vec;
+        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
+        enemy_vec = enemy_vec - (projection)*vec;
         double distance = enemy_vec.mag();
         if (distance < (kRobotRadius + kBallRadius)) {
             return -1.0;
@@ -256,7 +256,7 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
         double angle = distance / projection;
         if (min_angle < 0) {
             min_angle = angle;
-        } else if(angle < min_angle) {
+        } else if (angle < min_angle) {
             min_angle = angle;
         }
     }
