@@ -21,6 +21,8 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
         return current_position_->get_task(world_state, field_dimensions);
     }
 
+    // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
+
     // Get sorted positions of all friendly robots
     typedef struct std::pair<int, double> RobotPos;  // (robotId, yPosition)
 
