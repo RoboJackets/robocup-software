@@ -6,7 +6,6 @@ Marker::Marker(u_int8_t robot_id) {
 
 std::optional<RobotIntent> Marker::get_task(RobotIntent intent,
     const WorldState* world_state, FieldDimensions field_dimensions) {
-    SPDLOG_INFO("Current target ID of robot: {}", target);
     rj_geometry::Point targetPoint = 
         world_state->get_robot(false, target).pose.position();
     rj_geometry::Point ballPoint = 

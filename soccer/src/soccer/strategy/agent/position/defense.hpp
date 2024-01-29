@@ -43,9 +43,6 @@ public:
     void revive() override;
 
 private:
-
-    //REMOVE REMOVE REMOVE REMOVE REMOVE REMOVE REMOVE PLEASE FOR THE LOVE OF GOD REMOVE
-    bool has_already_run_enter_mark {false};
     int move_ct_ = 0;
 
     /**
