@@ -11,12 +11,16 @@
 
 
 namespace strategy {
+
+/**
+ * Represents a Marker, a defensive role that targets an enemy robot
+ * and follows it around the field while it is on our side, blocking passes.
+*/
 class Marker : public RoleInterface {
 private:
-    const double factor = 0.5;
     int target {-1};
 
-    const double Y_BOUND {4.5};
+    static constexpr double Y_BOUND {4.5};
 
 public:
     Marker(u_int8_t robot_id);

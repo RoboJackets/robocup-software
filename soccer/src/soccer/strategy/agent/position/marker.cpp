@@ -18,6 +18,10 @@ std::optional<RobotIntent> Marker::get_task(RobotIntent intent,
 
 int Marker::choose_target(WorldState* ws) {
 
+    //TODO: (James Vogt, github: jvogt23)
+    //If we ever use multiple Markers, they should choose different
+    //robots to track from each other. Logic for this operation must be
+    //added because multiple markers currently mark the same robot.
     for (int i = 0; i < 11; i++) {
         if (std::fabs(ws->get_robot(false, i).pose.position().x()) < 2.5
             && ws->get_robot(false, i).pose.position().y() < Y_BOUND
