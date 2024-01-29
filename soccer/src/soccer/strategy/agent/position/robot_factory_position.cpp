@@ -42,8 +42,10 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     }
 
     // Assigning new position
-    // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid undetermined behavior on midline)
-    if (Position::our_possession_ || world_state.ball.position.y() > field_dimensions.length() / 1.99) {
+    // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid
+    // undetermined behavior on midline)
+    if (Position::our_possession_ ||
+        world_state.ball.position.y() > field_dimensions.length() / 1.99) {
         // Offensive mode
         // 3 robots on offense, 2 robots on defense
         if (i >= 3) {
