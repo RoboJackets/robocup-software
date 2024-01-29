@@ -1,14 +1,10 @@
 #include "defense.hpp"
 
-
 namespace strategy {
 
-Defense::Defense(int r_id) : 
-    Position(r_id), 
-    marker_{static_cast<uint8_t>(r_id)}
-    {
-        position_name_ = "Defense";
-    }
+Defense::Defense(int r_id) : Position(r_id), marker_{static_cast<uint8_t>(r_id)} {
+    position_name_ = "Defense";
+}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
@@ -39,11 +35,11 @@ Defense::State Defense::update_state() {
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
         case WALLING:
-            //If a wall is already full,
-            //Remove the robot with the highest ID from a wall
-            //and make them a marker instead.
-            if (this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())
-                && walling_robots_.size() > MAX_WALLERS) {
+            // If a wall is already full,
+            // Remove the robot with the highest ID from a wall
+            // and make them a marker instead.
+            if (this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end()) &&
+                walling_robots_.size() > MAX_WALLERS) {
                 send_leave_wall_request();
                 next_state = ENTERING_MARKING;
             }
@@ -83,15 +79,12 @@ Defense::State Defense::update_state() {
             } else {
                 next_state = MARKING;
             }
-        
-
     }
 
     return next_state;
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
-
     // if (robot_id_ == 2) {
     //     SPDLOG_INFO("{} current state of 2", current_state_);
     // }
@@ -152,12 +145,12 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.motion_command = face_ball_cmd;
         return intent;
     } else if (current_state_ == ENTERING_MARKING) {
-        //Prepares a robot for marking. NOTE: May update to add move to center of field
+        // Prepares a robot for marking. NOTE: May update to add move to center of field
         auto empty_motion_cmd = planning::MotionCommand{};
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == MARKING) {
-        //Marker marker = Marker((u_int8_t) robot_id_);
+        // Marker marker = Marker((u_int8_t) robot_id_);
         return marker_.get_task(intent, last_world_state_, this->field_dimensions_);
     }
 

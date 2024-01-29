@@ -87,10 +87,10 @@ Offense::State Offense::update_state() {
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
-    //This was added to our code when we merged from ros2.
-    //Please let us know whether this log is needed when
-    //reviewing.
-    //SPDLOG_INFO(current_state_);
+    // This was added to our code when we merged from ros2.
+    // Please let us know whether this log is needed when
+    // reviewing.
+    // SPDLOG_INFO(current_state_);
 
     if (current_state_ == IDLING) {
         // Do nothing

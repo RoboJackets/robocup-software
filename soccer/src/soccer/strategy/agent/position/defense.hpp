@@ -8,6 +8,7 @@
 
 #include <rj_msgs/action/robot_move.hpp>
 
+#include "marker.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/field_dimensions.hpp"
@@ -16,7 +17,6 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "waller.hpp"
-#include "marker.hpp"
 
 namespace strategy {
 
@@ -43,7 +43,7 @@ public:
 private:
     int move_ct_ = 0;
 
-    static constexpr int MAX_WALLERS {3};
+    static constexpr int MAX_WALLERS{3};
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
@@ -57,18 +57,16 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        IDLING,        // simply staying in place
-        JOINING_WALL,  // send message to find its place in the wall
-        WALLING,       // participating in the wall
-        SEARCHING,     // moving around on the field to do something
-        RECEIVING,     // physically intercepting the ball from a pass
-        PASSING,       // physically kicking the ball towards another robot
-        FACING,        // turning to face the passing robot
-        MARKING,       // Following closely to an offense robot
-        ENTERING_MARKING, // Choosing/waiting for a robot to mark
+        IDLING,            // simply staying in place
+        JOINING_WALL,      // send message to find its place in the wall
+        WALLING,           // participating in the wall
+        SEARCHING,         // moving around on the field to do something
+        RECEIVING,         // physically intercepting the ball from a pass
+        PASSING,           // physically kicking the ball towards another robot
+        FACING,            // turning to face the passing robot
+        MARKING,           // Following closely to an offense robot
+        ENTERING_MARKING,  // Choosing/waiting for a robot to mark
     };
-
-
 
     State update_state();
 
