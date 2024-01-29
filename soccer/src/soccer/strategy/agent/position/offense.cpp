@@ -110,7 +110,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         // TIGERS Mannheim eTDP from 2019 for details
         // See also passer.py in rj_gameplay
         dist = target_robot_pos.dist_to(this_robot_pos);
-        intent.kick_speed = std::sqrt((std::pow(FINAL_BALL_SPEED, 2)) - (2 * BALL_DECEL * dist));
+        intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
         intent.is_active = true;
         return intent;
     } else if (current_state_ == PREPARING_SHOT) {
