@@ -62,6 +62,10 @@ private:
     bool scorer_ = false;
     bool last_scorer_ = false;
 
+    bool has_open_shot();
+
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head);
+
     communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
 
     /**
