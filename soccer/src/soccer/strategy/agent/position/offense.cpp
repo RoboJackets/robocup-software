@@ -78,18 +78,8 @@ Offense::State Offense::update_state() {
             next_state = IDLING;
         }
     } else if (current_state_ == AWAITING_SEND_PASS) {
-        // Only sends a pass request every 0.2 seconds
-        auto cur = std::chrono::high_resolution_clock::now();
-        auto diff = cur - start;
-        if (distance_to_ball < ball_lost_distance_ && diff.count() > 0.2) {
+        if (distance_to_ball < ball_lost_distance_) {
             Position::broadcast_direct_pass_request();
-            start = std::chrono::high_resolution_clock::now();
-        }
-    } else if (current_state_ == SEEKING) {
-        // if the ball comes close to it while it's trying to seek, it should no longer be trying to
-        // seek
-        if (distance_to_ball < ball_receive_distance_) {
-            // next_state = RECEIVING;
         }
     }
 
