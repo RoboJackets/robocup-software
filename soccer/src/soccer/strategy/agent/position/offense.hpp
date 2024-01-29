@@ -16,6 +16,8 @@
 #include "rj_geometry/point.hpp"
 #include "seeker.hpp"
 
+#include "seeking.hpp"
+
 namespace strategy {
 
 /*
