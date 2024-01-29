@@ -168,8 +168,8 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
         min_path_dist = std::min(min_path_dist, pass_path.dist_to(ally_pos));
     }
 
-    min_path_dist = 0.1 / min_path_dist;
-    min_robot_dist = 0.1f / min_robot_dist;
+    min_path_dist = 0.1f / min_path_dist;
+    min_robot_dist = 0.1 / min_robot_dist;
 
     // More Line of Sight Heuristics
     for (auto robot : world_state->our_robots) {
