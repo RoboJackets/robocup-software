@@ -15,7 +15,6 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "seeker.hpp"
-
 #include "seeking.hpp"
 
 namespace strategy {

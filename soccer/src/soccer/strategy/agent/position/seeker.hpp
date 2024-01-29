@@ -87,7 +87,8 @@ private:
      *
      * @return rj_geometry::Point The corrected point
      */
-    rj_geometry::Point correct_point(rj_geometry::Point point, const FieldDimensions& field_dimensions) const;
+    rj_geometry::Point correct_point(rj_geometry::Point point,
+                                     const FieldDimensions& field_dimensions) const;
 
     /**
      * @brief Calculates how 'good' a target point is
@@ -99,7 +100,7 @@ private:
      * @return double The evaluation of that target point
      */
     static double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                      const WorldState* world_state);
+                             const WorldState* world_state);
 };
 
 }  // namespace strategy
