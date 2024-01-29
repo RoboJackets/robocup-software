@@ -37,8 +37,8 @@ public:
 private:
     bool kicking_{true};
 
-    //These variables are for calculating ball speed when passing
-    static constexpr float kFinalBallSpeed {0.0f};
+    // These variables are for calculating ball speed when passing
+    static constexpr float kFinalBallSpeed{0.0f};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
