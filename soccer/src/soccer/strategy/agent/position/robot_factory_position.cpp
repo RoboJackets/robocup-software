@@ -42,16 +42,18 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     }
 
     // Assigning new position
-    // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid undetermined behavior on midline)
-    if (Position::our_possession_ || world_state.ball.position.y() > field_dimensions.length() / 1.99) {
+    // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid
+    // undetermined behavior on midline)
+    if (Position::our_possession_ ||
+        world_state.ball.position.y() > field_dimensions.length() / 1.99) {
         // Offensive mode
         // 3 robots on offense, 2 robots on defense
         if (i >= 3) {
-            if (current_position_->get_name().compare("Offense") != 0) {
+            if (current_position_->get_name() != "Offense") {
                 current_position_ = std::make_unique<Offense>(robot_id_);
             }
         } else {
-            if (current_position_->get_name().compare("Defense") != 0) {
+            if (current_position_->get_name() != "Defense") {
                 current_position_ = std::make_unique<Defense>(robot_id_);
             }
         }
@@ -59,11 +61,11 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
         // Defensive mode
         // 4 robots on defense, 1 robot on offense
         if (i <= 4) {
-            if (current_position_->get_name().compare("Defense") != 0) {
+            if (current_position_->get_name() != "Defense") {
                 current_position_ = std::make_unique<Defense>(robot_id_);
             }
         } else {
-            if (current_position_->get_name().compare("Offense") != 0) {
+            if (current_position_->get_name() != "Offense") {
                 current_position_ = std::make_unique<Offense>(robot_id_);
             }
         }
