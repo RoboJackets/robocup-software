@@ -116,12 +116,12 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
 communication::PosAgentResponseWrapper Position::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response{};
-    if (const communication::PassRequest* pass_request =
-            std::get_if<communication::PassRequest>(&request.request)) {
-        communication::PassResponse pass_response = receive_pass_request(*pass_request);
-        comm_response.response = pass_response;
-    } else if (const communication::IncomingBallRequest* incoming_ball_request =
-                   std::get_if<communication::IncomingBallRequest>(&request.request)) {
+    // if (const communication::PassRequest* pass_request =
+    //         std::get_if<communication::PassRequest>(&request.request)) {
+    //     communication::PassResponse pass_response = receive_pass_request(*pass_request);
+    //     comm_response.response = pass_response;
+    if (const communication::IncomingBallRequest* incoming_ball_request =
+            std::get_if<communication::IncomingBallRequest>(&request.request)) {
         communication::Acknowledge incoming_pass_acknowledge =
             acknowledge_pass(*incoming_ball_request);
         comm_response.response = incoming_pass_acknowledge;
@@ -155,6 +155,19 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication_request_ = communication_request;
 }
 
+void Position::broadcast_direct_pass_request() {
+    communication::PassRequest pass_request{};
+    communication::generate_uid(pass_request);
+    pass_request.direct = true;
+    pass_request.from_robot_id = robot_id_;
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = pass_request;
+    communication_request.urgent = true;
+    communication_request.broadcast = true;
+    communication_request_ = communication_request;
+}
+
 communication::PassResponse Position::receive_pass_request(
     communication::PassRequest pass_request) {
     communication::PassResponse pass_response{};
@@ -162,7 +175,6 @@ communication::PassResponse Position::receive_pass_request(
 
     if (pass_request.direct) {
         // Handle direct pass request
-        // TODO: Make this rely on actually being open
         pass_response.direct_open = true;
     } else {
         // TODO: Handle indirect pass request

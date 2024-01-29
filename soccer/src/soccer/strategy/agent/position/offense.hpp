@@ -40,15 +40,16 @@ private:
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 
     enum State {
-        IDLING,          // simply staying in place
-        SEARCHING,       // moving around on the field to get open
-        PASSING,         // physically kicking the ball towards another robot
-        PREPARING_SHOT,  // pivot around ball in preparation for shot
-        SHOOTING,        // physically kicking the ball towards the net
-        RECEIVING,       // physically intercepting the ball from a pass (gets possession)
-        STEALING,        // attempting to intercept the ball from the other team
-        FACING,          // turning to face the ball
-        SCORER,          // overrides everything and will attempt to steal the bal and shoot it
+        IDLING,              // simply staying in place
+        SEARCHING,           // moving around on the field to get open
+        PASSING,             // physically kicking the ball towards another robot
+        PREPARING_SHOT,      // pivot around ball in preparation for shot
+        SHOOTING,            // physically kicking the ball towards the net
+        RECEIVING,           // physically intercepting the ball from a pass (gets possession)
+        STEALING,            // attempting to intercept the ball from the other team
+        FACING,              // turning to face the ball
+        SCORER,              // overrides everything and will attempt to steal the bal and shoot it
+        AWAITING_SEND_PASS,  // is waiting to send a pass to someone else
     };
 
     State update_state();
@@ -60,6 +61,8 @@ private:
 
     bool scorer_ = false;
     bool last_scorer_ = false;
+
+    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
