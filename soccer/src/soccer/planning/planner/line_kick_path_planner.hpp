@@ -2,7 +2,9 @@
 
 #include <optional>
 
+#include "planning/planner/collect_path_planner.hpp"
 #include "planning/planner/path_planner.hpp"
+#include "planning/planner/path_target_path_planner.hpp"
 #include "planning/trajectory.hpp"
 
 class Configuration;
@@ -29,25 +31,40 @@ public:
 
     void reset() override {
         prev_path_ = {};
-        final_approach_ = false;
         target_kick_pos_ = std::nullopt;
-        reuse_path_count_ = 0;
+        current_state_ = INITIAL_APPROACH;
+        average_ball_vel_initialized_ = false;
+        has_created_plan = false;
     }
     [[nodiscard]] bool is_done() const override;
 
 private:
+    enum State { INITIAL_APPROACH, FINAL_APPROACH };
+    State current_state_ = INITIAL_APPROACH;
+    PathTargetPathPlanner path_target_{};
+    CollectPathPlanner collect_planner_{};
     Trajectory prev_path_;
-    bool final_approach_ = false;
-    std::optional<rj_geometry::Point> target_kick_pos_;
-    int reuse_path_count_ = 0;
 
-    // ball velocity filtering vars
+    // These constants could be tuned more
+    static constexpr double kIsDoneBallVel = 1.5;
+    static constexpr double kFinalRobotSpeed = 1.0;
+    static constexpr double kPredictIn = 0.5;  // seconds
+    static constexpr double kAvoidBallBy = 0.05;
+
     rj_geometry::Point average_ball_vel_;
     bool average_ball_vel_initialized_ = false;
+    bool has_created_plan = false;
+    std::optional<rj_geometry::Point> target_kick_pos_;
 
-    // TODO(Kevin): make this a common param ("ball is slow" used
-    // in a lot of places)
-    double IS_DONE_BALL_VEL = 0.5;  // m/s
+    // Trajectory initial(BallState ball, MotionCommand command, RobotInstant start_instant,
+    // ShapeSet static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
+    Trajectory initial(const PlanRequest& plan_request);
+    Trajectory final(const PlanRequest& plan_request);
+    // Trajectory final(BallState ball, MotionCommand command, RobotInstant start_instant, ShapeSet
+    // static_obstacles, std::vector<DynamicObstacle> dynamic_obstacles);
+    void process_state_transition();
+
+    // PlayState::State current_state_;
 };
 
 }  // namespace planning
