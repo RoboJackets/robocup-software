@@ -5,7 +5,7 @@ namespace strategy {
 Seeker::Seeker(int robot_id) { robot_id_ = robot_id; }
 
 std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState* last_world_state,
-                                             FieldDimensions field_dimensions) {
+                                            FieldDimensions field_dimensions) {
     // Determine target position for seeking
     rj_geometry::Point current_loc = last_world_state->get_robot(true, robot_id_).pose.position();
 
@@ -20,15 +20,15 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
 }
 
 rj_geometry::Point Seeker::get_open_point(const WorldState* world_state,
-                                           rj_geometry::Point current_loc,
-                                           const FieldDimensions& field_dimensions) const {
+                                          rj_geometry::Point current_loc,
+                                          const FieldDimensions& field_dimensions) const {
     return Seeker::calculate_open_point(3.0, .2, current_loc, world_state, field_dimensions);
 }
 
 rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_prec,
-                                                 rj_geometry::Point current_point,
-                                                 const WorldState* world_state,
-                                                 const FieldDimensions& field_dimensions) const {
+                                                rj_geometry::Point current_point,
+                                                const WorldState* world_state,
+                                                const FieldDimensions& field_dimensions) const {
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state->ball.position;
         rj_geometry::Point min = current_point;
@@ -67,7 +67,8 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
     return current_point;
 }
 
-rj_geometry::Point Seeker::correct_point(rj_geometry::Point p, const FieldDimensions& field_dimensions) const {
+rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
+                                         const FieldDimensions& field_dimensions) const {
     double BORDER_BUFFER = .2;
     double x = p.x();
     double y = p.y();
@@ -129,7 +130,7 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p, const FieldDimens
 }
 
 double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                           const WorldState* world_state) {
+                          const WorldState* world_state) {
     // Determines 'how good' a point is
     // A higher value is a worse point
 
