@@ -254,9 +254,7 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
             return -1.0;
         }
         double angle = distance / projection;
-        if (min_angle < 0) {
-            min_angle = angle;
-        } else if (angle < min_angle) {
+        if ((min_angle < 0) || (angle < min_angle)) {
             min_angle = angle;
         }
     }
