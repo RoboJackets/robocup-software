@@ -20,9 +20,9 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
 }
 
 rj_geometry::Point Seeker::get_open_point(const WorldState* world_state,
-                                          rj_geometry::Point current_loc,
+                                          rj_geometry::Point current_position,
                                           const FieldDimensions& field_dimensions) const {
-    return Seeker::calculate_open_point(3.0, .2, current_loc, world_state, field_dimensions);
+    return Seeker::calculate_open_point(3.0, .2, current_position, world_state, field_dimensions);
 }
 
 rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_prec,
@@ -69,36 +69,36 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
 
 rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
                                          const FieldDimensions& field_dimensions) const {
-    double BORDER_BUFFER = .2;
+    double border_buffer = .2;
     double x = p.x();
     double y = p.y();
 
     // X Border
-    if (p.x() > field_dimensions.field_x_right_coord() - BORDER_BUFFER) {
-        x = field_dimensions.field_x_right_coord() - BORDER_BUFFER;
-    } else if (p.x() < field_dimensions.field_x_left_coord() + BORDER_BUFFER) {
-        x = field_dimensions.field_x_left_coord() + BORDER_BUFFER;
+    if (p.x() > field_dimensions.field_x_right_coord() - border_buffer) {
+        x = field_dimensions.field_x_right_coord() - border_buffer;
+    } else if (p.x() < field_dimensions.field_x_left_coord() + border_buffer) {
+        x = field_dimensions.field_x_left_coord() + border_buffer;
     }
 
     // Y Border
-    if (p.y() > field_dimensions.their_goal_loc().y() - BORDER_BUFFER) {
-        y = field_dimensions.their_goal_loc().y() - BORDER_BUFFER;
-    } else if (p.y() < field_dimensions.our_goal_loc().y() + BORDER_BUFFER) {
-        y = field_dimensions.our_goal_loc().y() + BORDER_BUFFER;
+    if (p.y() > field_dimensions.their_goal_loc().y() - border_buffer) {
+        y = field_dimensions.their_goal_loc().y() - border_buffer;
+    } else if (p.y() < field_dimensions.our_goal_loc().y() + border_buffer) {
+        y = field_dimensions.our_goal_loc().y() + border_buffer;
     }
 
     // Goalie Boxes
     if ((y < 1.2 || y > 7.8) && fabs(x) < 1.2) {
         if (y > 4.5) {
-            y = 8.0 - BORDER_BUFFER;
+            y = 8.0 - border_buffer;
         } else {
-            y = 1.0 + BORDER_BUFFER;
+            y = 1.0 + border_buffer;
         }
 
         if (x > .5) {
-            x = 1.0 + BORDER_BUFFER;
+            x = 1.0 + border_buffer;
         } else {
-            x = -1.0 - BORDER_BUFFER;
+            x = -1.0 - border_buffer;
         }
     }
 
@@ -107,22 +107,22 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
         // Assign left
         if (x > field_dimensions.field_x_left_coord() + field_dimensions.width() / 2) {
             x = field_dimensions.field_x_left_coord() + field_dimensions.width() / 2 -
-                BORDER_BUFFER;
+                border_buffer;
         }
     } else if (robot_id_ == 2) {
         // Assign right
         if (x < field_dimensions.field_x_right_coord() - field_dimensions.width() / 2) {
             x = field_dimensions.field_x_right_coord() - field_dimensions.width() / 2 +
-                BORDER_BUFFER;
+                border_buffer;
         }
     } else {
         // Assign middle
         if (x < field_dimensions.field_x_left_coord() + field_dimensions.width() / 3) {
             x = field_dimensions.field_x_left_coord() + field_dimensions.width() / 3 +
-                BORDER_BUFFER;
+                border_buffer;
         } else if (x > field_dimensions.field_x_right_coord() - field_dimensions.width() / 3) {
             x = field_dimensions.field_x_right_coord() - field_dimensions.width() / 3 -
-                BORDER_BUFFER;
+                border_buffer;
         }
     }
 
@@ -142,7 +142,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
 
     // Line of Sight Heuristic
     double max = 0;
-    double curr_dp;
+    double curr_dp = 0;
     for (auto robot : world_state->their_robots) {
         curr_dp = (current_point).norm().dot((robot.pose.position() - ball_pos).norm());
         curr_dp *= curr_dp;
@@ -169,7 +169,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     }
 
     min_path_dist = 0.1 / min_path_dist;
-    min_robot_dist = 0.1 / min_robot_dist;
+    min_robot_dist = 0.1f / min_robot_dist;
 
     // More Line of Sight Heuristics
     for (auto robot : world_state->our_robots) {
