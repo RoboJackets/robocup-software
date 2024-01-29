@@ -8,9 +8,9 @@ Defense::Defense(int r_id) :
     marker_{static_cast<uint8_t>(r_id)}
     {
         position_name_ = "Defense";
-        if (robot_id_ == 2) {
-            current_state_ = ENTERING_MARKING;
-        }
+        // if (robot_id_ == 2) {
+        //     current_state_ = ENTERING_MARKING;
+        // }
     }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
@@ -35,8 +35,6 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
-            if (robot_id_ == 2) 
-            SPDLOG_INFO("IN IDLING");
             break;
         case JOINING_WALL:
             send_join_wall_request();
@@ -44,6 +42,13 @@ Defense::State Defense::update_state() {
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
         case WALLING:
+            //Should remove the robot with the highest ID from a wall
+            //and make them a marker instead.
+            if (this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())
+                && walling_robots_.size() > 3) {
+                send_leave_wall_request();
+                next_state = ENTERING_MARKING;
+            }
             break;
         case SEARCHING:
             break;
@@ -70,24 +75,18 @@ Defense::State Defense::update_state() {
             }
         case MARKING:
             if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
-                SPDLOG_INFO("TRANSITION INTO IDLING FROM MARKING");
                 next_state = ENTERING_MARKING;
             }
             break;
         case ENTERING_MARKING:
-            SPDLOG_INFO("IN ENTERING MARKING");
             int target_id = marker_.choose_target(world_state);
             if (target_id == -1) {
-                SPDLOG_INFO("THE ID IS -1, ENTERING IDLING");
                 next_state = ENTERING_MARKING;
             } else {
                 next_state = MARKING;
             }
         
-        // if (robot_id_ == 2 && has_already_run_enter_mark == false) {
-        //     next_state = ENTERING_MARKING;
-        //     has_already_run_enter_mark = true;
-        // }
+
     }
 
     return next_state;
