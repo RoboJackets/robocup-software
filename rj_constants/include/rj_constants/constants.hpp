@@ -26,7 +26,7 @@ constexpr float kRobotMouthWidth = 0.0635f;
 constexpr float kRobotMouthRadius = 0.078f;
 
 // Constant for ball deceleration on field
-constexpr float kBallDecel {-0.4f};
+constexpr float kBallDecel{-0.4f};
 
 /** constants for dot patterns */
 constexpr float kDotsSmallOffset = 0.035;
