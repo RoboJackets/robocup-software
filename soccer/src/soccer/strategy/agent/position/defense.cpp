@@ -12,7 +12,7 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
 Defense::State Defense::update_state() {
     State next_state = current_state_;
     // handle transitions between states
-    WorldState* world_state = this->world_state();
+    WorldState* world_state = last_world_state_;
 
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = world_state->ball.position;
@@ -74,8 +74,8 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         // check how far we are from the ball
         // TODO(https://app.clickup.com/t/8677rrgjn): Convert RECEIVING state into role_interface
         rj_geometry::Point robot_position =
-            world_state()->get_robot(true, robot_id_).pose.position();
-        rj_geometry::Point ball_position = world_state()->ball.position;
+            last_world_state_->get_robot(true, robot_id_).pose.position();
+        rj_geometry::Point ball_position = last_world_state_->ball.position;
         double distance_to_ball = robot_position.dist_to(ball_position);
         if (distance_to_ball > max_receive_distance && !chasing_ball) {
             auto motion_instance =
@@ -93,7 +93,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     } else if (current_state_ == PASSING) {
         // attempt to pass the ball to the target robot
         rj_geometry::Point target_robot_pos =
-            world_state()->get_robot(true, target_robot_id).pose.position();
+            last_world_state_->get_robot(true, target_robot_id).pose.position();
         planning::LinearMotionInstant target{target_robot_pos};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
@@ -107,11 +107,11 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     } else if (current_state_ == WALLING) {
         if (!walling_robots_.empty()) {
             Waller waller{waller_id_, (int)walling_robots_.size()};
-            return waller.get_task(intent, world_state(), this->field_dimensions_);
+            return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
     } else if (current_state_ = FACING) {
         rj_geometry::Point robot_position =
-            world_state()->get_robot(true, robot_id_).pose.position();
+            last_world_state_->get_robot(true, robot_id_).pose.position();
         auto current_location_instant =
             planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
         auto face_ball = planning::FaceBall{};

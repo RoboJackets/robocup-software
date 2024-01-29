@@ -4,6 +4,8 @@
 #include <rj_common/utils.hpp>
 #include <rj_constants/topic_names.hpp>
 
+#include "game_state.hpp"
+
 namespace referee {
 
 RefereeBase::RefereeBase(const std::string& name)

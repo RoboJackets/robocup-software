@@ -103,7 +103,7 @@ struct FieldDimensions {
 
     /*
      * Provides a rect that is a padded version of their goalbox.
-     * Used as a static obstalce by coach in certain match situations.
+     * Used as a static obstacle in certain match situations.
      */
     [[nodiscard]] rj_geometry::Rect their_defense_area_padded(float padding) {
         rj_geometry::Rect tmp = rj_geometry::Rect(their_defense_area_);
