@@ -23,11 +23,11 @@ public:
         rsq_ = r_ * r_;
     }
 
-    Circle(const Circle& other) {
-        center = other.center;
-        r_ = other.radius();
-        rsq_ = r_ * r_;
-    }
+    ~Circle() = default;
+    Circle(const Circle& other) = default;
+    Circle(Circle&& other) = default;
+    Circle& operator=(const Circle& other) = default;
+    Circle& operator=(Circle&& other) = default;
 
     Shape* clone() const override;
 

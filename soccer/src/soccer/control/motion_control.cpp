@@ -7,6 +7,7 @@
 #include <rj_geometry/util.hpp>
 #include <rj_utils/logging.hpp>
 
+#include "game_state.hpp"
 #include "planning/instant.hpp"
 
 namespace control {

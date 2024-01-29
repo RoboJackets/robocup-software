@@ -24,6 +24,7 @@ set(ROBOCUP_LIB_SRC
     optimization/parallel_gradient_ascent_1d.cpp
     optimization/nelder_mead_2d.cpp
     optimization/python_function_wrapper.cpp
+    planning/global_state.cpp
     planning/primitives/angle_planning.cpp
     planning/primitives/create_path.cpp
     planning/primitives/path_smoothing.cpp
@@ -42,6 +43,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner/settle_path_planner.cpp
     planning/planner/goalie_idle_path_planner.cpp
     planning/planner_node.cpp
+    planning/planner_for_robot.cpp
     planning/trajectory.cpp
     planning/trajectory_utils.cpp
     planning/trajectory_collection.cpp
@@ -50,7 +52,6 @@ set(ROBOCUP_LIB_SRC
     radio/network_radio.cpp
     radio/packet_convert.cpp
     radio/sim_radio.cpp
-    strategy/coach/coach_node.cpp
     radio/radio.cpp
     referee/referee_base.cpp
     referee/external_referee.cpp
@@ -70,12 +71,12 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/soccer_config_client.cpp
     ros2_temp/raw_vision_packet_sub.cpp
     ros2_temp/referee_sub.cpp
-    ros2_temp/coach_sub.cpp
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     strategy/agent/agent_action_client.cpp
     strategy/agent/communication/communication.cpp
     strategy/agent/position/position.cpp
+    strategy/agent/position/robot_factory_position.cpp
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/defense.cpp
@@ -120,8 +121,6 @@ set(CONTROL_NODE_SRC control/control_node_main.cpp)
 
 set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
-set(COACH_NODE_SRC strategy/coach/coach_node_main.cpp)
-
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
 set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
@@ -160,9 +159,6 @@ target_sources(control_node PRIVATE ${CONTROL_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
-
-# ---- coach_node ----
-target_sources(coach_node PRIVATE ${COACH_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})

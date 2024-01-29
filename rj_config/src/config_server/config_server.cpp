@@ -54,8 +54,10 @@ void ConfigServer::broadcast_field_dimensions() {
 }
 
 void ConfigServer::set_field_dimensions_callback(const FieldDimensionsMsg& msg) {
-    field_dimensions_ = msg;
-    broadcast_field_dimensions();
+    if (field_dimensions_ != msg) {
+        field_dimensions_ = msg;
+        broadcast_field_dimensions();
+    }
 }
 
 }  // namespace config_server
