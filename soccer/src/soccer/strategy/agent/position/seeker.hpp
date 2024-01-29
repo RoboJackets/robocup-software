@@ -20,13 +20,17 @@
 namespace strategy {
 
 /*
- * The Seeking role provides the implementation for a offensive robot that
+ * The Seeker role provides the implementation for a offensive robot that
  * is trying to get open, so that they can receive a pass
  */
-class Seeking : public RoleInterface {
+class Seeker : public RoleInterface {
 public:
-    Seeking(int robot_id);
-    ~Seeking() = default;
+    Seeker(int robot_id);
+    ~Seeker() = default;
+    Seeker(const Seeker& other) = default;
+    Seeker(Seeker&& other) = default;
+    Seeker& operator=(const Seeker& other) = default;
+    Seeker& operator=(Seeker&& other) = default;
 
     /**
      * @brief  Returns a seeker behavior which aims to get open
@@ -44,7 +48,7 @@ private:
     // The seeker's id
     int robot_id_;
     // The taret point to move to
-    rj_geometry::Point target_pt{0.0, 0.0};
+    rj_geometry::Point target_pt_{0.0, 0.0};
 
     /**
      * @brief Returns the point which is most 'open'
@@ -57,7 +61,7 @@ private:
      */
     rj_geometry::Point get_open_point(const WorldState* world_state,
                                       rj_geometry::Point current_position,
-                                      FieldDimensions field_dimensions);
+                                      const FieldDimensions& field_dimensions) const;
 
     /**
      * @brief Calculates which point is the best by iteratively searching around the robot
@@ -73,7 +77,7 @@ private:
     rj_geometry::Point calculate_open_point(double current_prec, double min_prec,
                                             rj_geometry::Point current_point,
                                             const WorldState* world_state,
-                                            FieldDimensions field_dimensions);
+                                            const FieldDimensions& field_dimensions) const;
 
     /**
      * @brief Corrects the point to be within the field
@@ -83,7 +87,7 @@ private:
      *
      * @return rj_geometry::Point The corrected point
      */
-    rj_geometry::Point correct_point(rj_geometry::Point point, FieldDimensions field_dimensions);
+    rj_geometry::Point correct_point(rj_geometry::Point point, const FieldDimensions& field_dimensions) const;
 
     /**
      * @brief Calculates how 'good' a target point is
@@ -94,7 +98,7 @@ private:
      *
      * @return double The evaluation of that target point
      */
-    double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
+    static double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
                       const WorldState* world_state);
 };
 
