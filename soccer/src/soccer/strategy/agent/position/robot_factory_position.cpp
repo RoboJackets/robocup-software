@@ -54,13 +54,13 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
         world_state.ball.position.y() > field_dimensions.length() / 1.99) {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i >= 2) {
-            if (current_position_->get_name() != "Offense") {
-                current_position_ = std::make_unique<Offense>(robot_id_);
-            }
-        } else {
+        if (i <= 1) {
             if (current_position_->get_name() != "Defense") {
                 current_position_ = std::make_unique<Defense>(robot_id_);
+            }
+        } else {
+            if (current_position_->get_name() != "Offense") {
+                current_position_ = std::make_unique<Offense>(robot_id_);
             }
         }
     } else {
