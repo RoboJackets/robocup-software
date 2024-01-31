@@ -14,13 +14,13 @@ using kalman_robot::PARAM_max_time_outside_vision;
 
 KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
                          CameraRobot init_measurement, const WorldRobot& previous_world_robot)
-    : camera_id_(camera_id),
-      health_(filter::health::PARAM_init),
-      last_update_time_(creation_time),
+    : last_update_time_(creation_time),
       last_predict_time_(creation_time),
+      previous_measurements_(kick::detector::PARAM_slow_kick_hist_length),
       unwrap_theta_ctr_(0),
+      health_(filter::health::PARAM_init),
       robot_id_(init_measurement.get_robot_id()),
-      previous_measurements_(kick::detector::PARAM_slow_kick_hist_length) {
+      camera_id_(camera_id) {
     rj_geometry::Pose init_pose = init_measurement.get_pose();
     rj_geometry::Twist init_twist(0, 0, 0);
 

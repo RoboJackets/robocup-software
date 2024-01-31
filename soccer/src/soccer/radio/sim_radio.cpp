@@ -70,9 +70,9 @@ static SimulatorCommand convert_placement_to_proto(
 
 SimRadio::SimRadio(bool blue_team)
     : Radio(),
-      blue_team_(blue_team),
       socket_(io_service_, ip::udp::endpoint(ip::udp::v4(), blue_team ? kSimBlueStatusPort
-                                                                      : kSimYellowStatusPort)) {
+                                                                      : kSimYellowStatusPort)),
+      blue_team_(blue_team) {
     for (size_t i = 0; i < kNumShells; ++i) {
         last_sent_diff_.emplace_back(RJ::now());
     }
