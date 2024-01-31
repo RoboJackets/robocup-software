@@ -6,6 +6,8 @@ namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
+Position::Position(int r_id, std::string position_name) : robot_id_{r_id}, position_name_{std::move(position_name)} {};
+
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions) {
     // Point class variables to parameter references
@@ -32,6 +34,8 @@ void Position::set_time_left(double time_left) { time_left_ = time_left; }
 void Position::set_is_done() { is_done_ = true; }
 
 void Position::set_goal_canceled() { goal_canceled_ = true; }
+
+inline void Position::set_goalie_id(int goalie_id) { goalie_id_ = goalie_id; }
 
 bool Position::check_is_done() {
     if (is_done_) {
