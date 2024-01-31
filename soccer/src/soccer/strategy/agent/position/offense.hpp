@@ -11,6 +11,7 @@
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/time.hpp"
+#include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 
@@ -35,6 +36,9 @@ public:
 
 private:
     bool kicking_{true};
+
+    // These variables are for calculating ball speed when passing
+    static constexpr float kFinalBallSpeed{0.0f};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
