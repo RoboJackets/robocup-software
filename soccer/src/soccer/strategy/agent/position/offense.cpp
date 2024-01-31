@@ -29,8 +29,8 @@ Offense::State Offense::update_state() {
     double distance_to_ball = robot_position.dist_to(ball_position);
 
     if (current_state_ == IDLING) {
-        send_scorer_request();
-        next_state = SHOOTING;
+        // send_scorer_request();
+        next_state = SEEKING;
     } else if (current_state_ == SEARCHING) {
         if (scorer_) {
             next_state = STEALING;
@@ -58,7 +58,7 @@ Offense::State Offense::update_state() {
         }
     } else if (current_state_ == RECEIVING) {
         // transition to idling if we are close enough to the ball
-        if (distance_to_ball < ball_receive_distance_) {
+        if (distance_to_ball < 2 * ball_receive_distance_) {
             next_state = IDLING;
         }
     } else if (current_state_ == STEALING) {
@@ -80,6 +80,12 @@ Offense::State Offense::update_state() {
     } else if (current_state_ == AWAITING_SEND_PASS) {
         if (distance_to_ball < ball_lost_distance_) {
             Position::broadcast_direct_pass_request();
+        }
+    } else if (current_state_ == SEEKING) {
+        // if the ball comes close to it while it's trying to seek, it should no longer be trying to
+        // seek
+        if (distance_to_ball < ball_receive_distance_) {
+            // next_state = RECEIVING;
         }
     }
 
@@ -196,6 +202,13 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         auto empty_motion_cmd = planning::MotionCommand{};
         intent.motion_command = empty_motion_cmd;
         return intent;
+    } else if (current_state_ == SEEKING) {
+        // Only get a new target position if we have reached our target
+        if (check_is_done() ||
+            last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
+            Seeker seeker{robot_id_};
+            return seeker.get_task(intent, last_world_state_, this->field_dimensions_);
+        }
     }
 
     // should be impossible to reach, but this is an EmptyMotionCommand

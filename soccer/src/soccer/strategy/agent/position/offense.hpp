@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <cmath>
 
 #include <rclcpp/rclcpp.hpp>
@@ -14,6 +15,7 @@
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
+#include "seeker.hpp"
 
 namespace strategy {
 
@@ -54,6 +56,7 @@ private:
         FACING,              // turning to face the ball
         SCORER,              // overrides everything and will attempt to steal the bal and shoot it
         AWAITING_SEND_PASS,  // is waiting to send a pass to someone else
+        SEEKING,             // is trying to get open
     };
 
     State update_state();
@@ -65,8 +68,6 @@ private:
 
     bool scorer_ = false;
     bool last_scorer_ = false;
-
-    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
