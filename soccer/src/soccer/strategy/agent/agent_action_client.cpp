@@ -41,6 +41,10 @@ AgentActionClient::AgentActionClient(int r_id)
         "config/game_settings", 1,
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
+    goalie_id_sub_ = create_subscription<rj_msgs::msg::Goalie>(
+        ::referee::topics::kGoalieTopic, 1,
+        [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
+
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
         [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
@@ -67,7 +71,6 @@ AgentActionClient::AgentActionClient(int r_id)
             get_communication();
             check_communication_timeout();
         });
-
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -101,6 +104,14 @@ void AgentActionClient::field_dimensions_callback(
     FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
+}
+
+void AgentActionClient::goalie_id_callback(int goalie_id) {
+    if (current_position_) {
+        current_position_->set_goalie_id(goalie_id);
+    }
+
+    goalie_id_ = goalie_id;
 }
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
@@ -176,7 +187,6 @@ void AgentActionClient::send_new_goal() {
 
 void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
-
     auto goal_handle = future.get();
     if (!goal_handle) {
         current_position_->set_goal_canceled();
@@ -185,7 +195,6 @@ void AgentActionClient::goal_response_callback(
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
     if (current_position_ == nullptr) {
         current_position_->set_time_left(time_left);
@@ -193,7 +202,6 @@ void AgentActionClient::feedback_callback(
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
-
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
@@ -351,7 +359,6 @@ void AgentActionClient::receive_response_callback(
 }
 
 void AgentActionClient::check_communication_timeout() {
-
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {
             current_position_->receive_communication_response(buffered_responses_[i]);
@@ -359,6 +366,5 @@ void AgentActionClient::check_communication_timeout() {
         }
     }
 }
-
 
 }  // namespace strategy

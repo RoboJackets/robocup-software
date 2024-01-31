@@ -208,7 +208,15 @@ public:
      */
     virtual void revive(){};
 
+    /**
+     * @brief setter for goalie id
+    */
+    void set_goalie_id(int goalie_id);
+
 protected:
+
+    Position(int r_id, std::string position_name);
+
     // should be overriden in subclass constructors
     std::string position_name_{"Position"};
 
@@ -281,6 +289,9 @@ protected:
 
     // protected to allow WorldState to be accessed directly by derived
     WorldState* last_world_state_;
+
+    // Current goalie
+    int goalie_id_;
 
 private:
     /**
