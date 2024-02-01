@@ -437,29 +437,4 @@ rj_geometry::Point Offense::calculate_best_shot() {
     return best_shot;
 }
 
-double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) {
-    rj_geometry::Point vec = head - tail;
-    auto their_robots = this->last_world_state_->our_robots;
-    double min_angle = -0.5;
-    for (auto enemy : their_robots) {
-        rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
-        if (enemy_vec.dot(vec) < 0) {
-            continue;
-        }
-        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
-        enemy_vec = enemy_vec - (projection)*vec;
-        double distance = enemy_vec.mag();
-        if (distance < (kRobotRadius + kBallRadius)) {
-            return -1.0;
-        }
-        double angle = distance / projection;
-        if (min_angle < 0) {
-            min_angle = angle;
-        } else if (angle < min_angle) {
-            min_angle = angle;
-        }
-    }
-    return min_angle;
-}
-
 }  // namespace strategy

@@ -71,8 +71,6 @@ private:
 
     bool has_open_shot();
 
-    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head);
-
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
      *
