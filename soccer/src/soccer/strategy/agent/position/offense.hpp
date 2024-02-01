@@ -86,6 +86,19 @@ private:
 
     // These variables are for calculating ball speed when passing
     static constexpr float kFinalBallSpeed{0.0f};
+
+
+    // The following functions are calculations to aid state transition or MotionCommand creation.
+
+    /**
+    * @brief Checks if this agent has a good shot, in which case it should shoot instead of passing.
+    */
+    bool has_open_shot();
+
+    /**
+     * @brief Calculates the distance of vector from other team's closest robot
+     */
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point heaad);
 };
 
 }  // namespace strategy

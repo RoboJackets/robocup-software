@@ -33,23 +33,26 @@ Offense::State Offense::update_state() {
         case DEFAULT:
 
             return SEEKING;
-            break;
 
         case SEEKING:
 
-            // Seek
-            // Stay until moved to receiving or stealing
+            return SEEKING;
 
-            // TODO: should_steal() tomatic switch to passing if a pass is accepted.
+        case POSSESSION_START:
+
+            if (has_open_shot()) {
+                return SHOOTING;
+            }
+
+            // No open shot, try to pass.
+            // This will trigger an automatic switch to passing if a pass is accepted.
             broadcast_direct_pass_request();
 
             return POSSESSION;
 
         case POSSESSION:
 
-            // If we can make a shot, make it.
-            // If we need to stop possessing now, shoot.
-            if (has_open_shot() || timed_out()) {
+            if (has_open_shot()) {
                 return SHOOTING;
             }
 
