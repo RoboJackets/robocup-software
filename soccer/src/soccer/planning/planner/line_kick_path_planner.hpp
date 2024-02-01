@@ -20,7 +20,7 @@ namespace planning {
  * to kick.
  *
  * Because of the two-stage system, this planner is *stateful*. It ought
- * not to be destructed and re-constructed during a single execution; 
+ * not to be destructed and re-constructed during a single execution;
  * the best approach is to call plan() on each tick.
  * However, it also shouldn't *completely* break if it is reset.
  *
@@ -60,22 +60,22 @@ private:
     bool average_ball_vel_initialized_ = false;
 
     /**
-    * Returns the trajectory during the initial stage. 
-    * Uses PathTargetPathPlanner to draw a path to the spot to kick from.
-    * Avoids the ball
-    */
+     * Returns the trajectory during the initial stage.
+     * Uses PathTargetPathPlanner to draw a path to the spot to kick from.
+     * Avoids the ball
+     */
     Trajectory initial(const PlanRequest& plan_request);
 
     /**
-    * Returns the trajectory during the final stage. 
-    * Uses PathTargetPathPlanner to draw a path directly into the ball.
-    * Tries to hit the ball with the mouth of the robot.
-    */
+     * Returns the trajectory during the final stage.
+     * Uses PathTargetPathPlanner to draw a path directly into the ball.
+     * Tries to hit the ball with the mouth of the robot.
+     */
     Trajectory final(const PlanRequest& plan_request);
 
     /**
-    * Decides if the intial approach is complete and updates internal state as necessary.
-    */
+     * Decides if the intial approach is complete and updates internal state as necessary.
+     */
     void process_state_transition();
 };
 
