@@ -36,11 +36,15 @@ Offense::State Offense::update_state() {
 
         case SEEKING:
 
+            // If the ball seems "stealable", we should switch to STEALING
+
             return SEEKING;
 
         case POSSESSION_START:
 
-            if (has_open_shot()) {
+            // If we can make a shot, take it
+            // If we need to stop possessing now, shoot.
+            if (has_open_shot() || timed_out()) {
                 return SHOOTING;
             }
 
@@ -52,7 +56,9 @@ Offense::State Offense::update_state() {
 
         case POSSESSION:
 
-            if (has_open_shot()) {
+            // If we can make a shot, make it.
+            // If we need to stop possessing now, shoot.
+            if (has_open_shot() || timed_out()) {
                 return SHOOTING;
             }
 
