@@ -44,6 +44,7 @@ private:
     enum State {
         DEFAULT, // Decide what to do
         SEEKING, // Get open
+        POSSESSION_START, // Try to shoot and send pass request
         POSSESSION, // Holding the ball
         PASSING, // Getting rid of it
         STEALING, // Getting the ball
@@ -59,6 +60,8 @@ private:
             case SEEKING:
                 return RJ::Seconds{-1};
             case POSSESSION:
+                return RJ::Seconds{-1};
+            case POSSESSION_START:
                 return RJ::Seconds{-1};
             case PASSING:
                 return RJ::Seconds{5};
@@ -86,6 +89,12 @@ private:
 
     // These variables are for calculating ball speed when passing
     static constexpr float kFinalBallSpeed{0.0f};
+
+    // Used to tell if we have lost all chance of possessing the ball
+    static constexpr double kBallTooFarDist{0.5};
+
+    // Used to tell if the ball is close enough to steal
+    static constexpr double kStealBallRadius{0.5};
 
 
     // The following functions are calculations to aid state transition or MotionCommand creation.
