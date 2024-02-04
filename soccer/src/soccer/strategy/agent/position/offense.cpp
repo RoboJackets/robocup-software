@@ -33,6 +33,11 @@ Offense::State Offense::update_state() {
         case SEEKING:
 
             // If the ball seems "stealable", we should switch to STEALING
+            if (can_steal_ball()) {
+                return STEALING;
+            }
+
+            // If we need to get a new seeking target, restart seeking
 
             return SEEKING;
 
@@ -73,7 +78,7 @@ Offense::State Offense::update_state() {
             }
 
             // If we lost the ball completely, give up
-            if (ball_position.dist_to(robot_position) > kBallTooFarDist) {
+            if (distance_to_ball > kBallTooFarDist) {
                 return DEFAULT;
             }
 
@@ -86,7 +91,7 @@ Offense::State Offense::update_state() {
             }
 
             // If we ran out of time or the ball is out of our radius, give up
-            if (timed_out() || ball_position.dist_to(robot_position) > kStealBallRadius) {
+            if (timed_out() || distance_to_ball > kStealBallRadius) {
                 return DEFAULT;
             }
 
@@ -123,8 +128,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         
         case SEEKING:
-
-            // Seek
 
             return std::nullopt; // TODO
 
@@ -271,6 +274,16 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
         }
     }
     return min_angle;
+}
+
+bool Offense::can_steal_ball() {
+    rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
+
+    rj_geometry::Point ball_position = world_state->ball.position;
+
+    double distance_to_ball = robot_position.dist_to(ball_position);
+
+    return distance_to_ball < kStealBallRadius;
 }
 
 }  // namespace strategy

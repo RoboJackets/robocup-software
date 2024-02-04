@@ -105,6 +105,11 @@ private:
      * @brief Calculates the distance of vector from other team's closest robot
      */
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point heaad);
+
+    /**
+    * @brief Check if this agent could easily steal the ball
+    */
+    bool can_steal_ball();
 };
 
 }  // namespace strategy
