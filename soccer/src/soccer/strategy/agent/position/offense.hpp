@@ -27,7 +27,7 @@ class Offense : public Position {
 public:
     Offense(int r_id);
     ~Offense() override = default;
-    
+
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
@@ -39,17 +39,17 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        DEFAULT, // Decide what to do
-        SEEKING, // Get open
-        POSSESSION_START, // Try to shoot and send pass request
-        POSSESSION, // Holding the ball
-        PASSING, // Getting rid of it
-        STEALING, // Getting the ball
-        RECEIVING, // Getting the ball from a pass
-        SHOOTING // Winning the game
+        DEFAULT,           // Decide what to do
+        SEEKING,           // Get open
+        POSSESSION_START,  // Try to shoot and send pass request
+        POSSESSION,        // Holding the ball
+        PASSING,           // Getting rid of it
+        STEALING,          // Getting the ball
+        RECEIVING,         // Getting the ball from a pass
+        SHOOTING           // Winning the game
     };
 
-    // The longest amount of time we should be 
+    // The longest amount of time we should be
     static constexpr RJ::Seconds timeout(State s) {
         switch (s) {
             case DEFAULT:
@@ -77,6 +77,8 @@ private:
 
     RJ::Time last_time_;
 
+    Seeker seeker_;
+
     State update_state();
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
@@ -93,22 +95,22 @@ private:
     // Used to tell if the ball is close enough to steal
     static constexpr double kStealBallRadius{0.5};
 
-
     // The following functions are calculations to aid state transition or MotionCommand creation.
 
     /**
-    * @brief Checks if this agent has a good shot, in which case it should shoot instead of passing.
-    */
+     * @brief Checks if this agent has a good shot, in which case it should shoot instead of
+     * passing.
+     */
     bool has_open_shot();
 
     /**
      * @brief Calculates the distance of vector from other team's closest robot
      */
-    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point heaad);
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head);
 
     /**
-    * @brief Check if this agent could easily steal the ball
-    */
+     * @brief Check if this agent could easily steal the ball
+     */
     bool can_steal_ball();
 };
 

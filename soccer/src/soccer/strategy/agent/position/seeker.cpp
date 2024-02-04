@@ -9,7 +9,10 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
     // Determine target position for seeking
     rj_geometry::Point current_loc = last_world_state->get_robot(true, robot_id_).pose.position();
 
-    target_pt_ = get_open_point(last_world_state, current_loc, field_dimensions);
+    if (!target_valid_) {
+        target_pt_ = get_open_point(last_world_state, current_loc, field_dimensions);
+        target_valid_ = true;
+    }
 
     planning::PathTargetFaceOption face_option = planning::FaceBall{};
     bool ignore_ball = false;
@@ -18,6 +21,8 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
 
     return intent;
 }
+
+void Seeker::reset_target() { target_valid_ = false; }
 
 rj_geometry::Point Seeker::get_open_point(const WorldState* world_state,
                                           rj_geometry::Point current_position,

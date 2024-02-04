@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position(r_id) { position_name_ = "Offense"; }
+Offense::Offense(int r_id) : Position{r_id}, seeker_{r_id}, { position_name_ = "Offense"; }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     State next_state = update_state();
@@ -24,8 +24,7 @@ Offense::State Offense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
-     switch (current_state_) {
-
+    switch (current_state_) {
         case DEFAULT:
 
             return SEEKING;
@@ -82,7 +81,6 @@ Offense::State Offense::update_state() {
                 return DEFAULT;
             }
 
-
         case STEALING:
 
             // Go to possession if successful
@@ -119,35 +117,31 @@ Offense::State Offense::update_state() {
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
-    
     switch (current_state_) {
-
         case DEFAULT:
             // Do nothing: empty motion command
             intent.motion_command = planning::MotionCommand{};
             return intent;
-        
+
         case SEEKING:
 
-            return std::nullopt; // TODO
+            return std::nullopt;  // TODO
 
         case POSSESSION:
 
-            
-
-            return std::nullopt; // TODO
+            return std::nullopt;  // TODO
 
         case PASSING:
 
             // Pass to target robot
 
-            return std::nullopt; // TODO
+            return std::nullopt;  // TODO
 
         case STEALING:
 
             // Settle/Collect
 
-            return std::nullopt; // TODO
+            return std::nullopt;  // TODO
 
         case RECEIVING:
 
@@ -165,7 +159,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
-
     // PassRequests: only in offense right now
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
@@ -202,11 +195,9 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
     }
 }
 
-inline void Offense::reset_timeout() {
-    last_time_ = RJ::now();
-}
+void Offense::reset_timeout() { last_time_ = RJ::now(); }
 
-inline bool Offense::timed_out() {
+bool Offense::timed_out() {
     const auto time_val = this->timeout(current_state_);
     return time_val >= RJ::Seconds{0} && RJ::now() - last_time_ > time_val;
 }
@@ -255,7 +246,8 @@ bool Offense::has_open_shot() {
 
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) {
     rj_geometry::Point vec = head - tail;
-    auto their_robots = this->last_world_state_->their_robots;
+    auto& their_robots = this->last_world_state_->their_robots;
+
     double min_angle = -0.5;
     for (auto enemy : their_robots) {
         rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
