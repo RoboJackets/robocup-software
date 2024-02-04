@@ -5,7 +5,6 @@ namespace strategy {
 Offense::Offense(int r_id) : Position{r_id}, seeker_{r_id} { position_name_ = "Offense"; }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
-    
     // Get next state, and if different, reset clock
     State new_state = next_state();
 
@@ -45,7 +44,8 @@ Offense::State Offense::next_state() {
             }
 
             // If we need to get a new seeking target, restart seeking
-            if (check_is_done() || last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
+            if (check_is_done() ||
+                last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
                 return SEEKING_START;
             }
 
@@ -133,48 +133,67 @@ Offense::State Offense::next_state() {
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
-        case DEFAULT:
+        case DEFAULT: {
             // Do nothing: empty motion command
             intent.motion_command = planning::MotionCommand{};
             return intent;
+        }
 
-        case SEEKING_START:
-
+        case SEEKING_START: {
             // Calculate a new seeking point
             seeker_.reset_target();
             return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+        }
 
-        case SEEKING:
-
+        case SEEKING: {
             return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+        }
 
-        case POSSESSION:
-
+        case POSSESSION: {
             return std::nullopt;  // TODO
+        }
 
-        case PASSING:
+        case PASSING: {
+            // Kick to the target robot
+            rj_geometry::Point target_robot_pos =
+                last_world_state_->get_robot(true, target_robot_id).pose.position();
 
-            // Pass to target robot
+            planning::LinearMotionInstant target{target_robot_pos};
+            planning::MotionCommand line_kick_cmd{"line_kick", target};
 
-            return std::nullopt;  // TODO
+            // Set intent to kick
+            intent.motion_command = line_kick_cmd;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 
-        case STEALING:
+            // Adjusts kick speed based on distance.
+            // Details: TIGERS 2019 eTDP, rj_gameplay/passer.py
+            rj_geometry::Point this_robot_pos =
+                last_world_state_->get_robot(true, this->robot_id_).pose.position();
 
+            double dist = target_robot_pos.dist_to(this_robot_pos);
+            intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
+
+            return intent;
+        }
+
+        case STEALING: {
             // Settle/Collect
 
             return std::nullopt;  // TODO
+        }
 
-        case RECEIVING:
-
+        case RECEIVING: {
             // Settle/Collect but like slower
 
             return std::nullopt;
+        }
 
-        case SHOOTING:
-
+        case SHOOTING: {
             // Line kick
 
             return std::nullopt;
+        }
     }
 }
 
@@ -282,8 +301,6 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
     return min_angle;
 }
 
-bool Offense::can_steal_ball() const {
-    return distance_to_ball() < kStealBallRadius;
-}
+bool Offense::can_steal_ball() const { return distance_to_ball() < kStealBallRadius; }
 
 }  // namespace strategy
