@@ -214,11 +214,10 @@ public:
 
     /**
      * @brief setter for goalie id
-    */
+     */
     void set_goalie_id(int goalie_id);
 
 protected:
-
     Position(int r_id, std::string position_name);
 
     // should be overriden in subclass constructors
