@@ -2,17 +2,20 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position{r_id}, seeker_{r_id}, { position_name_ = "Offense"; }
+Offense::Offense(int r_id) : Position{r_id}, seeker_{r_id} { position_name_ = "Offense"; }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
-    State next_state = update_state();
+    
+    // Get next state, and if different, reset clock
+    State new_state = next_state();
 
-    if (current_state_ != next_state) {
+    if (current_state_ != new_state) {
         reset_timeout();
     }
 
-    current_state_ = next_state;
+    current_state_ = new_state;
 
+    // Calculate task based on state
     return state_to_task(intent);
 }
 
@@ -20,17 +23,18 @@ std::string Offense::get_current_state() {
     return std::string{"Offense"} + std::to_string(static_cast<int>(current_state_));
 }
 
-Offense::State Offense::update_state() {
+Offense::State Offense::next_state() {
     // handle transitions between current state
     WorldState* world_state = this->last_world_state_;
-
-    rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
-    rj_geometry::Point ball_position = world_state->ball.position;
-    double distance_to_ball = robot_position.dist_to(ball_position);
 
     switch (current_state_) {
         case DEFAULT:
 
+            return SEEKING_START;
+
+        case SEEKING_START:
+
+            // Unconditionally only stay in this state for one tick.
             return SEEKING;
 
         case SEEKING:
@@ -41,6 +45,11 @@ Offense::State Offense::update_state() {
             }
 
             // If we need to get a new seeking target, restart seeking
+            if (check_is_done() || last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
+
+
+
+            }
 
             return SEEKING;
 
@@ -81,7 +90,10 @@ Offense::State Offense::update_state() {
             }
 
             // If we lost the ball completely, give up
-            if (distance_to_ball > kBallTooFarDist) {
+            const auto& robot = last_world_state_->get_robot(true, robot_id_);
+            const auto& ball = last_world_state_->ball;
+
+            if (ball.dist_to(robot.pose.position()) > kBallTooFarDist) {
                 return DEFAULT;
             }
 
@@ -93,7 +105,10 @@ Offense::State Offense::update_state() {
             }
 
             // If we ran out of time or the ball is out of our radius, give up
-            if (timed_out() || distance_to_ball > kStealBallRadius) {
+            const auto& robot = last_world_state_->get_robot(true, robot_id_);
+            const auto& ball = last_world_state_->ball;
+
+            if (timed_out() || ball.dist_to(robot.pose.position()) > kBallTooFarDist) {
                 return DEFAULT;
             }
 
@@ -127,9 +142,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             intent.motion_command = planning::MotionCommand{};
             return intent;
 
+        case SEEKING_START:
+
+            // Calculate a new seeking point
+            seeker_.reset_target();
+            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+
         case SEEKING:
 
-            return std::nullopt;  // TODO
+            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
 
         case POSSESSION:
 
@@ -273,9 +294,9 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Offense::can_steal_ball() {
-    rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
 
-    rj_geometry::Point ball_position = world_state->ball.position;
+    rj_geometry::Point ball_position = last_world_state_->ball.position;
 
     double distance_to_ball = robot_position.dist_to(ball_position);
 
