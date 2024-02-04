@@ -6,7 +6,8 @@ namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
-Position::Position(int r_id, std::string position_name) : robot_id_{r_id}, position_name_{std::move(position_name)} {};
+Position::Position(int r_id, std::string position_name)
+    : robot_id_{r_id}, position_name_{std::move(position_name)} {};
 
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions) {
