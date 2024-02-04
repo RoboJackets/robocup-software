@@ -208,8 +208,8 @@ inline void Offense::reset_timeout() {
 }
 
 inline bool Offense::timed_out() {
-    const auto timeout = timeout(current_state_);
-    return timeout >= 0 && RJ::now() - last_time_ > timeout;
+    const auto time_val = this->timeout(current_state_);
+    return time_val >= RJ::Seconds{0} && RJ::now() - last_time_ > time_val;
 }
 
 void Offense::derived_acknowledge_pass() {
@@ -229,6 +229,52 @@ void Offense::derived_pass_ball() {
 void Offense::derived_acknowledge_ball_in_transit() {
     // The ball is coming to me
     current_state_ = RECEIVING;
+}
+
+bool Offense::has_open_shot() {
+    // Goal location
+    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
+
+    // Ball location
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    double best_distance = -1.0;
+    rj_geometry::Point increment(0.05, 0);
+    rj_geometry::Point curr_point =
+        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
+    for (int i = 0; i < 19; i++) {
+        double distance = distance_from_their_robots(ball_position, curr_point);
+        if (distance > best_distance) {
+            best_distance = distance;
+        }
+        curr_point = curr_point + increment;
+    }
+
+    return best_distance > max_receive_distance;
+}
+
+double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) {
+    rj_geometry::Point vec = head - tail;
+    auto their_robots = this->last_world_state_->their_robots;
+    double min_angle = -0.5;
+    for (auto enemy : their_robots) {
+        rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
+        if (enemy_vec.dot(vec) < 0) {
+            continue;
+        }
+        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
+        enemy_vec = enemy_vec - (projection)*vec;
+        double distance = enemy_vec.mag();
+        if (distance < (kRobotRadius + kBallRadius)) {
+            return -1.0;
+        }
+        double angle = distance / projection;
+        if ((min_angle < 0) || (angle < min_angle)) {
+            min_angle = angle;
+        }
+    }
+    return min_angle;
 }
 
 }  // namespace strategy
