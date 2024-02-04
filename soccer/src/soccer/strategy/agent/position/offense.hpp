@@ -105,12 +105,22 @@ private:
     /**
     * @brief Reset the timeout for the current state
     */
-    void reset_timeout();
+    void reset_timeout() {
+        // Defined here so it can be inlined
+        last_time_ = RJ::now();
+    }
 
     /**
     * @return if the current state has timed out
     */
-    bool timed_out() const;
+    bool timed_out() const {
+        // Defined here so it can be inlined
+        using namespace std::chrono_literals;
+
+        const auto max_time = timeout(current_state_);
+
+        return (max_time > 0s) && (last_time_ + max_time < RJ::now());
+    };
 
     State current_state_ = State::DEFAULT;
 
@@ -149,6 +159,13 @@ private:
      * @brief Check if this agent could easily steal the ball
      */
     bool can_steal_ball() const;
+
+    /**
+    * @return distance from this agent to ball
+    */
+    double distance_to_ball() const {
+        return last_world_state_->ball.position.dist_to(last_world_state_->get_robot(true, robot_id_).pose.position());
+    };
 };
 
 }  // namespace strategy

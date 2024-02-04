@@ -42,9 +42,7 @@ Offense::State Offense::next_state() {
 
             // If we need to get a new seeking target, restart seeking
             if (check_is_done() || last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
-
-
-
+                return SEEKING_START;
             }
 
             return SEEKING;
@@ -86,12 +84,11 @@ Offense::State Offense::next_state() {
             }
 
             // If we lost the ball completely, give up
-            const auto& robot = last_world_state_->get_robot(true, robot_id_);
-            const auto& ball = last_world_state_->ball;
-
-            if (ball.dist_to(robot.pose.position()) > kBallTooFarDist) {
+            if (distance_to_ball() > kBallTooFarDist) {
                 return DEFAULT;
             }
+
+            return PASSING;
 
         case STEALING:
 
@@ -101,12 +98,11 @@ Offense::State Offense::next_state() {
             }
 
             // If we ran out of time or the ball is out of our radius, give up
-            const auto& robot = last_world_state_->get_robot(true, robot_id_);
-            const auto& ball = last_world_state_->ball;
-
-            if (timed_out() || ball.dist_to(robot.pose.position()) > kBallTooFarDist) {
+            if (timed_out() || distance_to_ball() > kBallTooFarDist) {
                 return DEFAULT;
             }
+
+            return STEALING;
 
         case RECEIVING:
 
@@ -216,13 +212,6 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
     }
 }
 
-void Offense::reset_timeout() { last_time_ = RJ::now(); }
-
-bool Offense::timed_out() {
-    const auto time_val = this->timeout(current_state_);
-    return time_val >= RJ::Seconds{0} && RJ::now() - last_time_ > time_val;
-}
-
 void Offense::derived_acknowledge_pass() {
     // I have been chosen as the receiver
     current_state_ = RECEIVING;
@@ -242,7 +231,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
 }
 
-bool Offense::has_open_shot() {
+bool Offense::has_open_shot() const {
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
     double goal_width = field_dimensions_.goal_width();  // 1.0 meters
@@ -265,7 +254,7 @@ bool Offense::has_open_shot() {
     return best_distance > max_receive_distance;
 }
 
-double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) {
+double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 
@@ -289,14 +278,8 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
     return min_angle;
 }
 
-bool Offense::can_steal_ball() {
-    rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
-
-    rj_geometry::Point ball_position = last_world_state_->ball.position;
-
-    double distance_to_ball = robot_position.dist_to(ball_position);
-
-    return distance_to_ball < kStealBallRadius;
+bool Offense::can_steal_ball() const {
+    return distance_to_ball() < kStealBallRadius;
 }
 
 }  // namespace strategy
