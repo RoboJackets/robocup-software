@@ -35,7 +35,7 @@ void Position::set_is_done() { is_done_ = true; }
 
 void Position::set_goal_canceled() { goal_canceled_ = true; }
 
-inline void Position::set_goalie_id(int goalie_id) { goalie_id_ = goalie_id; }
+void Position::set_goalie_id(int goalie_id) { goalie_id_ = goalie_id; }
 
 bool Position::check_is_done() {
     if (is_done_) {
