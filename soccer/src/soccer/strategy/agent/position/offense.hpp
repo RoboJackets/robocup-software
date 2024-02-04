@@ -37,8 +37,8 @@ public:
 
 private:
     /**
-    * @brief Overriden from Position. Calls next_state and then state_to_task on each tick.
-    */
+     * @brief Overriden from Position. Calls next_state and then state_to_task on each tick.
+     */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
@@ -54,31 +54,31 @@ private:
     };
 
     /**
-    * @return what the state should be right now. called on each get_task tick
-    */
+     * @return what the state should be right now. called on each get_task tick
+     */
     State next_state();
 
     /**
-    * @return the task to execute. called on each get_task tick AFTER next_state()
-    */
+     * @return the task to execute. called on each get_task tick AFTER next_state()
+     */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     /**
-    * @brief This FSM has timeouts for certain states. 
-    * Ideally, these would not be necessary; as planners get more sophisticated
-    * they should not get "stuck". However, empirically, the offense FSM in particular
-    * has been observed to deadlock often. 
-    *
-    * One common case is when waiting for a receiver to accept a pass; if no receiver responds,
-    * the timeout is necessary. In the future receivers may be able to respond in the negative
-    * instead of ignoring the request.
-    *
-    * The timeouts are a safety mechanism, and should not be the primary reason for a 
-    * state transition. They are set relatively high for this reason.
-    *
-    * @return the maximum duration to stay in a given state, or -1 if there is no maximum.
-    *
-    */
+     * @brief This FSM has timeouts for certain states.
+     * Ideally, these would not be necessary; as planners get more sophisticated
+     * they should not get "stuck". However, empirically, the offense FSM in particular
+     * has been observed to deadlock often.
+     *
+     * One common case is when waiting for a receiver to accept a pass; if no receiver responds,
+     * the timeout is necessary. In the future receivers may be able to respond in the negative
+     * instead of ignoring the request.
+     *
+     * The timeouts are a safety mechanism, and should not be the primary reason for a
+     * state transition. They are set relatively high for this reason.
+     *
+     * @return the maximum duration to stay in a given state, or -1 if there is no maximum.
+     *
+     */
     static constexpr RJ::Seconds timeout(State s) {
         switch (s) {
             case DEFAULT:
@@ -103,16 +103,16 @@ private:
     }
 
     /**
-    * @brief Reset the timeout for the current state
-    */
+     * @brief Reset the timeout for the current state
+     */
     void reset_timeout() {
         // Defined here so it can be inlined
         last_time_ = RJ::now();
     }
 
     /**
-    * @return if the current state has timed out
-    */
+     * @return if the current state has timed out
+     */
     bool timed_out() const {
         // Defined here so it can be inlined
         using namespace std::chrono_literals;
@@ -126,7 +126,6 @@ private:
 
     // The time at which the last state started.
     RJ::Time last_time_;
-
 
     /* RoleInterface Members */
     Seeker seeker_;
@@ -161,10 +160,11 @@ private:
     bool can_steal_ball() const;
 
     /**
-    * @return distance from this agent to ball
-    */
+     * @return distance from this agent to ball
+     */
     double distance_to_ball() const {
-        return last_world_state_->ball.position.dist_to(last_world_state_->get_robot(true, robot_id_).pose.position());
+        return last_world_state_->ball.position.dist_to(
+            last_world_state_->get_robot(true, robot_id_).pose.position());
     };
 };
 
