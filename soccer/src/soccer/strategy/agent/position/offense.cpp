@@ -14,7 +14,9 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     current_state_ = new_state;
 
-    // SPDLOG_INFO("{}", state_to_name(current_state_));
+    if (current_state_ == PASSING || current_state_ == RECEIVING) {
+        SPDLOG_INFO("{}", state_to_name(current_state_));
+    }
 
     // Calculate task based on state
     return state_to_task(intent);
