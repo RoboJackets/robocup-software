@@ -73,17 +73,13 @@ public:
         current_position_->update_alive_robots(alive_robots);
     }
 
-    inline const std::string get_name() override {
-        current_position_->get_name();
-    }
+    inline const std::string get_name() override { current_position_->get_name(); }
 
     inline void set_time_left(double time_left) override {
         current_position_->set_time_left(time_left);
     }
 
-    inline void set_goal_canceled() override {
-        current_position_->set_goal_canceled();
-    }
+    inline void set_goal_canceled() override { current_position_->set_goal_canceled(); }
 
     inline void send_direct_pass_request(std::vector<u_int8_t> target_robots) override {
         current_position_->send_direct_pass_request(target_robots);
@@ -93,7 +89,8 @@ public:
         current_position_->broadcast_direct_pass_request();
     }
 
-    inline communication::PassResponse receive_pass_request(communication::PassRequest pass_request) override {
+    inline communication::PassResponse receive_pass_request(
+        communication::PassRequest pass_request) override {
         current_position_->receive_pass_request(pass_request);
     }
 
@@ -104,7 +101,6 @@ public:
     inline void set_goalie_id(int goalie_id) override {
         current_position_->set_goalie_id(goalie_id);
     }
-
 
 private:
     std::unique_ptr<Position> current_position_;

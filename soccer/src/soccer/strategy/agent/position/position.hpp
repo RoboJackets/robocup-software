@@ -142,7 +142,8 @@ public:
      * @return communication::PassResponse a response to the robot as to whether or not it
      * is open for a pass
      */
-    virtual communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
+    virtual communication::PassResponse receive_pass_request(
+        communication::PassRequest pass_request);
 
     /**
      * @brief tell another robot that this robot will pass to it
