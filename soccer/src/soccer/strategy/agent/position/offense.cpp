@@ -14,6 +14,8 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     current_state_ = new_state;
 
+    // SPDLOG_INFO("{}", state_to_name(current_state_));
+
     // Calculate task based on state
     return state_to_task(intent);
 }
@@ -27,17 +29,16 @@ Offense::State Offense::next_state() {
     WorldState* world_state = this->last_world_state_;
 
     switch (current_state_) {
-        case DEFAULT:
-
+        case DEFAULT: {
             return SEEKING_START;
+        }
 
-        case SEEKING_START:
-
+        case SEEKING_START: {
             // Unconditionally only stay in this state for one tick.
             return SEEKING;
+        }
 
-        case SEEKING:
-
+        case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
             if (can_steal_ball()) {
                 return STEALING;
@@ -50,9 +51,8 @@ Offense::State Offense::next_state() {
             }
 
             return SEEKING;
-
-        case POSSESSION_START:
-
+        }
+        case POSSESSION_START: {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
             if (has_open_shot() || timed_out()) {
@@ -64,9 +64,9 @@ Offense::State Offense::next_state() {
             broadcast_direct_pass_request();
 
             return POSSESSION;
+        }
 
-        case POSSESSION:
-
+        case POSSESSION: {
             // If we can make a shot, make it.
             // If we need to stop possessing now, shoot.
             if (has_open_shot() || timed_out()) {
@@ -74,9 +74,9 @@ Offense::State Offense::next_state() {
             }
 
             return POSSESSION;
+        }
 
-        case PASSING:
-
+        case PASSING: {
             // If we've finished passing, cool!
             if (check_is_done()) {
                 return DEFAULT;
@@ -93,26 +93,32 @@ Offense::State Offense::next_state() {
             }
 
             return PASSING;
+        }
 
-        case STEALING:
-
+        case STEALING: {
             // Go to possession if successful
             if (check_is_done()) {
-                return POSSESSION;
+                return POSSESSION_START;
             }
 
-            // If we ran out of time or the ball is out of our radius, give up
-            if (timed_out() || distance_to_ball() > kBallTooFarDist) {
+            if (timed_out()) {
+                // If we timed out and the ball is close, assume we have it
+                // (because is_done for settle/collect are not great)
+                if (distance_to_ball() < kOwnBallRadius) {
+                    return POSSESSION_START;
+                }
+            } else {
+                // Otherwise, assume we lost it
                 return DEFAULT;
             }
 
             return STEALING;
+        }
 
-        case RECEIVING:
-
+        case RECEIVING: {
             // If we got it, cool, we have it!
             if (check_is_done()) {
-                return POSSESSION;
+                return POSSESSION_START;
             }
 
             // If we failed to get it in time
@@ -120,14 +126,16 @@ Offense::State Offense::next_state() {
                 return DEFAULT;
             }
 
-        case SHOOTING:
-
+            return RECEIVING;
+        }
+        case SHOOTING: {
             // If we either succeed or fail, it's time to start over.
             if (check_is_done() || timed_out()) {
                 return DEFAULT;
             }
 
-            return DEFAULT;
+            return SHOOTING;
+        }
     }
 }
 
@@ -149,8 +157,12 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
         }
 
+        case POSSESSION_START: {
+            return intent;
+        }
+
         case POSSESSION: {
-            return std::nullopt;  // TODO
+            return intent;
         }
 
         case PASSING: {
@@ -178,27 +190,55 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case STEALING: {
-            // Settle/Collect
+            // intercept the ball
+            // if ball fast, use settle, otherwise collect
+            if (last_world_state_->ball.velocity.mag() > 0.75) {
+                auto settle_cmd = planning::MotionCommand{"settle"};
+                intent.motion_command = settle_cmd;
+                intent.dribbler_speed = 255.0;
+            } else {
+                auto collect_cmd = planning::MotionCommand{"collect"};
+                intent.motion_command = collect_cmd;
+                intent.dribbler_speed = 255.0;
+            }
 
-            return std::nullopt;  // TODO
+            return intent;
         }
 
         case RECEIVING: {
-            // Settle/Collect but like slower
+            // intercept the ball
+            // if ball fast, use settle, otherwise collect
+            if (last_world_state_->ball.velocity.mag() > 0.75) {
+                auto settle_cmd = planning::MotionCommand{"settle"};
+                intent.motion_command = settle_cmd;
+                intent.dribbler_speed = 255.0;
+            } else {
+                auto collect_cmd = planning::MotionCommand{"collect"};
+                intent.motion_command = collect_cmd;
+                intent.dribbler_speed = 255.0;
+            }
 
-            return std::nullopt;
+            return intent;
         }
 
         case SHOOTING: {
-            // Line kick
+            // Line kick best shot
+            planning::LinearMotionInstant target{calculate_best_shot()};
+            auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
 
-            return std::nullopt;
+            intent.motion_command = line_kick_cmd;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 4.0;
+
+            return intent;
         }
     }
 }
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response = Position::receive_communication_request(request);
     // PassRequests: only in offense right now
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
@@ -225,9 +265,14 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         // determine when we are open, but this may need to change
         if (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance) {
             communication::PassResponse response = Position::receive_pass_request(*pass_request);
-            return {response};
-        }
+            // communication::PosAgentResponseWrapper comm_response{};
 
+            SPDLOG_INFO("Robot {} accepts pass", robot_id_);
+
+            comm_response.response = response;
+            return comm_response;
+        }
+        SPDLOG_INFO("Robot {} rejects pass", robot_id_);
         return {};
     } else {
         // Super: other kinds of requests
@@ -303,4 +348,27 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 
 bool Offense::can_steal_ball() const { return distance_to_ball() < kStealBallRadius; }
 
+rj_geometry::Point Offense::calculate_best_shot() const {
+    // Goal location
+    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
+
+    // Ball location
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    rj_geometry::Point best_shot = their_goal_pos;
+    double best_distance = -1.0;
+    rj_geometry::Point increment(0.05, 0);
+    rj_geometry::Point curr_point =
+        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
+    for (int i = 0; i < 19; i++) {
+        double distance = distance_from_their_robots(ball_position, curr_point);
+        if (distance > best_distance) {
+            best_distance = distance;
+            best_shot = curr_point;
+        }
+        curr_point = curr_point + increment;
+    }
+    return best_shot;
+}
 }  // namespace strategy
