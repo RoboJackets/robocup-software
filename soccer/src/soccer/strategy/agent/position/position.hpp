@@ -71,10 +71,10 @@ public:
                                                 FieldDimensions& field_dimensions);
 
     // communication with AC
-    void update_play_state(const PlayState& play_state);
-    void update_field_dimensions(const FieldDimensions& field_dimensions);
-    void update_alive_robots(std::vector<u_int8_t> alive_robots);
-    const std::string get_name();
+    virtual void update_play_state(const PlayState& play_state);
+    virtual void update_field_dimensions(const FieldDimensions& field_dimensions);
+    virtual void update_alive_robots(std::vector<u_int8_t> alive_robots);
+    virtual const std::string get_name();
 
     // returns the current state of the robot
     virtual std::string get_current_state() = 0;
@@ -82,7 +82,7 @@ public:
     /**
      * @brief setter for time_left_
      */
-    void set_time_left(double time_left);
+    virtual void set_time_left(double time_left);
 
     /**
      * @brief setter for is_done_
@@ -98,7 +98,7 @@ public:
      * Outside classes can only set to true, Position/derived classes can clear
      * with check_is_done().
      */
-    void set_goal_canceled();
+    virtual void set_goal_canceled();
 
     // Agent-to-Agent communication
     /**
@@ -131,9 +131,9 @@ public:
      *
      * @param target_robots a vector of robots to send a request to
      */
-    void send_direct_pass_request(std::vector<u_int8_t> target_robots);
+    virtual void send_direct_pass_request(std::vector<u_int8_t> target_robots);
 
-    void broadcast_direct_pass_request();
+    virtual void broadcast_direct_pass_request();
 
     /**
      * @brief receives and handles a pass_request
@@ -142,14 +142,14 @@ public:
      * @return communication::PassResponse a response to the robot as to whether or not it
      * is open for a pass
      */
-    communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
+    virtual communication::PassResponse receive_pass_request(communication::PassRequest pass_request);
 
     /**
      * @brief tell another robot that this robot will pass to it
      *
      * @param target_robot the robot that will be passed to
      */
-    void send_pass_confirmation(u_int8_t target_robot);
+    virtual void send_pass_confirmation(u_int8_t target_robot);
 
     /**
      * @brief acknowledges the pass confirmation from another robot
@@ -215,7 +215,7 @@ public:
     /**
      * @brief setter for goalie id
      */
-    void set_goalie_id(int goalie_id);
+    virtual void set_goalie_id(int goalie_id);
 
 protected:
     Position(int r_id, std::string position_name);

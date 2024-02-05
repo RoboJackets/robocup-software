@@ -61,6 +61,51 @@ public:
     void die() override;
     void revive() override;
 
+    inline void update_play_state(const PlayState& play_state) override {
+        current_position_->update_play_state(play_state);
+    }
+
+    inline void update_field_dimensions(const FieldDimensions& field_dimensions) override {
+        current_position_->update_field_dimensions(field_dimensions);
+    }
+
+    inline void update_alive_robots(std::vector<u_int8_t> alive_robots) override {
+        current_position_->update_alive_robots(alive_robots);
+    }
+
+    inline const std::string get_name() override {
+        current_position_->get_name();
+    }
+
+    inline void set_time_left(double time_left) override {
+        current_position_->set_time_left(time_left);
+    }
+
+    inline void set_goal_canceled() override {
+        current_position_->set_goal_canceled();
+    }
+
+    inline void send_direct_pass_request(std::vector<u_int8_t> target_robots) override {
+        current_position_->send_direct_pass_request(target_robots);
+    }
+
+    inline void broadcast_direct_pass_request() override {
+        current_position_->broadcast_direct_pass_request();
+    }
+
+    inline communication::PassResponse receive_pass_request(communication::PassRequest pass_request) override {
+        current_position_->receive_pass_request(pass_request);
+    }
+
+    inline void send_pass_confirmation(u_int8_t target_robot) override {
+        current_position_->send_pass_confirmation(target_robot);
+    }
+
+    inline void set_goalie_id(int goalie_id) override {
+        current_position_->set_goalie_id(goalie_id);
+    }
+
+
 private:
     std::unique_ptr<Position> current_position_;
 
