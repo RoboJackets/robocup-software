@@ -18,195 +18,217 @@ Offense::State Offense::update_state() {
     State next_state = current_state_;
     // handle transitions between current state
     WorldState* world_state = this->last_world_state_;
-
-    // if no ball found, stop and return to box immediately
-    if (!world_state->ball.visible) {
-        return current_state_;
-    }
-
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
-    rj_geometry::Point ball_position = world_state->ball.position;
-    double distance_to_ball = robot_position.dist_to(ball_position);
 
     if (current_state_ == IDLING) {
-        // send_scorer_request();
-        next_state = SEEKING;
-    } else if (current_state_ == SEARCHING) {
-        if (scorer_) {
-            next_state = STEALING;
-        }
-    } else if (current_state_ == PASSING) {
-        // transition to idling if we no longer have the ball (i.e. it was passed or it was
-        // stolen)
-        if (check_is_done()) {
-            next_state = IDLING;
-        }
-
-        if (distance_to_ball > ball_lost_distance_) {
-            next_state = IDLING;
-        }
-    } else if (current_state_ == PREPARING_SHOT) {
-        if (check_is_done()) {
-            next_state = SHOOTING;
-        }
-    } else if (current_state_ == SHOOTING) {
-        // transition to idling if we no longer have the ball (i.e. it was passed or it was
-        // stolen)
-        if (check_is_done() || distance_to_ball > ball_lost_distance_) {
-            send_reset_scorer_request();
+        if (robot_position.x() >= 2.9) {
             next_state = SEARCHING;
         }
-    } else if (current_state_ == RECEIVING) {
-        // transition to idling if we are close enough to the ball
-        if (distance_to_ball < 2 * ball_receive_distance_) {
+    } else if (current_state_ == SEARCHING) {
+        if (robot_position.x() <= -2.9) {
             next_state = IDLING;
-        }
-    } else if (current_state_ == STEALING) {
-        // The collect planner check_is_done() is wonky so I added a second clause to check
-        // distance
-        if (check_is_done() || distance_to_ball < ball_receive_distance_) {
-            // send direct pass request to robot 4
-            if (scorer_) {
-                next_state = PREPARING_SHOT;
-            } else {
-                /* send_direct_pass_request({4}); */
-                /* next_state = SEARCHING; */
-            }
-        }
-    } else if (current_state_ == FACING) {
-        if (check_is_done()) {
-            next_state = IDLING;
-        }
-    } else if (current_state_ == AWAITING_SEND_PASS) {
-        if (distance_to_ball < ball_lost_distance_) {
-            Position::broadcast_direct_pass_request();
-        }
-    } else if (current_state_ == SEEKING) {
-        // if the ball comes close to it while it's trying to seek, it should no longer be trying to
-        // seek
-        if (distance_to_ball < ball_receive_distance_) {
-            // next_state = RECEIVING;
         }
     }
 
-    return SHOOTING;
+    // // if no ball found, stop and return to box immediately
+    // if (!world_state->ball.visible) {
+    //     return current_state_;
+    // }
+
+    // rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
+    // rj_geometry::Point ball_position = world_state->ball.position;
+    // double distance_to_ball = robot_position.dist_to(ball_position);
+
+    // if (current_state_ == IDLING) {
+    //     // send_scorer_request();
+    //     next_state = SEEKING;
+    // } else if (current_state_ == SEARCHING) {
+    //     if (scorer_) {
+    //         next_state = STEALING;
+    //     }
+    // } else if (current_state_ == PASSING) {
+    //     // transition to idling if we no longer have the ball (i.e. it was passed or it was
+    //     // stolen)
+    //     if (check_is_done()) {
+    //         next_state = IDLING;
+    //     }
+
+    //     if (distance_to_ball > ball_lost_distance_) {
+    //         next_state = IDLING;
+    //     }
+    // } else if (current_state_ == PREPARING_SHOT) {
+    //     if (check_is_done()) {
+    //         next_state = SHOOTING;
+    //     }
+    // } else if (current_state_ == SHOOTING) {
+    //     // transition to idling if we no longer have the ball (i.e. it was passed or it was
+    //     // stolen)
+    //     if (check_is_done() || distance_to_ball > ball_lost_distance_) {
+    //         send_reset_scorer_request();
+    //         next_state = SEARCHING;
+    //     }
+    // } else if (current_state_ == RECEIVING) {
+    //     // transition to idling if we are close enough to the ball
+    //     if (distance_to_ball < 2 * ball_receive_distance_) {
+    //         next_state = IDLING;
+    //     }
+    // } else if (current_state_ == STEALING) {
+    //     // The collect planner check_is_done() is wonky so I added a second clause to check
+    //     // distance
+    //     if (check_is_done() || distance_to_ball < ball_receive_distance_) {
+    //         // send direct pass request to robot 4
+    //         if (scorer_) {
+    //             next_state = PREPARING_SHOT;
+    //         } else {
+    //             /* send_direct_pass_request({4}); */
+    //             /* next_state = SEARCHING; */
+    //         }
+    //     }
+    // } else if (current_state_ == FACING) {
+    //     if (check_is_done()) {
+    //         next_state = IDLING;
+    //     }
+    // } else if (current_state_ == AWAITING_SEND_PASS) {
+    //     if (distance_to_ball < ball_lost_distance_) {
+    //         Position::broadcast_direct_pass_request();
+    //     }
+    // } else if (current_state_ == SEEKING) {
+    //     // if the ball comes close to it while it's trying to seek, it should no longer be trying to
+    //     // seek
+    //     if (distance_to_ball < ball_receive_distance_) {
+    //         // next_state = RECEIVING;
+    //     }
+    // }
+
+    // return SHOOTING;
+    return next_state;
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
-    float dist{0.0f};
-    // SPDLOG_INFO(current_state_);
     if (current_state_ == IDLING) {
-        // Do nothing
-        auto empty_motion_cmd = planning::MotionCommand{};
-        intent.motion_command = empty_motion_cmd;
+        planning::LinearMotionInstant target{rj_geometry::Point{3.0, 4.5}};
+        intent.motion_command = planning::MotionCommand{"path_target", target, planning::FacePoint{field_dimensions_.our_goal_loc()}};
         return intent;
     } else if (current_state_ == SEARCHING) {
-        // DEFINE SEARCHING BEHAVIOR
-        auto empty_motion_cmd = planning::MotionCommand{};
-        intent.motion_command = empty_motion_cmd;
+        planning::LinearMotionInstant target{rj_geometry::Point{-3.0, 4.5}};
+        intent.motion_command = planning::MotionCommand{"path_target", target, planning::FacePoint{field_dimensions_.our_goal_loc()}};
         return intent;
-    } else if (current_state_ == PASSING) {
-        target_robot_id = 2;
-        rj_geometry::Point target_robot_pos =
-            last_world_state_->get_robot(true, target_robot_id).pose.position();
-        rj_geometry::Point this_robot_pos =
-            last_world_state_->get_robot(true, this->robot_id_).pose.position();
-        planning::LinearMotionInstant target{target_robot_pos};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
-        intent.motion_command = line_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        // NOTE: Check we can actually use break beams
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        // Adjusts kick speed based on distance. Refer to
-        // TIGERS Mannheim eTDP from 2019 for details
-        // See also passer.py in rj_gameplay
-        dist = target_robot_pos.dist_to(this_robot_pos);
-        intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
-        intent.is_active = true;
-        return intent;
-    } else if (current_state_ == PREPARING_SHOT) {
-        // pivot around ball...
-        auto ball_pt = last_world_state_->ball.position;
-
-        // ...to face their goal
-        rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-        planning::LinearMotionInstant target_instant{their_goal_pos};
-
-        auto pivot_cmd = planning::MotionCommand{"pivot"};
-        pivot_cmd.target = target_instant;
-        pivot_cmd.pivot_point = ball_pt;
-        intent.motion_command = pivot_cmd;
-        intent.dribbler_speed = 255.0;
-        return intent;
-    } else if (current_state_ == SHOOTING) {
-        planning::LinearMotionInstant target{calculate_best_shot()};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
-        intent.motion_command = line_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 4.0;
-        intent.is_active = true;
-
-        // intent.motion_command = planning::MotionCommand{
-        //     "path_target", planning::LinearMotionInstant{last_world_state_->ball.position,
-        //     {0.0}}, planning::FaceBall{}};
-
-        return intent;
-    } else if (current_state_ == RECEIVING) {
-        // check how far we are from the ball
-        rj_geometry::Point robot_position =
-            last_world_state_->get_robot(true, robot_id_).pose.position();
-        rj_geometry::Point ball_position = last_world_state_->ball.position;
-        double distance_to_ball = robot_position.dist_to(ball_position);
-        if (distance_to_ball > max_receive_distance && !chasing_ball) {
-            auto motion_instance =
-                planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
-            auto face_ball = planning::FaceBall{};
-            auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
-            intent.motion_command = face_ball_cmd;
-        } else {
-            // intercept the bal
-            chasing_ball = true;
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-        }
-        return intent;
-    } else if (current_state_ == STEALING) {
-        // intercept the ball
-        // if ball fast, use settle, otherwise collect
-        if (last_world_state_->ball.velocity.mag() > 0.75) {
-            auto settle_cmd = planning::MotionCommand{"settle"};
-            intent.motion_command = settle_cmd;
-            intent.dribbler_speed = 255.0;
-            return intent;
-        } else {
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-            intent.dribbler_speed = 255.0;
-            return intent;
-        }
-    } else if (current_state_ == FACING) {
-        rj_geometry::Point robot_position =
-            last_world_state_->get_robot(true, robot_id_).pose.position();
-        auto current_location_instant =
-            planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
-        auto face_ball = planning::FaceBall{};
-        auto face_ball_cmd =
-            planning::MotionCommand{"path_target", current_location_instant, face_ball};
-        intent.motion_command = face_ball_cmd;
-        return intent;
-    } else if (current_state_ == AWAITING_SEND_PASS) {
-        auto empty_motion_cmd = planning::MotionCommand{};
-        intent.motion_command = empty_motion_cmd;
-        return intent;
-    } else if (current_state_ == SEEKING) {
-        // Only get a new target position if we have reached our target
-        if (check_is_done() ||
-            last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
-            Seeker seeker{robot_id_};
-            return seeker.get_task(intent, last_world_state_, this->field_dimensions_);
-        }
     }
+
+    // float dist{0.0f};
+    // // SPDLOG_INFO(current_state_);
+    // if (current_state_ == IDLING) {
+    //     // Do nothing
+    //     auto empty_motion_cmd = planning::MotionCommand{};
+    //     intent.motion_command = empty_motion_cmd;
+    //     return intent;
+    // } else if (current_state_ == SEARCHING) {
+    //     // DEFINE SEARCHING BEHAVIOR
+    //     auto empty_motion_cmd = planning::MotionCommand{};
+    //     intent.motion_command = empty_motion_cmd;
+    //     return intent;
+    // } else if (current_state_ == PASSING) {
+    //     target_robot_id = 2;
+    //     rj_geometry::Point target_robot_pos =
+    //         last_world_state_->get_robot(true, target_robot_id).pose.position();
+    //     rj_geometry::Point this_robot_pos =
+    //         last_world_state_->get_robot(true, this->robot_id_).pose.position();
+    //     planning::LinearMotionInstant target{target_robot_pos};
+    //     auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+    //     intent.motion_command = line_kick_cmd;
+    //     intent.shoot_mode = RobotIntent::ShootMode::KICK;
+    //     // NOTE: Check we can actually use break beams
+    //     intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+    //     // Adjusts kick speed based on distance. Refer to
+    //     // TIGERS Mannheim eTDP from 2019 for details
+    //     // See also passer.py in rj_gameplay
+    //     dist = target_robot_pos.dist_to(this_robot_pos);
+    //     intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
+    //     intent.is_active = true;
+    //     return intent;
+    // } else if (current_state_ == PREPARING_SHOT) {
+    //     // pivot around ball...
+    //     auto ball_pt = last_world_state_->ball.position;
+
+    //     // ...to face their goal
+    //     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    //     planning::LinearMotionInstant target_instant{their_goal_pos};
+
+    //     auto pivot_cmd = planning::MotionCommand{"pivot"};
+    //     pivot_cmd.target = target_instant;
+    //     pivot_cmd.pivot_point = ball_pt;
+    //     intent.motion_command = pivot_cmd;
+    //     intent.dribbler_speed = 255.0;
+    //     return intent;
+    // } else if (current_state_ == SHOOTING) {
+    //     planning::LinearMotionInstant target{calculate_best_shot()};
+    //     auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+    //     intent.motion_command = line_kick_cmd;
+    //     intent.shoot_mode = RobotIntent::ShootMode::KICK;
+    //     intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+    //     intent.kick_speed = 4.0;
+    //     intent.is_active = true;
+
+    //     // intent.motion_command = planning::MotionCommand{
+    //     //     "path_target", planning::LinearMotionInstant{last_world_state_->ball.position,
+    //     //     {0.0}}, planning::FaceBall{}};
+
+    //     return intent;
+    // } else if (current_state_ == RECEIVING) {
+    //     // check how far we are from the ball
+    //     rj_geometry::Point robot_position =
+    //         last_world_state_->get_robot(true, robot_id_).pose.position();
+    //     rj_geometry::Point ball_position = last_world_state_->ball.position;
+    //     double distance_to_ball = robot_position.dist_to(ball_position);
+    //     if (distance_to_ball > max_receive_distance && !chasing_ball) {
+    //         auto motion_instance =
+    //             planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
+    //         auto face_ball = planning::FaceBall{};
+    //         auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
+    //         intent.motion_command = face_ball_cmd;
+    //     } else {
+    //         // intercept the bal
+    //         chasing_ball = true;
+    //         auto collect_cmd = planning::MotionCommand{"collect"};
+    //         intent.motion_command = collect_cmd;
+    //     }
+    //     return intent;
+    // } else if (current_state_ == STEALING) {
+    //     // intercept the ball
+    //     // if ball fast, use settle, otherwise collect
+    //     if (last_world_state_->ball.velocity.mag() > 0.75) {
+    //         auto settle_cmd = planning::MotionCommand{"settle"};
+    //         intent.motion_command = settle_cmd;
+    //         intent.dribbler_speed = 255.0;
+    //         return intent;
+    //     } else {
+    //         auto collect_cmd = planning::MotionCommand{"collect"};
+    //         intent.motion_command = collect_cmd;
+    //         intent.dribbler_speed = 255.0;
+    //         return intent;
+    //     }
+    // } else if (current_state_ == FACING) {
+    //     rj_geometry::Point robot_position =
+    //         last_world_state_->get_robot(true, robot_id_).pose.position();
+    //     auto current_location_instant =
+    //         planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
+    //     auto face_ball = planning::FaceBall{};
+    //     auto face_ball_cmd =
+    //         planning::MotionCommand{"path_target", current_location_instant, face_ball};
+    //     intent.motion_command = face_ball_cmd;
+    //     return intent;
+    // } else if (current_state_ == AWAITING_SEND_PASS) {
+    //     auto empty_motion_cmd = planning::MotionCommand{};
+    //     intent.motion_command = empty_motion_cmd;
+    //     return intent;
+    // } else if (current_state_ == SEEKING) {
+    //     // Only get a new target position if we have reached our target
+    //     if (check_is_done() ||
+    //         last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
+    //         Seeker seeker{robot_id_};
+    //         return seeker.get_task(intent, last_world_state_, this->field_dimensions_);
+    //     }
+    // }
 
     // should be impossible to reach, but this is an EmptyMotionCommand
     return std::nullopt;
