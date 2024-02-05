@@ -105,10 +105,12 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
         } else if (const communication::PassResponse* pass_response =
                        std::get_if<communication::PassResponse>(&response.responses[i])) {
             // get the associated pass request for this response
+            SPDLOG_INFO("Robot {} receives pass response", robot_id_);
             if (const communication::PassRequest* sent_pass_request =
                     std::get_if<communication::PassRequest>(&response.associated_request)) {
                 if (sent_pass_request->direct) {
                     // if direct -> pass to first robot
+                SPDLOG_INFO("Robot {} receives direct pass response", robot_id_);
                     send_pass_confirmation(response.received_robot_ids[i]);
                 } else {
                     // TODO: handle deciding on indirect passing
@@ -122,9 +124,9 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response{};
     // if (const communication::PassRequest* pass_request =
-    //         std::get_if<communication::PassRequest>(&request.request)) {
-    //     communication::PassResponse pass_response = receive_pass_request(*pass_request);
-    //     comm_response.response = pass_response;
+            // std::get_if<communication::PassRequest>(&request.request)) {
+        // communication::PassResponse pass_response = receive_pass_request(*pass_request);
+        // comm_response.response = pass_response;
     if (const communication::IncomingBallRequest* incoming_ball_request =
             std::get_if<communication::IncomingBallRequest>(&request.request)) {
         communication::Acknowledge incoming_pass_acknowledge =
