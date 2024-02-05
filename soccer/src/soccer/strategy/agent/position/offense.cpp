@@ -126,6 +126,11 @@ Offense::State Offense::next_state() {
 
             return RECEIVING;
         }
+
+        case SHOOTING_START: {
+            return SHOOTING;
+        }
+
         case SHOOTING: {
             // If we either succeed or fail, it's time to start over.
             if (check_is_done() || timed_out()) {
@@ -219,10 +224,22 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         }
 
-        case SHOOTING: {
+        case SHOOTING_START: {
             // Line kick best shot
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+            target_ = calculate_best_shot();
+
+            auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
+
+            intent.motion_command = line_kick_cmd;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 4.0;
+
+            return intent;
+        }
+
+        case SHOOTING: {
+            auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;

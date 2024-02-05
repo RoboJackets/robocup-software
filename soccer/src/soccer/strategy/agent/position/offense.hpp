@@ -50,7 +50,8 @@ private:
         PASSING,           // Getting rid of it
         STEALING,          // Getting the ball
         RECEIVING,         // Getting the ball from a pass
-        SHOOTING,           // Winning the game
+        SHOOTING_START,    // Calculate shot
+        SHOOTING,          // Winning the game
     };
 
     /**
@@ -97,6 +98,8 @@ private:
                 return RJ::Seconds{5};
             case RECEIVING:
                 return RJ::Seconds{5};
+            case SHOOTING_START:
+                return RJ::Seconds{-1};
             case SHOOTING:
                 return RJ::Seconds{5};
         }
@@ -122,6 +125,8 @@ private:
                 return "STEALING";
             case RECEIVING:
                 return "RECEIVING";
+            case SHOOTING_START:
+                return "SHOOTING";
             case SHOOTING:
                 return "SHOOTING";
         }
@@ -154,6 +159,9 @@ private:
 
     /* RoleInterface Members */
     Seeker seeker_;
+
+    // Used to cache targets between states
+    rj_geometry::Point target_;
 
     /* Constants for State or Task Calculation */
 
