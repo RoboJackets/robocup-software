@@ -21,19 +21,19 @@ Offense::State Offense::update_state() {
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
 
     if (current_state_ == IDLING) {
-        if (robot_position.x() >= 1.4 and robot_position.y() <= 3.1){
+        if (check_is_done()){
             next_state = SEARCHING;
         }
     } else if (current_state_ == SEARCHING) {
-        if (robot_position.x() <= -1.4) {
+        if (check_is_done()) {
             next_state = PASSING;
         }
     } else if (current_state_ == PASSING) {
-        if (robot_position.y() >= 5.9) {
+        if (check_is_done()) {
             next_state = PREPARING_SHOT;
         }
     } else if (current_state_ == PREPARING_SHOT) {
-        if (robot_position.x() >= 1.4) {
+        if (check_is_done()) {
             next_state = IDLING;
         }
     }
