@@ -21,11 +21,11 @@ Offense::State Offense::update_state() {
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
 
     if (current_state_ == IDLING) {
-        if (robot_position.x() >= 2.9) {
+        if (check_is_done()) {
             next_state = SEARCHING;
         }
     } else if (current_state_ == SEARCHING) {
-        if (robot_position.x() <= -2.9) {
+        if (check_is_done()) {
             next_state = IDLING;
         }
     }
@@ -106,11 +106,11 @@ Offense::State Offense::update_state() {
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
-        planning::LinearMotionInstant target{rj_geometry::Point{3.0, 4.5}};
+        planning::LinearMotionInstant target{rj_geometry::Point{3.0, (double) robot_id_ + 2}};
         intent.motion_command = planning::MotionCommand{"path_target", target, planning::FacePoint{field_dimensions_.our_goal_loc()}};
         return intent;
     } else if (current_state_ == SEARCHING) {
-        planning::LinearMotionInstant target{rj_geometry::Point{-3.0, 4.5}};
+        planning::LinearMotionInstant target{rj_geometry::Point{-3.0, (double) robot_id_ + 2}};
         intent.motion_command = planning::MotionCommand{"path_target", target, planning::FacePoint{field_dimensions_.our_goal_loc()}};
         return intent;
     }
