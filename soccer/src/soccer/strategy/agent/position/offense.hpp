@@ -50,7 +50,7 @@ private:
         PASSING,           // Getting rid of it
         STEALING,          // Getting the ball
         RECEIVING,         // Getting the ball from a pass
-        SHOOTING           // Winning the game
+        SHOOTING,           // Winning the game
     };
 
     /**
@@ -102,6 +102,31 @@ private:
         }
     }
 
+    // For debugging
+    static constexpr std::string_view state_to_name(State s) {
+
+        switch (s) {
+            case DEFAULT:
+                return "DEFAULT";
+            case SEEKING_START:
+                return "SEEKING_START";
+            case SEEKING:
+                return "SEEKING";
+            case POSSESSION:
+                return "POSSESSION";
+            case POSSESSION_START:
+                return "POSSESSION_START";
+            case PASSING:
+                return "PASSING";
+            case STEALING:
+                return "STEALING";
+            case RECEIVING:
+                return "RECEIVING";
+            case SHOOTING:
+                return "SHOOTING";
+        }
+    }
+
     /**
      * @brief Reset the timeout for the current state
      */
@@ -141,6 +166,9 @@ private:
     // Used to tell if the ball is close enough to steal
     static constexpr double kStealBallRadius{0.5};
 
+    // Used to assume we are capable of manipulating the ball
+    static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
+
     /* Utility functions for State or Task Calculation */
 
     /**
@@ -166,6 +194,11 @@ private:
         return last_world_state_->ball.position.dist_to(
             last_world_state_->get_robot(true, robot_id_).pose.position());
     };
+
+    /**
+     * @return the target (within the goal) that would be the most clear shot
+    */
+    rj_geometry::Point calculate_best_shot() const;
 };
 
 }  // namespace strategy
