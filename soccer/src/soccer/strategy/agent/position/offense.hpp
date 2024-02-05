@@ -29,8 +29,8 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
-    communication::PosAgentResponseWrapper receive_communication_request(
-        communication::AgentPosRequestWrapper request) override;
+    // communication::PosAgentResponseWrapper receive_communication_request(
+    //     communication::AgentPosRequestWrapper request) override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
@@ -104,13 +104,12 @@ private:
             case SHOOTING_START:
                 return RJ::Seconds{-1};
             case SHOOTING:
-                return RJ::Seconds{5};
+                return RJ::Seconds{-1};
         }
     }
 
     // For debugging
     static constexpr std::string_view state_to_name(State s) {
-
         switch (s) {
             case DEFAULT:
                 return "DEFAULT";
@@ -208,7 +207,7 @@ private:
 
     /**
      * @return the target (within the goal) that would be the most clear shot
-    */
+     */
     rj_geometry::Point calculate_best_shot() const;
 };
 
