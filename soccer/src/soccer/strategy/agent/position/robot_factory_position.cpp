@@ -27,7 +27,7 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
     std::vector<RobotPos> robots_copy;
-    for (int i = 0; i < world_state.our_robots.size(); i++) {
+    for (int i = 0; i < 6; i++) {
         // Ignore goalie
         if (i == 0) {
             continue;
