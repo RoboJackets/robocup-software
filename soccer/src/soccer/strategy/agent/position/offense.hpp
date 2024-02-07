@@ -28,8 +28,8 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
 
-    // communication::PosAgentResponseWrapper receive_communication_request(
-    //     communication::AgentPosRequestWrapper request) override;
+    communication::PosAgentResponseWrapper receive_communication_request(
+        communication::AgentPosRequestWrapper request) override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
