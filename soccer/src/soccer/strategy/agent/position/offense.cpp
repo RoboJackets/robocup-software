@@ -10,12 +10,10 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
-        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
+        // SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
     }
 
-
     current_state_ = new_state;
-
 
     // Calculate task based on state
     return state_to_task(intent);
@@ -105,10 +103,9 @@ Offense::State Offense::next_state() {
                 // (because is_done for settle/collect are not great)
                 if (distance_to_ball() < kOwnBallRadius) {
                     return POSSESSION_START;
+                } else {
+                    return DEFAULT;
                 }
-            } else {
-                // Otherwise, assume we lost it
-                return DEFAULT;
             }
 
             return STEALING;
@@ -254,51 +251,55 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
     }
 }
 
-// communication::PosAgentResponseWrapper Offense::receive_communication_request(
-//     communication::AgentPosRequestWrapper request) {
-//     communication::PosAgentResponseWrapper comm_response =
-//     Position::receive_communication_request(request);
-//     // PassRequests: only in offense right now
-//     if (const communication::PassRequest* pass_request =
-//             std::get_if<communication::PassRequest>(&request.request)) {
-//         // If the robot recieves a PassRequest, only process it if we are oppen
+bool Offense::check_if_open(int target_robot_shell) {
+    rj_geometry::Point robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point from_robot_position =
+        last_world_state_->get_robot(true, target_robot_shell).pose.position();
+    rj_geometry::Segment pass_path{from_robot_position, robot_position};
+    double min_robot_dist = 10000;
+    float min_path_dist = 10000;
 
-//         rj_geometry::Point robot_position =
-//             last_world_state_->get_robot(true, robot_id_).pose.position();
-//         rj_geometry::Point from_robot_position =
-//             last_world_state_->get_robot(true, pass_request->from_robot_id).pose.position();
-//         rj_geometry::Segment pass_path{from_robot_position, robot_position};
-//         double min_robot_dist = 10000;
-//         float min_path_dist = 10000;
+    // Calculates the minimum distance from the current robot to all other robots
+    // Also calculates the minimum distance from another robot to the passing line
+    for (auto bot : last_world_state_->their_robots) {
+        rj_geometry::Point opp_pos = bot.pose.position();
+        min_robot_dist = std::min(min_robot_dist, robot_position.dist_to(opp_pos));
+        min_path_dist = std::min(min_path_dist, pass_path.dist_to(opp_pos));
+    }
 
-//         // Calculates the minimum distance from the current robot to all other robots
-//         // Also calculates the minimum distance from another robot to the passing line
-//         for (auto bot : last_world_state_->their_robots) {
-//             rj_geometry::Point opp_pos = bot.pose.position();
-//             min_robot_dist = std::min(min_robot_dist, robot_position.dist_to(opp_pos));
-//             min_path_dist = std::min(min_path_dist, pass_path.dist_to(opp_pos));
-//         }
+    // If the current robot is far enough away from other robots and there
+    // are no other robots
+    // in the passing line, process the request Currently, max_receive_distance is used to
+    // determine when we are open, but this may need to change
+    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance)
+}
 
-//         // If the current robot is far enough away from other robots and there are no other
-//         robots
-//         // in the passing line, process the request Currently, max_receive_distance is used to
-//         // determine when we are open, but this may need to change
-//         if (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance) {
-//             communication::PassResponse response = Position::receive_pass_request(*pass_request);
-//             // communication::PosAgentResponseWrapper comm_response{};
+communication::PosAgentResponseWrapper Offense::receive_communication_request(
+    communication::AgentPosRequestWrapper request) {
+    communication::PosAgentResponseWrapper comm_response =
+        Position::receive_communication_request(request);
 
-//             SPDLOG_INFO("Robot {} accepts pass", robot_id_);
 
-//             comm_response.response = response;
-//             return comm_response;
-//         }
-//         SPDLOG_INFO("Robot {} rejects pass", robot_id_);
-//         return {};
-//     } else {
-//         // Super: other kinds of requests
-//         return Position::receive_communication_request(request);
-//     }
-// }
+    
+    // PassRequests: only in offense right now
+    if (const communication::PassRequest* pass_request =
+            std::get_if<communication::PassRequest>(&request.request)) {
+        // If the robot recieves a PassRequest, only process it if we are open
+
+        if (check_is_open())
+            response.direct_open = true;
+            // communication::PosAgentResponseWrapper comm_response{};
+
+            SPDLOG_INFO("Robot {} accepts pass", robot_id_);
+
+            comm_response.response = response;
+            return comm_response;
+        }
+        SPDLOG_INFO("Robot {} rejects pass", robot_id_);
+        return {};
+    }
+}
 
 void Offense::derived_acknowledge_pass() {
     // I have been chosen as the receiver
