@@ -108,8 +108,10 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
             SPDLOG_INFO("Robot {} receives pass response", robot_id_);
             if (const communication::PassRequest* sent_pass_request =
                     std::get_if<communication::PassRequest>(&response.associated_request)) {
-
-                SPDLOG_INFO("Robot {} found associated request from {}: direct: {}, direct_open: {}", robot_id_, response.received_robot_ids[i], sent_pass_request->direct, pass_response->direct_open);
+                SPDLOG_INFO(
+                    "Robot {} found associated request from {}: direct: {}, direct_open: {}",
+                    robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
+                    pass_response->direct_open);
 
                 if (sent_pass_request->direct && pass_response->direct_open) {
                     // if direct -> pass to first robot
@@ -175,7 +177,7 @@ void Position::broadcast_direct_pass_request() {
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = pass_request;
-    communication_request.urgent = true;
+    communication_request.urgent = false;
     communication_request.broadcast = true;
     communication_request_ = communication_request;
 }
