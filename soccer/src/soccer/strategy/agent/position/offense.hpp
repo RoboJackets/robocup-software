@@ -206,6 +206,11 @@ private:
     };
 
     /**
+     * @return if this agent is open to receive a pass
+     * @param target_robot_shell the robot shell to check if open
+    */
+    bool check_if_open(int target_robot_shell);
+    /**
      * @return the target (within the goal) that would be the most clear shot
      */
     rj_geometry::Point calculate_best_shot() const;
