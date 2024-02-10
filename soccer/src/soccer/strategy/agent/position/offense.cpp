@@ -268,7 +268,7 @@ bool Offense::check_if_open(int target_robot_shell) {
     // are no other robots
     // in the passing line, process the request Currently, max_receive_distance is used to
     // determine when we are open, but this may need to change
-    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance)
+    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance);
 }
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
@@ -276,25 +276,22 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
     communication::PosAgentResponseWrapper comm_response =
         Position::receive_communication_request(request);
 
-
-    
     // PassRequests: only in offense right now
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
         // If the robot recieves a PassRequest, only process it if we are open
 
-        if (check_is_open())
-            response.direct_open = true;
-            // communication::PosAgentResponseWrapper comm_response{};
+        auto response = Position::receive_pass_request(*pass_request);
 
-            SPDLOG_INFO("Robot {} accepts pass", robot_id_);
+        if (check_if_open(pass_request->from_robot_id)) response.direct_open = true;
 
-            comm_response.response = response;
-            return comm_response;
-        }
-        SPDLOG_INFO("Robot {} rejects pass", robot_id_);
-        return {};
+        SPDLOG_INFO("Robot {} accepts pass", robot_id_);
+
+        comm_response.response = response;
+        return comm_response;
     }
+    
+    return comm_response;
 }
 
 void Offense::derived_acknowledge_pass() {
