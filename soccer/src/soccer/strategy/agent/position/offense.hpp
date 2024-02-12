@@ -52,6 +52,7 @@ private:
         POSSESSION,        // Holding the ball
         PASSING,           // Getting rid of it
         STEALING,          // Getting the ball
+        RECEIVING_START,   // Facing the ball
         RECEIVING,         // Getting the ball from a pass
         SHOOTING_START,    // Calculate shot
         SHOOTING,          // Winning the game
@@ -99,6 +100,8 @@ private:
                 return RJ::Seconds{5};
             case STEALING:
                 return RJ::Seconds{5};
+            case RECEIVING_START:
+                return RJ::Seconds{5};
             case RECEIVING:
                 return RJ::Seconds{5};
             case SHOOTING_START:
@@ -125,6 +128,8 @@ private:
                 return "PASSING";
             case STEALING:
                 return "STEALING";
+            case RECEIVING_START:
+                return "RECEIVING_START";
             case RECEIVING:
                 return "RECEIVING";
             case SHOOTING_START:
@@ -208,7 +213,7 @@ private:
     /**
      * @return if this agent is open to receive a pass
      * @param target_robot_shell the robot shell to check if open
-    */
+     */
     bool check_if_open(int target_robot_shell);
     /**
      * @return the target (within the goal) that would be the most clear shot
