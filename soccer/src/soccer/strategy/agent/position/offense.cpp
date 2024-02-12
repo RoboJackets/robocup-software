@@ -125,6 +125,14 @@ Offense::State Offense::next_state() {
             return RECEIVING;
         }
 
+        case RECEIVING_START: {
+            // Stay in this state until either:
+            // a) Incoming Ball Request received
+            // b) Timed out
+            // both of which are handled in other member functions
+            return RECEIVING_START;
+        }
+
         case SHOOTING_START: {
             return SHOOTING;
         }
@@ -193,15 +201,27 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case STEALING: {
             // intercept the ball
             // if ball fast, use settle, otherwise collect
-            if (last_world_state_->ball.velocity.mag() > 0.75) {
-                auto settle_cmd = planning::MotionCommand{"settle"};
-                intent.motion_command = settle_cmd;
-                intent.dribbler_speed = 255.0;
-            } else {
+            // if (last_world_state_->ball.velocity.mag() > 0.75) {
+            //     auto settle_cmd = planning::MotionCommand{"settle"};
+            //     intent.motion_command = settle_cmd;
+            //     intent.dribbler_speed = 255.0;
+            // } else {
                 auto collect_cmd = planning::MotionCommand{"collect"};
                 intent.motion_command = collect_cmd;
                 intent.dribbler_speed = 255.0;
-            }
+            // }
+
+            return intent;
+        }
+
+        case RECEIVING_START: {
+            // Turn to face the ball
+
+            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+
+            planning::LinearMotionInstant stay_in_place {current_pos};
+
+            intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
 
             return intent;
         }
@@ -209,15 +229,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case RECEIVING: {
             // intercept the ball
             // if ball fast, use settle, otherwise collect
-            if (last_world_state_->ball.velocity.mag() > 0.75) {
-                auto settle_cmd = planning::MotionCommand{"settle"};
-                intent.motion_command = settle_cmd;
-                intent.dribbler_speed = 255.0;
-            } else {
+            // if (last_world_state_->ball.velocity.mag() > 0.75) {
+                // auto settle_cmd = planning::MotionCommand{"settle"};
+                // intent.motion_command = settle_cmd;
+                // intent.dribbler_speed = 255.0;
+            // } else {
                 auto collect_cmd = planning::MotionCommand{"collect"};
                 intent.motion_command = collect_cmd;
                 intent.dribbler_speed = 255.0;
-            }
+            // }
 
             return intent;
         }
@@ -294,13 +314,13 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         comm_response.response = response;
         return comm_response;
     }
-    
+
     return comm_response;
 }
 
 void Offense::derived_acknowledge_pass() {
     // I have been chosen as the receiver
-    current_state_ = RECEIVING;
+    current_state_ = RECEIVING_START;
 }
 
 void Offense::derived_pass_ball() {
