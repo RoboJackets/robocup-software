@@ -19,6 +19,7 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
+
     const auto state = plan_request.play_state.state();
     if (state == PlayState::Stop || state == PlayState::Halt) {
         // This planner automatically fails if the robot is prohibited from touching the ball.
@@ -466,8 +467,7 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     dampen_end.set_debug_text("Damping");
 
     if (!previous_.empty()) {
-        SPDLOG_INFO("stamp {} {}", previous_.last().stamp.time_since_epoch().count(),
-                    dampen_end.first().stamp.time_since_epoch().count());
+        SPDLOG_INFO("stamp {} {}",previous_.last().stamp.time_since_epoch().count(), dampen_end.first().stamp.time_since_epoch().count());
         dampen_end = Trajectory(previous_, dampen_end);
     }
 
