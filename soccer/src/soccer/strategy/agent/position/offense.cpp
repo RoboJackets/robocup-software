@@ -202,9 +202,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             //     intent.motion_command = settle_cmd;
             //     intent.dribbler_speed = 255.0;
             // } else {
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-            intent.dribbler_speed = 255.0;
+                auto collect_cmd = planning::MotionCommand{"collect"};
+                intent.motion_command = collect_cmd;
+                intent.dribbler_speed = 255.0;
             // }
 
             return intent;
@@ -215,10 +215,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
             auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
 
-            planning::LinearMotionInstant stay_in_place{current_pos};
+            planning::LinearMotionInstant stay_in_place {current_pos};
 
-            intent.motion_command =
-                planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
+            intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
 
             return intent;
         }
@@ -227,13 +226,13 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intercept the ball
             // if ball fast, use settle, otherwise collect
             // if (last_world_state_->ball.velocity.mag() > 0.75) {
-            // auto settle_cmd = planning::MotionCommand{"settle"};
-            // intent.motion_command = settle_cmd;
-            // intent.dribbler_speed = 255.0;
+                // auto settle_cmd = planning::MotionCommand{"settle"};
+                // intent.motion_command = settle_cmd;
+                // intent.dribbler_speed = 255.0;
             // } else {
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-            intent.dribbler_speed = 255.0;
+                auto collect_cmd = planning::MotionCommand{"collect"};
+                intent.motion_command = collect_cmd;
+                intent.dribbler_speed = 255.0;
             // }
 
             return intent;
