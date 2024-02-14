@@ -16,6 +16,7 @@
 #include <rj_utils/logging_macros.hpp>
 #include <unistd.h>
 
+#include "game_state.hpp"
 #include "world_state.hpp"
 
 namespace referee {

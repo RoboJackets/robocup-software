@@ -12,21 +12,16 @@
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/coach_state.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/position_assignment.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
+#include "game_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
-#include "strategy/agent/position/defense.hpp"
-#include "strategy/agent/position/goal_kicker.hpp"
-#include "strategy/agent/position/goalie.hpp"
-#include "strategy/agent/position/offense.hpp"
-#include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
+#include "strategy/agent/position/robot_factory_position.hpp"
 #include "world_state.hpp"
 
 // Communication
@@ -55,8 +50,7 @@ public:
 private:
     // ROS pub/subs
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::CoachState>::SharedPtr coach_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
+    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
@@ -64,7 +58,7 @@ private:
 
     // callbacks for subs
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
-    void coach_state_callback(const rj_msgs::msg::CoachState::SharedPtr& msg);
+    void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
@@ -90,10 +84,6 @@ private:
     void get_task();
     rclcpp::TimerBase::SharedPtr get_task_timer_;
 
-    /*
-     * Updates the current position based on the robot ID and the given Position message.
-     */
-    void update_position(const rj_msgs::msg::PositionAssignment::SharedPtr& msg);
     // note that this is our RobotIntent struct (robot_intent.hpp), not a
     // pre-generated ROS msg type
     RobotIntent last_task_;
@@ -134,14 +124,8 @@ private:
     void get_communication();
     std::vector<communication::AgentPosResponseWrapper> buffered_responses_;
 
-    rclcpp::TimerBase::SharedPtr update_alive_robots_timer_;
-    /**
-     * @brief Updates the current positions list of alive robots (1/second)
-     *
-     */
-    void update_position_alive_robots();
-
     FieldDimensions field_dimensions_;
+    PlayState play_state_ = PlayState::halt();
     std::vector<u_int8_t> alive_robots_ = {};
     bool is_simulated_ = false;
     static constexpr double field_padding_ = 0.3;

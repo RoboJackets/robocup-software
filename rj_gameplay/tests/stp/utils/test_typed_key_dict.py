@@ -15,12 +15,10 @@ class Interface:
         return self.name == other.name
 
 
-class ConcreteA(Interface):
-    ...
+class ConcreteA(Interface): ...
 
 
-class ConcreteB(Interface):
-    ...
+class ConcreteB(Interface): ...
 
 
 class Key(TypedKey[ValueConcreteT]):

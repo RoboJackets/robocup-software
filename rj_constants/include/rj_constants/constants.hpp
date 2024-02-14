@@ -25,10 +25,16 @@ constexpr float kRobotHeight = 0.150f;
 constexpr float kRobotMouthWidth = 0.0635f;
 constexpr float kRobotMouthRadius = 0.078f;
 
+// Constant for ball deceleration on field
+constexpr float kBallDecel{-0.4f};
+
 /** constants for dot patterns */
 constexpr float kDotsSmallOffset = 0.035;
 constexpr float kDotsLargeOffset = 0.054772;
 constexpr float kDotsRadius = 0.02;
+
+/** constants for planning */
+constexpr double kAvoidBallDistance = 0.01;
 
 const std::string kTeamNameLower = "robojackets";
 const std::string kTeamName = "RoboJackets";

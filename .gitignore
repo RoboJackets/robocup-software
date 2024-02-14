@@ -48,3 +48,7 @@ coverage.xml
 
 # Debugging launch files
 launch/debug-*
+
+# clangd
+.clangd/
+compile_commands.json

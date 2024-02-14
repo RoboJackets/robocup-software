@@ -1,8 +1,14 @@
+.. role:: sh(code)
+   :language: sh
+
+.. role:: cpp(code)
+   :language: cpp
+
+.. role:: cmake(code)
+   :language: cmake
+
 Tutorial
 =============
-
-**Section 3 on rj_gameplay and Python is outdated as of 12/28/2022.**
-(The other sections still apply.)
 
 This page is meant to teach new RoboCup Software members the basics of what
 they'll need to contribute. It will introduce the Robot Operating System (ROS),
@@ -59,13 +65,10 @@ ask for help.
 0. Command-Line Basics
 ----------------------
 
-If you've never heard of or used the command-line before, `this website
-<https://ubuntu.com/tutorials/command-line-for-beginners#1-overview>`_ is
+If you've never heard of or used the command-line before, `Command Line Basics`_ is
 wonderful for beginners.
 
-.. image::
-
-   ./_static/ubuntu_cli_tutorial.png
+.. image:: ./_static/ubuntu_cli_tutorial.png
 
 The rest of this tutorial assumes you have working knowledge of the
 command-line: how to run an executable, change directories, move files, run
@@ -73,11 +76,11 @@ commands, etc. So if you're uncomfortable with any of that, go through the
 exercises in the site above.
 
 Some tips about learning how to use commands:
- * ``man [command]`` will pull up a manpage, which is an explanation of the
+ * :sh:`man [command]` will pull up a manpage, which is an explanation of the
    command and all of its options. This usually only works on standard Unix
    commands. For instance, you can find words in any file in a directory using
-   ``grep``: try ``man grep`` to see its full potential.
- * ``[command or executable] --help`` will almost always return a prompt that
+   :sh:`grep`: try :sh:`man grep` to see its full potential.
+ * :sh:`[command or executable] --help` will almost always return a prompt that
    tells you what the command does, and how you can modify it with options. Many
    custom command-line tools will have a --help output, if they don't have a man
    page.
@@ -89,8 +92,13 @@ Some tips about learning how to use commands:
 
 See "Installation". That page will assume you have the Command-Line Basics
 from above, as well as a working knowledge of Git (which you can get either
-`online <https://rogerdudler.github.io/git-guide/>`_ or from the "Contributing"
+online (`Git Guide`_) or from the "Contributing"
 page).
+
+Once you've installed, play around with the simulator a little bit. Be familiar 
+with how to move the ball (click), take a shot (right click and drag), move a robot
+(click and drag), and issue the basic referee commands: stop, halt, and force start.
+(Buttons in the top left)
 
 2. GitHub Basics
 ----------------
@@ -103,35 +111,55 @@ command-line and git, let's get started using GitHub.
    git is a command line version-control tool. GitHub is a website to host
    shared files, and is well-integrated with git, but is not the same thing.
 
-First, use git to create a new branch under this naming scheme:
+First, use git to checkout the branch that contains starter code for this
+project, and then pull its latest version:
 
-.. code-block:: bash
+   .. code-block:: sh
 
-   git checkout -b "<your-name>/robocup-sw-tutorial"
+      git checkout ros2
+      git pull
+
+Next, create a new branch under this naming scheme:
+
+   .. code-block:: sh
+
+      git checkout -b "<your-name>/robocup-sw-tutorial"
 
 For instance, the author's branch would be named
 ``kevin-fu/robocup-sw-tutorial``.
 
-Launch soccer (our UI) and the
-ER-force simulator, same way as you did in the installation guide, then select
-this play as the test play to see it in action. 
+Launch soccer (our UI) and the ER-force simulator, same way as you did in the 
+installation guide. Press the green check mark. You should see four wallers
+and one goalie move into position. Click anywhere on the field to place the 
+ball in that location. You should see all five robots move between the ball
+and the goal.
+
+Open the file ``soccer/src/soccer/strategy/agent/position/waller.cpp``. 
+Find the line of code that calculates the ``wall_spacing`` and double its value.
+
+Re-build the project (:sh:`make again`) and run the simulator again. You should
+see the wallers more spread out. Note that this is probably a less effective wall!
+This change is just for educational purposes. 
+
+**Take a screenshot of your new wall.***
 
 Now that you've made a change to the repo, run ``git status``. You should see
 that whatever files you changed show up in red, which indicates that they are
 unstaged. Stage the files you changed with ``git add`` (Google this if unsure
 how, or see the previous section on git), then commit them:
 
-.. code-block:: bash
+   .. code-block:: sh
 
-   git commit -m '<commit msg>'
+      git commit -m '<commit msg>'
 
 .. note::
 
    <commit msg> should be a present-tense description of what you've changed. In
-   this case, "change to 4 wallers" is fine.
+   this case, "double wall spacing" is fine.
 
-   Without the -m flag, git commit will open a nano, a text editor, and ask you
-   to type in a commit msg. -m is a bit faster.
+   Without the -m flag, git commit will open a nano (or whatever your
+   default text editor is set to) and ask you to type in 
+   a commit msg. -m is a bit faster.
 
 When you commit, you should see our pre-commit hooks run. These are automated
 programs that make your code comply with standardized style guidelines. If one
@@ -139,7 +167,7 @@ of the checks fails, simply re-add your files and re-commit. (If you don't see
 this, make sure you have everything installed correctly per the installation
 guide.)
 
-Now that you've committed, run ``git push`` to push your changes to the remote
+Now that you've committed, run :sh:`git push` to push your changes to the remote
 server. This is how GitHub sees your changes. If you run into any errors at this
 step, read the error logs carefully (they often tell you what to do), and Google
 if needed.
@@ -150,96 +178,23 @@ description, you can delete the template and write something simple like
 "Completes RC SW tutorials." Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
-1. rj_gameplay and Python
--------------------------
-
-In this section, you'll be tasked with creating a new Python class to give our
-robots some new tricks on the field. This section is one of two coding-heavy
-sections, and should present a significant challenge.
-
- * If you don't know Python, but you've coded in some other language before,
-   Python is likely an easier language to learn than the one you already know.
-   (Just look at some of the .py files in this repo and you'll see.)
- * If you've never coded before this club, hopefully you are in CS 1301/1371,
-   and you'll start learning how to code very shortly. In that case, skip to
-   section #4 for now, continue working, and come back here at the end of
-   section #5 when it becomes necessary to have this section done.
- * If you've never coded before and you're not in an introductory CS course,
-   you'll have to go through a Python tutorial like `this one
-   <https://docs.python.org/3/tutorial/>`_ to learn the ropes.
-
-Your task is to create a Runner Role that can make any arbitrary robot run
-around the perimeter of the field. This should hopefully distract the other team
-and keep them from being able to score on us. **Read the rest of this section
-before starting.**
-
-The coordinates of the field are in the ``world_state`` object that is passed
-through every single gameplay element. Search the ``rj_gameplay`` folder for
-``world_state.field`` to figure out how to get those coordinates--you will
-eventually find the file where the field coords are passed in, and from there it
-will be obvious how to use them. Do this search with ``grep``, not by hand.
-
-A Role defines a complex, single-robot behavior, like the Goalie, or a Passer.
-See the Design Docs linked in `this PR
-<https://github.com/RoboJackets/robocup-software/pull/1811>`_ for more detail.
-The superclass for all Roles is defined in ``rj_gameplay/stp/role/__init__.py``,
-and the subclasses that define actual Roles are in
-``rj_gameplay/rj_gameplay/role/``. All roles use a finite state machine, or FSM,
-which is really just a good mental model for writing programs that change over
-the course of time. Look at the existing files to figure out how to structure
-and implement your role to use an FSM.
-
-If you've never heard of a superclass before, see `this website
-<https://www.whitman.edu/mathematics/java_tutorial/java/objects/inheritance.html>`_
-for a quick introduction. If you want to learn more about FSMs, see `this link
-<https://flaviocopes.com/finite-state-machines/>`_.
-
-To test your Role, you'll have to write a Tactic that uses it, and put that
-Tactic into a Play. This is a little complicated. Look at the Defense Play you
-modified earlier. The Goalie Tactic in this play is really just a wrapper for
-the Goalie Role (as in, it doesn't do much but call the Goalie Role and ask it
-what to do). This is how your Runner Role should be included. Put it in the
-Defense Play so that you have 4 Wallers, 1 Goalie, and 1 Runner. Remember to
-test often with the sim.
-
-.. image::
-
-   ./_static/basic_defense.drawio.png
-
-There are many ways to assign a Role to a given robot (see the design doc linked
-above for more detail). In this case, assign robot 1 to be our runner. (That's
-our most in-shape robot, so it can handle the extra miles.) Do this the same
-way that the Goalie Role always picks robot 0 to be the goalie.
-
-You may have noticed there's a lot of file-finding in this section. Use the
-option in your IDE or text editor that allows you to see a full folder at once.
-For instance, in VS Code, there is an option to open a full folder, which
-displays all the subfolders and files in the left toolbar. If you open
-``robocup-software/rj_gameplay`` like this, it should be a lot easier to
-navigate these files.
-
-If you've read this whole section and are feeling a little intimidated, that's
-normal. The paragraphs above form a nice to-do list for you to follow. Just try
-your best, one step at a time, and eventually you'll have a working piece of
-software to be proud of. You'll use this same Runner Role again later on, so
-you'll get to savor your success then!
-
-4. ROS CLI Basics
+3. ROS CLI Basics
 -----------------
 
-This section is our variation of the ROS 2 `"Beginner: CLI Tools"
-<https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>`_ tutorials. We
+This section is our variation of the ROS 2 `Beginner CLI Tools`_
+ tutorials. We
 do things slightly differently (and don't use all of the ROS 2 features
 described in those tutorials), so this is intended to keep you from having to
 read all of those docs.
 
 However, those docs are obviously still the source of truth on ROS. Before we
 get started, read all of the short "Background" sections for these pages:
- * Understanding ROS 2 nodes
- * Understanding ROS 2 topics
- * Understanding ROS 2 services
- * Understanding ROS 2 parameters
- * Understanding ROS 2 actions
+
+* Understanding ROS 2 nodes
+* Understanding ROS 2 topics
+* Understanding ROS 2 services
+* Understanding ROS 2 parameters
+* Understanding ROS 2 actions
 
 The background sections put together are only a couple hundred words, and
 contain very neat animated diagrams that we can't recreate here.
@@ -251,48 +206,45 @@ docs, just know that we are referencing ROS 2 every time.)
 First, open up our stack, same as you did in the installation guide. (Remember
 to source ROS2!) Then run
 
-.. code-block::
+   .. code-block:: sh
 
-   ros2 topic list
+      ros2 topic list
 
 to see the list of topics. Let's look at what robot 0 is thinking. Run
 
-.. code-block::
+   .. code-block:: sh
 
-   ros2 topic echo /gameplay/robot_intent/robot_0
+      ros2 topic echo /gameplay/robot_intent/robot_0
 
 to see what's being published to that topic. You should see that robot 0 is
 being given a motion_command to go to a certain position at a certain angle.
 Feel free to try echoing other topics to see what they're publishing.
 
-Now run ``ros2 topic info`` on the same topic to see what message type that
+Now run :sh:`ros2 topic info` on the same topic to see what message type that
 topic is publishing, and how many publishers and subscribers are listening to
 it. For this topic, the message type is a subset of ``rj_msgs/``, which means we
 wrote our own custom .msg file that this topic uses.
 
 Your task for this section is to find the file that defines the message type
 used by ``/gameplay/robot_intent/robot_0``. This will take you a long time if
-you search for it manually and almost no time if you use a tool like ``find``.
+you search for it manually and almost no time if you use a tool like :sh:`find`.
 Once you have the right file, figure out the full filepath and add it to your
 GitHub PR as a comment. Congrats! You now have a grasp of ROS CLI tools.
 
-5. rqt Basics
+4. rqt Basics
 -------------
 
 The observant among you may have noticed that the last section only covered ROS
 topics, even though it asked you to read about ROS nodes, services, parameters,
-and actions as well. This was to set up the need to use ``rqt``, a graphical
+and actions as well. This was to set up the need to use :sh:`rqt`, a graphical
 interface for the many tools ROS includes.
 
 To use it, open a new terminal, source ROS (like you do before running our
-stack), and run ``rqt``. (This should have been installed with the rest of the
-stack when you ran ``./util/ubuntu-setup``; if not, see `this guide
-<http://wiki.ros.org/rqt/UserGuide/Install/Groovy>`_.) You should see a blank
+stack), and run :sh:`rqt`. (This should have been installed with the rest of the
+stack when you ran :sh:`./util/ubuntu-setup`; if not, see `Install Groovy`_.) You should see a blank
 GUI pop up.
 
-.. image::
-
-   ./_static/blank_rqt.png
+.. image:: ./_static/blank_rqt.png
 
 To replicate what we did in the last section, go to the top, click Plugins >
 Topics > Topic Monitor. This allows you to see both a list of all topics, and
@@ -317,25 +269,17 @@ the runner (and every other robot on our team) move much more quickly.
 Take a screen recording of this whole process and send it to your software lead
 via Slack. Feel free to play around with any other params you see!
 
-6. ROS and C++
+5. ROS and C++
 --------------
 
 Much like the last section, this section is our version of an official ROS
-tutorial. This time we'll reprise `Writing a simple publisher and subscriber
-(C++)
-<http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_.
+tutorial. This time we'll reprise `Writing a simple publisher and subscriber (C++)`_.
 Before continuing, read the "Background" section of that tutorial, and brush up
 on any of the readings from section 4 that you need to. Ignore
 "Prerequisites"--our workspace is already set up for you, and we'll walk through
 instructions for building your code here.
 
-This section is by far the most difficult of the tutorial. If you've made it
-this far, though, you should have everything you need for this section *except
-for* C++ knowledge. This is a real hurdle. If you already have Java or C
-experience, the syntax is similar enough to where you'll be able to work
-through this section, even if it takes you some time. If you aren't so lucky,
-read through the sections "Basics of C++", "Program structure", and "Classes"
-of `the C++ tutorial <https://cplusplus.com/doc/tutorial/>`_ and try your best.
+This section is by far the most difficult of the tutorial. 
 
 **Read the rest of this section before starting.**
 
@@ -347,29 +291,27 @@ and picks a fruit to match. Our robots have to stay motivated somehow!
 
 You can find the team color by subscribing to the relevant topic (this should
 become obvious after looking at the list of topics). To "pick a fruit", publish
-a `standard string msg
-<http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html>`_ to a new
-topic `/team_fruit`.
- * When our team color is yellow, publish "banana" to `/team_fruit`.
- * When our team color is blue, publish "blueberries" to `/team_fruit`.
+a standard `String Msg`_ 
+to a new topic ``/team_fruit``.
+ * When our team color is yellow, publish "banana" to ``/team_fruit``.
+ * When our team color is blue, publish "blueberries" to ``/team_fruit``.
 
 Creating a New Node
 ~~~~~~~~~~~~~~~~~~~
 
-Often in C++ you'll see the use of a header file, which ends in `.hpp`, and a
-source file, which ends in `.cpp`. Header files contain all the function
+Often in C++ you'll see the use of a header file, which ends in ``.hpp``, and a
+source file, which ends in ``.cpp``. Header files contain all the function
 declarations and docstrings explaining their use. Source files contain the
 function definitions--that is, the code that actually makes the functions work.
 This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
 files. 
 
-(For more information, check out `this
-<https://cplusplus.com/articles/Gw6AC542/>`_ resource.)
+(For more information, check out `Headers and Includes`_ resource.)
 
 Let's take a look at a real example in our codebase to make this more
 understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
-last section, you used ``rqt`` to launch the Node Graph. One of the nodes that
+last section, you used :sh:`rqt` to launch the Node Graph. One of the nodes that
 subscribe and publish to various topics is ``/radio``, and these files are the
 source of that node. 
 
@@ -379,38 +321,36 @@ take directly from the ROS tutorial, and where you need to deviate from it.
 
 As a brief overview to help you get started...
 
-* Notice the ``#includes`` at the top of both files. ``#includes`` are like
-  ``import`` statements from Java or Python (with slight differences that are
+* Notice the :cpp:`#includes` at the top of both files. :cpp:`#includes` are like
+  :cpp:`import` statements from Java or Python (with slight differences that are
   not terribly important for our purposes right now). Using ROS forces you to
   include certain things; again, check out the ROS tutorial.
 
-* The header file defines Radio to be subclass of rclcpp::Node (see `: public
-  rclcpp::Node``). This means the Radio has access to all the
-  methods of rclcpp::Node (notice that Node is under namespace rclcpp!).
+* The header file defines Radio to be subclass of rclcpp::Node (see :cpp:`public rclcpp::Node`).
+  This means the Radio has access to all the methods of rclcpp::Node 
+  (notice that Node is under :cpp:`namespace rclcpp`!).
 
 * The header file also categorizes all variables and methods of the Radio
-  class into ``public``, ``protected``, and ``private``. These are known
-  as "access specifiers". `This
-  article <https://www.w3schools.com/cpp/cpp_access_specifiers.asp#:~:text=In%20C%2B%2B%2C%20there%20are,be%20accessed%20in%20inherited%20classes.>`_
+  class into :cpp:`public`, :cpp:`protected`, and :cpp:`private`. These are known
+  as "access specifiers". This article on `Access Specifiers`_
   sums them up nicely.
 
 * Both files are enclosed under a namespace. Namespaces are an organizational
   tool in C++ which helps organize large codebases. For instance, the radio.hpp
-  file defines ``namespace radio``, so when other files use the ``SimRadio``
-  object, they reference ``radio::SimRadio``. Give your SoccerMom node a
-  ``tutorial`` namespace.
+  file defines :cpp:`namespace radio`, so when other files use the :cpp:`SimRadio`
+  object, they reference :cpp:`radio::SimRadio`. Give your SoccerMom node a
+  :cpp:`tutorial` namespace.
 
 * The existing codebase makes heavy use of *lambda expressions*. For instance,
   in radio.cpp:
 
-.. code-block::
+   .. code-block:: cpp
 
-   create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
-            control::topics::manipulator_setpoint_topic(i), rclcpp::QoS(1), [this,
-            i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {  //
-            NOLINT
-                manipulators_cached_.at(i) = *manipulator;
-            });
+      create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
+               control::topics::manipulator_setpoint_topic(i), rclcpp::QoS(1), 
+               [this, i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {
+                  manipulators_cached_.at(i) = *manipulator;
+               });
 
 Here, a lambda expression is used instead of the callback function that you'll
 see in the ROS tutorial. A lambda expression is just a concise way of defining
@@ -419,28 +359,26 @@ don't want to reuse a function (since without a name, you can't reference that
 function anywhere else). and requires less lines of code when compared to
 having another function. 
 
-Read more `here <https://www.programiz.com/cpp-programming/lambda-expression>`_
+Read more about `Lambda Expressions`_
 if you would like.
 
- * The existing codebase also makes heavy use of *pointers*. You will see this
-   in the use of the arrow operator, ``->``. For example:
+* The existing codebase also makes heavy use of *pointers*. You will see this
+  in the use of the arrow operator, :cpp:`->`. For example:
 
-.. code-block::
+   .. code-block:: cpp
 
-   robot_status_topics_.at(robot_id)->publish(robot_status);
+      robot_status_topics_.at(robot_id)->publish(robot_status);
 
 The arrow operator is used to access a method or element of an object, when
-given a pointer to that object. Above, ``robot_status_topics_`` is a list of
-pointers to ROS publisher objects. Calling ``->publish(robot_status)`` on one
+given a pointer to that object. Above, :cpp:`robot_status_topics_` is a list of
+pointers to ROS publisher objects. Calling :cpp:`->publish(robot_status)` on one
 element in that list publishes a robot status using that specific publisher.
 You will learn more about pointers when you take CS 2110, but if you want to
-get a headstart, see `this
-resource <https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm>`_.
+get a headstart, see `C++ Member Operators`_.
 
 * Finally, the docstrings in the radio header file state that the Radio class
   abstract superclass of the network_radio and sim_radio nodes. (If you are
-  unfamiliar with the concept of abstraction, `here
-  <https://www.pythontutorial.net/python-oop/python-abstract-class/>`_ is more
+  unfamiliar with the concept of abstraction, `C++ Abstract Classes`_ is more
   information.) The concrete subclasses are NetworkRadio and SimRadio.
 
 You might be wondering: okay, this is great, but how do I compile and run my
@@ -449,7 +387,7 @@ new node?
 Well, both NetworkRadio and SimRadio have an associated <name>_main.cpp file
 (e.g. ``sim_radio_node_main``) which contains the main function for its
 respective node. This structure is intended to make writing the CMake files for
-the directory easier. We use `CMake <https://cmake.org/overview/>`_ to compile
+the directory easier. We use `CMake`_ to compile
 our C++ programs on a variety of different hardware architectures. 
 
 As a result, to compile and use your new node, you'll need to add your new
@@ -460,25 +398,24 @@ Building Your Node
 
 CMakeLists.txt files are used to make standard build files for the directory. It
 locates files, libraries, and executables to support complex directory
-hierarchies. Locate the CMakeLists.txt file in
+hierarchies. Locate the ``CMakeLists.txt`` file in
 ``robocup-software/soccer/src/soccer``.
 
 Let's start looking at all the magic CMake text that builds our cpp code:
 
-* Notice the source files under ``ROBOCUP_LIB_SRC``. You will find the
+* Notice the source files under :cmake:`ROBOCUP_LIB_SRC`. You will find the
   radio files that you explored earlier, along with all the other source
   files we use (motion control, UI, etc.).
 
 * Many of the nodes have an environment variable set for their
   <node>_main.cpp. For instance, SimRadio has the line
-  ``set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)``. This defines
-  ``SIM_RADIO_NODE_SRC`` to be the filepath
-  ``radio/sim_radio_node_main.cpp``. You will need a similar line for
+  :cmake:`set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)`. This defines
+  :cmake:`SIM_RADIO_NODE_SRC` to be the filepath
+  :cmake:`radio/sim_radio_node_main.cpp`. You will need a similar line for
   your new node, with adjustments to the names.
 
-* There is a corresponding ``target_sources`` line that SimRadio needs to
-  actually start: ``target_sources(sim_radio_node PRIVATE
-  ${SIM_RADIO_NODE_SRC})``
+* There is a corresponding :cmake:`target_sources` line that SimRadio needs to
+  actually start: :cmake:`target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})`
 
 The rest is up to you. Keep using SimRadio as an example. Search through and
 find the parts of the CMake file where SimRadio is used, then follow that
@@ -502,9 +439,7 @@ directory and open the file that seems most relevant to your new node.
 
 Like the CMake section, this part is a lot of copying what already exists and
 changing it to match your new node's names. If you want to read more about ROS
-launch files, `the tutorial
-page<https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html>`_
-is a great place to start.
+launch files, the `Launch Files Tutorial`_ is a great place to start.
 
 
 Testing
@@ -535,7 +470,7 @@ issues, your order of question-asking should be:
 
 To test, change our team color using the UI by going to the top menu bar and
 clicking Field > Team Color. You should see the team color change in the top
-right corner of our UI. Screenshot proof that your `/team_fruit` topic is
+right corner of our UI. Screenshot proof that your ``/team_fruit`` topic is
 publishing the right fruit for both options, and post as a comment to your PR.
 
 Similar to the Python section, there's a lot of file-finding in this part. Use
@@ -547,6 +482,106 @@ If you've read this whole section and are feeling a little intimidated, that's
 normal. The paragraphs above form a nice guide and checklist for you to follow.
 Just try your best, one step at a time, and eventually you'll have a working
 piece of software to be proud of.
+
+6. Action Clients and building a position
+-----------------------------------------
+
+Background
+~~~~~~~~~~~
+
+This last section introduces more concepts of ROS and our strategy. 
+
+First, read this page and do some research if you need to get an understanding
+of ROS actions. Our strategy stack is centered around an Action Server and six
+Action Clients, each of which represent a robot on the field. 
+
+Also, take a second to understand the difference between
+strategy and planning in our stack. Strategy is responsible for high level decisions,
+such as robot movement, kicking procedure, robot communication, and referee interaction. Planning is responsible
+for taking the instructions from strategy and turning them into trajectories and commands a robot can execute,
+which are relayed to our physical robots by the radio.
+
+The Action Server is housed by the Planner node, which is the node responsible for turning requests
+for robot actions into trajectories for the robot to follow.
+
+The Action Clients are created by the AgentActionClient node which contain some 
+other useful subscriptions to get information about the field and referee.
+
+At any given time, an AgentActionClient is playing a single position. 
+It creates a Position instance and checks for its task,
+which it then relays to the planner using ROS actions. Take a look through ``agent_action_client.cpp`` to get a better understanding of this process. 
+
+Strategy decisions are delegated to the Positions. This makes
+sense with respect to soccer—players play differently based on their position.
+
+There are three major positions: Offense, Defense, and Goalie. You may see
+some others, but these are only for special game cases.
+
+Take some time to read through Offense, Defense, and Goalie, paying special 
+attention to how they each implement ``state_to_task`` and ``update_state``.
+This is called a finite state machine, and it is a crucial concept to get the 
+hang of. Here's a simple article to get you started: `Finite State Machines`_ 
+
+Instructions
+~~~~~~~~~~~~
+
+This is the most open-ended part of the tutorial, but you got this! 
+Remember, if you get stuck, ask Google first. Then, check with your peers. We're a very collaborative
+team. If you're still stuck, your software lead is happy to give you some hints
+and troubleshoot bugs.
+
+Your task is to create a new position, like Offense, Defense, or Goalie. Your
+new position will be called Runner. Note that this class is not a ROS node
+like the last class you made, but it will be a subclass of ``position.hpp``. 
+
+Some useful C++ resources:
+
+* `C++ Classes`_
+* `C++ Inheritance`_ 
+
+Your runner will be a robot that takes laps around the field. It should run in a rectangle that you choose.
+If you're feeling creative, the shape it runs in can be any polygon with 4 or more sides. 
+
+A runner's process looks like this:
+
+#. Run along first side of shape 
+#. Continue until done
+#. Run along second side of shape
+#. Continue until done
+#. Run along third side of shape
+#. Continue until done
+
+etc, starting over when it finishes the shape.
+
+Hopefully, you're seeing how this list lends nicely to a state machine, where states are sides
+and you know to switch states based on when the robot has reached a vertex (the end of its path).
+
+You will need to look through the other positions to figure out the details of creating this position,
+but here are some more hints.
+
+* The motion command for driving in a straight line is :cpp:`"path_target"`.
+* You will probably need to override some methods relating to passing, but you can leave their implementations empty. They don't need to do anything in your position, as your robot will not pass the ball
+* The simulator tells you the coordinates of your cursor—these are the same coordinates you can use in your motion commands.
+
+Testing
+~~~~~~~
+
+Testing a new position is a bit complicated. The files you need to change are ``coach_node.hpp``, ``coach_node.cpp``, and ``agent_action_client.cpp``.
+
+Open these files, search for ``Offense``, and add your Runner class in all the necessary places.
+
+You only want one Runner robot, so just set the robot with ID 1 to always be a Runner.
+
+This part is admittedly more work than it should be, and isn't the focus of your tutorial. 
+As such, your software lead is happy to help you through it if need be. Also, this part of the
+strategy stack is currently being changed, and :cpp:`coach_node` is likely to be removed, which is
+why the tutorial skips teaching you about it.
+
+Wrapping up
+~~~~~~~~~~~
+Make sure that you are periodically commiting your changes. This makes it easy for you to revert things if you need to!
+
+Once robot 1 is successfully running in a rectangle (or other shape), you're finished! Congratulations!
 
 7. Conclusion
 -------------
@@ -565,3 +600,72 @@ Congratulations! This was a long journey, but if you've made it this far, you
 have proved yourself worthy of your teammates' trust, and are ready to work on
 real features. We hope this was a helpful first step in your long robotics
 career.
+
+8. Resources (again)
+--------------------
+
+Here are all the external links from this document, copied again for your easy reference
+
+* `Command Line Basics`_
+  
+.. _Command Line Basics: https://ubuntu.com/tutorials/command-line-for-beginners#1-overview
+
+* `Git Guide`_
+  
+.. _Git Guide: https://rogerdudler.github.io/git-guide/
+
+* `Beginner CLI Tools`_
+  
+.. _Beginner CLI Tools: https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>
+
+* `Install Groovy`_
+
+.. _Install Groovy: http://wiki.ros.org/rqt/UserGuide/Install/Groovy
+
+* `Writing a simple publisher and subscriber (C++)`_
+
+.. _Writing a simple publisher and subscriber (C++): http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html
+
+* `String Msg`_
+
+.. _String Msg: http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html
+
+* `Headers and Includes`_
+
+.. _Headers and Includes: https://cplusplus.com/articles/Gw6AC542/
+
+* `Access Specifiers`_
+  
+.. _Access Specifiers: https://www.w3schools.com/cpp/cpp_access_specifiers.asp
+
+* `Lambda Expressions`_
+
+.. _Lambda Expressions: https://www.programiz.com/cpp-programming/lambda-expression
+
+* `C++ Member Operators`_
+
+.. _C++ Member Operators: https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm
+
+* `C++ Abstract Classes`_
+
+.. _C++ Abstract Classes: https://en.wikibooks.org/wiki/C%2B%2B_Programming/Classes/Abstract_Classes
+
+* `CMake`_
+
+.. _CMake: https://cmake.org/overview/
+
+* `Launch Files Tutorial`_
+
+.. _Launch Files Tutorial: https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html
+
+* `Finite State Machines`_ 
+
+.. _Finite State Machines: https://medium.com/@mlbors/what-is-a-finite-state-machine-6d8dec727e2c
+
+* `C++ Classes`_
+
+.. _C++ Classes: https://www.learncpp.com/cpp-tutorial/classes-and-class-members/
+
+* `C++ Inheritance`_ 
+
+.. _C++ Inheritance: https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/

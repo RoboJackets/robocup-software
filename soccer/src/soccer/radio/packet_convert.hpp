@@ -14,7 +14,7 @@
 #include <robot_intent.hpp>
 
 #include "robot_status.hpp"
-#include "strategy/coach/coach_node.hpp"
+#include "strategy/agent/position/positions.hpp"
 
 #include "rc-fshare/rtp.hpp"
 

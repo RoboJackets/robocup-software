@@ -15,7 +15,7 @@
 
 #include "robot_intent.hpp"
 #include "robot_status.hpp"
-#include "strategy/coach/coach_node.hpp"
+#include "strategy/agent/position/positions.hpp"
 
 namespace radio {
 
@@ -54,9 +54,7 @@ private:
     std::array<rclcpp::Subscription<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr, kNumShells>
         manipulator_subs_;
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
-    rclcpp::Subscription<rj_msgs::msg::PositionAssignment>::SharedPtr positions_sub_;
     rclcpp::TimerBase::SharedPtr tick_timer_;
-
     std::array<rj_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;
     std::array<RJ::Time, kNumShells> last_updates_ = {};
 

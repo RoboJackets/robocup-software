@@ -152,10 +152,8 @@ def check_clang_apply_replacements_binary(args):
         subprocess.check_call([args.clang_apply_replacements_binary, "--version"])
     except:
         print(
-            (
-                "Unable to run clang-apply-replacements. Is clang-apply-replacements "
-                "binary correctly specified?"
-            ),
+            "Unable to run clang-apply-replacements. Is clang-apply-replacements "
+            "binary correctly specified?",
             file=sys.stderr,
         )
         traceback.print_exc()

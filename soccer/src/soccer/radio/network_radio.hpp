@@ -11,7 +11,7 @@
 #include <robot_intent.hpp>
 
 #include "radio.hpp"
-#include "strategy/coach/coach_node.hpp"
+#include "strategy/agent/position/positions.hpp"
 
 #include "rc-fshare/rtp.hpp"
 

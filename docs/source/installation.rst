@@ -133,9 +133,7 @@ take advantage of some neat shortcuts. These shortcuts all depend on the
 following knowledge:
 
 Sourcing only needs to happen every time a new terminal is opened, and building
-only needs to happen when C++ or launch.py files are changed. (Python is not a
-compiled language; thus, most of those files do not need to be built when
-changed.)
+ needs to happen when C++ or launch.py files are changed. 
 
 So, after you've built once, the ``install/setup.bash`` script will exist in
 your version of the repo, and you won't have to build again until you make
@@ -154,15 +152,11 @@ and our stack (``ros2 launch rj_robocup sim.launch.py``).
 To stop this process (like any other) press CTRL-C in the command line. You may
 have to press CTRL-C twice.
 
-Since Python is not compiled, if you're exclusively working on Python files, and
-staying in one terminal, it's likely that you'll mostly only need:
-
 .. code-block:: bash
 
    make run-sim
 
-However, if you're working on C++ or launch files (or if someone else changes
-them on a different branch and you want their changes), you'll need to build
+When you make changes to any C++ files, you'll need to build
 again to see your changes take effect. If you've already built once on your
 machine, though, you can build again more quickly with:
 
