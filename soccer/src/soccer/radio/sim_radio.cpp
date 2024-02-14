@@ -94,6 +94,13 @@ SimRadio::SimRadio(bool blue_team)
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
     sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
 
+    alive_robots_timer_ = create_wall_timer(
+        std::chrono::milliseconds(500),
+        std::bind(&SimRadio::publish_alive_robots, this)
+    );
+    alive_robots_pub_ =
+        this->create_publisher<rj_msgs::msg::AliveRobots>("strategy/alive_robots", rclcpp::QoS(1));
+
     buffer_.resize(1024);
     start_receive();
 
@@ -223,6 +230,18 @@ void SimRadio::send_sim_command(const SimulatorCommand& cmd) {
     if (bytes == 0) {
         SPDLOG_ERROR("Sent 0 bytes.");
     }
+}
+
+void SimRadio::publish_alive_robots() {
+    std::vector<uint8_t> alive_robots = {};
+    for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        alive_robots.push_back(robot_id);
+    }
+
+    // publish a message containing the alive robots
+    rj_msgs::msg::AliveRobots alive_message{};
+    alive_message.alive_robots = alive_robots;
+    alive_robots_pub_->publish(alive_message);
 }
 
 }  // namespace radio

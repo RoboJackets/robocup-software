@@ -7,6 +7,7 @@
 #include <rj_common/time.hpp>
 #include <rj_msgs/srv/sim_placement.hpp>
 #include <rj_protos/ssl_simulation_control.pb.h>
+#include <rj_msgs/msg/alive_robots.hpp>
 
 #include "context.hpp"
 #include "radio.hpp"
@@ -36,6 +37,11 @@ private:
 
     // For ball and robot placement
     void send_sim_command(const SimulatorCommand& cmd);
+
+    // Publishing Alive Robots
+    rclcpp::TimerBase::SharedPtr alive_robots_timer_;
+    rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
+    void publish_alive_robots();
 
     boost::asio::io_service io_service_;
     boost::asio::ip::udp::socket socket_;
