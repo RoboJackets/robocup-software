@@ -182,14 +182,14 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             # spawn strategy only if manual is not on
-            # Node(
-            #     condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-            #     package="rj_robocup",
-            #     executable="agent_action_client_node",
-            #     output="screen",
-            #     parameters=[param_config_filepath],
-            #     on_exit=Shutdown(),
-            # ),
+            Node(
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+                package="rj_robocup",
+                executable="agent_action_client_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
             Node(
                 condition=IfCondition(PythonExpression(["not ", use_manual_control])),
                 package="rj_robocup",
