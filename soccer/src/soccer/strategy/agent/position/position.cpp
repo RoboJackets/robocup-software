@@ -98,24 +98,24 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
             // if the acknowledgement is from an incoming pass request -> pass the ball
             if (const communication::IncomingBallRequest* incoming_ball_request =
                     std::get_if<communication::IncomingBallRequest>(&response.associated_request)) {
-                SPDLOG_INFO("Robot {} received incoming ball request", robot_id_);
+                // SPDLOG_INFO("Robot {} received incoming ball request", robot_id_);
                 pass_ball(response.received_robot_ids[i]);
             }
 
         } else if (const communication::PassResponse* pass_response =
                        std::get_if<communication::PassResponse>(&response.responses[i])) {
             // get the associated pass request for this response
-            SPDLOG_INFO("Robot {} receives pass response", robot_id_);
+            // SPDLOG_INFO("Robot {} receives pass response", robot_id_);
             if (const communication::PassRequest* sent_pass_request =
                     std::get_if<communication::PassRequest>(&response.associated_request)) {
-                SPDLOG_INFO(
-                    "Robot {} found associated request from {}: direct: {}, direct_open: {}",
-                    robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
-                    pass_response->direct_open);
+                // SPDLOG_INFO(
+                    // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
+                    // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
+                    // pass_response->direct_open);
 
                 if (sent_pass_request->direct && pass_response->direct_open) {
                     // if direct -> pass to first robot
-                    SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
+                    // SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
                     send_pass_confirmation(response.received_robot_ids[i]);
                 }
             }
@@ -136,13 +136,13 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
                    std::get_if<communication::IncomingBallRequest>(&request.request)) {
         communication::Acknowledge incoming_pass_acknowledge =
             acknowledge_pass(*incoming_ball_request);
-        SPDLOG_INFO("Robot {} acknowledges incoming ball request", robot_id_);
+        // SPDLOG_INFO("Robot {} acknowledges incoming ball request", robot_id_);
         comm_response.response = incoming_pass_acknowledge;
     } else if (const communication::BallInTransitRequest* ball_in_transit_request =
                    std::get_if<communication::BallInTransitRequest>(&request.request)) {
         communication::Acknowledge ball_in_transit_acknowledge =
             acknowledge_ball_in_transit(*ball_in_transit_request);
-        SPDLOG_INFO("Robot {} acknowledges ball in transit request", robot_id_);
+        // SPDLOG_INFO("Robot {} acknowledges ball in transit request", robot_id_);
         comm_response.response = ball_in_transit_acknowledge;
     } else {
         communication::Acknowledge acknowledge{};

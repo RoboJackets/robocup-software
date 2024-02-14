@@ -94,6 +94,11 @@ Offense::State Offense::next_state() {
                 return POSSESSION_START;
             }
 
+            // If another robot becomes closer, leave state
+            if (!can_steal_ball()) {
+                return SEEKING;
+            }
+
             if (timed_out()) {
                 // If we timed out and the ball is close, assume we have it
                 // (because is_done for settle/collect are not great)
@@ -305,7 +310,7 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
 
         if (check_if_open(pass_request->from_robot_id)) response.direct_open = true;
 
-        SPDLOG_INFO("Robot {} accepts pass", robot_id_);
+        // SPDLOG_INFO("Robot {} accepts pass", robot_id_);
 
         comm_response.response = response;
         return comm_response;
@@ -334,26 +339,31 @@ void Offense::derived_acknowledge_ball_in_transit() {
 }
 
 bool Offense::has_open_shot() const {
-    // Goal location
-    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
-
-    // Ball location
+    // Ball position
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
-    double best_distance = -1.0;
-    rj_geometry::Point increment(0.05, 0);
-    rj_geometry::Point curr_point =
-        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
-    for (int i = 0; i < 19; i++) {
-        double distance = distance_from_their_robots(ball_position, curr_point);
-        if (distance > best_distance) {
-            best_distance = distance;
+    // Goal target location
+    rj_geometry::Point best_shot = calculate_best_shot();
+    double min_dist = 999;
+    rj_geometry::Point ball_to_goal = best_shot - ball_position;
+    for (int i = 0; i < this->last_world_state_->their_robots.size(); i++) {
+        auto enemy = this->last_world_state_->their_robots[i];
+        rj_geometry::Point enemy_vec = enemy.pose.position() - ball_position;
+        if (enemy_vec.dot(ball_to_goal) < 0) {
+            continue;
         }
-        curr_point = curr_point + increment;
+        auto projection = (enemy_vec.dot(ball_to_goal) / ball_to_goal.dot(ball_to_goal));
+        enemy_vec = enemy_vec - (projection)*ball_to_goal;
+        double distance = enemy_vec.mag();
+        if (distance < min_dist) {
+            min_dist = distance;
+        }
+        // SPDLOG_INFO("Robot {} {}", i, distance);
     }
 
-    return best_distance > max_receive_distance;
+    // SPDLOG_INFO("Robot id to shoot: {} min dist: {}", robot_id_, min_dist);
+
+    return min_dist > 0.5;
 }
 
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
@@ -369,6 +379,7 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
         auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
         enemy_vec = enemy_vec - (projection)*vec;
         double distance = enemy_vec.mag();
+        SPDLOG_INFO("Robot {}", distance);
         if (distance < (kRobotRadius + kBallRadius)) {
             return -1.0;
         }
@@ -380,7 +391,44 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
     return min_angle;
 }
 
-bool Offense::can_steal_ball() const { return distance_to_ball() < kStealBallRadius; }
+bool Offense::can_steal_ball() const {
+    // Ball location
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    // Our robot is closest robot to ball
+    bool closest = true;
+
+    auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+
+
+    auto our_dist = (current_pos - ball_position).mag();
+    for (auto enemy : this->last_world_state_->their_robots) {
+        auto dist = (enemy.pose.position() - ball_position).mag();
+        if (dist < our_dist) {
+            closest = false;
+            break;
+        }
+    }
+
+    if (!closest) {
+        return closest;
+    }
+
+    for (auto pal : this->last_world_state_->our_robots) {
+        // if (pal.robot_id_ == robot_id_) {
+            // continue;
+        // }
+        auto dist = (pal.pose.position() - ball_position).mag();
+        if (dist < our_dist) {
+            closest = false;
+            break;
+        }
+    }
+
+    return closest;
+
+    // return distance_to_ball() < kStealBallRadius;
+}
 
 rj_geometry::Point Offense::calculate_best_shot() const {
     // Goal location
