@@ -41,13 +41,13 @@ void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* stat
     status->version = RobotStatus::HardwareVersion::kFleet2018;
     status->twist_estimate = std::nullopt;
     status->pose_estimate = std::nullopt;
-    status->battery_voltage =
-        static_cast<float>(rtp_message.battery_voltage) * rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
+    status->battery_voltage = static_cast<float>(rtp_message.battery_voltage) *
+                              rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
     status->kicker_voltage = 0;
     status->has_ball = rtp_message.ball_sense_status;
     status->kicker = rtp_message.kick_healthy
                          ? (rtp_message.kick_status ? RobotStatus::KickerState::kCharged
-                                                   : RobotStatus::KickerState::kCharging)
+                                                    : RobotStatus::KickerState::kCharging)
                          : RobotStatus::KickerState::kFailed;
     for (int i = 0; i < 5; i++) {
         status->motors_healthy[i] = (rtp_message.motor_errors & (1u << i)) == 0;

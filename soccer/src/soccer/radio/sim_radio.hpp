@@ -5,9 +5,9 @@
 #include <boost/asio.hpp>
 
 #include <rj_common/time.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/srv/sim_placement.hpp>
 #include <rj_protos/ssl_simulation_control.pb.h>
-#include <rj_msgs/msg/alive_robots.hpp>
 
 #include "context.hpp"
 #include "radio.hpp"

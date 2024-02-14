@@ -94,10 +94,8 @@ SimRadio::SimRadio(bool blue_team)
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
     sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
 
-    alive_robots_timer_ = create_wall_timer(
-        std::chrono::milliseconds(500),
-        std::bind(&SimRadio::publish_alive_robots, this)
-    );
+    alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(500),
+                                            std::bind(&SimRadio::publish_alive_robots, this));
     alive_robots_pub_ =
         this->create_publisher<rj_msgs::msg::AliveRobots>("strategy/alive_robots", rclcpp::QoS(1));
 

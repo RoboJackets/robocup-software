@@ -49,8 +49,8 @@ void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status);
 
 namespace ConvertTx {
 
-void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
-            int shell, rtp::ControlMessage* rtp, bool blue_team);
+void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+            rtp::ControlMessage* rtp, bool blue_team);
 
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::ControlMessage* rtp,
