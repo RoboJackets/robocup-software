@@ -331,7 +331,7 @@ void Offense::send_scorer_request() {
     communication_request.request = scorer_request;
     communication_request.broadcast = true;
 
-    communication_request_ = communication_request;
+    communication_request_.push(communication_request);
 }
 
 void Offense::send_reset_scorer_request() {
@@ -342,7 +342,7 @@ void Offense::send_reset_scorer_request() {
     communication_request.request = reset_scorer_request;
     communication_request.broadcast = true;
 
-    communication_request_ = communication_request;
+    communication_request_.push(communication_request);
     last_scorer_ = true;
     scorer_ = false;
 }

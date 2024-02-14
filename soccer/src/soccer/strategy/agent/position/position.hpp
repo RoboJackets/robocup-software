@@ -2,6 +2,8 @@
 
 #include <cstdlib>
 #include <vector>
+#include <queue>
+#include <unordered_map>
 
 #include <spdlog/spdlog.h>
 
@@ -27,6 +29,7 @@
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
+#include <rj_msgs/msg/kicker_request.hpp>
 
 // Responses
 #include <rj_msgs/msg/acknowledge.hpp>
@@ -102,7 +105,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    virtual std::optional<communication::PosAgentRequestWrapper> send_communication_request();
+    virtual std::queue<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -130,6 +133,14 @@ public:
     void send_direct_pass_request(std::vector<u_int8_t> target_robots);
 
     void broadcast_direct_pass_request();
+
+    void broadcast_kicker_request();
+    
+    std::unordered_map<int, double> kicker_distances_;
+
+    bool is_kicker_ = false;
+
+
 
     /**
      * @brief receives and handles a pass_request
@@ -265,7 +276,7 @@ protected:
     bool chasing_ball = false;
 
     // Request
-    std::optional<communication::PosAgentRequestWrapper> communication_request_;
+    std::queue<communication::PosAgentRequestWrapper> communication_request_ = {};
 
     // farthest distance the robot is willing to go to receive a pass
     static constexpr double ball_receive_distance_ = 0.1;
@@ -279,7 +290,7 @@ protected:
     // true if this robot is alive
     bool alive = false;
 
-    // protected to allow WorldState to be accessed directly by derived
+    // protected to allow WorldState to be accessed directly by deriveed
     WorldState* last_world_state_;
 
 private:

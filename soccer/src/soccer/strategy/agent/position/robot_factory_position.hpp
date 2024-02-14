@@ -48,7 +48,7 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
-    std::optional<communication::PosAgentRequestWrapper> send_communication_request() override;
+    std::queue<communication::PosAgentRequestWrapper> send_communication_request() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
@@ -60,8 +60,10 @@ public:
 
 private:
     std::unique_ptr<Position> current_position_;
-
+    
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    std::pair<int, double> get_closest_kicker(std::unordered_map<int, double> kicker_distances);
 };
 
 }  // namespace strategy

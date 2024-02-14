@@ -86,7 +86,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
     return std::nullopt;
 }
 
-std::optional<communication::PosAgentRequestWrapper>
+std::queue<communication::PosAgentRequestWrapper>
 RobotFactoryPosition::send_communication_request() {
     // Call to super
     return current_position_->send_communication_request();
@@ -100,8 +100,30 @@ void RobotFactoryPosition::receive_communication_response(
 
 communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
+    if (const communication::KickerRequest* kicker_request =
+                   std::get_if<communication::KickerRequest>(&request.request)) {
+        current_position_->kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
+
+        //TODO: Edit this when Alive Robots exists
+        if (current_position_->kicker_distances_.size() == 6) {
+            std::pair<int, double> closest_kicker = get_closest_kicker(current_position_->kicker_distances_);
+            current_position_->is_kicker_ = (closest_kicker.first == robot_id_);
+            current_position_->kicker_distances_.clear();
+        }
+    }
     // Return the response
     return current_position_->receive_communication_request(request);
+}
+
+
+std::pair<int, double> RobotFactoryPosition::get_closest_kicker(std::unordered_map<int, double> kicker_distances) {
+    std::pair<int, double> closest_kicker = {-1, 10000};
+    for (const auto & [key, value] : kicker_distances) {
+        if (value < closest_kicker.second) {
+            closest_kicker = {key, value};
+        }
+    }
+    return closest_kicker;
 }
 
 void RobotFactoryPosition::derived_acknowledge_pass() {
