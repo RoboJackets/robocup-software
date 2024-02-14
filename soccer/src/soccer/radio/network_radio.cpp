@@ -16,7 +16,7 @@ using ip::udp;
 
 namespace radio {
 
-NetworkRadio::NetworkRadio() : socket(io_service), recv_buffer_{}, send_buffers_(kNumShells), last_heard_from{} {
+NetworkRadio::NetworkRadio() : socket(io_service), robot_status_buffer_{}, alive_robots_buffer_{}, send_buffers_(kNumShells) {
     socket.open(udp::v4());
     socket.bind(udp::endpoint(udp::v4(), kIncomingBaseStationDataPort));
 
@@ -28,9 +28,16 @@ NetworkRadio::NetworkRadio() : socket(io_service), recv_buffer_{}, send_buffers_
 
 void NetworkRadio::start_receive() {
     socket.async_receive_from(
-        boost::asio::buffer(recv_buffer_), bound_endpoint,
+        boost::asio::buffer(robot_status_buffer_), robot_status_endpoint,
         [this](const boost::system::error_code& error, std::size_t num_bytes) {
             receive_packet(error, num_bytes);
+        }
+    );
+
+    socket.async_receive_from(
+        boost::asio::buffer(alive_robots_buffer_), alive_robots_endpoint,
+        [this](const boost::system::error_code& error, std::size_t num_bytes) {
+            publish_alive_robots(error, num_bytes);
         }
     );
 }
@@ -79,11 +86,9 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
         return;
     }
 
-    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&recv_buffer_[0]);
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&robot_status_buffer_[0]);
 
     int robot_id = msg->robot_id;
-
-    last_heard_from[robot_id] = RJ::now();
 
     // Extract the rtp to a regular struct.
     rj_msgs::msg::RobotStatus status_ros;
@@ -101,10 +106,13 @@ void NetworkRadio::switch_team(bool blue_team) {
     _blue_team = blue_team;
 }
 
-void NetworkRadio::publish_alive_robots() {
-    std::vector<u_int8_t> alive_robots = {};
-    for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
-        if (RJ::now() - last_heard_from[robot_id] < kTimeout) {
+void NetworkRadio::publish_alive_robots(
+    const boost::system::error_code& error, std::size_t num_bytes
+) {
+    uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[1]);
+    std::vector<uint8_t> alive_robots = {};
+    for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        if (alive & (1 << robot_id) != 0) {
             alive_robots.push_back(robot_id);
         }
     }

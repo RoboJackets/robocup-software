@@ -22,8 +22,6 @@ namespace radio {
 
 /**
  * @brief Interface for the radio over regular network interface
- *
- * TODO(Kyle): Clean this up by removing dual-radio support.
  */
 class NetworkRadio : public Radio {
 public:
@@ -38,9 +36,11 @@ protected:
 
     boost::asio::ip::udp::endpoint base_station_endpoint = 
         boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(kBaseStationAddress), kBaseStationPort);
-    // TODO: Make this not hardcoded
-    boost::asio::ip::udp::endpoint bound_endpoint = 
+    
+    boost::asio::ip::udp::endpoint robot_status_endpoint =
         boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), kIncomingBaseStationDataPort);
+    boost::asio::ip::udp::endpoint alive_robots_endpoint =
+        boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), kIncomingBaseStationAliveRobotsPort);
 
     // Fuck Around and Find Out
     // https://stackoverflow.com/questions/26243008/error-initializing-a-boost-udp-socket-with-a-boost-io-service
@@ -52,22 +52,21 @@ protected:
     void start_receive();
 
     // Written by `async_receive_from`.
-    std::array<char, sizeof(rtp::RobotStatusMessage)> recv_buffer_;
+    std::array<char, sizeof(rtp::RobotStatusMessage)> robot_status_buffer_;
+
+    // Written by 'async_receive_from`.
+    std::array<char, 2> alive_robots_buffer_;
 
     // Read from by `async_send_to`
     std::vector<std::array<uint8_t, sizeof(rtp::ControlMessage)>> send_buffers_{};
 
-    constexpr static std::chrono::duration kTimeout = std::chrono::milliseconds(250);
-
     rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
-    rclcpp::TimerBase::SharedPtr alive_robots_timer_;
-    std::array<RJ::Time, 6> last_heard_from;
 
     /**
      * @brief Publish a vector of alive robots to the "strategy/alive_robots" endpoint
      *
      */
-    void publish_alive_robots();
+    void publish_alive_robots(const boost::system::error_code& error, std::size_t num_bytes);
 
 private:
     bool _blue_team = false;
