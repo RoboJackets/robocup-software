@@ -26,6 +26,13 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
         return intent;
     }
 
+
+    if (kicker_distances_.count(robot_id_) == 0) {
+        broadcast_kicker_request();
+    }
+
+    SPDLOG_INFO("Robot {}, Is Kicker: {}", robot_id_, is_kicker_);
+
     // delegate to derived class to complete behavior
     return derived_get_task(intent);
 }
@@ -82,13 +89,13 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-std::optional<communication::PosAgentRequestWrapper> Position::send_communication_request() {
-    if (communication_request_ != std::nullopt) {
+std::queue<communication::PosAgentRequestWrapper> Position::send_communication_request() {
+    if (communication_request_.size() != 0) {
         auto saved_comm_req = communication_request_;
-        communication_request_ = std::nullopt;
+        communication_request_ = {};
         return saved_comm_req;
     }
-    return std::nullopt;
+    return {};
 }
 
 void Position::receive_communication_response(communication::AgentPosResponseWrapper response) {
@@ -170,7 +177,7 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication_request.target_agents = target_robots;
     communication_request.urgent = true;
     communication_request.broadcast = false;
-    communication_request_ = communication_request;
+    communication_request_.push(communication_request);
 }
 
 void Position::broadcast_direct_pass_request() {
@@ -183,7 +190,22 @@ void Position::broadcast_direct_pass_request() {
     communication_request.request = pass_request;
     communication_request.urgent = false;
     communication_request.broadcast = true;
-    communication_request_ = communication_request;
+    communication_request_.push(communication_request);
+}
+
+void Position::broadcast_kicker_request() {
+    communication::KickerRequest kicker_request{};
+    communication::generate_uid(kicker_request);
+    kicker_request.robot_id = robot_id_;
+    double distance = last_world_state_->ball.position.dist_to(last_world_state_->get_robot(true, robot_id_).pose.position());
+    kicker_distances_[robot_id_] = distance;
+    kicker_request.distance = distance;
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = kicker_request;
+    communication_request.urgent = true;
+    communication_request.broadcast = true;
+    communication_request_.push(communication_request);
 }
 
 communication::PassResponse Position::receive_pass_request(
@@ -213,7 +235,7 @@ void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication_request.broadcast = false;
     communication_request.urgent = true;
 
-    communication_request_ = communication_request;
+    communication_request_.push(communication_request);
 }
 
 communication::Acknowledge Position::acknowledge_pass(
@@ -241,7 +263,7 @@ void Position::pass_ball(int robot_id) {
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
-    communication_request_ = communication_request;
+    communication_request_.push(communication_request);
 
     derived_pass_ball();
 }
