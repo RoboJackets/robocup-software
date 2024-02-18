@@ -22,11 +22,16 @@ public:
     SimRadio(bool blue_team = false);
 
 protected:
-    void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+    // 
+    void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
               const rj_msgs::msg::ManipulatorSetpoint& manipulator,
               strategy::Positions role) override;
-    void receive() override;
-    void switch_team(bool blue) override;
+
+    // Poll the asynchronous receiver
+    void poll_receive() override;
+
+    // Switch teams and let the UI know
+    void switch_team(bool blue_team) override;
 
 private:
     void stop_robots();
@@ -38,10 +43,10 @@ private:
     // For ball and robot placement
     void send_sim_command(const SimulatorCommand& cmd);
 
-    // Publishing Alive Robots
+    // Timer to publish alive robots (i.e. all robots are alive)
     rclcpp::TimerBase::SharedPtr alive_robots_timer_;
+    std::array<bool, kNumShells> alive_robots_{};
     rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
-    void publish_alive_robots();
 
     boost::asio::io_service io_service_;
     boost::asio::ip::udp::socket socket_;

@@ -113,8 +113,7 @@ void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings:
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
     if (!is_simulated_) {
-        return std::find(alive_robots_.begin(), alive_robots_.end(), robot_id) !=
-               alive_robots_.end();
+        return alive_robots_.at(robot_id);
     } else {
         if (this->world_state()->get_robot(true, robot_id).visible) {
             rj_geometry::Point robot_position =

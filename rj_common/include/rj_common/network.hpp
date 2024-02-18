@@ -59,16 +59,21 @@ static const std::string kSharedVisionSourceAddress = "224.5.23.2";
  * one (or try them all in worst-case).
  */
 
-static const std::string kRefereeInterface = "127.0.0.1";
+static const std::string kRefereeInterface = "192.168.20.119";
 /* static const std::string kRefereeInterface = "172.0.0.1"; */
 static const std::string kVisionInterface =
     kRefereeInterface;  // In all but rare cirucmstances, this should match kRefereeInterface.
 
-static const std::string kBaseStationAddress = "10.42.0.136";
+// The network address of the base station
+static const std::string kBaseStationAddress = "10.42.0.252";
+// The Port (on the local machine to bind the base station communication socket to)
+static const int kBaseStationBindPort = 8000;
+// The Port (on the base station) to send control messages to
 static const int kBaseStationPort = 8000;
-
-static const int kIncomingBaseStationDataPort = 8001;
-static const int kIncomingBaseStationAliveRobotsPort = 8002;
+// The Port (on the local machine) to receive robot status messages at
+static const int kIncomingRobotStatusPort = 8001;
+// The Port (on the local machine) to receive alive robots messages at
+static const int kIncomingAliveRobotsPort = 8002;
 
 static const int kSimVisionPort = 10020;  // was 10020 before 1-30-2022
 static const int kSimBlueStatusPort = 30011;

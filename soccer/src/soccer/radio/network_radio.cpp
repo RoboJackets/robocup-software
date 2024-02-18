@@ -17,32 +17,33 @@ using ip::udp;
 namespace radio {
 
 NetworkRadio::NetworkRadio()
-    : socket(io_service),
+    : base_station_socket_(io_service_),
       robot_status_buffer_{},
       alive_robots_buffer_{},
       send_buffers_(kNumShells) {
-    socket.open(udp::v4());
-    socket.bind(udp::endpoint(udp::v4(), kIncomingBaseStationDataPort));
+    base_station_socket_.open(udp::v4());
+    base_station_socket_.bind(udp::endpoint(udp::v4(), kBaseStationBindPort));
 
     start_receive();
-
-    alive_robots_pub_ =
-        this->create_publisher<rj_msgs::msg::AliveRobots>("strategy/alive_robots", rclcpp::QoS(1));
 }
 
 void NetworkRadio::start_receive() {
-    socket.async_receive_from(boost::asio::buffer(robot_status_buffer_), robot_status_endpoint,
-                              [this](const boost::system::error_code& error,
-                                     std::size_t num_bytes) { receive_packet(error, num_bytes); });
+    base_station_socket_.async_receive_from(
+        boost::asio::buffer(robot_status_buffer_), robot_status_endpoint_,
+        [this](const boost::system::error_code& error, size_t num_bytes) {
+            receive_robot_status(error, num_bytes);
+        }
+    );
 
-    socket.async_receive_from(
-        boost::asio::buffer(alive_robots_buffer_), alive_robots_endpoint,
-        [this](const boost::system::error_code& error, std::size_t num_bytes) {
-            publish_alive_robots(error, num_bytes);
-        });
+    base_station_socket_.async_receive_from(
+        boost::asio::buffer(alive_robots_buffer_), alive_robots_endpoint_,
+        [this](const boost::system::error_code& error, size_t num_bytes) {
+            receive_alive_robots(error, num_bytes);
+        }
+    );
 }
 
-void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+void NetworkRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                         const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                         strategy::Positions role) {
     // Build the control packet for this robot.
@@ -52,25 +53,30 @@ void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     auto* body = reinterpret_cast<rtp::ControlMessage*>(&forward_packet_buffer[0]);
 
-    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, _blue_team);
+    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, blue_team());
 
-    socket.async_send_to(
-        boost::asio::buffer(forward_packet_buffer), base_station_endpoint,
-        [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
+    base_station_socket_.async_send_to(
+        boost::asio::buffer(forward_packet_buffer), control_message_endpoint_,
+        [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_Bytes) {
             if (static_cast<bool>(error)) {
                 SPDLOG_ERROR("Error Sending: {}", error.message());
             }
-        });
+        }
+    );
 }
 
-void NetworkRadio::receive() {
+void NetworkRadio::poll_receive() {
     // Let boost::asio handle callbacks
-    io_service.poll();
+    io_service_.poll();
 }
 
-void NetworkRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
+void NetworkRadio::switch_team(bool blue_team) {
+    // TODO (Nate): Send some command to the base station to switch teams.
+}
+
+void NetworkRadio::receive_robot_status(const boost::system::error_code& error, size_t num_bytes) {
     if (static_cast<bool>(error)) {
-        SPDLOG_ERROR("Error sending: {}.", error);
+        SPDLOG_ERROR("Error Receiving Robot Status: {}.", error.message());
         return;
     }
     if (num_bytes != sizeof(rtp::RobotStatusMessage)) {
@@ -89,28 +95,35 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
     ConvertRx::rtp_to_status(*msg, &status);
     ConvertRx::status_to_ros(status, &status_ros);
 
-    publish(robot_id, status_ros);
+    publish_robot_status(robot_id, status_ros);
 
     // Restart receiving
     start_receive();
 }
 
-void NetworkRadio::switch_team(bool blue_team) { _blue_team = blue_team; }
+void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, size_t num_bytes) {
+    if (static_cast<bool>(error)) {
+        SPDLOG_ERROR("Error Receiving Alive Robots: {}", error.message());
+        return;
+    }
 
-void NetworkRadio::publish_alive_robots(const boost::system::error_code& error,
-                                        std::size_t num_bytes) {
-    uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[1]);
-    std::vector<uint8_t> alive_robots = {};
+    if (num_bytes != 2) {
+        SPDLOG_ERROR("Invalid Packet Length: expected {}, got {}", 2, num_bytes);
+        return;
+    }
+
+    uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
     for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
         if (alive & (1 << robot_id) != 0) {
-            alive_robots.push_back(robot_id);
+            alive_robots_[robot_id] = true;
+        } else {
+            alive_robots_[robot_id] = false;
         }
     }
 
-    // publish a message containing the alive robots
     rj_msgs::msg::AliveRobots alive_message{};
-    alive_message.alive_robots = alive_robots;
-    alive_robots_pub_->publish(alive_message);
+    alive_message.alive_robots = alive_robots_;
+    publish_alive_robots(alive_message);
 }
 
 }  // namespace radio

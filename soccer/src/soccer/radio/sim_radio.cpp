@@ -94,8 +94,15 @@ SimRadio::SimRadio(bool blue_team)
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
     sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
 
-    alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(500),
-                                            std::bind(&SimRadio::publish_alive_robots, this));
+    alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(500), [this]() {
+        rj_msgs::msg::AliveRobots alive_message{};
+        alive_message.alive_robots = alive_robots_;
+        publish_alive_robots(alive_message);
+    });
+    
+    for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        alive_robots_[robot_id] = true;
+    }
     alive_robots_pub_ =
         this->create_publisher<rj_msgs::msg::AliveRobots>("strategy/alive_robots", rclcpp::QoS(1));
 
@@ -112,7 +119,7 @@ SimRadio::SimRadio(bool blue_team)
         sim::topics::kSimPlacementSrv, placement_callback);
 }
 
-void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                     const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                     strategy::Positions role) {
     RobotControl sim_packet;
@@ -140,7 +147,7 @@ void SimRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
     socket_.send_to(buffer(out), robot_control_endpoint_);
 }
 
-void SimRadio::receive() { io_service_.poll(); }
+void SimRadio::poll_receive() { io_service_.poll(); }
 
 void SimRadio::start_receive() {
     // Set a receive callback
@@ -168,7 +175,7 @@ void SimRadio::handle_receive(const std::string& data) {
         ConvertRx::sim_to_status(sim_status, &status);
         ConvertRx::status_to_ros(status, &status_ros);
 
-        publish(status_ros.robot_id, status_ros);
+        publish_robot_status(status_ros.robot_id, status_ros);
     }
 }
 
@@ -228,18 +235,6 @@ void SimRadio::send_sim_command(const SimulatorCommand& cmd) {
     if (bytes == 0) {
         SPDLOG_ERROR("Sent 0 bytes.");
     }
-}
-
-void SimRadio::publish_alive_robots() {
-    std::vector<uint8_t> alive_robots = {};
-    for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
-        alive_robots.push_back(robot_id);
-    }
-
-    // publish a message containing the alive robots
-    rj_msgs::msg::AliveRobots alive_message{};
-    alive_message.alive_robots = alive_robots;
-    alive_robots_pub_->publish(alive_message);
 }
 
 }  // namespace radio

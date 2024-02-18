@@ -15,7 +15,10 @@ Radio::Radio()
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
-            switch_team(color->is_blue);
+            if (color->is_blue != blue_team_) {
+                blue_team_ = color->is_blue;
+                switch_team(color->is_blue);
+            }
         });
 
     for (size_t i = 0; i < kNumShells; i++) {
@@ -34,24 +37,34 @@ Radio::Radio()
                 if (i == 0) {
                     SPDLOG_INFO("\033[92mRobot 0 Received Normal Communication\033[0m");
                 }
-                send(i, *motion, manipulators_cached_.at(i), positions_.at(i));
+                send_control_message(i, *motion, manipulators_cached_.at(i), positions_.at(i));
             });
     }
+
+    alive_robots_pub_ = create_publisher<rj_msgs::msg::AliveRobots>(
+        "/alive_robots", rclcpp::QoS(1));
 
     tick_timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { tick(); });
 }
 
-void Radio::publish(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {
+void Radio::publish_robot_status(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {
     robot_status_pubs_.at(robot_id)->publish(robot_status);
 }
 
+void Radio::publish_alive_robots(const rj_msgs::msg::AliveRobots& alive_robots) {
+    alive_robots_pub_->publish(alive_robots);
+}
+
+const bool Radio::blue_team() { return blue_team_; }
+
 void Radio::tick() {
-    receive();
+    poll_receive();
 
     RJ::Time update_time = RJ::now();
 
     for (size_t i = 0; i < kNumShells; i++) {
         if (last_updates_.at(i) + RJ::Seconds(PARAM_timeout) < update_time) {
+            // Send Alive Robots an Empty Motion Command (i.e. `STOP`)
             using rj_msgs::msg::ManipulatorSetpoint;
             using rj_msgs::msg::MotionSetpoint;
 
@@ -66,10 +79,7 @@ void Radio::tick() {
                                          .kick_speed(0)
                                          .dribbler_speed(0);
             last_updates_.at(i) = RJ::now();
-            if (i == 0) {
-                SPDLOG_INFO("\033[92mRobot 0 Timeout Reached\033[0m");
-            }
-            send(i, motion, manipulator, positions_.at(i));
+            send_control_message(i, motion, manipulator, positions_.at(i));
         }
     }
 }
