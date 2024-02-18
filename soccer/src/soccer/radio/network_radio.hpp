@@ -29,9 +29,9 @@ public:
 protected:
     // Send Control Message through the Base Station to the Robots
     void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-              strategy::Positions role) override;
-    
+                              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                              strategy::Positions role) override;
+
     // Poll the asynchronous boost::asio receiver
     void poll_receive() override;
 
@@ -42,23 +42,23 @@ private:
     /**
      * @brief Setup the base_station_socket_ to receive robot status and alive robot messages
      * from the base station
-     * 
+     *
      */
     void start_receive();
 
     /**
      * @brief Parse the alive robots from a packet received via the base station.
-     * 
-     * @param error 
-     * @param num_bytes 
+     *
+     * @param error
+     * @param num_bytes
      */
     void receive_robot_status(const boost::system::error_code& error, size_t num_bytes);
 
     /**
      * @brief Parse the alive robots from a packet received via the base station.
-     * 
-     * @param error 
-     * @param num_bytes 
+     *
+     * @param error
+     * @param num_bytes
      */
     void receive_alive_robots(const boost::system::error_code& error, size_t num_bytes);
 
