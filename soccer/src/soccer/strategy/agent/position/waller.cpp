@@ -54,15 +54,29 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     // Avoid ball
     bool ignore_ball{true};
 
+    rj_geometry::Point ball_pt = world_state->ball.position;
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     double distance_to_ball = robot_position.dist_to(ball_pt);
 
-    Log.d("Waller ", robot_id + " is " + distance_to_ball + " from the ball.");
 
-    // Create Motion Command
-    planning::LinearMotionInstant target{target_point, target_vel};
-    intent.motion_command =
+    // Create a temporary node to get a logger
+    auto temporary_node = std::make_shared<rclcpp::Node>("temporary_node");
+
+    // Use logging macros to log messages
+    RCLCPP_INFO(temporary_node->get_logger(), "Waller %d is %f distance to the ball.", robot_id_, distance_to_ball);
+    
+    // 0.75 or less is the starting value for distance
+
+    if (distance_to_ball < CLEAR_DIST) {
+        planning::LinearMotionInstant target{ball_pt, target_vel};
+        intent.motion_command =
+        planning::MotionCommand{"path_target", target, face_option, false};
+    } else {
+        // Create Motion Command
+        planning::LinearMotionInstant target{target_point, target_vel};
+        intent.motion_command =
         planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+    }
     return intent;
 }
 

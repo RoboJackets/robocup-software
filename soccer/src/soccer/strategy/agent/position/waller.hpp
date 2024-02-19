@@ -7,6 +7,8 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
+#include <rj_utils/logging.hpp>
+#include "rclcpp/utilities.hpp"
 
 #include "planning/instant.hpp"
 #include "position.hpp"
@@ -16,6 +18,7 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "role_interface.hpp"
+
 
 namespace strategy {
 
@@ -44,6 +47,8 @@ private:
     int waller_pos_;
     int robot_id_;
     int total_wallers_;
+
+    const float CLEAR_DIST = 0.75;
 
     static constexpr double robot_diameter_multiplier_ = 1.5;
 };
