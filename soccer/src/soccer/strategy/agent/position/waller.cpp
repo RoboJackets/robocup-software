@@ -63,7 +63,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     auto temporary_node = std::make_shared<rclcpp::Node>("temporary_node");
 
     // Use logging macros to log messages
-    RCLCPP_INFO(temporary_node->get_logger(), "Waller %d is %f distance to the ball.", robot_id_, distance_to_ball);
+     RCLCPP_INFO(temporary_node->get_logger(), "before: Waller %d is %f distance to the ball.", robot_id_, distance_to_ball);
     
     // 0.75 or less is the starting value for distance
 
@@ -71,11 +71,19 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
         planning::LinearMotionInstant target{ball_pt, target_vel};
         intent.motion_command =
         planning::MotionCommand{"path_target", target, face_option, false};
+        
+        intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 4.0;
+        intent.dribbler_speed = 255.0;
+        intent.is_active = true;
+        RCLCPP_INFO(temporary_node->get_logger(), "Waller %d is %f distance to the ball and is kicking!", robot_id_, distance_to_ball);
     } else {
         // Create Motion Command
         planning::LinearMotionInstant target{target_point, target_vel};
         intent.motion_command =
         planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+        RCLCPP_INFO(temporary_node->get_logger(), "Waller %d is %f distance to the ball and is not kicking", robot_id_, distance_to_ball);
     }
     return intent;
 }
