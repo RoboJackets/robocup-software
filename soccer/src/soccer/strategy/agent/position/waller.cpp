@@ -2,9 +2,10 @@
 
 namespace strategy {
 
-Waller::Waller(int waller_num, int total_wallers) {
+Waller::Waller(int waller_num, int robot_id, int total_wallers) {
     defense_type_ = "Waller";
     waller_pos_ = waller_num;
+    robot_id_ = robot_id;
     total_wallers_ = total_wallers;
 }
 
@@ -52,6 +53,11 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
 
     // Avoid ball
     bool ignore_ball{true};
+
+    rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
+    double distance_to_ball = robot_position.dist_to(ball_pt);
+
+    Log.d("Waller ", robot_id + " is " + distance_to_ball + " from the ball.");
 
     // Create Motion Command
     planning::LinearMotionInstant target{target_point, target_vel};

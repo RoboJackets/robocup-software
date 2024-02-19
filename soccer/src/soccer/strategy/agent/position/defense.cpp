@@ -106,7 +106,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == WALLING) {
         if (!walling_robots_.empty()) {
-            Waller waller{waller_id_, (int)walling_robots_.size()};
+            Waller waller{waller_id_, robot_id_ (int)walling_robots_.size()};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
     } else if (current_state_ = FACING) {

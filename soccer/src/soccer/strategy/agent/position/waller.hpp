@@ -26,7 +26,7 @@ namespace strategy {
  */
 class Waller : public RoleInterface {
 public:
-    Waller(int waller_num, int total_wallers);
+    Waller(int waller_num, int robot_id, int total_wallers);
     ~Waller() = default;
 
     /**
@@ -42,6 +42,7 @@ public:
 private:
     std::string defense_type_;
     int waller_pos_;
+    int robot_id_;
     int total_wallers_;
 
     static constexpr double robot_diameter_multiplier_ = 1.5;
