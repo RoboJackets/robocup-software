@@ -10,7 +10,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
-        // SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
+        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
     }
 
     current_state_ = new_state;
@@ -49,6 +49,7 @@ Offense::State Offense::next_state() {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
             if (has_open_shot() || timed_out()) {
+                SPDLOG_INFO("Robot {}: PLEASE PRINT", robot_id_);
                 return SHOOTING_START;
             }
 
@@ -168,6 +169,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case POSSESSION_START: {
+            target_ = calculate_best_shot();
             return intent;
         }
 
@@ -207,6 +209,14 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             //     intent.motion_command = settle_cmd;
             //     intent.dribbler_speed = 255.0;
             // } else {
+
+            // rj_geometry::Point increment(0.3, 0.3);
+            // auto current_pos = last_world_state_->ball.position - increment;
+
+            // planning::LinearMotionInstant stay_in_place {current_pos};
+
+            // intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}, false};
+
                 auto collect_cmd = planning::MotionCommand{"collect"};
                 intent.motion_command = collect_cmd;
                 intent.dribbler_speed = 255.0;
@@ -247,18 +257,20 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // Line kick best shot
             target_ = calculate_best_shot();
 
-            auto line_kick_cmd =
-                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
+            // auto line_kick_cmd =
+            //     planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
-            intent.motion_command = line_kick_cmd;
-            intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 4.0;
+            // intent.motion_command = line_kick_cmd;
+            // intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            // intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            // intent.kick_speed = 4.0;
+            intent.motion_command = planning::MotionCommand{};
 
             return intent;
         }
 
         case SHOOTING: {
+            // target_ = calculate_best_shot();
             auto line_kick_cmd =
                 planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
