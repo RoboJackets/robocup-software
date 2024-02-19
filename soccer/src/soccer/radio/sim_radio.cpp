@@ -99,7 +99,7 @@ SimRadio::SimRadio(bool blue_team)
         alive_message.alive_robots = alive_robots_;
         publish_alive_robots(alive_message);
     });
-    
+
     for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
         alive_robots_[robot_id] = true;
     }
@@ -120,8 +120,8 @@ SimRadio::SimRadio(bool blue_team)
 }
 
 void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                    const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                    strategy::Positions role) {
+                                    const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                                    strategy::Positions role) {
     RobotControl sim_packet;
 
     // Send a sim packet with a single robot. The simulator can handle many robots, but our commands
