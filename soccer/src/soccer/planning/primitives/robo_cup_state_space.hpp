@@ -12,9 +12,8 @@ namespace planning {
  */
 class RoboCupStateSpace : public RRT::StateSpace<rj_geometry::Point> {
 public:
-    RoboCupStateSpace(const FieldDimensions& dims,
-                      const rj_geometry::ShapeSet& obstacles)
-        : field_dimensions_(dims), obstacles_(obstacles) {}
+    RoboCupStateSpace(const FieldDimensions& dims, const rj_geometry::ShapeSet& obstacles)
+        : obstacles_(obstacles), field_dimensions_(dims) {}
 
     rj_geometry::Point randomState() const override {
         double x = field_dimensions_.floor_width() * (drand48() - 0.5f);

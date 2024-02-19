@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include "game_state.hpp"
 #include "planning/instant.hpp"
 #include "planning/planner/collect_path_planner.hpp"
 #include "planning/planner/motion_command.hpp"
@@ -47,6 +48,7 @@ TEST(Planning, path_target_random) {
         }
 
         LinearMotionInstant goal = random_instant(&gen).linear_motion();
+        PlayState play_state = PlayState::halt();
         PlanRequest request{start,
                             MotionCommand{"path_target", goal},
                             RobotConstraints{},
@@ -55,6 +57,7 @@ TEST(Planning, path_target_random) {
                             {},
                             0,
                             &world_state,
+                            play_state,
                             2,
                             nullptr};
         Trajectory path = planner.plan(std::move(request));
@@ -87,6 +90,7 @@ TEST(Planning, collect_basic) {
     world_state.ball.position = Point{1, 1};
     world_state.ball.velocity = Point{0, 0};
     world_state.ball.timestamp = RJ::now();
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -95,6 +99,7 @@ TEST(Planning, collect_basic) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -109,6 +114,7 @@ TEST(Planning, collect_obstructed) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -117,6 +123,7 @@ TEST(Planning, collect_obstructed) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -134,6 +141,7 @@ TEST(Planning, collect_pointless_obs) {
     obstacles.add(std::make_shared<Circle>(Point{3, 3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{-2, 3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{0, 5}, .2));
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -142,6 +150,7 @@ TEST(Planning, collect_pointless_obs) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -156,6 +165,7 @@ TEST(Planning, collect_moving_ball_quick) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -164,6 +174,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -178,6 +189,7 @@ TEST(Planning, collect_moving_ball_slow) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-0.5, .5}, .2));
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -186,6 +198,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -200,6 +213,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -208,6 +222,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -234,6 +249,7 @@ TEST(Planning, collect_random) {
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 0.5, 1.5)},
                 .2));
         }
+        PlayState play_state = PlayState::halt();
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             MotionCommand{"collect"},
                             RobotConstraints{},
@@ -242,6 +258,7 @@ TEST(Planning, collect_random) {
                             {},
                             0,
                             &world_state,
+                            play_state,
                             2,
                             nullptr};
         CollectPathPlanner planner;
@@ -265,6 +282,7 @@ TEST(Planning, settle_basic) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"settle"},
                         RobotConstraints{},
@@ -273,6 +291,7 @@ TEST(Planning, settle_basic) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -289,6 +308,7 @@ TEST(Planning, settle_pointless_obs) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-1, 1.0}, .2));
+    PlayState play_state = PlayState::halt();
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"settle"},
                         RobotConstraints{},
@@ -297,6 +317,7 @@ TEST(Planning, settle_pointless_obs) {
                         {},
                         0,
                         &world_state,
+                        play_state,
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -324,6 +345,7 @@ TEST(Planning, settle_random) {
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)},
                 .2));
         }
+        PlayState play_state = PlayState::halt();
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             MotionCommand{"settle"},
                             RobotConstraints{},
@@ -332,6 +354,7 @@ TEST(Planning, settle_random) {
                             {},
                             0,
                             &world_state,
+                            play_state,
                             2,
                             nullptr};
         SettlePathPlanner planner;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <cmath>
 
 #include <rclcpp/rclcpp.hpp>
@@ -11,8 +12,10 @@
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/time.hpp"
+#include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
+#include "seeker.hpp"
 
 namespace strategy {
 
@@ -36,19 +39,24 @@ public:
 private:
     bool kicking_{true};
 
+    // These variables are for calculating ball speed when passing
+    static constexpr float kFinalBallSpeed{0.0f};
+
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     // TODO (Kevin): strategy design pattern for BallHandler/Receiver
 
     enum State {
-        IDLING,          // simply staying in place
-        SEARCHING,       // moving around on the field to get open
-        PASSING,         // physically kicking the ball towards another robot
-        PREPARING_SHOT,  // pivot around ball in preparation for shot
-        SHOOTING,        // physically kicking the ball towards the net
-        RECEIVING,       // physically intercepting the ball from a pass (gets possession)
-        STEALING,        // attempting to intercept the ball from the other team
-        FACING,          // turning to face the ball
-        SCORER,          // overrides everything and will attempt to steal the bal and shoot it
+        IDLING,              // simply staying in place
+        SEARCHING,           // moving around on the field to get open
+        PASSING,             // physically kicking the ball towards another robot
+        PREPARING_SHOT,      // pivot around ball in preparation for shot
+        SHOOTING,            // physically kicking the ball towards the net
+        RECEIVING,           // physically intercepting the ball from a pass (gets possession)
+        STEALING,            // attempting to intercept the ball from the other team
+        FACING,              // turning to face the ball
+        SCORER,              // overrides everything and will attempt to steal the bal and shoot it
+        AWAITING_SEND_PASS,  // is waiting to send a pass to someone else
+        SEEKING,             // is trying to get open
     };
 
     State update_state();
@@ -60,6 +68,8 @@ private:
 
     bool scorer_ = false;
     bool last_scorer_ = false;
+
+    bool has_open_shot();
 
     /**
      * @brief Send request to the other robots to see if this robot should be the scorer
@@ -102,6 +112,16 @@ private:
      * status
      */
     communication::Acknowledge receive_reset_scorer_request();
+
+    /**
+     * @brief Calcualtes the best location for a shot
+     */
+    rj_geometry::Point calculate_best_shot();
+
+    /**
+     * @brief Calculates the distance of vector from other team's closest robot
+     */
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point heaad);
 };
 
 }  // namespace strategy

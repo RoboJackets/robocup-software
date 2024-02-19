@@ -129,6 +129,8 @@ public:
      */
     void send_direct_pass_request(std::vector<u_int8_t> target_robots);
 
+    void broadcast_direct_pass_request();
+
     /**
      * @brief receives and handles a pass_request
      *
