@@ -19,6 +19,7 @@ public:
     GoalKicker(int r_id);
     ~GoalKicker() = default;
 
+    string return_current_state() override;
     /**
      * @brief Does nothing; this position is a special case
      */

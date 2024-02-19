@@ -19,6 +19,8 @@ public:
     PenaltyPlayer(int r_id);
     ~PenaltyPlayer() = default;
 
+    string return_current_state() override;
+
     /**
      * @brief Does nothing; this position is a special case
      */

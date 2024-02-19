@@ -31,6 +31,8 @@ public:
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
+    
+    string return_current_state() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;

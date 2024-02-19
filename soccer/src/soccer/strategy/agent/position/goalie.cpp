@@ -11,6 +11,10 @@ std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
+string Goalie::return_current_state() {
+    return "Goalie";
+}
+
 Goalie::State Goalie::update_state() {
     // if a shot is coming, override all and go block it
     WorldState* world_state = last_world_state_;
