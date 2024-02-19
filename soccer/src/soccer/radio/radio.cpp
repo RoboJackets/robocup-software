@@ -41,8 +41,8 @@ Radio::Radio()
             });
     }
 
-    alive_robots_pub_ = create_publisher<rj_msgs::msg::AliveRobots>(
-        "/alive_robots", rclcpp::QoS(1));
+    alive_robots_pub_ =
+        create_publisher<rj_msgs::msg::AliveRobots>("/alive_robots", rclcpp::QoS(1));
 
     tick_timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { tick(); });
 }

@@ -22,10 +22,10 @@ public:
     SimRadio(bool blue_team = false);
 
 protected:
-    // 
+    //
     void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-              strategy::Positions role) override;
+                              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                              strategy::Positions role) override;
 
     // Poll the asynchronous receiver
     void poll_receive() override;
