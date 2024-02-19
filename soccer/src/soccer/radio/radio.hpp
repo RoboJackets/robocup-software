@@ -82,7 +82,7 @@ protected:
      */
     void publish_alive_robots(const rj_msgs::msg::AliveRobots& alive_robots);
 
-    const bool blue_team();
+    bool blue_team() const;
 
 private:
     /**
@@ -92,7 +92,7 @@ private:
      */
     void tick();
     // Time between consecutive calls to tick().
-    std::chrono::milliseconds tick_period = std::chrono::milliseconds(100);
+    std::chrono::milliseconds tick_period_ = std::chrono::milliseconds(100);
     // Ros timer to trigger tick every tick_period
     rclcpp::TimerBase::SharedPtr tick_timer_;
 

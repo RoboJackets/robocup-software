@@ -44,7 +44,7 @@ Radio::Radio()
     alive_robots_pub_ =
         create_publisher<rj_msgs::msg::AliveRobots>("/alive_robots", rclcpp::QoS(1));
 
-    tick_timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { tick(); });
+    tick_timer_ = create_wall_timer(tick_period_, [this]() { tick(); });
 }
 
 void Radio::publish_robot_status(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {
@@ -55,7 +55,7 @@ void Radio::publish_alive_robots(const rj_msgs::msg::AliveRobots& alive_robots) 
     alive_robots_pub_->publish(alive_robots);
 }
 
-const bool Radio::blue_team() { return blue_team_; }
+bool Radio::blue_team() const { return blue_team_; }
 
 void Radio::tick() {
     poll_receive();
