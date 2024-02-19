@@ -16,23 +16,34 @@ using ip::udp;
 
 namespace radio {
 
-NetworkRadio::NetworkRadio() : base_station_socket_(io_service_), alive_robots_socket_(io_service_), send_buffers_(kNumShells) {
-    base_station_socket_.open(udp::v4());
-    base_station_socket_.bind(udp::endpoint(udp::v4(), kBaseStationBindPort));
+NetworkRadio::NetworkRadio() :
+    control_message_socket_(io_service_),
+    robot_status_socket_(io_service_),
+    alive_robots_socket_(io_service_),
+    send_buffers_(kNumShells) {
+    
+    control_message_socket_.open(udp::v4());
+    control_message_socket_.bind(udp::endpoint(udp::v4(), kControlMessageSocketPort));
+
+    robot_status_socket_.open(udp::v4());
+    robot_status_socket_.bind(udp::endpoint(udp::v4(), kRobotStatusMessageSocketPort));
     
     alive_robots_socket_.open(udp::v4());
-    alive_robots_socket_.bind(udp::endpoint(udp::v4(), kAliveRobotsBindPort));
+    alive_robots_socket_.bind(udp::endpoint(udp::v4(), kAliveRobotsMessageSocketPort));
 
-    start_receive();
+    start_robot_status_receive();
+    start_alive_robots_receive();
 }
 
-void NetworkRadio::start_receive() {
-    base_station_socket_.async_receive_from(
+void NetworkRadio::start_robot_status_receive() {
+    robot_status_socket_.async_receive_from(
         boost::asio::buffer(robot_status_buffer_), robot_status_endpoint_,
         [this](const boost::system::error_code& error, size_t num_bytes) {
             receive_robot_status(error, num_bytes);
         });
+}
 
+void NetworkRadio::start_alive_robots_receive() {
     alive_robots_socket_.async_receive_from(
         boost::asio::buffer(alive_robots_buffer_), alive_robots_endpoint_,
         [this](const boost::system::error_code& error, size_t num_bytes) {
@@ -44,6 +55,7 @@ void NetworkRadio::send_control_message(uint8_t robot_id,
                                         const rj_msgs::msg::MotionSetpoint& motion,
                                         const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                                         strategy::Positions role) {
+    SPDLOG_INFO("Sending for robot: {}", robot_id);
     // Build the control packet for this robot.
     std::array<uint8_t, sizeof(rtp::ControlMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
@@ -53,7 +65,7 @@ void NetworkRadio::send_control_message(uint8_t robot_id,
 
     ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, blue_team());
 
-    base_station_socket_.async_send_to(
+    control_message_socket_.async_send_to(
         boost::asio::buffer(forward_packet_buffer), control_message_endpoint_,
         [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
             if (static_cast<bool>(error)) {
@@ -74,13 +86,13 @@ void NetworkRadio::switch_team(bool blue_team) {
 void NetworkRadio::receive_robot_status(const boost::system::error_code& error, size_t num_bytes) {
     if (static_cast<bool>(error)) {
         SPDLOG_ERROR("Error Receiving Robot Status: {}.", error.message());
-        start_receive();
+        start_robot_status_receive();
         return;
     }
     if (num_bytes != sizeof(rtp::RobotStatusMessage)) {
         SPDLOG_ERROR("Invalid packet length: expected {}, got {}", sizeof(rtp::RobotStatusMessage),
                      num_bytes);
-        start_receive();
+        start_robot_status_receive();
         return;
     }
 
@@ -100,19 +112,19 @@ void NetworkRadio::receive_robot_status(const boost::system::error_code& error, 
     publish_robot_status(robot_id, status_ros);
 
     // Restart receiving
-    start_receive();
+    start_robot_status_receive();
 }
 
 void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, size_t num_bytes) {
     if (static_cast<bool>(error)) {
         SPDLOG_ERROR("Error Receiving Alive Robots: {}", error.message());
-        start_receive();
+        start_alive_robots_receive();
         return;
     }
 
     if (num_bytes != 2) {
         SPDLOG_ERROR("Invalid Packet Length: expected {}, got {}", 2, num_bytes);
-        start_receive();
+        start_alive_robots_receive();
         return;
     }
 
@@ -132,7 +144,7 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
     publish_alive_robots(alive_message);
 
     // Restart Receiving
-    start_receive();
+    start_alive_robots_receive();
 }
 
 }  // namespace radio
