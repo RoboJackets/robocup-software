@@ -5,21 +5,25 @@ namespace strategy {
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
     position_name_ = "RobotFactoryPosition";
 
-    if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
-    } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
-    }
+    current_position_ = std::make_unique<Testing>(robot_id_);
+
+    // if (robot_id_ == 0) {
+    //     current_position_ = std::make_unique<Goalie>(robot_id_);
+    // } else if (robot_id_ == 1) {
+    //     current_position_ = std::make_unique<Offense>(robot_id_);
+    // } else {
+    //     current_position_ = std::make_unique<Defense>(robot_id_);
+    // }
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state,
                                                           FieldDimensions& field_dimensions) {
     // If keeper, make no changes
-    if (robot_id_ == 0) {
-        return current_position_->get_task(world_state, field_dimensions);
-    }
+    // if (robot_id_ == 0) {
+        
+    // Just do basics for now
+    return current_position_->get_task(world_state, field_dimensions);
+    // }
 
     // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
 
