@@ -18,8 +18,6 @@ namespace radio {
 
 NetworkRadio::NetworkRadio()
     : base_station_socket_(io_service_),
-      robot_status_buffer_{},
-      alive_robots_buffer_{},
       send_buffers_(kNumShells) {
     base_station_socket_.open(udp::v4());
     base_station_socket_.bind(udp::endpoint(udp::v4(), kBaseStationBindPort));
@@ -57,7 +55,7 @@ void NetworkRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Mo
 
     base_station_socket_.async_send_to(
         boost::asio::buffer(forward_packet_buffer), control_message_endpoint_,
-        [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_Bytes) {
+        [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
             if (static_cast<bool>(error)) {
                 SPDLOG_ERROR("Error Sending: {}", error.message());
             }
@@ -114,7 +112,7 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
 
     uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
     for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
-        if (alive & (1 << robot_id) != 0) {
+        if ((alive & (1 << robot_id)) != 0) {
             alive_robots_[robot_id] = true;
         } else {
             alive_robots_[robot_id] = false;
