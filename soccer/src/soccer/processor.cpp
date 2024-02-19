@@ -19,7 +19,7 @@ using namespace google::protobuf;
 FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
 
 Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
-    : loop_mutex_(), read_log_file_(read_log_file) {
+    : read_log_file_(read_log_file), loop_mutex_() {
     // Set the logger to ros2.
     rj_utils::set_spdlog_default_ros2("processor");
 

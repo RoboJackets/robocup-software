@@ -29,10 +29,10 @@ public:
         pt[1] = p2;
     }
 
-    Rect(const Rect& other) {
-        pt[0] = other.pt[0];
-        pt[1] = other.pt[1];
-    }
+    Rect(const Rect& other) = default;
+    Rect(Rect&& other) = default;
+    Rect& operator=(const Rect& other) = default;
+    Rect& operator=(Rect&& other) = default;
 
     Shape* clone() const override;
 
