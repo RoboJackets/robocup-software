@@ -18,9 +18,7 @@ struct Context;
 
 class DebugDrawer {
 public:
-    DebugDrawer(Context* context) : context_(context), num_debug_layers_(0) {
-        reset_log_frame();
-    }
+    DebugDrawer(Context* context) : num_debug_layers_(0), context_(context) { reset_log_frame(); }
 
     const QStringList& debug_layers() const { return debug_layers_; }
 
