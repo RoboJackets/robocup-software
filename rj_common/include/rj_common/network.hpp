@@ -66,8 +66,10 @@ static const std::string kVisionInterface =
 
 // The network address of the base station
 static const std::string kBaseStationAddress = "10.42.0.252";
-// The Port (on the local machine to bind the base station communication socket to)
+// The Port (on the local machine) to bind the base station communication socket to
 static const int kBaseStationBindPort = 8000;
+// The Port (on the local machine) to bind the alive robots communication socket to
+static const int kAliveRobotsBindPort = 8001;
 // The Port (on the base station) to send control messages to
 static const int kBaseStationPort = 8000;
 // The Port (on the local machine) to receive robot status messages at

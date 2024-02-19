@@ -34,9 +34,6 @@ Radio::Radio()
             [this, i](rj_msgs::msg::MotionSetpoint::SharedPtr motion) {  // NOLINT
                 last_updates_.at(i) = RJ::now();
                 motions_[i] = motion;
-                if (i == 0) {
-                    SPDLOG_INFO("\033[92mRobot 0 Received Normal Communication\033[0m");
-                }
                 send_control_message(i, *motion, manipulators_cached_.at(i), positions_.at(i));
             });
     }

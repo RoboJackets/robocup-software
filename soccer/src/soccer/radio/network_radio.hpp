@@ -70,13 +70,13 @@ private:
 
     // What local endpoint to expect robot statuses to be received at
     boost::asio::ip::udp::endpoint robot_status_endpoint_ = boost::asio::ip::udp::endpoint(
-        boost::asio::ip::address::from_string("127.0.0.1"), kIncomingRobotStatusPort);
+        boost::asio::ip::address::from_string(kBaseStationAddress), kIncomingRobotStatusPort);
     // Buffer for an incoming robot status from the base station
     std::array<uint8_t, sizeof(rtp::RobotStatusMessage)> robot_status_buffer_{};
 
     // Where local endpoint to expect alive robots to be received at
     boost::asio::ip::udp::endpoint alive_robots_endpoint_ = boost::asio::ip::udp::endpoint(
-        boost::asio::ip::address::from_string("127.0.0.1"), kIncomingAliveRobotsPort);
+        boost::asio::ip::address::from_string(kBaseStationAddress), kIncomingAliveRobotsPort);
     // Buffer for an alive robots message from the base station
     std::array<uint8_t, 2> alive_robots_buffer_{};
     // if alive_robots_[robot_id] = true => robot[robot_id] is alive
@@ -87,6 +87,8 @@ private:
     boost::asio::io_service io_service_;
     // The socket used to communicate with the base station
     boost::asio::ip::udp::socket base_station_socket_;
+    // The socket used to subscribe to alive robots updates from the base station
+    boost::asio::ip::udp::socket alive_robots_socket_;
 };
 
 }  // namespace radio
