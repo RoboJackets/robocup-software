@@ -65,19 +65,13 @@ static const std::string kVisionInterface =
     kRefereeInterface;  // In all but rare cirucmstances, this should match kRefereeInterface.
 
 // The network address of the base station
-static const std::string kBaseStationAddress = "10.42.0.136";
-// The Port (on the local machine) to bind the control message publisher socket to
+static const std::string kBaseStationAddress = "10.42.0.248";
+// The Port (on the local machine) to bind the control message socket to
 static const int kControlMessageSocketPort = 8000;
-// The Port (on the local machine) to bind the robot status subscriber socket to
+// The Port (on the local machine) to bind the robot status socket to
 static const int kRobotStatusMessageSocketPort = 8001;
-// The Port (on the local machine) to bind the alive robots subscriber socket to
+// The Port (on the local machine) to bind the alive robots socket to
 static const int kAliveRobotsMessageSocketPort = 8002;
-// The Port (on the base station) to send control messages to
-static const int kBaseStationControlMessagePort = 8000;
-// The Port (on the base station) to receive robot status messages from
-static const int kBaseStationRobotStatusMessagePort = 8001;
-// The Port (on the base station) to receive alive robots from
-static const int kBaseStationAliveRobotsMessagePort = 8002;
 
 static const int kSimVisionPort = 10020;  // was 10020 before 1-30-2022
 static const int kSimBlueStatusPort = 30011;

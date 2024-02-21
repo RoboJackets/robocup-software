@@ -61,19 +61,19 @@ private:
 
     // Where to send control messages to
     boost::asio::ip::udp::endpoint control_message_endpoint_ = boost::asio::ip::udp::endpoint(
-        boost::asio::ip::address::from_string(kBaseStationAddress), kBaseStationControlMessagePort);
+        boost::asio::ip::address::from_string(kBaseStationAddress), kControlMessageSocketPort);
     // Buffer to send a set of control messages
     std::vector<std::array<uint8_t, sizeof(rtp::ControlMessage)>> send_buffers_{};
 
     // What local endpoint to expect robot statuses to be received at
     boost::asio::ip::udp::endpoint robot_status_endpoint_ = boost::asio::ip::udp::endpoint(
-        boost::asio::ip::address::from_string(kBaseStationAddress), kBaseStationRobotStatusMessagePort);
+        boost::asio::ip::address::from_string("0.0.0.0"), kRobotStatusMessageSocketPort);
     // Buffer for an incoming robot status from the base station
     std::array<uint8_t, sizeof(rtp::RobotStatusMessage)> robot_status_buffer_{};
 
     // Where local endpoint to expect alive robots to be received at
     boost::asio::ip::udp::endpoint alive_robots_endpoint_ = boost::asio::ip::udp::endpoint(
-        boost::asio::ip::address::from_string(kBaseStationAddress), kBaseStationAliveRobotsMessagePort);
+        boost::asio::ip::address::from_string("0.0.0.0"), kAliveRobotsMessageSocketPort);
     // Buffer for an alive robots message from the base station
     std::array<uint8_t, 2> alive_robots_buffer_{};
     // if alive_robots_[robot_id] = true => robot[robot_id] is alive

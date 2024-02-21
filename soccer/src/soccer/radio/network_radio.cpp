@@ -55,7 +55,6 @@ void NetworkRadio::send_control_message(uint8_t robot_id,
                                         const rj_msgs::msg::MotionSetpoint& motion,
                                         const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                                         strategy::Positions role) {
-    SPDLOG_INFO("Sending for robot: {}", robot_id);
     // Build the control packet for this robot.
     std::array<uint8_t, sizeof(rtp::ControlMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
@@ -97,9 +96,6 @@ void NetworkRadio::receive_robot_status(const boost::system::error_code& error, 
     }
 
     auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&robot_status_buffer_[0]);
-    SPDLOG_INFO("Status Received for Robot {}", msg->robot_id);
-    SPDLOG_INFO("Team: {}, Robot Id: {}, Ball Sense Status: {}, Kick Status: {}, Kick Healthy: {}, Battery Voltage: {}, Motor Errors: {}, Fpga Status: {}",
-    msg->team, msg->robot_id, msg->ball_sense_status, msg->kick_status, msg->kick_healthy, msg->battery_voltage, msg->motor_errors, msg->fpga_status);
 
     int robot_id = msg->robot_id;
 
@@ -136,8 +132,6 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
             alive_robots_[robot_id] = false;
         }
     }
-
-    SPDLOG_INFO("Robot 0: {}, Robot 5: {}", alive_robots_[0], alive_robots_[5]);
 
     rj_msgs::msg::AliveRobots alive_message{};
     alive_message.alive_robots = alive_robots_;
