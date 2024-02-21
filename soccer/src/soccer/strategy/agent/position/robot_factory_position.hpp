@@ -58,6 +58,8 @@ public:
     void die() override;
     void revive() override;
 
+    string return_current_state() override;
+
 private:
     std::unique_ptr<Position> current_position_;
 
