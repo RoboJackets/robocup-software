@@ -419,7 +419,7 @@ rj_geometry::Point Offense::calculate_best_shot() {
     double goal_width = field_dimensions_.goal_width();  // 1.0 meters
 
     // Ball location
-    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+    rj_geometry::Point ball_position = last_world_state_->ball.position;
 
     rj_geometry::Point best_shot = their_goal_pos;
     double best_distance = -1.0;
@@ -435,6 +435,23 @@ rj_geometry::Point Offense::calculate_best_shot() {
         curr_point = curr_point + increment;
     }
     return best_shot;
+}
+
+void Offense::set_state_shooting() {
+    current_state_ = SHOOTING;
+}
+
+std::optional<RobotIntent> Offense::derived_state_to_task(RobotIntent intent) {
+    return state_to_task(intent);
+}
+
+bool Offense::derived_check_is_done() {
+    return check_is_done();
+}
+
+void Offense::set_globals(WorldState* world_state, FieldDimensions& field_dimensions) {
+    field_dimensions_ = field_dimensions;
+    last_world_state_ = world_state;
 }
 
 }  // namespace strategy

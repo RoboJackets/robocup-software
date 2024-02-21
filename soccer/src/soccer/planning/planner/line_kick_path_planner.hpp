@@ -50,7 +50,7 @@ private:
     Trajectory prev_path_;
 
     // These constants could be tuned more
-    static constexpr double kIsDoneBallVel{1.5};
+    static constexpr double kIsDoneBallVel{0.5};
     static constexpr double kFinalRobotSpeed{1.0};
     static constexpr double kPredictIn{0.5};  // seconds
     static constexpr double kAvoidBallBy{0.05};
