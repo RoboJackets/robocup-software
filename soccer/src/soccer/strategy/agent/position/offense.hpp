@@ -36,6 +36,12 @@ public:
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
 
+    bool derived_check_is_done();
+    void set_state_shooting();
+    std::optional<RobotIntent> derived_state_to_task(RobotIntent intent);
+
+    void set_globals(WorldState* world_state, FieldDimensions& field_dimensions);
+
 private:
     bool kicking_{true};
 
