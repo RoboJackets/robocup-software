@@ -16,6 +16,7 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "seeker.hpp"
+#include <string>
 
 namespace strategy {
 
@@ -32,7 +33,7 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
     
-    string return_current_state() override;
+    std::string return_current_state() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -32,7 +33,7 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
     
-    string return_current_state() override;
+    std::string return_current_state() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;

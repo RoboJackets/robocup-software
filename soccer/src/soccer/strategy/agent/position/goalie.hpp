@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 
 #include <spdlog/spdlog.h>
 
@@ -24,7 +25,7 @@ public:
     Goalie(int r_id);
     ~Goalie() override = default;
 
-    string return_current_state() override;
+    std::string return_current_state() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;

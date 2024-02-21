@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <rclcpp/rclcpp.hpp>
 
 #include "planning/instant.hpp"
@@ -19,7 +21,7 @@ public:
     PenaltyPlayer(int r_id);
     ~PenaltyPlayer() = default;
 
-    string return_current_state() override;
+    std::string return_current_state() override;
 
     /**
      * @brief Does nothing; this position is a special case

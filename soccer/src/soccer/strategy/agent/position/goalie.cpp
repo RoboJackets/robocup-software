@@ -1,4 +1,5 @@
 #include "goalie.hpp"
+#include <string>
 
 #include <spdlog/spdlog.h>
 
@@ -11,7 +12,7 @@ std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
-string Goalie::return_current_state() {
+std::string Goalie::return_current_state() {
     return "Goalie";
 }
 

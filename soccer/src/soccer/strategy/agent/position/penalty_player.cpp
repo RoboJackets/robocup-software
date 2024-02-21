@@ -1,4 +1,5 @@
 #include "penalty_player.hpp"
+#include <string>
 
 namespace strategy {
 
@@ -31,7 +32,7 @@ std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
-string PenaltyPlayer::return_current_state() {
+std::string PenaltyPlayer::return_current_state() {
     return "PenaltyPlayer";
 }
 

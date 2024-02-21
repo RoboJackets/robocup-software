@@ -1,4 +1,5 @@
 #include "offense.hpp"
+#include <string>
 
 namespace strategy {
 
@@ -14,7 +15,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
-string Offense::return_current_state() {
+std::string Offense::return_current_state() {
     return "Offense" + static_cast<int>(current_state_);
 }
 
