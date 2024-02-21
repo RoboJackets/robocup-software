@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <string>
 
 #include <spdlog/spdlog.h>
 
@@ -76,7 +77,7 @@ public:
     const std::string get_name();
 
     //returns the current state of the robot
-    virtual string return_current_state();
+    virtual std::string return_current_state();
 
     /**
      * @brief setter for time_left_

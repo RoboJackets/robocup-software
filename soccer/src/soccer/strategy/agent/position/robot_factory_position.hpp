@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -54,7 +55,7 @@ public:
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
 
-    string return_current_state() override;
+    std::string return_current_state() override;
 
     void set_is_done() override;
     void die() override;
