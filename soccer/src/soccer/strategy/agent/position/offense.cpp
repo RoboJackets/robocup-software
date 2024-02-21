@@ -53,7 +53,6 @@ Offense::State Offense::next_state() {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
             if (has_open_shot() || timed_out()) {
-                SPDLOG_INFO("Robot {}: PLEASE PRINT", robot_id_);
                 return SHOOTING_START;
             }
 
@@ -374,10 +373,7 @@ bool Offense::has_open_shot() const {
         if (distance < min_dist) {
             min_dist = distance;
         }
-        // SPDLOG_INFO("Robot {} {}", i, distance);
     }
-
-    // SPDLOG_INFO("Robot id to shoot: {} min dist: {}", robot_id_, min_dist);
 
     return min_dist > 0.5;
 }
@@ -395,7 +391,6 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
         auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
         enemy_vec = enemy_vec - (projection)*vec;
         double distance = enemy_vec.mag();
-        SPDLOG_INFO("Robot {}", distance);
         if (distance < (kRobotRadius + kBallRadius)) {
             return -1.0;
         }
