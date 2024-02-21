@@ -415,7 +415,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
 
 rj_geometry::Point Offense::calculate_best_shot() {
     // Goal location
-    rj_geometry::Point their_goal_pos = field_dimensions_.our_goal_loc();
+    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
     double goal_width = field_dimensions_.goal_width();  // 1.0 meters
 
     // Ball location
