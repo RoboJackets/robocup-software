@@ -42,7 +42,8 @@ public:
     RobotFactoryPosition& operator=(RobotFactoryPosition&& other) = delete;
 
     std::optional<RobotIntent> get_task(WorldState& world_state,
-                                        FieldDimensions& field_dimensions) override;
+                                        FieldDimensions& field_dimensions,
+                                        PlayState& play_state) override;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
 
@@ -108,6 +109,8 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     std::pair<int, double> get_closest_kicker(std::unordered_map<int, double> kicker_distances);
+
+    void set_default_positions(WorldState& world_state, FieldDimensions& field_dimensions);
 };
 
 }  // namespace strategy

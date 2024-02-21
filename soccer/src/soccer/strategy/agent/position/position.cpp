@@ -10,7 +10,8 @@ Position::Position(int r_id, std::string position_name)
     : position_name_{std::move(position_name)}, robot_id_{r_id} {};
 
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
-                                              FieldDimensions& field_dimensions) {
+                                              FieldDimensions& field_dimensions,
+                                              PlayState& play_state) {
     // Point class variables to parameter references
     // TODO (Prabhanjan): Don't copy references into local vars
     field_dimensions_ = field_dimensions;
@@ -25,13 +26,6 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
         intent.motion_command = planning::MotionCommand{};
         return intent;
     }
-
-
-    if (kicker_distances_.count(robot_id_) == 0) {
-        broadcast_kicker_request();
-    }
-
-    SPDLOG_INFO("Robot {}, Is Kicker: {}", robot_id_, is_kicker_);
 
     // delegate to derived class to complete behavior
     return derived_get_task(intent);
@@ -195,7 +189,9 @@ void Position::broadcast_kicker_request() {
     communication::KickerRequest kicker_request{};
     communication::generate_uid(kicker_request);
     kicker_request.robot_id = robot_id_;
+    SPDLOG_INFO("Robot {} made it here", robot_id_);
     double distance = last_world_state_->ball.position.dist_to(last_world_state_->get_robot(true, robot_id_).pose.position());
+    SPDLOG_INFO("Robot {} made it here2", robot_id_);
     kicker_distances_[robot_id_] = distance;
     kicker_request.distance = distance;
 
@@ -204,6 +200,8 @@ void Position::broadcast_kicker_request() {
     communication_request.urgent = true;
     communication_request.broadcast = true;
     communication_request_.push(communication_request);
+
+    SPDLOG_INFO("Robot {} added itself, count {}", robot_id_, kicker_distances_.count(robot_id_));
 }
 
 communication::PassResponse Position::receive_pass_request(
