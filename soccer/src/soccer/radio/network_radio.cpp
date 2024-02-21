@@ -16,18 +16,17 @@ using ip::udp;
 
 namespace radio {
 
-NetworkRadio::NetworkRadio() :
-    control_message_socket_(io_service_),
-    robot_status_socket_(io_service_),
-    alive_robots_socket_(io_service_),
-    send_buffers_(kNumShells) {
-    
+NetworkRadio::NetworkRadio()
+    : control_message_socket_(io_service_),
+      robot_status_socket_(io_service_),
+      alive_robots_socket_(io_service_),
+      send_buffers_(kNumShells) {
     control_message_socket_.open(udp::v4());
     control_message_socket_.bind(udp::endpoint(udp::v4(), kControlMessageSocketPort));
 
     robot_status_socket_.open(udp::v4());
     robot_status_socket_.bind(udp::endpoint(udp::v4(), kRobotStatusMessageSocketPort));
-    
+
     alive_robots_socket_.open(udp::v4());
     alive_robots_socket_.bind(udp::endpoint(udp::v4(), kAliveRobotsMessageSocketPort));
 
