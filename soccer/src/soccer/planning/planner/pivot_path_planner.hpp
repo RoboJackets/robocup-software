@@ -32,6 +32,7 @@ public:
         previous_ = Trajectory{};
         cached_pivot_target_ = std::nullopt;
         cached_pivot_point_ = std::nullopt;
+        cached_angle_change_ = std::nullopt;
     }
     [[nodiscard]] bool is_done() const override;
 
