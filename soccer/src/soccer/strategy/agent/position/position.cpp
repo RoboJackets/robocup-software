@@ -6,8 +6,6 @@ namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
-std::string Position::return_current_state() {}
-
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions) {
     // Point class variables to parameter references
