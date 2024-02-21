@@ -142,7 +142,7 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 void AgentActionClient::get_task() {
     auto lock = std::lock_guard(world_state_mutex_);
 
-    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_);
+    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
 
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();

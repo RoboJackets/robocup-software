@@ -71,7 +71,8 @@ public:
      */
 
     virtual std::optional<RobotIntent> get_task(WorldState& world_state,
-                                                FieldDimensions& field_dimensions);
+                                                FieldDimensions& field_dimensions,
+                                                PlayState& play_state);
 
     // communication with AC
     virtual void update_play_state(const PlayState& play_state);
@@ -144,7 +145,8 @@ public:
 
     bool is_kicker_ = false;
 
-
+    // Request
+    std::queue<communication::PosAgentRequestWrapper> communication_request_ = {};
 
     /**
      * @brief receives and handles a pass_request
@@ -286,9 +288,6 @@ protected:
     // Whether or not this robot should be chasing the ball on receive
     // set to true when the ball gets close to this robot
     bool chasing_ball = false;
-
-    // Request
-    std::queue<communication::PosAgentRequestWrapper> communication_request_ = {};
 
     // farthest distance the robot is willing to go to receive a pass
     static constexpr double ball_receive_distance_ = 0.1;
