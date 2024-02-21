@@ -187,7 +187,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
 
     // Additional heuristics for calculating optimal point
     double ball_proximity_loss = (current_point - ball_pos).mag() * .002;
-    double goal_distance_loss = (9.0 - current_point.y()) * .008;
+    double goal_distance_loss = (8.5 - current_point.y()) * 0.15 + abs(current_point.x()) * 0.15;
 
     // Final evaluation
     return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist;
