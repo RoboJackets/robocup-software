@@ -75,6 +75,9 @@ public:
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
 
+    //returns the current state of the robot
+    virtual string return_current_state();
+
     /**
      * @brief setter for time_left_
      */

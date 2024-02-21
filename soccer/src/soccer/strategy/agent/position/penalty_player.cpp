@@ -31,6 +31,10 @@ std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
+string PenaltyPlayer::return_current_state() {
+    return "PenaltyPlayer";
+}
+
 void PenaltyPlayer::derived_acknowledge_pass() {}
 
 void PenaltyPlayer::derived_pass_ball() {}
