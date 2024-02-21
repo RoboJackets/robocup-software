@@ -68,21 +68,19 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     LinearMotionInstant target{ball_position - offset_from_ball};
 
 
-    SPDLOG_INFO("{} {} hi", (ball_position - plan_request.start.pose.position()).mag(), distance_from_ball);
+    // if ((ball_position - plan_request.start.pose.position()).mag() < distance_from_ball) {
+    //     SPDLOG_INFO("HELLO!");
 
-    if ((ball_position - plan_request.start.pose.position()).mag() < distance_from_ball) {
-        SPDLOG_INFO("HELLO!");
+    //     rj_geometry::Point clear_point_{0.0, 4.5};
+    //     planning::LinearMotionInstant target_instant{clear_point_};
+    //     auto pivot_cmd = planning::MotionCommand{"pivot"};
+    //     pivot_cmd.target = target_instant;
+    //     pivot_cmd.pivot_point = ball.position;
+    //     modified_request.motion_command = pivot_cmd;
+    //     modified_request.dribbler_speed = 255.0;
 
-        rj_geometry::Point clear_point_{0.0, 4.5};
-        planning::LinearMotionInstant target_instant{clear_point_};
-        auto pivot_cmd = planning::MotionCommand{"pivot"};
-        pivot_cmd.target = target_instant;
-        pivot_cmd.pivot_point = ball.position;
-        modified_request.motion_command = pivot_cmd;
-        modified_request.dribbler_speed = 255.0;
-
-        return pivot_planner_.plan(modified_request);
-    }
+    //     return pivot_planner_.plan(modified_request);
+    // }
     MotionCommand modified_command{"path_target", target,
                                    FacePoint{plan_request.motion_command.target.position}};
     modified_request.motion_command = modified_command;
@@ -110,8 +108,6 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
 }
 
 void LineKickPathPlanner::process_state_transition() {
-    SPDLOG_INFO("Pivot Planner is {}", pivot_planner_.is_done());
-    SPDLOG_INFO("Path Planner is {}", path_target_.is_done());
     // Let PathTarget decide when the first stage is done
     // Possible problem: can PathTarget get stuck and loop infinitely?
     if (current_state_ == INITIAL_APPROACH && (path_target_.is_done())) {
