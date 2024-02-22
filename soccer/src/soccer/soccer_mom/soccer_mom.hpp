@@ -16,7 +16,7 @@ private:
     void publish_fruit(bool is_blue_team);
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mom_msg_pub_;
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
-    const std::string pub_topic = "team_fruit";
+    const std::string pub_topic_ = "team_fruit";
 };
 
 } // namespace tutorial

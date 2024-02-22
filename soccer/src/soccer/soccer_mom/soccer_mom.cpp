@@ -13,7 +13,7 @@ SoccerMom::SoccerMom()
         });
     
     mom_msg_pub_ = create_publisher<std_msgs::msg::String>(
-        pub_topic, rclcpp::QoS(1));
+        pub_topic_, rclcpp::QoS(1));
 }
 
 void SoccerMom::publish_fruit(bool is_blue_team) {
