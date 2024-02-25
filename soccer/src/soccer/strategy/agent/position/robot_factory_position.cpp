@@ -1,5 +1,7 @@
 #include "robot_factory_position.hpp"
 
+#include <algorithm>
+
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
@@ -100,13 +102,11 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
 
 std::pair<int, double> RobotFactoryPosition::get_closest_kicker(
     const std::unordered_map<int, double>& kicker_distances) {
-    std::pair<int, double> closest_kicker = {-1, 10000};
-    for (const auto& [key, value] : kicker_distances) {
-        if (value < closest_kicker.second) {
-            closest_kicker = {key, value};
-        }
-    }
-    return closest_kicker;
+    // Return the max, comparing by distances only
+    return *std::max_element(kicker_distances.begin(), kicker_distances.end(),
+                             [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
+                                 return a.second < b.second;
+                             });
 }
 
 void RobotFactoryPosition::set_default_positions(WorldState& world_state,
