@@ -174,7 +174,8 @@ void Position::broadcast_kicker_request() {
     communication::generate_uid(kicker_request);
     kicker_request.robot_id = robot_id_;
     SPDLOG_INFO("Robot {} made it here", robot_id_);
-    double distance = last_world_state_->ball.position.dist_to(last_world_state_->get_robot(true, robot_id_).pose.position());
+    double distance = last_world_state_->ball.position.dist_to(
+        last_world_state_->get_robot(true, robot_id_).pose.position());
     SPDLOG_INFO("Robot {} made it here2", robot_id_);
     kicker_distances_[robot_id_] = distance;
     kicker_request.distance = distance;

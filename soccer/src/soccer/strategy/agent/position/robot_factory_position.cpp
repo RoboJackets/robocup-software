@@ -31,7 +31,8 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
         if (kicker_distances_.count(robot_id_) == 0) {
             SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
             broadcast_kicker_request();
-            SPDLOG_INFO("Robot {} count in factory {}", robot_id_, kicker_distances_.count(robot_id_));
+            SPDLOG_INFO("Robot {} count in factory {}", robot_id_,
+                        kicker_distances_.count(robot_id_));
         } else if (kicker_distances_.size() == 5) {
             if (is_kicker_) {
                 SPDLOG_INFO("Robot {} is chosen as free kicker", robot_id_);
@@ -77,11 +78,12 @@ void RobotFactoryPosition::receive_communication_response(
 communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     if (const communication::KickerRequest* kicker_request =
-                   std::get_if<communication::KickerRequest>(&request.request)) {
+            std::get_if<communication::KickerRequest>(&request.request)) {
         kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
-        SPDLOG_INFO("Robot {} recieved a kick request from {}", robot_id_, kicker_request->robot_id);
+        SPDLOG_INFO("Robot {} recieved a kick request from {}", robot_id_,
+                    kicker_request->robot_id);
 
-        //TODO: Edit this when Alive Robots exists
+        // TODO: Edit this when Alive Robots exists
         if (kicker_distances_.size() == 5) {
             SPDLOG_INFO("Robot {} got 5", robot_id_);
             std::pair<int, double> closest_kicker = get_closest_kicker(kicker_distances_);
@@ -92,10 +94,10 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
     return current_position_->receive_communication_request(request);
 }
 
-
-std::pair<int, double> RobotFactoryPosition::get_closest_kicker(std::unordered_map<int, double> kicker_distances) {
+std::pair<int, double> RobotFactoryPosition::get_closest_kicker(
+    std::unordered_map<int, double> kicker_distances) {
     std::pair<int, double> closest_kicker = {-1, 10000};
-    for (const auto & [key, value] : kicker_distances) {
+    for (const auto& [key, value] : kicker_distances) {
         if (value < closest_kicker.second) {
             closest_kicker = {key, value};
         }
@@ -103,8 +105,9 @@ std::pair<int, double> RobotFactoryPosition::get_closest_kicker(std::unordered_m
     return closest_kicker;
 }
 
-void RobotFactoryPosition::set_default_positions(WorldState& world_state, FieldDimensions& field_dimensions) {
-        // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
+void RobotFactoryPosition::set_default_positions(WorldState& world_state,
+                                                 FieldDimensions& field_dimensions) {
+    // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
 
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)

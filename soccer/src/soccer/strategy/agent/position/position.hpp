@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cstdlib>
-#include <vector>
-#include <queue>
 #include <unordered_map>
+#include <vector>
 
+#include <queue>
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
@@ -26,10 +26,10 @@
 // Requests
 #include <rj_msgs/msg/ball_in_transit_request.hpp>
 #include <rj_msgs/msg/incoming_ball_request.hpp>
+#include <rj_msgs/msg/kicker_request.hpp>
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
-#include <rj_msgs/msg/kicker_request.hpp>
 
 // Responses
 #include <rj_msgs/msg/acknowledge.hpp>
@@ -136,7 +136,7 @@ public:
     void broadcast_direct_pass_request();
 
     void broadcast_kicker_request();
-    
+
     std::unordered_map<int, double> kicker_distances_;
 
     bool is_kicker_ = false;
