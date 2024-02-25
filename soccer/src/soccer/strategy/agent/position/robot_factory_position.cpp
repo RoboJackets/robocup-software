@@ -82,7 +82,7 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
         SPDLOG_INFO("Robot {} recieved a kick request from {}", robot_id_,
                     kicker_request->robot_id);
 
-        // TODO: Edit this when Alive Robots exists
+        // TODO(sanat): Edit this when Alive Robots exists
         if (kicker_distances_.size() == 5) {
             SPDLOG_INFO("Robot {} got 5", robot_id_);
             std::pair<int, double> closest_kicker = get_closest_kicker(kicker_distances_);
@@ -94,7 +94,7 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
 }
 
 std::pair<int, double> RobotFactoryPosition::get_closest_kicker(
-    std::unordered_map<int, double> kicker_distances) {
+    const std::unordered_map<int, double>& kicker_distances) {
     std::pair<int, double> closest_kicker = {-1, 10000};
     for (const auto& [key, value] : kicker_distances) {
         if (value < closest_kicker.second) {

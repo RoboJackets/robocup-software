@@ -103,7 +103,7 @@ private:
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    std::pair<int, double> get_closest_kicker(std::unordered_map<int, double> kicker_distances);
+    static std::pair<int, double> get_closest_kicker(const std::unordered_map<int, double>& kicker_distances);
 
     void set_default_positions(WorldState& world_state, FieldDimensions& field_dimensions);
 };
