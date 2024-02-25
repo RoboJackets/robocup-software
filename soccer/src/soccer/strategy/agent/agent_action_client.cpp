@@ -142,7 +142,8 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 void AgentActionClient::get_task() {
     auto lock = std::lock_guard(world_state_mutex_);
 
-    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
+    auto optional_task =
+        current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
 
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
@@ -236,12 +237,11 @@ void AgentActionClient::get_communication() {
     }
 
     auto optional_communication_request = current_position_->send_communication_request();
-    if (optional_communication_request.size()  == 0) {
+    if (optional_communication_request.size() == 0) {
         return;
     }
 
     for (int i = 0; i < optional_communication_request.size(); i++) {
-
         auto communication_request = optional_communication_request.front();
         optional_communication_request.pop();
 
@@ -258,8 +258,8 @@ void AgentActionClient::get_communication() {
                 if (i != robot_id_ && check_robot_alive(i)) {
                     robot_communication_cli_[i]->async_send_request(
                         request, [this, i](const std::shared_future<
-                                        rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                            response) {
+                                           rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                               response) {
                             receive_response_callback(response, ((u_int8_t)i));
                         });
                     sent_robot_ids.push_back(i);
@@ -271,9 +271,10 @@ void AgentActionClient::get_communication() {
             for (u_int8_t i : communication_request.target_agents) {
                 if (i != robot_id_ && check_robot_alive(i)) {
                     robot_communication_cli_[i]->async_send_request(
-                        request, [this, i](const std::shared_future<
-                                        rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                            response) { receive_response_callback(response, i); });
+                        request,
+                        [this, i](const std::shared_future<
+                                  rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                      response) { receive_response_callback(response, i); });
                     sent_robot_ids.push_back(i);
                 }
             }

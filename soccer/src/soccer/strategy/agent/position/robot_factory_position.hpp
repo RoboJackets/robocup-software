@@ -41,8 +41,7 @@ public:
     RobotFactoryPosition& operator=(const RobotFactoryPosition& other) = delete;
     RobotFactoryPosition& operator=(RobotFactoryPosition&& other) = delete;
 
-    std::optional<RobotIntent> get_task(WorldState& world_state,
-                                        FieldDimensions& field_dimensions,
+    std::optional<RobotIntent> get_task(WorldState& world_state, FieldDimensions& field_dimensions,
                                         PlayState& play_state) override;
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
@@ -101,7 +100,7 @@ public:
 
 private:
     std::unique_ptr<Position> current_position_;
-    
+
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     std::pair<int, double> get_closest_kicker(std::unordered_map<int, double> kicker_distances);

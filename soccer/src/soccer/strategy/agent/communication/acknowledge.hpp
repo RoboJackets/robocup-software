@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <mutex>
 #include <string>
@@ -12,32 +12,31 @@
 namespace strategy::communication {
 
 struct Acknowledge {
-	uint32_t response_uid;
+    uint32_t response_uid;
 };
 
 bool operator==(const Acknowledge& a, const Acknowledge& b);
 void generate_uid(Acknowledge& response);
 
-}
+}  // namespace strategy::communication
 
 namespace rj_convert {
 
 template <>
 struct RosConverter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge> {
-	static rj_msgs::msg::Acknowledge to_ros(const strategy::communication::Acknowledge& from) {
-		rj_msgs::msg::Acknowledge result;
-		result.response_uid = from.response_uid;
-		return result;
-	}
+    static rj_msgs::msg::Acknowledge to_ros(const strategy::communication::Acknowledge& from) {
+        rj_msgs::msg::Acknowledge result;
+        result.response_uid = from.response_uid;
+        return result;
+    }
 
-	static strategy::communication::Acknowledge from_ros(const rj_msgs::msg::Acknowledge& from) {
-		return strategy::communication::Acknowledge{
-			from.response_uid,
-		};
-	}
-
+    static strategy::communication::Acknowledge from_ros(const rj_msgs::msg::Acknowledge& from) {
+        return strategy::communication::Acknowledge{
+            from.response_uid,
+        };
+    }
 };
 
 ASSOCIATE_CPP_ROS(strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge);
 
-}
+}  // namespace rj_convert
