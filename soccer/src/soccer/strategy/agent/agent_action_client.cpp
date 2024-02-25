@@ -243,7 +243,7 @@ void AgentActionClient::get_communication() {
 
     for (int i = 0; i < optional_communication_request.size(); i++) {
         auto communication_request = optional_communication_request.front();
-        optional_communication_request.pop();
+        optional_communication_request.pop_front();
 
         // create a buffer to hold the responses and the outgoing request
         communication::AgentPosResponseWrapper buffered_response;
