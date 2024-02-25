@@ -235,7 +235,7 @@ void AgentActionClient::get_communication() {
     }
 
     auto optional_communication_request = current_position_->send_communication_request();
-    if (optional_communication_request.size() == 0) {
+    if (optional_communication_request.empty()) {
         return;
     }
 
