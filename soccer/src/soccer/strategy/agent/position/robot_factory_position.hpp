@@ -49,7 +49,7 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
-    std::queue<communication::PosAgentRequestWrapper> send_communication_request() override;
+    std::deque<communication::PosAgentRequestWrapper> send_communication_request() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
@@ -107,7 +107,8 @@ private:
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    static std::pair<int, double> get_closest_kicker(const std::unordered_map<int, double>& kicker_distances);
+    static std::pair<int, double> get_closest_kicker(
+        const std::unordered_map<int, double>& kicker_distances);
 
     void set_default_positions(WorldState& world_state, FieldDimensions& field_dimensions);
 };

@@ -208,7 +208,7 @@ void Defense::send_join_wall_request() {
     communication_request.urgent = false;
     communication_request.broadcast = true;
 
-    communication_request_.push(communication_request);
+    communication_requests_.push_back(communication_request);
 
     current_state_ = WALLING;
 }
@@ -224,7 +224,7 @@ void Defense::send_leave_wall_request() {
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
-    communication_request_.push(communication_request);
+    communication_requests_.push_back(communication_request);
 }
 
 communication::JoinWallResponse Defense::handle_join_wall_request(

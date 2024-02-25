@@ -57,16 +57,21 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
     return std::nullopt;
 }
 
-std::queue<communication::PosAgentRequestWrapper>
+std::deque<communication::PosAgentRequestWrapper>
 RobotFactoryPosition::send_communication_request() {
-    // Call to super
-    auto saved_requests = communication_request_;
-    while (saved_requests.size() > 0) {
-        current_position_->communication_request_.push(saved_requests.front());
-        saved_requests.pop();
-    }
-    communication_request_ = {};
-    return current_position_->send_communication_request();
+    // Return both this position's communication requests and its child position's communication
+    // requests
+
+    // This class
+    auto result = Position::send_communication_request();
+
+    // Delegated class
+    auto current = current_position_->send_communication_request();
+
+    // Combine the two
+    result.insert(result.end(), current.begin(), current.end());
+
+    return result;
 }
 
 void RobotFactoryPosition::receive_communication_response(

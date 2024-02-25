@@ -81,13 +81,9 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-std::queue<communication::PosAgentRequestWrapper> Position::send_communication_request() {
-    if (communication_request_.size() != 0) {
-        auto saved_comm_req = communication_request_;
-        communication_request_ = {};
-        return saved_comm_req;
-    }
-    return {};
+std::deque<communication::PosAgentRequestWrapper> Position::send_communication_request() {
+    // Return and reset this member
+    return std::exchange(communication_requests_, {});
 }
 
 void Position::receive_communication_response(communication::AgentPosResponseWrapper response) {
@@ -169,7 +165,7 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication_request.target_agents = target_robots;
     communication_request.urgent = true;
     communication_request.broadcast = false;
-    communication_request_.push(communication_request);
+    communication_requests_.push_back(communication_request);
 }
 
 void Position::broadcast_direct_pass_request() {
@@ -182,7 +178,7 @@ void Position::broadcast_direct_pass_request() {
     communication_request.request = pass_request;
     communication_request.urgent = false;
     communication_request.broadcast = true;
-    communication_request_.push(communication_request);
+    communication_requests_.push_back(communication_request);
 }
 
 void Position::broadcast_kicker_request() {
@@ -200,7 +196,7 @@ void Position::broadcast_kicker_request() {
     communication_request.request = kicker_request;
     communication_request.urgent = true;
     communication_request.broadcast = true;
-    communication_request_.push(communication_request);
+    communication_requests_.push_back(communication_request);
 
     SPDLOG_INFO("Robot {} added itself, count {}", robot_id_, kicker_distances_.count(robot_id_));
 }
@@ -232,7 +228,7 @@ void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication_request.broadcast = false;
     communication_request.urgent = true;
 
-    communication_request_.push(communication_request);
+    communication_requests_.push_back(communication_request);
 }
 
 communication::Acknowledge Position::acknowledge_pass(
@@ -260,7 +256,7 @@ void Position::pass_ball(int robot_id) {
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
-    communication_request_.push(communication_request);
+    communication_requests_.push_back(communication_request);
 
     derived_pass_ball();
 }

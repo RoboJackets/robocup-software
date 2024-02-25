@@ -113,7 +113,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    virtual std::queue<communication::PosAgentRequestWrapper> send_communication_request();
+    virtual std::deque<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -147,9 +147,6 @@ public:
     std::unordered_map<int, double> kicker_distances_;
 
     bool is_kicker_ = false;
-
-    // Request
-    std::queue<communication::PosAgentRequestWrapper> communication_request_ = {};
 
     /**
      * @brief receives and handles a pass_request
@@ -250,6 +247,9 @@ protected:
     bool our_possession_{};
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
     PlayState current_play_state_ = PlayState::halt();
+
+    // Current queue of requests to return to the AAC
+    std::deque<communication::PosAgentRequestWrapper> communication_requests_{};
 
     /*
      * @brief assert world_state is valid before using it in get_task().
