@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "idle.hpp"
+
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
@@ -16,47 +18,57 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
     }
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state,
-                                                          FieldDimensions& field_dimensions,
-                                                          PlayState& play_state) {
-    Position::get_task(world_state, field_dimensions, play_state);
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
+    // SPDLOG_INFO("Robot {} size {}", robot_id_, kicker_distances_.size());
+    // SPDLOG_INFO("Free Kick {}", current_play_state_.is_free_kick());
 
-    // If keeper, make no changes
     if (robot_id_ == 0) {
-        return current_position_->get_task(world_state, field_dimensions, play_state);
+        if (current_position_->get_name() != "Goalie") {
+            current_position_ = std::make_unique<Goalie>(robot_id_);
+        }
+        return current_position_->get_task(*last_world_state_, field_dimensions_,
+                                           current_play_state_);
     }
 
-    SPDLOG_INFO("Robot {} size {}", robot_id_, kicker_distances_.size());
-    SPDLOG_INFO("Free Kick {}", play_state.is_free_kick());
+    if (current_play_state_.is_free_kick()) {
+        std::string debug{};
+        for (const auto& elem : kicker_distances_) {
+            debug += std::to_string(elem.first) + "," + std::to_string(elem.second) + " ";
+        }
+        // SPDLOG_INFO("Robot {} map is {}", robot_id_, debug);
 
-    if (play_state.is_free_kick()) {
         if (kicker_distances_.count(robot_id_) == 0) {
             SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
             broadcast_kicker_request();
-            SPDLOG_INFO("Robot {} count in factory {}", robot_id_,
-                        kicker_distances_.count(robot_id_));
+            // SPDLOG_INFO("Robot {} count in factory {}", robot_id_,
+            //             kicker_distances_.count(robot_id_));
+
         } else if (kicker_distances_.size() == 5) {
-            if (is_kicker_) {
-                SPDLOG_INFO("Robot {} is chosen as free kicker", robot_id_);
-                current_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
+            if (get_closest_kicker(kicker_distances_).first == robot_id_) {
+                if (current_position_->get_name() != "GoalKicker") {
+                    SPDLOG_INFO("Robot {} is chosen as free kicker", robot_id_);
+
+                    current_position_ = std::make_unique<GoalKicker>(robot_id_);
+                }
+
             } else {
-                SPDLOG_INFO("Robot {} is not chosen as free kicker", robot_id_);
-                current_position_ = std::make_unique<Defense>(robot_id_);
+                if (current_position_->get_name() != "Defense") {
+                    SPDLOG_INFO("Robot {} is not chosen as free kicker", robot_id_);
+
+                    current_position_ = std::make_unique<Defense>(robot_id_);
+                }
             }
         } else {
-            current_position_ = std::make_unique<Defense>(robot_id_);
+            if (current_position_->get_name() != "Idle") {
+                current_position_ = std::make_unique<Idle>(robot_id_);
+            }
         }
     } else {
-        set_default_positions(world_state, field_dimensions);
+        set_default_positions(*last_world_state_, field_dimensions_);
     }
 
-    return current_position_->get_task(world_state, field_dimensions, play_state);
-}
-
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
-    [[maybe_unused]] RobotIntent intent) {
-    SPDLOG_ERROR("RobotFactory derived_get_task() should not be called!");
-    return std::nullopt;
+    return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
 }
 
 std::deque<communication::PosAgentRequestWrapper>
@@ -87,15 +99,9 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
     if (const communication::KickerRequest* kicker_request =
             std::get_if<communication::KickerRequest>(&request.request)) {
         kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
+
         SPDLOG_INFO("Robot {} recieved a kick request from {}", robot_id_,
                     kicker_request->robot_id);
-
-        // TODO(sanat): Edit this when Alive Robots exists
-        if (kicker_distances_.size() == 5) {
-            SPDLOG_INFO("Robot {} got 5", robot_id_);
-            std::pair<int, double> closest_kicker = get_closest_kicker(kicker_distances_);
-            is_kicker_ = (closest_kicker.first == robot_id_);
-        }
     }
     // Return the response
     return current_position_->receive_communication_request(request);
@@ -104,8 +110,11 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
 std::pair<int, double> RobotFactoryPosition::get_closest_kicker(
     const std::unordered_map<int, double>& kicker_distances) {
     // Return the max, comparing by distances only
-    return *std::max_element(kicker_distances.begin(), kicker_distances.end(),
+    return *std::min_element(kicker_distances.begin(), kicker_distances.end(),
                              [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
+                                 if (a.second == b.second) {
+                                     return a.first < b.first;
+                                 }
                                  return a.second < b.second;
                              });
 }
@@ -118,6 +127,7 @@ void RobotFactoryPosition::set_default_positions(WorldState& world_state,
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
     std::vector<RobotPos> robots_copy;
+    // TODO(Rishi) change this to alive robots soon
     for (int i = 0; i < 6; i++) {
         // Ignore goalie
         if (i == 0) {

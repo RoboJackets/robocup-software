@@ -178,7 +178,7 @@ void Position::broadcast_kicker_request() {
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = kicker_request;
-    communication_request.urgent = true;
+    communication_request.urgent = false;
     communication_request.broadcast = true;
     communication_requests_.push_back(communication_request);
 

@@ -5,6 +5,8 @@ namespace strategy {
 Offense::Offense(int r_id) : Position(r_id) {
     position_name_ = "Offense";
     current_state_ = IDLING;
+
+    SPDLOG_INFO("Robot {} has now become Offense", r_id);
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
