@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -10,17 +10,15 @@
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_utils/logging.hpp>
 
-#include "rclcpp/utilities.hpp"
-
 #include "planning/instant.hpp"
 #include "position.hpp"
+#include "rclcpp/utilities.hpp"
 #include "rj_common/field_dimensions.hpp"
 #include "rj_common/time.hpp"
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
 #include "role_interface.hpp"
-
 
 namespace strategy {
 
@@ -52,7 +50,7 @@ private:
     std::vector<u_int8_t> waller_ids_;  // list of wallers
 
     // max distance away the ball can be from a waller for it to jump out and kick it
-    const float CLEAR_DIST = 0.75; 
+    const float CLEAR_DIST = 0.75;
 
     static constexpr double robot_diameter_multiplier_ = 1.5;
 };

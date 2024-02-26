@@ -59,12 +59,12 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     rj_geometry::Point ball_pt = world_state->ball.position;
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     double distance_to_ball = robot_position.dist_to(ball_pt);
-    
+
     // 0.75 or less is the starting value for distance
     bool dont_kick = true;
-    
+
     // checks to see if ball is within the kicking distance
-    if (distance_to_ball < CLEAR_DIST) {  
+    if (distance_to_ball < CLEAR_DIST) {
         std::sort(waller_ids_.begin(), waller_ids_.end());
         int median_id = waller_ids_[waller_ids_.size() / 2];
 
@@ -72,24 +72,23 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
         // this is just an arbitrary decision that works good enough
         if (robot_id_ == median_id) {
             planning::LinearMotionInstant target{field_dimensions.their_goal_loc()};
-            intent.motion_command =
-            planning::MotionCommand{"line_kick", target};
-            
+            intent.motion_command = planning::MotionCommand{"line_kick", target};
+
             intent.shoot_mode = RobotIntent::ShootMode::CHIP;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
             intent.kick_speed = 4.0;
             intent.dribbler_speed = 255.0;
             intent.is_active = true;
             dont_kick = false;
-        }        
-    } 
-    
+        }
+    }
+
     // standard waller behavior
     if (dont_kick) {
         // Create Motion Command
         planning::LinearMotionInstant target{target_point, target_vel};
         intent.motion_command =
-        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+            planning::MotionCommand{"path_target", target, face_option, ignore_ball};
     }
     return intent;
 }
