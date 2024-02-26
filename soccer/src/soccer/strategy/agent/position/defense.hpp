@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -41,6 +42,7 @@ public:
 
 private:
     int move_ct_ = 0;
+
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot

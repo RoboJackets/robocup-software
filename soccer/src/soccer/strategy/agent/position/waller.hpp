@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <algorithm>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -8,6 +9,8 @@
 
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_utils/logging.hpp>
+#include <iostream> // delete after working for debugging only
+
 #include "rclcpp/utilities.hpp"
 
 #include "planning/instant.hpp"
@@ -29,7 +32,7 @@ namespace strategy {
  */
 class Waller : public RoleInterface {
 public:
-    Waller(int waller_num, int robot_id, int total_wallers);
+    Waller(int waller_num, int robot_id, int total_wallers, std::vector<u_int8_t> waller_ids);
     ~Waller() = default;
 
     /**
@@ -47,8 +50,9 @@ private:
     int waller_pos_;
     int robot_id_;
     int total_wallers_;
+    std::vector<u_int8_t> waller_ids_;
 
-    const float CLEAR_DIST = 0.75;
+    const float CLEAR_DIST = 0.75; // was 0.75
 
     static constexpr double robot_diameter_multiplier_ = 1.5;
 };

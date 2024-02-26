@@ -2,11 +2,12 @@
 
 namespace strategy {
 
-Waller::Waller(int waller_num, int robot_id, int total_wallers) {
+Waller::Waller(int waller_num, int robot_id, int total_wallers, std::vector<u_int8_t> waller_ids) {
     defense_type_ = "Waller";
     waller_pos_ = waller_num;
     robot_id_ = robot_id;
     total_wallers_ = total_wallers;
+    waller_ids_ = waller_ids;
 }
 
 std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState* world_state,
@@ -58,32 +59,51 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     double distance_to_ball = robot_position.dist_to(ball_pt);
 
-
-    // Create a temporary node to get a logger
-    auto temporary_node = std::make_shared<rclcpp::Node>("temporary_node");
-
-    // Use logging macros to log messages
-     RCLCPP_INFO(temporary_node->get_logger(), "before: Waller %d is %f distance to the ball.", robot_id_, distance_to_ball);
     
     // 0.75 or less is the starting value for distance
-
+    bool dont_kick = true;
+    
     if (distance_to_ball < CLEAR_DIST) {
-        planning::LinearMotionInstant target{ball_pt, target_vel};
-        intent.motion_command =
-        planning::MotionCommand{"path_target", target, face_option, false};
-        
-        intent.shoot_mode = RobotIntent::ShootMode::CHIP;
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 4.0;
-        intent.dribbler_speed = 255.0;
-        intent.is_active = true;
-        RCLCPP_INFO(temporary_node->get_logger(), "Waller %d is %f distance to the ball and is kicking!", robot_id_, distance_to_ball);
-    } else {
+        /*
+        int smallest_id = 999;
+        for (int waller_id : waller_ids_) {
+            if (waller_id < smallest_id) {
+                smallest_id = waller_id;
+            }
+        } */
+
+        std::sort(waller_ids_.begin(), waller_ids_.end());
+        int median_id = waller_ids_[waller_ids_.size() / 2];
+
+        std:string ids = "waller ids are ";
+        for (int i : waller_ids_) {
+            ids.append(std::to_string(i) + " ");
+        }
+
+        SPDLOG_INFO(ids);
+
+        if (robot_id_ == median_id) {
+            planning::LinearMotionInstant target{field_dimensions.their_goal_loc()};
+            intent.motion_command =
+            planning::MotionCommand{"line_kick", target};
+            
+            intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 4.0;
+            intent.dribbler_speed = 255.0;
+            intent.is_active = true;
+            //SPDLOG_INFO("Waller {} is {} distance to the ball and is kicking!", robot_id_, distance_to_ball);
+            SPDLOG_INFO("Waller {} is kicking!!", robot_id_);
+            dont_kick = false;
+        }        
+    } 
+    
+    if (dont_kick) {
         // Create Motion Command
         planning::LinearMotionInstant target{target_point, target_vel};
         intent.motion_command =
         planning::MotionCommand{"path_target", target, face_option, ignore_ball};
-        RCLCPP_INFO(temporary_node->get_logger(), "Waller %d is %f distance to the ball and is not kicking", robot_id_, distance_to_ball);
+        // SPDLOG_INFO("Waller {} is {} distance to the ball and is not kicking", robot_id_, distance_to_ball);
     }
     return intent;
 }
