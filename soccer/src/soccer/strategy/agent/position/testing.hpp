@@ -33,6 +33,7 @@ private:
     };
 
     inline static std::vector<bool> is_running_;
+    inline static int counter = 0;
     bool move_on_ = false;
     int r_id_;
     inline static bool lock_ = false;
