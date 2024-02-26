@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-Testing::Testing(int r_id) : Position(r_id), off_(r_id_){
+Testing::Testing(int r_id) : Position(r_id), off_(r_id_) {
     position_name_ = "Testing";
     current_state_ = IDLING;
     move_on_ = false;
@@ -38,7 +38,7 @@ Testing::State Testing::update_state() {
             }
             break;
         }
-            
+
         case BASIC_MOVEMENT_1: {
             if (proceed()) {
                 move_on_ = false;
@@ -96,7 +96,6 @@ Testing::State Testing::update_state() {
 
         default:
             next_state = IDLING;
-
     }
 
     return next_state;
@@ -106,7 +105,6 @@ std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
     WorldState* world_state = this->last_world_state_;
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     switch (current_state_) {
-
         case IDLING: {
             break;
         }
@@ -119,20 +117,22 @@ std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
             intent.is_active = true;
             break;
         }
-        
+
         case BASIC_MOVEMENT_2: {
             rj_geometry::Point target_pos = rj_geometry::Point(-.24 + .6 * robot_id_, 7.0);
             planning::LinearMotionInstant target{target_pos};
-            planning::PathTargetFaceOption face_option{planning::FacePoint{rj_geometry::Point{0, 4.5}}};
+            planning::PathTargetFaceOption face_option{
+                planning::FacePoint{rj_geometry::Point{0, 4.5}}};
             auto motion_cmd = planning::MotionCommand{"path_target", target, face_option};
             intent.motion_command = motion_cmd;
             intent.is_active = true;
-            break; 
+            break;
         }
 
         case SPIN_1: {
             planning::LinearMotionInstant target{robot_position};
-            planning::PathTargetFaceOption face_option{planning::FacePoint{rj_geometry::Point{robot_position.y(), 0.0}}};
+            planning::PathTargetFaceOption face_option{
+                planning::FacePoint{rj_geometry::Point{robot_position.y(), 0.0}}};
             auto motion_cmd = planning::MotionCommand{"path_target", target, face_option, true};
             intent.motion_command = motion_cmd;
             intent.is_active = true;
@@ -141,7 +141,8 @@ std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
 
         case SPIN_2: {
             planning::LinearMotionInstant target{robot_position};
-            planning::PathTargetFaceOption face_option{planning::FacePoint{rj_geometry::Point{robot_position.x(), 9.0}}};
+            planning::PathTargetFaceOption face_option{
+                planning::FacePoint{rj_geometry::Point{robot_position.x(), 9.0}}};
             auto motion_cmd = planning::MotionCommand{"path_target", target, face_option, true};
             intent.motion_command = motion_cmd;
             intent.is_active = true;
@@ -156,7 +157,6 @@ std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
         case LINEKICK: {
             return off_.derived_state_to_task(intent);
         }
-
     }
 
     return intent;
@@ -181,12 +181,8 @@ bool Testing::start() {
 bool Testing::is_ball_near_center() {
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
     return (ball_position.dist_to(rj_geometry::Point(0, 4.5)) < 0.5);
-
 }
 
-bool Testing::derived_check() {
-    return off_.derived_check_is_done();
-}
+bool Testing::derived_check() { return off_.derived_check_is_done(); }
 
-
-} // namespace strategy
+}  // namespace strategy

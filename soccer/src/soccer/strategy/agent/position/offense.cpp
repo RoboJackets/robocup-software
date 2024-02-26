@@ -437,17 +437,13 @@ rj_geometry::Point Offense::calculate_best_shot() {
     return best_shot;
 }
 
-void Offense::set_state_shooting() {
-    current_state_ = STEALING;
-}
+void Offense::set_state_shooting() { current_state_ = STEALING; }
 
 std::optional<RobotIntent> Offense::derived_state_to_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
-bool Offense::derived_check_is_done() {
-    return check_is_done();
-}
+bool Offense::derived_check_is_done() { return check_is_done(); }
 
 void Offense::set_globals(WorldState* world_state, FieldDimensions& field_dimensions) {
     field_dimensions_ = field_dimensions;
