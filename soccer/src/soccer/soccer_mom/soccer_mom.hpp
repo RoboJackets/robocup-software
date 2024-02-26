@@ -1,10 +1,11 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
+
 #include <rj_constants/topic_names.hpp>
 
-#include "std_msgs/msg/string.hpp"
 #include "rj_msgs/msg/team_color.hpp"
+#include "std_msgs/msg/string.hpp"
 
 namespace tutorial {
 
@@ -19,4 +20,4 @@ private:
     const std::string pub_topic_ = "team_fruit";
 };
 
-} // namespace tutorial
+}  // namespace tutorial

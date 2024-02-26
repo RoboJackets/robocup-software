@@ -21,13 +21,7 @@ public:
     ~Runner() override = default;
 
 private:
-
-    enum State {
-        LEFT_SIDE,
-        TOP_SIDE,
-        RIGHT_SIDE,
-        BOTTOM_SIDE
-    };
+    enum State { LEFT_SIDE, TOP_SIDE, RIGHT_SIDE, BOTTOM_SIDE };
 
     State current_state_ = LEFT_SIDE;
 
@@ -43,4 +37,4 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
 
-} // namespace strategy
+}  // namespace strategy

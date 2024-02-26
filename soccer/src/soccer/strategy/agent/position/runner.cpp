@@ -11,7 +11,8 @@ Runner::Runner(int r_id) : Position(r_id) {
 
 Runner::State Runner::update_state() {
     State next_state = current_state_;
-    rj_geometry::Point robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point robot_position =
+        this->last_world_state_->get_robot(true, robot_id_).pose.position();
 
     if (robot_position.nearly_equals(top_left_target_, 0.1)) {
         next_state = TOP_SIDE;
@@ -27,7 +28,6 @@ Runner::State Runner::update_state() {
 }
 
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
-
     planning::PathTargetFaceOption face_option = planning::FaceTarget{};
     bool ignore_ball = true;
     rj_geometry::Point target_pt;
@@ -45,9 +45,10 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
         // sending an empty MotionCommand
         return std::nullopt;
     }
-    
+
     planning::LinearMotionInstant target{target_pt, rj_geometry::Point{0.0, 0.0}};
-    intent.motion_command = planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+    intent.motion_command =
+        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
     return intent;
 }
 
@@ -56,6 +57,4 @@ std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
-} // namespace strategy
-
-
+}  // namespace strategy
