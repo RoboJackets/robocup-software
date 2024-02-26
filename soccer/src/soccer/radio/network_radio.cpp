@@ -16,118 +16,87 @@ using ip::udp;
 
 namespace radio {
 
-NetworkRadio::NetworkRadio() : socket_(io_service_), recv_buffer_{}, send_buffers_(kNumShells) {
-    connections_.resize(kNumShells);
+NetworkRadio::NetworkRadio()
+    : control_message_socket_(io_service_),
+      robot_status_socket_(io_service_),
+      alive_robots_socket_(io_service_),
+      send_buffers_(kNumShells) {
+    control_message_socket_.open(udp::v4());
+    control_message_socket_.bind(udp::endpoint(udp::v4(), kControlMessageSocketPort));
 
-    this->get_parameter("server_port", param_server_port_);
-    SPDLOG_INFO("Radio param_server_port_: {}", param_server_port_);
+    robot_status_socket_.open(udp::v4());
+    robot_status_socket_.bind(udp::endpoint(udp::v4(), kRobotStatusMessageSocketPort));
 
-    // socket must be opened before it can be bound to an endpoint
+    alive_robots_socket_.open(udp::v4());
+    alive_robots_socket_.bind(udp::endpoint(udp::v4(), kAliveRobotsMessageSocketPort));
 
-    // (Kevin) I don't understand networking well enough, but I believe putting
-    // udp::v4() instead of an address here means the field comp links to the
-    // Ubiquiti router
-    socket_.open(udp::v4());
-    socket_.bind(udp::endpoint(udp::v4(), param_server_port_));
-
-    start_receive();
-
-    alive_robots_pub_ =
-        this->create_publisher<rj_msgs::msg::AliveRobots>("strategy/alive_robots", rclcpp::QoS(1));
+    start_robot_status_receive();
+    start_alive_robots_receive();
 }
 
-void NetworkRadio::start_receive() {
-    // Set a receive callback
-    socket_.async_receive_from(boost::asio::buffer(recv_buffer_), robot_endpoint_,
-                               [this](const boost::system::error_code& error,
-                                      std::size_t num_bytes) { receive_packet(error, num_bytes); });
+void NetworkRadio::start_robot_status_receive() {
+    robot_status_socket_.async_receive_from(
+        boost::asio::buffer(robot_status_buffer_), robot_status_endpoint_,
+        [this](const boost::system::error_code& error, size_t num_bytes) {
+            receive_robot_status(error, num_bytes);
+        });
 }
 
-void NetworkRadio::send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                        const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                        strategy::Positions role) {
+void NetworkRadio::start_alive_robots_receive() {
+    alive_robots_socket_.async_receive_from(
+        boost::asio::buffer(alive_robots_buffer_), alive_robots_endpoint_,
+        [this](const boost::system::error_code& error, size_t num_bytes) {
+            receive_alive_robots(error, num_bytes);
+        });
+}
+
+void NetworkRadio::send_control_message(uint8_t robot_id,
+                                        const rj_msgs::msg::MotionSetpoint& motion,
+                                        const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                                        strategy::Positions role) {
     // Build the control packet for this robot.
-    std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
+    std::array<uint8_t, sizeof(rtp::ControlMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
-    fill_header(header);
+    auto* body = reinterpret_cast<rtp::ControlMessage*>(&forward_packet_buffer[0]);
 
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    auto* body = reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
+    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, blue_team());
 
-    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role);
-
-    // Fetch the connection
-    auto maybe_connection = connections_.at(robot_id);
-
-    // If there exists a connection, we can send.
-    if (maybe_connection) {
-        const RobotConnection& connection = maybe_connection.value();
-        // Check if we've timed out.
-        if (RJ::now() + kTimeout < connection.last_received) {
-            // Remove the endpoint from the IP map and the connection list
-            assert(robot_ip_map_.erase(connection.endpoint) == 1);  // NOLINT
-            connections_.at(robot_id) = std::nullopt;
-            publish_alive_robots();
-        } else {
-            // Send to the given IP address
-            const udp::endpoint& robot_endpoint = connection.endpoint;
-            socket_.async_send_to(
-                boost::asio::buffer(forward_packet_buffer), robot_endpoint,
-                [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
-                    // Handle errors.
-                    if (static_cast<bool>(error)) {
-                        SPDLOG_ERROR(  // NOLINT(bugprone-lambda-function-name)
-                            "Error sending: {}.", error);
-                    }
-                });
-        }
-    }
+    control_message_socket_.async_send_to(
+        boost::asio::buffer(forward_packet_buffer), control_message_endpoint_,
+        [](const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
+            if (static_cast<bool>(error)) {
+                SPDLOG_ERROR("Error Sending: {}", error.message());
+            }
+        });
 }
 
-void NetworkRadio::receive() {
+void NetworkRadio::poll_receive() {
     // Let boost::asio handle callbacks
     io_service_.poll();
 }
 
-void NetworkRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
+void NetworkRadio::switch_team(bool blue_team) {
+    // TODO (Nate): Send some command to the base station to switch teams.
+}
+
+void NetworkRadio::receive_robot_status(const boost::system::error_code& error, size_t num_bytes) {
     if (static_cast<bool>(error)) {
-        SPDLOG_ERROR("Error sending: {}.", error);
+        SPDLOG_ERROR("Error Receiving Robot Status: {}.", error.message());
+        start_robot_status_receive();
         return;
     }
-    if (num_bytes != rtp::ReverseSize) {
-        SPDLOG_ERROR("Invalid packet length: expected {}, got {}", rtp::ReverseSize, num_bytes);
+    if (num_bytes != sizeof(rtp::RobotStatusMessage)) {
+        SPDLOG_ERROR("Invalid packet length: expected {}, got {}", sizeof(rtp::RobotStatusMessage),
+                     num_bytes);
+        start_robot_status_receive();
         return;
     }
 
-    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&recv_buffer_[rtp::HeaderSize]);
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&robot_status_buffer_[0]);
 
-    robot_endpoint_.port(kRobotEndpointPort);
-
-    int robot_id = msg->uid;
-
-    auto iter = robot_ip_map_.find(robot_endpoint_);
-    if (iter != robot_ip_map_.end() && iter->second != robot_id) {
-        // Make sure this IP address isn't mapped to another robot ID.
-        // If it is, remove the entry and the connections corresponding
-        // to both this ID and this IP address.
-        connections_.at(iter->second) = std::nullopt;
-        robot_ip_map_.erase(iter);
-        connections_.at(robot_id) = std::nullopt;
-        publish_alive_robots();
-    }
-
-    // Update assignments.
-    if (!connections_.at(robot_id)) {
-        connections_.at(robot_id) = RobotConnection{robot_endpoint_, RJ::now()};
-        robot_ip_map_.insert({robot_endpoint_, robot_id});
-        publish_alive_robots();
-    } else {
-        // Update the timeout watchdog
-        connections_.at(robot_id)->last_received = RJ::now();
-    }
+    int robot_id = msg->robot_id;
 
     // Extract the rtp to a regular struct.
     rj_msgs::msg::RobotStatus status_ros;
@@ -135,30 +104,40 @@ void NetworkRadio::receive_packet(const boost::system::error_code& error, std::s
     ConvertRx::rtp_to_status(*msg, &status);
     ConvertRx::status_to_ros(status, &status_ros);
 
-    publish(robot_id, status_ros);
+    publish_robot_status(robot_id, status_ros);
 
     // Restart receiving
-    start_receive();
+    start_robot_status_receive();
 }
 
-void NetworkRadio::switch_team(bool /*blue_team*/) {}
+void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, size_t num_bytes) {
+    if (static_cast<bool>(error)) {
+        SPDLOG_ERROR("Error Receiving Alive Robots: {}", error.message());
+        start_alive_robots_receive();
+        return;
+    }
 
-void NetworkRadio::publish_alive_robots() {
-    std::vector<u_int8_t> alive_robots = {};
-    for (u_int8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
-        try {
-            if (connections_.at(robot_id) != std::nullopt) {
-                alive_robots.push_back(robot_id);
-            }
-        } catch (std::out_of_range err) {
-            continue;
+    if (num_bytes != 2) {
+        SPDLOG_ERROR("Invalid Packet Length: expected {}, got {}", 2, num_bytes);
+        start_alive_robots_receive();
+        return;
+    }
+
+    uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
+    for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        if ((alive & (1 << robot_id)) != 0) {
+            alive_robots_[robot_id] = true;
+        } else {
+            alive_robots_[robot_id] = false;
         }
     }
 
-    // publish a message containing the alive robots
     rj_msgs::msg::AliveRobots alive_message{};
-    alive_message.alive_robots = alive_robots;
-    alive_robots_pub_->publish(alive_message);
+    alive_message.alive_robots = alive_robots_;
+    publish_alive_robots(alive_message);
+
+    // Restart Receiving
+    start_alive_robots_receive();
 }
 
 }  // namespace radio
