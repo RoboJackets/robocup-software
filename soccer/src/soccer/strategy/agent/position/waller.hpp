@@ -9,7 +9,6 @@
 
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_utils/logging.hpp>
-#include <iostream> // delete after working for debugging only
 
 #include "rclcpp/utilities.hpp"
 
@@ -50,9 +49,10 @@ private:
     int waller_pos_;
     int robot_id_;
     int total_wallers_;
-    std::vector<u_int8_t> waller_ids_;
+    std::vector<u_int8_t> waller_ids_;  // list of wallers
 
-    const float CLEAR_DIST = 0.75; // was 0.75
+    // max distance away the ball can be from a waller for it to jump out and kick it
+    const float CLEAR_DIST = 0.75; 
 
     static constexpr double robot_diameter_multiplier_ = 1.5;
 };

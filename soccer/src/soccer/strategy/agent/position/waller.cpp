@@ -55,33 +55,21 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     // Avoid ball
     bool ignore_ball{true};
 
+    // find distance to ball
     rj_geometry::Point ball_pt = world_state->ball.position;
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     double distance_to_ball = robot_position.dist_to(ball_pt);
-
     
     // 0.75 or less is the starting value for distance
     bool dont_kick = true;
     
-    if (distance_to_ball < CLEAR_DIST) {
-        /*
-        int smallest_id = 999;
-        for (int waller_id : waller_ids_) {
-            if (waller_id < smallest_id) {
-                smallest_id = waller_id;
-            }
-        } */
-
+    // checks to see if ball is within the kicking distance
+    if (distance_to_ball < CLEAR_DIST) {  
         std::sort(waller_ids_.begin(), waller_ids_.end());
         int median_id = waller_ids_[waller_ids_.size() / 2];
 
-        std:string ids = "waller ids are ";
-        for (int i : waller_ids_) {
-            ids.append(std::to_string(i) + " ");
-        }
-
-        SPDLOG_INFO(ids);
-
+        // if the robot is the median robot id, kick
+        // this is just an arbitrary decision that works good enough
         if (robot_id_ == median_id) {
             planning::LinearMotionInstant target{field_dimensions.their_goal_loc()};
             intent.motion_command =
@@ -92,18 +80,16 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
             intent.kick_speed = 4.0;
             intent.dribbler_speed = 255.0;
             intent.is_active = true;
-            //SPDLOG_INFO("Waller {} is {} distance to the ball and is kicking!", robot_id_, distance_to_ball);
-            SPDLOG_INFO("Waller {} is kicking!!", robot_id_);
             dont_kick = false;
         }        
     } 
     
+    // standard waller behavior
     if (dont_kick) {
         // Create Motion Command
         planning::LinearMotionInstant target{target_point, target_vel};
         intent.motion_command =
         planning::MotionCommand{"path_target", target, face_option, ignore_ball};
-        // SPDLOG_INFO("Waller {} is {} distance to the ball and is not kicking", robot_id_, distance_to_ball);
     }
     return intent;
 }
