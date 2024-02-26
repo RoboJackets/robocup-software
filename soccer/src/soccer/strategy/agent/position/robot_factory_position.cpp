@@ -8,11 +8,11 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
     // current_position_ = std::make_unique<Testing>(robot_id_);
 
     if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_); // std::make_unique<Testing>(robot_id_);
+        current_position_ =
+            std::make_unique<Goalie>(robot_id_);  // std::make_unique<Testing>(robot_id_);
     } else if (robot_id_ == 1) {
         current_position_ = std::make_unique<Offense>(robot_id_);
-    }  
-    else {
+    } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
 }
@@ -21,7 +21,7 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
                                                           FieldDimensions& field_dimensions) {
     // If keeper, make no changes
     // if (robot_id_ == 0) {
-        
+
     // Just do basics for now
     return current_position_->get_task(world_state, field_dimensions);
     // }

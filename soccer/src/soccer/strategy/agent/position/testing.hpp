@@ -1,35 +1,34 @@
 #pragma once
 
-#include <spdlog/spdlog.h>
-#include <vector>
 #include <algorithm>
+#include <vector>
 
-#include "position.hpp"
-#include "offense.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include <spdlog/spdlog.h>
+
 #include <rj_constants/constants.hpp>
 
+#include "offense.hpp"
+#include "position.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "rj_geometry/point.hpp"
 
 namespace strategy {
 
 class Testing : public Position {
-
 public:
     Testing(int r_id);
     ~Testing() override = default;
 
 private:
-
     enum State {
         NULLOPT,
         IDLING,
-        BASIC_MOVEMENT_1, // move robot to location
-        BASIC_MOVEMENT_2, // move robot in straight line
-        BRING_TO_CENTER, // bring ball to center
-        SPIN_1, // spin 180
-        SPIN_2, // spin other 180
-        LINEKICK, // test line kick by kicking in goal
+        BASIC_MOVEMENT_1,  // move robot to location
+        BASIC_MOVEMENT_2,  // move robot in straight line
+        BRING_TO_CENTER,   // bring ball to center
+        SPIN_1,            // spin 180
+        SPIN_2,            // spin other 180
+        LINEKICK,          // test line kick by kicking in goal
     };
 
     inline static std::vector<bool> is_running_;
@@ -52,4 +51,4 @@ private:
     bool is_ball_near_center();
 };
 
-} // namespace strategy
+}  // namespace strategy
