@@ -14,6 +14,10 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
+std::string Offense::return_current_state() {
+    return "Offense" + static_cast<int>(current_state_);
+}
+
 Offense::State Offense::update_state() {
     State next_state = current_state_;
     // handle transitions between current state

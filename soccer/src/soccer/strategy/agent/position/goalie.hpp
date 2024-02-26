@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 
 #include <spdlog/spdlog.h>
 
@@ -27,6 +28,8 @@ public:
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
+
+    std::string return_current_state() override;
 
 private:
     // point goalie will aim for when clearing balls
