@@ -6,7 +6,7 @@ Testing::Testing(int r_id) : Position(r_id), off_(r_id_){
     position_name_ = "Testing";
     current_state_ = IDLING;
     move_on_ = false;
-    r_id_ = r_id;
+    r_id_ = counter++;
     is_running_.emplace_back(true);
 }
 
@@ -14,6 +14,9 @@ std::optional<RobotIntent> Testing::derived_get_task(RobotIntent intent) {
     off_.set_globals(last_world_state_, field_dimensions_);
     current_state_ = update_state();
     SPDLOG_INFO(current_state_);
+    // if (r_id_ == 1) {
+    SPDLOG_INFO("Next says {}", next_);
+    // }
     return state_to_task(intent);
 }
 
@@ -47,7 +50,8 @@ Testing::State Testing::update_state() {
         case BASIC_MOVEMENT_2: {
             if (proceed()) {
                 move_on_ = false;
-                next_state = SPIN_1;
+                next_state = IDLING;
+                next_ = BRING_TO_CENTER;
             }
             break;
         }
@@ -60,10 +64,9 @@ Testing::State Testing::update_state() {
         }
 
         case SPIN_2: {
-            if (proceed()) {
+            if (check_is_done()) {
                 move_on_ = false;
                 next_state = SPIN_1;
-                next_ = BRING_TO_CENTER;
             }
         }
 
@@ -120,7 +123,8 @@ std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
         case BASIC_MOVEMENT_2: {
             rj_geometry::Point target_pos = rj_geometry::Point(-.24 + .6 * robot_id_, 7.0);
             planning::LinearMotionInstant target{target_pos};
-            auto motion_cmd = planning::MotionCommand{"path_target", target};
+            planning::PathTargetFaceOption face_option{planning::FacePoint{rj_geometry::Point{0, 4.5}}};
+            auto motion_cmd = planning::MotionCommand{"path_target", target, face_option};
             intent.motion_command = motion_cmd;
             intent.is_active = true;
             break; 

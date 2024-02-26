@@ -438,7 +438,7 @@ rj_geometry::Point Offense::calculate_best_shot() {
 }
 
 void Offense::set_state_shooting() {
-    current_state_ = SHOOTING;
+    current_state_ = STEALING;
 }
 
 std::optional<RobotIntent> Offense::derived_state_to_task(RobotIntent intent) {
