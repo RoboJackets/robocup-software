@@ -224,8 +224,6 @@ communication::Acknowledge Defense::handle_leave_wall_request(
         }
     }
 
-    
-
     communication::Acknowledge acknowledge_response{};
     communication::generate_uid(acknowledge_response);
 
