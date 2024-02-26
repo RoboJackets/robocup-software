@@ -10,7 +10,10 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
-        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
+        if (robot_id_ == 1) {
+            SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
+        }
+
     }
 
     current_state_ = new_state;
@@ -73,9 +76,17 @@ Offense::State Offense::next_state() {
             return POSSESSION;
         }
 
+        case PASSING_START: {
+             if (check_is_done()) {
+                return PASSING;
+            }
+            return PASSING_START;
+        }
+
         case PASSING: {
             // If we've finished passing, cool!
             if (check_is_done()) {
+                pass_ball(pass_to_robot_id_);
                 return DEFAULT;
             }
 
@@ -139,7 +150,10 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING_START: {
-            return SHOOTING;
+            if (check_is_done()) {
+                return SHOOTING;
+            }
+            return SHOOTING_START;
         }
 
         case SHOOTING: {
@@ -177,6 +191,20 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case POSSESSION: {
+            return intent;
+        }
+
+        case PASSING_START: {
+            rj_geometry::Point ball_position = last_world_state_->ball.position;
+            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+            auto move_vector = (current_pos - ball_position).normalized(0.2);
+
+            planning::LinearMotionInstant target{ball_position + move_vector};
+            planning::MotionCommand prep_command{"path_target", target,
+                planning::FaceBall{}};
+
+            intent.motion_command = prep_command;
+
             return intent;
         }
 
@@ -218,7 +246,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
             // planning::LinearMotionInstant stay_in_place {current_pos};
 
-            // intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}, false};
+                       // intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}, false};
 
                 auto collect_cmd = planning::MotionCommand{"collect"};
                 intent.motion_command = collect_cmd;
@@ -267,7 +295,16 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intent.shoot_mode = RobotIntent::ShootMode::KICK;
             // intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
             // intent.kick_speed = 4.0;
-            intent.motion_command = planning::MotionCommand{};
+
+            rj_geometry::Point ball_position = last_world_state_->ball.position;
+            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+            auto move_vector = (current_pos - ball_position).normalized(0.2);
+
+            planning::LinearMotionInstant target{ball_position + move_vector};
+            planning::MotionCommand prep_command{"path_target", target,
+                planning::FaceBall{}};
+
+            intent.motion_command = prep_command;
 
             return intent;
         }
@@ -334,6 +371,49 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
     return comm_response;
 }
 
+// Receiving a response. THis means we initiated a request earlier
+void Offense::receive_communication_response(communication::AgentPosResponseWrapper response) {
+    for (u_int32_t i = 0; i < response.responses.size(); i++) {
+        if (const communication::Acknowledge* acknowledge =
+                std::get_if<communication::Acknowledge>(&response.responses[i])) {
+            // if the acknowledgement is from an incoming pass request -> pass the ball
+            if (const communication::IncomingBallRequest* incoming_ball_request =
+                    std::get_if<communication::IncomingBallRequest>(&response.associated_request)) {
+                // SPDLOG_INFO("Robot {} received incoming ball request",
+                // robot_id_);
+
+                // Chosen Robot has told us they are ready to receive
+                current_state_ = PASSING_START;
+                pass_to_robot_id_ = response.received_robot_ids[i];
+
+                // pass_ball(response.received_robot_ids[i]);
+            }
+
+        } else if (const communication::PassResponse* pass_response =
+                       std::get_if<communication::PassResponse>(&response.responses[i])) {
+            // get the associated pass request for this response
+            // SPDLOG_INFO("Robot {} receives pass response", robot_id_);
+
+            // Robot has told us they are open
+            if (const communication::PassRequest* sent_pass_request =
+                    std::get_if<communication::PassRequest>(&response.associated_request)) {
+                // SPDLOG_INFO(
+                    // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
+                    // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
+                    // pass_response->direct_open);
+
+                if (sent_pass_request->direct && pass_response->direct_open) {
+                    // if direct -> pass to first robot
+                    // SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
+                    send_pass_confirmation(response.received_robot_ids[i]);
+                    // pass_to_robot_id_ = response.received_robot_ids[i];
+                    // current_state_ = PASSING_START;
+                }
+            }
+        }
+    }
+}
+
 void Offense::derived_acknowledge_pass() {
     // I have been chosen as the receiver
     current_state_ = RECEIVING_START;
@@ -344,7 +424,7 @@ void Offense::derived_pass_ball() {
     // However, if we've since started shooting, just do that.
     // Otherwise, we can now pass because somebody has accepted our pass.
     if (current_state_ != SHOOTING) {
-        current_state_ = PASSING;
+        // current_state_ = PASSING_START;
     }
 }
 
@@ -354,6 +434,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
 }
 
 bool Offense::has_open_shot() const {
+    return false;
     // Ball position
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 

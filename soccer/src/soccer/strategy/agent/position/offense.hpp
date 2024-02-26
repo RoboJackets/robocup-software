@@ -32,6 +32,8 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
+    void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
@@ -50,6 +52,7 @@ private:
         SEEKING,           // Get open
         POSSESSION_START,  // Try to shoot and send pass request
         POSSESSION,        // Holding the ball
+        PASSING_START,     // Prepare to pass
         PASSING,           // Getting rid of it
         STEALING,          // Getting the ball
         RECEIVING_START,   // Facing the ball
@@ -96,10 +99,12 @@ private:
                 return RJ::Seconds{-1};
             case POSSESSION_START:
                 return RJ::Seconds{-1};
+            case PASSING_START:
+                return RJ::Seconds(-1);
             case PASSING:
                 return RJ::Seconds{5};
             case STEALING:
-                return RJ::Seconds{5};
+                return RJ::Seconds{10};
             case RECEIVING_START:
                 return RJ::Seconds{5};
             case RECEIVING:
@@ -124,6 +129,8 @@ private:
                 return "POSSESSION";
             case POSSESSION_START:
                 return "POSSESSION_START";
+            case PASSING_START:
+                return "PASSING_START";
             case PASSING:
                 return "PASSING";
             case STEALING:
@@ -133,7 +140,7 @@ private:
             case RECEIVING:
                 return "RECEIVING";
             case SHOOTING_START:
-                return "SHOOTING";
+                return "SHOOTING_START";
             case SHOOTING:
                 return "SHOOTING";
         }
@@ -163,6 +170,8 @@ private:
 
     // The time at which the last state started.
     RJ::Time last_time_;
+
+    int pass_to_robot_id_ = 0;
 
     /* RoleInterface Members */
     Seeker seeker_;
