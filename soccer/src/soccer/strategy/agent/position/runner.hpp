@@ -23,13 +23,18 @@ public:
 private:
 
     enum State {
-        LEFT,
-        TOP,
-        RIGHT,
-        BOTTOM
+        LEFT_SIDE,
+        TOP_SIDE,
+        RIGHT_SIDE,
+        BOTTOM_SIDE
     };
 
-    State current_state_ = LEFT;
+    State current_state_ = LEFT_SIDE;
+
+    const rj_geometry::Point top_left_target_{2.83, 1.39};
+    const rj_geometry::Point top_right_target_{-2.83, 1.39};
+    const rj_geometry::Point bottom_right_target_{-2.83, 7.7};
+    const rj_geometry::Point bottom_left_target_{2.83, 7.7};
 
     State update_state();
 

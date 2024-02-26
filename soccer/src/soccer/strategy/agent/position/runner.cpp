@@ -6,26 +6,21 @@ namespace strategy {
 
 Runner::Runner(int r_id) : Position(r_id) {
     position_name_ = "Runner";
-    current_state_ = LEFT;
+    current_state_ = LEFT_SIDE;
 }
 
 Runner::State Runner::update_state() {
     State next_state = current_state_;
     rj_geometry::Point robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
 
-    rj_geometry::Point top_left_target_{2.83, 1.39};
-    rj_geometry::Point top_right_target_{-2.83, 1.39};
-    rj_geometry::Point bottom_right_target_{-2.83, 7.7};
-    rj_geometry::Point bottom_left_target_{2.83, 7.7};
-
     if (robot_position.nearly_equals(top_left_target_, 0.1)) {
-        next_state = TOP;
+        next_state = TOP_SIDE;
     } else if (robot_position.nearly_equals(top_right_target_, 0.1)) {
-        next_state = RIGHT;
+        next_state = RIGHT_SIDE;
     } else if (robot_position.nearly_equals(bottom_right_target_, 0.1)) {
-        next_state = BOTTOM;
+        next_state = BOTTOM_SIDE;
     } else if (robot_position.nearly_equals(bottom_left_target_, 0.1)) {
-        next_state = LEFT;
+        next_state = LEFT_SIDE;
     }
 
     return next_state;
@@ -35,16 +30,16 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 
     planning::PathTargetFaceOption face_option = planning::FaceTarget{};
     bool ignore_ball = true;
-    rj_geometry::Point target_pt{0.0, 0.0};
+    rj_geometry::Point target_pt;
 
-    if (current_state_ == LEFT) {
-        target_pt = rj_geometry::Point{2.83, 1.39};
-    } else if (current_state_ == TOP) {
-        target_pt = rj_geometry::Point{-2.83, 1.39};
-    } else if (current_state_ == RIGHT) {
-        target_pt = rj_geometry::Point{-2.83, 7.7};
-    } else if (current_state_ == BOTTOM) {
-        target_pt = rj_geometry::Point{2.83, 7.7};
+    if (current_state_ == LEFT_SIDE) {
+        target_pt = top_left_target_;
+    } else if (current_state_ == TOP_SIDE) {
+        target_pt = top_right_target_;
+    } else if (current_state_ == RIGHT_SIDE) {
+        target_pt = bottom_right_target_;
+    } else if (current_state_ == BOTTOM_SIDE) {
+        target_pt = bottom_left_target_;
     } else {
         // should be impossible to reach, but this is equivalent to
         // sending an empty MotionCommand
