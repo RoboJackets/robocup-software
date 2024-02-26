@@ -13,6 +13,7 @@ Testing::Testing(int r_id) : Position(r_id), off_(r_id_){
 std::optional<RobotIntent> Testing::derived_get_task(RobotIntent intent) {
     off_.set_globals(last_world_state_, field_dimensions_);
     current_state_ = update_state();
+    SPDLOG_INFO(current_state_);
     return state_to_task(intent);
 }
 
@@ -46,10 +47,24 @@ Testing::State Testing::update_state() {
         case BASIC_MOVEMENT_2: {
             if (proceed()) {
                 move_on_ = false;
-                next_state = IDLING;
-                next_ = BRING_TO_CENTER;
+                next_state = SPIN_1;
             }
             break;
+        }
+
+        case SPIN_1: {
+            if (check_is_done()) {
+                next_state = SPIN_2;
+            }
+            break;
+        }
+
+        case SPIN_2: {
+            if (proceed()) {
+                move_on_ = false;
+                next_state = SPIN_1;
+                next_ = BRING_TO_CENTER;
+            }
         }
 
         case BRING_TO_CENTER: {
@@ -85,6 +100,8 @@ Testing::State Testing::update_state() {
 }
 
 std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
+    WorldState* world_state = this->last_world_state_;
+    rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     switch (current_state_) {
 
         case IDLING: {
@@ -107,6 +124,24 @@ std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
             intent.motion_command = motion_cmd;
             intent.is_active = true;
             break; 
+        }
+
+        case SPIN_1: {
+            planning::LinearMotionInstant target{robot_position};
+            planning::PathTargetFaceOption face_option{planning::FacePoint{rj_geometry::Point{robot_position.y(), 0.0}}};
+            auto motion_cmd = planning::MotionCommand{"path_target", target, face_option, true};
+            intent.motion_command = motion_cmd;
+            intent.is_active = true;
+            break;
+        }
+
+        case SPIN_2: {
+            planning::LinearMotionInstant target{robot_position};
+            planning::PathTargetFaceOption face_option{planning::FacePoint{rj_geometry::Point{robot_position.x(), 9.0}}};
+            auto motion_cmd = planning::MotionCommand{"path_target", target, face_option, true};
+            intent.motion_command = motion_cmd;
+            intent.is_active = true;
+            break;
         }
 
         case BRING_TO_CENTER: {

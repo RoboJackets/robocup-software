@@ -7,6 +7,7 @@
 #include "position.hpp"
 #include "offense.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include <rj_constants/constants.hpp>
 
 #include "rj_geometry/point.hpp"
 
@@ -26,6 +27,8 @@ private:
         BASIC_MOVEMENT_1, // move robot to location
         BASIC_MOVEMENT_2, // move robot in straight line
         BRING_TO_CENTER, // bring ball to center
+        SPIN_1, // spin 180
+        SPIN_2, // spin other 180
         LINEKICK, // test line kick by kicking in goal
     };
 
