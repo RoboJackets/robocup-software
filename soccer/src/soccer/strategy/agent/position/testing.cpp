@@ -50,8 +50,17 @@ Testing::State Testing::update_state() {
         case BASIC_MOVEMENT_2: {
             if (proceed()) {
                 move_on_ = false;
-                next_state = IDLING;
-                next_ = BRING_TO_CENTER;
+                next_state = BASIC_MOVEMENT_3;
+                next_ = BASIC_MOVEMENT_3;
+            }
+            break;
+        }
+
+        case BASIC_MOVEMENT_3: {
+            if (proceed()) {
+                move_on_ = false;
+                next_state = BASIC_MOVEMENT_2;
+                next_ = BASIC_MOVEMENT_2;
             }
             break;
         }
@@ -123,7 +132,18 @@ std::optional<RobotIntent> Testing::state_to_task(RobotIntent intent) {
             planning::LinearMotionInstant target{target_pos};
             planning::PathTargetFaceOption face_option{
                 planning::FacePoint{rj_geometry::Point{0, 4.5}}};
-            auto motion_cmd = planning::MotionCommand{"path_target", target, face_option};
+            auto motion_cmd = planning::MotionCommand{"path_target", target, face_option, true};
+            intent.motion_command = motion_cmd;
+            intent.is_active = true;
+            break;
+        }
+
+        case BASIC_MOVEMENT_3: {
+            rj_geometry::Point target_pos = rj_geometry::Point(-.24 + .6 * robot_id_, 2);
+            planning::LinearMotionInstant target{target_pos};
+            planning::PathTargetFaceOption face_option{
+                planning::FacePoint{rj_geometry::Point{-3, 4.5}}};
+            auto motion_cmd = planning::MotionCommand{"path_target", target, face_option, true};
             intent.motion_command = motion_cmd;
             intent.is_active = true;
             break;
