@@ -105,8 +105,6 @@ void AgentActionClient::field_dimensions_callback(
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
     alive_robots_ = msg->alive_robots;
-    SPDLOG_INFO("alive robots size {}", alive_robots_.size());
-    current_position_->update_alive_robots(alive_robots_);
 }
 
 void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
