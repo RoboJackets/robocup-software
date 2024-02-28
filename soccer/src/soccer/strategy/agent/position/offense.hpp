@@ -110,7 +110,7 @@ private:
             case RECEIVING:
                 return RJ::Seconds{5};
             case SHOOTING_START:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{3};
             case SHOOTING:
                 return RJ::Seconds{-1};
         }
