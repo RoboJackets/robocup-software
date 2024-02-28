@@ -25,7 +25,7 @@ private:
         IDLING,
         BASIC_MOVEMENT_1,  // move robot to location
         BASIC_MOVEMENT_2,  // move robot in straight line
-        BASIC_MOVEMENT_3, // move robot back in straight line while staring at a fixed point
+        BASIC_MOVEMENT_3,  // move robot back in straight line while staring at a fixed point
         BRING_TO_CENTER,   // bring ball to center
         SPIN_1,            // spin 180
         SPIN_2,            // spin other 180
