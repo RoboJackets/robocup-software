@@ -18,6 +18,7 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goal_kicker.hpp"
+#include "strategy/agent/position/free_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
@@ -108,6 +109,22 @@ private:
         const std::unordered_map<int, double>& kicker_distances);
 
     void set_default_positions(WorldState& world_state, FieldDimensions& field_dimensions);
+
+    enum State {
+        FREE_KICK,
+        PENALTY_SETUP,
+        PENALTY_KICK,
+        KICKOFF_SETUP,
+        KICKOFF_KICK,
+        STOP,
+        PLAYING,
+    };
+
+    State current_state_ = STOP;
+
+    State update_state();
+
+    void state_to_task();
 };
 
 }  // namespace strategy
