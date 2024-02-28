@@ -55,7 +55,7 @@ public:
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
 
-    std::string return_current_state() override;
+    std::string get_current_state() override;
 
     void set_is_done() override;
     void die() override;
