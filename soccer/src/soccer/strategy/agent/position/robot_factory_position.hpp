@@ -15,6 +15,7 @@
 #include "rj_common/time.hpp"
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
+#include "strategy/agent/position/back_and_forth.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
@@ -22,7 +23,6 @@
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/testing.hpp"
-#include "strategy/agent/position/back_and_forth.hpp"
 
 namespace strategy {
 
