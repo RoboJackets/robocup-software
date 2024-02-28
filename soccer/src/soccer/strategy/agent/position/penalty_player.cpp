@@ -31,9 +31,7 @@ std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
-std::string PenaltyPlayer::get_current_state() {
-    return "PenaltyPlayer";
-}
+std::string PenaltyPlayer::get_current_state() { return "PenaltyPlayer"; }
 
 void PenaltyPlayer::derived_acknowledge_pass() {}
 

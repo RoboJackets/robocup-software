@@ -1,7 +1,8 @@
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
 #include <string>
+
+#include <rclcpp/rclcpp.hpp>
 
 #include "planning/instant.hpp"
 #include "planning/planner/motion_command.hpp"

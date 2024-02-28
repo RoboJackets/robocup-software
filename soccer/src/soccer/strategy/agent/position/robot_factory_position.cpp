@@ -120,6 +120,8 @@ void RobotFactoryPosition::die() { current_position_->die(); }
 
 void RobotFactoryPosition::revive() { current_position_->revive(); }
 
-std::string RobotFactoryPosition::get_current_state() { return current_position_->get_current_state(); }
+std::string RobotFactoryPosition::get_current_state() {
+    return current_position_->get_current_state();
+}
 
 }  // namespace strategy

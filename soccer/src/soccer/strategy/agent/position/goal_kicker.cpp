@@ -28,9 +28,7 @@ std::optional<RobotIntent> GoalKicker::derived_get_task(RobotIntent intent) {
     return intent;
 }
 
-std::string GoalKicker::get_current_state() {
-    return "GoalKicker";
-}
+std::string GoalKicker::get_current_state() { return "GoalKicker"; }
 
 void GoalKicker::derived_acknowledge_pass() {}
 

@@ -38,7 +38,6 @@ public:
     void derived_acknowledge_ball_in_transit() override;
     std::string get_current_state() override;
 
-
     void die() override;
     void revive() override;
 
