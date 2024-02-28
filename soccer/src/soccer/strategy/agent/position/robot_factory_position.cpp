@@ -28,46 +28,196 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
         }
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
-    }
+    }    
 
-    if (current_play_state_.is_free_kick()) {
-        std::string debug{};
-        for (const auto& elem : kicker_distances_) {
-            debug += std::to_string(elem.first) + "," + std::to_string(elem.second) + " ";
-        }
-        // SPDLOG_INFO("Robot {} map is {}", robot_id_, debug);
+    current_state_ = update_state();
 
-        if (kicker_distances_.count(robot_id_) == 0) {
-            SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
-            broadcast_kicker_request();
-            // SPDLOG_INFO("Robot {} count in factory {}", robot_id_,
-            //             kicker_distances_.count(robot_id_));
-
-        } else if (kicker_distances_.size() == 5) {
-            if (get_closest_kicker(kicker_distances_).first == robot_id_) {
-                if (current_position_->get_name() != "GoalKicker") {
-                    SPDLOG_INFO("Robot {} is chosen as free kicker", robot_id_);
-
-                    current_position_ = std::make_unique<GoalKicker>(robot_id_);
-                }
-
-            } else {
-                if (current_position_->get_name() != "Defense") {
-                    SPDLOG_INFO("Robot {} is not chosen as free kicker", robot_id_);
-
-                    current_position_ = std::make_unique<Defense>(robot_id_);
-                }
-            }
-        } else {
-            if (current_position_->get_name() != "Idle") {
-                current_position_ = std::make_unique<Idle>(robot_id_);
-            }
-        }
-    } else {
-        set_default_positions(*last_world_state_, field_dimensions_);
-    }
+    state_to_task();
 
     return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
+}
+
+RobotFactoryPosition::State RobotFactoryPosition::update_state() {
+    RobotFactoryPosition::State next_state = current_state_;
+    switch (current_state_) {
+        case FREE_KICK: {
+            if (!current_play_state_.is_free_kick()) {
+                kicker_distances_.clear();
+                next_state = PLAYING;
+            }
+            break;
+        } case PENALTY_SETUP: {
+            if (current_play_state_.is_penalty() && current_play_state_.is_ready()) {
+                next_state = PENALTY_KICK;
+            }
+            break;
+        } case PENALTY_KICK: {
+            if (!current_play_state_.is_penalty()) {
+                kicker_distances_.clear();
+                next_state = PLAYING;
+            }
+            break;
+        } case KICKOFF_SETUP: {
+            if (current_play_state_.is_kickoff() && current_play_state_.is_ready()) {
+                next_state = KICKOFF_KICK;
+            }
+            break;
+        } case KICKOFF_KICK: {
+            if (!current_play_state_.is_kickoff()) {
+                kicker_distances_.clear();
+                next_state = PLAYING;
+            }
+            break;
+        } case STOP: {
+            if (!current_play_state_.is_stop()) {
+                if (current_play_state_.is_free_kick()) {
+                    next_state = FREE_KICK;
+                } else if (current_play_state_.is_penalty() && current_play_state_.is_setup()) {
+                    next_state = PENALTY_SETUP;
+                } else if (current_play_state_.is_kickoff() && current_play_state_.is_setup()) {
+                    next_state = KICKOFF_SETUP;
+                } else {
+                    next_state = PLAYING;
+                }
+            }
+            break;
+        }case PLAYING: {
+            if (current_play_state_.is_free_kick()) {
+                next_state = FREE_KICK;
+            } else if (current_play_state_.is_penalty() && current_play_state_.is_setup()) {
+                next_state = PENALTY_SETUP;
+            } else if (current_play_state_.is_kickoff() && current_play_state_.is_setup()) {
+                next_state = KICKOFF_SETUP;
+            } else if (current_play_state_.is_stop()) {
+                next_state = STOP;
+            }
+            break;
+        }
+    }
+    return next_state;
+}
+
+
+void RobotFactoryPosition::state_to_task() {
+    switch (current_state_) {
+        case FREE_KICK: {
+            std::string debug{};
+            for (const auto& elem : kicker_distances_) {
+                debug += std::to_string(elem.first) + "," + std::to_string(elem.second) + " ";
+            }
+            // SPDLOG_INFO("Robot {} map is {}", robot_id_, debug);
+
+            if (kicker_distances_.count(robot_id_) == 0) {
+                SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
+                broadcast_kicker_request();
+                // SPDLOG_INFO("Robot {} count in factory {}", robot_id_,
+                //             kicker_distances_.count(robot_id_));
+
+            } else if (kicker_distances_.size() == 5) {
+                if (get_closest_kicker(kicker_distances_).first == robot_id_) {
+                    if (current_position_->get_name() != "FreeKicker") {
+                        SPDLOG_INFO("Robot {} is chosen as free kicker", robot_id_);
+
+                        current_position_ = std::make_unique<FreeKicker>(robot_id_);
+                    }
+
+                } else {
+                    if (current_position_->get_name() != "Defense") {
+                        SPDLOG_INFO("Robot {} is not chosen as free kicker", robot_id_);
+
+                        current_position_ = std::make_unique<Defense>(robot_id_);
+                    }
+                }
+            } else {
+                if (current_position_->get_name() != "Idle") {
+                    current_position_ = std::make_unique<Idle>(robot_id_);
+                }
+            }
+            break;
+        }
+        case PENALTY_SETUP: {
+            if (kicker_distances_.count(robot_id_) == 0) {
+                SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
+                broadcast_kicker_request();
+                // SPDLOG_INFO("Robot {} count in factory {}", robot_id_,
+                //             kicker_distances_.count(robot_id_));
+
+            } else if (kicker_distances_.size() == 5) {
+                if (get_closest_kicker(kicker_distances_).first == robot_id_) {
+                    if (current_position_->get_name() != "PenaltyPlayer") {
+                        SPDLOG_INFO("Robot {} is chosen as penalty kicker", robot_id_);
+
+                        current_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
+                    }
+
+                } else {
+                    if (current_position_->get_name() != "Defense") {
+                        SPDLOG_INFO("Robot {} is not chosen as penalty kicker", robot_id_);
+
+                        current_position_ = std::make_unique<Defense>(robot_id_);
+                    }
+                }
+            } else {
+                if (current_position_->get_name() != "Idle") {
+                    current_position_ = std::make_unique<Idle>(robot_id_);
+                }
+            }
+            break;
+        }
+        case PENALTY_KICK: {
+            if (current_position_->get_name() == "PenaltyPlayer") {
+                current_position_ = std::make_unique<GoalKicker>(robot_id_);
+            }
+            break;
+        }
+        case KICKOFF_SETUP: {
+            if (kicker_distances_.count(robot_id_) == 0) {
+                SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
+                broadcast_kicker_request();
+                // SPDLOG_INFO("Robot {} count in factory {}", robot_id_,
+                //             kicker_distances_.count(robot_id_));
+
+            } else if (kicker_distances_.size() == 5) {
+                if (get_closest_kicker(kicker_distances_).first == robot_id_) {
+                    if (current_position_->get_name() != "PenaltyPlayer") {
+                        SPDLOG_INFO("Robot {} is chosen as Kickoff kicker", robot_id_);
+
+                        current_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
+                    }
+
+                } else {
+                    if (current_position_->get_name() != "Defense") {
+                        SPDLOG_INFO("Robot {} is not chosen as penalty kicker", robot_id_);
+
+                        current_position_ = std::make_unique<Defense>(robot_id_);
+                    }
+                }
+            } else {
+                if (current_position_->get_name() != "Idle") {
+                    current_position_ = std::make_unique<Idle>(robot_id_);
+                }
+            }
+            break;
+        }
+        case KICKOFF_KICK: {
+            if (current_position_->get_name() == "PenaltyPlayer") {
+                current_position_ = std::make_unique<FreeKicker>(robot_id_);
+            }
+            break;
+        }
+        case STOP: {
+            // if (current_position_->get_name() != "Defense") {
+            //     current_position_ = std::make_unique<Defense>(robot_id_);
+            // }
+            set_default_positions(*last_world_state_, field_dimensions_);
+            SPDLOG_INFO("Robot {} Speed: {}", robot_id_, last_world_state_->get_robot(true, robot_id_).velocity.linear().mag());
+            break;
+        }
+        case PLAYING: {
+            set_default_positions(*last_world_state_, field_dimensions_);
+            break;
+        }
+    }
 }
 
 std::deque<communication::PosAgentRequestWrapper>
