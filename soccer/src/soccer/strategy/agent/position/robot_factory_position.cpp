@@ -18,8 +18,8 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
     }
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
-    [[maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
+    [maybe_unused]] RobotIntent intent) {
     // SPDLOG_INFO("Robot {} size {}", robot_id_, kicker_distances_.size());
     // SPDLOG_INFO("Free Kick {}", current_play_state_.is_free_kick());
 
@@ -29,7 +29,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
         }
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
-    }    
+    }
 
     current_state_ = update_state();
 
@@ -47,29 +47,34 @@ RobotFactoryPosition::State RobotFactoryPosition::update_state() {
                 next_state = PLAYING;
             }
             break;
-        } case PENALTY_SETUP: {
+        }
+        case PENALTY_SETUP: {
             if (current_play_state_.is_penalty() && current_play_state_.is_ready()) {
                 next_state = PENALTY_KICK;
             }
             break;
-        } case PENALTY_KICK: {
+        }
+        case PENALTY_KICK: {
             if (!current_play_state_.is_penalty()) {
                 kicker_distances_.clear();
                 next_state = PLAYING;
             }
             break;
-        } case KICKOFF_SETUP: {
+        }
+        case KICKOFF_SETUP: {
             if (current_play_state_.is_kickoff() && current_play_state_.is_ready()) {
                 next_state = KICKOFF_KICK;
             }
             break;
-        } case KICKOFF_KICK: {
+        }
+        case KICKOFF_KICK: {
             if (!current_play_state_.is_kickoff()) {
                 kicker_distances_.clear();
                 next_state = PLAYING;
             }
             break;
-        } case STOP: {
+        }
+        case STOP: {
             if (!current_play_state_.is_stop()) {
                 if (current_play_state_.is_free_kick()) {
                     next_state = FREE_KICK;
@@ -82,7 +87,8 @@ RobotFactoryPosition::State RobotFactoryPosition::update_state() {
                 }
             }
             break;
-        }case PLAYING: {
+        }
+        case PLAYING: {
             if (current_play_state_.is_free_kick()) {
                 next_state = FREE_KICK;
             } else if (current_play_state_.is_penalty() && current_play_state_.is_setup()) {
@@ -97,7 +103,6 @@ RobotFactoryPosition::State RobotFactoryPosition::update_state() {
     }
     return next_state;
 }
-
 
 void RobotFactoryPosition::state_to_task() {
     switch (current_state_) {
@@ -211,7 +216,8 @@ void RobotFactoryPosition::state_to_task() {
             //     current_position_ = std::make_unique<Defense>(robot_id_);
             // }
             set_default_positions(*last_world_state_, field_dimensions_);
-            SPDLOG_INFO("Robot {} Speed: {}", robot_id_, last_world_state_->get_robot(true, robot_id_).velocity.linear().mag());
+            SPDLOG_INFO("Robot {} Speed: {}", robot_id_,
+                        last_world_state_->get_robot(true, robot_id_).velocity.linear().mag());
             break;
         }
         case PLAYING: {
