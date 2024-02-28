@@ -7,6 +7,8 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/config.hpp>
 
+#include <rj_common/network.hpp>
+#include <rj_common/time.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <robot_intent.hpp>
 
@@ -19,56 +21,73 @@ namespace radio {
 
 /**
  * @brief Interface for the radio over regular network interface
- *
- * TODO(Kyle): Clean this up by removing dual-radio support.
  */
 class NetworkRadio : public Radio {
 public:
     NetworkRadio();
 
 protected:
-    void send(int robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-              strategy::Positions role) override;
-    void receive() override;
-    void switch_team(bool blue) override;
+    // Send Control Message through the Base Station to the Robots
+    void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
+                              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+                              strategy::Positions role) override;
 
-    struct RobotConnection {
-        boost::asio::ip::udp::endpoint endpoint;
-        RJ::Time last_received;
-    };
+    // Poll the asynchronous boost::asio receiver
+    void poll_receive() override;
 
-    // Connections to the robots, indexed by robot ID.
-    std::vector<std::optional<RobotConnection>> connections_{};
+    // Switch teams and let the base station know
+    void switch_team(bool blue_team) override;
 
-    // Map from IP address to robot ID.
-    std::map<boost::asio::ip::udp::endpoint, int> robot_ip_map_{};
+private:
+    void start_robot_status_receive();
 
-    void receive_packet(const boost::system::error_code& error, std::size_t num_bytes);
-
-    void start_receive();
-
-    boost::asio::io_service io_service_;
-    boost::asio::ip::udp::socket socket_;
-    int param_server_port_;
-
-    // Written by `async_receive_from`.
-    std::array<char, rtp::ReverseSize> recv_buffer_;
-    boost::asio::ip::udp::endpoint robot_endpoint_;
-
-    // Read from by `async_send_to`
-    std::vector<std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>> send_buffers_{};
-
-    constexpr static std::chrono::duration kTimeout = std::chrono::milliseconds(250);
-
-    rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
-    rclcpp::TimerBase::SharedPtr alive_robots_timer_;
+    void start_alive_robots_receive();
 
     /**
-     * @brief Publish a vector of alive robots to the "strategy/alive_robots" endpoint
+     * @brief Parse the alive robots from a packet received via the base station.
      *
+     * @param error
+     * @param num_bytes
      */
-    void publish_alive_robots();
+    void receive_robot_status(const boost::system::error_code& error, size_t num_bytes);
+
+    /**
+     * @brief Parse the alive robots from a packet received via the base station.
+     *
+     * @param error
+     * @param num_bytes
+     */
+    void receive_alive_robots(const boost::system::error_code& error, size_t num_bytes);
+
+    // Where to send control messages to
+    boost::asio::ip::udp::endpoint control_message_endpoint_ = boost::asio::ip::udp::endpoint(
+        boost::asio::ip::address::from_string(kBaseStationAddress), kControlMessageSocketPort);
+    // Buffer to send a set of control messages
+    std::vector<std::array<uint8_t, sizeof(rtp::ControlMessage)>> send_buffers_{};
+
+    // What local endpoint to expect robot statuses to be received at
+    boost::asio::ip::udp::endpoint robot_status_endpoint_ = boost::asio::ip::udp::endpoint(
+        boost::asio::ip::address::from_string("0.0.0.0"), kRobotStatusMessageSocketPort);
+    // Buffer for an incoming robot status from the base station
+    std::array<uint8_t, sizeof(rtp::RobotStatusMessage)> robot_status_buffer_{};
+
+    // Where local endpoint to expect alive robots to be received at
+    boost::asio::ip::udp::endpoint alive_robots_endpoint_ = boost::asio::ip::udp::endpoint(
+        boost::asio::ip::address::from_string("0.0.0.0"), kAliveRobotsMessageSocketPort);
+    // Buffer for an alive robots message from the base station
+    std::array<uint8_t, 2> alive_robots_buffer_{};
+    // if alive_robots_[robot_id] = true => robot[robot_id] is alive
+    std::array<bool, kNumShells> alive_robots_{};
+
+    // Keep io_service above the socket
+    // https://stackoverflow.com/questions/26243008/error-initializing-a-boost-udp-socket-with-a-boost-io-service
+    boost::asio::io_service io_service_;
+    // The socket used to send control messages to the base station
+    boost::asio::ip::udp::socket control_message_socket_;
+    // The socket used to receive robot status messages from the base station
+    boost::asio::ip::udp::socket robot_status_socket_;
+    // The socket used to receive alive robots messages from the base station
+    boost::asio::ip::udp::socket alive_robots_socket_;
 };
 
 }  // namespace radio

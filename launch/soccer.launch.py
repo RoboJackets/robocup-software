@@ -159,6 +159,7 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
                 package="rj_robocup",
                 executable="control_node",
                 output="screen",

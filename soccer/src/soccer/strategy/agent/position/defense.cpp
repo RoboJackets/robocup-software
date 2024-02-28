@@ -12,6 +12,10 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
+std::string Defense::get_current_state() {
+    return std::string{"Defense"} + std::to_string(static_cast<int>(current_state_));
+}
+
 Defense::State Defense::update_state() {
     State next_state = current_state_;
     // handle transitions between states

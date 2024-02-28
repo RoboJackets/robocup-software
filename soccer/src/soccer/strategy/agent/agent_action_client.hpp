@@ -126,7 +126,7 @@ private:
 
     FieldDimensions field_dimensions_;
     PlayState play_state_ = PlayState::halt();
-    std::vector<u_int8_t> alive_robots_ = {};
+    std::array<bool, kNumShells> alive_robots_{};
     bool is_simulated_ = false;
     static constexpr double field_padding_ = 0.3;
 
