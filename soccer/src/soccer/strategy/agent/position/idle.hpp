@@ -4,7 +4,6 @@
 
 namespace strategy {
 class Idle : public Position {
-
 public:
     Idle(int r_id);
     ~Idle() = default;
@@ -25,5 +24,4 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };
-}
-
+}  // namespace strategy
