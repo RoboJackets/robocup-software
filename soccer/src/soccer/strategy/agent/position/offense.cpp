@@ -10,9 +10,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
-        if (robot_id_ == 1) {
-            SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
-        }
+        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
 
     }
 
@@ -60,7 +58,8 @@ Offense::State Offense::next_state() {
             }
 
             // No open shot, try to pass.
-            // This will trigger an automatic switch to passing if a pass is accepted.
+            // This will trigger an automatic switch to passing if a pass is
+            // accepted.
             broadcast_direct_pass_request();
 
             return POSSESSION;
@@ -129,7 +128,7 @@ Offense::State Offense::next_state() {
 
         case RECEIVING: {
             // If we got it, cool, we have it!
-            if (check_is_done()) {
+            if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
             }
 
@@ -211,7 +210,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case PASSING: {
             // Kick to the target robot
             rj_geometry::Point target_robot_pos =
-                last_world_state_->get_robot(true, target_robot_id).pose.position();
+                last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
 
             planning::LinearMotionInstant target{target_robot_pos};
             planning::MotionCommand line_kick_cmd{"line_kick", target};
@@ -417,6 +416,7 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
 void Offense::derived_acknowledge_pass() {
     // I have been chosen as the receiver
     current_state_ = RECEIVING_START;
+    reset_timeout();
 }
 
 void Offense::derived_pass_ball() {
@@ -431,10 +431,10 @@ void Offense::derived_pass_ball() {
 void Offense::derived_acknowledge_ball_in_transit() {
     // The ball is coming to me
     current_state_ = RECEIVING;
+    reset_timeout();
 }
 
 bool Offense::has_open_shot() const {
-    return false;
     // Ball position
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
