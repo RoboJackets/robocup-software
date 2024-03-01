@@ -56,9 +56,8 @@ jobs:
         if: always()
 
   fix-style:
-    # Check if the PR is not raised by this workflow and is not from a fork
-    if: startsWith(github.head_ref, 'fix-code-style') == false && github.event.pull_request.head.repo.full_name == github.repository
-
+    # Check if the PR is not raised by this workflow
+    if: startsWith(github.head_ref, 'fix-code-style') == false
     runs-on: ubuntu-latest
     container:
       image: ros:foxy
@@ -103,7 +102,8 @@ jobs:
             fi
 
       - name: Create PR with style fixes
-        if: steps.style-check.outputs.changed == 'true'
+        # Only make the PR if the original PR is within this repo (not from a fork)
+        if: steps.style-check.outputs.changed == 'true' && github.event.pull_request.head.repo.full_name == github.repository
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: "automated style fixes"
