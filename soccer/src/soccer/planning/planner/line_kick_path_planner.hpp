@@ -5,7 +5,6 @@
 #include "planning/planner/collect_path_planner.hpp"
 #include "planning/planner/path_planner.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
-#include "planning/planner/pivot_path_planner.hpp"
 #include "planning/trajectory.hpp"
 
 namespace planning {
@@ -48,8 +47,6 @@ private:
 
     PathTargetPathPlanner path_target_{};
     CollectPathPlanner collect_planner_{};
-    PivotPathPlanner pivot_planner_{};
-
     Trajectory prev_path_;
 
     // These constants could be tuned more

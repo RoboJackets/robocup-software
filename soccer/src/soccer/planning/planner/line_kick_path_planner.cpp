@@ -97,7 +97,6 @@ void LineKickPathPlanner::process_state_transition() {
     // Let PathTarget decide when the first stage is done
     // Possible problem: can PathTarget get stuck and loop infinitely?
     if (current_state_ == INITIAL_APPROACH && path_target_.is_done()) {
-        pivot_planner_.reset();
         current_state_ = FINAL_APPROACH;
     }
 }
