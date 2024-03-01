@@ -105,7 +105,6 @@ bool PivotPathPlanner::is_done() const {
     if (!cached_angle_change_.has_value()) {
         return false;
     }
-
     return cached_angle_change_.value() < IS_DONE_ANGLE_CHANGE_THRESH;
 }
 

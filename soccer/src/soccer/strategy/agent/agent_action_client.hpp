@@ -13,6 +13,7 @@
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
+#include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
@@ -54,6 +55,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_id_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
@@ -62,6 +64,7 @@ private:
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
+    void goalie_id_callback(int goalie_id);
 
     std::unique_ptr<Position> current_position_;
 
@@ -129,6 +132,7 @@ private:
     std::array<bool, kNumShells> alive_robots_{};
     bool is_simulated_ = false;
     static constexpr double field_padding_ = 0.3;
+    int goalie_id_;
 
     /**
      * @brief checks whether a robot is visible, in the field, and (if the game is not

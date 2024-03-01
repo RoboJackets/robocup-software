@@ -53,7 +53,7 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     const BallState& ball = plan_request.world_state->ball;
 
     // Distance to stay away from the ball
-    auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy;
+    auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
 
     // In case the ball is (slowly) moving
     auto ball_position = ball.predict_at(RJ::now() + RJ::Seconds{kPredictIn}).position;
@@ -96,7 +96,7 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
 void LineKickPathPlanner::process_state_transition() {
     // Let PathTarget decide when the first stage is done
     // Possible problem: can PathTarget get stuck and loop infinitely?
-    if (current_state_ == INITIAL_APPROACH && (path_target_.is_done())) {
+    if (current_state_ == INITIAL_APPROACH && path_target_.is_done()) {
         current_state_ = FINAL_APPROACH;
     }
 }

@@ -44,11 +44,15 @@ public:
     std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* world_state,
                                         FieldDimensions field_dimensions) override;
 
+    void reset_target();
+
 private:
     // The seeker's id
     int robot_id_;
     // The taret point to move to
     rj_geometry::Point target_pt_{0.0, 0.0};
+
+    bool target_valid_{false};
 
     /**
      * @brief Returns the point which is most 'open'
