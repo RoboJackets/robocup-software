@@ -109,9 +109,9 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
             if (const communication::PassRequest* sent_pass_request =
                     std::get_if<communication::PassRequest>(&response.associated_request)) {
                 // SPDLOG_INFO(
-                    // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
-                    // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
-                    // pass_response->direct_open);
+                // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
+                // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
+                // pass_response->direct_open);
 
                 if (sent_pass_request->direct && pass_response->direct_open) {
                     // if direct -> pass to first robot
@@ -128,7 +128,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
     communication::PosAgentResponseWrapper comm_response{};
     if (const communication::PassRequest* pass_request =
             std::get_if<communication::PassRequest>(&request.request)) {
-
         // Pass is needed. respond if open
         communication::PassResponse pass_response = receive_pass_request(*pass_request);
         pass_response.direct_open = false;
@@ -136,7 +135,6 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
 
     } else if (const communication::IncomingBallRequest* incoming_ball_request =
                    std::get_if<communication::IncomingBallRequest>(&request.request)) {
-
         // I have been chosen. Offense: RECEVING_START (used to be called FACING)
         communication::Acknowledge incoming_pass_acknowledge =
             acknowledge_pass(*incoming_ball_request);
@@ -146,7 +144,7 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
                    std::get_if<communication::BallInTransitRequest>(&request.request)) {
         communication::Acknowledge ball_in_transit_acknowledge =
 
-        // Pass has started. Offense: RECEIVING
+            // Pass has started. Offense: RECEIVING
             acknowledge_ball_in_transit(*ball_in_transit_request);
         // SPDLOG_INFO("Robot {} acknowledges ball in transit request", robot_id_);
         comm_response.response = ball_in_transit_acknowledge;

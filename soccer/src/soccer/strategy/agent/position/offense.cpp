@@ -11,7 +11,6 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     if (current_state_ != new_state) {
         reset_timeout();
         SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
-
     }
 
     current_state_ = new_state;
@@ -76,7 +75,7 @@ Offense::State Offense::next_state() {
         }
 
         case PASSING_START: {
-             if (check_is_done()) {
+            if (check_is_done()) {
                 return PASSING;
             }
             return PASSING_START;
@@ -199,8 +198,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto move_vector = (current_pos - ball_position).normalized(0.2);
 
             planning::LinearMotionInstant target{ball_position + move_vector};
-            planning::MotionCommand prep_command{"path_target", target,
-                planning::FaceBall{}};
+            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
 
             intent.motion_command = prep_command;
 
@@ -245,11 +243,12 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
             // planning::LinearMotionInstant stay_in_place {current_pos};
 
-                       // intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}, false};
+            // intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
+            // planning::FaceBall{}, false};
 
-                auto collect_cmd = planning::MotionCommand{"collect"};
-                intent.motion_command = collect_cmd;
-                intent.dribbler_speed = 255.0;
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
+            intent.dribbler_speed = 255.0;
             // }
 
             return intent;
@@ -260,9 +259,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
             auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
 
-            planning::LinearMotionInstant stay_in_place {current_pos};
+            planning::LinearMotionInstant stay_in_place{current_pos};
 
-            intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
 
             return intent;
         }
@@ -271,13 +271,13 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intercept the ball
             // if ball fast, use settle, otherwise collect
             // if (last_world_state_->ball.velocity.mag() > 0.75) {
-                // auto settle_cmd = planning::MotionCommand{"settle"};
-                // intent.motion_command = settle_cmd;
-                // intent.dribbler_speed = 255.0;
+            // auto settle_cmd = planning::MotionCommand{"settle"};
+            // intent.motion_command = settle_cmd;
+            // intent.dribbler_speed = 255.0;
             // } else {
-                auto collect_cmd = planning::MotionCommand{"collect"};
-                intent.motion_command = collect_cmd;
-                intent.dribbler_speed = 255.0;
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
+            intent.dribbler_speed = 255.0;
             // }
 
             return intent;
@@ -300,8 +300,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto move_vector = (current_pos - ball_position).normalized(0.2);
 
             planning::LinearMotionInstant target{ball_position + move_vector};
-            planning::MotionCommand prep_command{"path_target", target,
-                planning::FaceBall{}};
+            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
 
             intent.motion_command = prep_command;
 
@@ -397,9 +396,9 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
             if (const communication::PassRequest* sent_pass_request =
                     std::get_if<communication::PassRequest>(&response.associated_request)) {
                 // SPDLOG_INFO(
-                    // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
-                    // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
-                    // pass_response->direct_open);
+                // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
+                // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
+                // pass_response->direct_open);
 
                 if (sent_pass_request->direct && pass_response->direct_open) {
                     // if direct -> pass to first robot
@@ -492,7 +491,6 @@ bool Offense::can_steal_ball() const {
 
     auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
 
-
     auto our_dist = (current_pos - ball_position).mag();
     for (auto enemy : this->last_world_state_->their_robots) {
         auto dist = (enemy.pose.position() - ball_position).mag();
@@ -508,7 +506,7 @@ bool Offense::can_steal_ball() const {
 
     for (auto pal : this->last_world_state_->our_robots) {
         // if (pal.robot_id_ == robot_id_) {
-            // continue;
+        // continue;
         // }
         auto dist = (pal.pose.position() - ball_position).mag();
         if (dist < our_dist) {
