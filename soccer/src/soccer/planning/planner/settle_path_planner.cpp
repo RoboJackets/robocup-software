@@ -467,7 +467,6 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     dampen_end.set_debug_text("Damping");
 
     if (!previous_.empty()) {
-        SPDLOG_INFO("stamp {} {}",previous_.last().stamp.time_since_epoch().count(), dampen_end.first().stamp.time_since_epoch().count());
         dampen_end = Trajectory(previous_, dampen_end);
     }
 
