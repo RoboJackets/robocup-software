@@ -17,18 +17,25 @@ namespace strategy {
  */
 class Marker : public RoleInterface {
 private:
-    int target{-1};
+    int target_{-1};
 
-    static constexpr double Y_BOUND{4.5};
+    static constexpr double kYBound{4.5};
+    //Constant - Avoid marking robots that are right on the edge of the field.
+    static constexpr double kMarkerFollowCutoff {2.5};
 
 public:
-    Marker(u_int8_t robot_id);
+    Marker();
     ~Marker() = default;
-    std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* const world_state,
+    Marker(const Marker& other) = default;
+    Marker(Marker&& other) = default;
+    Marker& operator=(const Marker& other) = default;
+    Marker& operator=(Marker&& other) = default;
+
+    std::optional<RobotIntent> get_task(RobotIntent intent, const WorldState* world_state,
                                         FieldDimensions field_dimensions) override;
 
-    int choose_target(WorldState* ws);
+    void choose_target(const WorldState* ws);
     int get_target();
-    bool target_out_of_bounds(WorldState* ws);
+    bool target_out_of_bounds(const WorldState* ws);
 };
 }  // namespace strategy
