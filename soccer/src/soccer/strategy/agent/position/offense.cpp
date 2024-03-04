@@ -439,23 +439,36 @@ bool Offense::has_open_shot() const {
 
     // Goal target location
     rj_geometry::Point best_shot = calculate_best_shot();
-    double min_dist = 999;
+
+    double min_dist = std::numeric_limits<double>::infinity();
+
+    // Vector from target to ball
     rj_geometry::Point ball_to_goal = best_shot - ball_position;
-    for (int i = 0; i < this->last_world_state_->their_robots.size(); i++) {
-        auto enemy = this->last_world_state_->their_robots[i];
+    for (const RobotState& enemy : last_world_state_->their_robots) {
+        // Ignore enemies within their defense area
+        // this ignores the enemy goalie, which will almost always be in the way of the shot anyway
+        if (this->field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
+            continue;
+        }
+
+        // Vector from enemy to ball
         rj_geometry::Point enemy_vec = enemy.pose.position() - ball_position;
+
+        // I think this means enemy is behind shot (sid)
         if (enemy_vec.dot(ball_to_goal) < 0) {
             continue;
         }
+
+        // Project enemy vector onto our shot line
         auto projection = (enemy_vec.dot(ball_to_goal) / ball_to_goal.dot(ball_to_goal));
         enemy_vec = enemy_vec - (projection)*ball_to_goal;
+
+        // Enemy's distance from our shot line
         double distance = enemy_vec.mag();
-        if (distance < min_dist) {
-            min_dist = distance;
-        }
+        min_dist = std::min(min_dist, distance);
     }
 
-    return min_dist > 0.5;
+    return min_dist > kEnemyTooCloseRadius;
 }
 
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
