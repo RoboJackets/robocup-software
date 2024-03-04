@@ -1,6 +1,5 @@
 #include "defense.hpp"
 
-
 namespace strategy {
 
 Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
@@ -10,8 +9,8 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 }
 
-std::string Defense::return_current_state() {
-    return "Defense" + static_cast<int>(current_state_);
+std::string Defense::get_current_state() {
+    return std::string{"Defense"} + std::to_string(static_cast<int>(current_state_));
 }
 
 Defense::State Defense::update_state() {

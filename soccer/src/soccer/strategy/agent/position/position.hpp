@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdlib>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <spdlog/spdlog.h>
 
@@ -76,8 +76,8 @@ public:
     void update_alive_robots(std::vector<u_int8_t> alive_robots);
     const std::string get_name();
 
-    //returns the current state of the robot
-    virtual std::string return_current_state() = 0;
+    // returns the current state of the robot
+    virtual std::string get_current_state() = 0;
 
     /**
      * @brief setter for time_left_

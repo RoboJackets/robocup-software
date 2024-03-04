@@ -1,7 +1,8 @@
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
 #include <string>
+
+#include <rclcpp/rclcpp.hpp>
 
 #include "planning/instant.hpp"
 #include "planning/planner/motion_command.hpp"
@@ -33,7 +34,7 @@ public:
      */
     void derived_acknowledge_ball_in_transit() override;
 
-    std::string return_current_state() override;
+    std::string get_current_state() override;
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
