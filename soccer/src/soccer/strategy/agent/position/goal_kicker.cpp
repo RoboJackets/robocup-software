@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-GoalKicker::GoalKicker(int r_id) : Position(r_id) { position_name_ = "GoalKicker"; }
+GoalKicker::GoalKicker(int r_id) : Position(r_id, "GoalKicker") {}
 
 std::optional<RobotIntent> GoalKicker::derived_get_task(RobotIntent intent) {
     // Penalty Kicker kicks the ball into the goal
