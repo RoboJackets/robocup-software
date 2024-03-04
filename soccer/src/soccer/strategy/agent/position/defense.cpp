@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
+Defense::Defense(int r_id) : Position(r_id, "Defense") {}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();

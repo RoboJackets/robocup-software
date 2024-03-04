@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position{r_id}, seeker_{r_id} { position_name_ = "Offense"; }
+Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock

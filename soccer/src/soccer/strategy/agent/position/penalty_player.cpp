@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-PenaltyPlayer::PenaltyPlayer(int r_id) : Position(r_id) { position_name_ = "PenaltyPlayer"; }
+PenaltyPlayer::PenaltyPlayer(int r_id) : Position(r_id, "PenaltyPlayer") {}
 
 std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     // Penalty Player lines up with the ball

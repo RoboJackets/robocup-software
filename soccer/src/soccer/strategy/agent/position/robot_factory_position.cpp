@@ -2,8 +2,7 @@
 
 namespace strategy {
 
-RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
-    position_name_ = "RobotFactoryPosition";
+RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
 
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
