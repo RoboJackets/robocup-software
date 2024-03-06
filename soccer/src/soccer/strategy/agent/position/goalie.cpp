@@ -8,7 +8,6 @@ Goalie::Goalie(int r_id) : Position(r_id) { position_name_ = "Goalie"; }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
-    SPDLOG_INFO("state {}", latest_state_);
     return state_to_task(intent);
 }
 
@@ -35,14 +34,8 @@ Goalie::State Goalie::update_state() {
 
     bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     if (ball_is_slow && ball_in_box) {
+        // TODO: add pivot logic once its is_done
         return CLEARING;
-        // SPDLOG_INFO("HELLO! in box");
-        // if (latest_state_ != CLEARING && check_is_done()) {
-        //     return PREPARING_SHOT;
-        // } else if (latest_state_ == PREPARING_SHOT) {
-        //     // when PREPARING_SHOT is done, CLEAR
-        //     return CLEARING;
-        // }
     }
 
     // when line kick fails but ball leaves box, don't chase it
