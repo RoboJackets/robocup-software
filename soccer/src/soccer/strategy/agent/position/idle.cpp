@@ -6,10 +6,9 @@
 
 namespace strategy {
 
-Idle::Idle(int r_id) : Position{r_id} {
-    position_name_ = "Idle";
-    SPDLOG_INFO("Robot {} is now Idle", r_id);
-}
+Idle::Idle(int r_id) : Position{r_id, "Idle"} {}
+
+std::string Idle::get_current_state() { return "Idle"; }
 
 /**
  * @brief Does nothing; this position is a special case
