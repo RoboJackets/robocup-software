@@ -63,12 +63,10 @@ void Position::update_field_dimensions(const FieldDimensions& field_dims) {
 void Position::update_alive_robots(std::array<bool, kNumShells> alive_robots) {
     alive_robots_ = alive_robots;
 
-    if (alive &&
-        std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) != alive_robots_.end()) {
+    if (alive && !alive_robots_[robot_id_]) {
         alive = false;
         die();
-    } else if (!alive && std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) ==
-                             alive_robots_.end()) {
+    } else if (!alive && alive_robots_[robot_id_]) {
         alive = true;
         revive();
     }
