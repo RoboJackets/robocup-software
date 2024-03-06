@@ -133,7 +133,7 @@ private:
      * @brief Sets the current position to the parameterized type.
      * Requires the type to have a constructor that takes a reference to the old Position
      * (and to be a subclass of Position)
-    */
+     */
     template <class Pos>
     void set_current_position() {
         // If we are not currently playing Pos

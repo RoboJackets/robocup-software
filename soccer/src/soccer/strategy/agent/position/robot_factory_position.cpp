@@ -243,7 +243,6 @@ std::pair<int, double> RobotFactoryPosition::get_closest_kicker(
 void RobotFactoryPosition::set_default_positions(WorldState& world_state,
                                                  FieldDimensions& field_dimensions) {
     // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
-    SPDLOG_INFO("DEFAULT");
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
