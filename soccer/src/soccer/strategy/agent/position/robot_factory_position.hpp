@@ -109,25 +109,15 @@ private:
     static std::pair<int, double> get_closest_kicker(
         const std::unordered_map<int, double>& kicker_distances);
 
-    void set_default_positions(WorldState& world_state, FieldDimensions& field_dimensions);
+    void set_default_positions();
 
-    enum State {
-        FREE_KICK,
-        PENALTY_SETUP,
-        PENALTY_KICK,
-        KICKOFF_SETUP,
-        KICKOFF_KICK,
-        STOP,
-        PLAYING,
-    };
+    PlayState last_play_state_;
 
-    State current_state_ = STOP;
+    void process_play_state();
 
-    State update_state();
+    void update_position();
 
-    void state_to_task();
-
-    void perform_free_kick();
+    void choose_kicker();
 
     /**
      * @brief Sets the current position to the parameterized type.

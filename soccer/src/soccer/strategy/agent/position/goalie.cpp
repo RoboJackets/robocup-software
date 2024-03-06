@@ -6,6 +6,8 @@ namespace strategy {
 
 Goalie::Goalie(int r_id) : Position(r_id, "Goalie") {}
 
+Goalie::Goalie(const Position& other) : Position{other} {}
+
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
     return state_to_task(intent);
