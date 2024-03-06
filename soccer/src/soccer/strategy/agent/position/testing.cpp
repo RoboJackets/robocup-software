@@ -13,9 +13,9 @@ Testing::Testing(int r_id) : Position(r_id), off_(r_id_) {
 std::optional<RobotIntent> Testing::derived_get_task(RobotIntent intent) {
     off_.set_globals(last_world_state_, field_dimensions_);
     current_state_ = update_state();
-    SPDLOG_INFO(current_state_);
+    // SPDLOG_INFO(current_state_);
     // if (r_id_ == 1) {
-    SPDLOG_INFO("Next says {}", next_);
+    // SPDLOG_INFO("Next says {}", next_);
     // }
     return state_to_task(intent);
 }
@@ -40,7 +40,7 @@ Testing::State Testing::update_state() {
         }
 
         case BASIC_MOVEMENT_1: {
-            if (proceed()) {
+            if (check_is_done()) {
                 move_on_ = false;
                 next_state = BASIC_MOVEMENT_2;
             }
@@ -48,7 +48,7 @@ Testing::State Testing::update_state() {
         }
 
         case BASIC_MOVEMENT_2: {
-            if (proceed()) {
+            if (check_is_done()) {
                 move_on_ = false;
                 next_state = BASIC_MOVEMENT_3;
                 next_ = BASIC_MOVEMENT_3;
@@ -57,7 +57,7 @@ Testing::State Testing::update_state() {
         }
 
         case BASIC_MOVEMENT_3: {
-            if (proceed()) {
+            if (check_is_done()) {
                 move_on_ = false;
                 next_state = BASIC_MOVEMENT_2;
                 next_ = BASIC_MOVEMENT_2;

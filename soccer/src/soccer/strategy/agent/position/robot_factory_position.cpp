@@ -9,7 +9,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id) {
     // current_position_ = std::make_unique<BackAndForth>(robot_id_);
     if (robot_id_ == 0) {
          current_position_ =
-             std::make_unique<Testing>(robot_id_);  // std::make_unique<Testing>(robot_id_);
+             std::make_unique<Goalie>(robot_id_);  // std::make_unique<Testing>(robot_id_);
     } else if (robot_id_ == 1) {
          current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
