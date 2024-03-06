@@ -26,16 +26,14 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
     std::vector<RobotPos> robots_copy;
-    int j = 0;
-    for (bool alive : alive_robots_) {
+    for (int i = 0; i <kNumShells; i++) {
         // Ignore goalie
-        if (j == goalie_id_) {
+        if (i == goalie_id_) {
             continue;
         }
-        if (alive) {
-           robots_copy.emplace_back(j, world_state.our_robots[j].pose.position().y());
+        if (alive_robots_[i]) {
+           robots_copy.emplace_back(i, world_state.our_robots[i].pose.position().y());
         }
-        j++;
     }
 
 
@@ -127,9 +125,5 @@ void RobotFactoryPosition::revive() { current_position_->revive(); }
 std::string RobotFactoryPosition::get_current_state() {
     return current_position_->get_current_state();
 }
-
-// void RobotFactoryPosition::update_alive_robots(std::array<bool, kNumShells> alive_robots) {
-//     current_position_->Position::update_alive_robots(alive_robots);
-// }
 
 }  // namespace strategy
