@@ -70,7 +70,8 @@ public:
     }
 
     void update_alive_robots(std::array<bool, kNumShells> alive_robots) override {
-        current_position_->Position::update_alive_robots(alive_robots);
+        Position::update_alive_robots(alive_robots);
+        current_position->update_alive_robots(alive_robots);
     }
 
     const std::string get_name() override { return current_position_->get_name(); }
