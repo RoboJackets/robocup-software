@@ -60,6 +60,7 @@ public:
     void revive() override;
 
     void update_play_state(const PlayState& play_state) override {
+        Position::update_play_state(play_state);
         current_position_->update_play_state(play_state);
     }
 
@@ -125,6 +126,22 @@ private:
     State update_state();
 
     void state_to_task();
+
+    void perform_free_kick();
+
+    /**
+     * @brief Sets the current position to the parameterized type.
+     * Requires the type to have a constructor that takes a reference to the old Position
+     * (and to be a subclass of Position)
+    */
+    template <class Pos>
+    void set_current_position() {
+        // If we are not currently playing Pos
+        if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
+            // This line requires Pos to implement the constructor Pos(const Position&)
+            current_position_ = std::make_unique<Pos>(*current_position_);
+        }
+    }
 };
 
 }  // namespace strategy

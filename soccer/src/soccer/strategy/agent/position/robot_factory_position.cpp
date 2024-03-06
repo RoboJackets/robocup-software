@@ -311,25 +311,17 @@ void RobotFactoryPosition::set_default_positions(WorldState& world_state,
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
         if (i <= 1) {
-            if (current_position_->get_name() != "Defense") {
-                current_position_ = std::make_unique<Defense>(*current_position_);
-            }
+            set_current_position<Defense>();
         } else {
-            if (current_position_->get_name() != "Offense") {
-                current_position_ = std::make_unique<Offense>(robot_id_);
-            }
+            set_current_position<Offense>();
         }
     } else {
         // Defensive mode
         // Closest 4 robots on defense, rest on offense
         if (i <= 3) {
-            if (current_position_->get_name() != "Defense") {
-                current_position_ = std::make_unique<Defense>(robot_id_);
-            }
+            set_current_position<Defense>();
         } else {
-            if (current_position_->get_name() != "Offense") {
-                current_position_ = std::make_unique<Offense>(*current_position_);
-            }
+            set_current_position<Offense>();
         }
     }
 }
