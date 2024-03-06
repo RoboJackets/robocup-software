@@ -151,6 +151,9 @@ Offense::State Offense::next_state() {
             if (check_is_done()) {
                 return SHOOTING;
             }
+            if (distance_to_ball() < kOwnBallRadius) {
+                return DEFAULT;
+            }
             return SHOOTING_START;
         }
 
