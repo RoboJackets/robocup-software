@@ -45,7 +45,7 @@ public:
 private:
     int move_ct_ = 0;
 
-    static constexpr int kMaxWallers {3};
+    static constexpr int kMaxWallers{3};
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot

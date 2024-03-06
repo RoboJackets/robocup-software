@@ -19,11 +19,11 @@ class Marker : public RoleInterface {
 private:
     int target_{-1};
 
-    //Calculated from field dimensions - Prevent the marker from
-    //marking any enemies that are out of range; e. g. on the other
-    //side of the field or the sidelines.
-    float y_bound {FieldDimensions::kDefaultDimensions.length() / 2};
-    float marker_follow_cutoff {FieldDimensions::kDefaultDimensions.width() / 2};
+    // Calculated from field dimensions - Prevent the marker from
+    // marking any enemies that are out of range; e. g. on the other
+    // side of the field or the sidelines.
+    float y_bound{FieldDimensions::kDefaultDimensions.length() / 2};
+    float marker_follow_cutoff{FieldDimensions::kDefaultDimensions.width() / 2};
 
 public:
     Marker(FieldDimensions field_dimensions);

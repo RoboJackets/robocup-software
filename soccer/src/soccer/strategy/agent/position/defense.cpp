@@ -2,9 +2,7 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : 
-    Position(r_id, "Defense"), 
-    marker_{field_dimensions_} {}
+Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
@@ -42,7 +40,7 @@ Defense::State Defense::update_state() {
             // If a wall is already full,
             // Remove the robot with the highest ID from a wall
             // and make them a marker instead.
-            if (walling_robots_.size() > kMaxWallers && 
+            if (walling_robots_.size() > kMaxWallers &&
                 this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
                 send_leave_wall_request();
                 next_state = ENTERING_MARKING;
