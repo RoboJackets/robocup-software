@@ -1,6 +1,7 @@
 name: Pull request checks
 
-on: [pull_request]
+# Run on PRs and when manually run
+on: [pull_request, workflow_dispatch]
 
 jobs:
   build-and-test:
