@@ -1,7 +1,10 @@
 #include "marker.hpp"
 
 namespace strategy {
-Marker::Marker() {}
+Marker::Marker(FieldDimensions field_dimensions) {
+    this->y_bound = field_dimensions.length() / 2;
+    this->marker_follow_cutoff = field_dimensions.width() / 2;
+}
 
 std::optional<RobotIntent> Marker::get_task(RobotIntent intent, const WorldState* world_state,
                                             [[maybe_unused]] FieldDimensions field_dimensions) {
@@ -20,8 +23,8 @@ void Marker::choose_target(const WorldState* ws) {
     // robots to track from each other. Logic for this operation must be
     // added because multiple markers currently mark the same robot.
     for (int i = 0; i < kNumShells; i++) {
-        if (std::fabs(ws->get_robot(false, i).pose.position().x()) < kMarkerFollowCutoff &&
-            ws->get_robot(false, i).pose.position().y() < kYBound &&
+        if (std::fabs(ws->get_robot(false, i).pose.position().x()) < marker_follow_cutoff &&
+            ws->get_robot(false, i).pose.position().y() < y_bound &&
             (ws->ball.position - ws->get_robot(false, i).pose.position()).mag() > .25) {
             target_ = i;
             return; 
@@ -32,7 +35,7 @@ void Marker::choose_target(const WorldState* ws) {
 
 bool Marker::target_out_of_bounds(const WorldState* ws) {
     if (target_ == -1) return true;
-    if (ws->get_robot(false, target_).pose.position().y() > kYBound) {
+    if (ws->get_robot(false, target_).pose.position().y() > y_bound) {
         target_ = -1;
         return true;
     }

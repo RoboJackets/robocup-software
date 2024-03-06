@@ -19,12 +19,14 @@ class Marker : public RoleInterface {
 private:
     int target_{-1};
 
-    static constexpr double kYBound{4.5};
-    //Constant - Avoid marking robots that are right on the edge of the field.
-    static constexpr double kMarkerFollowCutoff {2.5};
+    //Calculated from field dimensions - Prevent the marker from
+    //marking any enemies that are out of range; e. g. on the other
+    //side of the field or the sidelines.
+    float y_bound {0.0f};
+    float marker_follow_cutoff {0.0f};
 
 public:
-    Marker();
+    Marker(FieldDimensions field_dimensions);
     ~Marker() = default;
     Marker(const Marker& other) = default;
     Marker(Marker&& other) = default;
