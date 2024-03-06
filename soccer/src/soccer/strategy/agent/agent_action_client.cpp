@@ -13,11 +13,12 @@ AgentActionClient::AgentActionClient() : AgentActionClient(0) {
 }
 
 AgentActionClient::AgentActionClient(int r_id)
-    : robot_id_(r_id),
-      rclcpp::Node(fmt::format("agent_{}_action_client_node", r_id),
+    : rclcpp::Node(::fmt::format("agent_{}_action_client_node", r_id),
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
-                       .allow_undeclared_parameters(true)) {
+                       .allow_undeclared_parameters(true)),
+      current_position_{std::make_unique<RobotFactoryPosition>(r_id)},
+      robot_id_{r_id} {
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
@@ -42,7 +43,7 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
     goalie_id_sub_ = create_subscription<rj_msgs::msg::Goalie>(
-        ::referee::topics::kGoalieTopic, 1,
+        ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
@@ -51,9 +52,6 @@ AgentActionClient::AgentActionClient(int r_id)
                std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response) {
             receive_communication_callback(request, response);
         });
-
-    // Default Positions with the Position class
-    current_position_ = std::make_unique<RobotFactoryPosition>(robot_id_);
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {

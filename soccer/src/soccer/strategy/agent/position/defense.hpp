@@ -29,6 +29,7 @@ class Defense : public Position {
 public:
     Defense(int r_id);
     ~Defense() override = default;
+    Defense(const Position& other);
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(
@@ -43,8 +44,6 @@ public:
     void revive() override;
 
 private:
-    int move_ct_ = 0;
-
     static constexpr int kMaxWallers{3};
 
     /**

@@ -4,6 +4,8 @@ namespace strategy {
 
 Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
 
+Defense::Defense(const Position& other) : Position{other} { position_name_ = "Defense"; }
+
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
     return state_to_task(intent);
@@ -227,7 +229,7 @@ void Defense::send_leave_wall_request() {
 
 communication::JoinWallResponse Defense::handle_join_wall_request(
     communication::JoinWallRequest join_request) {
-    for (int i = 0; i < walling_robots_.size(); i++) {
+    for (size_t i = 0; i < walling_robots_.size(); i++) {
         if (walling_robots_[i] == join_request.robot_id) {
             break;
         } else if (walling_robots_[i] > join_request.robot_id) {
@@ -266,7 +268,7 @@ communication::Acknowledge Defense::handle_leave_wall_request(
 }
 
 void Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
-    for (int i = 0; i < walling_robots_.size(); i++) {
+    for (size_t i = 0; i < walling_robots_.size(); i++) {
         if (walling_robots_[i] == join_response.robot_id) {
             return;
         } else if (walling_robots_[i] > join_response.robot_id) {

@@ -98,15 +98,14 @@ SimRadio::SimRadio(bool blue_team)
     for (uint8_t robot_id = 0; robot_id < 6; robot_id++) {
         alive_robots_[robot_id] = true;
     }
-    alive_robots_pub_ = this->create_publisher<rj_msgs::msg::AliveRobots>(
-        topics::kAliveRobotsTopic, rclcpp::QoS(1));
+    alive_robots_pub_ = this->create_publisher<rj_msgs::msg::AliveRobots>(topics::kAliveRobotsTopic,
+                                                                          rclcpp::QoS(1));
 
     alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(500), [this]() {
         rj_msgs::msg::AliveRobots alive_message{};
         alive_message.alive_robots = alive_robots_;
         publish_alive_robots(alive_message);
     });
-
 
     buffer_.resize(1024);
     start_receive();

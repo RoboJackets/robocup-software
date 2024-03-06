@@ -80,6 +80,11 @@ public:
 
     void set_goal_canceled() override { current_position_->set_goal_canceled(); }
 
+    void set_goalie_id(int goalie_id) override {
+        Position::set_goalie_id(goalie_id);
+        current_position_->set_goalie_id(goalie_id);
+    }
+
     void send_direct_pass_request(std::vector<u_int8_t> target_robots) override {
         current_position_->send_direct_pass_request(target_robots);
     }
@@ -96,8 +101,6 @@ public:
     void send_pass_confirmation(u_int8_t target_robot) override {
         current_position_->send_pass_confirmation(target_robot);
     }
-
-    void set_goalie_id(int goalie_id) override { current_position_->set_goalie_id(goalie_id); }
 
 private:
     std::unique_ptr<Position> current_position_;
