@@ -37,7 +37,7 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state->ball.position;
         rj_geometry::Point min = current_point;
-        double min_val = Seeker::eval_point(ball_pos, current_point, world_state, field_dimensions);
+        double min_val = eval_point(ball_pos, current_point, world_state, field_dimensions);
         double curr_val{};
         // Points in a current_prec radius of the current point, at 45 degree intervals
         std::vector<rj_geometry::Point> check_points{
