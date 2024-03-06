@@ -6,8 +6,6 @@
 #include <vector>
 
 #include <queue>
-#include <unordered_map>
-
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
