@@ -8,6 +8,10 @@ Marker::Marker(FieldDimensions field_dimensions) {
 
 std::optional<RobotIntent> Marker::get_task(RobotIntent intent, const WorldState* world_state,
                                             [[maybe_unused]] FieldDimensions field_dimensions) {
+
+    this->y_bound = field_dimensions.length() / 2;
+    this->marker_follow_cutoff = field_dimensions.width() / 2;
+
     rj_geometry::Point targetPoint = world_state->get_robot(false, target_).pose.position();
     rj_geometry::Point ballPoint = world_state->ball.position;
     rj_geometry::Point targetToBall = (ballPoint - targetPoint).normalized(0.55f);
