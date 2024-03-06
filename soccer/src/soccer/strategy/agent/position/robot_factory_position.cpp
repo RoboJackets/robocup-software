@@ -26,16 +26,15 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
     std::vector<RobotPos> robots_copy;
-    for (int i = 0; i <kNumShells; i++) {
+    for (int i = 0; i < kNumShells; i++) {
         // Ignore goalie
         if (i == goalie_id_) {
             continue;
         }
         if (alive_robots_[i]) {
-           robots_copy.emplace_back(i, world_state.our_robots[i].pose.position().y());
+            robots_copy.emplace_back(i, world_state.our_robots[i].pose.position().y());
         }
     }
-
 
     std::sort(robots_copy.begin(), robots_copy.end(),
               [](RobotPos const& a, RobotPos const& b) { return a.second < b.second; });
