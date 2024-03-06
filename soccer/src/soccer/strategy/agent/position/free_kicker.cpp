@@ -2,10 +2,7 @@
 
 namespace strategy {
 
-FreeKicker::FreeKicker(int r_id) : Position(r_id) {
-    position_name_ = "FreeKicker";
-    SPDLOG_INFO("Robot {} is now FreeKicker", r_id);
-}
+FreeKicker::FreeKicker(int r_id) : Position(r_id, "FreeKicker") {}
 
 std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     // Penalty Kicker kicks the ball into the goal
@@ -30,6 +27,8 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
 
     return intent;
 }
+
+std::string FreeKicker::get_current_state() { return "FreeKicker"; }
 
 void FreeKicker::derived_acknowledge_pass() {}
 
