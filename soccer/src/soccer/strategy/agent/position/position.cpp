@@ -60,7 +60,7 @@ void Position::update_field_dimensions(const FieldDimensions& field_dims) {
     field_dimensions_ = field_dims;
 }
 
-void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
+void Position::update_alive_robots(std::array<bool, kNumShells> alive_robots) {
     alive_robots_ = alive_robots;
 
     if (alive &&
