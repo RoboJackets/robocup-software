@@ -10,7 +10,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
-        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
+        // SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
     }
 
     current_state_ = new_state;

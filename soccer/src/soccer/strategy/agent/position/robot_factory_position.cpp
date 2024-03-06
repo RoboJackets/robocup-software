@@ -6,7 +6,6 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
-        // } else if (robot_id_ == 1) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
@@ -16,7 +15,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
 std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state,
                                                           FieldDimensions& field_dimensions) {
     // If keeper, make no changes
-    if (robot_id_ == 0) {
+    if (robot_id_ == goalie_id_) {
         return current_position_->get_task(world_state, field_dimensions);
     }
 
@@ -51,7 +50,7 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     // Assigning new position
     // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid
     // rounding issues on midline)
-    if (Position::our_possession_ ||
+    if (our_possession_ ||
         world_state.ball.position.y() > field_dimensions.length() / 1.99) {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
@@ -77,6 +76,8 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
             }
         }
     }
+
+    SPDLOG_INFO("ROBOT {} POSITION {}", robot_id_, current_position_->get_name())
 
     return current_position_->get_task(world_state, field_dimensions);
 }

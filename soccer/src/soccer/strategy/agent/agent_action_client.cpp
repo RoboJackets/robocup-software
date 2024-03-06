@@ -34,7 +34,7 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
-        ::strategy::topics::kAliveRobots, 1,
+        ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
     game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(

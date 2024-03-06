@@ -39,7 +39,7 @@ Radio::Radio()
     }
 
     alive_robots_pub_ =
-        create_publisher<rj_msgs::msg::AliveRobots>(strategy::topics::kAliveRobots, rclcpp::QoS(1));
+        create_publisher<rj_msgs::msg::AliveRobots>(topics::kAliveRobotsTopic, rclcpp::QoS(1));
 
     tick_timer_ = create_wall_timer(tick_period_, [this]() { tick(); });
 }
