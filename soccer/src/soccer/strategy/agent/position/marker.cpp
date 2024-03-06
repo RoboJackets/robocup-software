@@ -8,7 +8,6 @@ Marker::Marker(FieldDimensions field_dimensions) {
 
 std::optional<RobotIntent> Marker::get_task(RobotIntent intent, const WorldState* world_state,
                                             [[maybe_unused]] FieldDimensions field_dimensions) {
-
     this->y_bound = field_dimensions.length() / 2;
     this->marker_follow_cutoff = field_dimensions.width() / 2;
 
@@ -31,7 +30,7 @@ void Marker::choose_target(const WorldState* ws) {
             ws->get_robot(false, i).pose.position().y() < y_bound &&
             (ws->ball.position - ws->get_robot(false, i).pose.position()).mag() > .25) {
             target_ = i;
-            return; 
+            return;
         }
     }
     target_ = -1;
