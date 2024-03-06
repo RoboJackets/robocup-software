@@ -1,20 +1,26 @@
 #include "robot_factory_position.hpp"
 
+#include "strategy/agent/position/line.hpp"
+
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
-    if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        // } else if (robot_id_ == 1) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
-    } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
-    }
+    current_position_ = std::make_unique<Line>(robot_id_);
+
+    // if (robot_id_ == 0) {
+    //     current_position_ = std::make_unique<Goalie>(robot_id_);
+    // } else if (robot_id_ == 1 || robot_id_ == 2) {
+    //     // } else if (robot_id_ == 1) {
+    //     current_position_ = std::make_unique<Offense>(robot_id_);
+    // } else {
+    //     current_position_ = std::make_unique<Defense>(robot_id_);
+    // }
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state,
                                                           FieldDimensions& field_dimensions) {
+    return current_position_->get_task(world_state, field_dimensions);
+
     // If keeper, make no changes
     if (robot_id_ == 0) {
         return current_position_->get_task(world_state, field_dimensions);
