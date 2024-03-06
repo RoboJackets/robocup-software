@@ -37,7 +37,7 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state->ball.position;
         rj_geometry::Point min = current_point;
-        double min_val = Seeker::eval_point(ball_pos, current_point, world_state);
+        double min_val = eval_point(ball_pos, current_point, world_state, field_dimensions);
         double curr_val{};
         // Points in a current_prec radius of the current point, at 45 degree intervals
         std::vector<rj_geometry::Point> check_points{
@@ -60,7 +60,7 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
 
         // Finds the best point out of the ones checked
         for (auto point : check_points) {
-            curr_val = Seeker::eval_point(ball_pos, point, world_state);
+            curr_val = Seeker::eval_point(ball_pos, point, world_state, field_dimensions);
             if (curr_val < min_val) {
                 min_val = curr_val;
                 min = point;
@@ -135,7 +135,7 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
 }
 
 double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                          const WorldState* world_state) {
+                          const WorldState* world_state, const FieldDimensions& field_dimensions) {
     // Determines 'how good' a point is
     // A higher value is a worse point
 
@@ -148,7 +148,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // Line of Sight Heuristic
     double max = 0;
     double curr_dp = 0;
-    for (auto robot : world_state->their_robots) {
+    for (const RobotState& robot : world_state->their_robots) {
         curr_dp = (current_point).norm().dot((robot.pose.position() - ball_pos).norm());
         curr_dp *= curr_dp;
         if (curr_dp > max) {
@@ -161,23 +161,31 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     rj_geometry::Segment pass_path{ball_pos, current_point};
     double min_robot_dist = 10000;
     float min_path_dist = 10000;
-    for (auto bot : world_state->their_robots) {
-        rj_geometry::Point opp_pos = bot.pose.position();
-        min_robot_dist = std::min(min_robot_dist, current_point.dist_to(opp_pos));
-        min_path_dist = std::min(min_path_dist, pass_path.dist_to(opp_pos));
+    for (const RobotState& robot : world_state->their_robots) {
+        rj_geometry::Point opp_pos = robot.pose.position();
+        auto robot_dist = current_point.dist_to(opp_pos);
+        min_robot_dist = std::min(min_robot_dist, robot_dist);
+        auto path_dist = pass_path.dist_to(opp_pos);
+        min_path_dist = std::min(min_path_dist, path_dist);
     }
 
-    for (auto bot : world_state->our_robots) {
-        rj_geometry::Point ally_pos = bot.pose.position();
-        min_robot_dist = std::min(min_robot_dist, current_point.dist_to(ally_pos));
-        min_path_dist = std::min(min_path_dist, pass_path.dist_to(ally_pos));
+    for (const RobotState& robot : world_state->our_robots) {
+        rj_geometry::Point ally_pos = robot.pose.position();
+        auto robot_dist = current_point.dist_to(ally_pos);
+        // if dist is 0, then bot must be seeker (self ) robot, so should ignore
+        if (robot_dist == 0) {
+            continue;
+        }
+        min_robot_dist = std::min(min_robot_dist, robot_dist);
+        auto path_dist = pass_path.dist_to(ally_pos);
+        min_path_dist = std::min(min_path_dist, path_dist);
     }
 
     min_path_dist = 0.1f / min_path_dist;
     min_robot_dist = 0.1 / min_robot_dist;
 
     // More Line of Sight Heuristics
-    for (auto robot : world_state->our_robots) {
+    for (const RobotState& robot : world_state->our_robots) {
         curr_dp = (current_point - ball_pos).norm().dot((robot.pose.position() - ball_pos).norm());
         curr_dp *= curr_dp;
         if (curr_dp > max) {
@@ -186,11 +194,22 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     }
 
     // Additional heuristics for calculating optimal point
-    double ball_proximity_loss = (current_point - ball_pos).mag() * .002;
-    double goal_distance_loss = (8.5 - current_point.y()) * 0.15 + abs(current_point.x()) * 0.15;
+    const double ball_proximity_loss_weight = 0.002;
+    const double goal_distance_loss_weight = 0.15;
+    double ball_proximity_loss = (current_point - ball_pos).mag() * ball_proximity_loss_weight;
+    double goal_distance_loss = (field_dimensions.their_defense_area().miny() - current_point.y()) *
+                                goal_distance_loss_weight;
+
+    rj_geometry::Segment ball_goal{ball_pos, field_dimensions.their_goal_loc()};
+    double block_shot_dist = ball_goal.dist_to(current_point);
+    double block_shot_loss = 0;
+    if (block_shot_dist < 1) {
+        block_shot_loss = 1;
+    }
 
     // Final evaluation
-    return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist;
+    return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist +
+           block_shot_loss;
 }
 
 }  // namespace strategy

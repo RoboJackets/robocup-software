@@ -104,7 +104,8 @@ private:
      * @return double The evaluation of that target point
      */
     static double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                             const WorldState* world_state);
+                             const WorldState* world_state,
+                             const FieldDimensions& field_dimensions);
 };
 
 }  // namespace strategy

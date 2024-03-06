@@ -69,6 +69,7 @@ static inline std::string trajectory_topic(int robot_id) {
 }  // namespace planning::topics
 
 namespace strategy::topics {
+constexpr auto kAliveRobots("strategy/alive_robots");
 }  // namespace strategy::topics
 
 namespace control {
