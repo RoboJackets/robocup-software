@@ -20,6 +20,7 @@ class PenaltyPlayer : public Position {
 public:
     PenaltyPlayer(int r_id);
     ~PenaltyPlayer() = default;
+    PenaltyPlayer(const Position& other);
 
     /**
      * @brief Does nothing; this position is a special case

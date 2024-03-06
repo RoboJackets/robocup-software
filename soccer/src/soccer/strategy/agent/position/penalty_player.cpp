@@ -4,6 +4,8 @@ namespace strategy {
 
 PenaltyPlayer::PenaltyPlayer(int r_id) : Position(r_id, "PenaltyPlayer") {}
 
+PenaltyPlayer::PenaltyPlayer(const Position& other) : Position{other} {}
+
 std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     // Penalty Player lines up with the ball
     // Only robot allowed within 1 m of the ball

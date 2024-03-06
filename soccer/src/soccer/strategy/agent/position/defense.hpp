@@ -44,7 +44,9 @@ public:
     void revive() override;
 
 private:
-    static constexpr int kMaxWallers{3};
+    // static constexpr int kMaxWallers{6};
+    static constexpr int kMaxWallers{static_cast<int>(kNumShells)}; // This effectively turns off marking
+
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
