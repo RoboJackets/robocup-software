@@ -73,7 +73,7 @@ public:
     // communication with AC
     virtual void update_play_state(const PlayState& play_state);
     virtual void update_field_dimensions(const FieldDimensions& field_dimensions);
-    virtual void update_alive_robots(std::vector<u_int8_t> alive_robots);
+    virtual void update_alive_robots(std::array<bool, kNumShells> alive_robots);
     virtual const std::string get_name();
 
     // returns the current state of the robot
@@ -286,7 +286,7 @@ protected:
     static constexpr double ball_lost_distance_ = 0.5;
 
     // vector of alive robots from the agent action client
-    std::vector<u_int8_t> alive_robots_ = {};
+    std::array<bool, kNumShells> alive_robots_ = {};
 
     // true if this robot is alive
     bool alive = false;

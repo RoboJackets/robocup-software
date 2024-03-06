@@ -69,7 +69,7 @@ public:
         current_position_->update_field_dimensions(field_dimensions);
     }
 
-    void update_alive_robots(std::vector<u_int8_t> alive_robots) override {
+    void update_alive_robots(std::array<bool, kNumShells> alive_robots) override {
         current_position_->update_alive_robots(alive_robots);
     }
 
