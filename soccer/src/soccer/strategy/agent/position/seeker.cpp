@@ -161,7 +161,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     rj_geometry::Segment pass_path{ball_pos, current_point};
     double min_robot_dist = 10000;
     float min_path_dist = 10000;
-    for (auto bot : world_state->their_robots) {
+    for (const RobotState& bot : world_state->their_robots) {
         rj_geometry::Point opp_pos = bot.pose.position();
         auto robot_dist = current_point.dist_to(opp_pos);
         min_robot_dist = std::min(min_robot_dist, robot_dist);
