@@ -14,6 +14,7 @@
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_msgs/msg/agent_state.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "game_state.hpp"
@@ -42,6 +43,7 @@ class AgentActionClient : public rclcpp::Node {
 public:
     using RobotMove = rj_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
+    using AgentStateMsg = rj_msgs::msg::AgentState;
 
     AgentActionClient();
     AgentActionClient(int r_id);
@@ -62,6 +64,8 @@ private:
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
+
+    rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 
     std::unique_ptr<Position> current_position_;
 
